@@ -134,7 +134,7 @@ pub struct UserFunction {
 
 impl UserFunction {
     pub fn new(
-        name: String,
+        name: &str,
         arguments: Vec<FunctionArgument>,
         unquoted: bool,
         function_type: FunctionType,
@@ -144,7 +144,7 @@ impl UserFunction {
             .map(|argument| argument.name.clone())
             .collect();
         Self {
-            signature: FunctionSignature::with_named(&name, arguments.len(), names),
+            signature: FunctionSignature::with_named(name, arguments.len(), names),
             arguments,
             body: Vec::new(),
             unquoted,
@@ -430,12 +430,7 @@ mod tests {
                 FunctionArgument::new((*name).to_owned(), default.map(TValue::Int))
             })
             .collect();
-        UserFunction::new(
-            name.to_owned(),
-            arguments,
-            false,
-            FunctionType::ReturnFunction,
-        )
+        UserFunction::new(name, arguments, false, FunctionType::ReturnFunction)
     }
 
     #[test]

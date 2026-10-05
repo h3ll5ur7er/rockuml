@@ -3,35 +3,34 @@ mod options;
 mod system_host;
 
 use std::fs;
+use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use naming::OutputNamer;
 use options::{Command, OutputFormat, RenderOptions};
-use rockuml::preproc::{PreprocessorEnvironment, Source};
+use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 use system_host::SystemHost;
 
 /// PlantUML writes text output with the platform's line separator.
 const LINE_SEPARATOR: &str = if cfg!(windows) { "\r\n" } else { "\n" };
 
+/// PlantUML's exit status when at least one diagram has errors.
+const DIAGRAM_ERROR_STATUS: u8 = 200;
+
 fn main() -> ExitCode {
-    match options::parse(std::env::args().skip(1)) {
-        Ok(Command::Version) => {
-            println!(
-                "rockuml {} (PlantUML {} compatible)",
-                env!("CARGO_PKG_VERSION"),
-                rockuml::PLANTUML_VERSION
-            );
-            ExitCode::SUCCESS
-        }
-        Ok(Command::Render(options)) => match render_all(&options) {
-            Ok(()) => ExitCode::SUCCESS,
-            Err(error) => {
-                eprintln!("rockuml: {error}");
-                ExitCode::FAILURE
-            }
-        },
+    let result = match options::parse(std::env::args().skip(1)) {
+        Ok(Command::Version) => print_version(),
         Ok(Command::DecodeUrl(codes)) => decode_urls(&codes),
+        Ok(Command::Render(options)) => render_all(&options),
+        Err(error) => Err(error),
+    };
+    match result {
+        Ok(ExitStatus::Success) => ExitCode::SUCCESS,
+        Ok(ExitStatus::DiagramErrors) => {
+            eprintln!("Some diagram description contains errors");
+            ExitCode::from(DIAGRAM_ERROR_STATUS)
+        }
         Err(error) => {
             eprintln!("rockuml: {error}");
             ExitCode::FAILURE
@@ -39,39 +38,54 @@ fn main() -> ExitCode {
     }
 }
 
+enum ExitStatus {
+    Success,
+    DiagramErrors,
+}
+
+fn print_version() -> Result<ExitStatus, String> {
+    let version = format!(
+        "rockuml {} (PlantUML {} compatible){LINE_SEPARATOR}",
+        env!("CARGO_PKG_VERSION"),
+        rockuml::PLANTUML_VERSION
+    );
+    write_stdout(&version)?;
+    Ok(ExitStatus::Success)
+}
+
 /// PlantUML wraps the decoded source, which already has its own start and end lines, in another pair.
-fn decode_urls(codes: &[String]) -> ExitCode {
+fn decode_urls(codes: &[String]) -> Result<ExitStatus, String> {
     for code in codes {
-        let Ok(source) = rockuml::url_code::decode(code) else {
-            eprintln!("rockuml: not a PlantUML code: {code}");
-            return ExitCode::FAILURE;
-        };
-        print!("@startuml{LINE_SEPARATOR}{source}{LINE_SEPARATOR}@enduml{LINE_SEPARATOR}");
+        let source =
+            rockuml::url_code::decode(code).map_err(|_| format!("not a PlantUML code: {code}"))?;
+        write_stdout(&format!(
+            "@startuml{LINE_SEPARATOR}{source}{LINE_SEPARATOR}@enduml{LINE_SEPARATOR}"
+        ))?;
     }
-    ExitCode::SUCCESS
+    Ok(ExitStatus::Success)
 }
 
-fn render_all(options: &RenderOptions) -> Result<(), String> {
+fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
+    let mut status = ExitStatus::Success;
     for file in &options.files {
-        render_file(file, options)?;
+        let blocks = preprocess_file(file)?;
+        if blocks.iter().any(PreprocessedBlock::failed)
+            && options.format != OutputFormat::EncodedUrl
+        {
+            status = ExitStatus::DiagramErrors;
+        }
+        write_outputs(file, &blocks, options)?;
     }
-    Ok(())
+    Ok(status)
 }
 
-fn render_file(file: &Path, options: &RenderOptions) -> Result<(), String> {
-    let source =
+fn preprocess_file(file: &Path) -> Result<Vec<PreprocessedBlock>, String> {
+    let bytes =
         fs::read(file).map_err(|error| format!("cannot read {}: {error}", file.display()))?;
-    let source = String::from_utf8_lossy(&source);
-    let file_name = file
-        .file_name()
-        .map(|name| name.to_string_lossy())
-        .unwrap_or_default();
-    let output_directory = output_directory(file, options.output_directory.as_deref());
-    fs::create_dir_all(&output_directory)
-        .map_err(|error| format!("cannot create {}: {error}", output_directory.display()))?;
-
+    let text = String::from_utf8_lossy(&bytes);
+    let file_name = file_name(file);
     let source = Source {
-        text: &source,
+        text: &text,
         description: &file_name,
         directory: std::path::absolute(file)
             .ok()
@@ -79,17 +93,27 @@ fn render_file(file: &Path, options: &RenderOptions) -> Result<(), String> {
             .unwrap_or_default(),
         environment: environment_of(file, &file_name),
     };
-    let blocks = rockuml::preproc::preprocess(&source, &SystemHost);
+    Ok(rockuml::preproc::preprocess(&source, &SystemHost))
+}
+
+fn write_outputs(
+    file: &Path,
+    blocks: &[PreprocessedBlock],
+    options: &RenderOptions,
+) -> Result<(), String> {
     if options.format == OutputFormat::EncodedUrl {
         for block in blocks {
-            print!(
+            write_stdout(&format!(
                 "{}{LINE_SEPARATOR}",
                 rockuml::url_code::encode(&block.source_text())
-            );
+            ))?;
         }
         return Ok(());
     }
-    let mut namer = OutputNamer::new(&file_name, options.format.suffix());
+    let output_directory = output_directory(file, options.output_directory.as_deref());
+    fs::create_dir_all(&output_directory)
+        .map_err(|error| format!("cannot create {}: {error}", output_directory.display()))?;
+    let mut namer = OutputNamer::new(&file_name(file), options.format.suffix());
     for block in blocks {
         let output = output_directory.join(namer.next_name(block.output_name().as_deref()));
         let content = match options.format {
@@ -103,6 +127,22 @@ fn render_file(file: &Path, options: &RenderOptions) -> Result<(), String> {
             .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
     }
     Ok(())
+}
+
+/// A reader that closed the pipe (`rockuml ... | head`) simply wants no more output.
+fn write_stdout(text: &str) -> Result<(), String> {
+    match io::stdout().lock().write_all(text.as_bytes()) {
+        Err(error) if error.kind() != io::ErrorKind::BrokenPipe => {
+            Err(format!("cannot write output: {error}"))
+        }
+        _ => Ok(()),
+    }
+}
+
+fn file_name(file: &Path) -> String {
+    file.file_name()
+        .map(|name| name.to_string_lossy().into_owned())
+        .unwrap_or_default()
 }
 
 /// What `%filename()` and `%filedate()` report. `%dirpath()` stays empty: PlantUML only reveals the

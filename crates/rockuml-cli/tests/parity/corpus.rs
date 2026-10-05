@@ -37,6 +37,7 @@ impl GoldenKind {
     }
 }
 
+#[derive(Clone)]
 pub struct Case {
     /// Path relative to the corpus root with `/` separators, stable across platforms.
     pub id: String,

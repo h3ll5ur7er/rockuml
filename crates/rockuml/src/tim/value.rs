@@ -21,10 +21,6 @@ impl TValue {
         TValue::String(value.into())
     }
 
-    pub fn is_number(&self) -> bool {
-        matches!(self, TValue::Int(_))
-    }
-
     pub fn to_int(&self) -> i32 {
         match self {
             TValue::Int(value) => *value,
@@ -102,8 +98,7 @@ impl fmt::Display for TValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             TValue::Int(value) => write!(f, "{value}"),
-            TValue::String(string) => f.write_str(string),
-            TValue::Json(JsonValue::String(string)) => f.write_str(string),
+            TValue::String(string) | TValue::Json(JsonValue::String(string)) => f.write_str(string),
             TValue::Json(json) => write!(f, "{json}"),
         }
     }

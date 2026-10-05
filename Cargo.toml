@@ -20,6 +20,18 @@ all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 module_name_repetitions = "allow"
 must_use_candidate = "allow"
+# Ported code reproduces Java's and zlib's numeric semantics, which rely on truncating casts and exact
+# float comparisons; flagging every one would bury the warnings that matter.
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_sign_loss = "allow"
+cast_precision_loss = "allow"
+float_cmp = "allow"
+# Ported tables (colours, zlib codes) are written as in the original sources.
+unreadable_literal = "allow"
+# zlib's algorithms use single-letter names (n, m, h...) that the port keeps for traceability.
+many_single_char_names = "allow"
+missing_errors_doc = "allow"
 
 [profile.release]
 lto = true

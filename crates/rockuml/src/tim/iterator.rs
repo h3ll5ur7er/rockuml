@@ -80,22 +80,22 @@ macro_rules! delegate_navigation {
 }
 
 struct Lines {
-    lines: Vec<StringLocated>,
+    entries: Vec<StringLocated>,
     current: usize,
     jumps: usize,
 }
 
 impl Lines {
-    fn new(lines: Vec<StringLocated>) -> Self {
+    fn new(entries: Vec<StringLocated>) -> Self {
         Self {
-            lines,
+            entries,
             current: 0,
             jumps: 0,
         }
     }
 
     fn current_line(&self) -> Option<StringLocated> {
-        self.lines.get(self.current).cloned()
+        self.entries.get(self.current).cloned()
     }
 }
 
@@ -105,7 +105,7 @@ impl CodeIterator for Lines {
     }
 
     fn next(&mut self) -> TimResult<()> {
-        if self.current >= self.lines.len() {
+        if self.current >= self.entries.len() {
             return Err(TimError::Fatal);
         }
         self.current += 1;

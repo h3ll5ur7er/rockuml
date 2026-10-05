@@ -1,6 +1,6 @@
 //! Preprocessor expressions: tokenizing, shunting-yard ordering and reverse-Polish evaluation.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -495,7 +495,7 @@ fn evaluate_reverse_polish(
             }
             TokenType::QuotedString => stack.push(TValue::string(token.surface.clone())),
             TokenType::JsonData => {
-                stack.push(TValue::Json(token.json.clone().ok_or(TimError::Fatal)?))
+                stack.push(TValue::Json(token.json.clone().ok_or(TimError::Fatal)?));
             }
             TokenType::Affectation => {
                 let value = stack.pop().ok_or(TimError::Fatal)?;
@@ -526,7 +526,7 @@ fn evaluate_reverse_polish(
                         location,
                     );
                 };
-                if !function.can_cover(positional, &Default::default()) {
+                if !function.can_cover(positional, &HashSet::default()) {
                     return fail(
                         format!(
                             "Bad number of arguments for {}",

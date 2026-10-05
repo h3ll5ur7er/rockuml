@@ -3,6 +3,7 @@
 use std::path::{Component, Path, PathBuf};
 
 use crate::host::Host;
+use crate::java::RuntimeException;
 use crate::stdlib::Stdlib;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -55,23 +56,27 @@ impl PathSystem {
         Self { current }
     }
 
-    pub fn with_current_dir(&self, folder: Folder) -> Self {
-        Self { current: folder }
+    pub fn current_folder(&self) -> &Folder {
+        &self.current
     }
 
     /// Fails for URLs, which rockuml does not fetch.
-    pub fn input_file(&self, name: &str, host: &dyn Host) -> Result<Option<InputFile>, String> {
+    /// URLs are not files here: where PlantUML resolves one, it fails right after (it cannot take the
+    /// folder of a URL), so they report a runtime failure.
+    pub fn input_file(
+        &self,
+        name: &str,
+        host: &dyn Host,
+    ) -> Result<Option<InputFile>, RuntimeException> {
         if name.starts_with("http://") || name.starts_with("https://") {
-            return Err(format!("Cannot open URL {name}"));
+            return Err(RuntimeException);
         }
         if let Some(inner) = name
             .strip_prefix('<')
             .and_then(|rest| rest.strip_suffix('>'))
         {
             let full = inner.to_lowercase();
-            let (library, path) = full
-                .split_once('/')
-                .ok_or_else(|| format!("Bad stdlib path {name}"))?;
+            let (library, path) = full.split_once('/').ok_or(RuntimeException)?;
             let library = Stdlib::retrieve(library).map(|library| library.name().to_owned());
             return Ok(library.map(|library| InputFile::Stdlib {
                 library,
@@ -163,12 +168,11 @@ mod tests {
     }
 
     #[test]
-    fn urls_are_refused() {
+    fn urls_are_not_files() {
         let paths = PathSystem::new(Folder::Regular(PathBuf::new()));
-        assert!(
-            paths
-                .input_file("https://example.com/x.puml", &IsolatedHost)
-                .is_err()
+        assert_eq!(
+            paths.input_file("https://example.com/x.puml", &IsolatedHost),
+            Err(RuntimeException)
         );
     }
 

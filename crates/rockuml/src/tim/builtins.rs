@@ -1,5 +1,8 @@
 //! The `%name()` functions every diagram can call.
 
+// Every builtin shares one signature, including those that cannot fail.
+#![allow(clippy::unnecessary_wraps)]
+
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 use std::rc::Rc;
@@ -17,6 +20,9 @@ use crate::json::{self, JsonObject, JsonValue};
 use crate::text::StringLocated;
 
 type Body = fn(&mut Call) -> TimResult<TValue>;
+
+/// Name, argument count of the signature, accepted argument counts, implementation.
+type BuiltinEntry = (&'static str, usize, fn(usize) -> bool, Body);
 
 /// What a builtin sees of its invocation.
 struct Call<'c, 'a> {
@@ -152,8 +158,9 @@ impl TFunction for InvokeProcedure {
 }
 
 /// Registers the builtins in PlantUML's order: lookups may iterate them, so the order is observable.
+#[allow(clippy::too_many_lines, reason = "one table row per builtin")]
 pub fn register(functions: &mut FunctionsSet) {
-    let builtins: [(&str, usize, fn(usize) -> bool, Body); 74] = [
+    let builtins: [BuiltinEntry; 74] = [
         ("%false", 0, |n| n == 0, |_| Ok(TValue::from_bool(false))),
         ("%true", 0, |n| n == 0, |_| Ok(TValue::from_bool(true))),
         (
@@ -666,13 +673,11 @@ fn get_json_keys(call: &mut Call) -> TimResult<TValue> {
 
 fn get_json_type(call: &mut Call) -> TimResult<TValue> {
     let kind = match call.argument(0)? {
-        TValue::String(_) => "string",
-        TValue::Int(_) => "number",
+        TValue::String(_) | TValue::Json(JsonValue::String(_)) => "string",
+        TValue::Int(_) | TValue::Json(JsonValue::Number(_)) => "number",
         TValue::Json(JsonValue::Array(_)) => "array",
         TValue::Json(JsonValue::Object(_)) => "object",
         TValue::Json(JsonValue::Bool(_)) => "boolean",
-        TValue::Json(JsonValue::Number(_)) => "number",
-        TValue::Json(JsonValue::String(_)) => "string",
         TValue::Json(JsonValue::Null) => "json",
     };
     Ok(TValue::string(kind))
@@ -850,7 +855,9 @@ fn load_json(call: &mut Call) -> TimResult<TValue> {
             .ok_or(TimError::Fatal)?;
         crate::stdlib::json_resource(inner).map_err(|_| TimError::Fatal)?
     } else if path.starts_with("http://") || path.starts_with("https://") {
-        None
+        call.context
+            .read_url(&path)
+            .filter(|bytes| !bytes.is_empty())
     } else {
         call.context
             .host

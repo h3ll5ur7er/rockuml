@@ -104,10 +104,6 @@ impl Eater {
         }
     }
 
-    pub fn optionally_eat_char(&mut self, expected: char) {
-        self.safe_check_and_eat_char(expected);
-    }
-
     /// An optional `$`, then letters, digits, underscores or emoji.
     pub fn eat_and_get_varname(&mut self) -> TimResult<String> {
         let first = self.eat_one_char()?;
@@ -270,7 +266,7 @@ impl Eater {
         self.skip_spaces();
         if !self.safe_check_and_eat_char('(') {
             if allow_no_parenthesis {
-                return Ok(UserFunction::new(name, arguments, unquoted, function_type));
+                return Ok(UserFunction::new(&name, arguments, unquoted, function_type));
             }
             return fail("Missing opening parenthesis", &self.line);
         }
@@ -299,7 +295,7 @@ impl Eater {
             }
         }
         self.skip_spaces();
-        Ok(UserFunction::new(name, arguments, unquoted, function_type))
+        Ok(UserFunction::new(&name, arguments, unquoted, function_type))
     }
 }
 

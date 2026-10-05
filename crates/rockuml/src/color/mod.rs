@@ -127,7 +127,7 @@ impl HColor {
         }
     }
 
-    /// Shifts lightness by half the range in the perceptual HSLuv space, keeping hue and saturation.
+    /// Shifts lightness by half the range in the perceptual `HSLuv` space, keeping hue and saturation.
     pub fn reverse_hsluv(&self) -> HColor {
         match self {
             HColor::Simple(color) => HColor::Simple(hsluv::reverse(*color)),

@@ -8,7 +8,7 @@ use regex::Regex;
 
 use super::builtins;
 use super::eater::Eater;
-use super::error::{EaterException, TimError, TimResult, fail};
+use super::error::{TimError, TimResult, fail};
 use super::function::{FunctionSignature, FunctionType, FunctionsSet, TFunction};
 use super::iterator::{code_iterator, parse_startsub};
 use super::line_type::{LineType, is_letter_or_emoji_or_underscore_or_digit, line_type};
@@ -20,7 +20,7 @@ use crate::host::Host;
 use crate::java;
 use crate::jaws;
 use crate::json::{self, JsonObject, JsonValue};
-use crate::preproc::read_lines_of_first_diagram;
+use crate::preproc::{read_lines_of_diagram, read_plain_lines};
 use crate::stdlib;
 use crate::text::{LineLocation, StringLocated};
 
@@ -633,16 +633,17 @@ impl<'a> TContext<'a> {
             Err(TimError::Eater(_)) => None,
             Err(other) => return Err(other),
         };
-        if let Some((name, default)) = OPTIONS
+        let Some((name, default)) = OPTIONS
             .iter()
             .find(|(name, _)| simplify(name) == simplify(&key))
+        else {
+            return Ok(());
+        };
+        if let Some(value) = value
+            .map(|value| value.to_string())
+            .or(default.map(str::to_owned))
         {
-            if let Some(value) = value
-                .map(|value| value.to_string())
-                .or(default.map(str::to_owned))
-            {
-                self.options.push(((*name).to_owned(), value));
-            }
+            self.options.push(((*name).to_owned(), value));
         }
         Ok(())
     }
@@ -688,41 +689,16 @@ impl<'a> TContext<'a> {
         }
         eater.skip_spaces();
         let argument = line.with_text(eater.eat_all_to_end());
-        let mut what = self
+        let target = self
             .apply_functions_and_variables(memory, &argument)?
             .ok_or(TimError::Fatal)?;
-        if let Some(bang) = what.rfind('!') {
-            what.truncate(bang);
-        }
-
-        let included = if let Some(stdlib_path) = what
-            .strip_prefix('<')
-            .and_then(|rest| rest.strip_suffix('>'))
-        {
-            let file = self.input_file(&what, line)?.ok_or(TimError::Fatal)?;
-            let description = format!("<{stdlib_path}>");
-            stdlib::puml_resource(stdlib_path).map(|content| {
-                (
-                    file.parent_folder(),
-                    lines_of(&content, &description, &description, None),
-                )
-            })
-        } else if what.starts_with("http://") || what.starts_with("https://") {
-            return fail("Cannot open URL", line);
-        } else if what.starts_with('[') && what.ends_with(']') {
-            return fail("cannot include java.io.IOException: To be finished", line);
-        } else if let Some(file) = self.input_file(&what, line)? {
-            let Some(content) = file.read(self.host) else {
-                return fail("Cannot include file", line);
-            };
-            // PlantUML labels lines read from a diagram block inside an included file "desc2".
-            let lines = lines_of(&content, "desc2", &what, Some(line.location().clone()));
-            Some((file.parent_folder(), lines))
-        } else {
-            None
+        // `name!N` or `name!id` picks a block of a URL; for local files PlantUML ignores the selector.
+        let (what, selector) = match target.rsplit_once('!') {
+            Some((what, selector)) => (what.to_owned(), Some(selector.to_owned())),
+            None => (target, None),
         };
 
-        let Some((folder, lines)) = included else {
+        let Some((folder, lines)) = self.resolve_include(&what, selector.as_deref(), line)? else {
             return fail(format!("cannot include {what}"), line);
         };
         let saved = self.enter_folder(folder);
@@ -731,56 +707,119 @@ impl<'a> TContext<'a> {
         outcome.map(|_| ())
     }
 
-    fn input_file(&self, name: &str, line: &StringLocated) -> TimResult<Option<InputFile>> {
-        self.paths
-            .input_file(name, self.host)
-            .map_err(|message| EaterException::new(message, line).into())
+    /// The lines an `!include` brings in, and the folder relative includes inside them resolve against.
+    fn resolve_include(
+        &self,
+        what: &str,
+        selector: Option<&str>,
+        line: &StringLocated,
+    ) -> TimResult<Option<(Folder, Vec<StringLocated>)>> {
+        if let Some(stdlib_path) = what
+            .strip_prefix('<')
+            .and_then(|rest| rest.strip_suffix('>'))
+        {
+            let file = self.input_file(what)?.ok_or(TimError::Fatal)?;
+            let description = format!("<{stdlib_path}>");
+            return Ok(stdlib::puml_resource(stdlib_path).map(|content| {
+                (
+                    file.parent_folder(),
+                    lines_of(&content, &description, &description, None, None),
+                )
+            }));
+        }
+        if what.starts_with("http://") || what.starts_with("https://") {
+            let Some(content) = self.read_url(what) else {
+                return fail("Cannot open URL", line);
+            };
+            let lines = lines_of(
+                &content,
+                what,
+                what,
+                Some(line.location().clone()),
+                selector,
+            );
+            return Ok(Some((self.paths.current_folder().clone(), lines)));
+        }
+        if what.starts_with('[') && what.ends_with(']') {
+            return fail("cannot include java.io.IOException: To be finished", line);
+        }
+        let Some(file) = self.input_file(what)? else {
+            return Ok(None);
+        };
+        let Some(content) = file.read(self.host) else {
+            return fail("Cannot include file", line);
+        };
+        // PlantUML labels lines read from a diagram block inside an included file "desc2".
+        let lines = lines_of(&content, "desc2", what, Some(line.location().clone()), None);
+        Ok(Some((file.parent_folder(), lines)))
     }
 
+    /// URLs the security policy forbids behave like unreachable ones.
+    pub(super) fn read_url(&self, url: &str) -> Option<Vec<u8>> {
+        if crate::url_policy::is_forbidden(url) {
+            return None;
+        }
+        self.host.read_url(url)
+    }
+
+    fn input_file(&self, name: &str) -> TimResult<Option<InputFile>> {
+        self.paths
+            .input_file(name, self.host)
+            .map_err(|_| TimError::Fatal)
+    }
+
+    /// `!includesub file!NAME` runs the `NAME` sub of another file, `!includesub NAME` one of this file.
     fn execute_includesub(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
         let what = self.eat_directive_argument(memory, line, "!includesub")?;
-        let mut sub = None;
-        let mut saved_paths = None;
-        if let Some((file_name, block_name)) = what.split_once('!') {
-            if let Some(file) = self.input_file(file_name, line)? {
-                saved_paths = Some(self.enter_folder(file.parent_folder()));
-                let Some(content) = file.read(self.host) else {
-                    self.restore_paths(saved_paths);
-                    return fail(format!("cannot include {what}"), line);
-                };
-                let lines = crate::preproc::read_uncommented_merged_lines(
-                    &String::from_utf8_lossy(&content),
-                    &what,
-                    Some(line.location().clone()),
-                );
-                sub = match sub_from_lines(&lines, block_name) {
-                    Ok(found) => found,
-                    Err(error) => {
-                        self.restore_paths(saved_paths);
-                        return Err(error);
-                    }
-                };
-            }
+        if let Some((file_name, block_name)) = what.split_once('!')
+            && let Some(file) = self.input_file(file_name)?
+        {
+            let saved = self.enter_folder(file.parent_folder());
+            let outcome = self.execute_sub_of_file(memory, line, &what, &file, block_name);
+            self.paths = saved;
+            return outcome;
         }
-        let sub = sub.or_else(|| self.subs.get(&what).cloned());
-        let outcome = match sub {
-            Some(lines) => self.execute_lines(memory, &lines, None, false).map(|_| ()),
-            None => fail(format!("cannot include {what}"), line),
+        self.execute_sub(memory, line, &what, None)
+    }
+
+    fn execute_sub_of_file(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+        what: &str,
+        file: &InputFile,
+        block_name: &str,
+    ) -> TimResult<()> {
+        let Some(content) = file.read(self.host) else {
+            return fail(format!("cannot include {what}"), line);
         };
-        self.restore_paths(saved_paths);
-        outcome
+        let lines = crate::preproc::read_uncommented_merged_lines(
+            &String::from_utf8_lossy(&content),
+            what,
+            Some(line.location().clone()),
+        );
+        let sub = sub_from_lines(&lines, block_name)?;
+        self.execute_sub(memory, line, what, sub)
+    }
+
+    /// Runs `sub`, or else the sub of this file recorded under `what`.
+    fn execute_sub(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+        what: &str,
+        sub: Option<Vec<StringLocated>>,
+    ) -> TimResult<()> {
+        let Some(lines) = sub.or_else(|| self.subs.get(what).cloned()) else {
+            return fail(format!("cannot include {what}"), line);
+        };
+        self.execute_lines(memory, &lines, None, false).map(|_| ())
     }
 
     /// Makes `folder` the base for relative includes and returns the previous paths to restore later.
     fn enter_folder(&mut self, folder: Folder) -> PathSystem {
-        let entered = self.paths.with_current_dir(folder);
+        let entered = PathSystem::new(folder);
         std::mem::replace(&mut self.paths, entered)
-    }
-
-    fn restore_paths(&mut self, saved: Option<PathSystem>) {
-        if let Some(saved) = saved {
-            self.paths = saved;
-        }
     }
 
     fn execute_includedef(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
@@ -822,6 +861,7 @@ impl<'a> TContext<'a> {
         outcome.map(|_| ())
     }
 
+    /// A bundled theme, a local `puml-theme-NAME.puml`, or one from a library, URL or folder (`from`).
     fn load_theme(
         &self,
         name: &str,
@@ -829,36 +869,43 @@ impl<'a> TContext<'a> {
         line: &StringLocated,
     ) -> TimResult<Option<Vec<StringLocated>>> {
         let file_name = format!("puml-theme-{name}.puml");
+        let plain_lines = |content: &[u8], description: &str| {
+            read_plain_lines(&String::from_utf8_lossy(content), description, None)
+        };
         let Some(from) = from else {
             let resource = format!("themes/{file_name}");
             if let Some(content) = crate::assets::get(&resource) {
-                let description = format!("</{resource}>");
-                return Ok(Some(lines_of(content, &description, &description, None)));
+                return Ok(Some(plain_lines(content, &format!("</{resource}>"))));
             }
             let local = self
-                .input_file(&file_name, line)?
+                .input_file(&file_name)?
                 .and_then(|file| file.read(self.host));
-            let description = format!("theme {name}");
-            return Ok(local.map(|content| lines_of(&content, &description, &description, None)));
+            return Ok(local.map(|content| plain_lines(&content, &format!("theme {name}"))));
         };
+        let description = format!("{name} from {from}");
         if let Some(library) = from
             .strip_prefix('<')
             .and_then(|rest| rest.strip_suffix('>'))
         {
             let content = stdlib::puml_resource(&format!("{library}/{file_name}"));
-            let description = format!("{name} from {from}");
-            return Ok(content.map(|content| lines_of(&content, &description, &description, None)));
-        }
-        if from.starts_with("http://") || from.starts_with("https://") {
-            return fail("Cannot open URL", line);
+            return Ok(content.map(|content| plain_lines(&content, &description)));
         }
         let separator = if from.ends_with('/') { "" } else { "/" };
-        let file = self
-            .input_file(&format!("{from}{separator}{file_name}"), line)?
-            .ok_or(TimError::Fatal)?;
+        let location = format!("{from}{separator}{file_name}");
+        if from.starts_with("http://") || from.starts_with("https://") {
+            let Some(content) = self.read_url(&location) else {
+                return fail("Cannot open URL", line);
+            };
+            let text = String::from_utf8_lossy(&content);
+            return Ok(Some(read_plain_lines(
+                &text,
+                &location,
+                Some(line.location().clone()),
+            )));
+        }
+        let file = self.input_file(&location)?.ok_or(TimError::Fatal)?;
         let content = file.read(self.host).ok_or(TimError::Fatal)?;
-        let description = format!("{name} from {from}");
-        Ok(Some(lines_of(&content, &description, &description, None)))
+        Ok(Some(plain_lines(&content, &description)))
     }
 
     /// Takes the output lines a procedure wrote since `start` back out, joined into one value.
@@ -922,15 +969,23 @@ fn is_java_identifier_part(c: char) -> bool {
     c.is_alphanumeric() || c == '_' || c == '$'
 }
 
-/// Lines of an included resource: the first diagram block when it contains one, otherwise all of it.
+/// Lines of an included resource: a diagram block when it contains one (the first, or the one `selector`
+/// names by number or `id`), otherwise all of it.
 fn lines_of(
     content: &[u8],
     extracted_description: &str,
     plain_description: &str,
     parent: Option<LineLocation>,
+    selector: Option<&str>,
 ) -> Vec<StringLocated> {
     let text = String::from_utf8_lossy(content);
-    read_lines_of_first_diagram(&text, extracted_description, plain_description, parent)
+    read_lines_of_diagram(
+        &text,
+        extracted_description,
+        plain_description,
+        parent,
+        selector,
+    )
 }
 
 /// Drops a leading `---` YAML block and returns its `key: value` pairs.

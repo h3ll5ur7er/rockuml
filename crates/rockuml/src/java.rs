@@ -133,7 +133,7 @@ impl Random {
         if bound <= 0 {
             return None;
         }
-        if bound & -bound == bound {
+        if bound.cast_unsigned().is_power_of_two() {
             return Some(((i64::from(bound) * i64::from(self.next(31))) >> 31) as i32);
         }
         loop {
@@ -143,12 +143,6 @@ impl Random {
                 return Some(value);
             }
         }
-    }
-
-    pub fn next_double(&mut self) -> f64 {
-        let high = i64::from(self.next(26)) << 27;
-        let low = i64::from(self.next(27));
-        (high + low) as f64 * (1.0 / (1u64 << 53) as f64)
     }
 }
 
@@ -162,7 +156,6 @@ mod tests {
         assert_eq!(random.next_int(100), Some(30));
         assert_eq!(random.next_int(100), Some(63));
         assert_eq!(random.next_int(100), Some(48));
-        assert_eq!(Random::new(42).next_double(), 0.727_563_680_032_868_1);
         assert_eq!(Random::new(7).next_int(16), Some(11));
         assert_eq!(Random::new(-3).next_int(1000), Some(164));
         assert_eq!(Random::new(1).next_int(0), None);

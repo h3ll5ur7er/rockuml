@@ -1,4 +1,4 @@
-//! HSLuv conversions (`HUSLColorConverter`), used to reverse a colour's lightness perceptually.
+//! `HSLuv` conversions (`HUSLColorConverter`), used to reverse a colour's lightness perceptually.
 
 use std::f64::consts::PI;
 
@@ -131,7 +131,7 @@ fn rgb_to_hsluv(rgb: [f64; 3]) -> [f64; 3] {
     let hue = if chroma < 0.000_000_01 {
         0.0
     } else {
-        let degrees = (v.atan2(u) * 180.0) / 3.141_592_653_589_793_2;
+        let degrees = (v.atan2(u) * 180.0) / PI;
         if degrees < 0.0 {
             360.0 + degrees
         } else {

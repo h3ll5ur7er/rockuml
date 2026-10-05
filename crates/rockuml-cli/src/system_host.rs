@@ -1,7 +1,8 @@
 //! The engine's view of the real machine: files, environment variables and the clock.
 
+use std::net::{IpAddr, ToSocketAddrs};
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use rockuml::host::Host;
 
@@ -10,6 +11,17 @@ pub struct SystemHost;
 impl Host for SystemHost {
     fn read_file(&self, path: &Path) -> Option<Vec<u8>> {
         std::fs::read(path).ok()
+    }
+
+    fn read_url(&self, url: &str) -> Option<Vec<u8>> {
+        if resolves_to_private_network(url) {
+            return None;
+        }
+        let agent: ureq::Agent = ureq::Agent::config_builder()
+            .timeout_global(Some(Duration::from_secs(15)))
+            .build()
+            .into();
+        agent.get(url).call().ok()?.body_mut().read_to_vec().ok()
     }
 
     fn file_exists(&self, path: &Path) -> bool {
@@ -35,6 +47,25 @@ impl Host for SystemHost {
     fn local_time_zone(&self) -> Option<String> {
         jiff::tz::TimeZone::system().iana_name().map(str::to_owned)
     }
+}
+
+/// Like PlantUML, diagrams may not reach into loopback, link-local or private networks.
+fn resolves_to_private_network(url: &str) -> bool {
+    let Some(host) = rockuml::url_policy::host_of(url) else {
+        return true;
+    };
+    let Ok(addresses) = (host, 0).to_socket_addrs() else {
+        return true;
+    };
+    addresses.into_iter().any(|address| match address.ip() {
+        IpAddr::V4(ip) => {
+            ip.is_loopback() || ip.is_private() || ip.is_link_local() || ip.is_unspecified()
+        }
+        IpAddr::V6(ip) => {
+            let site_local = ip.segments()[0] & 0xffc0 == 0xfec0;
+            ip.is_loopback() || ip.is_unspecified() || ip.is_unicast_link_local() || site_local
+        }
+    })
 }
 
 pub fn millis_since_epoch(time: SystemTime) -> i64 {

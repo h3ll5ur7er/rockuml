@@ -28,7 +28,7 @@ const MAX_DIST: usize = WINDOW_SIZE - MIN_LOOKAHEAD;
 const HASH_BITS: usize = 15;
 const HASH_SIZE: usize = 1 << HASH_BITS;
 const HASH_MASK: usize = HASH_SIZE - 1;
-const HASH_SHIFT: usize = (HASH_BITS + MIN_MATCH - 1) / MIN_MATCH;
+const HASH_SHIFT: usize = HASH_BITS.div_ceil(MIN_MATCH);
 const LIT_BUFSIZE: usize = 1 << 14;
 const SYM_END: usize = (LIT_BUFSIZE - 1) * 3;
 const WIN_INIT: usize = MAX_MATCH;
@@ -44,12 +44,18 @@ const STORED_BLOCK: u16 = 0;
 const STATIC_TREES: u16 = 1;
 const DYN_TREES: u16 = 2;
 
-const EXTRA_LENGTH_BITS: [u16; LENGTH_CODES] =
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
-const EXTRA_DISTANCE_BITS: [u16; D_CODES] =
-    [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13];
-const EXTRA_BIT_LENGTH_BITS: [u16; BL_CODES] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7];
-const BIT_LENGTH_ORDER: [usize; BL_CODES] = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+const EXTRA_LENGTH_BITS: [u16; LENGTH_CODES] = [
+    0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0,
+];
+const EXTRA_DISTANCE_BITS: [u16; D_CODES] = [
+    0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13,
+    13,
+];
+const EXTRA_BIT_LENGTH_BITS: [u16; BL_CODES] =
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 7];
+const BIT_LENGTH_ORDER: [usize; BL_CODES] = [
+    16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15,
+];
 
 /// zlib's `ct_data`: two unions, frequency/code and parent/length, reused across the tree-building phases.
 #[derive(Clone, Copy, Default)]
@@ -277,7 +283,11 @@ impl<'a> State<'a> {
     fn slide_hash(&mut self) {
         let slide = |position: &mut u16| {
             let value = usize::from(*position);
-            *position = if value >= WINDOW_SIZE { (value - WINDOW_SIZE) as u16 } else { NIL as u16 };
+            *position = if value >= WINDOW_SIZE {
+                (value - WINDOW_SIZE) as u16
+            } else {
+                NIL as u16
+            };
         };
         self.head.iter_mut().for_each(slide);
         self.prev.iter_mut().for_each(slide);
@@ -299,7 +309,8 @@ impl<'a> State<'a> {
         loop {
             let mut more = 2 * WINDOW_SIZE - self.lookahead - self.strstart;
             if self.strstart >= WINDOW_SIZE + MAX_DIST {
-                self.window.copy_within(WINDOW_SIZE..2 * WINDOW_SIZE - more, 0);
+                self.window
+                    .copy_within(WINDOW_SIZE..2 * WINDOW_SIZE - more, 0);
                 self.match_start = self.match_start.wrapping_sub(WINDOW_SIZE);
                 self.strstart -= WINDOW_SIZE;
                 self.block_start -= WINDOW_SIZE as isize;
@@ -343,7 +354,8 @@ impl<'a> State<'a> {
                 self.window[current..current + init].fill(0);
                 self.high_water = current + init;
             } else if self.high_water < current + WIN_INIT {
-                let init = (current + WIN_INIT - self.high_water).min(window_size - self.high_water);
+                let init =
+                    (current + WIN_INIT - self.high_water).min(window_size - self.high_water);
                 self.window[self.high_water..self.high_water + init].fill(0);
                 self.high_water += init;
             }
@@ -355,7 +367,11 @@ impl<'a> State<'a> {
         let scan_start = self.strstart;
         let mut best_length = self.prev_length;
         let mut nice_match = NICE_MATCH;
-        let limit = if self.strstart > MAX_DIST { self.strstart - MAX_DIST } else { NIL };
+        let limit = if self.strstart > MAX_DIST {
+            self.strstart - MAX_DIST
+        } else {
+            NIL
+        };
         let string_end = self.strstart + MAX_MATCH;
         let mut scan_end_1 = self.window[scan_start + best_length - 1];
         let mut scan_end = self.window[scan_start + best_length];
@@ -409,7 +425,11 @@ impl<'a> State<'a> {
         let stored = usize::try_from(self.block_start)
             .ok()
             .map(|start| (start, self.strstart - start));
-        self.tr_flush_block(stored, (self.strstart as isize - self.block_start) as u64, last);
+        self.tr_flush_block(
+            stored,
+            (self.strstart as isize - self.block_start) as u64,
+            last,
+        );
         self.block_start = self.strstart as isize;
     }
 
@@ -432,7 +452,10 @@ impl<'a> State<'a> {
             self.prev_match = self.match_start;
             self.match_length = MIN_MATCH - 1;
 
-            if hash_head != NIL && self.prev_length < MAX_LAZY_MATCH && self.strstart - hash_head <= MAX_DIST {
+            if hash_head != NIL
+                && self.prev_length < MAX_LAZY_MATCH
+                && self.strstart - hash_head <= MAX_DIST
+            {
                 self.match_length = self.longest_match(hash_head);
                 if self.match_length <= 5
                     && self.match_length == MIN_MATCH
@@ -444,7 +467,10 @@ impl<'a> State<'a> {
 
             if self.prev_length >= MIN_MATCH && self.match_length <= self.prev_length {
                 let max_insert = self.strstart + self.lookahead - MIN_MATCH;
-                flush_needed = self.tally_distance(self.strstart - 1 - self.prev_match, self.prev_length - MIN_MATCH);
+                flush_needed = self.tally_distance(
+                    self.strstart - 1 - self.prev_match,
+                    self.prev_length - MIN_MATCH,
+                );
                 self.lookahead -= self.prev_length - 1;
                 self.prev_length -= 2;
                 loop {
@@ -495,9 +521,18 @@ impl<'a> State<'a> {
     }
 
     fn init_block(&mut self) {
-        self.literal_tree.iter_mut().take(L_CODES).for_each(|node| node.freq_or_code = 0);
-        self.distance_tree.iter_mut().take(D_CODES).for_each(|node| node.freq_or_code = 0);
-        self.bit_length_tree.iter_mut().take(BL_CODES).for_each(|node| node.freq_or_code = 0);
+        self.literal_tree
+            .iter_mut()
+            .take(L_CODES)
+            .for_each(|node| node.freq_or_code = 0);
+        self.distance_tree
+            .iter_mut()
+            .take(D_CODES)
+            .for_each(|node| node.freq_or_code = 0);
+        self.bit_length_tree
+            .iter_mut()
+            .take(BL_CODES)
+            .for_each(|node| node.freq_or_code = 0);
         self.literal_tree[END_BLOCK].freq_or_code = 1;
         self.opt_len = 0;
         self.static_len = 0;
@@ -513,7 +548,11 @@ impl<'a> State<'a> {
 
     fn tally_distance(&mut self, distance: usize, length: usize) -> bool {
         let [low, high] = (distance as u16).to_le_bytes();
-        self.symbols[self.symbols_next..self.symbols_next + 3].copy_from_slice(&[low, high, length as u8]);
+        self.symbols[self.symbols_next..self.symbols_next + 3].copy_from_slice(&[
+            low,
+            high,
+            length as u8,
+        ]);
         self.symbols_next += 3;
         let length_symbol = usize::from(TABLES.length_code[length]) + LITERALS + 1;
         self.literal_tree[length_symbol].freq_or_code += 1;
@@ -576,7 +615,8 @@ impl<'a> State<'a> {
         let v = self.heap[k];
         let mut j = k << 1;
         while j <= self.heap_len {
-            if j < self.heap_len && Self::smaller(tree, &self.depth, self.heap[j + 1], self.heap[j]) {
+            if j < self.heap_len && Self::smaller(tree, &self.depth, self.heap[j + 1], self.heap[j])
+            {
                 j += 1;
             }
             if Self::smaller(tree, &self.depth, v, self.heap[j]) {
@@ -589,10 +629,30 @@ impl<'a> State<'a> {
         self.heap[k] = v;
     }
 
-    fn tree_description(kind: TreeKind) -> (Option<&'static [TreeNode]>, &'static [u16], usize, usize, usize) {
+    fn tree_description(
+        kind: TreeKind,
+    ) -> (
+        Option<&'static [TreeNode]>,
+        &'static [u16],
+        usize,
+        usize,
+        usize,
+    ) {
         match kind {
-            TreeKind::Literal => (Some(&TABLES.literal_tree[..]), &EXTRA_LENGTH_BITS, LITERALS + 1, L_CODES, MAX_BITS),
-            TreeKind::Distance => (Some(&TABLES.distance_tree[..]), &EXTRA_DISTANCE_BITS, 0, D_CODES, MAX_BITS),
+            TreeKind::Literal => (
+                Some(&TABLES.literal_tree[..]),
+                &EXTRA_LENGTH_BITS,
+                LITERALS + 1,
+                L_CODES,
+                MAX_BITS,
+            ),
+            TreeKind::Distance => (
+                Some(&TABLES.distance_tree[..]),
+                &EXTRA_DISTANCE_BITS,
+                0,
+                D_CODES,
+                MAX_BITS,
+            ),
             TreeKind::BitLength => (None, &EXTRA_BIT_LENGTH_BITS, 0, BL_CODES, MAX_BL_BITS),
         }
     }
@@ -619,9 +679,15 @@ impl<'a> State<'a> {
                 continue;
             }
             self.bit_length_count[bits] += 1;
-            let extra_bits = if n >= base { usize::from(extra[n - base]) } else { 0 };
+            let extra_bits = if n >= base {
+                usize::from(extra[n - base])
+            } else {
+                0
+            };
             let frequency = u64::from(self.tree(kind)[n].freq_or_code);
-            self.opt_len = self.opt_len.wrapping_add(frequency * (bits + extra_bits) as u64);
+            self.opt_len = self
+                .opt_len
+                .wrapping_add(frequency * (bits + extra_bits) as u64);
             if let Some(static_tree) = static_tree {
                 let static_bits = (usize::from(static_tree[n].dad_or_len) + extra_bits) as u64;
                 self.static_len = self.static_len.wrapping_add(frequency * static_bits);
@@ -659,7 +725,9 @@ impl<'a> State<'a> {
                     let frequency = u64::from(node.freq_or_code);
                     let old_bits = u64::from(node.dad_or_len);
                     node.dad_or_len = bits as u16;
-                    self.opt_len = self.opt_len.wrapping_add((bits as u64).wrapping_sub(old_bits).wrapping_mul(frequency));
+                    self.opt_len = self
+                        .opt_len
+                        .wrapping_add((bits as u64).wrapping_sub(old_bits).wrapping_mul(frequency));
                 }
                 n -= 1;
             }
@@ -697,7 +765,9 @@ impl<'a> State<'a> {
             self.depth[node] = 0;
             self.opt_len = self.opt_len.wrapping_sub(1);
             if let Some(static_tree) = static_tree {
-                self.static_len = self.static_len.wrapping_sub(u64::from(static_tree[node].dad_or_len));
+                self.static_len = self
+                    .static_len
+                    .wrapping_sub(u64::from(static_tree[node].dad_or_len));
             }
         }
         let max_code = max_code as usize;
@@ -753,7 +823,8 @@ impl<'a> State<'a> {
             count += 1;
             if count < max_count && current_length == next_length {
                 continue;
-            } else if count < min_count {
+            }
+            if count < min_count {
                 self.bit_length_tree[usize::from(current_length)].freq_or_code += count;
             } else if current_length != 0 {
                 if current_length as isize != previous_length {
@@ -789,7 +860,8 @@ impl<'a> State<'a> {
             count += 1;
             if count < max_count && current_length == next_length {
                 continue;
-            } else if count < min_count {
+            }
+            if count < min_count {
                 for _ in 0..count {
                     self.send_code(usize::from(current_length), TreeKind::BitLength);
                 }
@@ -828,11 +900,18 @@ impl<'a> State<'a> {
         while max_index >= 3 && self.bit_length_tree[BIT_LENGTH_ORDER[max_index]].dad_or_len == 0 {
             max_index -= 1;
         }
-        self.opt_len = self.opt_len.wrapping_add(3 * (max_index as u64 + 1) + 5 + 5 + 4);
+        self.opt_len = self
+            .opt_len
+            .wrapping_add(3 * (max_index as u64 + 1) + 5 + 5 + 4);
         max_index
     }
 
-    fn send_all_trees(&mut self, literal_codes: usize, distance_codes: usize, bit_length_codes: usize) {
+    fn send_all_trees(
+        &mut self,
+        literal_codes: usize,
+        distance_codes: usize,
+        bit_length_codes: usize,
+    ) {
         self.send_bits((literal_codes - 257) as u16, 5);
         self.send_bits((distance_codes - 1) as u16, 5);
         self.send_bits((bit_length_codes - 4) as u16, 4);
@@ -847,11 +926,18 @@ impl<'a> State<'a> {
         let tables = &*TABLES;
         let mut index = 0;
         while index < self.symbols_next {
-            let distance = usize::from(u16::from_le_bytes([self.symbols[index], self.symbols[index + 1]]));
+            let distance = usize::from(u16::from_le_bytes([
+                self.symbols[index],
+                self.symbols[index + 1],
+            ]));
             let length_or_literal = usize::from(self.symbols[index + 2]);
             index += 3;
             let literal_node = |state: &Self, symbol: usize| {
-                if dynamic { state.literal_tree[symbol] } else { tables.literal_tree[symbol] }
+                if dynamic {
+                    state.literal_tree[symbol]
+                } else {
+                    tables.literal_tree[symbol]
+                }
             };
             if distance == 0 {
                 let node = literal_node(self, length_or_literal);
@@ -863,18 +949,32 @@ impl<'a> State<'a> {
             self.send_static_code(node);
             let extra = EXTRA_LENGTH_BITS[code];
             if extra != 0 {
-                self.send_bits((length_or_literal - usize::from(tables.base_length[code])) as u16, extra);
+                self.send_bits(
+                    (length_or_literal - usize::from(tables.base_length[code])) as u16,
+                    extra,
+                );
             }
             let distance = distance - 1;
             let code = distance_code(distance);
-            let node = if dynamic { self.distance_tree[code] } else { tables.distance_tree[code] };
+            let node = if dynamic {
+                self.distance_tree[code]
+            } else {
+                tables.distance_tree[code]
+            };
             self.send_static_code(node);
             let extra = EXTRA_DISTANCE_BITS[code];
             if extra != 0 {
-                self.send_bits((distance - usize::from(tables.base_distance[code])) as u16, extra);
+                self.send_bits(
+                    (distance - usize::from(tables.base_distance[code])) as u16,
+                    extra,
+                );
             }
         }
-        let node = if dynamic { self.literal_tree[END_BLOCK] } else { tables.literal_tree[END_BLOCK] };
+        let node = if dynamic {
+            self.literal_tree[END_BLOCK]
+        } else {
+            tables.literal_tree[END_BLOCK]
+        };
         self.send_static_code(node);
     }
 
@@ -909,7 +1009,11 @@ impl<'a> State<'a> {
             }
             _ => {
                 self.send_bits((DYN_TREES << 1) + u16::from(last), 3);
-                self.send_all_trees(self.literal_max_code + 1, self.distance_max_code + 1, max_bit_length_index + 1);
+                self.send_all_trees(
+                    self.literal_max_code + 1,
+                    self.distance_max_code + 1,
+                    max_bit_length_index + 1,
+                );
                 self.compress_block(true);
             }
         }
@@ -925,7 +1029,9 @@ mod tests {
     use super::*;
 
     fn fnv(data: &[u8]) -> u64 {
-        data.iter().fold(0xcbf2_9ce4_8422_2325, |hash, &byte| (hash ^ u64::from(byte)).wrapping_mul(0x100_0000_01b3))
+        data.iter().fold(0xcbf2_9ce4_8422_2325, |hash, &byte| {
+            (hash ^ u64::from(byte)).wrapping_mul(0x100_0000_01b3)
+        })
     }
 
     fn text(lines: u32) -> Vec<u8> {
@@ -950,7 +1056,12 @@ mod tests {
         let mut mixed = random(40_000, 3);
         mixed.extend_from_slice(&text(2000)[..50_000]);
         let cases: [(&str, Vec<u8>, usize, u64); 7] = [
-            ("hello", b"Bob -> Alice : hello".to_vec(), 22, 0xe61b_03a1_dc6b_a011),
+            (
+                "hello",
+                b"Bob -> Alice : hello".to_vec(),
+                22,
+                0xe61b_03a1_dc6b_a011,
+            ),
             ("single", b"x".to_vec(), 3, 0x66d0_851a_6f36_a3da),
             ("run", vec![b'a'; 82], 6, 0x8e03_738e_ea33_3f7c),
             ("text_small", text(30), 170, 0x0868_74f2_ab05_5774),
@@ -969,7 +1080,9 @@ mod tests {
         use std::io::Read;
         let input = text(8000);
         let mut decoded = Vec::new();
-        flate2::read::DeflateDecoder::new(&deflate(&input)[..]).read_to_end(&mut decoded).unwrap();
+        flate2::read::DeflateDecoder::new(&deflate(&input)[..])
+            .read_to_end(&mut decoded)
+            .unwrap();
         assert_eq!(decoded, input);
     }
 }

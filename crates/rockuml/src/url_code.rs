@@ -60,7 +60,9 @@ fn compress_source(source: &str) -> String {
     if started {
         inside
     } else {
-        source_body(&all).map(|body| clean(&body)).unwrap_or_default()
+        source_body(&all)
+            .map(|body| clean(&body))
+            .unwrap_or_default()
     }
 }
 

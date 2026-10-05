@@ -73,28 +73,74 @@ impl PreprocessedBlock {
     }
 }
 
-/// The lines of an included resource: the inside of its first diagram block if it has one (read with
+/// The lines of an included resource: the inside of one of its diagram blocks if it has any (read with
 /// continuation lines merged and comment prefixes removed), otherwise every line as written.
-pub(crate) fn read_lines_of_first_diagram(
+///
+/// `selector` picks the block: a number counts blocks from zero, anything else matches `id=...` on the
+/// start line. Without one, the first block is taken; if no block matches, nothing is.
+pub(crate) fn read_lines_of_diagram(
     text: &str,
     extracted_description: &str,
     plain_description: &str,
     parent: Option<LineLocation>,
+    selector: Option<&str>,
 ) -> Vec<StringLocated> {
     let detected = read_all(UncommentReadLine::new(Box::new(ReadFilterMergeLines::new(
         Box::new(ReadLineReader::new(text, extracted_description, None)),
     ))));
-    let Some(start) = detected
+    if !detected
         .iter()
-        .position(|line| start_utils::is_start_directive(line.text()))
-    else {
-        return read_all(ReadLineReader::new(text, plain_description, parent));
+        .any(|line| start_utils::is_start_directive(line.text()))
+    {
+        return read_plain_lines(text, plain_description, parent);
+    }
+    let mut starts = detected
+        .iter()
+        .enumerate()
+        .filter(|(_, line)| {
+            start_utils::is_start_directive(line.text()) && selects_by_id(selector, line)
+        })
+        .map(|(index, _)| index);
+    let start = match selector
+        .filter(|selector| !selector.is_empty() && selector.bytes().all(|b| b.is_ascii_digit()))
+    {
+        Some(number) => number
+            .parse()
+            .ok()
+            .and_then(|block: usize| starts.nth(block)),
+        None => starts.next(),
+    };
+    let Some(start) = start else {
+        return Vec::new();
     };
     detected
         .into_iter()
         .skip(start + 1)
         .take_while(|line| !start_utils::is_end_directive(line.text()))
         .collect()
+}
+
+/// PlantUML tests the id against the line's debug form, `(SL) <text>`.
+fn selects_by_id(selector: Option<&str>, line: &StringLocated) -> bool {
+    let Some(id) = selector.filter(|selector| !selector.bytes().all(|b| b.is_ascii_digit())) else {
+        return true;
+    };
+    let shown = if line.text().is_empty() {
+        "<<<EMPTY STRING>>>".to_owned()
+    } else {
+        format!("(SL) {}", line.text())
+    };
+    crate::pattern::try_java_regex(&format!(r"^.*id={id}\W.*$"), false)
+        .is_some_and(|regex| regex.is_match(&shown))
+}
+
+/// Every line as written: no comment prefix removal, no continuation merging.
+pub(crate) fn read_plain_lines(
+    text: &str,
+    description: &str,
+    parent: Option<LineLocation>,
+) -> Vec<StringLocated> {
+    read_all(ReadLineReader::new(text, description, parent))
 }
 
 /// An `!includesub` source: comment prefixes removed, then continuation lines merged.
@@ -181,6 +227,88 @@ mod tests {
 
     fn output_name(source: &str) -> Option<String> {
         preprocess_text(source).remove(0).output_name()
+    }
+
+    /// Serves one document at `https://example.com/lib.puml`.
+    struct WebHost;
+
+    impl crate::host::Host for WebHost {
+        fn read_file(&self, _: &std::path::Path) -> Option<Vec<u8>> {
+            None
+        }
+        fn read_url(&self, url: &str) -> Option<Vec<u8>> {
+            let document = "@startuml(id=first)\nFirst -> Block\n@enduml\n@startuml(id=second)\nSecond -> Block\n@enduml\n";
+            (url == "https://example.com/lib.puml").then(|| document.as_bytes().to_vec())
+        }
+        fn file_exists(&self, _: &std::path::Path) -> bool {
+            false
+        }
+        fn current_directory(&self) -> PathBuf {
+            PathBuf::new()
+        }
+        fn home_directory(&self) -> Option<PathBuf> {
+            None
+        }
+        fn getenv(&self, _: &str) -> Option<String> {
+            None
+        }
+        fn current_time_millis(&self) -> i64 {
+            0
+        }
+        fn local_time_zone(&self) -> Option<String> {
+            None
+        }
+    }
+
+    fn preprocess_on_web(include: &str) -> Vec<String> {
+        let text = format!("@startuml\n{include}\n@enduml");
+        let source = Source {
+            text: &text,
+            description: "t",
+            directory: PathBuf::new(),
+            environment: PreprocessorEnvironment::default(),
+        };
+        preprocess(&source, &WebHost)
+            .remove(0)
+            .lines()
+            .map(str::to_owned)
+            .collect()
+    }
+
+    #[test]
+    fn url_includes_take_the_selected_diagram_block() {
+        let expected = |line: &str| {
+            [
+                "@startuml".to_owned(),
+                line.to_owned(),
+                "@enduml".to_owned(),
+            ]
+        };
+        assert_eq!(
+            preprocess_on_web("!include https://example.com/lib.puml"),
+            expected("First -> Block")
+        );
+        assert_eq!(
+            preprocess_on_web("!includeurl https://example.com/lib.puml!1"),
+            expected("Second -> Block")
+        );
+        assert_eq!(
+            preprocess_on_web("!include https://example.com/lib.puml!second"),
+            expected("Second -> Block")
+        );
+    }
+
+    #[test]
+    fn unreachable_or_forbidden_urls_cannot_be_included() {
+        let failing = |include: &str| preprocess_on_web(include).last().cloned();
+        assert_eq!(
+            failing("!include https://example.com/missing.puml").as_deref(),
+            Some("!include https://example.com/missing.puml")
+        );
+        assert_eq!(
+            failing("!include http://localhost/lib.puml").as_deref(),
+            Some("!include http://localhost/lib.puml")
+        );
     }
 
     fn preprocessed(lines: &[&str]) -> Vec<String> {

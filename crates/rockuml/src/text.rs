@@ -32,16 +32,9 @@ impl LineLocation {
         }
     }
 
+    #[cfg(test)]
     pub fn position(&self) -> i32 {
         self.position
-    }
-
-    pub fn description(&self) -> &str {
-        &self.description
-    }
-
-    pub fn parent(&self) -> Option<&LineLocation> {
-        self.parent.as_deref()
     }
 }
 
@@ -67,10 +60,6 @@ impl StringLocated {
 
     pub fn location(&self) -> &LineLocation {
         &self.location
-    }
-
-    pub fn preprocessor_error(&self) -> Option<&str> {
-        self.preprocessor_error.as_deref()
     }
 
     #[must_use]

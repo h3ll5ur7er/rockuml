@@ -56,7 +56,7 @@ pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, Str
             "--version" => return Ok(Command::Version),
             "-preproc" | "--preproc" => format = OutputFormat::Preprocessed,
             "-encodeurl" | "--encode-url" | "-computeurl" | "--compute-url" => {
-                format = OutputFormat::EncodedUrl
+                format = OutputFormat::EncodedUrl;
             }
             "-decodeurl" | "--decode-url" => return Ok(Command::DecodeUrl(arguments.collect())),
             "-tsvg" | "-svg" | "--svg" => format = OutputFormat::Svg,

@@ -18,6 +18,10 @@ pub fn from_rgb(color: XColor) -> [f32; 3] {
     } else {
         (60.0 * (red - green) / (max - min)) + 240.0
     };
+    #[allow(
+        clippy::manual_midpoint,
+        reason = "same rounding as Java's (max + min) / 2"
+    )]
     let luminance = (max + min) / 2.0;
     let saturation = if max == min {
         0.0

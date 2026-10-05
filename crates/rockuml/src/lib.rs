@@ -13,6 +13,7 @@ mod stdlib;
 mod text;
 mod tim;
 pub mod url_code;
+pub mod url_policy;
 
 /// The PlantUML release whose input language and output rockuml reproduces.
 pub const PLANTUML_VERSION: &str = "1.2026.8";

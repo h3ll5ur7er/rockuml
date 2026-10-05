@@ -5,6 +5,8 @@ use std::path::{Path, PathBuf};
 
 pub trait Host {
     fn read_file(&self, path: &Path) -> Option<Vec<u8>>;
+    /// Called only for URLs `url_policy` allows; `None` when the URL cannot be fetched.
+    fn read_url(&self, url: &str) -> Option<Vec<u8>>;
     fn file_exists(&self, path: &Path) -> bool;
     /// What relative paths resolve against outside any diagram file, like Java's `Paths.get("")`.
     fn current_directory(&self) -> PathBuf;
@@ -21,6 +23,10 @@ pub struct IsolatedHost;
 
 impl Host for IsolatedHost {
     fn read_file(&self, _path: &Path) -> Option<Vec<u8>> {
+        None
+    }
+
+    fn read_url(&self, _url: &str) -> Option<Vec<u8>> {
         None
     }
 
