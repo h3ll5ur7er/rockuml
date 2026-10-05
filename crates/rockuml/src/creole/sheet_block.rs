@@ -31,6 +31,14 @@ impl SheetBlock1 {
         Self { sheet, padding }
     }
 
+    /// How a single line of text aligns itself in a table cell; longer sheets align left.
+    pub(super) fn cell_alignment(&self) -> HorizontalAlignment {
+        match self.sheet.stripes.as_slice() {
+            [only] => only.cell_alignment,
+            _ => HorizontalAlignment::Left,
+        }
+    }
+
     fn layout(&self, string_bounder: &dyn StringBounder) -> Layout {
         let mut positions = Vec::with_capacity(self.sheet.stripes.len());
         let mut widths = Vec::with_capacity(self.sheet.stripes.len());

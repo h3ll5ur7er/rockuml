@@ -92,3 +92,34 @@ impl Atom for HorizontalLine {
         0.0
     }
 }
+
+/// An atom with space above and below it, as tables and trees have.
+pub struct AtomWithMargin<A> {
+    atom: A,
+    top: f64,
+    bottom: f64,
+}
+
+impl<A: Atom> AtomWithMargin<A> {
+    pub fn new(atom: A, top: f64, bottom: f64) -> Self {
+        Self { atom, top, bottom }
+    }
+}
+
+impl<A: Atom> TextBlock for AtomWithMargin<A> {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.atom
+            .calculate_dimension(string_bounder)
+            .delta(0.0, self.top + self.bottom)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.atom.draw_u(&ug.translated(0.0, self.top));
+    }
+}
+
+impl<A: Atom> Atom for AtomWithMargin<A> {
+    fn starting_altitude(&self, string_bounder: &dyn StringBounder) -> f64 {
+        self.atom.starting_altitude(string_bounder)
+    }
+}

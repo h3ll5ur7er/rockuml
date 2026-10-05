@@ -10,6 +10,8 @@ mod commands;
 mod display;
 mod parser;
 mod sheet_block;
+mod table;
+mod tree;
 
 pub use display::Display;
 pub use parser::CreoleParser;

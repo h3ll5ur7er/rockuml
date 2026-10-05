@@ -3,8 +3,10 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::atom_text::AtomText;
-use super::atoms::{Bullet, HorizontalLine};
+use super::atoms::{AtomWithMargin, Bullet, HorizontalLine};
 use super::commands::{CreoleCommand, creole_commands};
+use super::table::{self, AtomTable};
+use super::tree::{self, AtomTree};
 use super::{Atom, CreoleMode, Sheet, Stripe, char_hidder};
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
@@ -39,13 +41,30 @@ impl CreoleParser {
     pub fn create_sheet(&self, lines: &[impl AsRef<str>]) -> Sheet {
         let mut list_numbers = ListNumbers::default();
         let mut stripes: Vec<Stripe> = Vec::new();
+        let mut open_block: Option<MultilineBlock> = None;
         for line in lines {
-            let alignment = stripes
-                .last()
-                .map_or(self.horizontal_alignment, |stripe| stripe.cell_alignment);
             let line = manage_guillemet(line.as_ref());
-            stripes.extend(self.create_stripes(&line, alignment, &mut list_numbers));
+            if let Some(block) = &mut open_block
+                && block.continues_with(&line)
+            {
+                block.add_line(&line, &self.font);
+                continue;
+            }
+            if let Some(block) = open_block.take() {
+                stripes.push(block.into_stripe(self.horizontal_alignment));
+            }
+            if table::is_table_line(&line) {
+                open_block = Some(MultilineBlock::Table(AtomTable::new(&line, &self.font)));
+            } else if tree::is_tree_start(&line) {
+                open_block = Some(MultilineBlock::Tree(AtomTree::new(&line, &self.font)));
+            } else {
+                let alignment = stripes
+                    .last()
+                    .map_or(self.horizontal_alignment, |stripe| stripe.cell_alignment);
+                stripes.extend(self.create_stripes(&line, alignment, &mut list_numbers));
+            }
         }
+        stripes.extend(open_block.map(|block| block.into_stripe(self.horizontal_alignment)));
         Sheet { stripes }
     }
 
@@ -83,6 +102,43 @@ impl CreoleParser {
                 )))
             }
             _ => None,
+        }
+    }
+}
+
+/// A table or tree, which following lines of the same kind extend.
+enum MultilineBlock {
+    Table(AtomTable),
+    Tree(AtomTree),
+}
+
+impl MultilineBlock {
+    /// Tables and trees keep this much space above and below them.
+    const MARGIN: f64 = 2.0;
+
+    fn continues_with(&self, line: &str) -> bool {
+        match self {
+            Self::Table(_) => table::is_table_line(line),
+            Self::Tree(_) => tree::is_tree_start(java::trim(line)),
+        }
+    }
+
+    fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+        match self {
+            Self::Table(table) => table.add_line(line, font),
+            Self::Tree(tree) => tree.add_line(line, font),
+        }
+    }
+
+    /// Aligned like the sheet, as not being a line of text.
+    fn into_stripe(self, alignment: HorizontalAlignment) -> Stripe {
+        let atom: Box<dyn Atom> = match self {
+            Self::Table(table) => Box::new(AtomWithMargin::new(table, Self::MARGIN, Self::MARGIN)),
+            Self::Tree(tree) => Box::new(AtomWithMargin::new(tree, Self::MARGIN, Self::MARGIN)),
+        };
+        Stripe {
+            atoms: vec![atom],
+            cell_alignment: alignment,
         }
     }
 }
@@ -279,7 +335,18 @@ impl StripeBuilder {
         }
     }
 
-    fn analyze_and_add(&mut self, line: &str) {
+    /// A stripe of plain text, as in table cells and tree items.
+    pub(super) fn plain(font: FontConfiguration, mode: CreoleMode) -> Self {
+        Self::new(
+            font,
+            StripeStyle::NORMAL,
+            HorizontalAlignment::Left,
+            None,
+            mode,
+        )
+    }
+
+    pub(super) fn analyze_and_add(&mut self, line: &str) {
         let line = self.manage_cell_alignment(line);
         let line = char_hidder::hide(line);
         match self.style.kind {
@@ -354,7 +421,7 @@ impl StripeBuilder {
         self.font = current;
     }
 
-    fn build(mut self) -> Stripe {
+    pub(super) fn build(mut self) -> Stripe {
         if self.atoms.is_empty() {
             self.atoms
                 .push(Box::new(AtomText::legacy(" ", self.font.clone())));
