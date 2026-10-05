@@ -14,6 +14,7 @@ mod klimt;
 mod pattern;
 pub mod preproc;
 mod stdlib;
+mod style;
 mod text;
 mod tim;
 pub mod url_code;

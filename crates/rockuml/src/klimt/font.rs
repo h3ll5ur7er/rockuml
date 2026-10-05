@@ -17,6 +17,23 @@ impl UFontFace {
         italic: false,
         weight: 400,
     };
+    pub const BOLD: Self = Self {
+        italic: false,
+        weight: 700,
+    };
+    pub const ITALIC: Self = Self {
+        italic: true,
+        weight: 400,
+    };
+
+    /// An upright face of a CSS weight, rounded to the nearest hundred between 100 and 900.
+    pub fn with_weight(css_weight: i32) -> Self {
+        let rounded = ((css_weight.clamp(100, 900) + 50) / 100) * 100;
+        Self {
+            italic: false,
+            weight: rounded as u16,
+        }
+    }
 
     pub fn is_bold(self) -> bool {
         self.weight >= 700

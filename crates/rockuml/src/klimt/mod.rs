@@ -24,3 +24,11 @@ pub enum HorizontalAlignment {
     Center,
     Right,
 }
+
+impl HorizontalAlignment {
+    pub fn from_name(name: &str) -> Option<Self> {
+        [Self::Left, Self::Center, Self::Right]
+            .into_iter()
+            .find(|alignment| format!("{alignment:?}").eq_ignore_ascii_case(name))
+    }
+}
