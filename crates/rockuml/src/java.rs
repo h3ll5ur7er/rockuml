@@ -99,6 +99,11 @@ pub fn hash_map_iteration_order(hashes: &[i32]) -> Vec<usize> {
     while hashes.len() * 4 > capacity * 3 {
         capacity *= 2;
     }
+    bucket_order(hashes, capacity)
+}
+
+/// Visits entries bucket by bucket; within a bucket in insertion order, which resizing preserves.
+fn bucket_order(hashes: &[i32], capacity: usize) -> Vec<usize> {
     let bucket = |hash: i32| {
         let spread = (hash ^ (hash >> 16 & 0xFFFF)) as u32;
         spread as usize & (capacity - 1)
@@ -106,6 +111,95 @@ pub fn hash_map_iteration_order(hashes: &[i32]) -> Vec<usize> {
     let mut order: Vec<usize> = (0..hashes.len()).collect();
     order.sort_by_key(|&index| bucket(hashes[index]));
     order
+}
+
+/// A `java.util.HashMap<String, V>` reduced to what decides its iteration order: the table capacity, the
+/// key hashes and the insertion order within a bucket. Removals are not supported.
+#[derive(Clone, Debug)]
+pub struct JavaHashMap<V> {
+    entries: Vec<(String, V)>,
+    capacity: usize,
+    threshold: usize,
+}
+
+impl<V> Default for JavaHashMap<V> {
+    fn default() -> Self {
+        Self {
+            entries: Vec::new(),
+            capacity: 0,
+            threshold: 0,
+        }
+    }
+}
+
+impl<V> JavaHashMap<V> {
+    pub fn get(&self, key: &str) -> Option<&V> {
+        self.entries.iter().find(|(existing, _)| existing == key).map(|(_, value)| value)
+    }
+
+    pub fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    pub fn put(&mut self, key: String, value: V) {
+        if let Some(existing) = self.entries.iter_mut().find(|(existing, _)| *existing == key) {
+            existing.1 = value;
+            return;
+        }
+        if self.capacity == 0 {
+            self.resize();
+        }
+        self.entries.push((key, value));
+        if self.entries.len() > self.threshold {
+            self.resize();
+        }
+    }
+
+    /// `putAll` sizes an empty table for the incoming map up front, unlike a series of `put`s.
+    pub fn put_all(&mut self, other: Self) {
+        let incoming = other.len();
+        if incoming == 0 {
+            return;
+        }
+        if self.capacity == 0 {
+            let wanted = (incoming * 4).div_ceil(3);
+            if wanted > self.threshold {
+                self.threshold = wanted.next_power_of_two();
+            }
+        } else {
+            while incoming > self.threshold {
+                self.resize();
+            }
+        }
+        for (key, value) in other.into_iter() {
+            self.put(key, value);
+        }
+    }
+
+    /// When the table does not exist yet, `threshold` holds the requested initial capacity.
+    fn resize(&mut self) {
+        if self.capacity == 0 {
+            self.capacity = if self.threshold > 0 { self.threshold } else { 16 };
+        } else {
+            self.capacity *= 2;
+        }
+        self.threshold = self.capacity * 3 / 4;
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (&str, &V)> {
+        self.iteration_order().into_iter().map(|index| (self.entries[index].0.as_str(), &self.entries[index].1))
+    }
+
+    pub fn into_iter(mut self) -> impl Iterator<Item = (String, V)> {
+        let order = self.iteration_order();
+        let mut slots: Vec<Option<(String, V)>> = self.entries.drain(..).map(Some).collect();
+        order.into_iter().map(move |index| slots[index].take().expect("each entry is visited once"))
+    }
+
+    fn iteration_order(&self) -> Vec<usize> {
+        let hashes: Vec<i32> = self.entries.iter().map(|(key, _)| string_hash_code(key)).collect();
+        bucket_order(&hashes, self.capacity.max(1))
+    }
 }
 
 /// `java.util.Random`'s 48-bit linear congruential generator, for output that PlantUML seeds.
@@ -159,6 +253,34 @@ mod tests {
         assert_eq!(Random::new(7).next_int(16), Some(11));
         assert_eq!(Random::new(-3).next_int(1000), Some(164));
         assert_eq!(Random::new(1).next_int(0), None);
+    }
+
+    /// Orders observed on the JDK for maps built like PlantUML's regex results: putAll of child maps.
+    #[test]
+    fn java_hash_map_iterates_like_the_jdk() {
+        let cases: [(&[usize], &str); 7] = [
+            (&[3, 4], "2 1 0 6 5 4 3"),
+            (&[12], "2 1 0 6 5 4 3 9 8 7 11 10"),
+            (&[1, 11], "2 1 0 6 5 4 3 9 8 7 11 10"),
+            (&[6, 6, 1], "12 2 1 0 6 5 4 3 9 8 7 11 10"),
+            (&[13], "12 2 1 0 6 5 4 3 9 8 7 11 10"),
+            (&[2, 2, 2, 2, 2, 2, 2], "13 12 2 1 0 6 5 4 3 9 8 7 11 10"),
+            (&[25], "24 23 11 10 13 12 15 14 17 16 19 18 2 1 0 6 5 4 3 9 8 7 20 22 21"),
+        ];
+        for (child_sizes, expected) in cases {
+            let mut map = JavaHashMap::default();
+            let mut next = 0;
+            for &size in child_sizes {
+                let mut child = JavaHashMap::default();
+                for _ in 0..size {
+                    child.put(format!("KEY{next}"), ());
+                    next += 1;
+                }
+                map.put_all(child);
+            }
+            let order: Vec<String> = map.iter().map(|(key, ())| key.trim_start_matches("KEY").to_owned()).collect();
+            assert_eq!(order.join(" "), expected, "{child_sizes:?}");
+        }
     }
 
     #[test]
