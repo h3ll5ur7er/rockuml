@@ -2,12 +2,15 @@
 
 use super::sheet_block::SheetBlock1;
 use super::{Atom, Sheet};
+use crate::color::HColor;
 use crate::klimt::TextBlock;
+use crate::klimt::blocks::Marged;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
 use crate::klimt::stencil::UHorizontalLine;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
+use crate::openiconic::{OpenIconic, OpenIconicBlock};
 
 /// The mark in front of a `*` list item: a disc at the first level, a square below.
 pub struct Bullet {
@@ -121,5 +124,56 @@ impl<A: Atom> TextBlock for AtomWithMargin<A> {
 impl<A: Atom> Atom for AtomWithMargin<A> {
     fn starting_altitude(&self, string_bounder: &dyn StringBounder) -> f64 {
         self.atom.starting_altitude(string_bounder)
+    }
+}
+
+/// An `OpenIconic` icon (`<&heart>`), sized to the font and in its colour unless given one.
+pub struct AtomOpenIconic {
+    open_iconic: OpenIconic,
+    factor: f64,
+    color: HColor,
+}
+
+impl AtomOpenIconic {
+    pub fn new(
+        new_color: Option<HColor>,
+        scale: f64,
+        open_iconic: OpenIconic,
+        font: &FontConfiguration,
+    ) -> Self {
+        Self {
+            open_iconic,
+            factor: scale * font.font().size_2d() / 12.0,
+            color: new_color.unwrap_or_else(|| font.color().clone()),
+        }
+    }
+
+    fn as_text_block(&self) -> Marged<OpenIconicBlock<'_>> {
+        Marged::new(
+            self.open_iconic
+                .as_text_block(self.color.clone(), self.factor),
+            ClockwiseTopRightBottomLeft {
+                top: 0.0,
+                right: 1.0,
+                bottom: 0.0,
+                left: 1.0,
+            },
+        )
+    }
+}
+
+impl TextBlock for AtomOpenIconic {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.as_text_block().calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.as_text_block().draw_u(ug);
+    }
+}
+
+impl Atom for AtomOpenIconic {
+    fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
+        -3.0 * self.factor
     }
 }

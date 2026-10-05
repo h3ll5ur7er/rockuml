@@ -9,7 +9,7 @@ use super::parser::StripeBuilder;
 use crate::color::HColor;
 use crate::klimt::font::{FontPosition, FontStyle};
 use crate::klimt::url::Url;
-use crate::pattern::plantuml_regex;
+use crate::pattern::{java_regex, plantuml_regex};
 use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
 pub trait CreoleCommand: Send + Sync {
@@ -51,36 +51,47 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
     }
     commands.extend(vec![
         RegexCommand::boxed(
-            "<s",
+            &["<s"],
             r"^(\<size[\s:]+(\d+)[%s]*\>(.*?)\</size\>)",
             2,
             change_size,
         ),
-        RegexCommand::boxed("<s", r"^(\<size[\s:]+(\d+)[%s]*\>(.*)$)", 2, change_size),
+        RegexCommand::boxed(&["<s"], r"^(\<size[\s:]+(\d+)[%s]*\>(.*)$)", 2, change_size),
         RegexCommand::boxed(
-            "<c",
+            &["<c"],
             &format!(r"^({COLOR}(.*?)\</color\>)"),
             2,
             change_color,
         ),
-        RegexCommand::boxed("<c", &format!("^({COLOR}(.*)$)"), 2, change_color),
+        RegexCommand::boxed(&["<c"], &format!("^({COLOR}(.*)$)"), 2, change_color),
         RegexCommand::boxed(
-            "<f",
+            &["<f"],
             &format!(r"^({FONT}(.*?)\</font\>)"),
             1,
             change_color_and_size,
         ),
-        RegexCommand::boxed("<f", &format!("^({FONT}(.*))$"), 1, change_color_and_size),
+        RegexCommand::boxed(
+            &["<f"],
+            &format!("^({FONT}(.*))$"),
+            1,
+            change_color_and_size,
+        ),
         PositionCommand::boxed(FontPosition::Exposant, "sup"),
         PositionCommand::boxed(FontPosition::Indice, "sub"),
         RegexCommand::boxed(
-            "<f",
+            &["<#", "<&"],
+            &format!(r"^(\<(#\w+)?&([-\w]+){SCALE_OR_COLOR}\>)"),
+            1,
+            open_icon,
+        ),
+        RegexCommand::boxed(
+            &["<f"],
             &format!(r"^({FAMILY}(.*?)\</font\>)"),
             1,
             change_family,
         ),
-        RegexCommand::boxed("<f", &format!("^({FAMILY}(.*)$)"), 1, change_family),
-        RegexCommand::boxed("\"\"", r#"^(""(.*?)"")"#, 1, monospaced),
+        RegexCommand::boxed(&["<f"], &format!("^({FAMILY}(.*)$)"), 1, change_family),
+        RegexCommand::boxed(&["\"\""], r#"^(""(.*?)"")"#, 1, monospaced),
         Box::new(LinkCommand),
     ]);
     commands
@@ -89,6 +100,8 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
 const COLOR: &str = r"\<color[\s:]+(#[0-9a-fA-F]{1,6}|#?\w+)[%s]*\>";
 const FONT: &str = r"\<font(?:[%s]+size[%s]*=[%s]*[%g]?(\d+)[%g]?|[%s]+color[%s]*=[%s]*[%g]?(#[0-9a-fA-F]{6}|\w+)[%g]?)+[%s]*\>";
 const FAMILY: &str = r"\<font[\s:]+([^>]+)/?\>";
+const SCALE_OR_COLOR: &str =
+    r"([\{,]?(?:(?:scale=|\*)[0-9.]+)?(?:,?color[= :](?:#[0-9a-fA-F]{1,8}|\w+))?\}?)?";
 
 /// Turns on a font style for the text it encloses: `**bold**` (creole), `<b>bold</b>` (legacy) or `<b>`
 /// up to the end of the line.
@@ -255,7 +268,7 @@ impl CreoleCommand for PositionCommand {
 
 /// A command described by a regex whose group 1 is everything the command consumes.
 struct RegexCommand {
-    starters: [&'static str; 1],
+    starters: &'static [&'static str],
     regex: Regex,
     /// PlantUML ignores a match whose group of this number is empty.
     group_required: usize,
@@ -264,13 +277,13 @@ struct RegexCommand {
 
 impl RegexCommand {
     fn boxed(
-        starter: &'static str,
+        starters: &'static [&'static str],
         pattern: &str,
         group_required: usize,
         apply: fn(&Captures, &mut StripeBuilder),
     ) -> Box<dyn CreoleCommand> {
         Box::new(Self {
-            starters: [starter],
+            starters,
             regex: plantuml_regex(pattern),
             group_required,
             apply,
@@ -280,7 +293,7 @@ impl RegexCommand {
 
 impl CreoleCommand for RegexCommand {
     fn starters(&self) -> &[&'static str] {
-        &self.starters
+        self.starters
     }
 
     fn matches(&self, rest: &str) -> bool {
@@ -342,6 +355,32 @@ fn change_family(captures: &Captures, stripe: &mut StripeBuilder) {
 
 fn monospaced(captures: &Captures, stripe: &mut StripeBuilder) {
     stripe.with_font(|font| font.with_family("monospaced"), enclosed(captures));
+}
+
+/// `<&name>`, `<#color&name>`, `<&name*2>` or `<&name{scale=2,color=red}>`.
+fn open_icon(captures: &Captures, stripe: &mut StripeBuilder) {
+    let scale_or_color = group(captures, 4);
+    let color = group(captures, 2)
+        .or_else(|| get_color(scale_or_color))
+        .map(|name| parse_color(name).unwrap_or(HColor::WHITE));
+    stripe.add_open_icon(&captures[3], get_scale(scale_or_color, 1.0), color);
+}
+
+fn get_scale(scale_or_color: Option<&str>, default: f64) -> f64 {
+    static SCALE: LazyLock<Regex> = LazyLock::new(|| java_regex(r"(?:scale=|\*)([0-9.]+)", false));
+    scale_or_color
+        .and_then(|text| SCALE.captures(text))
+        .and_then(|captures| captures[1].parse().ok())
+        .unwrap_or(default)
+}
+
+fn get_color(scale_or_color: Option<&str>) -> Option<&str> {
+    static COLOR: LazyLock<Regex> =
+        LazyLock::new(|| java_regex(r"color[= :](#[0-9a-fA-F]{1,6}|\w+)", false));
+    COLOR
+        .captures(scale_or_color?)
+        .and_then(|captures| captures.get(1))
+        .map(|color| color.as_str())
 }
 
 /// The patterns let only digits through, and any run of digits parses as a float.
