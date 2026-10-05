@@ -47,7 +47,7 @@ impl UHorizontalLine<'_> {
             (start, start + half((start, end)))
         });
         let (start, end) = extent(y);
-        self.draw_title(ug, title, start, end, y);
+        draw_title(ug, title, start, end, y);
         self.draw_lines(&ug_stroke, y, |y| {
             let (start, end) = extent(y);
             (end - half((start, end)), end)
@@ -72,12 +72,13 @@ impl UHorizontalLine<'_> {
             draw_line(ug, y + DOUBLE_LINE_GAP, &extent);
         }
     }
+}
 
-    fn draw_title(&self, ug: &UGraphic, title: &dyn TextBlock, start: f64, end: f64, y: f64) {
-        let dimension = title.calculate_dimension(ug.string_bounder());
-        let x = start + (end - start - dimension.width) / 2.0;
-        title.draw_u(&ug.translated(x, y - dimension.height / 2.0 - 0.5));
-    }
+/// Centred on the line, half a pixel up.
+fn draw_title(ug: &UGraphic, title: &dyn TextBlock, start: f64, end: f64, y: f64) {
+    let dimension = title.calculate_dimension(ug.string_bounder());
+    let x = start + (end - start - dimension.width) / 2.0;
+    title.draw_u(&ug.translated(x, y - dimension.height / 2.0 - 0.5));
 }
 
 fn draw_line(ug: &UGraphic, y: f64, extent: &impl Fn(f64) -> (f64, f64)) {
