@@ -30,8 +30,28 @@ generate_case() {
 	reference_plantuml -preproc -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -f debug -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -f svg -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
+	generate_deterministic_svg "$case_file" "$golden_dir"
 	reference_plantuml -encodeurl "$case_file" > "$golden_dir/$(basename "${case_file%.puml}").url" 2> /dev/null || true
 	mask_render_timestamps "$golden_dir"
+	drop_crash_reports "$golden_dir"
+}
+
+# Where PlantUML crashes it draws a crash report with a random quote instead of the diagram. rockuml
+# renders the diagram, so such a golden would be neither stable nor a target.
+drop_crash_reports() {
+	grep -lr --null 'An error has occurred : java\.' "$1" | xargs -0 -r rm -f
+}
+
+# Deterministic SVG shares the .svg suffix with font-measured SVG, so it is generated apart and renamed.
+generate_deterministic_svg() {
+	local case_file="$1" golden_dir="$2"
+	local scratch="$golden_dir/.deterministic"
+	mkdir -p "$scratch"
+	reference_plantuml -f svg-deterministic -o "$(echo "$scratch" | to_native_paths)" "$case_file" > /dev/null 2>&1 || true
+	for svg in "$scratch"/*.svg; do
+		[[ -e "$svg" ]] && mv "$svg" "$golden_dir/$(basename "${svg%.svg}").dsvg"
+	done
+	rm -rf "$scratch"
 }
 
 # The debug format stamps the current time next to shapes it cannot describe. Masking it keeps
@@ -41,7 +61,7 @@ mask_render_timestamps() {
 		's/(Mon|Tue|Wed|Thu|Fri|Sat|Sun) [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} [^ ]+ [0-9]{4}/<timestamp>/g' {} +
 }
 
-export -f generate_case mask_render_timestamps reference_plantuml to_native_paths
+export -f generate_case generate_deterministic_svg mask_render_timestamps drop_crash_reports reference_plantuml to_native_paths
 export jdk_bin reference_jar
 
 list_cases "$@" | xargs -0 -P "$(nproc)" -I {} bash -c 'generate_case "$1"' _ {}
