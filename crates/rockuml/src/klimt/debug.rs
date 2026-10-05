@@ -77,7 +77,8 @@ impl UGraphicDebug {
             "TEXT:".to_owned(),
             format!("  text: {}", text.text),
             format!("  position: {}", point(at.dx, at.dy)),
-            format!("  orientation: {}", text.orientation),
+            // Rotated text is not ported yet.
+            "  orientation: 0".to_owned(),
             format!("  font: {}", text.font.to_string_debug()),
             format!(
                 "  color: {}",

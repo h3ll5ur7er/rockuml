@@ -65,6 +65,15 @@ pub enum HorizontalAlignment {
 }
 
 impl HorizontalAlignment {
+    /// Where something `width` wide starts when aligned in `available` space.
+    pub fn offset(self, available: f64, width: f64) -> f64 {
+        match self {
+            Self::Left => 0.0,
+            Self::Center => (available - width) / 2.0,
+            Self::Right => available - width,
+        }
+    }
+
     pub fn from_name(name: &str) -> Option<Self> {
         match name.to_ascii_lowercase().as_str() {
             "left" => Some(Self::Left),

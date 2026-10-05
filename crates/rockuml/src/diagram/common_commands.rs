@@ -296,9 +296,9 @@ fn skinparam_pattern() -> RegexTree {
 }
 
 fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
-    let name = arg.get("NAME", 0).unwrap_or_default().to_lowercase();
+    let name = arg.get("NAME", 0).unwrap_or_default();
     let value = arg.get("VALUE", 0).unwrap_or_default();
-    diagram.titled().skin.set_param(&name, value);
+    diagram.titled().skin.set_param(name, value);
 }
 
 fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {

@@ -165,11 +165,7 @@ impl TextBlock for DecorateEntityImage<'_> {
         let top_height = dimension_of(self.top.as_ref(), string_bounder).height;
         let draw_decoration = |decoration: &Decoration, y: f64| {
             let width = decoration.block.calculate_dimension(string_bounder).width;
-            let x = match decoration.alignment {
-                HorizontalAlignment::Left => 0.0,
-                HorizontalAlignment::Center => (total.width - width) / 2.0,
-                HorizontalAlignment::Right => total.width - width,
-            };
+            let x = decoration.alignment.offset(total.width, width);
             ug.start_group(&decoration.group);
             decoration.block.draw_u(&ug.translated(x, y));
             ug.close_group();
@@ -221,11 +217,7 @@ impl TextBlock for TextBlockVertical<'_> {
                         dimension.height,
                     )));
             }
-            let dx = match self.alignment {
-                HorizontalAlignment::Left => 0.0,
-                HorizontalAlignment::Center => (total.width - dimension.width) / 2.0,
-                HorizontalAlignment::Right => total.width - dimension.width,
-            };
+            let dx = self.alignment.offset(total.width, dimension.width);
             block.draw_u(&ug.translated(dx, y));
             y += dimension.height;
         }

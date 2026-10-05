@@ -95,7 +95,6 @@ impl USegment {
 pub struct UText {
     pub text: String,
     pub font: FontConfiguration,
-    pub orientation: i32,
 }
 
 impl UText {
@@ -103,7 +102,6 @@ impl UText {
         Self {
             text: crate::jaws::make_newlines_visible(text),
             font,
-            orientation: 0,
         }
     }
 }

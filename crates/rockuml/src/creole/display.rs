@@ -25,15 +25,17 @@ impl Display {
     /// A label written on one line: `\n`, `\l` and `\r` break it (left- or right-aligning it for the last
     /// two), except inside `<math>`, `<latex>` and `[[links]]`.
     pub fn with_newlines(text: &str) -> Self {
-        let mut lines = Vec::new();
-        let mut current = String::new();
+        /// A line break, and the alignment it asks for.
+        enum Break {
+            Plain,
+            Aligned(HorizontalAlignment),
+        }
+        let mut lines = vec![String::new()];
         let mut natural_alignment = None;
         let mut raw = false;
-        let chars: Vec<char> = text.chars().collect();
-        let mut index = 0;
-        while index < chars.len() {
-            let c = chars[index];
-            let rest: String = chars[index..].iter().take(8).collect();
+        let mut chars = text.char_indices().peekable();
+        while let Some((at, c)) = chars.next() {
+            let rest = &text[at..];
             if ["<math>", "<latex>", "[["]
                 .iter()
                 .any(|start| rest.starts_with(start))
@@ -45,42 +47,47 @@ impl Display {
             {
                 raw = false;
             }
-            let mut break_line = |alignment: Option<HorizontalAlignment>, current: &mut String| {
-                if alignment.is_some() {
-                    natural_alignment = alignment;
-                }
-                lines.push(std::mem::take(current));
-            };
-            match c {
-                '\\' if !raw && index + 1 < chars.len() => {
-                    index += 1;
-                    match chars[index] {
-                        'n' => break_line(None, &mut current),
-                        'r' => break_line(Some(HorizontalAlignment::Right), &mut current),
-                        'l' => break_line(Some(HorizontalAlignment::Left), &mut current),
-                        't' => current.push('\t'),
-                        '\\' => current.push('\\'),
-                        other => {
-                            current.push('\\');
-                            current.push(other);
+            let current = lines.last_mut().expect("there is always a current line");
+            let line_break = match c {
+                '\\' if !raw && chars.peek().is_some() => match chars.next().expect("peeked").1 {
+                    'n' => Some(Break::Plain),
+                    'r' => Some(Break::Aligned(HorizontalAlignment::Right)),
+                    'l' => Some(Break::Aligned(HorizontalAlignment::Left)),
+                    escaped => {
+                        match escaped {
+                            't' => current.push('\t'),
+                            '\\' => current.push('\\'),
+                            other => {
+                                current.push('\\');
+                                current.push(other);
+                            }
                         }
+                        None
                     }
+                },
+                BLOCK_E1_NEWLINE_LEFT_ALIGN => Some(Break::Aligned(HorizontalAlignment::Left)),
+                BLOCK_E1_NEWLINE_RIGHT_ALIGN => Some(Break::Aligned(HorizontalAlignment::Right)),
+                BLOCK_E1_NEWLINE if !raw => Some(Break::Plain),
+                BLOCK_E1_BREAKLINE => Some(Break::Plain),
+                BLOCK_E1_REAL_BACKSLASH => {
+                    current.push('\\');
+                    None
                 }
-                BLOCK_E1_REAL_BACKSLASH => current.push('\\'),
-                BLOCK_E1_NEWLINE_LEFT_ALIGN => {
-                    break_line(Some(HorizontalAlignment::Left), &mut current);
+                BLOCK_E1_INVISIBLE_QUOTE => None,
+                _ => {
+                    current.push(c);
+                    None
                 }
-                BLOCK_E1_NEWLINE_RIGHT_ALIGN => {
-                    break_line(Some(HorizontalAlignment::Right), &mut current);
+            };
+            match line_break {
+                Some(Break::Aligned(alignment)) => {
+                    natural_alignment = Some(alignment);
+                    lines.push(String::new());
                 }
-                BLOCK_E1_INVISIBLE_QUOTE => {}
-                BLOCK_E1_NEWLINE if !raw => break_line(None, &mut current),
-                BLOCK_E1_BREAKLINE => break_line(None, &mut current),
-                _ => current.push(c),
+                Some(Break::Plain) => lines.push(String::new()),
+                None => {}
             }
-            index += 1;
         }
-        lines.push(current);
         Self {
             lines,
             natural_alignment,
