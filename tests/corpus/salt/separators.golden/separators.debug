@@ -1,0 +1,114 @@
+DPI: 96
+dimension: [ 204.1703 ; 123.0000 ]
+scaleFactor: 1.0000
+seed: 8696605237565403186
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: Text1
+  position: [ 6.0000 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 6.0000 ; 23.5000 ]
+  pt2: [ 199.1703 ; 23.5000 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ffaaaaaa
+
+TEXT:
+  text: Some field
+  position: [ 9.0000 ; 37.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 40.0000 ]
+  pt2: [ 130.8671 ; 40.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 7.0000 ; 37.0000 ]
+  pt2: [ 7.0000 ; 39.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 130.8671 ; 37.0000 ]
+  pt2: [ 130.8671 ; 39.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 6.0000 ; 46.5000 ]
+  pt2: [ 199.1703 ; 46.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffaaaaaa
+
+LINE:
+  pt1: [ 6.0000 ; 48.5000 ]
+  pt2: [ 199.1703 ; 48.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffaaaaaa
+
+TEXT:
+  text: Note on usage
+  position: [ 6.0000 ; 61.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 6.0000 ; 69.5000 ]
+  pt2: [ 199.1703 ; 69.5000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffaaaaaa
+
+TEXT:
+  text: Another text
+  position: [ 6.0000 ; 83.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 6.0000 ; 91.5000 ]
+  pt2: [ 199.1703 ; 91.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffaaaaaa
+
+RECTANGLE:
+  pt1: [ 8.5000 ; 98.5000 ]
+  pt2: [ 34.2726 ; 114.5000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff000000
+  backcolor: ffeeeeee
+
+TEXT:
+  text: Ok
+  position: [ 10.5000 ; 109.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -10,7 +10,7 @@ use crate::host::Host;
 use crate::text::StringLocated;
 
 /// `%date()`, `%date(format)`, `%date(format, epochSeconds)` or `%date(format, epochSeconds, zone)`.
-pub fn format_date(
+pub(super) fn format_date(
     host: &dyn Host,
     arguments: &[TValue],
     location: &StringLocated,
@@ -44,7 +44,7 @@ pub fn format_date(
 }
 
 /// `Date.toString()`, e.g. `Mon Oct 05 14:49:18 CEST 2026`.
-pub fn java_date_to_string(millis: i64, zone: &TimeZone) -> String {
+pub(super) fn java_date_to_string(millis: i64, zone: &TimeZone) -> String {
     simple_date_format("EEE MMM dd HH:mm:ss zzz yyyy", millis, zone).unwrap_or_default()
 }
 
@@ -73,7 +73,7 @@ const MONTH_NAMES: [&str; 12] = [
 ];
 
 /// `None` for patterns `SimpleDateFormat` rejects.
-pub fn simple_date_format(pattern: &str, millis: i64, zone: &TimeZone) -> Option<String> {
+pub(super) fn simple_date_format(pattern: &str, millis: i64, zone: &TimeZone) -> Option<String> {
     let time = Timestamp::from_millisecond(millis)
         .ok()?
         .to_zoned(zone.clone());

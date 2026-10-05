@@ -1,0 +1,38 @@
+DPI: 96
+dimension: [ 214.1654 ; 59.0000 ]
+scaleFactor: 1.0000
+seed: 6070501146257204061
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 5.0000 ; 5.0000 ]
+  pt2: [ 209.1654 ; 40.0000 ]
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 203.1654 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: ffffff00
+
+TEXT:
+  text: Title in a box
+  position: [ 15.0000 ; 25.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff0000ff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: x
+  position: [ 101.3523 ; 50.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

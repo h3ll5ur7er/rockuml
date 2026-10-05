@@ -14,7 +14,7 @@ use super::value::TValue;
 use crate::java;
 use crate::text::StringLocated;
 
-pub trait CodeIterator {
+pub(super) trait CodeIterator {
     fn peek(
         &mut self,
         context: &mut TContext,
@@ -27,7 +27,7 @@ pub trait CodeIterator {
 }
 
 /// Builds the full chain over `lines`.
-pub fn code_iterator(lines: Vec<StringLocated>) -> Box<dyn CodeIterator> {
+pub(super) fn code_iterator(lines: Vec<StringLocated>) -> Box<dyn CodeIterator> {
     let lines = Box::new(Lines::new(lines));
     let long_comments = Box::new(LongComments { source: lines });
     let short_comments = Box::new(ShortComments {
@@ -261,7 +261,7 @@ impl CodeIterator for Subs {
 }
 
 /// `!startsub NAME`: the name must be a single word.
-pub fn parse_startsub(line: &StringLocated) -> TimResult<String> {
+pub(super) fn parse_startsub(line: &StringLocated) -> TimResult<String> {
     let mut eater = Eater::new(line.clone());
     eater.skip_spaces();
     eater.check_and_eat("!startsub")?;

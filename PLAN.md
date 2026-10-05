@@ -109,17 +109,15 @@ Crates that close the gaps:
 | **Layout engine** | Matches Java **without** Graphviz installed (Smetana path). Optionally matches Java *with* dot when the user has `dot` on PATH | default / optional |
 
 ### Fonts: our deliberate improvement
-rockuml **embeds** its fonts:
-- Liberation Sans (metric-compatible with Arial, which is what Java uses on Windows)
-- Liberation Mono and Serif
-- DejaVu Sans as a fallback for wider Unicode coverage
+rockuml **embeds** its fonts: Liberation Sans, Serif and Mono, metric-compatible with Arial, Times New Roman and
+Courier New, which is what Java's logical fonts map to on Windows.
 
 Measurement uses `ttf-parser` advances with fractional metrics, which is how Java measures (`FRACTIONALMETRICS ON`).
 PNG rendering uses the **same** embedded fonts through resvg.
 
-The result: output is identical on every OS and in the browser, and it matches Java-on-Windows. A user who sets
-`skinparam defaultFontName` to a font we don't embed gets it resolved through `fontdb` (system fonts, native builds only),
-with a fallback to Liberation.
+The result: output is identical on every OS and in the browser, and it matches Java-on-Windows. Users can register any
+other font (`--font`, `ROCKUML_FONTS`; `FontRegistry::register` for embedders). System fonts are deliberately not
+picked up automatically, so that output does not depend on the machine.
 
 Three bounders are selectable, mirroring Java:
 - `font` (default)
@@ -272,8 +270,62 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Backends: DEBUG, SVG (both bounders), PNG via resvg.
 - Error diagram (`PSystemError`) rendering, plus `@startcreole`/`@startsalt` as first end-to-end smoke diagrams.
 - **Exit:** salt/creole and error images pass L1/L2.
+- **Status: done.** Every ported corpus case matches the golden model in all formats: debug (L1), deterministic SVG (L2),
+  font-measured SVG (L3, byte for byte, except one known font-coverage case) and PNG size (L4). Done:
+  - regex tree, UBrex engine, command framework and the command-factory parse loop;
+  - style system: skin files, `<style>` sheets, merge priorities, skinparam→style conversion, `SkinParam`;
+  - klimt core and the DEBUG backend; creole sheets with lists, headings, separators and all inline markup
+    (styles, colours, sizes, fonts, sup/sub);
+  - creole tables, trees, links (`<a>` in SVG), `<code>` blocks, OpenIconic icons and separators, which span their
+    title, legend or note through PlantUML's stencil;
+  - `@startcreole`; `@startsalt` grids, widgets, trees, tabs, menus, scroll panes and separators; error images,
+    including the welcome text;
+  - common commands: `skinparam`, `<style>`, `scale` (all forms), title, caption, legend, header and footer (one-line
+    and block forms); `skinparam dpi`; gradient colours;
+  - SVG with both bounders: `-f svg-deterministic` (width table) and `-tsvg` (embedded Liberation fonts, plus fonts
+    registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet;
+  - PNG: the SVG rasterised by resvg with the same fonts, at PlantUML's image size (cropped at `PLANTUML_LIMIT_SIZE`),
+    with the source in an `iTXt` chunk;
+  - CLI: exit status 200 for error images, `--font` / `ROCKUML_FONTS`, rendering on a large-stack thread.
+
+  Learned along the way / deliberate deviations:
+  - Java's `%.4f` rounds the shortest decimal representation half-up, not the exact binary value; `java::format_fixed`
+    reproduces that. Java collections' iteration orders leak into output (regex results, salt grid lines), hence
+    `JavaHashMap` / `JavaHashSet`.
+  - Font names other than Java's logical fonts depend on the fonts installed where Java runs; rockuml names them like a
+    machine without them (`Dialog`).
+  - The oracle starts PlantUML through `tools/oracle/launcher`, which switches off the donation banners error images
+    get in some minutes of the hour; rockuml never shows them.
+  - Where PlantUML crashes while drawing (a creole `----` in SVG, an unclosed salt group) it prints a crash report with
+    a random quote; rockuml does not reproduce crash reports, and the golden generator drops them.
+  - rockuml matches PlantUML on the happy path. Java bugs and quirks that only show on odd input, easter eggs and
+    toy diagrams are not ported.
+  - Java's logical fonts on Windows are composites: their line height includes fallback fonts for other scripts. The
+    font measurement reproduces that extent; characters the embedded fonts lack are measured with PlantUML's width
+    table, where Java would measure them with a Windows font.
+  - PNG antialiasing differs from Java2D, and resvg draws wavy underlines straight.
+  - Top-level `@startcreole` separators are drawn across the sheet; PlantUML cannot draw them there (its debug output
+    marks them unsupported, its SVG and PNG crash).
+  - Java's logical fonts take some characters from Windows fallback fonts even where Arial or Times New Roman have
+    them (some dashes and bullets, `…`, `™`, arrows, maths and box drawing, Vietnamese letters). rockuml measures
+    those with the Liberation glyphs, which can differ by a pixel or two (corpus: `creole/escapes` SVG).
+  - Several salt menu popups are drawn in creation order; Java's order follows identity hash codes, so it is
+    effectively random.
+  - Gradients compare by identity in Java, so a gradient background never counts as "the same as the image's"; rockuml
+    keeps that, as it decides whether titles paint their background.
+  - Moved on: sprites, `<img>` and emoji (all embedded as PNG or rendered through PlantUML's SVG parser) become
+    Phase 2b, with a parity check on decoded pixels instead of PNG bytes. The `@startuml` best-error selection needs
+    the UML diagram factories and moves to Phase 3. Salt border layouts, vertical tab bars and salt images are
+    undocumented or rare and wait until someone needs them.
+
+### Phase 2b — Images (sprites, `<img>`, emoji)
+- `sprite $name [WxH/n] {…}` definitions (monochrome, compressed, SVG) and `<$name>` in creole; stdlib sprites.
+- `<img:…>` (files through `Host`, data URIs) and `<:emoji:>` (PlantUML's SVG parser and the Twemoji set).
+- The parity harness compares embedded images by decoded pixels, as Java's PNG encoding is not worth reproducing.
+- **Exit:** sprite, image and emoji corpus cases pass L1 and L2 with pixel-compared images.
 
 ### Phase 3 — Sequence diagrams (~20k)
+- Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,
   all ~41 commands, notes, groups, refs, dividers, delays, autonumber, boxes, return, activation, create/destroy, newpage.
 - **Exit:** L1 ≥ 98% on the sequence corpus. This is the first genuinely usable release.

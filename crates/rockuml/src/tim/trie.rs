@@ -6,19 +6,19 @@ use std::collections::HashMap;
 const END: char = '\0';
 
 #[derive(Default)]
-pub struct Trie {
+pub(super) struct Trie {
     children: HashMap<char, Trie>,
 }
 
 impl Trie {
-    pub fn add(&mut self, name: &str) {
+    pub(super) fn add(&mut self, name: &str) {
         let mut node = self;
         for c in name.chars().chain([END]) {
             node = node.children.entry(c).or_default();
         }
     }
 
-    pub fn remove(&mut self, name: &str) {
+    pub(super) fn remove(&mut self, name: &str) {
         let mut node = self;
         for c in name.chars() {
             let Some(child) = node.children.get_mut(&c) else {
@@ -31,7 +31,7 @@ impl Trie {
 
     /// Follows `chars` from `position` as far as the stored names allow and returns that prefix if a name
     /// ends there, or `""`. It does not back off to a shorter name: PlantUML's lookup is greedy too.
-    pub fn longest_match_starting_in(&self, chars: &[char], position: usize) -> String {
+    pub(super) fn longest_match_starting_in(&self, chars: &[char], position: usize) -> String {
         let mut node = self;
         let mut matched = String::new();
         let mut position = position;

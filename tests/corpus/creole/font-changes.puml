@@ -1,0 +1,9 @@
+@startcreole
+<color:red>red</color> <color:#00FF00>green</color> <color:nosuchcolor>unknown</color> plain
+<size:20>twenty</size> then <size:8>eight
+""monospaced"" and """" and ""unclosed
+<font:monospaced>family</font> <font:SansSerif>sans
+<font color=blue size=18>blue 18</font> <font size="9">nine
+= Heading <size:10>ten</size>
+<color:blue>blue <size:18>big blue</size> back</color>
+@endcreole

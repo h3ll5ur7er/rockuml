@@ -1,0 +1,13 @@
+@startsalt
+header Page <b>header</b>
+footer left footer
+caption This is the caption
+legend right
+  Legend line one
+  Legend line two
+endlegend
+title Title with header
+{
+  Hello | World
+}
+@endsalt

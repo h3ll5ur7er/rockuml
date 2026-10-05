@@ -45,7 +45,7 @@ const KAPPA: f64 = 903.296_296_2;
 const EPSILON: f64 = 0.008_856_451_6;
 
 /// `ColorUtils.reverseHsluv`. PlantUML divides channels by 256 here, not 255.
-pub fn reverse(color: XColor) -> XColor {
+pub(super) fn reverse(color: XColor) -> XColor {
     let [hue, saturation, lightness] = rgb_to_hsluv([
         f64::from(color.red) / 256.0,
         f64::from(color.green) / 256.0,

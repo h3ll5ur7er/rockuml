@@ -8,7 +8,7 @@ use super::start_utils;
 use crate::text::StringLocated;
 
 /// Each block runs from its `@start` line to its `@end` line inclusive.
-pub fn extract_blocks(
+pub(super) fn extract_blocks(
     source: &str,
     description: &str,
     config: Vec<String>,

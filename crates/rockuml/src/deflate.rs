@@ -178,7 +178,7 @@ enum TreeKind {
 }
 
 /// Compresses `input` as Java's `new Deflater(9, true)` followed by `finish()` and one `deflate` call.
-pub fn deflate(input: &[u8]) -> Vec<u8> {
+pub(crate) fn deflate(input: &[u8]) -> Vec<u8> {
     let mut state = State::new(input);
     state.deflate_slow();
     state.output

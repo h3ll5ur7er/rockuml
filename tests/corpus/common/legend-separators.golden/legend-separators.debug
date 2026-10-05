@@ -1,0 +1,157 @@
+DPI: 96
+dimension: [ 234.4051 ; 177.0000 ]
+scaleFactor: 1.0000
+seed: 7778444259731401693
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: Hello
+  position: [ 50.3904 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: World
+  position: [ 128.7172 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 19.0000 ]
+  pt2: [ 229.4051 ; 172.0000 ]
+
+RECTANGLE:
+  pt1: [ 17.0000 ; 31.0000 ]
+  pt2: [ 216.4051 ; 159.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: First part
+  position: [ 22.0000 ; 46.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 17.0000 ; 55.0000 ]
+  pt2: [ 216.4051 ; 55.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Second part
+  position: [ 22.0000 ; 70.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 17.0000 ; 79.0000 ]
+  pt2: [ 216.4051 ; 79.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 17.0000 ; 81.0000 ]
+  pt2: [ 216.4051 ; 81.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Third part
+  position: [ 22.0000 ; 94.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 17.0000 ; 105.0000 ]
+  pt2: [ 40.0470 ; 105.0000 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text:  Section 
+  position: [ 40.0470 ; 108.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 193.3580 ; 105.0000 ]
+  pt2: [ 216.4051 ; 105.0000 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Fourth part
+  position: [ 22.0000 ; 122.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 17.0000 ; 133.0000 ]
+  pt2: [ 44.8913 ; 133.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 17.0000 ; 135.0000 ]
+  pt2: [ 44.8913 ; 135.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text:  Header 
+  position: [ 44.8913 ; 136.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 188.5138 ; 133.0000 ]
+  pt2: [ 216.4051 ; 133.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 188.5138 ; 135.0000 ]
+  pt2: [ 216.4051 ; 135.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Last part
+  position: [ 22.0000 ; 150.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,16 @@
+@startsalt
+legend
+  First part
+  ----
+  Second part
+  ====
+  Third part
+  .. Section ..
+  Fourth part
+  == Header ==
+  Last part
+endlegend
+{
+  Hello | World
+}
+@endsalt

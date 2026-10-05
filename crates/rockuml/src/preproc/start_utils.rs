@@ -7,7 +7,7 @@ use regex::Regex;
 use crate::java;
 use crate::text::StringLocated;
 
-pub fn is_start_directive(s: &str) -> bool {
+pub(crate) fn is_start_directive(s: &str) -> bool {
     let rest = s.trim_start_matches(java::is_whitespace);
     let Some(after_marker) = rest.strip_prefix(['@', '\\']) else {
         return false;
@@ -15,25 +15,25 @@ pub fn is_start_directive(s: &str) -> bool {
     after_marker.starts_with("start") && after_marker.chars().count() > 5
 }
 
-pub fn is_end_directive(s: &str) -> bool {
+pub(crate) fn is_end_directive(s: &str) -> bool {
     starts_with_directive_keyword(s, "end")
 }
 
-pub fn is_pause_directive(s: &str) -> bool {
+pub(crate) fn is_pause_directive(s: &str) -> bool {
     starts_with_directive_keyword(s, "pause")
 }
 
-pub fn is_unpause_directive(s: &str) -> bool {
+pub(crate) fn is_unpause_directive(s: &str) -> bool {
     starts_with_directive_keyword(s, "unpause")
 }
 
-pub fn is_exit(s: &str) -> bool {
+pub(crate) fn is_exit(s: &str) -> bool {
     s.trim_matches(java::is_whitespace) == "!exit"
 }
 
 /// Text that precedes `@start` on its line, as long as it holds no word characters: a comment
 /// prefix such as `' ` that every line of the block carries and that must be stripped.
-pub fn before_start_uml(s: &str) -> Option<&str> {
+pub(crate) fn before_start_uml(s: &str) -> Option<&str> {
     let mut inside_angle_brackets = false;
     for (index, c) in s.char_indices() {
         if starts_with_directive_keyword(&s[index..], "start") {
@@ -61,7 +61,7 @@ fn starts_with_directive_keyword(text: &str, keyword: &str) -> bool {
 }
 
 /// While paused, a line `@append text` (or `@a text`) still contributes `text` to the block.
-pub fn possible_append(line: &StringLocated) -> Option<StringLocated> {
+pub(crate) fn possible_append(line: &StringLocated) -> Option<StringLocated> {
     static APPEND: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"(?i)^[^a-zA-Z0-9_]*[@\\](append|a)(?-u:\b)").unwrap());
     let matched = APPEND.find(line.text())?;
@@ -69,7 +69,7 @@ pub fn possible_append(line: &StringLocated) -> Option<StringLocated> {
 }
 
 /// `@startditaa` blocks keep their trailing backslashes: they are part of the drawing.
-pub fn is_ditaa_start(s: &str) -> bool {
+pub(crate) fn is_ditaa_start(s: &str) -> bool {
     let rest = s.trim_start_matches(java::is_whitespace);
     let Some(after_marker) = rest.strip_prefix(['@', '\\']) else {
         return false;

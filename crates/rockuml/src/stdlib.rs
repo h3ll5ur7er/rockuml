@@ -11,7 +11,7 @@ use std::rc::Rc;
 use crate::assets;
 use crate::java::RuntimeException;
 
-pub struct Stdlib {
+pub(crate) struct Stdlib {
     name: String,
     info: HashMap<String, String>,
     puml: RefCell<Option<HashMap<String, Vec<u8>>>>,
@@ -24,7 +24,7 @@ thread_local! {
 
 impl Stdlib {
     /// The library with this folder name, following `link=` redirections (e.g. versioned names).
-    pub fn retrieve(name: &str) -> Option<Rc<Stdlib>> {
+    pub(crate) fn retrieve(name: &str) -> Option<Rc<Stdlib>> {
         if let Some(cached) = LIBRARIES.with_borrow(|libraries| libraries.get(name).cloned()) {
             return cached;
         }
@@ -53,34 +53,34 @@ impl Stdlib {
         }))
     }
 
-    pub fn name(&self) -> &str {
+    pub(crate) fn name(&self) -> &str {
         &self.name
     }
 
-    pub fn has_info(&self) -> bool {
+    pub(crate) fn has_info(&self) -> bool {
         !self.info.is_empty()
     }
 
-    pub fn metadata(&self) -> impl Iterator<Item = (&String, &String)> {
+    pub(crate) fn metadata(&self) -> impl Iterator<Item = (&String, &String)> {
         self.info.iter()
     }
 
-    pub fn metadata_value(&self, key: &str) -> Option<String> {
+    pub(crate) fn metadata_value(&self, key: &str) -> Option<String> {
         self.info.get(key).cloned()
     }
 
-    pub fn version(&self) -> Option<String> {
+    pub(crate) fn version(&self) -> Option<String> {
         self.metadata_value("VERSION")
             .or_else(|| self.metadata_value("version"))
     }
 
-    pub fn source(&self) -> Option<String> {
+    pub(crate) fn source(&self) -> Option<String> {
         self.metadata_value("SOURCE")
             .or_else(|| self.metadata_value("source"))
     }
 
     /// `file` is the lowercase path inside the library without the `.puml` extension.
-    pub fn puml_resource(&self, file: &str) -> Option<Vec<u8>> {
+    pub(crate) fn puml_resource(&self, file: &str) -> Option<Vec<u8>> {
         let mut puml = self.puml.borrow_mut();
         let entries = puml.get_or_insert_with(|| self.read_channel("puml").unwrap_or_default());
         entries.get(file).cloned()
@@ -110,7 +110,7 @@ impl Stdlib {
 }
 
 /// A `.puml` file of the standard library, named like `c4/C4_Container` or `c4/C4_Container.puml`.
-pub fn puml_resource(full_name: &str) -> Option<Vec<u8>> {
+pub(crate) fn puml_resource(full_name: &str) -> Option<Vec<u8>> {
     let full_name = full_name.to_lowercase().replace(".puml", "");
     let (library, file) = full_name.split_once('/')?;
     let library = Stdlib::retrieve(library)?;
@@ -121,7 +121,7 @@ pub fn puml_resource(full_name: &str) -> Option<Vec<u8>> {
 }
 
 /// The folder names of all libraries, sorted.
-pub fn library_names() -> Vec<String> {
+pub(crate) fn library_names() -> Vec<String> {
     let mut names: Vec<String> = assets::get("stdlib/home.spm")
         .map(|home| {
             String::from_utf8_lossy(home)
@@ -137,7 +137,7 @@ pub fn library_names() -> Vec<String> {
 
 /// A JSON file of the standard library, for `%load_json(<library/file>)`. PlantUML crashes when the
 /// library exists but the file does not.
-pub fn json_resource(full_name: &str) -> Result<Option<Vec<u8>>, RuntimeException> {
+pub(crate) fn json_resource(full_name: &str) -> Result<Option<Vec<u8>>, RuntimeException> {
     let Some((library, file)) = full_name.split_once('/') else {
         return Ok(None);
     };

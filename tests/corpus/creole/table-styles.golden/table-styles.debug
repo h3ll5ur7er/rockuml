@@ -1,0 +1,135 @@
+DPI: 96
+dimension: [ 265.8655 ; 46.0000 ]
+scaleFactor: 1.0000
+seed: 1038450363581429483
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 2.0000 ]
+  pt2: [ 265.8655 ; 16.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffffe0
+
+TEXT:
+  text:  Header A 
+  position: [ 0.0000 ; 12.8889 ]
+  orientation: 0
+  font: Serif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  Header B 
+  position: [ 133.0299 ; 12.8889 ]
+  orientation: 0
+  font: Serif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 16.0000 ]
+  pt2: [ 265.8655 ; 30.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffffff
+
+TEXT:
+  text:  a1 
+  position: [ 0.0000 ; 26.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  b1 
+  position: [ 133.0299 ; 26.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 30.0000 ]
+  pt2: [ 133.0299 ; 44.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffc0cb
+
+TEXT:
+  text:  a2 
+  position: [ 0.0000 ; 40.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  b2 
+  position: [ 133.0299 ; 40.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 0.0000 ; 2.0000 ]
+  pt2: [ 265.8655 ; 2.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 0.0000 ; 16.0000 ]
+  pt2: [ 265.8655 ; 16.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 0.0000 ; 30.0000 ]
+  pt2: [ 265.8655 ; 30.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 0.0000 ; 44.0000 ]
+  pt2: [ 265.8655 ; 44.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 0.0000 ; 2.0000 ]
+  pt2: [ 0.0000 ; 44.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 133.0299 ; 2.0000 ]
+  pt2: [ 133.0299 ; 44.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 265.8655 ; 2.0000 ]
+  pt2: [ 265.8655 ; 44.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+

@@ -1,0 +1,34 @@
+DPI: 96
+dimension: [ 739.6972 ; 33.0000 ]
+scaleFactor: 0.1082
+seed: 3360720212985599699
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: A rather long text that needs scaling down
+  position: [ 6.0000 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 651.0367 ; 8.5000 ]
+  pt2: [ 731.1972 ; 24.5000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff000000
+  backcolor: ffeeeeee
+
+TEXT:
+  text: Button
+  position: [ 653.0367 ; 19.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

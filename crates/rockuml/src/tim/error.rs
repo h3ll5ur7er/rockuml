@@ -3,13 +3,13 @@ use crate::text::StringLocated;
 
 /// A preprocessing failure reported to the user at a source line.
 #[derive(Debug, Clone, PartialEq)]
-pub struct EaterException {
+pub(super) struct EaterException {
     pub message: String,
     pub location: StringLocated,
 }
 
 impl EaterException {
-    pub fn new(message: impl Into<String>, location: &StringLocated) -> Self {
+    pub(super) fn new(message: impl Into<String>, location: &StringLocated) -> Self {
         Self {
             message: message.into(),
             location: location.clone(),
@@ -18,7 +18,7 @@ impl EaterException {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub enum TimError {
+pub(super) enum TimError {
     Eater(EaterException),
     /// Raised by JSON literals; multi-line JSON assignments catch it to read the next line and retry.
     JsonParse(ParseError),
@@ -38,8 +38,8 @@ impl From<ParseError> for TimError {
     }
 }
 
-pub type TimResult<T> = Result<T, TimError>;
+pub(super) type TimResult<T> = Result<T, TimError>;
 
-pub fn fail<T>(message: impl Into<String>, location: &StringLocated) -> TimResult<T> {
+pub(super) fn fail<T>(message: impl Into<String>, location: &StringLocated) -> TimResult<T> {
     Err(TimError::Eater(EaterException::new(message, location)))
 }

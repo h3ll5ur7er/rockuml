@@ -1,3 +1,4 @@
+mod fonts;
 mod naming;
 mod options;
 mod system_host;
@@ -6,9 +7,12 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use std::sync::Arc;
 
 use naming::OutputNamer;
 use options::{Command, OutputFormat, RenderOptions};
+use rockuml::diagram::{ImageFormat, NotYetPorted};
+use rockuml::fonts::FontRegistry;
 use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 use system_host::SystemHost;
 
@@ -18,7 +22,19 @@ const LINE_SEPARATOR: &str = if cfg!(windows) { "\r\n" } else { "\n" };
 /// PlantUML's exit status when at least one diagram has errors.
 const DIAGRAM_ERROR_STATUS: u8 = 200;
 
+/// Deeply nested diagrams recurse deeply; the main thread's stack is only 1 MiB on Windows.
+const STACK_SIZE: usize = 64 * 1024 * 1024;
+
 fn main() -> ExitCode {
+    std::thread::Builder::new()
+        .stack_size(STACK_SIZE)
+        .spawn(run)
+        .expect("a thread can be started")
+        .join()
+        .unwrap_or(ExitCode::FAILURE)
+}
+
+fn run() -> ExitCode {
     let result = match options::parse(std::env::args().skip(1)) {
         Ok(Command::Version) => print_version(),
         Ok(Command::DecodeUrl(codes)) => decode_urls(&codes),
@@ -31,6 +47,7 @@ fn main() -> ExitCode {
             eprintln!("Some diagram description contains errors");
             ExitCode::from(DIAGRAM_ERROR_STATUS)
         }
+        Ok(ExitStatus::SomeNotRendered) => ExitCode::FAILURE,
         Err(error) => {
             eprintln!("rockuml: {error}");
             ExitCode::FAILURE
@@ -41,6 +58,8 @@ fn main() -> ExitCode {
 enum ExitStatus {
     Success,
     DiagramErrors,
+    /// Some diagrams need parts of PlantUML that rockuml does not have yet.
+    SomeNotRendered,
 }
 
 fn print_version() -> Result<ExitStatus, String> {
@@ -66,17 +85,48 @@ fn decode_urls(codes: &[String]) -> Result<ExitStatus, String> {
 }
 
 fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
-    let mut status = ExitStatus::Success;
+    let fonts = if options.format.measures_with_fonts() {
+        fonts::load(&options.fonts)?
+    } else {
+        FontRegistry::default()
+    };
+    let fonts = Arc::new(fonts);
+    let mut outcome = Outcome::default();
     for file in &options.files {
         let blocks = preprocess_file(file)?;
         if blocks.iter().any(PreprocessedBlock::failed)
             && options.format != OutputFormat::EncodedUrl
         {
-            status = ExitStatus::DiagramErrors;
+            outcome.diagram_errors = true;
         }
-        write_outputs(file, &blocks, options)?;
+        outcome.merge(write_outputs(file, &blocks, options, &fonts)?);
     }
-    Ok(status)
+    Ok(outcome.status())
+}
+
+/// What happened to the diagrams of a run.
+#[derive(Clone, Copy, Default)]
+struct Outcome {
+    diagram_errors: bool,
+    not_rendered: bool,
+}
+
+impl Outcome {
+    fn merge(&mut self, other: Outcome) {
+        self.diagram_errors |= other.diagram_errors;
+        self.not_rendered |= other.not_rendered;
+    }
+
+    /// Diagrams rockuml could not render at all matter more than those it rendered as error images.
+    fn status(self) -> ExitStatus {
+        if self.not_rendered {
+            ExitStatus::SomeNotRendered
+        } else if self.diagram_errors {
+            ExitStatus::DiagramErrors
+        } else {
+            ExitStatus::Success
+        }
+    }
 }
 
 fn preprocess_file(file: &Path) -> Result<Vec<PreprocessedBlock>, String> {
@@ -96,20 +146,23 @@ fn preprocess_file(file: &Path) -> Result<Vec<PreprocessedBlock>, String> {
     Ok(rockuml::preproc::preprocess(&source, &SystemHost))
 }
 
+/// Blocks that cannot be rendered are reported and skipped.
 fn write_outputs(
     file: &Path,
     blocks: &[PreprocessedBlock],
     options: &RenderOptions,
-) -> Result<(), String> {
+    fonts: &Arc<FontRegistry>,
+) -> Result<Outcome, String> {
     if options.format == OutputFormat::EncodedUrl {
         for block in blocks {
             write_stdout(&format!(
                 "{}{LINE_SEPARATOR}",
-                rockuml::url_code::encode(&block.source_text())
+                rockuml::diagram::encoded_url(block)
             ))?;
         }
-        return Ok(());
+        return Ok(Outcome::default());
     }
+    let mut outcome = Outcome::default();
     let output_directory = output_directory(file, options.output_directory.as_deref());
     fs::create_dir_all(&output_directory)
         .map_err(|error| format!("cannot create {}: {error}", output_directory.display()))?;
@@ -120,13 +173,47 @@ fn write_outputs(
             OutputFormat::Preprocessed => block
                 .lines()
                 .flat_map(|line| [line, LINE_SEPARATOR])
-                .collect::<String>(),
-            format => return Err(format!("{format:?} output is not implemented yet")),
+                .collect::<String>()
+                .into_bytes(),
+            format => {
+                let image_format = format
+                    .image_format()
+                    .ok_or_else(|| format!("{format:?} output is not implemented yet"))?;
+                match render(block, image_format, fonts) {
+                    Ok(Rendered { image, is_error }) => {
+                        outcome.diagram_errors |= is_error;
+                        image
+                    }
+                    Err(not_ported) => {
+                        eprintln!("rockuml: {}: {not_ported}", output.display());
+                        outcome.not_rendered = true;
+                        continue;
+                    }
+                }
+            }
         };
         fs::write(&output, content)
             .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
     }
-    Ok(())
+    Ok(outcome)
+}
+
+struct Rendered {
+    image: Vec<u8>,
+    /// The image shows the diagram's errors instead of the diagram.
+    is_error: bool,
+}
+
+fn render(
+    block: &PreprocessedBlock,
+    format: ImageFormat,
+    fonts: &Arc<FontRegistry>,
+) -> Result<Rendered, NotYetPorted> {
+    let diagram = rockuml::diagram::create(block)?;
+    Ok(Rendered {
+        image: rockuml::diagram::export(diagram.as_ref(), format, fonts, &SystemHost)?,
+        is_error: diagram.is_error(),
+    })
 }
 
 /// A reader that closed the pipe (`rockuml ... | head`) simply wants no more output.

@@ -2,7 +2,7 @@
 
 mod block;
 mod reader;
-mod start_utils;
+pub(crate) mod start_utils;
 
 use std::sync::LazyLock;
 
@@ -33,17 +33,22 @@ pub struct Source<'a> {
 /// One diagram's source after preprocessing, from its `@start` line to its `@end` line.
 pub struct PreprocessedBlock {
     lines: Vec<StringLocated>,
+    /// The block as written, before preprocessing.
+    raw_lines: Vec<String>,
     failed: bool,
 }
 
 impl PreprocessedBlock {
-    pub fn lines(&self) -> impl Iterator<Item = &str> {
-        self.lines.iter().map(StringLocated::text)
+    pub(crate) fn located_lines(&self) -> &[StringLocated] {
+        &self.lines
     }
 
-    /// The lines joined as PlantUML does when it encodes a diagram's source: each followed by `\n`.
-    pub fn source_text(&self) -> String {
-        self.lines().flat_map(|line| [line, "\n"]).collect()
+    pub(crate) fn raw_lines(&self) -> &[String] {
+        &self.raw_lines
+    }
+
+    pub fn lines(&self) -> impl Iterator<Item = &str> {
+        self.lines.iter().map(StringLocated::text)
     }
 
     /// Whether preprocessing stopped at an error, reported on the last line.
@@ -183,6 +188,7 @@ pub fn preprocess(source: &Source, host: &dyn Host) -> Vec<PreprocessedBlock> {
         );
         blocks.push(PreprocessedBlock {
             lines: preprocessed.lines,
+            raw_lines: lines.iter().map(|line| line.text().to_owned()).collect(),
             failed: preprocessed.failed,
         });
     }

@@ -1,0 +1,168 @@
+DPI: 96
+dimension: [ 218.9945 ; 74.0000 ]
+scaleFactor: 1.0000
+seed: -223708990673979796
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text:  Root
+  position: [ 18.0000 ; 12.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  Child 1
+  position: [ 26.0000 ; 26.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  Child 2
+  position: [ 26.0000 ; 40.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  Grandchild
+  position: [ 34.0000 ; 54.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  Second root
+  position: [ 18.0000 ; 68.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 15.0000 ; 8.0000 ]
+  pt2: [ 17.0000 ; 10.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 8.0000 ; 9.0000 ]
+  pt2: [ 16.0000 ; 9.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 8.0000 ; 2.0000 ]
+  pt2: [ 8.0000 ; 9.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 23.0000 ; 22.0000 ]
+  pt2: [ 25.0000 ; 24.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 16.0000 ; 23.0000 ]
+  pt2: [ 24.0000 ; 23.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 16.0000 ; 9.0000 ]
+  pt2: [ 16.0000 ; 23.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 23.0000 ; 36.0000 ]
+  pt2: [ 25.0000 ; 38.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 16.0000 ; 37.0000 ]
+  pt2: [ 24.0000 ; 37.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 16.0000 ; 23.0000 ]
+  pt2: [ 16.0000 ; 37.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 31.0000 ; 50.0000 ]
+  pt2: [ 33.0000 ; 52.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 24.0000 ; 51.0000 ]
+  pt2: [ 32.0000 ; 51.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 24.0000 ; 37.0000 ]
+  pt2: [ 24.0000 ; 51.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 15.0000 ; 64.0000 ]
+  pt2: [ 17.0000 ; 66.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 8.0000 ; 65.0000 ]
+  pt2: [ 16.0000 ; 65.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 8.0000 ; 9.0000 ]
+  pt2: [ 8.0000 ; 65.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+

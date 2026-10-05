@@ -6,6 +6,33 @@ A PlantUML-compatible diagram renderer written in Rust: one self-contained binar
 Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the porting plan and the definition of
 "compatible".
 
+## Usage
+
+```bash
+rockuml diagram.puml                    # writes diagram.svg next to it
+rockuml -tpng diagram.puml              # diagram.png
+rockuml -o out -f svg-deterministic a.puml b.puml
+```
+
+### Fonts
+
+Text is measured with embedded fonts: the Liberation fonts, which have the metrics of Arial, Times New Roman and
+Courier New, the fonts PlantUML uses on Windows. Images therefore look the same on every machine and match PlantUML
+run on Windows.
+
+To use other fonts, register their files and name them in the diagram as usual (`skinparam defaultFontName`,
+`<font:...>`, styles):
+
+```bash
+rockuml --font ~/fonts/Inter.ttf --font ~/fonts/more/ diagram.puml
+```
+
+`--font` takes a `.ttf`, `.otf` or `.ttc` file, or a directory of them, and can be repeated. The `ROCKUML_FONTS`
+environment variable holds more such paths, separated like `PATH`. Fonts are registered under their family names; a
+family nobody registered falls back to the default sans-serif font, as in PlantUML.
+
+`-f svg-deterministic` measures text with PlantUML's built-in width table instead of fonts.
+
 ## Build and test
 
 ```bash

@@ -4,7 +4,7 @@ mod hsl;
 mod hsluv;
 mod named;
 
-pub use hsl::to_rgb as hsl_to_rgb;
+pub(crate) use hsl::to_rgb as hsl_to_rgb;
 use named::NAMED_COLORS;
 
 use crate::java::{self, RuntimeException};
@@ -32,6 +32,14 @@ impl XColor {
         Self::rgb((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
     }
 
+    /// Java's `Color.getRGB()`: alpha in the top byte.
+    pub fn argb(self) -> u32 {
+        u32::from(self.alpha) << 24
+            | u32::from(self.red) << 16
+            | u32::from(self.green) << 8
+            | u32::from(self.blue)
+    }
+
     /// Perceived brightness, 0 to 255.
     pub fn gray_scale(self) -> u32 {
         (u32::from(self.red) * 299 + u32::from(self.green) * 587 + u32::from(self.blue) * 114)
@@ -45,10 +53,40 @@ pub enum HColor {
     Simple(XColor),
     Automagic,
     Scheme,
-    Gradient,
+    Gradient(Gradient),
+}
+
+/// A colour fading into another, like `red-blue`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Gradient {
+    pub from: XColor,
+    pub to: XColor,
+    /// The character written between the colours, which gives the direction: `|` left to right, `-` top to
+    /// bottom, `/` and `\` diagonally.
+    pub policy: char,
 }
 
 impl HColor {
+    pub const BLACK: HColor = HColor::Simple(XColor::rgb(0, 0, 0));
+    pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
+    pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
+    /// No colour: nothing is painted.
+    pub const NONE: HColor = HColor::Simple(XColor {
+        red: 0,
+        green: 0,
+        blue: 0,
+        alpha: 0,
+    });
+
+    pub fn is_transparent(&self) -> bool {
+        matches!(self, HColor::Simple(color) if color.alpha == 0)
+    }
+
+    /// A colour as `parse` reads it; white when the text names none (PlantUML's `getColorOrWhite`).
+    pub fn parse_or_white(text: &str) -> HColor {
+        Self::parse(text).ok().flatten().unwrap_or(Self::WHITE)
+    }
+
     /// Parses a colour name, `#rgb`, `#rrggbb`, `#rrggbbaa`, gradient (`red-blue`) or scheme (`?a:b`).
     pub fn parse(text: &str) -> Result<Option<HColor>, RuntimeException> {
         let text = text.strip_prefix('#').unwrap_or(text);
@@ -81,10 +119,16 @@ impl HColor {
         }
         for (index, c) in text.char_indices() {
             if matches!(c, '-' | '\\' | '|' | '/')
-                && parse_simple_color(&text[..index]).is_some()
-                && parse_simple_color(&text[index + 1..]).is_some()
+                && let (Some(from), Some(to)) = (
+                    parse_simple_color(&text[..index]),
+                    parse_simple_color(&text[index + 1..]),
+                )
             {
-                return Ok(Some(HColor::Gradient));
+                return Ok(Some(HColor::Gradient(Gradient {
+                    from,
+                    to,
+                    policy: c,
+                })));
             }
         }
         Ok(None)
@@ -142,6 +186,41 @@ impl HColor {
         }
     }
 
+    /// `#RRGGBB`, with the alpha appended when translucent, or `#00000000` when transparent.
+    pub fn to_svg(&self) -> String {
+        match self.as_xcolor() {
+            color if color.alpha == 0 => "#00000000".to_owned(),
+            color if color.alpha == 255 => self.to_rgb(),
+            color => format!("{}{:02X}", self.to_rgb(), color.alpha),
+        }
+    }
+
+    /// `#RRGGBB`, ignoring transparency.
+    pub fn to_rgb(&self) -> String {
+        let color = self.as_xcolor();
+        format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
+    }
+
+    /// Where one colour is needed, a gradient gives its first. Automagic and scheme colours are not ported to
+    /// the drawing formats yet and draw black.
+    fn as_xcolor(&self) -> XColor {
+        match self {
+            HColor::Simple(color) => *color,
+            HColor::Gradient(gradient) => gradient.from,
+            HColor::Automagic | HColor::Scheme => XColor::rgb(0, 0, 0),
+        }
+    }
+
+    /// The name of the Java class PlantUML represents the colour with.
+    pub fn java_class_name(&self) -> &'static str {
+        match self {
+            HColor::Simple(_) => "HColorSimple",
+            HColor::Automagic => "HColorAutomagic",
+            HColor::Scheme => "HColorScheme",
+            HColor::Gradient(_) => "HColorGradient",
+        }
+    }
+
     /// `#RRGGBB`, `#aarrggbb` when translucent, or `transparent`.
     pub fn as_string(&self) -> String {
         match self {
@@ -155,9 +234,7 @@ impl HColor {
                     color.alpha, color.red, color.green, color.blue
                 )
             }
-            HColor::Automagic => "?HColorAutomagic".to_owned(),
-            HColor::Scheme => "?HColorScheme".to_owned(),
-            HColor::Gradient => "?HColorGradient".to_owned(),
+            other => format!("?{}", other.java_class_name()),
         }
     }
 }

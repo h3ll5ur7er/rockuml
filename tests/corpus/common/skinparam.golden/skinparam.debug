@@ -1,0 +1,46 @@
+DPI: 96
+dimension: [ 338.3971 ; 65.0000 ]
+scaleFactor: 1.0000
+seed: 7138545931535444353
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 5.0000 ; 5.0000 ]
+  pt2: [ 333.3971 ; 46.0000 ]
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 327.3971 ; 40.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffeeeeff
+
+TEXT:
+  text: Styled title
+  position: [ 15.0000 ; 30.5556 ]
+  orientation: 0
+  font: SansSerif.bold/20 [BOLD]
+  color: ffff0000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: a
+  position: [ 156.7277 ; 56.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: b
+  position: [ 170.1988 ; 56.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

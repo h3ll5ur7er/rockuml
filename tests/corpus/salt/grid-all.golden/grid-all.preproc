@@ -1,0 +1,10 @@
+@startsalt
+{#
+  . | Column 2 | Column 3
+  Row header 1 | value 1 | value 2
+  Row header 2 | A long cell | *
+  x | y | z
+  1 | 2 | 3
+  4 | 5 | 6
+}
+@endsalt

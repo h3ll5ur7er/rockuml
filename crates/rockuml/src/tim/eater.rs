@@ -17,14 +17,14 @@ use crate::java;
 use crate::json;
 use crate::text::StringLocated;
 
-pub struct Eater {
+pub(super) struct Eater {
     line: StringLocated,
     chars: Vec<char>,
     position: usize,
 }
 
 impl Eater {
-    pub fn new(line: StringLocated) -> Self {
+    pub(super) fn new(line: StringLocated) -> Self {
         Self {
             chars: line.text().chars().collect(),
             line,
@@ -32,29 +32,29 @@ impl Eater {
         }
     }
 
-    pub fn line(&self) -> &StringLocated {
+    pub(super) fn line(&self) -> &StringLocated {
         &self.line
     }
 
-    pub fn position(&self) -> usize {
+    pub(super) fn position(&self) -> usize {
         self.position
     }
 
     /// `'\0'` past the end, as in PlantUML.
-    pub fn peek_char(&self) -> char {
+    pub(super) fn peek_char(&self) -> char {
         self.chars.get(self.position).copied().unwrap_or('\0')
     }
 
-    pub fn peek_char_n2(&self) -> char {
+    pub(super) fn peek_char_n2(&self) -> char {
         self.chars.get(self.position + 1).copied().unwrap_or('\0')
     }
 
-    pub fn has_next_char(&self) -> bool {
+    pub(super) fn has_next_char(&self) -> bool {
         self.position < self.chars.len()
     }
 
     /// Like Java's `charAt`, reading past the end is a runtime failure.
-    pub fn eat_one_char(&mut self) -> TimResult<char> {
+    pub(super) fn eat_one_char(&mut self) -> TimResult<char> {
         let c = *self
             .chars
             .get(self.position)
@@ -63,25 +63,25 @@ impl Eater {
         Ok(c)
     }
 
-    pub fn eat_all_to_end(&mut self) -> String {
+    pub(super) fn eat_all_to_end(&mut self) -> String {
         let rest = self.chars[self.position..].iter().collect();
         self.position = self.chars.len();
         rest
     }
 
-    pub fn skip_spaces(&mut self) {
+    pub(super) fn skip_spaces(&mut self) {
         while self.position < self.chars.len() && java::is_whitespace(self.chars[self.position]) {
             self.position += 1;
         }
     }
 
-    pub fn skip_until_char(&mut self, c: char) {
+    pub(super) fn skip_until_char(&mut self, c: char) {
         while self.position < self.chars.len() && self.chars[self.position] != c {
             self.position += 1;
         }
     }
 
-    pub fn check_and_eat_char(&mut self, expected: char) -> TimResult<()> {
+    pub(super) fn check_and_eat_char(&mut self, expected: char) -> TimResult<()> {
         if self.peek_char() != expected || !self.has_next_char() {
             return fail("a001", &self.line);
         }
@@ -89,13 +89,13 @@ impl Eater {
         Ok(())
     }
 
-    pub fn check_and_eat(&mut self, expected: &str) -> TimResult<()> {
+    pub(super) fn check_and_eat(&mut self, expected: &str) -> TimResult<()> {
         expected
             .chars()
             .try_for_each(|c| self.check_and_eat_char(c))
     }
 
-    pub fn safe_check_and_eat_char(&mut self, expected: char) -> bool {
+    pub(super) fn safe_check_and_eat_char(&mut self, expected: char) -> bool {
         if self.has_next_char() && self.peek_char() == expected {
             self.position += 1;
             true
@@ -105,7 +105,7 @@ impl Eater {
     }
 
     /// An optional `$`, then letters, digits, underscores or emoji.
-    pub fn eat_and_get_varname(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_varname(&mut self) -> TimResult<String> {
         let first = self.eat_one_char()?;
         if !is_letter_or_emoji_or_underscore_or_dollar(first) {
             return fail("a002", &self.line);
@@ -115,7 +115,7 @@ impl Eater {
         Ok(name)
     }
 
-    pub fn eat_and_get_function_name(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_function_name(&mut self) -> TimResult<String> {
         let first = self.eat_one_char()?;
         if !is_letter_or_emoji_or_underscore_or_dollar(first) {
             return fail("a003", &self.line);
@@ -135,7 +135,7 @@ impl Eater {
         }
     }
 
-    pub fn eat_and_get_number(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_number(&mut self) -> TimResult<String> {
         let mut number = String::new();
         loop {
             let c = self.peek_char();
@@ -150,7 +150,7 @@ impl Eater {
         }
     }
 
-    pub fn eat_and_get_spaces(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_spaces(&mut self) -> TimResult<String> {
         let mut spaces = String::new();
         loop {
             let c = self.peek_char();
@@ -161,7 +161,7 @@ impl Eater {
         }
     }
 
-    pub fn eat_and_get_quoted_string(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_quoted_string(&mut self) -> TimResult<String> {
         let separator = self.peek_char();
         if !is_quote(separator) {
             return fail("quote10", &self.line);
@@ -177,7 +177,7 @@ impl Eater {
     }
 
     /// A quoted string, or raw text up to the next top-level `,` or `)`.
-    pub fn eat_and_get_optional_quoted_string(&mut self) -> TimResult<String> {
+    pub(super) fn eat_and_get_optional_quoted_string(&mut self) -> TimResult<String> {
         if is_quote(self.peek_char()) {
             return self.eat_and_get_quoted_string();
         }
@@ -202,14 +202,14 @@ impl Eater {
     }
 
     /// Whether `name = ...` follows: a named argument in a function call.
-    pub fn match_affectation(&self) -> bool {
+    pub(super) fn match_affectation(&self) -> bool {
         static AFFECTATION: LazyLock<Regex> =
             LazyLock::new(|| Regex::new(r"^\$?[_\p{L}][_\p{L}0-9]*[\t\n\x0B\x0C\r ]*=").unwrap());
         let rest: String = self.chars[self.position..].iter().collect();
         AFFECTATION.is_match(&rest)
     }
 
-    pub fn eat_expression(
+    pub(super) fn eat_expression(
         &mut self,
         context: &mut TContext,
         memory: &mut Memory,
@@ -223,7 +223,7 @@ impl Eater {
         tokens.get_result(&self.line, context, memory)
     }
 
-    pub fn eat_token_stack(&mut self) -> TimResult<TokenStack> {
+    pub(super) fn eat_token_stack(&mut self) -> TimResult<TokenStack> {
         let tokens = self.tokens_until(false)?;
         if tokens.is_empty() {
             return fail("Missing expression", &self.line);
@@ -231,7 +231,7 @@ impl Eater {
         Ok(tokens)
     }
 
-    pub fn eat_expression_stop_at_colon(
+    pub(super) fn eat_expression_stop_at_colon(
         &mut self,
         context: &mut TContext,
         memory: &mut Memory,
@@ -253,7 +253,7 @@ impl Eater {
     }
 
     /// `name(arg, arg = default, ...)` as written after `!function`, `!procedure` or `!define`.
-    pub fn eat_declare_function(
+    pub(super) fn eat_declare_function(
         &mut self,
         context: &mut TContext,
         memory: &mut Memory,

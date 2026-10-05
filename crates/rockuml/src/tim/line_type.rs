@@ -8,7 +8,7 @@ use crate::java;
 use crate::pattern::plantuml_regex;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum LineType {
+pub(super) enum LineType {
     Plain,
     AffectationDefine,
     Affectation,
@@ -119,7 +119,7 @@ static COMMENT_ONE_LINE_BLOCK: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^[%s]*/'.*'/[%s]*$"));
 static COMMENT_LONG_START: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*/'"));
 
-pub fn line_type(line: &str) -> LineType {
+pub(super) fn line_type(line: &str) -> LineType {
     if COMMENT_SIMPLE.is_match(line) || COMMENT_ONE_LINE_BLOCK.is_match(line) {
         return LineType::CommentSimple;
     }
@@ -135,15 +135,15 @@ pub fn line_type(line: &str) -> LineType {
         .map_or(LineType::Plain, |(line_type, _)| *line_type)
 }
 
-pub fn is_quote(c: char) -> bool {
+pub(super) fn is_quote(c: char) -> bool {
     c == '"' || c == '\''
 }
 
-pub fn is_letter_or_emoji_or_underscore_or_digit(c: char) -> bool {
+pub(super) fn is_letter_or_emoji_or_underscore_or_digit(c: char) -> bool {
     is_letter_or_emoji_or_underscore(c) || c.is_ascii_digit()
 }
 
-pub fn is_letter_or_emoji_or_underscore_or_dollar(c: char) -> bool {
+pub(super) fn is_letter_or_emoji_or_underscore_or_dollar(c: char) -> bool {
     is_letter_or_emoji_or_underscore(c) || c == '$'
 }
 

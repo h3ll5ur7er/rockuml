@@ -8,13 +8,13 @@ use regex::Regex;
 
 use crate::corpus::{Case, GoldenKind, file_name};
 
-pub enum Outcome {
+pub(crate) enum Outcome {
     Pass,
     Fail(String),
 }
 
 /// Returns `None` when the golden model produced nothing of this kind for the case.
-pub fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
+pub(crate) fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
     let goldens = case.goldens(kind);
     if goldens.is_empty() {
         return None;
@@ -36,7 +36,7 @@ pub fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
     Some(compare(
         &goldens
             .into_iter()
-            .map(|(name, path)| (name, read_normalised(&path)))
+            .map(|(name, path)| (name, read_normalised(&path, kind)))
             .collect(),
         &produced,
     ))
@@ -56,7 +56,11 @@ fn run_to_files(rockuml: &Path, case: &Case, kind: GoldenKind) -> Produced {
     let produced = fs::read_dir(output_directory.path())
         .unwrap()
         .map(|entry| entry.unwrap().path())
-        .map(|path| (file_name(&path), read_normalised(&path)))
+        .map(|path| {
+            // Deterministic SVGs are written as `.svg`, but kept beside the font-measured ones as `.dsvg`.
+            let golden_name = path.with_extension(kind.extension());
+            (file_name(&golden_name), read_normalised(&path, kind))
+        })
         .collect();
     (produced, run)
 }
@@ -113,8 +117,19 @@ fn first_difference(expected: &str, produced: &str) -> Option<String> {
     unreachable!()
 }
 
-fn read_normalised(path: &Path) -> String {
-    normalise(&String::from_utf8_lossy(&fs::read(path).unwrap()))
+/// PNGs are compared by size only: Java and resvg antialias differently.
+fn read_normalised(path: &Path, kind: GoldenKind) -> String {
+    let bytes = fs::read(path).unwrap();
+    if kind == GoldenKind::Png {
+        return png_size(&bytes);
+    }
+    normalise(&String::from_utf8_lossy(&bytes))
+}
+
+/// Width and height from the PNG header.
+fn png_size(png: &[u8]) -> String {
+    let dimension = |at: usize| u32::from_be_bytes(png[at..at + 4].try_into().unwrap());
+    format!("{} x {}", dimension(16), dimension(20))
 }
 
 /// Line endings depend on how git checked out the goldens, and PlantUML's debug output stamps the
@@ -147,6 +162,14 @@ mod tests {
             first_difference("a\nb", "a").as_deref(),
             Some(r#"line 2: expected "b", produced "<end of file>""#)
         );
+    }
+
+    #[test]
+    fn pngs_compare_by_size() {
+        let mut header = b"\x89PNG\r\n\x1a\n\0\0\0\rIHDR".to_vec();
+        header.extend(300_u32.to_be_bytes());
+        header.extend(20_u32.to_be_bytes());
+        assert_eq!(png_size(&header), "300 x 20");
     }
 
     #[test]

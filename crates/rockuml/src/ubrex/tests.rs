@@ -1,0 +1,705 @@
+//! Every expectation here was observed on PlantUML 1.2026.8's `com.plantuml.ubrex`, running on JDK 21.
+
+use super::{UMatcher, UnicodeBracketedExpression};
+
+const NONE: [&str; 0] = [];
+
+/// The accepted match, or `None` where Java's `startMatch()` is false.
+fn accepted<'a>(pattern: &str, text: &'a str) -> Option<&'a str> {
+    UnicodeBracketedExpression::build(pattern)
+        .match_at(text)
+        .as_ref()
+        .map(UMatcher::accepted_match)
+}
+
+/// The values captured under `key`, none where nothing matched.
+fn found<'a>(matcher: Option<&UMatcher<'a>>, key: &str) -> Vec<&'a str> {
+    matcher.map_or_else(Vec::new, |matcher| matcher.find_values_by_key(key))
+}
+
+fn values<'a>(pattern: &str, text: &'a str, key: &str) -> Vec<&'a str> {
+    found(
+        UnicodeBracketedExpression::build(pattern)
+            .match_at(text)
+            .as_ref(),
+        key,
+    )
+}
+
+/// The match, which must exist.
+fn matched<'a>(pattern: &str, text: &'a str) -> UMatcher<'a> {
+    UnicodeBracketedExpression::build(pattern)
+        .match_at(text)
+        .expect("the pattern matches")
+}
+
+fn assert_cases(pattern: &str, cases: &[(&str, Option<&str>)]) {
+    for &(text, expected) in cases {
+        assert_eq!(accepted(pattern, text), expected, "{pattern} on {text:?}");
+    }
+}
+
+mod creole {
+    //! The patterns `CommandCreoleStyle` and `CommandCreoleExposantChange` build from `FontStyle`.
+
+    use super::*;
+
+    const UNDERLINE_ACTIVATION: &str = "<「uU」〇?〘:〶$XC=【#〇{6}「0〜9a〜fA〜F」┇〇+〴w】〙>";
+    const BACKCOLOR_ACTIVATION: &str = "<「bB」「aA」「cC」「kK」〇?〘:〶$XC=〘\
+        【#〇{6}「0〜9a〜fA〜F」┇〇+〴w 】 \
+        〇?〘「-\\|/」【〇{6}「0〜9a〜fA〜F」┇〇+〴w】 〙\
+        〙 〙>";
+    const STRIKE_ACTIVATION: &str =
+        "<【strike┇STRIKE┇s┇S┇del┇DEL】〇?〘:〶$XC=【#〇{6}「0〜9a〜fA〜F」┇〇+〴w】〙>";
+    const STRIKE_DEACTIVATION: &str = "</【strike┇STRIKE┇s┇S┇del┇DEL】>";
+
+    fn legacy(activation: &str, deactivation: &str) -> String {
+        format!("{activation}〶$V=〄>〘{deactivation}〙")
+    }
+
+    fn creole(syntax: &str) -> String {
+        format!("{syntax}〶$V=〄+〴.->〘{syntax}〙")
+    }
+
+    /// (text, accepted match, `V`, `XC`).
+    type StyleCase<'a> = (&'a str, Option<&'a str>, &'a [&'a str], &'a [&'a str]);
+
+    fn assert_style(pattern: &str, cases: &[StyleCase]) {
+        let ubrex = UnicodeBracketedExpression::build(pattern);
+        for &(text, accepted, value, extended_color) in cases {
+            let matcher = ubrex.match_at(text);
+            let matcher = matcher.as_ref();
+            assert_eq!(matcher.map(UMatcher::accepted_match), accepted, "{text:?}");
+            assert_eq!(found(matcher, "V"), value, "{text:?}");
+            assert_eq!(found(matcher, "XC"), extended_color, "{text:?}");
+        }
+    }
+
+    #[test]
+    fn legacy_bold_captures_up_to_the_closing_tag() {
+        assert_style(
+            &legacy("<「bB」>", "</「bB」>"),
+            &[
+                ("<b>bold</b> rest", Some("<b>bold</b>"), &["bold"], &[]),
+                ("<b>bold", None, &[], &[]),
+                ("<b></b>", Some("<b></b>"), &[""], &[]),
+            ],
+        );
+    }
+
+    #[test]
+    fn creole_bold_needs_one_character_before_the_closing_stars() {
+        assert_style(
+            &creole("**"),
+            &[
+                ("**bold** x", Some("**bold**"), &["bold"], &[]),
+                ("****", None, &[], &[]),
+                ("*****", Some("*****"), &["*"], &[]),
+                ("**a**b**", Some("**a**"), &["a"], &[]),
+            ],
+        );
+    }
+
+    #[test]
+    fn underline_takes_an_optional_extended_color() {
+        assert_style(
+            &legacy(UNDERLINE_ACTIVATION, "</「uU」>"),
+            &[
+                (
+                    "<u:#FF00aa>text</u>",
+                    Some("<u:#FF00aa>text</u>"),
+                    &["text"],
+                    &["#FF00aa"],
+                ),
+                ("<u:red>t</U>", Some("<u:red>t</U>"), &["t"], &["red"]),
+                ("<u:#FF00aa1>t</u>", None, &[], &[]),
+                ("<u>t</u>", Some("<u>t</u>"), &["t"], &[]),
+            ],
+        );
+    }
+
+    #[test]
+    fn backcolor_takes_an_optional_gradient() {
+        assert_style(
+            &legacy(BACKCOLOR_ACTIVATION, "</「bB」「aA」「cC」「kK」>"),
+            &[
+                (
+                    "<back:red/blue>x</back>",
+                    Some("<back:red/blue>x</back>"),
+                    &["x"],
+                    &["red/blue"],
+                ),
+                (
+                    "<BACK:#ffffff|000000>hi</back>",
+                    Some("<BACK:#ffffff|000000>hi</back>"),
+                    &["hi"],
+                    &["#ffffff|000000"],
+                ),
+                (
+                    "<back:#ffffff\\green>hi</back>",
+                    Some("<back:#ffffff\\green>hi</back>"),
+                    &["hi"],
+                    &["#ffffff\\green"],
+                ),
+            ],
+        );
+    }
+
+    #[test]
+    fn strike_tags_are_tried_in_order() {
+        assert_style(
+            &legacy(STRIKE_ACTIVATION, STRIKE_DEACTIVATION),
+            &[
+                ("<s>x</s>", Some("<s>x</s>"), &["x"], &[]),
+                (
+                    "<del:blue>x</del>",
+                    Some("<del:blue>x</del>"),
+                    &["x"],
+                    &["blue"],
+                ),
+                (
+                    "<sTrike>x</strike>",
+                    Some("<sTrike>x</strike>"),
+                    &["x"],
+                    &[],
+                ),
+                ("<strike>x</s>", Some("<strike>x</s>"), &["x"], &[]),
+            ],
+        );
+    }
+
+    #[test]
+    fn legacy_end_of_line_style_takes_the_rest_of_the_line() {
+        assert_style(
+            "<「bB」>〶$V=〇+〴.",
+            &[
+                (
+                    "<b>rest of line",
+                    Some("<b>rest of line"),
+                    &["rest of line"],
+                    &[],
+                ),
+                ("<b>", None, &[], &[]),
+            ],
+        );
+    }
+
+    #[test]
+    fn exposant_change() {
+        let matcher = matched("<sub>〶$V=〄>〘</sub>〙", "<sub>2</sub>O");
+        assert_eq!(matcher.accepted_match(), "<sub>2</sub>");
+        assert_eq!(matcher.find_values_by_key("V"), ["2"]);
+    }
+}
+
+mod matcher {
+    use super::*;
+
+    #[test]
+    fn a_failed_match_gives_no_matcher() {
+        let ubrex = UnicodeBracketedExpression::build("〶$V=〄>z");
+        assert!(ubrex.match_at("abc").is_none());
+    }
+
+    #[test]
+    fn a_match_may_leave_text_after_it() {
+        assert_eq!(accepted("a", "ab"), Some("a"));
+    }
+
+    #[test]
+    fn empty_matches_at_the_end_of_the_text() {
+        for pattern in ["〒$", "〇*〴s"] {
+            assert_eq!(accepted(pattern, ""), Some(""), "{pattern}");
+        }
+    }
+
+    #[test]
+    fn end_of_text() {
+        assert_cases("a〒$", &[("a", Some("a")), ("ab", None)]);
+    }
+}
+
+mod repetition {
+    use super::*;
+
+    #[test]
+    fn repetitions_are_greedy_and_never_backtrack() {
+        assert_eq!(accepted("〇*〴.x", "abx"), None);
+        assert_cases(
+            "〇{2}a",
+            &[("aaa", None), ("aa", Some("aa")), ("aab", Some("aa"))],
+        );
+    }
+
+    #[test]
+    fn repetition_counts_combine_ranges_and_minimums() {
+        assert_cases(
+            "〇{2-3;5+}a",
+            &[
+                ("a", None),
+                ("aa", Some("aa")),
+                ("aaa", Some("aaa")),
+                ("aaaa", None),
+                ("aaaaa", Some("aaaaa")),
+                ("aaaaaaa", Some("aaaaaaa")),
+            ],
+        );
+        assert_cases("〇{3+}a", &[("aaa", Some("aaa")), ("aa", None)]);
+        assert_cases("〇{1;3}a", &[("aaa", Some("aaa"))]);
+        assert_cases("〇{+2}a", &[("aa", Some("aa"))]);
+    }
+
+    #[test]
+    fn a_repetition_never_accepts_zero_occurrences() {
+        assert_eq!(accepted("〇{0}a", "b"), None);
+        assert_eq!(accepted("〇{-2+}a", "b"), None);
+        assert_eq!(accepted("〇{5--3}a", "a"), None);
+    }
+
+    #[test]
+    fn quantifiers_on_empty_text() {
+        assert_eq!(accepted("〇*a", ""), Some(""));
+        assert_eq!(accepted("〇+a", ""), None);
+        assert_eq!(accepted("〇?a", ""), Some(""));
+    }
+
+    #[test]
+    fn repeated_named_captures_accumulate() {
+        assert_eq!(values("〇*〘〶$D=〴d,〙", "1,2,3,", "D"), ["1", "2", "3"]);
+    }
+
+    #[test]
+    #[should_panic(expected = "infinite loop")]
+    fn zero_or_more_of_an_empty_match_is_an_infinite_loop() {
+        accepted("〇*〘〇?a〙", "aab");
+    }
+
+    #[test]
+    #[should_panic(expected = "infinite loop")]
+    fn one_or_more_of_an_empty_match_is_an_infinite_loop() {
+        accepted("〇+〘〇?a〙", "b");
+    }
+
+    #[test]
+    #[should_panic(expected = "infinite loop")]
+    fn counted_repetition_of_an_empty_match_is_an_infinite_loop() {
+        accepted("〇{2}〘〇?a〙", "b");
+    }
+
+    #[test]
+    #[should_panic(expected = "infinite loop")]
+    fn up_to_of_an_empty_match_is_an_infinite_loop() {
+        accepted("〄+〘〇?a〙->x", "b");
+    }
+}
+
+mod named {
+    use super::*;
+
+    #[test]
+    fn nested_names_are_prefixed_and_listed_first() {
+        let matcher = matched("〶$A=〘x〶$B=〇+〴d〙", "x12");
+        assert_eq!(matcher.find_values_by_key("A"), ["x12"]);
+        assert_eq!(matcher.find_values_by_key("B"), NONE);
+        assert_eq!(matcher.find_values_by_key("A/B"), ["12"]);
+    }
+
+    #[test]
+    fn values_are_found_by_their_whole_key() {
+        assert_eq!(values("〶$A1=a〶$A2=b", "ab", "A"), NONE);
+    }
+
+    #[test]
+    fn a_name_directly_inside_a_name() {
+        let matcher = matched("〶$X_y=〶$Z=a", "a");
+        assert_eq!(matcher.find_values_by_key("X_y"), ["a"]);
+        assert_eq!(matcher.find_values_by_key("X_y/Z"), ["a"]);
+        assert_eq!(matcher.find_values_by_key("Z"), NONE);
+    }
+
+    #[test]
+    fn a_skipped_optional_captures_nothing() {
+        assert_eq!(values("〇?〘〶$A=a〙b", "b", "A"), NONE);
+    }
+
+    #[test]
+    fn up_to_leaves_its_stop_pattern_out_of_the_name() {
+        for pattern in ["〶$V=〄+〴.->〘;〙", "〶$V=〄+ 〴. -> ;"] {
+            let matcher = matched(pattern, "abc;d");
+            assert_eq!(matcher.accepted_match(), "abc;");
+            assert_eq!(matcher.find_values_by_key("V"), ["abc"]);
+        }
+        let matcher = matched("〶$V=〄>〒$", "abc");
+        assert_eq!(matcher.accepted_match(), "abc");
+        assert_eq!(matcher.find_values_by_key("V"), ["abc"]);
+        let matcher = matched("〶$V=〄>a", "abc");
+        assert_eq!(matcher.accepted_match(), "a");
+        assert_eq!(matcher.find_values_by_key("V"), [""]);
+    }
+}
+
+mod alternative {
+    use super::*;
+
+    #[test]
+    fn the_first_matching_alternative_wins() {
+        assert_eq!(accepted("【a┇ab】", "ab"), Some("a"));
+        assert_eq!(
+            accepted("【hide-class┇hide┇show-class┇show】", "hide-class"),
+            Some("hide-class")
+        );
+    }
+
+    #[test]
+    fn a_blank_alternative_matches_empty() {
+        assert_eq!(accepted("【 ┇a】b", "b"), Some("b"));
+    }
+
+    #[test]
+    fn alternatives_nest() {
+        assert_eq!(accepted("【a【b┇c】┇d】", "ac"), Some("ac"));
+    }
+
+    #[test]
+    #[should_panic(expected = "〘")]
+    fn a_separator_inside_a_group_still_splits_the_alternative() {
+        UnicodeBracketedExpression::build("【〘a┇b〙┇c】");
+    }
+
+    #[test]
+    #[should_panic(expected = "「")]
+    fn a_separator_inside_a_char_set_still_splits_the_alternative() {
+        UnicodeBracketedExpression::build("【「a┇」┇b】");
+    }
+}
+
+mod char_class {
+    use super::*;
+
+    #[test]
+    fn spaces() {
+        assert_eq!(accepted("〴s", " "), Some(" "));
+        assert_eq!(accepted("〴s", "\t"), None);
+        assert_eq!(accepted("〴S", "\t"), Some("\t"));
+        assert_eq!(accepted("〴S", " "), None);
+    }
+
+    #[test]
+    fn digits_and_words_are_ascii_and_include_the_underscore() {
+        assert_eq!(accepted("〴d", "_"), Some("_"));
+        assert_eq!(accepted("〴w", "_"), Some("_"));
+        assert_eq!(accepted("〴w", "é"), None);
+        assert_eq!(accepted("〴W", "é"), Some("é"));
+        assert_eq!(accepted("〴Dx", "ax"), Some("ax"));
+    }
+
+    #[test]
+    fn guillemets() {
+        assert_eq!(accepted("〴g〴g〴g", "\"“”"), Some("\"“”"));
+        assert_eq!(accepted("〴G", "“"), None);
+    }
+
+    #[test]
+    fn letters_and_alphanumerics_are_unicode() {
+        assert_eq!(accepted("〴an", "é"), Some("é"));
+        assert_eq!(accepted("〴an", "\u{663}"), Some("\u{663}"));
+        assert_eq!(accepted("〴le", "é"), Some("é"));
+        assert_eq!(accepted("〴le", "1"), None);
+        assert_eq!(accepted("〴L", "1"), Some("1"));
+    }
+
+    #[test]
+    fn two_letter_classes_skip_their_second_letter_unread() {
+        assert_eq!(accepted("〴ax!", "1!"), Some("1!"));
+        assert_eq!(accepted("〇+〴a", "ab1-"), Some("ab1"));
+        assert_eq!(accepted("〇+〴l", "ab1-"), Some("ab"));
+    }
+
+    #[test]
+    fn any_includes_line_breaks() {
+        assert_eq!(accepted("〴.", "\n"), Some("\n"));
+    }
+}
+
+mod char_set {
+    use super::*;
+
+    const HEX: &str = "「0〜9a〜fA〜F」";
+
+    #[test]
+    fn ranges_ignore_ascii_case() {
+        assert_cases(HEX, &[("F", Some("F")), ("g", None), ("G", None)]);
+        assert_eq!(accepted("「a」", "A"), Some("A"));
+        assert_eq!(accepted("「A」", "a"), Some("a"));
+    }
+
+    #[test]
+    fn negation_applies_to_the_whole_set_wherever_it_is_written() {
+        assert_cases("「〤abc」", &[("d", Some("d")), ("A", None)]);
+        assert_eq!(accepted("「ab〤c」", "c"), None);
+    }
+
+    #[test]
+    fn escapes_and_spaces() {
+        assert_eq!(accepted("「〃」", "\""), Some("\""));
+        assert_eq!(accepted("「∙」", " "), Some(" "));
+        assert_eq!(accepted("「 a」", " "), None);
+        let set = "「-\\|/」";
+        assert_eq!(accepted(&set.repeat(4), "-\\|/"), Some("-\\|/"));
+    }
+
+    #[test]
+    fn classes_inside_a_set_are_never_negated() {
+        assert_cases("「〴S」", &[(" ", Some(" ")), ("\t", None)]);
+        assert_cases("「〴an_.」", &[("é", Some("é")), ("-", None)]);
+        assert_eq!(accepted("「〴a」", "1"), Some("1"));
+        assert_eq!(accepted("「〴le」", "é"), Some("é"));
+        assert_eq!(accepted("「〴anx」", "x"), Some("x"));
+        assert_eq!(accepted("〇+「〴a」", "ab1-"), Some("ab1"));
+    }
+
+    #[test]
+    fn characters_outside_the_bitmask_alias_characters_inside() {
+        // Java masks the shift distance, so control characters and U+00A0 land on printable bits.
+        assert_cases(
+            "「!〜~」",
+            &[
+                ("\t", Some("\t")),
+                ("\u{A0}", Some("\u{A0}")),
+                ("\u{A1}", None),
+            ],
+        );
+        assert_eq!(accepted("「`」", "\u{A0}"), Some("\u{A0}"));
+        assert_cases(
+            "「\u{80}」",
+            &[("\u{80}", Some("\u{80}")), ("\u{C0}", None)],
+        );
+        assert_cases("「`〜\u{80}」", &[("\u{A0}", Some("\u{A0}")), ("@", None)]);
+    }
+
+    #[test]
+    fn a_range_reversed_by_lowercasing_sets_unrelated_bits() {
+        assert_cases("「Z〜a」", &[("a", None), ("{", Some("{")), ("\"", None)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "〜")]
+    fn a_range_needs_an_end() {
+        UnicodeBracketedExpression::build("「a〜」");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty")]
+    fn a_set_cannot_be_empty() {
+        UnicodeBracketedExpression::build("「」");
+    }
+
+    #[test]
+    #[should_panic(expected = "bad char")]
+    fn a_set_only_holds_ascii() {
+        UnicodeBracketedExpression::build("「é」");
+    }
+
+    #[test]
+    #[should_panic(expected = "invalid range")]
+    fn a_range_must_be_ordered() {
+        UnicodeBracketedExpression::build("「z〜a」");
+    }
+
+    #[test]
+    #[should_panic(expected = "range")]
+    fn a_range_must_stay_in_ascii() {
+        UnicodeBracketedExpression::build("「a〜é」");
+    }
+}
+
+mod single_char {
+    use super::*;
+
+    #[test]
+    fn letters_ignore_ascii_case_only() {
+        assert_eq!(accepted("ABC", "abc"), Some("abc"));
+        assert_eq!(accepted("abc", "ABC"), Some("ABC"));
+        assert_eq!(accepted("É", "é"), None);
+    }
+
+    #[test]
+    fn spaces_are_layout_and_escapes_are_literal() {
+        assert_eq!(accepted("a b", "ab"), Some("ab"));
+        assert_eq!(
+            accepted("left∙to∙right", "left to right"),
+            Some("left to right")
+        );
+        assert_eq!(accepted("〃x〃", "\"x\""), Some("\"x\""));
+    }
+
+    #[test]
+    #[should_panic(expected = "reserved")]
+    fn reserved_characters_cannot_be_literals() {
+        UnicodeBracketedExpression::build("」");
+    }
+}
+
+mod syntax_errors {
+    use super::*;
+
+    #[test]
+    #[should_panic(expected = "no space allowed")]
+    fn a_quantified_atom_cannot_be_a_space() {
+        UnicodeBracketedExpression::build("〇+ a");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty")]
+    fn empty_pattern() {
+        UnicodeBracketedExpression::build("");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty")]
+    fn empty_group() {
+        UnicodeBracketedExpression::build("〘〙");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty")]
+    fn empty_alternative() {
+        UnicodeBracketedExpression::build("【a┇】");
+    }
+
+    #[test]
+    #[should_panic(expected = "no name")]
+    fn missing_name() {
+        UnicodeBracketedExpression::build("〶$=a");
+    }
+
+    #[test]
+    #[should_panic(expected = "$")]
+    fn name_without_dollar() {
+        UnicodeBracketedExpression::build("〶X=a");
+    }
+
+    #[test]
+    #[should_panic(expected = "unsupported name")]
+    fn name_with_a_dash() {
+        UnicodeBracketedExpression::build("〶$A-B=a");
+    }
+
+    #[test]
+    #[should_panic(expected = "quantifier")]
+    fn unknown_quantifier() {
+        UnicodeBracketedExpression::build("〇!a");
+    }
+
+    #[test]
+    #[should_panic(expected = "〄")]
+    fn unknown_up_to() {
+        UnicodeBracketedExpression::build("〄a");
+    }
+
+    #[test]
+    #[should_panic(expected = "->")]
+    fn up_to_without_arrow() {
+        UnicodeBracketedExpression::build("〄+a b");
+    }
+
+    #[test]
+    #[should_panic(expected = "〒")]
+    fn end_of_text_needs_its_dollar() {
+        UnicodeBracketedExpression::build("〒x");
+    }
+
+    #[test]
+    #[should_panic(expected = "〘")]
+    fn unclosed_group() {
+        UnicodeBracketedExpression::build("〘a");
+    }
+
+    #[test]
+    #[should_panic(expected = "【")]
+    fn unclosed_alternative() {
+        UnicodeBracketedExpression::build("【a");
+    }
+
+    #[test]
+    #[should_panic(expected = "「")]
+    fn unclosed_set() {
+        UnicodeBracketedExpression::build("「a");
+    }
+
+    #[test]
+    #[should_panic(expected = "┇")]
+    fn separator_outside_an_alternative() {
+        UnicodeBracketedExpression::build("┇");
+    }
+
+    #[test]
+    #[should_panic(expected = "class")]
+    fn unknown_class() {
+        UnicodeBracketedExpression::build("〴q");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty repetition token")]
+    fn empty_repetition() {
+        UnicodeBracketedExpression::build("〇{}a");
+    }
+
+    #[test]
+    #[should_panic(expected = "repetition")]
+    fn open_ended_range() {
+        UnicodeBracketedExpression::build("〇{2-}a");
+    }
+}
+
+mod non_bmp {
+    //! Java steps through UTF-16 units, so a surrogate pair is two characters to every pattern.
+
+    use super::*;
+
+    const GRIN: &str = "😀";
+    /// U+1D400 MATHEMATICAL BOLD CAPITAL A, a letter outside the BMP.
+    const BOLD_A: &str = "\u{1D400}";
+
+    #[test]
+    fn whole_characters_pass_through_runs() {
+        assert_eq!(accepted("〇+〴.", "a😀b"), Some("a😀b"));
+        assert_eq!(accepted("〇+〴.", BOLD_A), Some(BOLD_A));
+        assert_eq!(accepted("〇+〴W", GRIN), Some(GRIN));
+        assert_eq!(accepted("〇+〴S", GRIN), Some(GRIN));
+        assert_eq!(accepted("〇+〴G", "😀\""), Some(GRIN));
+        assert_eq!(accepted("〇+〴D", "😀\""), Some("😀\""));
+        assert_eq!(accepted("〇+「〤a」", "😀a"), Some(GRIN));
+        assert_eq!(values("〶$V=〄>a", "😀a", "V"), [GRIN]);
+        assert_eq!(values("<b>〶$V=〄>〘</b>〙", "<b>😀</b>", "V"), [GRIN]);
+        assert_eq!(values("〶$V=〄+〴.->〘**〙", "x😀**", "V"), ["x😀"]);
+    }
+
+    #[test]
+    fn a_surrogate_is_not_a_letter() {
+        assert_eq!(accepted("〇+〴le", BOLD_A), None);
+        assert_eq!(accepted("〇+〴an", BOLD_A), None);
+    }
+
+    #[test]
+    fn counted_repetitions_count_utf16_units() {
+        assert_eq!(accepted("〇{2}〴.", GRIN), Some(GRIN));
+        assert_eq!(accepted("〴.〴.〒$", GRIN), Some(GRIN));
+    }
+
+    #[test]
+    fn literal_pairs_match_as_two_units() {
+        assert_eq!(accepted(GRIN, GRIN), Some(GRIN));
+        assert_eq!(accepted("😀a", "😀A"), Some("😀A"));
+    }
+
+    /// Java accepts the high surrogate alone; a `&str` cannot be cut there, so the accepted text widens
+    /// to the whole character.
+    #[test]
+    fn a_match_ending_inside_a_pair_widens_to_the_whole_character() {
+        let matcher = matched("〶$V=〴.", GRIN);
+        assert_eq!(matcher.accepted_match(), GRIN);
+        assert_eq!(matcher.find_values_by_key("V"), [GRIN]);
+        assert_eq!(accepted("「〤a」", GRIN), Some(GRIN));
+    }
+}

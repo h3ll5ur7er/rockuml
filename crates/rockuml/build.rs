@@ -24,7 +24,7 @@ fn main() {
         .collect();
     entries.sort();
 
-    let mut table = String::from("pub static FILES: &[(&str, &[u8])] = &[\n");
+    let mut table = String::from("pub(crate) static FILES: &[(&str, &[u8])] = &[\n");
     for (name, file) in entries {
         writeln!(
             table,

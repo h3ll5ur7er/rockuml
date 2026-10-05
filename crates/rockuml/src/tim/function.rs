@@ -15,18 +15,22 @@ use crate::text::StringLocated;
 
 /// Functions are told apart by name and argument count; named arguments only matter for `can_cover`.
 #[derive(Clone, Debug)]
-pub struct FunctionSignature {
+pub(super) struct FunctionSignature {
     name: String,
     argument_count: usize,
     named_arguments: HashSet<String>,
 }
 
 impl FunctionSignature {
-    pub fn new(name: &str, argument_count: usize) -> Self {
+    pub(super) fn new(name: &str, argument_count: usize) -> Self {
         Self::with_named(name, argument_count, HashSet::new())
     }
 
-    pub fn with_named(name: &str, argument_count: usize, named_arguments: HashSet<String>) -> Self {
+    pub(super) fn with_named(
+        name: &str,
+        argument_count: usize,
+        named_arguments: HashSet<String>,
+    ) -> Self {
         Self {
             name: name.to_owned(),
             argument_count,
@@ -34,15 +38,15 @@ impl FunctionSignature {
         }
     }
 
-    pub fn name(&self) -> &str {
+    pub(super) fn name(&self) -> &str {
         &self.name
     }
 
-    pub fn argument_count(&self) -> usize {
+    pub(super) fn argument_count(&self) -> usize {
         self.argument_count
     }
 
-    pub fn named_arguments(&self) -> &HashSet<String> {
+    pub(super) fn named_arguments(&self) -> &HashSet<String> {
         &self.named_arguments
     }
 
@@ -71,7 +75,7 @@ impl Hash for FunctionSignature {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum FunctionType {
+pub(super) enum FunctionType {
     Procedure,
     ReturnFunction,
     LegacyDefine,
@@ -79,12 +83,12 @@ pub enum FunctionType {
 }
 
 impl FunctionType {
-    pub fn is_legacy(self) -> bool {
+    pub(super) fn is_legacy(self) -> bool {
         matches!(self, Self::LegacyDefine | Self::LegacyDefinelong)
     }
 }
 
-pub trait TFunction {
+pub(super) trait TFunction {
     fn signature(&self) -> &FunctionSignature;
     fn can_cover(&self, argument_count: usize, named_arguments: &HashSet<String>) -> bool;
     fn function_type(&self) -> FunctionType;
@@ -110,19 +114,19 @@ pub trait TFunction {
 }
 
 #[derive(Clone, Debug)]
-pub struct FunctionArgument {
+pub(super) struct FunctionArgument {
     name: String,
     default: Option<TValue>,
 }
 
 impl FunctionArgument {
-    pub fn new(name: String, default: Option<TValue>) -> Self {
+    pub(super) fn new(name: String, default: Option<TValue>) -> Self {
         Self { name, default }
     }
 }
 
 /// A `!function`, `!procedure`, `!define` or `!definelong` written in the diagram source.
-pub struct UserFunction {
+pub(super) struct UserFunction {
     signature: FunctionSignature,
     arguments: Vec<FunctionArgument>,
     body: Vec<StringLocated>,
@@ -133,7 +137,7 @@ pub struct UserFunction {
 }
 
 impl UserFunction {
-    pub fn new(
+    pub(super) fn new(
         name: &str,
         arguments: Vec<FunctionArgument>,
         unquoted: bool,
@@ -154,7 +158,7 @@ impl UserFunction {
         }
     }
 
-    pub fn add_body(&mut self, line: StringLocated) -> TimResult<()> {
+    pub(super) fn add_body(&mut self, line: StringLocated) -> TimResult<()> {
         if line_type(line.text()) == LineType::Return {
             self.contains_return = true;
             if self.function_type == FunctionType::Procedure {
@@ -168,15 +172,15 @@ impl UserFunction {
         Ok(())
     }
 
-    pub fn has_body(&self) -> bool {
+    pub(super) fn has_body(&self) -> bool {
         !self.body.is_empty()
     }
 
-    pub fn contains_return(&self) -> bool {
+    pub(super) fn contains_return(&self) -> bool {
         self.contains_return
     }
 
-    pub fn set_legacy_definition(&mut self, definition: String) {
+    pub(super) fn set_legacy_definition(&mut self, definition: String) {
         self.legacy_definition = Some(definition);
     }
 
@@ -291,7 +295,7 @@ impl TFunction for UserFunction {
 }
 
 #[derive(Default)]
-pub struct FunctionsSet {
+pub(super) struct FunctionsSet {
     /// In insertion order; replacing a function keeps its slot, as `HashMap.put` does.
     functions: Vec<Rc<dyn TFunction>>,
     finals: HashSet<FunctionSignature>,
@@ -300,11 +304,11 @@ pub struct FunctionsSet {
 }
 
 impl FunctionsSet {
-    pub fn len(&self) -> usize {
+    pub(super) fn len(&self) -> usize {
         self.functions.len()
     }
 
-    pub fn add(&mut self, function: Rc<dyn TFunction>) {
+    pub(super) fn add(&mut self, function: Rc<dyn TFunction>) {
         self.names.add(&format!("{}(", function.signature().name()));
         match self
             .functions
@@ -316,7 +320,7 @@ impl FunctionsSet {
         }
     }
 
-    pub fn add_user_function(&mut self, mut function: UserFunction) {
+    pub(super) fn add_user_function(&mut self, mut function: UserFunction) {
         if function.function_type == FunctionType::LegacyDefinelong {
             function.finalize_enddefinelong();
         }
@@ -325,7 +329,7 @@ impl FunctionsSet {
 
     /// The function with exactly this signature, or else the first one with the same name that accepts
     /// the arguments, in the order a Java `HashMap` would offer them.
-    pub fn get_smart(&self, searched: &FunctionSignature) -> Option<Rc<dyn TFunction>> {
+    pub(super) fn get_smart(&self, searched: &FunctionSignature) -> Option<Rc<dyn TFunction>> {
         if let Some(exact) = self
             .functions
             .iter()
@@ -348,16 +352,16 @@ impl FunctionsSet {
             .cloned()
     }
 
-    pub fn exists(&self, name: &str) -> bool {
+    pub(super) fn exists(&self, name: &str) -> bool {
         self.with_name(name).next().is_some()
     }
 
-    pub fn is_legacy_define(&self, name: &str) -> bool {
+    pub(super) fn is_legacy_define(&self, name: &str) -> bool {
         self.with_name(name)
             .any(|function| function.function_type().is_legacy())
     }
 
-    pub fn is_unquoted(&self, name: &str) -> bool {
+    pub(super) fn is_unquoted(&self, name: &str) -> bool {
         self.with_name(name).any(|function| function.is_unquoted())
     }
 
@@ -368,32 +372,32 @@ impl FunctionsSet {
     }
 
     /// The name of a function called at `position`, i.e. a known name directly followed by `(`.
-    pub fn name_called_at(&self, chars: &[char], position: usize) -> Option<String> {
+    pub(super) fn name_called_at(&self, chars: &[char], position: usize) -> Option<String> {
         let mut name = self.names.longest_match_starting_in(chars, position);
         name.pop()?;
         Some(name)
     }
 
-    pub fn pending(&self) -> Option<&UserFunction> {
+    pub(super) fn pending(&self) -> Option<&UserFunction> {
         self.pending.as_ref()
     }
 
-    pub fn pending_mut(&mut self) -> Option<&mut UserFunction> {
+    pub(super) fn pending_mut(&mut self) -> Option<&mut UserFunction> {
         self.pending.as_mut()
     }
 
-    pub fn start_pending(&mut self, function: UserFunction) {
+    pub(super) fn start_pending(&mut self, function: UserFunction) {
         self.pending = Some(function);
     }
 
-    pub fn finish_pending(&mut self) {
+    pub(super) fn finish_pending(&mut self) {
         if let Some(function) = self.pending.take() {
             self.add_user_function(function);
         }
     }
 
     /// Registers a `!function` or `!procedure` declaration, honouring `!final`.
-    pub fn declare(
+    pub(super) fn declare(
         &mut self,
         function: UserFunction,
         is_final: bool,

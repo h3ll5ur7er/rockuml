@@ -24,7 +24,7 @@ use crate::preproc::{read_lines_of_diagram, read_plain_lines};
 use crate::stdlib;
 use crate::text::{LineLocation, StringLocated};
 
-pub struct TContext<'a> {
+pub(super) struct TContext<'a> {
     pub functions: FunctionsSet,
     pub subs: HashMap<String, Vec<StringLocated>>,
     result: Vec<StringLocated>,
@@ -41,7 +41,7 @@ pub struct TContext<'a> {
 }
 
 impl<'a> TContext<'a> {
-    pub fn new(
+    pub(super) fn new(
         host: &'a dyn Host,
         environment: &'a PreprocessorEnvironment,
         definitions: &'a dyn Definitions,
@@ -65,28 +65,31 @@ impl<'a> TContext<'a> {
         }
     }
 
-    pub fn into_result(self) -> Vec<StringLocated> {
+    pub(super) fn into_result(self) -> Vec<StringLocated> {
         self.result
     }
 
-    pub fn result_mut(&mut self) -> &mut Vec<StringLocated> {
+    pub(super) fn result_mut(&mut self) -> &mut Vec<StringLocated> {
         &mut self.result
     }
 
-    pub fn log(&mut self, line: &StringLocated) {
+    pub(super) fn log(&mut self, line: &StringLocated) {
         self.debug.push(line.clone());
     }
 
-    pub fn theme_metadata(&self) -> &JsonObject {
+    pub(super) fn theme_metadata(&self) -> &JsonObject {
         &self.theme_metadata
     }
 
-    pub fn function_smart(&self, signature: &FunctionSignature) -> Option<Rc<dyn TFunction>> {
+    pub(super) fn function_smart(
+        &self,
+        signature: &FunctionSignature,
+    ) -> Option<Rc<dyn TFunction>> {
         self.functions.get_smart(signature)
     }
 
     /// Runs `body`; inside a function, returns the value of the `!return` that ended it.
-    pub fn execute_lines(
+    pub(super) fn execute_lines(
         &mut self,
         memory: &mut Memory,
         body: &[StringLocated],
@@ -224,7 +227,7 @@ impl<'a> TContext<'a> {
 
     /// Replaces variables and function calls in `line`. `None` when a procedure call took over the line:
     /// the procedure then wrote its own output lines.
-    pub fn apply_functions_and_variables(
+    pub(super) fn apply_functions_and_variables(
         &mut self,
         memory: &mut Memory,
         line: &StringLocated,
@@ -418,7 +421,7 @@ impl<'a> TContext<'a> {
     }
 
     /// What a bare word means inside an expression: a variable, a JSON path into one, or nothing.
-    pub fn variable_for_expression(
+    pub(super) fn variable_for_expression(
         &mut self,
         memory: &mut Memory,
         name: &str,
@@ -439,7 +442,7 @@ impl<'a> TContext<'a> {
         }))
     }
 
-    pub fn execute_affectation(
+    pub(super) fn execute_affectation(
         &mut self,
         memory: &mut Memory,
         line: &StringLocated,
@@ -495,7 +498,7 @@ impl<'a> TContext<'a> {
         )
     }
 
-    pub fn execute_legacy_define(
+    pub(super) fn execute_legacy_define(
         &mut self,
         memory: &mut Memory,
         line: &StringLocated,
@@ -514,7 +517,7 @@ impl<'a> TContext<'a> {
         Ok(())
     }
 
-    pub fn execute_legacy_definelong(
+    pub(super) fn execute_legacy_definelong(
         &mut self,
         memory: &mut Memory,
         line: &StringLocated,
@@ -533,7 +536,7 @@ impl<'a> TContext<'a> {
     }
 
     /// `![unquoted|final ]function NAME(...)` or `!procedure`, possibly with a one-line `return` body.
-    pub fn declare_function(
+    pub(super) fn declare_function(
         &mut self,
         memory: &mut Memory,
         line: &StringLocated,
@@ -909,7 +912,7 @@ impl<'a> TContext<'a> {
     }
 
     /// Takes the output lines a procedure wrote since `start` back out, joined into one value.
-    pub fn extract_from_result(&mut self, start: usize) -> String {
+    pub(super) fn extract_from_result(&mut self, start: usize) -> String {
         let extracted: Vec<String> = self
             .result
             .drain(start..)
@@ -921,7 +924,7 @@ impl<'a> TContext<'a> {
     /// `%xargs()`: what follows the first word of the diagram's first output line.
     ///
     /// PlantUML reads it from the line's debug form, `(SL) <text>`, so the first word is that prefix.
-    pub fn xargs(&self) -> Option<String> {
+    pub(super) fn xargs(&self) -> Option<String> {
         let first = self.result.first()?;
         let shown = if first.text().is_empty() {
             "<<<EMPTY STRING>>>".to_owned()
