@@ -11,6 +11,7 @@ pub mod stencil;
 pub mod svg;
 pub mod typeface;
 pub mod ugraphic;
+pub mod url;
 pub mod width_table;
 mod width_table_data;
 

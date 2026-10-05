@@ -59,6 +59,7 @@ pub enum HColor {
 impl HColor {
     pub const BLACK: HColor = HColor::Simple(XColor::rgb(0, 0, 0));
     pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
+    pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
     /// No colour: nothing is painted.
     pub const NONE: HColor = HColor::Simple(XColor {
         red: 0,

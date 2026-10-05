@@ -2,6 +2,9 @@
 
 use std::collections::HashMap;
 use std::fmt::Write;
+use std::sync::LazyLock;
+
+use regex::Regex;
 
 use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
@@ -24,6 +27,8 @@ pub struct SvgOption {
     pub preserve_aspect_ratio: String,
     /// Extra attributes of the `<svg>` element, like `data-diagram-type`.
     pub root_attributes: Vec<(String, String)>,
+    /// The window links open in.
+    pub link_target: Option<String>,
 }
 
 /// A text run with everything that styles it.
@@ -44,8 +49,11 @@ pub struct SvgGraphics {
     option: SvgOption,
     defs: XmlNode,
     g_root: XmlNode,
-    /// Groups not closed yet, innermost last; shapes go into the innermost.
-    open_groups: Vec<XmlNode>,
+    /// Groups and links not closed yet, innermost last; shapes go into the innermost.
+    open_elements: Vec<XmlNode>,
+    /// Links not closed yet, innermost last. SVG links cannot nest, so only the innermost is open, and it is
+    /// reopened around groups started inside it.
+    active_links: Vec<Link>,
     fill: String,
     stroke: String,
     stroke_width: String,
@@ -66,7 +74,8 @@ impl SvgGraphics {
         let mut graphics = Self {
             defs: XmlNode::new("defs"),
             g_root,
-            open_groups: Vec::new(),
+            open_elements: Vec::new(),
+            active_links: Vec::new(),
             fill: "black".to_owned(),
             stroke: "black".to_owned(),
             stroke_width: String::new(),
@@ -123,7 +132,7 @@ impl SvgGraphics {
     }
 
     fn current_group(&mut self) -> &mut XmlNode {
-        self.open_groups.last_mut().unwrap_or(&mut self.g_root)
+        self.open_elements.last_mut().unwrap_or(&mut self.g_root)
     }
 
     fn fill_me(&self, element: &mut XmlNode) {
@@ -324,24 +333,68 @@ impl SvgGraphics {
     }
 
     pub fn start_group(&mut self, group: &UGroup) {
+        self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
             element.set_attribute(kind.svg_attribute_name(), value);
         }
-        self.open_groups.push(element);
+        self.open_elements.push(element);
+        self.reopen_innermost_link();
     }
 
-    /// Empty groups are dropped.
     pub fn close_group(&mut self) {
-        let group = self.open_groups.pop().expect("a group is open");
-        if group.has_children() {
-            self.current_group().append_child(group);
+        self.close_innermost_link_element();
+        self.close_innermost_element();
+        self.reopen_innermost_link();
+    }
+
+    pub fn open_link(&mut self, url: &str, tooltip: &str) {
+        self.close_innermost_link_element();
+        self.active_links.push(Link {
+            url: if is_javascript(url) {
+                String::new()
+            } else {
+                url.to_owned()
+            },
+            title: decoded_title(tooltip),
+            target: self.option.link_target.clone().unwrap_or_default(),
+        });
+        self.reopen_innermost_link();
+    }
+
+    pub fn close_link(&mut self) {
+        self.close_innermost_link_element();
+        self.active_links.pop().expect("a link is open");
+        self.reopen_innermost_link();
+    }
+
+    /// Empty elements are dropped.
+    fn close_innermost_element(&mut self) {
+        let element = self.open_elements.pop().expect("an element is open");
+        if element.has_children() {
+            self.current_group().append_child(element);
+        }
+    }
+
+    /// While a link is active, the innermost open element is its `<a>`.
+    fn close_innermost_link_element(&mut self) {
+        if !self.active_links.is_empty() {
+            self.close_innermost_element();
+        }
+    }
+
+    fn reopen_innermost_link(&mut self) {
+        if let Some(link) = self.active_links.last() {
+            self.open_elements.push(link.element());
         }
     }
 
     /// The finished document; `metadata` is the encoded diagram source PlantUML embeds.
     pub fn into_xml(mut self, metadata: Option<&str>) -> String {
-        assert!(self.open_groups.is_empty(), "every group is closed");
+        assert!(
+            self.open_elements.is_empty(),
+            "every group and link is closed"
+        );
         if let Some(metadata) = metadata {
             self.g_root
                 .append_processing_instruction("plantuml-src", metadata);
@@ -404,6 +457,50 @@ fn opacity(value: f64) -> String {
     } else {
         trim_zeros(&java::format_fixed(value, DECIMALS))
     }
+}
+
+struct Link {
+    url: String,
+    title: String,
+    target: String,
+}
+
+impl Link {
+    fn element(&self) -> XmlNode {
+        let mut element = XmlNode::new("a");
+        element.set_attribute("target", self.target.as_str());
+        element.set_attribute("href", self.url.as_str());
+        element.set_attribute("xlink:href", self.url.as_str());
+        element.set_attribute("xlink:type", "simple");
+        element.set_attribute("xlink:actuate", "onRequest");
+        element.set_attribute("xlink:show", "new");
+        element.set_attribute("title", self.title.as_str());
+        element.set_attribute("xlink:title", self.title.as_str());
+        element
+    }
+}
+
+/// PlantUML drops `javascript:` links, however they are disguised.
+fn is_javascript(url: &str) -> bool {
+    url.to_lowercase()
+        .chars()
+        .filter(char::is_ascii_lowercase)
+        .collect::<String>()
+        .starts_with("javascript")
+}
+
+/// `<U+XXXX>` becomes the character, and a written `\n` a line break.
+fn decoded_title(tooltip: &str) -> String {
+    static UNICODE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"<U\+([0-9A-Fa-f]+)>").expect("valid"));
+    let decoded = UNICODE.replace_all(tooltip, |captures: &regex::Captures<'_>| {
+        u32::from_str_radix(&captures[1], 16)
+            .ok()
+            .and_then(|code| char::from_u32(code & 0xFFFF))
+            .map(String::from)
+            .unwrap_or_default()
+    });
+    decoded.replace("\\n", "\n")
 }
 
 fn fix_color(color: Option<&str>) -> String {
@@ -472,6 +569,7 @@ mod tests {
                 backcolor: Some("#FFFFFF".to_owned()),
                 preserve_aspect_ratio: "none".to_owned(),
                 root_attributes: Vec::new(),
+                link_target: None,
             },
         )
     }
@@ -510,6 +608,27 @@ mod tests {
         assert!(xml.contains(size), "{xml}");
         let rectangle = r##"<rect x="1" y="2" width="40.5" height="3" fill="#F00" style="stroke:#000;stroke-width:1;"/>"##;
         assert!(xml.contains(rectangle), "{xml}");
+    }
+
+    #[test]
+    fn links_cannot_nest_and_reopen_around_groups() {
+        let mut graphics = graphics();
+        graphics.open_link("https://a", "A");
+        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+        graphics.start_group(&UGroup::default());
+        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+        graphics.close_group();
+        graphics.close_link();
+        let xml = graphics.into_xml(None);
+        assert_eq!(xml.matches("<a ").count(), 2, "{xml}");
+        assert!(!xml.contains("<a target=\"\" href=\"https://a\" xlink:href=\"https://a\" xlink:type=\"simple\" xlink:actuate=\"onRequest\" xlink:show=\"new\" title=\"A\" xlink:title=\"A\"><g"), "{xml}");
+    }
+
+    #[test]
+    fn link_titles_decode_references_and_javascript_is_dropped() {
+        assert_eq!(decoded_title("a<U+221E>b\\nc"), "a\u{221E}b\nc");
+        assert!(is_javascript("Java Script:alert(1)"));
+        assert!(!is_javascript("https://plantuml.com"));
     }
 
     #[test]

@@ -3,6 +3,7 @@
 use std::rc::Rc;
 
 use super::geom::XDimension2D;
+use super::ugraphic::UStroke;
 use crate::color::HColor;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -261,9 +262,13 @@ pub struct FontConfiguration {
     extended_color: Option<HColor>,
     position: FontPosition,
     tab_size: i32,
+    hyperlink_color: HColor,
+    /// How links are underlined; PlantUML draws no underlines at all when it has no thickness.
+    underline_stroke: UStroke,
 }
 
 impl FontConfiguration {
+    /// With blue links underlined by a simple line.
     pub fn new(font: UFont, color: HColor, tab_size: i32) -> Self {
         Self {
             styles: FontStyles::of(&font),
@@ -272,7 +277,31 @@ impl FontConfiguration {
             extended_color: None,
             position: FontPosition::Normal,
             tab_size,
+            hyperlink_color: HColor::BLUE,
+            underline_stroke: UStroke::SIMPLE,
         }
+    }
+
+    #[must_use]
+    pub fn with_hyperlink_style(&self, color: HColor, underline_stroke: UStroke) -> Self {
+        Self {
+            hyperlink_color: color,
+            underline_stroke,
+            ..self.clone()
+        }
+    }
+
+    /// The configuration links are drawn in: underlined, in the link colour.
+    #[must_use]
+    pub fn hyperlink(&self) -> Self {
+        Self {
+            color: self.hyperlink_color.clone(),
+            ..self.with_style(FontStyle::Underline)
+        }
+    }
+
+    pub fn underline_stroke(&self) -> UStroke {
+        self.underline_stroke
     }
 
     /// Black text with blue links, as for diagrams that have no skin.

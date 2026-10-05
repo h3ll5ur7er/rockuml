@@ -8,6 +8,7 @@ use super::CreoleMode;
 use super::parser::StripeBuilder;
 use crate::color::HColor;
 use crate::klimt::font::{FontPosition, FontStyle};
+use crate::klimt::url::Url;
 use crate::pattern::plantuml_regex;
 use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
@@ -80,6 +81,7 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
         ),
         RegexCommand::boxed("<f", &format!("^({FAMILY}(.*)$)"), 1, change_family),
         RegexCommand::boxed("\"\"", r#"^(""(.*?)"")"#, 1, monospaced),
+        Box::new(LinkCommand),
     ]);
     commands
 }
@@ -349,6 +351,28 @@ fn font_size(digits: &str) -> f32 {
 
 fn parse_color(name: &str) -> Option<HColor> {
     HColor::parse(name).ok().flatten()
+}
+
+/// `[[url label]]` and the other link forms.
+struct LinkCommand;
+
+impl CreoleCommand for LinkCommand {
+    fn starters(&self) -> &[&'static str] {
+        &["[["]
+    }
+
+    fn matches(&self, rest: &str) -> bool {
+        Url::markup_length(rest).is_some()
+    }
+
+    fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize {
+        let length =
+            Url::markup_length(rest).expect("a creole command executes only where it matches");
+        if let Some(url) = Url::parse(&rest[..length]) {
+            stripe.add_url(url);
+        }
+        length
+    }
 }
 
 #[cfg(test)]

@@ -12,6 +12,7 @@ use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::{FontConfiguration, FontStyle};
+use crate::klimt::url::Url;
 use crate::pattern::{java_regex, plantuml_regex};
 
 /// Turns the lines of a label into a [`Sheet`] (PlantUML's legacy `CreoleParser`).
@@ -407,6 +408,11 @@ impl StripeBuilder {
             self.atoms
                 .push(Box::new(AtomText::legacy(&text, self.font.clone())));
         }
+    }
+
+    pub fn add_url(&mut self, url: Url) {
+        self.atoms
+            .push(Box::new(AtomText::link(url, self.font.hyperlink())));
     }
 
     /// Adds `text` in a changed font, then goes back to the current one.

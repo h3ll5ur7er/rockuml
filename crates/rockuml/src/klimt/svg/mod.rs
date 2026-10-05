@@ -13,6 +13,7 @@ use super::geom::UTranslate;
 use super::group::UGroup;
 use super::shape::{UImage, UShape, UText};
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
+use super::url::Url;
 use crate::color::HColor;
 
 pub struct UGraphicSvg {
@@ -83,7 +84,9 @@ impl UGraphicSvg {
         let mut decorations = Vec::new();
         let mut extra_lines = Vec::new();
         let size = font.size_2d();
-        if configuration.contains_style(FontStyle::Underline) {
+        if configuration.contains_style(FontStyle::Underline)
+            && configuration.underline_stroke().thickness > 0.0
+        {
             match configuration.extended_color() {
                 None => decorations.push("underline"),
                 Some(color) => extra_lines.push((color.clone(), size / 14.0)),
@@ -193,5 +196,13 @@ impl UGraphicBackend for UGraphicSvg {
 
     fn close_group(&mut self) {
         self.svg().close_group();
+    }
+
+    fn start_url(&mut self, url: &Url) {
+        self.svg().open_link(&url.href, &url.tooltip);
+    }
+
+    fn close_url(&mut self) {
+        self.svg().close_link();
     }
 }

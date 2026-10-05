@@ -275,7 +275,10 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - style system: skin files, `<style>` sheets, merge priorities, skinparam→style conversion, `SkinParam`;
   - klimt core and the DEBUG backend; creole sheets with lists, headings, separators and all inline markup
     (styles, colours, sizes, fonts, sup/sub);
-  - `@startcreole`; `@startsalt` grids and widgets with titles; error images, including the welcome text;
+  - creole tables, trees, links (`<a>` in SVG) and separators, which span their title, legend or note through
+    PlantUML's stencil;
+  - `@startcreole`; `@startsalt` grids, widgets, trees, tabs, menus, scroll panes and separators; error images,
+    including the welcome text;
   - common commands: `skinparam`, `<style>`, title, caption, legend, header and footer (one-line and block forms);
   - SVG with both bounders: `-f svg-deterministic` (width table) and `-tsvg` (embedded Liberation fonts, plus fonts
     registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet;
@@ -297,9 +300,16 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     font measurement reproduces that extent; characters the embedded fonts lack are measured with PlantUML's width
     table, where Java would measure them with a Windows font.
   - PNG antialiasing differs from Java2D, and resvg draws wavy underlines straight.
-  - Not yet: salt menus/tabs/trees/scroll/border/images, creole tables, trees, links, sprites, emoji, OpenIconic
-    and images, the remaining common commands (pragma, scale, sprites, mainframe...), creole separators drawn across
-    their container (`UHorizontalLine`), and the `@startuml` best-error selection.
+  - Top-level `@startcreole` separators are drawn across the sheet; PlantUML cannot draw them there (its debug output
+    marks them unsupported, its SVG and PNG crash).
+  - Java's logical fonts take some characters from Windows fallback fonts even where Arial or Times New Roman have
+    them (some dashes and bullets, `…`, `™`, arrows, maths and box drawing, Vietnamese letters). rockuml measures
+    those with the Liberation glyphs, which can differ by a pixel or two (corpus: `creole/escapes` SVG).
+  - Several salt menu popups are drawn in creation order; Java's order follows identity hash codes, so it is
+    effectively random.
+  - Not yet: salt border layouts, vertical tab bars and images; creole sprites, emoji, OpenIconic, images and
+    `<code>` blocks; the remaining common commands (pragma, scale, sprites, mainframe...); and the `@startuml`
+    best-error selection.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,

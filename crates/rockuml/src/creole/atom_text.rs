@@ -5,6 +5,7 @@ use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{UShape, UText};
 use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::url::Url;
 
 /// A run of text in one font.
 #[derive(Clone, Debug)]
@@ -12,6 +13,7 @@ pub struct AtomText {
     text: String,
     font: FontConfiguration,
     margins: Margins,
+    url: Option<Url>,
 }
 
 /// Space kept free beside the text, measured in the text's own font.
@@ -31,6 +33,16 @@ impl AtomText {
             text: manage_special_chars(&char_hidder::unhide(text)),
             font,
             margins: Margins::None,
+            url: None,
+        }
+    }
+
+    /// The label of a link, which clicking on follows it.
+    pub fn link(url: Url, font: FontConfiguration) -> Self {
+        let label = Self::legacy(&url.label, font);
+        Self {
+            url: Some(url),
+            ..label
         }
     }
 
@@ -131,6 +143,18 @@ impl TextBlock for AtomText {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
+        if let Some(url) = &self.url {
+            ug.start_url(url);
+        }
+        self.draw_text(ug);
+        if self.url.is_some() {
+            ug.close_url();
+        }
+    }
+}
+
+impl AtomText {
+    fn draw_text(&self, ug: &UGraphic) {
         let ug = &ug.translated(self.margin_left(ug.string_bounder()), 0.0);
         let string_bounder = ug.string_bounder();
         let font = self.font.font();

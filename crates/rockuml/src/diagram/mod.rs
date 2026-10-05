@@ -154,6 +154,7 @@ pub fn export(
                 .map(|name| ("data-diagram-type".to_owned(), name.to_owned()))
                 .into_iter()
                 .collect(),
+            link_target: settings.svg_link_target.clone(),
         };
         let output = Rc::new(RefCell::new(UGraphicSvg::new(
             settings.seed,

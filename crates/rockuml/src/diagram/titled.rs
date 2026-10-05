@@ -232,13 +232,24 @@ pub fn font_configuration(style: &Style) -> FontConfiguration {
         };
     }
     let font = UFont::new(&style.value(PName::FontName).as_string(), face, size);
-    FontConfiguration::new(font, style.value(PName::FontColor).as_color(), 8)
+    FontConfiguration::new(font, style.value(PName::FontColor).as_color(), 8).with_hyperlink_style(
+        style.value(PName::HyperLinkColor).as_color(),
+        stroke_of(
+            style,
+            PName::HyperlinkUnderlineThickness,
+            PName::HyperlinkUnderlineStyle,
+        ),
+    )
 }
 
 /// `Style.getStroke`: the line thickness, dashed by a `visible-space` line style.
 fn stroke(style: &Style) -> UStroke {
-    let thickness = style.value(PName::LineThickness).as_double();
-    let dash = style.value(PName::LineStyle).as_string();
+    stroke_of(style, PName::LineThickness, PName::LineStyle)
+}
+
+fn stroke_of(style: &Style, thickness: PName, line_style: PName) -> UStroke {
+    let thickness = style.value(thickness).as_double();
+    let dash = style.value(line_style).as_string();
     let mut lengths = dash
         .split(['-', ';', ','])
         .filter(|part| !part.is_empty())

@@ -7,6 +7,7 @@ use super::geom::UTranslate;
 use super::group::UGroup;
 use super::shape::UShape;
 use super::stencil::{Stencil, StencilFrame, UHorizontalLine};
+use super::url::Url;
 use crate::color::HColor;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -57,6 +58,11 @@ pub trait UGraphicBackend {
     fn start_group(&mut self, _group: &UGroup) {}
 
     fn close_group(&mut self) {}
+
+    /// Formats without links ignore them.
+    fn start_url(&mut self, _url: &Url) {}
+
+    fn close_url(&mut self) {}
 }
 
 /// A drawing surface positioned somewhere on a document; cheap to derive moved or restyled copies from.
@@ -141,6 +147,15 @@ impl UGraphic {
 
     pub fn close_group(&self) {
         self.backend.borrow_mut().close_group();
+    }
+
+    /// Shapes drawn until the matching `close_url` follow `url` when clicked.
+    pub fn start_url(&self, url: &Url) {
+        self.backend.borrow_mut().start_url(url);
+    }
+
+    pub fn close_url(&self) {
+        self.backend.borrow_mut().close_url();
     }
 
     /// Separators drawn on the result span `stencil`, which is placed where this surface is.
