@@ -31,6 +31,7 @@ generate_case() {
 	reference_plantuml -f debug -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -f svg -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	generate_deterministic_svg "$case_file" "$golden_dir"
+	reference_plantuml -tpng -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -encodeurl "$case_file" > "$golden_dir/$(basename "${case_file%.puml}").url" 2> /dev/null || true
 	mask_render_timestamps "$golden_dir"
 	drop_crash_reports "$golden_dir"
@@ -39,7 +40,14 @@ generate_case() {
 # Where PlantUML crashes it draws a crash report with a random quote instead of the diagram. rockuml
 # renders the diagram, so such a golden would be neither stable nor a target.
 drop_crash_reports() {
-	grep -lr --null 'An error has occurred : java\.' "$1" | xargs -0 -r rm -f
+	local report
+	grep -lr --null 'An error has occurred : java\.' "$1" | while IFS= read -r -d '' report; do
+		rm -f "$report"
+		# A PNG, measured like the SVG, draws the same report, which grep cannot read.
+		if [[ "$report" == *.svg ]]; then
+			rm -f "${report%.svg}.png"
+		fi
+	done
 }
 
 # Deterministic SVG shares the .svg suffix with font-measured SVG, so it is generated apart and renamed.

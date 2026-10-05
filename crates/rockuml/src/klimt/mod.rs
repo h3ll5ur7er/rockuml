@@ -5,6 +5,7 @@ pub mod debug;
 pub mod font;
 pub mod geom;
 pub mod group;
+pub mod png;
 pub mod shape;
 pub mod svg;
 pub mod typeface;

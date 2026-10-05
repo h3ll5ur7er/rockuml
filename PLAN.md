@@ -278,7 +278,8 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - `@startcreole`; `@startsalt` grids and widgets with titles; error images, including the welcome text;
   - common commands: `skinparam`, `<style>`, title, caption, legend, header and footer (one-line and block forms);
   - SVG with both bounders: `-f svg-deterministic` (width table) and `-tsvg` (embedded Liberation fonts, plus fonts
-    registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet.
+    registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet;
+  - PNG: the SVG rasterised by resvg with the same fonts, at PlantUML's image size, with the source in an `iTXt` chunk.
 
   Learned along the way / deliberate deviations:
   - Java's `%.4f` rounds the shortest decimal representation half-up, not the exact binary value; `java::format_fixed`
@@ -295,7 +296,8 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - Java's logical fonts on Windows are composites: their line height includes fallback fonts for other scripts. The
     font measurement reproduces that extent; characters the embedded fonts lack are measured with PlantUML's width
     table, where Java would measure them with a Windows font.
-  - Not yet: PNG, salt menus/tabs/trees/scroll/border/images, creole tables, trees, links, sprites, emoji, OpenIconic
+  - PNG antialiasing differs from Java2D, and resvg draws wavy underlines straight.
+  - Not yet: salt menus/tabs/trees/scroll/border/images, creole tables, trees, links, sprites, emoji, OpenIconic
     and images, the remaining common commands (pragma, scale, sprites, mainframe...), creole separators drawn across
     their container (`UHorizontalLine`), and the `@startuml` best-error selection.
 

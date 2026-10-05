@@ -16,5 +16,6 @@ fancy-regex = "0.19.2"
 flate2 = "1.1.10"
 jiff = "0.2.37"
 regex = "1.13.1"
+resvg = { version = "0.48.1", default-features = false, features = ["text", "raster-images"] }
 ttf-parser = "0.25.1"
 unicode-general-category = "1.1.0"

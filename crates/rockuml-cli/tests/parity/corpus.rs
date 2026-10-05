@@ -8,15 +8,17 @@ pub enum GoldenKind {
     Debug,
     Svg,
     DeterministicSvg,
+    Png,
     EncodedUrl,
 }
 
 impl GoldenKind {
-    pub const ALL: [GoldenKind; 5] = [
+    pub const ALL: [GoldenKind; 6] = [
         GoldenKind::Preprocessed,
         GoldenKind::Debug,
         GoldenKind::Svg,
         GoldenKind::DeterministicSvg,
+        GoldenKind::Png,
         GoldenKind::EncodedUrl,
     ];
 
@@ -26,6 +28,7 @@ impl GoldenKind {
             GoldenKind::Debug => "debug",
             GoldenKind::Svg => "svg",
             GoldenKind::DeterministicSvg => "dsvg",
+            GoldenKind::Png => "png",
             GoldenKind::EncodedUrl => "url",
         }
     }
@@ -40,6 +43,7 @@ impl GoldenKind {
             GoldenKind::Debug => &["-f", "debug"],
             GoldenKind::Svg => &["-tsvg"],
             GoldenKind::DeterministicSvg => &["-f", "svg-deterministic"],
+            GoldenKind::Png => &["-tpng"],
             GoldenKind::EncodedUrl => &["-encodeurl"],
         }
     }

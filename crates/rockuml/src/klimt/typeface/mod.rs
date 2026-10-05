@@ -141,6 +141,32 @@ impl FontRegistry {
             })
     }
 
+    /// Every font file, once, for drawing text.
+    pub(crate) fn files(&self) -> Vec<Arc<dyn AsRef<[u8]> + Send + Sync>> {
+        let mut files: Vec<Arc<dyn AsRef<[u8]> + Send + Sync>> = Vec::new();
+        let mut seen: Vec<*const u8> = Vec::new();
+        for registered in &self.faces {
+            let bytes = registered.data.bytes();
+            if seen.contains(&bytes.as_ptr()) {
+                continue;
+            }
+            seen.push(bytes.as_ptr());
+            files.push(match &registered.data {
+                FontData::Embedded(bytes) => Arc::new(*bytes),
+                FontData::Registered(bytes) => Arc::new(bytes.clone()),
+            });
+        }
+        files
+    }
+
+    /// The family name, as its font file names it, of the font Java draws a family name with.
+    pub(crate) fn drawn_family(&self, family: &str) -> String {
+        family_names(self.resolve(family, UFontFace::NORMAL).face())
+            .into_iter()
+            .next()
+            .unwrap_or_default()
+    }
+
     /// The font Java uses for a family name: a logical font, or a font of that name, or else `Dialog`.
     fn resolve(&self, family: &str, face: UFontFace) -> ResolvedFont<'_> {
         if let Some(logical) = LogicalFont::named(family)

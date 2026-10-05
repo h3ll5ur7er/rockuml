@@ -18,6 +18,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::png;
 use crate::klimt::svg::{SvgOption, UGraphicSvg};
 use crate::klimt::typeface::{FontRegistry, StringBounderFonts};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend};
@@ -113,29 +114,55 @@ pub enum ImageFormat {
     Svg,
     /// SVG with text measured by a fixed width table instead of fonts, identical on every machine.
     DeterministicSvg,
+    Png,
 }
 
-/// `fonts` measure the text of formats that use fonts.
+/// The image's bytes. `fonts` measure the text of formats that use fonts, and draw it in PNG.
 pub fn export(
     diagram: &dyn Diagram,
     format: ImageFormat,
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
-) -> Result<String, NotYetPorted> {
+) -> Result<Vec<u8>, NotYetPorted> {
     let settings = diagram.export_settings();
     let text_block = diagram.text_block()?;
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
-        ImageFormat::Svg => Rc::new(StringBounderFonts::new(fonts.clone())),
+        ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
         ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
     };
     let margin = settings.margin;
     let dimension = text_block
         .calculate_dimension(string_bounder.as_ref())
         .delta(margin.left + margin.right, margin.top + margin.bottom);
+    let backcolor = settings
+        .backcolor
+        .clone()
+        .or_else(|| text_block.backcolor())
+        .unwrap_or(HColor::WHITE);
     let draw = |backend: Rc<RefCell<dyn UGraphicBackend>>, default_background: HColor| {
         let ug = UGraphic::new(backend, string_bounder.clone(), default_background);
         text_block.draw_u(&ug.translated(margin.left, margin.top));
+    };
+    let svg = || {
+        let option = SvgOption {
+            min_dim: dimension,
+            backcolor: Some(backcolor.to_svg()),
+            preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
+            root_attributes: settings
+                .diagram_type
+                .map(|name| ("data-diagram-type".to_owned(), name.to_owned()))
+                .into_iter()
+                .collect(),
+        };
+        let output = Rc::new(RefCell::new(UGraphicSvg::new(
+            settings.seed,
+            option,
+            string_bounder.clone(),
+        )));
+        draw(output.clone(), backcolor.clone());
+        let metadata = crate::url_code::encode(&diagram.source().metadata());
+        output.borrow_mut().take_document(Some(&metadata))
     };
 
     Ok(match format {
@@ -143,38 +170,25 @@ pub fn export(
             let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
             let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
             draw(output.clone(), HColor::WHITE);
-            output.borrow().document(&DebugHeader {
-                dimension,
-                scale_factor: 1.0,
-                seed: settings.seed,
-                svg_link_target: settings.svg_link_target,
-                hover_path_color_rgb: None,
-                preserve_aspect_ratio: settings.preserve_aspect_ratio,
-            })
+            output
+                .borrow()
+                .document(&DebugHeader {
+                    dimension,
+                    scale_factor: 1.0,
+                    seed: settings.seed,
+                    svg_link_target: settings.svg_link_target.clone(),
+                    hover_path_color_rgb: None,
+                    preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
+                })
+                .into_bytes()
         }
-        ImageFormat::Svg | ImageFormat::DeterministicSvg => {
-            let backcolor = settings
-                .backcolor
-                .or_else(|| text_block.backcolor())
-                .unwrap_or(HColor::WHITE);
-            let option = SvgOption {
-                min_dim: dimension,
-                backcolor: Some(backcolor.to_svg()),
-                preserve_aspect_ratio: settings.preserve_aspect_ratio,
-                root_attributes: settings
-                    .diagram_type
-                    .map(|name| ("data-diagram-type".to_owned(), name.to_owned()))
-                    .into_iter()
-                    .collect(),
-            };
-            let output = Rc::new(RefCell::new(UGraphicSvg::new(
-                settings.seed,
-                option,
-                string_bounder.clone(),
-            )));
-            draw(output.clone(), backcolor);
-            let metadata = crate::url_code::encode(&diagram.source().metadata());
-            output.borrow_mut().take_document(Some(&metadata))
-        }
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg().into_bytes(),
+        ImageFormat::Png => png::rasterize(
+            &svg(),
+            (dimension.width as u32, dimension.height as u32),
+            &backcolor,
+            fonts,
+            &diagram.source().metadata(),
+        ),
     })
 }

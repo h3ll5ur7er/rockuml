@@ -26,6 +26,7 @@ pub enum OutputFormat {
     Preprocessed,
     Debug,
     Svg,
+    Png,
     /// SVG with text measured by a fixed width table instead of fonts, identical on every machine.
     DeterministicSvg,
     /// Prints each diagram's URL code instead of writing a file.
@@ -38,6 +39,7 @@ impl OutputFormat {
             "preproc" => Some(Self::Preprocessed),
             "debug" => Some(Self::Debug),
             "svg" => Some(Self::Svg),
+            "png" => Some(Self::Png),
             "svg-deterministic" => Some(Self::DeterministicSvg),
             _ => None,
         }
@@ -49,6 +51,7 @@ impl OutputFormat {
         match self {
             Self::Debug => Some(ImageFormat::Debug),
             Self::Svg => Some(ImageFormat::Svg),
+            Self::Png => Some(ImageFormat::Png),
             Self::DeterministicSvg => Some(ImageFormat::DeterministicSvg),
             Self::Preprocessed | Self::EncodedUrl => None,
         }
@@ -59,6 +62,7 @@ impl OutputFormat {
             Self::Preprocessed => ".preproc",
             Self::Debug => ".debug",
             Self::Svg | Self::DeterministicSvg => ".svg",
+            Self::Png => ".png",
             Self::EncodedUrl => "",
         }
     }
@@ -79,6 +83,7 @@ pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, Str
             }
             "-decodeurl" | "--decode-url" => return Ok(Command::DecodeUrl(arguments.collect())),
             "-tsvg" | "-svg" | "--svg" => format = OutputFormat::Svg,
+            "-tpng" | "-png" | "--png" => format = OutputFormat::Png,
             "-f" | "--format" => {
                 let name = arguments.next().ok_or("missing format name after -f")?;
                 format = OutputFormat::from_name(&name)

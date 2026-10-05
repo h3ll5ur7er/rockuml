@@ -133,7 +133,8 @@ fn write_outputs(
             OutputFormat::Preprocessed => block
                 .lines()
                 .flat_map(|line| [line, LINE_SEPARATOR])
-                .collect::<String>(),
+                .collect::<String>()
+                .into_bytes(),
             format => {
                 let image_format = format
                     .image_format()
@@ -158,7 +159,7 @@ fn render(
     block: &PreprocessedBlock,
     format: ImageFormat,
     fonts: &Arc<FontRegistry>,
-) -> Result<String, NotYetPorted> {
+) -> Result<Vec<u8>, NotYetPorted> {
     let diagram = rockuml::diagram::create(block)?;
     rockuml::diagram::export(diagram.as_ref(), format, fonts, &SystemHost)
 }

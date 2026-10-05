@@ -10,6 +10,7 @@ Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the port
 
 ```bash
 rockuml diagram.puml                    # writes diagram.svg next to it
+rockuml -tpng diagram.puml              # diagram.png
 rockuml -o out -f svg-deterministic a.puml b.puml
 ```
 
