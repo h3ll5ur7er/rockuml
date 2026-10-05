@@ -44,7 +44,7 @@ impl UGraphicDebug {
     }
 
     /// The document, with lines ending in `\n` on every platform as in PlantUML.
-    pub fn into_document(self, header: &DebugHeader) -> String {
+    pub fn document(&self, header: &DebugHeader) -> String {
         let optional = |value: &Option<String>| value.clone().unwrap_or_else(|| "null".to_owned());
         let header_lines = [
             "DPI: 96".to_owned(),
@@ -66,9 +66,9 @@ impl UGraphicDebug {
             String::new(),
         ];
         header_lines
-            .into_iter()
-            .chain(self.lines)
-            .flat_map(|line| [line, "\n".to_owned()])
+            .iter()
+            .chain(&self.lines)
+            .flat_map(|line| [line.as_str(), "\n"])
             .collect()
     }
 

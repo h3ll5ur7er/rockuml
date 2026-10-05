@@ -7,4 +7,6 @@
 
 # Rust
 /target/
+
+# Isolated checkouts of agents working in parallel
 /.claude/worktrees/

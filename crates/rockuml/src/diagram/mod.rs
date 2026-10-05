@@ -106,11 +106,7 @@ pub fn export_debug(diagram: &dyn Diagram, host: &dyn Host) -> String {
     );
     text_block.draw_u(&ug.translated(margin.left, margin.top));
 
-    drop(ug);
-    let output = Rc::into_inner(output)
-        .expect("the drawing surfaces are gone")
-        .into_inner();
-    output.into_document(&DebugHeader {
+    output.borrow().document(&DebugHeader {
         dimension,
         scale_factor: 1.0,
         seed: settings.seed,
