@@ -68,7 +68,8 @@ impl SaltDiagram {
         }
     }
 
-    /// The lines that describe widgets; skinparams, `scale` and sprites are not ported yet.
+    /// The lines that describe widgets. PlantUML drops `hide stereotype` and skinparams, which have no
+    /// say over widgets; `scale` and sprites are not ported yet.
     fn widget_lines(&self) -> Result<Vec<String>, NotYetPorted> {
         let mut lines = Vec::new();
         for line in &self.lines {
@@ -116,12 +117,9 @@ impl SingleLineCommand<SaltDiagram> for Anything {
         if diagram.lines.is_empty() && java::trim(line) == "salt" {
             return Err(CommandError::new("This is not needed anymore."));
         }
-        let pieces = java::split(line, &BLOCK_E1_NEWLINE.to_string());
-        diagram.lines.extend(if line.is_empty() {
-            vec![String::new()]
-        } else {
-            pieces
-        });
+        diagram
+            .lines
+            .extend(java::split(line, &BLOCK_E1_NEWLINE.to_string()));
         Ok(())
     }
 }
@@ -166,36 +164,57 @@ fn peek_text(source: &DataSource, ahead: usize) -> Result<&str, NotYetPorted> {
         .ok_or(NotYetPorted("error diagram for unterminated salt"))
 }
 
+/// Groups nest at most this deep, so that parsing and drawing them cannot overflow the stack. Debug
+/// builds on Windows' 1 MiB main thread stack overflow at about 250 levels.
+const MAX_NESTING: usize = 128;
+
+/// The depth of a group opened inside one at `depth`.
+fn inner_depth(depth: usize) -> Result<usize, NotYetPorted> {
+    if depth < MAX_NESTING {
+        Ok(depth + 1)
+    } else {
+        Err(NotYetPorted("deeply nested salt groups"))
+    }
+}
+
 /// The diagram is one group: a grid, a scroll pane, a border layout or a tree.
 fn top_level_element(source: &mut DataSource) -> Result<Box<dyn Element>, NotYetPorted> {
-    group(source)?
+    group(source, 1)?
         .map(|group| group.item)
         .ok_or(NotYetPorted("crash report for salt without a group"))
 }
 
-/// A group, tried in PlantUML's factory order.
-fn group(source: &mut DataSource) -> Result<Option<Terminated<Box<dyn Element>>>, NotYetPorted> {
-    if is_pyramid(source)? {
-        return pyramid(source).map(Some);
+/// A group at `depth`, tried in PlantUML's factory order.
+fn group(
+    source: &mut DataSource,
+    depth: usize,
+) -> Result<Option<Terminated<Box<dyn Element>>>, NotYetPorted> {
+    if let Some(strategy) = pyramid_strategy(source)? {
+        return pyramid(source, strategy, depth).map(Some);
     }
     if ["{S", "{S-", "{SI"].contains(&peek_text(source, 0)?) {
-        return scroll(source).map(Some);
+        return scroll(source, depth).map(Some);
     }
     if is_border(source)? {
         return Err(NotYetPorted("salt border layouts"));
     }
-    if is_tree(source)? {
-        return tree(source).map(Some);
+    if let Some(strategy) = tree_strategy(source)? {
+        return tree(source, strategy, depth).map(Some);
     }
     Ok(None)
 }
 
-fn is_pyramid(source: &DataSource) -> Result<bool, NotYetPorted> {
-    if !["{", "{+", "{^", "{#", "{!", "{-"].contains(&peek_text(source, 0)?) {
-        return Ok(false);
+/// The lines of the grid that opens here, if one does.
+fn pyramid_strategy(source: &DataSource) -> Result<Option<TableStrategy>, NotYetPorted> {
+    let header = peek_text(source, 0)?;
+    if !["{", "{+", "{^", "{#", "{!", "{-"].contains(&header) {
+        return Ok(None);
     }
     let next = peek_text(source, 1)?;
-    Ok(!is_border_marker(next) && !is_tree_marker(next))
+    if is_border_marker(next) || is_tree_marker(next) {
+        return Ok(None);
+    }
+    Ok(strategy_suffix(&header[1..]))
 }
 
 fn is_border(source: &DataSource) -> Result<bool, NotYetPorted> {
@@ -211,17 +230,30 @@ fn is_border_marker(text: &str) -> bool {
     BORDER.is_match(text)
 }
 
-fn is_tree(source: &DataSource) -> Result<bool, NotYetPorted> {
-    Ok(peek_text(source, 0)? == "{" && is_tree_marker(peek_text(source, 1)?))
+/// The lines of the tree that opens here, if one does.
+fn tree_strategy(source: &DataSource) -> Result<Option<TableStrategy>, NotYetPorted> {
+    if peek_text(source, 0)? != "{" {
+        return Ok(None);
+    }
+    Ok(tree_marker_strategy(peek_text(source, 1)?))
+}
+
+fn is_tree_marker(text: &str) -> bool {
+    tree_marker_strategy(text).is_some()
 }
 
 /// `T`, or `T` followed by a table strategy character.
-fn is_tree_marker(text: &str) -> bool {
+fn tree_marker_strategy(text: &str) -> Option<TableStrategy> {
+    text.strip_prefix('T').and_then(strategy_suffix)
+}
+
+/// Nothing, or a table strategy character.
+fn strategy_suffix(text: &str) -> Option<TableStrategy> {
     let mut chars = text.chars();
-    match (chars.next(), chars.next(), chars.next()) {
-        (Some('T'), None, _) => true,
-        (Some('T'), Some(strategy), None) => TableStrategy::from_char(strategy).is_some(),
-        _ => false,
+    match (chars.next(), chars.next()) {
+        (None, _) => Some(TableStrategy::None),
+        (Some(strategy), None) => TableStrategy::from_char(strategy),
+        _ => None,
     }
 }
 
@@ -242,14 +274,12 @@ fn close_group(
     })
 }
 
-fn pyramid(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+fn pyramid(
+    source: &mut DataSource,
+    strategy: TableStrategy,
+    depth: usize,
+) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
     let header = next_item(source)?;
-    let strategy = header
-        .item
-        .chars()
-        .nth(1)
-        .map_or(Some(TableStrategy::None), TableStrategy::from_char)
-        .ok_or(NotYetPorted("error diagram for a bad salt grid"))?;
     let title = if strategy == TableStrategy::OutsideWithTitle
         && header.terminator == Terminator::NewColumn
     {
@@ -259,7 +289,7 @@ fn pyramid(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotY
     };
     let mut positionner = Positionner::default();
     while peek_text(source, 0)? != "}" {
-        let next = next_element(source)?;
+        let next = next_element(source, depth)?;
         if next.item.plain_text() == Some("*") {
             positionner.merge_left(next.terminator);
         } else {
@@ -279,11 +309,14 @@ fn remove_quotes(text: &str) -> &str {
         .unwrap_or(text)
 }
 
-fn scroll(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+fn scroll(
+    source: &mut DataSource,
+    depth: usize,
+) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
     let header = next_item(source)?;
     let mut positionner = Positionner::default();
     while peek_text(source, 0)? != "}" {
-        let next = next_element(source)?;
+        let next = next_element(source, depth)?;
         positionner.add(next.item, next.terminator);
     }
     let strategy = ScrollStrategy::from_desc(&header.item);
@@ -293,15 +326,15 @@ fn scroll(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYe
     )
 }
 
-/// Each row starts with its label; the cells after it are elements like in a grid.
-fn tree(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+/// After the `{` and the `T` marker, each row starts with its label; the cells after it are elements
+/// like in a grid.
+fn tree(
+    source: &mut DataSource,
+    strategy: TableStrategy,
+    depth: usize,
+) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
     next_item(source)?;
-    let marker = next_item(source)?.item;
-    let strategy = marker
-        .chars()
-        .nth(1)
-        .map_or(Some(TableStrategy::None), TableStrategy::from_char)
-        .expect("checked by is_tree");
+    next_item(source)?;
     let mut tree = Tree::new(strategy);
     let mut takes_label = true;
     while peek_text(source, 0)? != "}" {
@@ -310,7 +343,7 @@ fn tree(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetP
             tree.add_entry(&label.item);
             label.terminator
         } else {
-            let cell = next_element(source)?;
+            let cell = next_element(source, depth)?;
             tree.add_cell_to_entry(cell.item);
             cell.terminator
         };
@@ -357,14 +390,17 @@ fn menu_bar(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, Not
     close_group(source, Box::new(menu_bar))
 }
 
-/// The next element inside a group, tried in PlantUML's factory order.
-fn next_element(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+/// The next element inside a group at `depth`, tried in PlantUML's factory order.
+fn next_element(
+    source: &mut DataSource,
+    depth: usize,
+) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
     let text = peek_text(source, 0)?.to_owned();
     if text == "{*" {
         return menu_bar(source);
     }
-    if is_tree(source)? {
-        return tree(source);
+    if let Some(strategy) = tree_strategy(source)? {
+        return tree(source, strategy, inner_depth(depth)?);
     }
     if text == "{/" {
         return tab_bar(source);
@@ -378,38 +414,18 @@ fn next_element(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>,
         Some(Box::new(Line::new(separator)))
     } else if text.starts_with('"') && text.ends_with('"') && text.len() > 1 {
         Some(Box::new(TextField::new(&text[1..text.len() - 1], font)))
-    } else if text.starts_with("[X]") {
-        Some(Box::new(RadioCheckbox::new(
-            after(&text, ']'),
-            font,
-            false,
-            true,
-        )))
-    } else if text.starts_with("[]") || text.starts_with("[ ]") {
-        Some(Box::new(RadioCheckbox::new(
-            after(&text, ']'),
-            font,
-            false,
-            false,
-        )))
+    } else if let Some(label) = label_after(&text, &["[X]"]) {
+        Some(Box::new(RadioCheckbox::checkbox_on(label, font)))
+    } else if let Some(label) = label_after(&text, &["[]", "[ ]"]) {
+        Some(Box::new(RadioCheckbox::checkbox_off(label, font)))
     } else if !text.starts_with("[[") && text.starts_with('[') && text.ends_with(']') {
         Some(Box::new(Button::new(&text[1..text.len() - 1], font)))
     } else if text.starts_with('^') && text.ends_with('^') && text.len() > 1 {
         Some(Box::new(Droplist::new(&text[1..text.len() - 1], font)))
-    } else if text.starts_with("(X)") {
-        Some(Box::new(RadioCheckbox::new(
-            after(&text, ')'),
-            font,
-            true,
-            true,
-        )))
-    } else if text.starts_with("()") || text.starts_with("( )") {
-        Some(Box::new(RadioCheckbox::new(
-            after(&text, ')'),
-            font,
-            true,
-            false,
-        )))
+    } else if let Some(label) = label_after(&text, &["(X)"]) {
+        Some(Box::new(RadioCheckbox::radio_on(label, font)))
+    } else if let Some(label) = label_after(&text, &["()", "( )"]) {
+        Some(Box::new(RadioCheckbox::radio_off(label, font)))
     } else if is_image_or_dictionary_entry(&text) {
         return Err(NotYetPorted("salt images and dictionary entries"));
     } else if !text.starts_with('{') && !text.starts_with('}') && !java::trim(&text).is_empty() {
@@ -424,7 +440,8 @@ fn next_element(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>,
             terminator,
         });
     }
-    group(source)?.ok_or(NotYetPorted("crash report for an unknown salt element"))
+    group(source, inner_depth(depth)?)?
+        .ok_or(NotYetPorted("crash report for an unknown salt element"))
 }
 
 /// `<<` or `<<name` start an image; `<<name>>` reuses a named element.
@@ -434,8 +451,82 @@ fn is_image_or_dictionary_entry(text: &str) -> bool {
     text == "<<" || IMAGE.is_match(text) || ENTRY.is_match(text)
 }
 
-/// The text after the first `closing`, trimmed: the label of a radio button or checkbox.
-fn after(text: &str, closing: char) -> &str {
-    let start = text.find(closing).map_or(0, |index| index + 1);
-    java::trim(&text[start..])
+/// The label of a radio button or checkbox: the text after its mark, trimmed.
+fn label_after<'a>(text: &'a str, marks: &[&str]) -> Option<&'a str> {
+    marks
+        .iter()
+        .find_map(|mark| text.strip_prefix(mark))
+        .map(java::trim)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+
+    use super::*;
+    use crate::diagram::{ImageFormat, export};
+    use crate::fonts::FontRegistry;
+    use crate::host::IsolatedHost;
+    use crate::text::StringLocated;
+
+    fn export_debug(lines: &[String]) -> Result<Vec<u8>, NotYetPorted> {
+        let location = LineLocation::new("test", None);
+        let source = UmlSource::new(
+            lines
+                .iter()
+                .map(|line| StringLocated::new(line, location.clone()))
+                .collect(),
+            lines.to_vec(),
+        );
+        let diagram = SaltDiagram::create(source);
+        export(
+            diagram.as_ref(),
+            ImageFormat::Debug,
+            &Arc::new(FontRegistry::default()),
+            &IsolatedHost,
+        )
+    }
+
+    fn salt(body: &[&str]) -> Vec<String> {
+        std::iter::once("@startsalt")
+            .chain(body.iter().copied())
+            .chain(std::iter::once("@endsalt"))
+            .map(str::to_owned)
+            .collect()
+    }
+
+    fn nested(depth: usize) -> Vec<String> {
+        let body: Vec<&str> = std::iter::repeat_n("{", depth)
+            .chain(std::iter::once("leaf"))
+            .chain(std::iter::repeat_n("}", depth))
+            .collect();
+        salt(&body)
+    }
+
+    #[test]
+    fn a_merge_at_the_start_of_a_row_widens_the_cell_above() {
+        assert!(export_debug(&salt(&["{", "a", "*", "}"])).is_ok());
+    }
+
+    #[test]
+    fn nested_grids_are_measured_once() {
+        assert!(export_debug(&nested(30)).is_ok());
+    }
+
+    #[test]
+    fn nested_trees_are_measured_once() {
+        let body: Vec<&str> = std::iter::once("{T")
+            .chain(std::iter::repeat_n("+ a | {T", 30))
+            .chain(std::iter::once("+ leaf"))
+            .chain(std::iter::repeat_n("}", 31))
+            .collect();
+        assert!(export_debug(&salt(&body)).is_ok());
+    }
+
+    #[test]
+    fn nesting_is_limited() {
+        assert!(export_debug(&nested(MAX_NESTING)).is_ok());
+        assert!(export_debug(&nested(MAX_NESTING + 1)).is_err());
+        assert!(export_debug(&nested(20_000)).is_err());
+    }
 }
