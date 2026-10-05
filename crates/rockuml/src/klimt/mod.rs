@@ -7,6 +7,7 @@ pub mod geom;
 pub mod group;
 pub mod shape;
 pub mod svg;
+pub mod typeface;
 pub mod ugraphic;
 pub mod width_table;
 mod width_table_data;

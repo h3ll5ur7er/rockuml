@@ -1,3 +1,4 @@
+mod fonts;
 mod naming;
 mod options;
 mod system_host;
@@ -6,10 +7,12 @@ use std::fs;
 use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use std::sync::Arc;
 
 use naming::OutputNamer;
 use options::{Command, OutputFormat, RenderOptions};
 use rockuml::diagram::{ImageFormat, NotYetPorted};
+use rockuml::fonts::FontRegistry;
 use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 use system_host::SystemHost;
 
@@ -70,6 +73,7 @@ fn decode_urls(codes: &[String]) -> Result<ExitStatus, String> {
 }
 
 fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
+    let fonts = Arc::new(fonts::load(&options.fonts)?);
     let mut status = ExitStatus::Success;
     for file in &options.files {
         let blocks = preprocess_file(file)?;
@@ -78,7 +82,7 @@ fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
         {
             status = ExitStatus::DiagramErrors;
         }
-        if !write_outputs(file, &blocks, options)? {
+        if !write_outputs(file, &blocks, options, &fonts)? {
             status = ExitStatus::SomeNotRendered;
         }
     }
@@ -107,6 +111,7 @@ fn write_outputs(
     file: &Path,
     blocks: &[PreprocessedBlock],
     options: &RenderOptions,
+    fonts: &Arc<FontRegistry>,
 ) -> Result<bool, String> {
     if options.format == OutputFormat::EncodedUrl {
         for block in blocks {
@@ -133,7 +138,7 @@ fn write_outputs(
                 let image_format = format
                     .image_format()
                     .ok_or_else(|| format!("{format:?} output is not implemented yet"))?;
-                match render(block, image_format) {
+                match render(block, image_format, fonts) {
                     Ok(document) => document,
                     Err(not_ported) => {
                         eprintln!("rockuml: {}: {not_ported}", output.display());
@@ -149,9 +154,13 @@ fn write_outputs(
     Ok(all_rendered)
 }
 
-fn render(block: &PreprocessedBlock, format: ImageFormat) -> Result<String, NotYetPorted> {
+fn render(
+    block: &PreprocessedBlock,
+    format: ImageFormat,
+    fonts: &Arc<FontRegistry>,
+) -> Result<String, NotYetPorted> {
     let diagram = rockuml::diagram::create(block)?;
-    rockuml::diagram::export(diagram.as_ref(), format, &SystemHost)
+    rockuml::diagram::export(diagram.as_ref(), format, fonts, &SystemHost)
 }
 
 /// A reader that closed the pipe (`rockuml ... | head`) simply wants no more output.

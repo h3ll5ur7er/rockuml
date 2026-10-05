@@ -16,6 +16,8 @@ pub enum Command {
 pub struct RenderOptions {
     pub format: OutputFormat,
     pub output_directory: Option<PathBuf>,
+    /// Font files, or directories of them, to measure text with besides the embedded fonts.
+    pub fonts: Vec<PathBuf>,
     pub files: Vec<PathBuf>,
 }
 
@@ -46,8 +48,9 @@ impl OutputFormat {
     pub fn image_format(self) -> Option<ImageFormat> {
         match self {
             Self::Debug => Some(ImageFormat::Debug),
+            Self::Svg => Some(ImageFormat::Svg),
             Self::DeterministicSvg => Some(ImageFormat::DeterministicSvg),
-            Self::Preprocessed | Self::Svg | Self::EncodedUrl => None,
+            Self::Preprocessed | Self::EncodedUrl => None,
         }
     }
 
@@ -64,6 +67,7 @@ impl OutputFormat {
 pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, String> {
     let mut format = OutputFormat::Svg;
     let mut output_directory = None;
+    let mut fonts = Vec::new();
     let mut files = Vec::new();
     let mut arguments = arguments.into_iter();
     while let Some(argument) = arguments.next() {
@@ -84,6 +88,9 @@ pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, Str
                 output_directory =
                     Some(arguments.next().ok_or("missing directory after -o")?.into());
             }
+            "-font" | "--font" => {
+                fonts.push(arguments.next().ok_or("missing path after --font")?.into());
+            }
             flag if flag.starts_with('-') => return Err(format!("unsupported option: {flag}")),
             file => files.push(file.into()),
         }
@@ -91,6 +98,7 @@ pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, Str
     Ok(Command::Render(RenderOptions {
         format,
         output_directory,
+        fonts,
         files,
     }))
 }
@@ -110,6 +118,7 @@ mod tests {
             Ok(Command::Render(RenderOptions {
                 format: OutputFormat::Svg,
                 output_directory: None,
+                fonts: Vec::new(),
                 files: vec!["a.puml".into()],
             }))
         );
@@ -117,11 +126,13 @@ mod tests {
 
     #[test]
     fn accepts_plantuml_flag_spellings() {
-        let Ok(Command::Render(options)) = parse_words("-preproc -o out a.puml") else {
+        let Ok(Command::Render(options)) = parse_words("-preproc -o out --font f.ttf a.puml")
+        else {
             panic!("expected a render command");
         };
         assert_eq!(options.format, OutputFormat::Preprocessed);
         assert_eq!(options.output_directory, Some("out".into()));
+        assert_eq!(options.fonts, [PathBuf::from("f.ttf")]);
     }
 
     #[test]

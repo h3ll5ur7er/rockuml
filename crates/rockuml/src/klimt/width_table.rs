@@ -22,6 +22,11 @@ impl StringBounder for StringBounderFromWidthTable {
     }
 }
 
+/// A character's width as a fraction of the font size.
+pub(super) fn relative_width(c: char) -> f64 {
+    char_width(c) / REFERENCE_SIZE
+}
+
 fn char_width(c: char) -> f64 {
     static BLOCKS: LazyLock<Vec<UnicodeBlock>> = LazyLock::new(|| {
         SANS_SERIF

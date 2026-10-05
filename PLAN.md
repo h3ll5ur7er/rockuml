@@ -109,17 +109,15 @@ Crates that close the gaps:
 | **Layout engine** | Matches Java **without** Graphviz installed (Smetana path). Optionally matches Java *with* dot when the user has `dot` on PATH | default / optional |
 
 ### Fonts: our deliberate improvement
-rockuml **embeds** its fonts:
-- Liberation Sans (metric-compatible with Arial, which is what Java uses on Windows)
-- Liberation Mono and Serif
-- DejaVu Sans as a fallback for wider Unicode coverage
+rockuml **embeds** its fonts: Liberation Sans, Serif and Mono, metric-compatible with Arial, Times New Roman and
+Courier New, which is what Java's logical fonts map to on Windows.
 
 Measurement uses `ttf-parser` advances with fractional metrics, which is how Java measures (`FRACTIONALMETRICS ON`).
 PNG rendering uses the **same** embedded fonts through resvg.
 
-The result: output is identical on every OS and in the browser, and it matches Java-on-Windows. A user who sets
-`skinparam defaultFontName` to a font we don't embed gets it resolved through `fontdb` (system fonts, native builds only),
-with a fallback to Liberation.
+The result: output is identical on every OS and in the browser, and it matches Java-on-Windows. Users can register any
+other font (`--font`, `ROCKUML_FONTS`; `FontRegistry::register` for embedders). System fonts are deliberately not
+picked up automatically, so that output does not depend on the machine.
 
 Three bounders are selectable, mirroring Java:
 - `font` (default)
@@ -277,7 +275,10 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - style system: skin files, `<style>` sheets, merge priorities, skinparam→style conversion, `SkinParam`;
   - klimt core and the DEBUG backend; creole sheets with lists, headings, separators and all inline markup
     (styles, colours, sizes, fonts, sup/sub);
-  - `@startcreole`; `@startsalt` grids and widgets with titles; error images, including the welcome text.
+  - `@startcreole`; `@startsalt` grids and widgets with titles; error images, including the welcome text;
+  - common commands: `skinparam`, `<style>`, title, caption, legend, header and footer (one-line and block forms);
+  - SVG with both bounders: `-f svg-deterministic` (width table) and `-tsvg` (embedded Liberation fonts, plus fonts
+    registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet.
 
   Learned along the way / deliberate deviations:
   - Java's `%.4f` rounds the shortest decimal representation half-up, not the exact binary value; `java::format_fixed`
@@ -288,10 +289,15 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - The oracle starts PlantUML through `tools/oracle/launcher`, which switches off the donation banners error images
     get in some minutes of the hour; rockuml never shows them.
   - Where PlantUML crashes while drawing (a creole `----` in SVG, an unclosed salt group) it prints a crash report with
-    a random quote; rockuml does not reproduce crash reports.
-  - Not yet: SVG/PNG backends (need embedded font metrics), salt menus/tabs/trees/scroll/border/images, creole tables,
-    trees, links, sprites, emoji, OpenIconic and images, most common commands (skinparam, style, legend, header...),
-    multi-pass parsing and the `@startuml` best-error selection.
+    a random quote; rockuml does not reproduce crash reports, and the golden generator drops them.
+  - rockuml matches PlantUML on the happy path. Java bugs and quirks that only show on odd input, easter eggs and
+    toy diagrams are not ported.
+  - Java's logical fonts on Windows are composites: their line height includes fallback fonts for other scripts. The
+    font measurement reproduces that extent; characters the embedded fonts lack are measured with PlantUML's width
+    table, where Java would measure them with a Windows font.
+  - Not yet: PNG, salt menus/tabs/trees/scroll/border/images, creole tables, trees, links, sprites, emoji, OpenIconic
+    and images, the remaining common commands (pragma, scale, sprites, mainframe...), creole separators drawn across
+    their container (`UHorizontalLine`), and the `@startuml` best-error selection.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,

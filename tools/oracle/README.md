@@ -28,8 +28,11 @@ one per block (`x.preproc`, `x_001.preproc`, …), one per page, or a name chose
 |---|---|---|
 | `.preproc` | `-preproc` | exactly (line endings normalised) |
 | `.debug` | `-f debug` (font-independent dump of drawn shapes) | exactly (render timestamps masked) |
-| `.svg` | `-f svg` | not yet (needs a structural comparator) |
-| `.dsvg` | `-f svg-deterministic` (oracle-only name: SVG measured with PlantUML's font-independent width table) | not yet |
+| `.svg` | `-f svg` (text measured with the fonts Java finds on Windows) | exactly |
+| `.dsvg` | `-f svg-deterministic` (oracle-only name: SVG measured with PlantUML's font-independent width table) | exactly |
+
+The `.svg` goldens must be generated on Windows: elsewhere Java measures with other fonts. rockuml's embedded
+Liberation fonts have the Windows fonts' metrics.
 
 Where PlantUML crashes it draws a crash report with a random quote; the generator drops such goldens, because
 rockuml renders the diagram instead.

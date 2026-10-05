@@ -10,6 +10,7 @@ mod titled;
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::color::HColor;
 use crate::host::Host;
@@ -18,6 +19,7 @@ use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::svg::{SvgOption, UGraphicSvg};
+use crate::klimt::typeface::{FontRegistry, StringBounderFonts};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend};
 use crate::klimt::width_table::StringBounderFromWidthTable;
 use crate::preproc::PreprocessedBlock;
@@ -107,19 +109,24 @@ fn prepare(block: &PreprocessedBlock) -> (Option<DiagramType>, UmlSource) {
 pub enum ImageFormat {
     /// PlantUML's `debug` format, which lists every drawn shape.
     Debug,
+    /// SVG with text measured with fonts.
+    Svg,
     /// SVG with text measured by a fixed width table instead of fonts, identical on every machine.
     DeterministicSvg,
 }
 
+/// `fonts` measure the text of formats that use fonts.
 pub fn export(
     diagram: &dyn Diagram,
     format: ImageFormat,
+    fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<String, NotYetPorted> {
     let settings = diagram.export_settings();
     let text_block = diagram.text_block()?;
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
+        ImageFormat::Svg => Rc::new(StringBounderFonts::new(fonts.clone())),
         ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
     };
     let margin = settings.margin;
@@ -145,7 +152,7 @@ pub fn export(
                 preserve_aspect_ratio: settings.preserve_aspect_ratio,
             })
         }
-        ImageFormat::DeterministicSvg => {
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => {
             let backcolor = settings
                 .backcolor
                 .or_else(|| text_block.backcolor())

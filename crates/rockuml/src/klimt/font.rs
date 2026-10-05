@@ -63,6 +63,11 @@ impl UFont {
         Self::new(Self::SERIF, UFontFace::NORMAL, size)
     }
 
+    /// As written: a family name or a comma-separated fallback list.
+    pub fn family(&self) -> &str {
+        &self.family
+    }
+
     pub fn size(&self) -> i32 {
         self.size
     }
