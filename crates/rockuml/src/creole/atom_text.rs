@@ -1,11 +1,11 @@
 use super::{Atom, char_hidder};
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
-use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{UShape, UText};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::url::Url;
+use crate::klimt::{TextBlock, layout_tabulated};
 
 /// A run of text in one font.
 #[derive(Clone, Debug)]
@@ -78,22 +78,6 @@ impl AtomText {
         c == '\t' || c == BLOCK_E1_REAL_TABULATION
     }
 
-    /// Splits at tabulations, which are returned as pieces of their own.
-    fn pieces(&self) -> impl Iterator<Item = &str> {
-        let mut rest = self.text.as_str();
-        std::iter::from_fn(move || {
-            let first = rest.chars().next()?;
-            let length = if Self::is_tabulation(first) {
-                first.len_utf8()
-            } else {
-                rest.find(Self::is_tabulation).unwrap_or(rest.len())
-            };
-            let (piece, remaining) = rest.split_at(length);
-            rest = remaining;
-            Some(piece)
-        })
-    }
-
     fn tab_size(&self, string_bounder: &dyn StringBounder) -> f64 {
         let spaces = match self.font.tab_size() {
             size @ 1..7 => " ".repeat(size as usize),
@@ -113,20 +97,15 @@ impl AtomText {
     fn layout_pieces(
         &self,
         string_bounder: &dyn StringBounder,
-        mut visit: impl FnMut(&str, f64),
+        visit: impl FnMut(&str, f64),
     ) -> f64 {
-        let tab_size = self.tab_size(string_bounder);
         let font = self.font.font();
-        let mut x = 0.0;
-        for piece in self.pieces() {
-            if piece.starts_with(Self::is_tabulation) {
-                x += tab_size - x % tab_size;
-            } else {
-                visit(piece, x);
-                x += string_bounder.calculate_dimension(&font, piece).width;
-            }
-        }
-        x
+        layout_tabulated(
+            &self.text,
+            self.tab_size(string_bounder),
+            |text| string_bounder.calculate_dimension(&font, text).width,
+            visit,
+        )
     }
 }
 
@@ -236,14 +215,5 @@ mod tests {
             manage_special_chars("&#; &#12 <U+12> ~@startuml a\\tb"),
             "&#; &#12 <U+12> @startuml a\tb"
         );
-    }
-
-    #[test]
-    fn tabulations_split_the_text_into_pieces() {
-        let atom = AtomText::legacy(
-            "\ta\tbc",
-            FontConfiguration::black_blue_true(crate::klimt::font::UFont::serif(14)),
-        );
-        assert_eq!(atom.pieces().collect::<Vec<_>>(), ["\t", "a", "\t", "bc"]);
     }
 }

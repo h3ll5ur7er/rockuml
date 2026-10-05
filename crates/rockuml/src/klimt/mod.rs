@@ -56,6 +56,32 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
     }
 }
 
+/// Lays a line out at tab stops `tab_width` apart: calls `visit` with each piece between tabulations and its x
+/// offset, and returns the width of the whole line.
+pub(crate) fn layout_tabulated(
+    line: &str,
+    tab_width: f64,
+    width_of: impl Fn(&str) -> f64,
+    mut visit: impl FnMut(&str, f64),
+) -> f64 {
+    let is_tabulation = |c: char| c == '\t' || c == crate::jaws::BLOCK_E1_REAL_TABULATION;
+    let mut x = 0.0;
+    for piece in line.split_inclusive(is_tabulation) {
+        let (text, tabulated) = match piece.strip_suffix(is_tabulation) {
+            Some(text) => (text, true),
+            None => (piece, false),
+        };
+        if !text.is_empty() {
+            visit(text, x);
+            x += width_of(text);
+        }
+        if tabulated {
+            x += tab_width - x % tab_width;
+        }
+    }
+    x
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(crate) enum HorizontalAlignment {
     #[default]
@@ -81,5 +107,25 @@ impl HorizontalAlignment {
             "right" => Some(Self::Right),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn tabulations_advance_to_the_next_stop() {
+        let mut pieces = Vec::new();
+        let width = layout_tabulated(
+            "	a	bc",
+            4.0,
+            |text| text.len() as f64,
+            |piece, x| {
+                pieces.push((piece.to_owned(), x));
+            },
+        );
+        assert_eq!(pieces, [("a".to_owned(), 4.0), ("bc".to_owned(), 8.0)]);
+        assert_eq!(width, 10.0);
     }
 }

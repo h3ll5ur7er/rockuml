@@ -5,7 +5,7 @@ use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use super::group::UGroup;
 use super::shape::{URectangle, UShape, UText};
 use super::ugraphic::{UGraphic, UStroke};
-use super::{HorizontalAlignment, TextBlock};
+use super::{HorizontalAlignment, TextBlock, layout_tabulated};
 use crate::color::HColor;
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
 
@@ -291,30 +291,16 @@ impl TextBlockRaw {
         XDimension2D::new(width, rect.height.max(10.0) + space_below)
     }
 
-    /// Calls `visit` with each piece between tabulations and its x offset; returns the total width.
+    /// Tab stops are eight spaces apart.
     fn layout(
         &self,
         line: &str,
         string_bounder: &dyn StringBounder,
-        mut visit: impl FnMut(&str, f64),
+        visit: impl FnMut(&str, f64),
     ) -> f64 {
         let font = self.font.font();
-        let tab_size = string_bounder.calculate_dimension(&font, "        ").width;
-        let mut x = 0.0;
-        for piece in line.split_inclusive(['\t', BLOCK_E1_REAL_TABULATION]) {
-            let (text, tabulated) = match piece.strip_suffix(['\t', BLOCK_E1_REAL_TABULATION]) {
-                Some(text) => (text, true),
-                None => (piece, false),
-            };
-            if !text.is_empty() {
-                visit(text, x);
-                x += string_bounder.calculate_dimension(&font, text).width;
-            }
-            if tabulated {
-                x += tab_size - x % tab_size;
-            }
-        }
-        x
+        let width_of = |text: &str| string_bounder.calculate_dimension(&font, text).width;
+        layout_tabulated(line, width_of("        "), width_of, visit)
     }
 }
 
