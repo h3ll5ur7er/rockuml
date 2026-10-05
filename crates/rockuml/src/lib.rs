@@ -18,6 +18,7 @@ mod stdlib;
 mod style;
 mod text;
 mod tim;
+mod ubrex;
 pub mod url_code;
 pub mod url_policy;
 
