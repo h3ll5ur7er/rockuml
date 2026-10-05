@@ -8,7 +8,9 @@ use regex::Regex;
 
 use crate::java;
 use crate::pattern::{java_regex, plantuml_regex};
-use crate::style::{Style, StyleBuilder, StyleParser, StyleSignature, skinparam_styles};
+use crate::style::{
+    Style, StyleBuilder, StyleParser, StyleParsingError, StyleSignature, skinparam_styles,
+};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
@@ -59,6 +61,14 @@ impl SkinParam {
     }
 
     /// `skinparam key value`: remembered under the normalised key, and turned into style rules.
+    /// The rules of a `<style>` block, merged over the current ones.
+    pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
+        let builder = self.style_builder_mut();
+        let styles = StyleParser::new(builder.counter()).parse(lines)?;
+        builder.mute(styles);
+        Ok(())
+    }
+
     pub fn set_param(&mut self, key: &str, value: &str) {
         for normalised in clean_for_key(key) {
             self.params

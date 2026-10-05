@@ -1,0 +1,110 @@
+DPI: 96
+dimension: [ 322.2928 ; 161.0000 ]
+scaleFactor: 1.0000
+seed: 2600182957589240688
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 193.6096 ; 5.0000 ]
+  pt2: [ 317.2928 ; 16.0000 ]
+
+TEXT:
+  text: Page 
+  position: [ 193.6096 ; 12.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: header
+  position: [ 238.9605 ; 12.7778 ]
+  orientation: 0
+  font: SansSerif.bold/10 [BOLD]
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 16.0000 ]
+  pt2: [ 317.2928 ; 51.0000 ]
+
+TEXT:
+  text: Title with header
+  position: [ 15.0000 ; 36.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Hello
+  position: [ 94.3343 ; 61.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: World
+  position: [ 172.6611 ; 61.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 18.0889 ; 65.0000 ]
+  pt2: [ 304.2039 ; 128.0000 ]
+
+RECTANGLE:
+  pt1: [ 30.0889 ; 77.0000 ]
+  pt2: [ 291.2039 ; 115.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Legend line one
+  position: [ 35.0889 ; 92.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Legend line two
+  position: [ 35.0889 ; 106.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 40.7818 ; 128.0000 ]
+  pt2: [ 281.5109 ; 145.0000 ]
+
+TEXT:
+  text: This is the caption
+  position: [ 41.7818 ; 139.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 94.1231 ; 145.0000 ]
+  pt2: [ 228.1697 ; 156.0000 ]
+
+TEXT:
+  text: left footer
+  position: [ 94.1231 ; 152.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

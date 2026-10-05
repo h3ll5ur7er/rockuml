@@ -11,10 +11,22 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 
-#[derive(Default)]
 pub struct Titled {
     pub skin: SkinParam,
+    /// The diagram's own style name, like `saltDiagram`, for the styles of its legend.
+    diagram_style: SName,
     title: Option<Display>,
+    caption: Option<Display>,
+    legend: Option<(Display, HorizontalAlignment, VerticalAlignment)>,
+    header: Option<(Display, HorizontalAlignment)>,
+    footer: Option<(Display, HorizontalAlignment)>,
+}
+
+/// Where a legend goes: above or below the diagram.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum VerticalAlignment {
+    Top,
+    Bottom,
 }
 
 /// A diagram built from commands that apply to every titled diagram.
@@ -23,11 +35,52 @@ pub trait TitledDiagram {
 }
 
 impl Titled {
+    pub fn new(diagram_style: SName) -> Self {
+        Self {
+            skin: SkinParam::default(),
+            diagram_style,
+            title: None,
+            caption: None,
+            legend: None,
+            header: None,
+            footer: None,
+        }
+    }
+
     /// A blank title is ignored.
     pub fn set_title(&mut self, title: Display) {
         if !title.is_white() {
             self.title = Some(title);
         }
+    }
+
+    pub fn set_caption(&mut self, caption: Display) {
+        self.caption = Some(caption);
+    }
+
+    pub fn set_legend(
+        &mut self,
+        legend: Display,
+        horizontal: HorizontalAlignment,
+        vertical: VerticalAlignment,
+    ) {
+        self.legend = Some((legend, horizontal, vertical));
+    }
+
+    pub fn set_header(&mut self, header: Display, alignment: HorizontalAlignment) {
+        self.header = Some((header, alignment));
+    }
+
+    pub fn set_footer(&mut self, footer: Display, alignment: HorizontalAlignment) {
+        self.footer = Some((footer, alignment));
+    }
+
+    /// Where headers or footers go when the command does not say: as their style aligns text.
+    pub fn default_alignment(&self, part: SName) -> HorizontalAlignment {
+        self.document_style(Some(part))
+            .value(PName::HorizontalAlignment)
+            .as_horizontal_alignment()
+            .unwrap_or_default()
     }
 
     fn document_style(&self, name: Option<SName>) -> Style {
@@ -38,18 +91,59 @@ impl Titled {
             .expect("the skin styles the document")
     }
 
-    /// The diagram's drawing with the title around it.
+    /// The diagram's drawing with its legend, title, caption, header and footer around it, added in
+    /// PlantUML's order.
     pub fn add_chrome<'a>(&'a self, drawing: Box<dyn TextBlock + 'a>) -> Box<dyn TextBlock + 'a> {
-        let Some(title) = &self.title else {
-            return drawing;
+        let mut result = drawing;
+        if let Some((legend, horizontal, vertical)) = &self.legend {
+            let names = [
+                SName::Root,
+                SName::Document,
+                self.diagram_style,
+                SName::Legend,
+            ];
+            let style = self
+                .skin
+                .merged_style(&StyleSignature::of(&names))
+                .expect("the skin styles the document");
+            let block = Some((bordered_text(legend, &style), *horizontal));
+            result = match vertical {
+                VerticalAlignment::Top => Box::new(Decorated::new(result, block, None)),
+                VerticalAlignment::Bottom => Box::new(Decorated::new(result, None, block)),
+            };
+        }
+        if let Some(title) = &self.title {
+            let block = bordered_text(title, &self.document_style(Some(SName::Title)));
+            result = Box::new(Decorated::new(
+                result,
+                Some((block, HorizontalAlignment::Center)),
+                None,
+            ));
+        }
+        if let Some(caption) = &self.caption {
+            let block = bordered_text(caption, &self.document_style(Some(SName::Caption)));
+            result = Box::new(Decorated::new(
+                result,
+                None,
+                Some((block, HorizontalAlignment::Center)),
+            ));
+        }
+        let ribbon = |part: &Option<(Display, HorizontalAlignment)>, name| {
+            part.as_ref()
+                .filter(|(display, _)| !display.lines().is_empty())
+                .map(|(display, alignment)| {
+                    (
+                        bordered_text(display, &self.document_style(Some(name))),
+                        *alignment,
+                    )
+                })
         };
-        let style = self.document_style(Some(SName::Title));
-        let title_block = bordered_text(title, &style);
-        Box::new(Decorated::new(
-            drawing,
-            Some((title_block, HorizontalAlignment::Center)),
-            None,
-        ))
+        let header = ribbon(&self.header, SName::Header);
+        let footer = ribbon(&self.footer, SName::Footer);
+        if header.is_some() || footer.is_some() {
+            result = Box::new(Decorated::new(result, header, footer));
+        }
+        result
     }
 
     /// The document style's margin if it sets one, otherwise the diagram's own default.

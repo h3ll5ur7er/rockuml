@@ -1,0 +1,56 @@
+DPI: 96
+dimension: [ 192.8564 ; 94.0000 ]
+scaleFactor: 1.0000
+seed: 4397753484193882965
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 91.5203 ; 5.0000 ]
+  pt2: [ 187.8564 ; 26.0000 ]
+
+TEXT:
+  text: Two-line
+  position: [ 91.5203 ; 12.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: header
+  position: [ 109.5241 ; 22.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 26.0000 ]
+  pt2: [ 187.8564 ; 75.0000 ]
+
+TEXT:
+  text: Multi-line
+  position: [ 15.0000 ; 46.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: title
+  position: [ 66.0873 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.bolditalic/14 [ITALIC, BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: x
+  position: [ 90.6977 ; 85.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

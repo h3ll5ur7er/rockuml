@@ -7,7 +7,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use super::common_commands::title_command;
+use super::common_commands::common_commands;
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
 use super::source::UmlSource;
@@ -46,11 +46,11 @@ impl SaltDiagram {
     pub fn create(source: UmlSource) -> Box<dyn Diagram> {
         let mut diagram = Self {
             source,
-            titled: Titled::default(),
+            titled: Titled::new(crate::style::SName::SaltDiagram),
             lines: Vec::new(),
         };
-        let commands: Vec<Box<dyn Command<SaltDiagram>>> =
-            vec![title_command(), Box::new(SingleLine(Anything::new()))];
+        let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = common_commands();
+        commands.push(Box::new(SingleLine(Anything::new())));
         let lines = diagram.source.lines().to_vec();
         match factory::execute_lines(&lines, &mut diagram, &commands) {
             Ok(()) => Box::new(diagram),

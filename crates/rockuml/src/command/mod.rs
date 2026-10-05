@@ -2,9 +2,11 @@
 
 mod bloc_lines;
 pub mod factory;
+mod multiline;
 mod single_line;
 
 pub use bloc_lines::BlocLines;
+pub use multiline::Multiline;
 pub use single_line::{SingleLine, SingleLineCommand};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

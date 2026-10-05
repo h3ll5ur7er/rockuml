@@ -87,6 +87,19 @@ impl Display {
         }
     }
 
+    /// Written `\t` becomes a tabulation.
+    #[must_use]
+    pub fn replace_backslash_t(&self) -> Self {
+        Self {
+            lines: self
+                .lines
+                .iter()
+                .map(|line| line.replace("\\t", "\t"))
+                .collect(),
+            natural_alignment: self.natural_alignment,
+        }
+    }
+
     pub fn lines(&self) -> &[String] {
         &self.lines
     }
