@@ -154,6 +154,10 @@ impl Diagram for ErrorDiagram {
     fn export_settings(&self) -> ExportSettings {
         ExportSettings::without_skin(self.source.seed())
     }
+
+    fn is_error(&self) -> bool {
+        true
+    }
 }
 
 /// The help PlantUML shows above errors in very short sources, with its logo in the top right corner.

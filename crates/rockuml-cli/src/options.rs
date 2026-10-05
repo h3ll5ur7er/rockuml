@@ -57,6 +57,11 @@ impl OutputFormat {
         }
     }
 
+    /// Whether text is measured with fonts, which `--font` adds to.
+    pub fn measures_with_fonts(self) -> bool {
+        matches!(self, Self::Svg | Self::Png)
+    }
+
     pub fn suffix(self) -> &'static str {
         match self {
             Self::Preprocessed => ".preproc",

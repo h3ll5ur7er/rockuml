@@ -2,7 +2,7 @@
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
 use super::scale::Scale;
-use super::{DEFAULT_DPI, ExportSettings};
+use super::{DEFAULT_DPI, ExportSettings, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{Bordered, Decorated, Decoration, Marged};
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
@@ -173,8 +173,8 @@ impl Titled {
             dpi: self
                 .skin
                 .value("dpi")
-                .filter(|dpi| !dpi.is_empty() && dpi.bytes().all(|byte| byte.is_ascii_digit()))
-                .and_then(|dpi| dpi.parse().ok())
+                .as_deref()
+                .and_then(parse_digits)
                 .unwrap_or(DEFAULT_DPI),
             svg_link_target: Some(
                 self.skin

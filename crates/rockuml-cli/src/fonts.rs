@@ -8,10 +8,15 @@ use rockuml::fonts::FontRegistry;
 const FONT_PATH_VARIABLE: &str = "ROCKUML_FONTS";
 const FONT_EXTENSIONS: [&str; 3] = ["ttf", "otf", "ttc"];
 
-/// The embedded fonts plus those in `paths` and in `ROCKUML_FONTS`; a directory adds every font file in it.
+/// The embedded fonts plus those in `ROCKUML_FONTS` and in `paths`; a directory adds every font file in it.
+/// `ROCKUML_FONTS` entries that do not exist are skipped, as the variable is set once for many runs.
 pub fn load(paths: &[PathBuf]) -> Result<FontRegistry, String> {
     let from_environment: Vec<PathBuf> = std::env::var_os(FONT_PATH_VARIABLE)
-        .map(|list| std::env::split_paths(&list).collect())
+        .map(|list| {
+            std::env::split_paths(&list)
+                .filter(|path| !path.as_os_str().is_empty() && path.exists())
+                .collect()
+        })
         .unwrap_or_default();
     let mut registry = FontRegistry::default();
     for path in from_environment.iter().chain(paths) {

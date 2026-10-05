@@ -7,7 +7,7 @@ use flate2::Crc;
 use flate2::write::ZlibEncoder;
 use resvg::tiny_skia::{Color, Pixmap, Transform};
 use resvg::usvg::fontdb::{self, Database};
-use resvg::usvg::{FontFamily, FontResolver, Options, Tree};
+use resvg::usvg::{FontFamily, FontResolver, ImageHrefResolver, Options, Tree};
 
 use super::typeface::FontRegistry;
 use crate::color::HColor;
@@ -33,12 +33,21 @@ pub fn rasterize(
     let options = Options {
         fontdb: Arc::new(font_database(fonts)),
         font_resolver: font_resolver(fonts.clone()),
+        image_href_resolver: embedded_images_only(),
         ..Options::default()
     };
     let tree = Tree::from_str(svg, &options).expect("rockuml writes valid SVG");
     resvg::render(&tree, Transform::identity(), &mut pixmap.as_mut());
     let png = pixmap.encode_png().expect("encoding to memory succeeds");
     with_text_chunk(&png, "plantuml", metadata)
+}
+
+/// The engine reads no files: images come embedded in the document or not at all.
+fn embedded_images_only() -> ImageHrefResolver<'static> {
+    ImageHrefResolver {
+        resolve_data: ImageHrefResolver::default_data_resolver(),
+        resolve_string: Box::new(|_, _| None),
+    }
 }
 
 fn font_database(fonts: &FontRegistry) -> Database {

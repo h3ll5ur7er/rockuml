@@ -56,7 +56,7 @@ impl fmt::Display for NotAFont {
 
 impl std::error::Error for NotAFont {}
 
-/// The embedded fonts, the Windows family each stands in for, and the logical font Java maps to that family.
+/// The embedded fonts, and the Windows family each stands in for.
 const EMBEDDED: [(&str, &str); 12] = [
     ("fonts/LiberationSans-Regular.ttf", "Arial"),
     ("fonts/LiberationSans-Bold.ttf", "Arial"),
@@ -93,12 +93,19 @@ impl FontRegistry {
         self.add(&FontData::Registered(data.into()), &[])
     }
 
+    /// Registers every face of the file, or none if any of them cannot be read.
     fn add(&mut self, data: &FontData, aliases: &[&str]) -> Result<Vec<String>, NotAFont> {
         let bytes = data.bytes();
         let count = ttf_parser::fonts_in_collection(bytes).unwrap_or(1);
+        let faces: Vec<(u32, Face)> = (0..count)
+            .map(|index| Face::parse(bytes, index).map(|face| (index, face)))
+            .collect::<Result<_, _>>()
+            .map_err(|_| NotAFont)?;
+        if faces.is_empty() {
+            return Err(NotAFont);
+        }
         let mut added = Vec::new();
-        for index_in_collection in 0..count {
-            let face = Face::parse(bytes, index_in_collection).map_err(|_| NotAFont)?;
+        for (index_in_collection, face) in faces {
             let mut families = family_names(&face);
             added.extend(families.iter().cloned());
             families.extend(aliases.iter().map(|alias| (*alias).to_owned()));
@@ -114,6 +121,7 @@ impl FontRegistry {
             };
             self.faces.insert(0, registered);
         }
+        added.sort();
         added.dedup();
         Ok(added)
     }

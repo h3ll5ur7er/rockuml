@@ -108,6 +108,8 @@ fn escape_into(out: &mut String, text: &str, in_attribute: bool) {
             '&' => out.push_str("&amp;"),
             '<' => out.push_str("&lt;"),
             '"' if in_attribute => out.push_str("&quot;"),
+            // `]]>` must not appear in text; PlantUML writes it anyway.
+            '>' if out.ends_with("]]") => out.push_str("&gt;"),
             c if is_xml_char(c) => out.push(c),
             _ => {}
         }
@@ -123,10 +125,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn characters_xml_cannot_hold_are_dropped() {
+    fn text_stays_well_formed() {
         let mut text = XmlNode::new("text");
-        text.set_text_content("a\u{1}b\u{FFFE}c\td");
-        assert_eq!(text.to_xml(), "<text>abc\td</text>");
+        text.set_text_content("a\u{1}b\u{FFFE}c\td ]]> >");
+        assert_eq!(text.to_xml(), "<text>abc\td ]]&gt; ></text>");
     }
 
     #[test]

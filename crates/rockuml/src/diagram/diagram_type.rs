@@ -72,9 +72,38 @@ impl DiagramType {
     /// How error messages name the type, like PlantUML's `humanReadableName`.
     pub fn human_readable_name(self) -> &'static str {
         match self {
+            Self::Uml => {
+                unreachable!("`@startuml` diagrams are named by the type their content reveals")
+            }
+            Self::Bpm => "bpm",
+            Self::Board => "board",
+            Self::Chart => "chart",
             Self::Creole => "creole",
+            Self::Chronology => "chronology",
+            Self::ChenEer => "chen_eer",
+            Self::Crash => "crash",
+            Self::Dot => "dot",
+            Self::Ditaa => "ditaa",
+            Self::Definition => "definition",
+            Self::Ebnf => "ebnf",
+            Self::Flow => "flow",
+            Self::Files => "files",
+            Self::Gantt => "gantt",
+            Self::Git => "git",
+            Self::Hcl => "hcl",
+            Self::Json => "json",
+            Self::Latex => "latex",
+            Self::Math => "math",
+            Self::MindMap => "mindmap",
+            Self::NwDiag => "nwdiag",
+            Self::Packet => "packet",
+            Self::Regex => "regex",
             Self::Salt => "salt",
-            other => unimplemented!("the error name of {other:?} diagrams"),
+            Self::Sprites => "sprites",
+            Self::Wire => "wire",
+            Self::Wbs => "wbs",
+            Self::Yaml => "yaml",
+            Self::Unknown => "unknown",
         }
     }
 

@@ -49,6 +49,11 @@ pub trait Diagram {
     fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
 
     fn export_settings(&self) -> ExportSettings;
+
+    /// Whether the diagram is an error image instead of what its source describes.
+    fn is_error(&self) -> bool {
+        false
+    }
 }
 
 /// The resolution diagrams are drawn for unless `skinparam dpi` says otherwise.
@@ -216,11 +221,22 @@ pub fn export(
     })
 }
 
-/// PlantUML crops images to `PLANTUML_LIMIT_SIZE` pixels each way.
+/// PlantUML crops images to `PLANTUML_LIMIT_SIZE` pixels each way. rockuml also refuses limits that would make
+/// a single image need gigabytes of memory.
 fn image_size_limit(host: &dyn Host) -> u32 {
     const DEFAULT_LIMIT: u32 = 4096;
+    const LARGEST_LIMIT: u32 = 16_384;
     host.getenv("PLANTUML_LIMIT_SIZE")
-        .filter(|limit| !limit.is_empty() && limit.bytes().all(|byte| byte.is_ascii_digit()))
-        .and_then(|limit| limit.parse().ok())
+        .as_deref()
+        .and_then(parse_digits)
         .unwrap_or(DEFAULT_LIMIT)
+        .min(LARGEST_LIMIT)
+}
+
+/// A setting written as digits only, as PlantUML accepts numeric settings.
+fn parse_digits(text: &str) -> Option<u32> {
+    if text.is_empty() || !text.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    text.parse().ok()
 }
