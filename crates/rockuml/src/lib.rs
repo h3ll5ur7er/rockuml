@@ -15,6 +15,7 @@ mod java;
 mod jaws;
 pub mod json;
 mod klimt;
+mod openiconic;
 mod pattern;
 pub mod preproc;
 mod skin;

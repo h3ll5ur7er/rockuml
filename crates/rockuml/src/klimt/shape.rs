@@ -40,9 +40,55 @@ impl UShape {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(
+    clippy::enum_variant_names,
+    reason = "PlantUML's names: SEG_MOVETO, SEG_LINETO, SEG_CUBICTO, SEG_ARCTO"
+)]
 pub enum USegment {
     MoveTo(f64, f64),
     LineTo(f64, f64),
+    CubicTo {
+        ctrl1: (f64, f64),
+        ctrl2: (f64, f64),
+        end: (f64, f64),
+    },
+    ArcTo {
+        radius: (f64, f64),
+        x_axis_rotation: f64,
+        large_arc: bool,
+        sweep: bool,
+        end: (f64, f64),
+    },
+}
+
+impl USegment {
+    /// An arc's radii and rotation do not move with it.
+    #[must_use]
+    pub fn translate(self, dx: f64, dy: f64) -> Self {
+        let moved = |(x, y): (f64, f64)| (x + dx, y + dy);
+        match self {
+            Self::MoveTo(x, y) => Self::MoveTo(x + dx, y + dy),
+            Self::LineTo(x, y) => Self::LineTo(x + dx, y + dy),
+            Self::CubicTo { ctrl1, ctrl2, end } => Self::CubicTo {
+                ctrl1: moved(ctrl1),
+                ctrl2: moved(ctrl2),
+                end: moved(end),
+            },
+            Self::ArcTo {
+                radius,
+                x_axis_rotation,
+                large_arc,
+                sweep,
+                end,
+            } => Self::ArcTo {
+                radius,
+                x_axis_rotation,
+                large_arc,
+                sweep,
+                end: moved(end),
+            },
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]

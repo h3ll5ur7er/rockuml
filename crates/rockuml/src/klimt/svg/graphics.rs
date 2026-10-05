@@ -237,22 +237,47 @@ impl SvgGraphics {
         self.ensure_visible(x, y);
         let mut d = Vec::with_capacity(segments.len());
         for segment in segments {
-            let (command, dx, dy) = match *segment {
-                USegment::MoveTo(dx, dy) => ('M', dx, dy),
-                USegment::LineTo(dx, dy) => ('L', dx, dy),
-            };
-            d.push(format!(
-                "{command}{},{}",
-                self.length(x + dx),
-                self.length(y + dy)
-            ));
-            self.ensure_visible(x + dx, y + dy);
+            d.push(match *segment {
+                USegment::MoveTo(dx, dy) => format!("M{}", self.visible_point(x + dx, y + dy)),
+                USegment::LineTo(dx, dy) => format!("L{}", self.visible_point(x + dx, y + dy)),
+                USegment::CubicTo { ctrl1, ctrl2, end } => format!(
+                    "C{} {} {}",
+                    self.visible_point(x + ctrl1.0, y + ctrl1.1),
+                    self.visible_point(x + ctrl2.0, y + ctrl2.1),
+                    self.visible_point(x + end.0, y + end.1)
+                ),
+                USegment::ArcTo {
+                    radius,
+                    x_axis_rotation,
+                    large_arc,
+                    sweep,
+                    end,
+                } => {
+                    self.ensure_visible(end.0 + radius.0 + x, end.1 + radius.1 + y);
+                    format!(
+                        "A{},{} {} {} {} {},{}",
+                        self.length(radius.0),
+                        self.length(radius.1),
+                        self.length(x_axis_rotation),
+                        u8::from(large_arc),
+                        u8::from(sweep),
+                        self.length(end.0 + x),
+                        self.length(end.1 + y)
+                    )
+                }
+            });
         }
         let mut element = XmlNode::new("path");
         element.set_attribute("d", d.join(" "));
         self.style_me(&mut element, "");
         self.fill_me(&mut element);
         self.current_group().append_child(element);
+    }
+
+    /// `x,y`, after growing the image to show the point.
+    fn visible_point(&mut self, x: f64, y: f64) -> String {
+        self.ensure_visible(x, y);
+        format!("{},{}", self.length(x), self.length(y))
     }
 
     pub fn text(&mut self, text: &SvgText) {

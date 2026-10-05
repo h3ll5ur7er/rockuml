@@ -93,7 +93,7 @@ fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
 }
 
 /// What happened to the diagrams of a run.
-#[derive(Default)]
+#[derive(Clone, Copy, Default)]
 struct Outcome {
     diagram_errors: bool,
     not_rendered: bool,
@@ -106,7 +106,7 @@ impl Outcome {
     }
 
     /// Diagrams rockuml could not render at all matter more than those it rendered as error images.
-    fn status(&self) -> ExitStatus {
+    fn status(self) -> ExitStatus {
         if self.not_rendered {
             ExitStatus::SomeNotRendered
         } else if self.diagram_errors {

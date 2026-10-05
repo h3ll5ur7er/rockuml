@@ -120,16 +120,39 @@ impl UGraphicDebug {
     fn out_path(&mut self, segments: &[USegment], param: &UParam) {
         self.lines.push("PATH:".to_owned());
         for segment in segments {
-            let (kind, x, y) = match *segment {
-                USegment::MoveTo(x, y) => ("SEG_MOVETO", x, y),
-                USegment::LineTo(x, y) => ("SEG_LINETO", x, y),
-            };
-            self.lines.extend([
-                format!("   - type: {kind}"),
-                format!("     pt1: {}", point(x, y)),
-            ]);
+            match *segment {
+                USegment::MoveTo(x, y) => self.out_segment("SEG_MOVETO", &[(x, y)]),
+                USegment::LineTo(x, y) => self.out_segment("SEG_LINETO", &[(x, y)]),
+                USegment::CubicTo { ctrl1, ctrl2, end } => {
+                    self.out_segment("SEG_CUBICTO", &[ctrl1, ctrl2, end]);
+                }
+                USegment::ArcTo {
+                    radius,
+                    x_axis_rotation,
+                    large_arc,
+                    sweep,
+                    end,
+                } => self.lines.extend([
+                    "   - type: SEG_ARCTO".to_owned(),
+                    format!("     radius: {}", point(radius.0, radius.1)),
+                    format!("     angle: {}", java::double_to_string(x_axis_rotation)),
+                    format!("     largeArcFlag: {large_arc}"),
+                    format!("     sweepFlag: {sweep}"),
+                    format!("     dest: {}", point(end.0, end.1)),
+                ]),
+            }
         }
         self.out_style(param);
+    }
+
+    fn out_segment(&mut self, kind: &str, points: &[(f64, f64)]) {
+        self.lines.push(format!("   - type: {kind}"));
+        self.lines.extend(
+            points
+                .iter()
+                .enumerate()
+                .map(|(index, &(x, y))| format!("     pt{}: {}", index + 1, point(x, y))),
+        );
     }
 
     /// Shadows are not ported yet, so every shape is listed without one.

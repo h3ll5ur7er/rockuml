@@ -3,17 +3,19 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::atom_text::AtomText;
-use super::atoms::{AtomWithMargin, Bullet, HorizontalLine};
+use super::atoms::{AtomOpenIconic, AtomWithMargin, Bullet, HorizontalLine};
 use super::code::{self, AtomCode};
 use super::commands::{CreoleCommand, creole_commands};
 use super::table::{self, AtomTable};
 use super::tree::{self, AtomTree};
 use super::{Atom, CreoleMode, Sheet, Stripe, char_hidder};
+use crate::color::HColor;
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::{FontConfiguration, FontStyle};
 use crate::klimt::url::Url;
+use crate::openiconic::OpenIconic;
 use crate::pattern::{java_regex, plantuml_regex};
 
 /// Turns the lines of a label into a [`Sheet`] (PlantUML's legacy `CreoleParser`).
@@ -420,6 +422,18 @@ impl StripeBuilder {
     pub fn add_url(&mut self, url: Url) {
         self.atoms
             .push(Box::new(AtomText::link(url, self.font.hyperlink())));
+    }
+
+    /// An unknown icon is left out.
+    pub fn add_open_icon(&mut self, src: &str, scale: f64, color: Option<HColor>) {
+        if let Some(open_iconic) = OpenIconic::retrieve(src) {
+            self.atoms.push(Box::new(AtomOpenIconic::new(
+                color,
+                scale,
+                open_iconic,
+                &self.font,
+            )));
+        }
     }
 
     /// Adds `text` in a changed font, then goes back to the current one.
