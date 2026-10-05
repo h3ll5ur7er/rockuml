@@ -1,5 +1,7 @@
 //! Trees and tree tables (`{T`): an indented first column with further cells beside it.
 
+use std::cell::OnceCell;
+
 use super::elements::{Element, TableStrategy, Text, color, widget_font};
 use crate::color::HColor;
 use crate::java;
@@ -11,6 +13,16 @@ use crate::klimt::ugraphic::UGraphic;
 pub struct Tree {
     entries: Vec<TreeEntry>,
     strategy: TableStrategy,
+    /// Computed on the first measurement: re-measuring nested trees on every call is exponential in
+    /// their depth. Each export builds its own elements and measures them with one string bounder.
+    layout: OnceCell<TreeLayout>,
+}
+
+/// The sizes of a tree's columns and rows.
+struct TreeLayout {
+    first_width: f64,
+    other_widths: ListWidth,
+    row_heights: Vec<f64>,
 }
 
 impl Tree {
@@ -20,6 +32,7 @@ impl Tree {
         Self {
             entries: Vec::new(),
             strategy,
+            layout: OnceCell::new(),
         }
     }
 
@@ -40,6 +53,18 @@ impl Tree {
         }
     }
 
+    fn layout(&self, string_bounder: &dyn StringBounder) -> &TreeLayout {
+        self.layout.get_or_init(|| TreeLayout {
+            first_width: self.first_column_width(string_bounder),
+            other_widths: self.other_widths(string_bounder),
+            row_heights: self
+                .entries
+                .iter()
+                .map(|entry| entry.row_height(string_bounder))
+                .collect(),
+        })
+    }
+
     fn first_column_width(&self, string_bounder: &dyn StringBounder) -> f64 {
         self.entries
             .iter()
@@ -58,21 +83,13 @@ impl Tree {
 
 impl Element for Tree {
     fn preferred_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let height = self
-            .entries
-            .iter()
-            .map(|entry| entry.row_height(string_bounder))
-            .sum();
-        let mut others = self
-            .other_widths(string_bounder)
-            .total_width_with_margin(Self::MARGIN);
+        let layout = self.layout(string_bounder);
+        let height = layout.row_heights.iter().sum();
+        let mut others = layout.other_widths.total_width_with_margin(Self::MARGIN);
         if others > 0.0 {
             others += Self::MARGIN;
         }
-        XDimension2D::new(
-            self.first_column_width(string_bounder) + others + 2.0,
-            height,
-        )
+        XDimension2D::new(layout.first_width + others + 2.0, height)
     }
 
     fn draw_u(&self, ug: &UGraphic, z_index: i32, _dimension: XDimension2D) {
@@ -80,9 +97,11 @@ impl Element for Tree {
             return;
         }
         let ug = ug.with_color(HColor::BLACK);
-        let string_bounder = ug.string_bounder();
-        let first_width = self.first_column_width(string_bounder);
-        let other_widths = self.other_widths(string_bounder);
+        let TreeLayout {
+            first_width,
+            other_widths,
+            row_heights,
+        } = self.layout(ug.string_bounder());
         let mut cols = vec![0.0, first_width + Self::MARGIN / 2.0];
         for width in &other_widths.0 {
             cols.push(cols[cols.len() - 1] + (width + Self::MARGIN));
@@ -90,10 +109,9 @@ impl Element for Tree {
         let mut rows = vec![0.0];
         let mut skeleton = Skeleton::default();
         let mut y = 0.0;
-        for entry in &self.entries {
+        for (entry, &height) in self.entries.iter().zip(row_heights) {
             entry.draw_first_cell(&ug, y);
-            entry.draw_other_cells(&ug, first_width + Self::MARGIN, y, &other_widths);
-            let height = entry.row_height(string_bounder);
+            entry.draw_other_cells(&ug, first_width + Self::MARGIN, y, other_widths);
             skeleton.add(entry.x_delta() - 7.0, y + height / 2.0 - 1.0);
             y += height;
             rows.push(y);

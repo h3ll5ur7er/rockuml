@@ -1,5 +1,6 @@
 //! The widgets of a salt mock-up and the grid that holds them.
 
+use std::cell::OnceCell;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -246,7 +247,23 @@ impl RadioCheckbox {
     const BOX: f64 = 10.0;
     const DOT: f64 = 4.0;
 
-    pub fn new(text: &str, font: UFont, radio: bool, checked: bool) -> Self {
+    pub fn checkbox_on(text: &str, font: UFont) -> Self {
+        Self::new(text, font, false, true)
+    }
+
+    pub fn checkbox_off(text: &str, font: UFont) -> Self {
+        Self::new(text, font, false, false)
+    }
+
+    pub fn radio_on(text: &str, font: UFont) -> Self {
+        Self::new(text, font, true, true)
+    }
+
+    pub fn radio_off(text: &str, font: UFont) -> Self {
+        Self::new(text, font, true, false)
+    }
+
+    fn new(text: &str, font: UFont, radio: bool, checked: bool) -> Self {
         Self {
             block: text_block(
                 &[text.to_owned()],
@@ -440,7 +457,7 @@ impl TableStrategy {
 
 /// The rows and columns an element spans.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Cell {
+struct Cell {
     min_row: usize,
     max_row: usize,
     min_col: usize,
@@ -512,19 +529,32 @@ pub struct Pyramid {
     cols: usize,
     strategy: TableStrategy,
     title: Option<SheetBlock1>,
+    /// Computed on the first measurement, like `ElementPyramid.init`: re-measuring nested grids on every
+    /// call is exponential in their depth. Each export builds its own elements and measures them with
+    /// one string bounder.
+    starts: OnceCell<Starts>,
+}
+
+/// Where each row and column starts, the last entry being where the grid ends.
+struct Starts {
+    rows: Vec<f64>,
+    cols: Vec<f64>,
 }
 
 impl Pyramid {
+    /// Enough rows and columns for every cell. PlantUML counts the cells' last row and column instead
+    /// of one past them, and so crashes when a row starting with `*` widens the cell above it beyond
+    /// the widest row.
     pub fn new(positionner: Positionner, strategy: TableStrategy, title: Option<&str>) -> Self {
         let rows = positionner
             .cells
             .iter()
-            .map(|(_, cell)| cell.max_row)
+            .map(|(_, cell)| cell.max_row + 1)
             .fold(positionner.max_row + 1, usize::max);
         let cols = positionner
             .cells
             .iter()
-            .map(|(_, cell)| cell.max_col)
+            .map(|(_, cell)| cell.max_col + 1)
             .fold(positionner.max_col + 1, usize::max);
         let title = title.map(|title| {
             let font = FontConfiguration::black_blue_true(widget_font());
@@ -536,6 +566,7 @@ impl Pyramid {
             cols,
             strategy,
             title,
+            starts: OnceCell::new(),
         }
     }
 
@@ -545,8 +576,12 @@ impl Pyramid {
         })
     }
 
-    /// Where each row and column starts, the last entry being where the grid ends.
-    fn starts(&self, string_bounder: &dyn StringBounder) -> (Vec<f64>, Vec<f64>) {
+    fn starts(&self, string_bounder: &dyn StringBounder) -> &Starts {
+        self.starts
+            .get_or_init(|| self.compute_starts(string_bounder))
+    }
+
+    fn compute_starts(&self, string_bounder: &dyn StringBounder) -> Starts {
         let title_height = self.title_height(string_bounder);
         let mut rows_start = vec![title_height / 2.0; self.rows + 1];
         let mut cols_start = vec![0.0; self.cols + 1];
@@ -574,7 +609,10 @@ impl Pyramid {
             let height = element.preferred_dimension(string_bounder).height + above + 2.0;
             ensure_span(&mut rows_start, cell.min_row, cell.max_row + 1, height);
         }
-        (rows_start, cols_start)
+        Starts {
+            rows: rows_start,
+            cols: cols_start,
+        }
     }
 }
 
@@ -590,10 +628,10 @@ fn ensure_span(starts: &mut [f64], first: usize, last: usize, size: f64) {
 
 impl Element for Pyramid {
     fn preferred_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let (rows_start, cols_start) = self.starts(string_bounder);
+        let Starts { rows, cols } = self.starts(string_bounder);
         XDimension2D::new(
-            cols_start[cols_start.len() - 1],
-            rows_start[rows_start.len() - 1] + self.title_height(string_bounder),
+            cols[cols.len() - 1],
+            rows[rows.len() - 1] + self.title_height(string_bounder),
         )
     }
 
@@ -601,8 +639,11 @@ impl Element for Pyramid {
         let ug = ug.with_color(HColor::BLACK);
         let string_bounder = ug.string_bounder();
         let title_height = self.title_height(string_bounder);
-        let (rows_start, cols_start) = self.starts(string_bounder);
-        let mut grid = Grid::new(&rows_start, &cols_start, self.strategy);
+        let Starts {
+            rows: rows_start,
+            cols: cols_start,
+        } = self.starts(string_bounder);
+        let mut grid = Grid::new(rows_start, cols_start, self.strategy);
         for (element, cell) in &self.cells {
             let above = if cell.min_row == 0 {
                 title_height / 2.0
