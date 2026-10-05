@@ -1,0 +1,9 @@
+@startcreole
+Before the code
+<code>
+fn main() {
+    println!("<b>not bold</b>");
+}
+</code>
+After the code
+@endcreole
