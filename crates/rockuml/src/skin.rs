@@ -14,36 +14,19 @@ use crate::style::{
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
+#[derive(Default)]
 pub struct SkinParam {
-    skin: String,
-    /// Loaded from the skin when first needed, so that `skin` commands before that still apply.
+    /// Loaded from the default skin when first needed.
     style_builder: OnceCell<StyleBuilder>,
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
 }
 
-impl Default for SkinParam {
-    fn default() -> Self {
-        Self {
-            skin: DEFAULT_SKIN.to_owned(),
-            style_builder: OnceCell::new(),
-            params: HashMap::new(),
-            looked_up: RefCell::new(HashMap::new()),
-        }
-    }
-}
-
 impl SkinParam {
-    pub fn set_default_skin(&mut self, skin: &str) {
-        skin.clone_into(&mut self.skin);
-    }
-
     pub fn style_builder(&self) -> &StyleBuilder {
         self.style_builder.get_or_init(|| {
-            StyleBuilder::load_skin(&self.skin)
-                .or_else(|| StyleBuilder::load_skin(DEFAULT_SKIN))
-                .expect("the default skin is embedded")
+            StyleBuilder::load_skin(DEFAULT_SKIN).expect("the default skin is embedded")
         })
     }
 
@@ -56,11 +39,6 @@ impl SkinParam {
         self.style_builder().merged_style(element)
     }
 
-    pub fn mute_style(&mut self, styles: Vec<Style>) {
-        self.style_builder_mut().mute(styles);
-    }
-
-    /// `skinparam key value`: remembered under the normalised key, and turned into style rules.
     /// The rules of a `<style>` block, merged over the current ones.
     pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
         let builder = self.style_builder_mut();
@@ -69,6 +47,7 @@ impl SkinParam {
         Ok(())
     }
 
+    /// `skinparam key value`: remembered under the normalised key, and turned into style rules.
     pub fn set_param(&mut self, key: &str, value: &str) {
         for normalised in clean_for_key(key) {
             self.params

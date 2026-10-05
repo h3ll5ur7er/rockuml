@@ -1,4 +1,4 @@
-use super::{BlocLines, Command, CommandControl, CommandError, CommandResult, ParserPass};
+use super::{BlocLines, Command, CommandControl, CommandError, CommandResult};
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::{LineLocation, StringLocated};
 
@@ -11,7 +11,6 @@ pub trait SingleLineCommand<D> {
         diagram: &mut D,
         location: &LineLocation,
         arg: &RegexResult,
-        pass: ParserPass,
     ) -> CommandResult;
 
     fn trims_line(&self) -> bool {
@@ -25,10 +24,6 @@ pub trait SingleLineCommand<D> {
 
     fn final_verification(&self) -> CommandControl {
         CommandControl::Ok
-    }
-
-    fn is_eligible_for(&self, pass: ParserPass) -> bool {
-        pass == ParserPass::One
     }
 }
 
@@ -96,7 +91,7 @@ impl<D, C: SingleLineCommand<D>> Command<D> for SingleLine<C> {
         }
     }
 
-    fn execute(&self, diagram: &mut D, lines: BlocLines, pass: ParserPass) -> CommandResult {
+    fn execute(&self, diagram: &mut D, lines: BlocLines) -> CommandResult {
         let lines = self.with_bracket_joined(lines);
         let (Some(first), 1) = (lines.first(), lines.len()) else {
             panic!("a single-line command executes exactly one line, got {lines:?}");
@@ -108,11 +103,7 @@ impl<D, C: SingleLineCommand<D>> Command<D> for SingleLine<C> {
                 line.text()
             )));
         };
-        self.0.execute_arg(diagram, first.location(), &arg, pass)
-    }
-
-    fn is_eligible_for(&self, pass: ParserPass) -> bool {
-        self.0.is_eligible_for(pass)
+        self.0.execute_arg(diagram, first.location(), &arg)
     }
 }
 
@@ -146,7 +137,6 @@ mod tests {
             titles: &mut Vec<String>,
             _: &LineLocation,
             arg: &RegexResult,
-            _: ParserPass,
         ) -> CommandResult {
             titles.push(arg.get("TITLE", 0).unwrap_or_default().to_owned());
             Ok(())
@@ -175,18 +165,10 @@ mod tests {
         let mut titles = Vec::new();
         let title = SingleLine(Title::new());
         title
-            .execute(
-                &mut titles,
-                BlocLines::from_texts(&["title Hello", "{"]),
-                ParserPass::One,
-            )
+            .execute(&mut titles, BlocLines::from_texts(&["title Hello", "{"]))
             .unwrap();
         title
-            .execute(
-                &mut titles,
-                BlocLines::from_texts(&["title World {"]),
-                ParserPass::One,
-            )
+            .execute(&mut titles, BlocLines::from_texts(&["title World {"]))
             .unwrap();
         assert_eq!(titles, ["Hello", "World"]);
     }

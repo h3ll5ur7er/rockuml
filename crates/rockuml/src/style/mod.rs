@@ -54,17 +54,6 @@ impl Style {
         }
         Style::new(self.signature.merge_with(&other.signature), properties)
     }
-
-    /// Lets a starred rule lose against more specific rules of the same element.
-    #[must_use]
-    pub fn with_added_priority(&self, delta: i32) -> Style {
-        let properties = self
-            .properties
-            .iter()
-            .map(|(&name, value)| (name, value.with_added_priority(delta)))
-            .collect();
-        Style::new(self.signature.clone(), properties)
-    }
 }
 
 /// Rules in declaration order, those with stereotypes ahead of the others: the order PlantUML merges them in.

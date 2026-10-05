@@ -14,7 +14,7 @@ use super::source::UmlSource;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted};
 use crate::command::{
-    Command, CommandError, CommandResult, ParserPass, SingleLine, SingleLineCommand, factory,
+    Command, CommandError, CommandResult, SingleLine, SingleLineCommand, factory,
 };
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
@@ -106,7 +106,6 @@ impl SingleLineCommand<SaltDiagram> for Anything {
         diagram: &mut SaltDiagram,
         _location: &LineLocation,
         arg: &RegexResult,
-        _pass: ParserPass,
     ) -> CommandResult {
         let line = arg.get("ALL", 0).unwrap_or_default();
         if diagram.lines.is_empty() && java::trim(line) == "salt" {

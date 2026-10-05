@@ -56,15 +56,13 @@ struct CharInspector {
 }
 
 impl CharInspector {
-    /// With `newlines`, every line ends with `\n`; without, lines run together.
-    fn new(lines: &[&str], newlines: bool) -> Self {
+    /// Every line ends with `\n`.
+    fn new(lines: &[&str]) -> Self {
         let lines = lines
             .iter()
             .map(|line| {
                 let mut chars: Vec<char> = crate::java::trim(line).chars().collect();
-                if newlines {
-                    chars.push('\n');
-                }
+                chars.push('\n');
                 chars
             })
             .collect();
@@ -305,25 +303,12 @@ impl<'a> StyleParser<'a> {
         if lines.is_empty() {
             return Ok(Vec::new());
         }
-        let tokens = tokenize(CharInspector::new(lines, true));
+        self.parse_tokens(&tokenize(CharInspector::new(lines)))
+    }
+
+    /// The rules in the order their blocks close.
+    fn parse_tokens(&mut self, tokens: &[Token]) -> Result<Vec<Style>, StyleParsingError> {
         let mut styles = Vec::new();
-        self.parse_tokens(&tokens, |style| styles.push(style))?;
-        Ok(styles)
-    }
-
-    /// `Property value` pairs without selectors.
-    pub fn parse_single_line(&mut self, line: &str) -> Result<Style, StyleParsingError> {
-        let tokens = tokenize(CharInspector::new(&[line], false));
-        let context = self.parse_tokens(&tokens, |_| {})?;
-        Ok(Style::new(StyleSignature::empty(), context.properties))
-    }
-
-    /// Calls `emit` with each rule as its block closes; returns the context left open at the end.
-    fn parse_tokens(
-        &mut self,
-        tokens: &[Token],
-        mut emit: impl FnMut(Style),
-    ) -> Result<Context, StyleParsingError> {
         let mut context = Context::root();
         let mut index = 0;
         let peek = |index: usize| tokens.get(index);
@@ -382,7 +367,7 @@ impl<'a> StyleParser<'a> {
                     }
                 }
                 (Token::CloseBracket, _) => {
-                    context.styles().for_each(&mut emit);
+                    styles.extend(context.styles());
                     if !context.is_root() {
                         context = context.pop();
                     }
@@ -404,7 +389,7 @@ impl<'a> StyleParser<'a> {
                 _ => return Err(StyleParsingError::Unexpected),
             }
         }
-        Ok(context)
+        Ok(styles)
     }
 
     fn declare(&mut self, text: &str) -> Value {

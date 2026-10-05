@@ -43,19 +43,13 @@ impl DarkString {
     }
 }
 
+/// A value written in a style sheet (PlantUML's `ValueImpl`).
 #[derive(Clone, Debug, PartialEq)]
-pub enum Value {
-    Written(DarkString),
-    /// A colour set from outside the style sheet, like `#red` on an element.
-    Color {
-        color: HColor,
-        priority: i32,
-    },
-}
+pub struct Value(DarkString);
 
 impl Value {
     pub fn regular(text: &str, priority: i32) -> Self {
-        Self::Written(DarkString {
+        Self(DarkString {
             light: Some(text.to_owned()),
             dark: None,
             priority,
@@ -63,59 +57,38 @@ impl Value {
     }
 
     pub fn dark(text: &str, priority: i32) -> Self {
-        Self::Written(DarkString {
+        Self(DarkString {
             light: None,
             dark: Some(text.to_owned()),
             priority,
         })
     }
 
+    /// Only the tests read it: they compare priorities with those PlantUML prints.
+    #[cfg(test)]
     pub fn priority(&self) -> i32 {
-        match self {
-            Self::Written(text) => text.priority,
-            Self::Color { priority, .. } => *priority,
-        }
+        self.0.priority
     }
 
     #[must_use]
     pub fn with_added_priority(&self, delta: i32) -> Self {
-        match self {
-            Self::Written(text) => Self::Written(DarkString {
-                priority: text.priority + delta,
-                ..text.clone()
-            }),
-            Self::Color { .. } => {
-                unimplemented!("PlantUML only raises the priority of written values")
-            }
-        }
+        Self(DarkString {
+            priority: self.0.priority + delta,
+            ..self.0.clone()
+        })
     }
 
     /// This value declared over `previous`.
     #[must_use]
     pub fn merge_with(&self, previous: Option<&Value>) -> Value {
-        match (self, previous) {
-            (_, None) => self.clone(),
-            (Self::Written(mine), Some(Self::Written(theirs))) => {
-                Self::Written(mine.merge_with(theirs))
-            }
-            (Self::Written(_), Some(color @ Self::Color { .. })) => {
-                if color.priority() > self.priority() {
-                    color.clone()
-                } else {
-                    self.clone()
-                }
-            }
-            (Self::Color { .. }, Some(_)) => {
-                unimplemented!("PlantUML never merges a colour value over another")
-            }
+        match previous {
+            None => self.clone(),
+            Some(previous) => Self(self.0.merge_with(&previous.0)),
         }
     }
 
     fn light(&self) -> Option<&str> {
-        match self {
-            Self::Written(text) => text.light.as_deref(),
-            Self::Color { .. } => None,
-        }
+        self.0.light.as_deref()
     }
 }
 
@@ -125,7 +98,6 @@ pub trait ValueReading {
     fn as_int(&self) -> i32;
     fn as_int_or_minus_one(&self) -> i32;
     fn as_double(&self) -> f64;
-    fn as_boolean(&self) -> bool;
     fn as_font_face(&self) -> UFontFace;
     fn as_horizontal_alignment(&self) -> Option<HorizontalAlignment>;
     fn as_color(&self) -> HColor;
@@ -156,10 +128,6 @@ impl ValueReading for Option<&Value> {
         })
     }
 
-    fn as_boolean(&self) -> bool {
-        self.is_some_and(|_| self.as_string().eq_ignore_ascii_case("true"))
-    }
-
     fn as_font_face(&self) -> UFontFace {
         let text = self.as_string();
         match text.trim().to_lowercase().as_str() {
@@ -184,19 +152,16 @@ impl ValueReading for Option<&Value> {
 
     /// Unknown colour names read as white.
     fn as_color(&self) -> HColor {
-        match self {
-            None => HColor::BLACK,
-            Some(Value::Color { color, .. }) => color.clone(),
-            Some(value @ Value::Written(_)) => {
-                let text = value.light().unwrap_or_else(|| {
-                    unimplemented!("a colour declared only for dark mode: {value:?}")
-                });
-                if text.eq_ignore_ascii_case("none") || text.eq_ignore_ascii_case("transparent") {
-                    return HColor::NONE;
-                }
-                HColor::parse(text).ok().flatten().unwrap_or(HColor::WHITE)
-            }
+        let Some(value) = self else {
+            return HColor::BLACK;
+        };
+        let text = value
+            .light()
+            .unwrap_or_else(|| unimplemented!("a colour declared only for dark mode: {value:?}"));
+        if text.eq_ignore_ascii_case("none") || text.eq_ignore_ascii_case("transparent") {
+            return HColor::NONE;
         }
+        HColor::parse(text).ok().flatten().unwrap_or(HColor::WHITE)
     }
 }
 

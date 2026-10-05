@@ -5,12 +5,11 @@
 //! letter classes never match a surrogate half, and a look-behind sees a surrogate pair reversed. Callers
 //! work with `&str`, so positions and results are UTF-8 byte offsets into the text they pass in. A Java
 //! match can end between the two halves of a surrogate pair, which no `&str` can express; there the
-//! accepted text and the captured values widen to the whole character, while `start_match` and
-//! `exact_match` still give Java's answers. No PlantUML pattern stops inside a pair.
+//! accepted text and the captured values widen to the whole character. No PlantUML pattern stops inside
+//! a pair.
 //!
 //! Malformed patterns panic, as Java throws: PlantUML only builds them from constants.
 
-mod builder;
 mod challenge;
 mod char_set;
 mod parser;
@@ -30,55 +29,37 @@ impl UnicodeBracketedExpression {
         }
     }
 
-    /// Java's `match(String, int)`; `position` is a byte offset into `text`.
+    /// Java's `match(String, int)`, `None` where its `startMatch()` is false; `position` is a byte
+    /// offset into `text`.
     ///
     /// # Panics
     /// Where Java throws: a repetition of something that matched empty text ("infinite loop"), or a
     /// look-behind inside a look-behind.
-    pub fn match_at<'a>(&self, text: &'a str, position: usize) -> UMatcher<'a> {
+    pub fn match_at<'a>(&self, text: &'a str, position: usize) -> Option<UMatcher<'a>> {
         let content: Vec<u16> = text.encode_utf16().collect();
         let start = text[..position].encode_utf16().count();
-        let Some(result) = self
+        let result = self
             .challenge
-            .run_challenge(TextNavigator::build(&content), start)
-        else {
-            return UMatcher::default();
-        };
-        let end = start + result.full_capture_length;
-        UMatcher {
-            accepted_match: utf16_slice(text, start..end),
-            start_match: true,
-            exact_match: end == content.len(),
+            .run_challenge(TextNavigator::build(&content), start)?;
+        Some(UMatcher {
+            accepted_match: utf16_slice(text, start..start + result.full_capture_length),
             values: result
                 .capture
                 .entries()
                 .iter()
                 .map(|entry| (entry.key.clone(), utf16_slice(text, entry.value.clone())))
                 .collect(),
-        }
+        })
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct UMatcher<'a> {
     accepted_match: &'a str,
-    start_match: bool,
-    exact_match: bool,
     values: Vec<(String, &'a str)>,
 }
 
 impl<'a> UMatcher<'a> {
-    /// Whether the expression matched at the position, possibly leaving text after it.
-    pub fn start_match(&self) -> bool {
-        self.start_match
-    }
-
-    /// Whether the expression matched everything from the position to the end of the text.
-    pub fn exact_match(&self) -> bool {
-        self.exact_match
-    }
-
-    /// Empty when nothing matched.
     pub fn accepted_match(&self) -> &'a str {
         self.accepted_match
     }
@@ -90,15 +71,6 @@ impl<'a> UMatcher<'a> {
             .filter(|(entry_key, _)| entry_key == key)
             .map(|&(_, value)| value)
             .collect()
-    }
-
-    /// The values of the first captured key starting with `key_prefix`; empty where Java returns null.
-    pub fn find_first_values_by_key_prefix(&self, key_prefix: &str) -> Vec<&'a str> {
-        self.values
-            .iter()
-            .find(|(key, _)| key.starts_with(key_prefix))
-            .map(|(key, _)| self.find_values_by_key(key))
-            .unwrap_or_default()
     }
 }
 

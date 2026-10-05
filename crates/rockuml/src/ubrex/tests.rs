@@ -1,19 +1,36 @@
 //! Every expectation here was observed on PlantUML 1.2026.8's `com.plantuml.ubrex`, running on JDK 21.
 
-use super::UnicodeBracketedExpression;
+use super::{UMatcher, UnicodeBracketedExpression};
 
 const NONE: [&str; 0] = [];
 
 /// The accepted match, or `None` where Java's `startMatch()` is false.
 fn accepted<'a>(pattern: &str, text: &'a str, position: usize) -> Option<&'a str> {
-    let matcher = UnicodeBracketedExpression::build(pattern).match_at(text, position);
-    matcher.start_match().then(|| matcher.accepted_match())
+    UnicodeBracketedExpression::build(pattern)
+        .match_at(text, position)
+        .as_ref()
+        .map(UMatcher::accepted_match)
+}
+
+/// The values captured under `key`, none where nothing matched.
+fn found<'a>(matcher: Option<&UMatcher<'a>>, key: &str) -> Vec<&'a str> {
+    matcher.map_or_else(Vec::new, |matcher| matcher.find_values_by_key(key))
 }
 
 fn values<'a>(pattern: &str, text: &'a str, key: &str) -> Vec<&'a str> {
+    found(
+        UnicodeBracketedExpression::build(pattern)
+            .match_at(text, 0)
+            .as_ref(),
+        key,
+    )
+}
+
+/// The match at `position`, which must exist.
+fn matched<'a>(pattern: &str, text: &'a str, position: usize) -> UMatcher<'a> {
     UnicodeBracketedExpression::build(pattern)
-        .match_at(text, 0)
-        .find_values_by_key(key)
+        .match_at(text, position)
+        .expect("the pattern matches")
 }
 
 fn assert_cases(pattern: &str, cases: &[(&str, Option<&str>)]) {
@@ -55,13 +72,10 @@ mod creole {
         let ubrex = UnicodeBracketedExpression::build(pattern);
         for &(text, accepted, value, extended_color) in cases {
             let matcher = ubrex.match_at(text, 0);
-            assert_eq!(
-                matcher.start_match().then(|| matcher.accepted_match()),
-                accepted,
-                "{text:?}"
-            );
-            assert_eq!(matcher.find_values_by_key("V"), value, "{text:?}");
-            assert_eq!(matcher.find_values_by_key("XC"), extended_color, "{text:?}");
+            let matcher = matcher.as_ref();
+            assert_eq!(matcher.map(UMatcher::accepted_match), accepted, "{text:?}");
+            assert_eq!(found(matcher, "V"), value, "{text:?}");
+            assert_eq!(found(matcher, "XC"), extended_color, "{text:?}");
         }
     }
 
@@ -79,11 +93,9 @@ mod creole {
 
     #[test]
     fn legacy_bold_matches_from_a_position() {
-        let matcher = UnicodeBracketedExpression::build(&legacy("<「bB」>", "</「bB」>"))
-            .match_at("xx<B>y</b>", 2);
+        let matcher = matched(&legacy("<「bB」>", "</「bB」>"), "xx<B>y</b>", 2);
         assert_eq!(matcher.accepted_match(), "<B>y</b>");
         assert_eq!(matcher.find_values_by_key("V"), ["y"]);
-        assert!(matcher.exact_match());
     }
 
     #[test]
@@ -185,11 +197,9 @@ mod creole {
 
     #[test]
     fn exposant_change() {
-        let matcher = UnicodeBracketedExpression::build("<sub>〶$V=〄>〘</sub>〙")
-            .match_at("H<sub>2</sub>O", 1);
+        let matcher = matched("<sub>〶$V=〄>〘</sub>〙", "H<sub>2</sub>O", 1);
         assert_eq!(matcher.accepted_match(), "<sub>2</sub>");
         assert_eq!(matcher.find_values_by_key("V"), ["2"]);
-        assert!(!matcher.exact_match());
     }
 }
 
@@ -197,30 +207,21 @@ mod matcher {
     use super::*;
 
     #[test]
-    fn a_failed_match_accepts_nothing() {
-        let matcher = UnicodeBracketedExpression::build("〶$V=〄>z").match_at("abc", 0);
-        assert!(!matcher.start_match());
-        assert!(!matcher.exact_match());
-        assert_eq!(matcher.accepted_match(), "");
-        assert_eq!(matcher.find_values_by_key("V"), NONE);
-        assert_eq!(matcher.find_first_values_by_key_prefix("V"), NONE);
+    fn a_failed_match_gives_no_matcher() {
+        let ubrex = UnicodeBracketedExpression::build("〶$V=〄>z");
+        assert!(ubrex.match_at("abc", 0).is_none());
     }
 
     #[test]
-    fn exact_match_requires_reaching_the_end_of_the_text() {
-        let ubrex = UnicodeBracketedExpression::build("a");
-        assert!(ubrex.match_at("ab", 0).start_match());
-        assert!(!ubrex.match_at("ab", 0).exact_match());
-        let b = UnicodeBracketedExpression::build("b").match_at("ab", 1);
-        assert_eq!((b.accepted_match(), b.exact_match()), ("b", true));
+    fn a_match_may_leave_text_after_it() {
+        assert_eq!(accepted("a", "ab", 0), Some("a"));
+        assert_eq!(accepted("b", "ab", 1), Some("b"));
     }
 
     #[test]
     fn empty_matches_at_the_end_of_the_text() {
         for pattern in ["〒$", "〇*〴s"] {
-            let matcher = UnicodeBracketedExpression::build(pattern).match_at("ab", 2);
-            assert!(matcher.exact_match(), "{pattern}");
-            assert_eq!(matcher.accepted_match(), "");
+            assert_eq!(accepted(pattern, "ab", 2), Some(""), "{pattern}");
         }
     }
 }
@@ -312,11 +313,11 @@ mod lazy {
             ("if a then", "if a then", "a "),
             ("if  then then", "if  then then", "then "),
         ] {
-            let matcher = ubrex.match_at(text, 0);
+            let matcher = ubrex.match_at(text, 0).unwrap();
             assert_eq!(matcher.accepted_match(), accepted);
             assert_eq!(matcher.find_values_by_key("IF2"), [if2]);
         }
-        assert!(!ubrex.match_at("if then", 0).start_match());
+        assert!(ubrex.match_at("if then", 0).is_none());
     }
 
     #[test]
@@ -341,25 +342,20 @@ mod named {
 
     #[test]
     fn nested_names_are_prefixed_and_listed_first() {
-        let matcher = UnicodeBracketedExpression::build("〶$A=〘x〶$B=〇+〴d〙").match_at("x12", 0);
+        let matcher = matched("〶$A=〘x〶$B=〇+〴d〙", "x12", 0);
         assert_eq!(matcher.find_values_by_key("A"), ["x12"]);
         assert_eq!(matcher.find_values_by_key("B"), NONE);
         assert_eq!(matcher.find_values_by_key("A/B"), ["12"]);
-        assert_eq!(matcher.find_first_values_by_key_prefix("A"), ["12"]);
     }
 
     #[test]
-    fn key_prefix_lookup_takes_the_first_key_that_starts_with_it() {
-        let matcher = UnicodeBracketedExpression::build("〶$A1=a〶$A2=b").match_at("ab", 0);
-        assert_eq!(matcher.find_first_values_by_key_prefix("A"), ["a"]);
-        assert_eq!(matcher.find_first_values_by_key_prefix("A2"), ["b"]);
-        assert_eq!(matcher.find_first_values_by_key_prefix("B"), NONE);
-        assert_eq!(matcher.find_values_by_key("A"), NONE);
+    fn values_are_found_by_their_whole_key() {
+        assert_eq!(values("〶$A1=a〶$A2=b", "ab", "A"), NONE);
     }
 
     #[test]
     fn a_name_directly_inside_a_name() {
-        let matcher = UnicodeBracketedExpression::build("〶$X_y=〶$Z=a").match_at("a", 0);
+        let matcher = matched("〶$X_y=〶$Z=a", "a", 0);
         assert_eq!(matcher.find_values_by_key("X_y"), ["a"]);
         assert_eq!(matcher.find_values_by_key("X_y/Z"), ["a"]);
         assert_eq!(matcher.find_values_by_key("Z"), NONE);
@@ -373,14 +369,14 @@ mod named {
     #[test]
     fn up_to_leaves_its_stop_pattern_out_of_the_name() {
         for pattern in ["〶$V=〄+〴.->〘;〙", "〶$V=〄+ 〴. -> ;"] {
-            let matcher = UnicodeBracketedExpression::build(pattern).match_at("abc;d", 0);
+            let matcher = matched(pattern, "abc;d", 0);
             assert_eq!(matcher.accepted_match(), "abc;");
             assert_eq!(matcher.find_values_by_key("V"), ["abc"]);
         }
-        let matcher = UnicodeBracketedExpression::build("〶$V=〄>〒$").match_at("abc", 0);
+        let matcher = matched("〶$V=〄>〒$", "abc", 0);
         assert_eq!(matcher.accepted_match(), "abc");
         assert_eq!(matcher.find_values_by_key("V"), ["abc"]);
-        let matcher = UnicodeBracketedExpression::build("〶$V=〄>a").match_at("abc", 0);
+        let matcher = matched("〶$V=〄>a", "abc", 0);
         assert_eq!(matcher.accepted_match(), "a");
         assert_eq!(matcher.find_values_by_key("V"), [""]);
     }
@@ -801,13 +797,11 @@ mod non_bmp {
         assert_eq!(accepted("〴.〴.〒<=〘😀〙", GRIN, 0), None);
     }
 
-    /// Java accepts the high surrogate alone (`exactMatch()` false); a `&str` cannot be cut there, so the
-    /// accepted text widens to the whole character while the match itself stays Java's.
+    /// Java accepts the high surrogate alone; a `&str` cannot be cut there, so the accepted text widens
+    /// to the whole character.
     #[test]
     fn a_match_ending_inside_a_pair_widens_to_the_whole_character() {
-        let matcher = UnicodeBracketedExpression::build("〶$V=〴.").match_at(GRIN, 0);
-        assert!(matcher.start_match());
-        assert!(!matcher.exact_match());
+        let matcher = matched("〶$V=〴.", GRIN, 0);
         assert_eq!(matcher.accepted_match(), GRIN);
         assert_eq!(matcher.find_values_by_key("V"), [GRIN]);
         assert_eq!(accepted("「〤a」", GRIN, 0), Some(GRIN));
@@ -815,139 +809,6 @@ mod non_bmp {
 
     #[test]
     fn positions_are_byte_offsets() {
-        let matcher = UnicodeBracketedExpression::build("〶$V=〴.").match_at("😀x", 4);
-        assert_eq!(matcher.accepted_match(), "x");
-        assert!(matcher.exact_match());
-    }
-}
-
-mod builder {
-    //! The command patterns PlantUML assembles with `com.plantuml.ubrex.builder`.
-
-    use super::*;
-
-    type Ubrex = UnicodeBracketedExpression;
-
-    #[test]
-    fn rank_dir() {
-        let rank_dir = Ubrex::concat([
-            Ubrex::named(
-                "DIRECTION",
-                Ubrex::build("【 left∙to∙right ┇ top∙to∙bottom 】"),
-            ),
-            Ubrex::space_one_or_more(),
-            Ubrex::build("direction"),
-            Ubrex::end(),
-        ]);
-        let matcher = rank_dir.match_at("Top To Bottom   Direction", 0);
-        assert!(matcher.exact_match());
-        assert_eq!(matcher.find_values_by_key("DIRECTION"), ["Top To Bottom"]);
-        assert!(
-            rank_dir
-                .match_at("left to right direction", 0)
-                .exact_match()
-        );
-        assert!(
-            !rank_dir
-                .match_at("left to right direction x", 0)
-                .start_match()
-        );
-        assert!(!rank_dir.match_at("left to rightdirection", 0).start_match());
-    }
-
-    #[test]
-    fn hide_show() {
-        let hide_show = Ubrex::concat([
-            Ubrex::named(
-                "COMMAND",
-                Ubrex::build("【hide-class┇hide┇show-class┇show】"),
-            ),
-            Ubrex::space_one_or_more(),
-            Ubrex::named("WHAT", Ubrex::build("【 << 〇*「〤<>」>> ┇ 〇+〴S 】 ")),
-            Ubrex::end(),
-        ]);
-        for (text, command, what) in [
-            ("hide <<foo>>", "hide", "<<foo>>"),
-            ("show-class Foo", "show-class", "Foo"),
-        ] {
-            let matcher = hide_show.match_at(text, 0);
-            assert!(matcher.exact_match());
-            assert_eq!(matcher.find_values_by_key("COMMAND"), [command]);
-            assert_eq!(matcher.find_values_by_key("WHAT"), [what]);
-        }
-        assert!(!hide_show.match_at("hide Foo Bar", 0).start_match());
-    }
-
-    #[test]
-    fn a_named_upto_includes_its_stop_pattern() {
-        let named = Ubrex::named("V", Ubrex::upto(Ubrex::build("〴."), Ubrex::build(";")));
-        let matcher = named.match_at("ab;c", 0);
-        assert_eq!(matcher.accepted_match(), "ab;");
-        assert_eq!(matcher.find_values_by_key("V"), ["ab;"]);
-        let upto = Ubrex::upto(Ubrex::build("〴."), Ubrex::named("E", Ubrex::build(";")));
-        assert_eq!(upto.match_at("ab;c", 0).find_values_by_key("E"), [";"]);
-    }
-
-    #[test]
-    fn or_takes_the_first_alternative() {
-        let or = Ubrex::or([
-            Ubrex::named("A", Ubrex::build("a")),
-            Ubrex::named("B", Ubrex::build("ab")),
-        ]);
-        let matcher = or.match_at("ab", 0);
-        assert_eq!(matcher.accepted_match(), "a");
-        assert_eq!(matcher.find_values_by_key("A"), ["a"]);
-        assert_eq!(matcher.find_values_by_key("B"), NONE);
-        assert!(!or.match_at("b", 0).start_match());
-    }
-
-    #[test]
-    fn optional() {
-        let optional = Ubrex::concat([
-            Ubrex::optional(Ubrex::named("A", Ubrex::build("a"))),
-            Ubrex::build("b"),
-        ]);
-        assert_eq!(optional.match_at("ab", 0).find_values_by_key("A"), ["a"]);
-        let skipped = optional.match_at("b", 0);
-        assert!(skipped.exact_match());
-        assert_eq!(skipped.find_values_by_key("A"), NONE);
-    }
-
-    #[test]
-    fn zero_or_more() {
-        let digits = Ubrex::concat([
-            Ubrex::zero_or_more(Ubrex::named("D", Ubrex::build("〴d"))),
-            Ubrex::end(),
-        ]);
-        assert_eq!(
-            digits.match_at("123", 0).find_values_by_key("D"),
-            ["1", "2", "3"]
-        );
-        assert!(digits.match_at("", 0).exact_match());
-    }
-
-    #[test]
-    fn one_or_more() {
-        let digits = Ubrex::concat([
-            Ubrex::one_or_more(Ubrex::named("D", Ubrex::build("〴d"))),
-            Ubrex::space_zero_or_more(),
-            Ubrex::end(),
-        ]);
-        let matcher = digits.match_at("12  ", 0);
-        assert!(matcher.exact_match());
-        assert_eq!(matcher.find_values_by_key("D"), ["1", "2"]);
-        assert!(!digits.match_at("", 0).start_match());
-    }
-
-    #[test]
-    fn nested_names() {
-        let nested = Ubrex::named(
-            "OUT",
-            Ubrex::concat([Ubrex::named("IN", Ubrex::build("a")), Ubrex::build("b")]),
-        );
-        let matcher = nested.match_at("ab", 0);
-        assert_eq!(matcher.find_values_by_key("OUT"), ["ab"]);
-        assert_eq!(matcher.find_values_by_key("OUT/IN"), ["a"]);
-        assert_eq!(matcher.find_first_values_by_key_prefix("OUT"), ["a"]);
+        assert_eq!(accepted("〶$V=〴.", "😀x", 4), Some("x"));
     }
 }

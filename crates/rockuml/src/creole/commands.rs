@@ -7,9 +7,9 @@ use regex::{Captures, Regex};
 use super::CreoleMode;
 use super::parser::StripeBuilder;
 use crate::color::HColor;
-use crate::klimt::font::{FontConfiguration, FontPosition, FontStyle};
+use crate::klimt::font::{FontPosition, FontStyle};
 use crate::pattern::plantuml_regex;
-use crate::ubrex::UnicodeBracketedExpression;
+use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
 pub trait CreoleCommand: Send + Sync {
     /// The two characters a line must continue with for the command to be tried.
@@ -138,15 +138,11 @@ impl CreoleCommand for StyleCommand {
     }
 
     fn matches(&self, rest: &str) -> bool {
-        let matcher = self.pattern.match_at(rest, 0);
-        matcher
-            .find_values_by_key("V")
-            .first()
-            .is_some_and(|value| !value.is_empty())
+        captures_value(&self.pattern, rest)
     }
 
     fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize {
-        let matcher = self.pattern.match_at(rest, 0);
+        let matcher = matched(&self.pattern, rest);
         let value = matcher.find_values_by_key("V")[0];
         let color = self
             .takes_color
@@ -162,6 +158,22 @@ impl CreoleCommand for StyleCommand {
         );
         matcher.accepted_match().len()
     }
+}
+
+/// Whether `pattern` matches at the start of `rest` with a non-empty `V`.
+fn captures_value(pattern: &UnicodeBracketedExpression, rest: &str) -> bool {
+    pattern.match_at(rest, 0).is_some_and(|matcher| {
+        matcher
+            .find_values_by_key("V")
+            .first()
+            .is_some_and(|value| !value.is_empty())
+    })
+}
+
+fn matched<'a>(pattern: &UnicodeBracketedExpression, rest: &'a str) -> UMatcher<'a> {
+    pattern
+        .match_at(rest, 0)
+        .expect("a creole command executes only where it matches")
 }
 
 fn creole_markup(style: FontStyle) -> Option<&'static str> {
@@ -228,15 +240,11 @@ impl CreoleCommand for PositionCommand {
     }
 
     fn matches(&self, rest: &str) -> bool {
-        let matcher = self.pattern.match_at(rest, 0);
-        matcher
-            .find_values_by_key("V")
-            .first()
-            .is_some_and(|value| !value.is_empty())
+        captures_value(&self.pattern, rest)
     }
 
     fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize {
-        let matcher = self.pattern.match_at(rest, 0);
+        let matcher = matched(&self.pattern, rest);
         let value = matcher.find_values_by_key("V")[0];
         stripe.with_font(|font| font.with_position(self.position), value);
         matcher.accepted_match().len()

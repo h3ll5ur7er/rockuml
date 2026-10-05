@@ -1,6 +1,6 @@
 use regex::Regex;
 
-use super::{BlocLines, Command, CommandControl, CommandResult, ParserPass};
+use super::{BlocLines, Command, CommandControl, CommandResult};
 
 /// A command spanning lines from one matching `start` to one matching `end` (PlantUML's
 /// `CommandMultilines` and `CommandMultilines2`). Both patterns are tried on trimmed lines.
@@ -56,7 +56,7 @@ impl<D> Command<D> for Multiline<D> {
         }
     }
 
-    fn execute(&self, diagram: &mut D, lines: BlocLines, _pass: ParserPass) -> CommandResult {
+    fn execute(&self, diagram: &mut D, lines: BlocLines) -> CommandResult {
         (self.apply)(diagram, &self.cleaned(&lines))
     }
 }

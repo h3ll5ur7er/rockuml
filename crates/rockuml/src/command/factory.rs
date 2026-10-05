@@ -1,6 +1,6 @@
 //! Feeds a diagram's lines to its commands (PlantUML's `PSystemCommandFactory`).
 
-use super::{BlocLines, Command, CommandControl, CommandError, ParserPass};
+use super::{BlocLines, Command, CommandControl, CommandError};
 use crate::preproc::start_utils;
 use crate::text::StringLocated;
 
@@ -31,11 +31,8 @@ pub fn execute_lines<D>(
             });
         };
         position = next;
-        if !command.is_eligible_for(ParserPass::One) {
-            continue;
-        }
         command
-            .execute(diagram, block, ParserPass::One)
+            .execute(diagram, block)
             .map_err(|error| ParseFailure {
                 error,
                 trace: lines[..position].to_vec(),
@@ -102,7 +99,6 @@ mod tests {
             words: &mut Vec<String>,
             _: &LineLocation,
             arg: &RegexResult,
-            _: ParserPass,
         ) -> CommandResult {
             words.push(arg.get("WORD", 0).unwrap_or_default().to_owned());
             Ok(())

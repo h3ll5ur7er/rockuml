@@ -17,14 +17,6 @@ pub enum CommandControl {
     OkPartial,
 }
 
-/// Some diagrams read their source more than once, e.g. to declare everything before linking.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub enum ParserPass {
-    One,
-    Two,
-    Three,
-}
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CommandError {
     pub message: String,
@@ -39,13 +31,6 @@ impl CommandError {
             score: 0,
         }
     }
-
-    pub fn no_such_color() -> Self {
-        Self {
-            message: "No such color".to_owned(),
-            score: 10,
-        }
-    }
 }
 
 pub type CommandResult = Result<(), CommandError>;
@@ -53,9 +38,5 @@ pub type CommandResult = Result<(), CommandError>;
 pub trait Command<D> {
     fn is_valid(&self, lines: &BlocLines) -> CommandControl;
 
-    fn execute(&self, diagram: &mut D, lines: BlocLines, pass: ParserPass) -> CommandResult;
-
-    fn is_eligible_for(&self, pass: ParserPass) -> bool {
-        pass == ParserPass::One
-    }
+    fn execute(&self, diagram: &mut D, lines: BlocLines) -> CommandResult;
 }

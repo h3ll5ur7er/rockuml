@@ -68,10 +68,6 @@ impl StyleSignature {
         }
     }
 
-    pub fn is_starred(&self) -> bool {
-        self.starred
-    }
-
     pub fn has_stereotypes(&self) -> bool {
         !self.stereotypes.is_empty()
     }

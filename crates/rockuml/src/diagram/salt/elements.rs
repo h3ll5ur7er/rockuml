@@ -675,17 +675,6 @@ fn segment_hash(row: usize, col: usize) -> i32 {
     (row * 47 + col) as i32
 }
 
-/// Takes no room and draws nothing.
-pub struct Empty;
-
-impl Element for Empty {
-    fn preferred_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
-        XDimension2D::new(1.0, 1.0)
-    }
-
-    fn draw_u(&self, _ug: &UGraphic, _z_index: i32, _dimension: XDimension2D) {}
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

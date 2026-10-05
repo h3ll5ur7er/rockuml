@@ -6,8 +6,7 @@ use regex::Regex;
 
 use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
 use crate::command::{
-    BlocLines, Command, CommandError, CommandResult, Multiline, ParserPass, SingleLine,
-    SingleLineCommand,
+    BlocLines, Command, CommandError, CommandResult, Multiline, SingleLine, SingleLineCommand,
 };
 use crate::creole::Display;
 use crate::klimt::HorizontalAlignment;
@@ -88,7 +87,6 @@ impl<D: TitledDiagram> SingleLineCommand<D> for Single<D> {
         diagram: &mut D,
         location: &LineLocation,
         arg: &RegexResult,
-        _: ParserPass,
     ) -> CommandResult {
         (self.apply)(diagram, arg, location);
         Ok(())

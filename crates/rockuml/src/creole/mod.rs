@@ -23,8 +23,6 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 pub enum CreoleMode {
     #[default]
     Full,
-    /// Inline markup only: no lists, headings or separators.
-    SimpleLine,
     NoCreole,
     /// Full creole except `__underline__` and lists.
     FullButUnderscore,
