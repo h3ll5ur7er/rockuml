@@ -120,7 +120,8 @@ impl RegexTree {
             Self::Leaf { pattern, .. } => (*pattern).to_owned(),
             Self::Concat(parts, _) => parts.iter().map(Self::pattern_string).collect(),
             Self::Or { name, alternatives } => {
-                let alternatives: Vec<String> = alternatives.iter().map(Self::pattern_string).collect();
+                let alternatives: Vec<String> =
+                    alternatives.iter().map(Self::pattern_string).collect();
                 let capture = if name.is_some() { "" } else { "?:" };
                 format!("({capture}{})", alternatives.join("|"))
             }
@@ -153,9 +154,14 @@ impl RegexTree {
 
     /// Maps the next groups to names, building maps in the same order PlantUML does so that iterating the
     /// result follows Java's `HashMap` order.
-    fn create_partial_match(&self, groups: &mut impl Iterator<Item = Option<String>>) -> JavaHashMap<Captured> {
+    fn create_partial_match(
+        &self,
+        groups: &mut impl Iterator<Item = Option<String>>,
+    ) -> JavaHashMap<Captured> {
         match self {
-            Self::Leaf { name, group_count, .. } => {
+            Self::Leaf {
+                name, group_count, ..
+            } => {
                 let captured: Captured = groups.by_ref().take(*group_count).collect();
                 let mut result = JavaHashMap::default();
                 if let Some(name) = name {
@@ -164,9 +170,15 @@ impl RegexTree {
                 result
             }
             Self::Concat(parts, _) => Self::composed_partial_match(parts.iter(), groups),
-            Self::Optional(part) | Self::ZeroOrMore(part) => Self::composed_partial_match([&**part], groups),
-            Self::Or { name, alternatives } => Self::named_group_partial_match(*name, alternatives.iter(), groups),
-            Self::OneOrMore { name, part } => Self::named_group_partial_match(*name, [&**part], groups),
+            Self::Optional(part) | Self::ZeroOrMore(part) => {
+                Self::composed_partial_match([&**part], groups)
+            }
+            Self::Or { name, alternatives } => {
+                Self::named_group_partial_match(*name, alternatives.iter(), groups)
+            }
+            Self::OneOrMore { name, part } => {
+                Self::named_group_partial_match(*name, [&**part], groups)
+            }
         }
     }
 
@@ -227,7 +239,10 @@ mod tests {
             RegexTree::spaces_zero_or_more(),
             RegexTree::named_or(
                 "ARROW",
-                vec![RegexTree::named(1, "SOLID", "(-+>)"), RegexTree::named(1, "DOTTED", "(\\.+>)")],
+                vec![
+                    RegexTree::named(1, "SOLID", "(-+>)"),
+                    RegexTree::named(1, "DOTTED", "(\\.+>)"),
+                ],
             ),
             RegexTree::spaces_zero_or_more(),
             RegexTree::named(1, "TO", "([%pLN_]+)"),

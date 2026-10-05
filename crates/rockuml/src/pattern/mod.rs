@@ -58,22 +58,29 @@ impl JavaPattern {
 
     /// The groups of the first match, numbered from 1 as in Java; `None` for groups that did not take part.
     pub fn captures(&self, text: &str) -> Option<Vec<Option<String>>> {
-        let to_vec = |count: usize, group: &dyn Fn(usize) -> Option<String>| (1..count).map(group).collect();
+        let to_vec =
+            |count: usize, group: &dyn Fn(usize) -> Option<String>| (1..count).map(group).collect();
         match self {
             JavaPattern::Plain(regex) => {
                 let captures = regex.captures(text)?;
-                Some(to_vec(captures.len(), &|index| captures.get(index).map(|group| group.as_str().to_owned())))
+                Some(to_vec(captures.len(), &|index| {
+                    captures.get(index).map(|group| group.as_str().to_owned())
+                }))
             }
             JavaPattern::WithLookaround(regex) => {
                 let captures = regex.captures(text).ok()??;
-                Some(to_vec(captures.len(), &|index| captures.get(index).map(|group| group.as_str().to_owned())))
+                Some(to_vec(captures.len(), &|index| {
+                    captures.get(index).map(|group| group.as_str().to_owned())
+                }))
             }
         }
     }
 }
 
 fn has_lookaround(pattern: &str) -> bool {
-    ["(?=", "(?!", "(?<=", "(?<!"].iter().any(|syntax| pattern.contains(syntax))
+    ["(?=", "(?!", "(?<=", "(?<!"]
+        .iter()
+        .any(|syntax| pattern.contains(syntax))
 }
 
 fn expand_macros(pattern: &str) -> String {
@@ -93,8 +100,10 @@ enum Dialect {
 const JAVA_SPACES: &str = r"\t\n\x0B\x0C\r ";
 const JAVA_WORD: &str = "a-zA-Z0-9_";
 const JAVA_DIGITS: &str = "0-9";
-const FANCY_WORD_BOUNDARY: &str = r"(?:(?<=[a-zA-Z0-9_])(?![a-zA-Z0-9_])|(?<![a-zA-Z0-9_])(?=[a-zA-Z0-9_]))";
-const FANCY_NOT_WORD_BOUNDARY: &str = r"(?:(?<=[a-zA-Z0-9_])(?=[a-zA-Z0-9_])|(?<![a-zA-Z0-9_])(?![a-zA-Z0-9_]))";
+const FANCY_WORD_BOUNDARY: &str =
+    r"(?:(?<=[a-zA-Z0-9_])(?![a-zA-Z0-9_])|(?<![a-zA-Z0-9_])(?=[a-zA-Z0-9_]))";
+const FANCY_NOT_WORD_BOUNDARY: &str =
+    r"(?:(?<=[a-zA-Z0-9_])(?=[a-zA-Z0-9_])|(?<![a-zA-Z0-9_])(?![a-zA-Z0-9_]))";
 
 fn translate(pattern: &str, dialect: Dialect) -> Option<String> {
     let mut result = String::with_capacity(pattern.len() * 2);
@@ -102,7 +111,13 @@ fn translate(pattern: &str, dialect: Dialect) -> Option<String> {
     let mut class_depth = 0;
     while let Some(c) = chars.next() {
         match c {
-            '\\' => translate_escape(chars.next()?, class_depth > 0, dialect, &mut chars, &mut result)?,
+            '\\' => translate_escape(
+                chars.next()?,
+                class_depth > 0,
+                dialect,
+                &mut chars,
+                &mut result,
+            )?,
             '[' => {
                 class_depth += 1;
                 result.push(c);
@@ -232,6 +247,9 @@ mod tests {
     fn lookbehind_patterns_use_the_backtracking_engine() {
         let grouping = JavaPattern::plantuml(r"^group((?<!else)(?<!also)(?<!end)#\w+)?$");
         assert!(matches!(grouping, JavaPattern::WithLookaround(_)));
-        assert_eq!(grouping.captures("group#red"), Some(vec![Some("#red".to_owned())]));
+        assert_eq!(
+            grouping.captures("group#red"),
+            Some(vec![Some("#red".to_owned())])
+        );
     }
 }

@@ -134,7 +134,10 @@ impl<V> Default for JavaHashMap<V> {
 
 impl<V> JavaHashMap<V> {
     pub fn get(&self, key: &str) -> Option<&V> {
-        self.entries.iter().find(|(existing, _)| existing == key).map(|(_, value)| value)
+        self.entries
+            .iter()
+            .find(|(existing, _)| existing == key)
+            .map(|(_, value)| value)
     }
 
     pub fn len(&self) -> usize {
@@ -142,7 +145,11 @@ impl<V> JavaHashMap<V> {
     }
 
     pub fn put(&mut self, key: String, value: V) {
-        if let Some(existing) = self.entries.iter_mut().find(|(existing, _)| *existing == key) {
+        if let Some(existing) = self
+            .entries
+            .iter_mut()
+            .find(|(existing, _)| *existing == key)
+        {
             existing.1 = value;
             return;
         }
@@ -179,7 +186,11 @@ impl<V> JavaHashMap<V> {
     /// When the table does not exist yet, `threshold` holds the requested initial capacity.
     fn resize(&mut self) {
         if self.capacity == 0 {
-            self.capacity = if self.threshold > 0 { self.threshold } else { 16 };
+            self.capacity = if self.threshold > 0 {
+                self.threshold
+            } else {
+                16
+            };
         } else {
             self.capacity *= 2;
         }
@@ -187,17 +198,25 @@ impl<V> JavaHashMap<V> {
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&str, &V)> {
-        self.iteration_order().into_iter().map(|index| (self.entries[index].0.as_str(), &self.entries[index].1))
+        self.iteration_order()
+            .into_iter()
+            .map(|index| (self.entries[index].0.as_str(), &self.entries[index].1))
     }
 
     pub fn into_iter(mut self) -> impl Iterator<Item = (String, V)> {
         let order = self.iteration_order();
         let mut slots: Vec<Option<(String, V)>> = self.entries.drain(..).map(Some).collect();
-        order.into_iter().map(move |index| slots[index].take().expect("each entry is visited once"))
+        order
+            .into_iter()
+            .map(move |index| slots[index].take().expect("each entry is visited once"))
     }
 
     fn iteration_order(&self) -> Vec<usize> {
-        let hashes: Vec<i32> = self.entries.iter().map(|(key, _)| string_hash_code(key)).collect();
+        let hashes: Vec<i32> = self
+            .entries
+            .iter()
+            .map(|(key, _)| string_hash_code(key))
+            .collect();
         bucket_order(&hashes, self.capacity.max(1))
     }
 }
@@ -265,7 +284,10 @@ mod tests {
             (&[6, 6, 1], "12 2 1 0 6 5 4 3 9 8 7 11 10"),
             (&[13], "12 2 1 0 6 5 4 3 9 8 7 11 10"),
             (&[2, 2, 2, 2, 2, 2, 2], "13 12 2 1 0 6 5 4 3 9 8 7 11 10"),
-            (&[25], "24 23 11 10 13 12 15 14 17 16 19 18 2 1 0 6 5 4 3 9 8 7 20 22 21"),
+            (
+                &[25],
+                "24 23 11 10 13 12 15 14 17 16 19 18 2 1 0 6 5 4 3 9 8 7 20 22 21",
+            ),
         ];
         for (child_sizes, expected) in cases {
             let mut map = JavaHashMap::default();
@@ -278,7 +300,10 @@ mod tests {
                 }
                 map.put_all(child);
             }
-            let order: Vec<String> = map.iter().map(|(key, ())| key.trim_start_matches("KEY").to_owned()).collect();
+            let order: Vec<String> = map
+                .iter()
+                .map(|(key, ())| key.trim_start_matches("KEY").to_owned())
+                .collect();
             assert_eq!(order.join(" "), expected, "{child_sizes:?}");
         }
     }

@@ -2,6 +2,7 @@
 
 mod assets;
 mod color;
+mod command;
 mod deflate;
 pub mod host;
 mod java;
