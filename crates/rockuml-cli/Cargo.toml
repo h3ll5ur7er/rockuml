@@ -14,6 +14,7 @@ path = "src/main.rs"
 workspace = true
 
 [dependencies]
+regex = "1"
 rockuml.workspace = true
 
 [dev-dependencies]

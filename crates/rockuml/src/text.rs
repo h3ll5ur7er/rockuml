@@ -1,0 +1,184 @@
+//! Source lines that remember where they came from, so errors can point at the right file and line.
+
+use std::rc::Rc;
+use std::sync::LazyLock;
+
+use regex::Regex;
+
+use crate::java;
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct LineLocation {
+    description: Rc<str>,
+    /// Zero-based; -1 before the first line has been read.
+    position: i32,
+    parent: Option<Rc<LineLocation>>,
+}
+
+impl LineLocation {
+    pub fn new(description: &str, parent: Option<LineLocation>) -> Self {
+        Self {
+            description: description.into(),
+            position: -1,
+            parent: parent.map(Rc::new),
+        }
+    }
+
+    #[must_use]
+    pub fn one_line_read(&self) -> Self {
+        Self {
+            position: self.position + 1,
+            ..self.clone()
+        }
+    }
+
+    pub fn position(&self) -> i32 {
+        self.position
+    }
+
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    pub fn parent(&self) -> Option<&LineLocation> {
+        self.parent.as_deref()
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct StringLocated {
+    text: String,
+    location: LineLocation,
+    preprocessor_error: Option<String>,
+}
+
+impl StringLocated {
+    pub fn new(text: impl Into<String>, location: LineLocation) -> Self {
+        Self {
+            text: text.into(),
+            location,
+            preprocessor_error: None,
+        }
+    }
+
+    pub fn text(&self) -> &str {
+        &self.text
+    }
+
+    pub fn location(&self) -> &LineLocation {
+        &self.location
+    }
+
+    pub fn preprocessor_error(&self) -> Option<&str> {
+        self.preprocessor_error.as_deref()
+    }
+
+    #[must_use]
+    pub fn with_preprocessor_error(&self, error: impl Into<String>) -> Self {
+        Self {
+            preprocessor_error: Some(error.into()),
+            ..self.clone()
+        }
+    }
+
+    #[must_use]
+    pub fn with_text(&self, text: impl Into<String>) -> Self {
+        Self {
+            text: text.into(),
+            ..self.clone()
+        }
+    }
+
+    #[must_use]
+    pub fn append(&self, end_of_line: &str) -> Self {
+        self.with_text(self.text.clone() + end_of_line)
+    }
+
+    #[must_use]
+    pub fn trimmed(&self) -> Self {
+        self.with_text(java::trim(&self.text))
+    }
+
+    /// Joins a line ending with a single backslash to the next one, as a continuation.
+    #[must_use]
+    pub fn merge_end_backslash(&self, next: &StringLocated) -> Self {
+        debug_assert!(ends_with_backslash(&self.text));
+        let without_backslash = &self.text[..self.text.len() - 1];
+        self.with_text(format!("{without_backslash}{}", next.text))
+    }
+
+    /// Strips `/' ... '/` comments that share the line with content.
+    #[must_use]
+    pub fn remove_inner_comment(&self) -> Self {
+        let trimmed = self.text.replace('\t', " ");
+        let trimmed = trimmed.trim_matches(|c: char| c <= ' ');
+        if trimmed.starts_with("/'")
+            && let Some(index) = self.text.find("'/")
+        {
+            return self.with_text(remove_special_inner_comment(&self.text[index + 2..]));
+        }
+        if trimmed.ends_with("'/")
+            && let Some(index) = self.text.rfind("/'")
+        {
+            return self.with_text(remove_special_inner_comment(&self.text[..index]));
+        }
+        if trimmed.contains("/'''") && trimmed.contains("'''/") {
+            return self.with_text(remove_special_inner_comment(&self.text));
+        }
+        self.clone()
+    }
+}
+
+pub fn ends_with_backslash(s: &str) -> bool {
+    s.ends_with('\\') && !s.ends_with("\\\\")
+}
+
+fn remove_special_inner_comment(s: &str) -> String {
+    static SPECIAL_INNER_COMMENT: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"/'''[-A-Za-z0-9_]*'''/").unwrap());
+
+    if s.contains("/'''") && s.contains("'''/") {
+        SPECIAL_INNER_COMMENT.replace_all(s, "").into_owned()
+    } else {
+        s.to_owned()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn line(text: &str) -> StringLocated {
+        StringLocated::new(text, LineLocation::new("test", None))
+    }
+
+    #[test]
+    fn locations_count_lines_from_zero() {
+        let location = LineLocation::new("file", None);
+        assert_eq!(location.one_line_read().one_line_read().position(), 1);
+    }
+
+    #[test]
+    fn a_trailing_double_backslash_is_not_a_continuation() {
+        assert!(ends_with_backslash("a \\"));
+        assert!(!ends_with_backslash("a \\\\"));
+    }
+
+    #[test]
+    fn inner_comments_are_removed_from_either_end() {
+        assert_eq!(
+            line("/' lead '/ Alice -> Bob")
+                .remove_inner_comment()
+                .text(),
+            " Alice -> Bob"
+        );
+        assert_eq!(
+            line("Alice -> Bob /' tail '/")
+                .remove_inner_comment()
+                .text(),
+            "Alice -> Bob "
+        );
+        assert_eq!(line("A /'''x'''/ B").remove_inner_comment().text(), "A  B");
+        assert_eq!(line("A -> B").remove_inner_comment().text(), "A -> B");
+    }
+}

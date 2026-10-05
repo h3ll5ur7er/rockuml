@@ -112,6 +112,10 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 [[package]]
 name = "rockuml"
 version = "0.1.0"
+dependencies = [
+ "regex",
+ "unicode-general-category",
+]
 
 [[package]]
 name = "rockuml-cli"
@@ -147,6 +151,12 @@ dependencies = [
  "rustix",
  "windows-sys",
 ]
+
+[[package]]
+name = "unicode-general-category"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b993bddc193ae5bd0d623b49ec06ac3e9312875fdae725a975c51db1cc1677f"
 
 [[package]]
 name = "windows-link"

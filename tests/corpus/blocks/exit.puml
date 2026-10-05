@@ -1,0 +1,5 @@
+@startuml
+Alice -> Bob : before exit
+!exit
+Alice -> Bob : after exit
+@enduml
