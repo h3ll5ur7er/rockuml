@@ -13,10 +13,10 @@ pub struct Multiline<D> {
 }
 
 impl<D> Multiline<D> {
-    pub fn new(start: Regex, end: Regex, apply: fn(&mut D, &BlocLines) -> CommandResult) -> Self {
+    pub fn new(start: &Regex, end: &Regex, apply: fn(&mut D, &BlocLines) -> CommandResult) -> Self {
         Self {
-            start: whole_line(&start),
-            end: whole_line(&end),
+            start: whole_line(start),
+            end: whole_line(end),
             skip_quote_lines: false,
             apply,
         }

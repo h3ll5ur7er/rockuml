@@ -24,8 +24,8 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
         single(skinparam_pattern(), set_skinparam),
         Box::new(
             Multiline::new(
-                plantuml_regex(r"^\<style\>$"),
-                plantuml_regex(r"^[%s]*\</?style\>[%s]*$"),
+                &plantuml_regex(r"^\<style\>$"),
+                &plantuml_regex(r"^[%s]*\</?style\>[%s]*$"),
                 apply_style_sheet,
             )
             .skipping_quote_lines(),
@@ -53,19 +53,19 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
         single(labelled("title", "TITLE1", "TITLE2"), set_title),
         single(labelled("caption", "DISPLAY1", "DISPLAY2"), set_caption),
         Box::new(Multiline::new(
-            plantuml_regex("^caption$"),
-            plantuml_regex("^end[%s]?caption$"),
+            &plantuml_regex("^caption$"),
+            &plantuml_regex("^end[%s]?caption$"),
             set_multiline_caption,
         )),
         Box::new(Multiline::new(
-            plantuml_regex("^title$"),
-            plantuml_regex("^end[%s]?title$"),
+            &plantuml_regex("^title$"),
+            &plantuml_regex("^end[%s]?title$"),
             set_multiline_title,
         )),
         Box::new(
             Multiline::new(
-                LEGEND_START.clone(),
-                plantuml_regex("^end[%s]?legend$"),
+                &LEGEND_START,
+                &plantuml_regex("^end[%s]?legend$"),
                 set_multiline_legend,
             )
             .skipping_quote_lines(),
@@ -75,16 +75,16 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
             Ribbon::Footer.set_from_line(diagram, arg, location);
         }),
         Box::new(Multiline::new(
-            Ribbon::Footer.block_start().clone(),
-            plantuml_regex("^end[%s]?footer$"),
+            Ribbon::Footer.block_start(),
+            &plantuml_regex("^end[%s]?footer$"),
             |diagram, lines| Ribbon::Footer.set_from_block(diagram, lines),
         )),
         single(Ribbon::Header.pattern(), |diagram, arg, location| {
             Ribbon::Header.set_from_line(diagram, arg, location);
         }),
         Box::new(Multiline::new(
-            Ribbon::Header.block_start().clone(),
-            plantuml_regex("^end[%s]?header$"),
+            Ribbon::Header.block_start(),
+            &plantuml_regex("^end[%s]?header$"),
             |diagram, lines| Ribbon::Header.set_from_block(diagram, lines),
         )),
     ]

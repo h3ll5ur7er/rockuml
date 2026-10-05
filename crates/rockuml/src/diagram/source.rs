@@ -63,7 +63,9 @@ impl UmlSource {
         self.lines.iter().map(StringLocated::text).all(|line| {
             start_utils::is_start_directive(line)
                 || start_utils::is_end_directive(line)
-                || line.trim_start_matches(java::is_regex_whitespace).starts_with('\'')
+                || line
+                    .trim_start_matches(java::is_regex_whitespace)
+                    .starts_with('\'')
                 || java::trim(line).is_empty()
         })
     }
