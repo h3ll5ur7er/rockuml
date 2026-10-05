@@ -64,11 +64,6 @@ impl UFont {
         Self::new(Self::SERIF, UFontFace::NORMAL, size)
     }
 
-    /// As written: a family name or a comma-separated fallback list.
-    pub fn family(&self) -> &str {
-        &self.family
-    }
-
     pub fn size(&self) -> i32 {
         self.size
     }
@@ -109,10 +104,15 @@ impl UFont {
 
     /// The name Java's AWT gives the font, like `Serif.bold`. Only Java's logical fonts are named the same on
     /// every machine; any other family is named as on a machine without it, which AWT replaces by `Dialog`.
+    /// The families of the fallback list, unquoted (PlantUML's `FontStack`).
+    pub fn families(&self) -> impl Iterator<Item = &str> {
+        self.family
+            .split(',')
+            .map(|family| family.trim_matches(|c: char| crate::java::is_whitespace(c) || c == '"'))
+    }
+
     fn portable_name(&self) -> String {
-        let first_family = self.family.split(',').next().unwrap_or_default();
-        let first_family =
-            first_family.trim_matches(|c: char| crate::java::is_whitespace(c) || c == '"');
+        let first_family = self.families().next().unwrap_or_default();
         let logical = ["Serif", "SansSerif", "Monospaced", "Dialog", "DialogInput"]
             .into_iter()
             .find(|logical| logical.eq_ignore_ascii_case(first_family))

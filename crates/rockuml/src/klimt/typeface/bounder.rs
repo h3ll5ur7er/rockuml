@@ -17,9 +17,7 @@ impl StringBounderFonts {
     /// PlantUML's `FontStack`: of a comma-separated list of families, the first that can display the text.
     fn font_for(&self, font: &UFont, text: &str) -> ResolvedFont<'_> {
         let mut candidates = font
-            .family()
-            .split(',')
-            .map(|family| family.trim_matches(|c: char| crate::java::is_whitespace(c) || c == '"'))
+            .families()
             .map(|family| self.fonts.resolve(family, font.face()));
         let first = candidates.next().expect("split yields at least one family");
         if first.can_display(text) {
