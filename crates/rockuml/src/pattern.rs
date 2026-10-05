@@ -11,10 +11,13 @@ pub fn plantuml_regex(pattern: &str) -> Regex {
 }
 
 pub fn java_regex(pattern: &str, case_insensitive: bool) -> Regex {
-    let translated = translate(pattern);
+    try_java_regex(pattern, case_insensitive).unwrap_or_else(|| panic!("cannot translate Java regex {pattern:?}"))
+}
+
+/// For patterns written by users, which may be invalid or use Java syntax with no equivalent here.
+pub fn try_java_regex(pattern: &str, case_insensitive: bool) -> Option<Regex> {
     let flags = if case_insensitive { "(?i)" } else { "" };
-    Regex::new(&format!("{flags}{translated}"))
-        .unwrap_or_else(|error| panic!("cannot translate Java regex {pattern:?}: {error}"))
+    Regex::new(&format!("{flags}{}", translate(pattern)?)).ok()
 }
 
 fn expand_macros(pattern: &str) -> String {
@@ -29,21 +32,18 @@ const JAVA_SPACES: &str = r"\t\n\x0B\x0C\r ";
 const JAVA_WORD: &str = "a-zA-Z0-9_";
 const JAVA_DIGITS: &str = "0-9";
 
-fn translate(pattern: &str) -> String {
+fn translate(pattern: &str) -> Option<String> {
     let mut result = String::with_capacity(pattern.len() * 2);
     let mut chars = pattern.chars().peekable();
     let mut class_depth = 0;
     while let Some(c) = chars.next() {
         match c {
-            '\\' => {
-                let escaped = chars.next().expect("dangling backslash in Java regex");
-                translate_escape(escaped, class_depth > 0, &mut chars, &mut result);
-            }
+            '\\' => translate_escape(chars.next()?, class_depth > 0, &mut chars, &mut result)?,
             '[' => {
                 class_depth += 1;
                 result.push(c);
                 if chars.peek() == Some(&'^') {
-                    result.push(chars.next().unwrap());
+                    result.push(chars.next()?);
                 }
                 if chars.peek() == Some(&']') {
                     result.push_str(r"\]");
@@ -63,7 +63,7 @@ fn translate(pattern: &str) -> String {
             _ => result.push(c),
         }
     }
-    result
+    Some(result)
 }
 
 fn translate_escape(
@@ -71,24 +71,24 @@ fn translate_escape(
     in_class: bool,
     chars: &mut std::iter::Peekable<std::str::Chars>,
     result: &mut String,
-) {
+) -> Option<()> {
     let class = |members: &str, negated: bool| match (in_class, negated) {
-        (true, false) => members.to_owned(),
-        (false, false) => format!("[{members}]"),
-        (false, true) => format!("[^{members}]"),
-        (true, true) => panic!("negated shorthand inside a character class is not supported"),
+        (true, false) => Some(members.to_owned()),
+        (false, false) => Some(format!("[{members}]")),
+        (false, true) => Some(format!("[^{members}]")),
+        (true, true) => None,
     };
     match escaped {
-        's' => result.push_str(&class(JAVA_SPACES, false)),
-        'S' => result.push_str(&class(JAVA_SPACES, true)),
-        'w' => result.push_str(&class(JAVA_WORD, false)),
-        'W' => result.push_str(&class(JAVA_WORD, true)),
-        'd' => result.push_str(&class(JAVA_DIGITS, false)),
-        'D' => result.push_str(&class(JAVA_DIGITS, true)),
+        's' => result.push_str(&class(JAVA_SPACES, false)?),
+        'S' => result.push_str(&class(JAVA_SPACES, true)?),
+        'w' => result.push_str(&class(JAVA_WORD, false)?),
+        'W' => result.push_str(&class(JAVA_WORD, true)?),
+        'd' => result.push_str(&class(JAVA_DIGITS, false)?),
+        'D' => result.push_str(&class(JAVA_DIGITS, true)?),
         'b' if !in_class => result.push_str(r"(?-u:\b)"),
         'B' if !in_class => result.push_str(r"(?-u:\B)"),
         'u' => {
-            result.push_str("\\x{");
+            result.push_str(r"\x{");
             result.extend(chars.by_ref().take(4));
             result.push('}');
         }
@@ -110,6 +110,7 @@ fn translate_escape(
         }
         c => result.push(c),
     }
+    Some(())
 }
 
 #[cfg(test)]
@@ -145,6 +146,12 @@ mod tests {
     #[test]
     fn word_boundary_ignores_non_ascii_letters_like_java() {
         assert!(java_regex(r"x\b", false).is_match("xé"));
+    }
+
+    #[test]
+    fn invalid_patterns_are_rejected_instead_of_panicking() {
+        assert!(try_java_regex(r"a\", false).is_none());
+        assert!(try_java_regex("(", false).is_none());
     }
 
     #[test]
