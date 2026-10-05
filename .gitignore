@@ -1,0 +1,9 @@
+# Reference implementation (golden model source) and its build output
+/reference/
+
+# Portable toolchains downloaded for the golden-model oracle
+/tools/jdk/
+/tools/oracle/build/
+
+# Rust
+/target/
