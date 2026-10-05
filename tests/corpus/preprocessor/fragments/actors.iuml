@@ -1,0 +1,5 @@
+actor Customer
+actor Clerk
+!startsub ORDER
+Customer -> Clerk : order
+!endsub

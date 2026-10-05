@@ -1,0 +1,10 @@
+@startuml
+!include <C4/C4_Container>
+Person(user, "User", "Uses the system")
+System_Boundary(sys, "System") {
+  Container(web, "Web App", "Rust", "Serves pages")
+  ContainerDb(db, "Database", "PostgreSQL")
+}
+Rel(user, web, "Uses", "HTTPS")
+Rel(web, db, "Reads/Writes")
+@enduml

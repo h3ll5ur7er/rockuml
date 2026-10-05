@@ -1,0 +1,15 @@
+@startuml
+!function $double($x)
+!return $x * 2
+!endfunction
+!procedure $exchange($from, $to, $message="ping")
+$from -> $to : $message
+$to --> $from : $double(21)
+!endprocedure
+!unquoted procedure TALK(a, b)
+a -> b : unquoted
+!endprocedure
+$exchange("Alice", "Bob")
+$exchange("Bob", "Carol", "hello")
+TALK(Carol, Alice)
+@enduml

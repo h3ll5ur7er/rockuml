@@ -1,0 +1,443 @@
+DPI: 96
+dimension: [ 454.0000 ; 392.0000 ]
+scaleFactor: 1.0000
+seed: -7384828026729333002
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: cluster Professional
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 2.5000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 145.1129 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 3.7500 ; 3.7500 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 147.6129 ; 2.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 154.6129 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 160.5000 ; 20.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 163.0000 ; 22.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 163.0000 ; 220.5000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 160.5000 ; 223.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 2.5000 ; 223.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 220.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 2.5000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 2.5000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 14.0000 ; 166.0000 ]
+  pt2: [ 168.6129 ; 166.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Professional
+  position: [ 18.0000 ; 158.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: cluster Restaurant
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 2.5000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 124.0096 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 3.7500 ; 3.7500 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 126.5096 ; 2.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 133.5096 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 259.5000 ; 20.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 262.0000 ; 22.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 262.0000 ; 251.5000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 259.5000 ; 254.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 2.5000 ; 254.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 251.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 2.5000 ]
+   - type: SEG_ARCTO
+     radius: [ 2.5000 ; 2.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 2.5000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 185.0000 ; 24.0000 ]
+  pt2: [ 318.5096 ; 24.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Restaurant
+  position: [ 189.0000 ; 16.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity g
+ELLIPSE:
+  pt1: [ 87.5091 ; 56.5000 ]
+  pt2: [ 103.5091 ; 72.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Guest
+  position: [ 66.5000 ; 126.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity c
+ELLIPSE:
+  pt1: [ 87.3751 ; 187.5000 ]
+  pt2: [ 103.3751 ; 203.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Chef
+  position: [ 66.5000 ; 257.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity fc
+ELLIPSE:
+  pt1: [ 87.3694 ; 279.5000 ]
+  pt2: [ 103.3694 ; 295.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Food Critic
+  position: [ 30.0000 ; 349.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC1
+ELLIPSE:
+  pt1: [ 240.5000 ; 45.5000 ]
+  pt2: [ 391.5005 ; 80.5001 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Eat Food
+  position: [ 252.5078 ; 66.5000 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC2
+ELLIPSE:
+  pt1: [ 201.0000 ; 98.5000 ]
+  pt2: [ 431.0614 ; 149.3123 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Pay for Food
+  position: [ 209.6076 ; 127.4061 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC3
+ELLIPSE:
+  pt1: [ 268.5000 ; 168.0000 ]
+  pt2: [ 363.0241 ; 193.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Drink
+  position: [ 284.4641 ; 184.3995 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC4
+ELLIPSE:
+  pt1: [ 254.0000 ; 212.0000 ]
+  pt2: [ 377.6278 ; 241.5256 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Review
+  position: [ 268.5479 ; 230.2628 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 278.0894 ; 242.0345 ]
+   - [ 268.2454 ; 241.7251 ]
+   - [ 273.4588 ; 243.9207 ]
+   - [ 271.2633 ; 249.1341 ]
+   - [ 278.0894 ; 242.0345 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 155.1703 ; 291.6583 ]
+   - type: SEG_CUBICTO
+     pt1: [ 193.3000 ; 276.1272 ]
+     pt2: [ 235.5438 ; 258.9204 ]
+     pt3: [ 267.4588 ; 245.9207 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 240.0483 ; 73.2908 ]
+   - [ 230.5879 ; 70.5522 ]
+   - [ 235.0948 ; 73.9710 ]
+   - [ 231.6761 ; 78.4779 ]
+   - [ 240.0483 ; 73.2908 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 118.6177 ; 91.1394 ]
+   - type: SEG_CUBICTO
+     pt1: [ 147.6634 ; 87.1515 ]
+     pt2: [ 189.2835 ; 81.4370 ]
+     pt3: [ 229.0948 ; 75.9710 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 200.8654 ; 107.8070 ]
+   - [ 192.5165 ; 102.5824 ]
+   - [ 195.9150 ; 107.1046 ]
+   - [ 191.3928 ; 110.5031 ]
+   - [ 200.8654 ; 107.8070 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 118.6177 ; 98.9892 ]
+   - type: SEG_CUBICTO
+     pt1: [ 138.4425 ; 101.8019 ]
+     pt2: [ 161.4825 ; 105.0707 ]
+     pt3: [ 189.9150 ; 109.1046 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 268.4381 ; 183.3224 ]
+   - [ 259.5900 ; 178.9967 ]
+   - [ 263.4414 ; 183.1400 ]
+   - [ 259.2982 ; 186.9914 ]
+   - [ 268.4381 ; 183.3224 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 118.7050 ; 107.0440 ]
+   - type: SEG_CUBICTO
+     pt1: [ 135.6154 ; 115.4089 ]
+     pt2: [ 156.5668 ; 127.9344 ]
+     pt3: [ 171.0000 ; 144.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 176.5806 ; 150.2117 ]
+     pt2: [ 172.3489 ; 155.9511 ]
+     pt3: [ 179.0000 ; 161.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 202.6109 ; 178.9230 ]
+     pt2: [ 230.6037 ; 184.1602 ]
+     pt3: [ 257.4414 ; 185.1400 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

@@ -1,0 +1,140 @@
+DPI: 96
+dimension: [ 373.9963 ; 180.0000 ]
+scaleFactor: 1.0417
+seed: -4968848973933213624
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 103.1960 ; 68.0000 ]
+  pt2: [ 111.1960 ; 112.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 106.6960 ; 68.0000 ]
+  pt2: [ 106.6960 ; 112.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffbabdbf
+
+RECTANGLE:
+  pt1: [ 280.1941 ; 68.0000 ]
+  pt2: [ 288.1941 ; 112.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 283.6941 ; 68.0000 ]
+  pt2: [ 283.6941 ; 112.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffbabdbf
+
+RECTANGLE:
+  pt1: [ 55.0000 ; 20.0000 ]
+  pt2: [ 158.3919 ; 62.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2fa4e7
+  backcolor: HColorGradient Mon Oct 05 14:49:10 CEST 2026
+
+TEXT:
+  text: Alice
+  position: [ 75.0000 ; 44.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 248.3919 ; 20.0000 ]
+  pt2: [ 318.9963 ; 62.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2fa4e7
+  backcolor: HColorGradient Mon Oct 05 14:49:10 CEST 2026
+
+TEXT:
+  text: Bob
+  position: [ 268.3919 ; 44.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 55.0000 ; 117.0000 ]
+  pt2: [ 158.3919 ; 159.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2fa4e7
+  backcolor: HColorGradient Mon Oct 05 14:49:10 CEST 2026
+
+TEXT:
+  text: Alice
+  position: [ 75.0000 ; 141.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 248.3919 ; 117.0000 ]
+  pt2: [ 318.9963 ; 159.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2fa4e7
+  backcolor: HColorGradient Mon Oct 05 14:49:10 CEST 2026
+
+TEXT:
+  text: Bob
+  position: [ 268.3919 ; 141.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 271.6941 ; 90.0000 ]
+   - [ 281.6941 ; 94.0000 ]
+   - [ 271.6941 ; 98.0000 ]
+   - [ 275.6941 ; 94.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2fa4e7
+  backcolor: ff2fa4e7
+
+LINE:
+  pt1: [ 106.6960 ; 94.0000 ]
+  pt2: [ 277.6941 ; 94.0000 ]
+  stroke: 0.0-0.0-3.0
+  shadow: 0
+  color: ff2fa4e7
+
+TEXT:
+  text: themed
+  position: [ 113.6960 ; 89.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ff343a40
+  extendedColor: NULL_COLOR
+

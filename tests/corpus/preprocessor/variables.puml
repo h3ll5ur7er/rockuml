@@ -1,0 +1,10 @@
+@startuml
+!$name = "Alice"
+!$count = 3
+!$total = $count * 2 + 1
+!$greeting ?= "Hello"
+!$greeting ?= "ignored"
+$name -> Bob : $greeting %strlen($name) $total
+!define LEGACY_ACTOR Charlie
+LEGACY_ACTOR -> $name : %upper("done")
+@enduml
