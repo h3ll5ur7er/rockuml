@@ -41,10 +41,13 @@ impl Diagram for CreoleDiagram {
         &self.source
     }
 
-    fn text_block(&self) -> Box<dyn TextBlock + '_> {
+    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let font = FontConfiguration::black_blue_true(UFont::serif(14));
         let sheet = CreoleParser::new(font, HorizontalAlignment::Left).create_sheet(&self.lines);
-        Box::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()))
+        Ok(Box::new(SheetBlock1::new(
+            sheet,
+            ClockwiseTopRightBottomLeft::none(),
+        )))
     }
 
     fn export_settings(&self) -> ExportSettings {

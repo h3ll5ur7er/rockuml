@@ -1,8 +1,11 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+mod common_commands;
 mod creole;
 mod diagram_type;
+mod salt;
 mod source;
+mod titled;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -35,17 +38,17 @@ pub trait Diagram {
     fn source(&self) -> &UmlSource;
 
     /// Everything the diagram draws.
-    fn text_block(&self) -> Box<dyn TextBlock + '_>;
+    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
 
     fn export_settings(&self) -> ExportSettings;
 }
 
 /// How a diagram is placed on the image, and the image-wide options the skin decides.
 pub struct ExportSettings {
-    margin: ClockwiseTopRightBottomLeft,
-    seed: i64,
-    svg_link_target: Option<String>,
-    preserve_aspect_ratio: String,
+    pub(super) margin: ClockwiseTopRightBottomLeft,
+    pub(super) seed: i64,
+    pub(super) svg_link_target: Option<String>,
+    pub(super) preserve_aspect_ratio: String,
 }
 
 impl ExportSettings {
@@ -64,6 +67,7 @@ pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorte
     let (diagram_type, source) = prepare(block.located_lines());
     match diagram_type {
         Some(DiagramType::Creole) => Ok(Box::new(CreoleDiagram::create(source)?)),
+        Some(DiagramType::Salt) => Ok(Box::new(salt::SaltDiagram::create(source)?)),
         _ => Err(NotYetPorted("this diagram type")),
     }
 }
@@ -88,9 +92,9 @@ fn prepare(lines: &[StringLocated]) -> (Option<DiagramType>, UmlSource) {
 }
 
 /// The diagram in PlantUML's `debug` format, which lists every drawn shape.
-pub fn export_debug(diagram: &dyn Diagram, host: &dyn Host) -> String {
+pub fn export_debug(diagram: &dyn Diagram, host: &dyn Host) -> Result<String, NotYetPorted> {
     let settings = diagram.export_settings();
-    let text_block = diagram.text_block();
+    let text_block = diagram.text_block()?;
     let string_bounder = Rc::new(StringBounderDebug);
     let margin = settings.margin;
     let dimension = text_block
@@ -106,12 +110,13 @@ pub fn export_debug(diagram: &dyn Diagram, host: &dyn Host) -> String {
     );
     text_block.draw_u(&ug.translated(margin.left, margin.top));
 
-    output.borrow().document(&DebugHeader {
+    let document = output.borrow().document(&DebugHeader {
         dimension,
         scale_factor: 1.0,
         seed: settings.seed,
         svg_link_target: settings.svg_link_target,
         hover_path_color_rgb: None,
         preserve_aspect_ratio: settings.preserve_aspect_ratio,
-    })
+    });
+    Ok(document)
 }

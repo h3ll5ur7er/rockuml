@@ -6,6 +6,13 @@ pub enum UShape {
     Text(UText),
     Ellipse(UEllipse),
     Rectangle(URectangle),
+    /// A straight line from the current position by this offset.
+    Line {
+        dx: f64,
+        dy: f64,
+    },
+    /// A closed shape through these points, relative to the current position.
+    Polygon(Vec<(f64, f64)>),
     /// Takes up space without drawing anything.
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
@@ -19,6 +26,8 @@ impl UShape {
             Self::Text(_) => "UText",
             Self::Ellipse(_) => "UEllipse",
             Self::Rectangle(_) => "URectangle",
+            Self::Line { .. } => "ULine",
+            Self::Polygon(_) => "UPolygon",
             Self::Empty(_) => "UEmpty",
             Self::HorizontalLine => "UHorizontalLine",
         }

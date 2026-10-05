@@ -1,0 +1,15 @@
+@startsalt
+{
+  {+
+    a | b
+    c | d
+  } | {-
+    one
+    two
+    three
+  }
+  {!
+    p | q | r
+  } | [Done]
+}
+@endsalt

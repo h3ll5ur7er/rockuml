@@ -1,6 +1,7 @@
 //! Diagram commands: each recognises some source lines and applies them to the diagram being built.
 
 mod bloc_lines;
+pub mod factory;
 mod single_line;
 
 pub use bloc_lines::BlocLines;

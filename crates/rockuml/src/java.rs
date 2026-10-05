@@ -118,17 +118,91 @@ fn bucket_order(hashes: &[i32], capacity: usize) -> Vec<usize> {
 #[derive(Clone, Debug)]
 pub struct JavaHashMap<V> {
     entries: Vec<(String, V)>,
-    capacity: usize,
-    threshold: usize,
+    table: TableSize,
 }
 
 impl<V> Default for JavaHashMap<V> {
     fn default() -> Self {
         Self {
             entries: Vec::new(),
-            capacity: 0,
-            threshold: 0,
+            table: TableSize::default(),
         }
+    }
+}
+
+/// How `java.util.HashMap` sizes its table: created at 16 buckets (or as requested) on the first insertion,
+/// doubled whenever it gets more than three-quarters full.
+#[derive(Clone, Copy, Debug, Default)]
+struct TableSize {
+    capacity: usize,
+    /// Before the table exists, the requested initial capacity.
+    threshold: usize,
+}
+
+impl TableSize {
+    fn before_insert(&mut self) {
+        if self.capacity == 0 {
+            self.resize();
+        }
+    }
+
+    fn after_insert(&mut self, len: usize) {
+        if len > self.threshold {
+            self.resize();
+        }
+    }
+
+    /// `putAll` sizes an empty table for the incoming entries up front, unlike a series of `put`s.
+    fn prepare_for(&mut self, incoming: usize) {
+        if self.capacity == 0 {
+            let wanted = (incoming * 4).div_ceil(3);
+            if wanted > self.threshold {
+                self.threshold = wanted.next_power_of_two();
+            }
+        } else {
+            while incoming > self.threshold {
+                self.resize();
+            }
+        }
+    }
+
+    fn resize(&mut self) {
+        self.capacity = match (self.capacity, self.threshold) {
+            (0, 0) => 16,
+            (0, requested) => requested,
+            (capacity, _) => capacity * 2,
+        };
+        self.threshold = self.capacity * 3 / 4;
+    }
+
+    fn iteration_order(self, hashes: &[i32]) -> Vec<usize> {
+        bucket_order(hashes, self.capacity.max(1))
+    }
+}
+
+/// A `java.util.HashSet` reduced to what decides its iteration order, for values with a Java hash code.
+#[derive(Clone, Debug, Default)]
+pub struct JavaHashSet<T> {
+    entries: Vec<(T, i32)>,
+    table: TableSize,
+}
+
+impl<T: PartialEq> JavaHashSet<T> {
+    pub fn insert(&mut self, value: T, hash: i32) {
+        if self.entries.iter().any(|(existing, _)| *existing == value) {
+            return;
+        }
+        self.table.before_insert();
+        self.entries.push((value, hash));
+        self.table.after_insert(self.entries.len());
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &T> {
+        let hashes: Vec<i32> = self.entries.iter().map(|&(_, hash)| hash).collect();
+        self.table
+            .iteration_order(&hashes)
+            .into_iter()
+            .map(|index| &self.entries[index].0)
     }
 }
 
@@ -153,48 +227,20 @@ impl<V> JavaHashMap<V> {
             existing.1 = value;
             return;
         }
-        if self.capacity == 0 {
-            self.resize();
-        }
+        self.table.before_insert();
         self.entries.push((key, value));
-        if self.entries.len() > self.threshold {
-            self.resize();
-        }
+        self.table.after_insert(self.entries.len());
     }
 
-    /// `putAll` sizes an empty table for the incoming map up front, unlike a series of `put`s.
     pub fn put_all(&mut self, other: Self) {
         let incoming = other.len();
         if incoming == 0 {
             return;
         }
-        if self.capacity == 0 {
-            let wanted = (incoming * 4).div_ceil(3);
-            if wanted > self.threshold {
-                self.threshold = wanted.next_power_of_two();
-            }
-        } else {
-            while incoming > self.threshold {
-                self.resize();
-            }
-        }
+        self.table.prepare_for(incoming);
         for (key, value) in other.into_iter() {
             self.put(key, value);
         }
-    }
-
-    /// When the table does not exist yet, `threshold` holds the requested initial capacity.
-    fn resize(&mut self) {
-        if self.capacity == 0 {
-            self.capacity = if self.threshold > 0 {
-                self.threshold
-            } else {
-                16
-            };
-        } else {
-            self.capacity *= 2;
-        }
-        self.threshold = self.capacity * 3 / 4;
     }
 
     pub fn iter(&self) -> impl Iterator<Item = (&str, &V)> {
@@ -217,7 +263,7 @@ impl<V> JavaHashMap<V> {
             .iter()
             .map(|(key, _)| string_hash_code(key))
             .collect();
-        bucket_order(&hashes, self.capacity.max(1))
+        self.table.iteration_order(&hashes)
     }
 }
 

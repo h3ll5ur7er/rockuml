@@ -128,8 +128,10 @@ fn write_outputs(
                 .lines()
                 .flat_map(|line| [line, LINE_SEPARATOR])
                 .collect::<String>(),
-            OutputFormat::Debug => match rockuml::diagram::create(block) {
-                Ok(diagram) => rockuml::diagram::export_debug(diagram.as_ref(), &SystemHost),
+            OutputFormat::Debug => match rockuml::diagram::create(block)
+                .and_then(|diagram| rockuml::diagram::export_debug(diagram.as_ref(), &SystemHost))
+            {
+                Ok(document) => document,
                 Err(not_ported) => {
                     eprintln!("rockuml: {}: {not_ported}", output.display());
                     all_rendered = false;

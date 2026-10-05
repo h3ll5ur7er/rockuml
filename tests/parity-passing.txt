@@ -6,6 +6,12 @@ debug creole/inline-styles.puml
 debug creole/plain.puml
 debug creole/styles-advanced.puml
 debug creole/unicode-tabs.puml
+debug salt/grid-all.puml
+debug salt/grid-nested.puml
+debug salt/grid-titled.puml
+debug salt/login.puml
+debug salt/title.puml
+debug salt/widgets.puml
 preproc activity/basic.puml
 preproc activity/swimlanes.puml
 preproc blocks/commented-header.puml
@@ -49,6 +55,9 @@ preproc preprocessor/theme.puml
 preproc preprocessor/themes.puml
 preproc preprocessor/variables-advanced.puml
 preproc preprocessor/variables.puml
+preproc salt/grid-all.puml
+preproc salt/grid-nested.puml
+preproc salt/grid-titled.puml
 preproc salt/login.puml
 preproc salt/title.puml
 preproc salt/widgets.puml
@@ -101,6 +110,9 @@ url preprocessor/theme.puml
 url preprocessor/themes.puml
 url preprocessor/variables-advanced.puml
 url preprocessor/variables.puml
+url salt/grid-all.puml
+url salt/grid-nested.puml
+url salt/grid-titled.puml
 url salt/login.puml
 url salt/title.puml
 url salt/widgets.puml

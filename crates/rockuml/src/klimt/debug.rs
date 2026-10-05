@@ -134,6 +134,27 @@ impl UGraphicBackend for UGraphicDebug {
             UShape::Text(text) => self.out_text(text, at),
             UShape::Ellipse(ellipse) => self.out_ellipse(ellipse, at, param),
             UShape::Rectangle(rectangle) => self.out_rectangle(rectangle, at, param),
+            UShape::Line { dx, dy } => {
+                self.lines.extend([
+                    "LINE:".to_owned(),
+                    format!("  pt1: {}", point(at.dx, at.dy)),
+                    format!("  pt2: {}", point(at.dx + dx, at.dy + dy)),
+                    format!("  stroke: {}", param.stroke),
+                    "  shadow: 0".to_owned(),
+                    format!("  color: {}", color_to_string(Some(&param.color))),
+                    String::new(),
+                ]);
+            }
+            UShape::Polygon(points) => {
+                self.lines
+                    .extend(["POLYGON:".to_owned(), "  points:".to_owned()]);
+                self.lines.extend(
+                    points
+                        .iter()
+                        .map(|(x, y)| format!("   - {}", point(at.dx + x, at.dy + y))),
+                );
+                self.out_style(param);
+            }
             UShape::Empty(dimension) => self.lines.extend([
                 "EMPTY:".to_owned(),
                 format!("  pt1: {}", point(at.dx, at.dy)),
