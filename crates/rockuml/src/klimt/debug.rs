@@ -3,7 +3,7 @@
 
 use super::font::{StringBounder, UFont};
 use super::geom::{UTranslate, XDimension2D};
-use super::shape::{UEllipse, URectangle, UShape, UText};
+use super::shape::{UEllipse, URectangle, USegment, UShape, UText};
 use super::ugraphic::{UGraphicBackend, UParam};
 use crate::color::HColor;
 use crate::java::{self, Random};
@@ -116,6 +116,22 @@ impl UGraphicDebug {
         self.out_style(param);
     }
 
+    /// PlantUML lists a path's points without the current translation.
+    fn out_path(&mut self, segments: &[USegment], param: &UParam) {
+        self.lines.push("PATH:".to_owned());
+        for segment in segments {
+            let (kind, x, y) = match *segment {
+                USegment::MoveTo(x, y) => ("SEG_MOVETO", x, y),
+                USegment::LineTo(x, y) => ("SEG_LINETO", x, y),
+            };
+            self.lines.extend([
+                format!("   - type: {kind}"),
+                format!("     pt1: {}", point(x, y)),
+            ]);
+        }
+        self.out_style(param);
+    }
+
     /// Shadows are not ported yet, so every shape is listed without one.
     fn out_style(&mut self, param: &UParam) {
         self.lines.extend([
@@ -155,6 +171,7 @@ impl UGraphicBackend for UGraphicDebug {
                 );
                 self.out_style(param);
             }
+            UShape::Path(segments) => self.out_path(segments, param),
             UShape::Empty(dimension) => self.lines.extend([
                 "EMPTY:".to_owned(),
                 format!("  pt1: {}", point(at.dx, at.dy)),

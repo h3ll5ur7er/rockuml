@@ -10,6 +10,7 @@ use super::xml::XmlNode;
 use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
+use crate::klimt::shape::USegment;
 
 const DEFAULT_FONT_FAMILY: &str = "sans-serif";
 const DECIMALS: usize = 3;
@@ -214,6 +215,24 @@ impl SvgGraphics {
         for &(x, y) in points {
             self.ensure_visible(x, y);
         }
+    }
+
+    pub fn path(&mut self, x: f64, y: f64, segments: &[USegment]) {
+        self.ensure_visible(x, y);
+        let mut d = Vec::with_capacity(segments.len());
+        for segment in segments {
+            let (command, dx, dy) = match *segment {
+                USegment::MoveTo(dx, dy) => ('M', dx, dy),
+                USegment::LineTo(dx, dy) => ('L', dx, dy),
+            };
+            d.push(format!("{command}{},{}", number(x + dx), number(y + dy)));
+            self.ensure_visible(x + dx, y + dy);
+        }
+        let mut element = XmlNode::new("path");
+        element.set_attribute("d", d.join(" "));
+        self.style_me(&mut element, "");
+        self.fill_me(&mut element);
+        self.current_group().append_child(element);
     }
 
     pub fn text(&mut self, text: &SvgText) {

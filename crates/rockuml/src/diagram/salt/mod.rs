@@ -1,7 +1,9 @@
 //! `@startsalt`: mock-ups of user interfaces drawn from a grid of widgets.
 
+mod bars;
 mod data_source;
 mod elements;
+mod tree;
 
 use std::sync::LazyLock;
 
@@ -24,10 +26,13 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexResult, RegexTree, java_regex};
 use crate::text::LineLocation;
+use bars::{MenuBar, TabBar};
 use data_source::{DataSource, Terminated, Terminator};
 use elements::{
-    Button, Droplist, Element, Positionner, Pyramid, RadioCheckbox, TableStrategy, Text, TextField,
+    Button, Droplist, Element, Line, Positionner, Pyramid, PyramidScrolled, RadioCheckbox,
+    ScrollStrategy, TableStrategy, Text, TextField,
 };
+use tree::Tree;
 
 pub struct SaltDiagram {
     source: UmlSource,
@@ -163,20 +168,51 @@ fn peek_text(source: &DataSource, ahead: usize) -> Result<&str, NotYetPorted> {
 
 /// The diagram is one group: a grid, a scroll pane, a border layout or a tree.
 fn top_level_element(source: &mut DataSource) -> Result<Box<dyn Element>, NotYetPorted> {
+    group(source)?
+        .map(|group| group.item)
+        .ok_or(NotYetPorted("crash report for salt without a group"))
+}
+
+/// A group, tried in PlantUML's factory order.
+fn group(source: &mut DataSource) -> Result<Option<Terminated<Box<dyn Element>>>, NotYetPorted> {
     if is_pyramid(source)? {
-        return Ok(pyramid(source)?.item);
+        return pyramid(source).map(Some);
     }
-    Err(NotYetPorted("salt scroll panes, border layouts and trees"))
+    if ["{S", "{S-", "{SI"].contains(&peek_text(source, 0)?) {
+        return scroll(source).map(Some);
+    }
+    if is_border(source)? {
+        return Err(NotYetPorted("salt border layouts"));
+    }
+    if is_tree(source)? {
+        return tree(source).map(Some);
+    }
+    Ok(None)
 }
 
 fn is_pyramid(source: &DataSource) -> Result<bool, NotYetPorted> {
-    static BORDER: LazyLock<Regex> = LazyLock::new(|| java_regex("^[NSEW]=$", false));
-    let opening = peek_text(source, 0)?;
-    if !["{", "{+", "{^", "{#", "{!", "{-"].contains(&opening) {
+    if !["{", "{+", "{^", "{#", "{!", "{-"].contains(&peek_text(source, 0)?) {
         return Ok(false);
     }
     let next = peek_text(source, 1)?;
-    Ok(!BORDER.is_match(next) && !is_tree_marker(next))
+    Ok(!is_border_marker(next) && !is_tree_marker(next))
+}
+
+fn is_border(source: &DataSource) -> Result<bool, NotYetPorted> {
+    Ok(
+        ["{", "{+", "{#", "{!", "{-"].contains(&peek_text(source, 0)?)
+            && is_border_marker(peek_text(source, 1)?),
+    )
+}
+
+/// `N=`, `S=`, `E=` or `W=`: the side of a border layout the next element goes to.
+fn is_border_marker(text: &str) -> bool {
+    static BORDER: LazyLock<Regex> = LazyLock::new(|| java_regex("^[NSEW]=$", false));
+    BORDER.is_match(text)
+}
+
+fn is_tree(source: &DataSource) -> Result<bool, NotYetPorted> {
+    Ok(peek_text(source, 0)? == "{" && is_tree_marker(peek_text(source, 1)?))
 }
 
 /// `T`, or `T` followed by a table strategy character.
@@ -189,8 +225,25 @@ fn is_tree_marker(text: &str) -> bool {
     }
 }
 
+fn next_item(source: &mut DataSource) -> Result<Terminated<String>, NotYetPorted> {
+    source
+        .next()
+        .ok_or(NotYetPorted("error diagram for unterminated salt"))
+}
+
+/// Ends a group at its closing `}`, which says how the group itself is terminated.
+fn close_group(
+    source: &mut DataSource,
+    group: Box<dyn Element>,
+) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+    Ok(Terminated {
+        item: group,
+        terminator: next_item(source)?.terminator,
+    })
+}
+
 fn pyramid(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
-    let header = source.next().expect("checked by is_pyramid");
+    let header = next_item(source)?;
     let strategy = header
         .item
         .chars()
@@ -200,10 +253,7 @@ fn pyramid(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotY
     let title = if strategy == TableStrategy::OutsideWithTitle
         && header.terminator == Terminator::NewColumn
     {
-        let title = source
-            .next()
-            .ok_or(NotYetPorted("error diagram for unterminated salt"))?;
-        Some(remove_quotes(&title.item).to_owned())
+        Some(remove_quotes(&next_item(source)?.item).to_owned())
     } else {
         None
     };
@@ -216,11 +266,10 @@ fn pyramid(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotY
             positionner.add(next.item, next.terminator);
         }
     }
-    let closing = source.next().expect("just peeked");
-    Ok(Terminated {
-        item: Box::new(Pyramid::new(positionner, strategy, title.as_deref())),
-        terminator: closing.terminator,
-    })
+    close_group(
+        source,
+        Box::new(Pyramid::new(positionner, strategy, title.as_deref())),
+    )
 }
 
 /// `"quoted"` titles lose their quotes.
@@ -230,64 +279,144 @@ fn remove_quotes(text: &str) -> &str {
         .unwrap_or(text)
 }
 
+fn scroll(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+    let header = next_item(source)?;
+    let mut positionner = Positionner::default();
+    while peek_text(source, 0)? != "}" {
+        let next = next_element(source)?;
+        positionner.add(next.item, next.terminator);
+    }
+    let strategy = ScrollStrategy::from_desc(&header.item);
+    close_group(
+        source,
+        Box::new(PyramidScrolled::new(positionner, strategy)),
+    )
+}
+
+/// Each row starts with its label; the cells after it are elements like in a grid.
+fn tree(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+    next_item(source)?;
+    let marker = next_item(source)?.item;
+    let strategy = marker
+        .chars()
+        .nth(1)
+        .map_or(Some(TableStrategy::None), TableStrategy::from_char)
+        .expect("checked by is_tree");
+    let mut tree = Tree::new(strategy);
+    let mut takes_label = true;
+    while peek_text(source, 0)? != "}" {
+        let terminator = if takes_label {
+            let label = next_item(source)?;
+            tree.add_entry(&label.item);
+            label.terminator
+        } else {
+            let cell = next_element(source)?;
+            tree.add_cell_to_entry(cell.item);
+            cell.terminator
+        };
+        takes_label = terminator == Terminator::NewLine;
+    }
+    close_group(source, Box::new(tree))
+}
+
+/// The tabs; tabs on separate lines would make a vertical bar.
+fn tab_bar(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+    next_item(source)?;
+    let mut tab_bar = TabBar::default();
+    while peek_text(source, 0)? != "}" {
+        let tab = next_item(source)?;
+        if tab.terminator == Terminator::NewLine {
+            return Err(NotYetPorted("vertical salt tab bars"));
+        }
+        tab_bar.add_tab(&tab.item);
+    }
+    close_group(source, Box::new(tab_bar))
+}
+
+/// The entries of the first line, then one line per popup: the entry it belongs to, then its entries.
+fn menu_bar(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
+    enum Reading {
+        Entries,
+        PopupOwner,
+        Popup(String),
+    }
+    next_item(source)?;
+    let mut menu_bar = MenuBar::default();
+    let mut reading = Reading::Entries;
+    while peek_text(source, 0)? != "}" {
+        let item = next_item(source)?;
+        match &reading {
+            Reading::Entries => menu_bar.add_entry(&item.item),
+            Reading::PopupOwner => reading = Reading::Popup(item.item.clone()),
+            Reading::Popup(owner) => menu_bar.add_sub_entry(owner, &item.item)?,
+        }
+        if item.terminator == Terminator::NewLine {
+            reading = Reading::PopupOwner;
+        }
+    }
+    close_group(source, Box::new(menu_bar))
+}
+
 /// The next element inside a group, tried in PlantUML's factory order.
 fn next_element(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>, NotYetPorted> {
     let text = peek_text(source, 0)?.to_owned();
-    let is_line = ['-', '=', '~', '.'].iter().any(|c| {
-        let marker: String = [*c, *c].iter().collect();
+    if text == "{*" {
+        return menu_bar(source);
+    }
+    if is_tree(source)? {
+        return tree(source);
+    }
+    if text == "{/" {
+        return tab_bar(source);
+    }
+    let line_separator = ['-', '=', '~', '.'].into_iter().find(|&c| {
+        let marker: String = [c, c].iter().collect();
         text.starts_with(&marker) && text.ends_with(&marker)
     });
-    if text == "{*"
-        || text == "{/"
-        || (text == "{" && is_tree_marker(peek_text(source, 1)?))
-        || is_line
-    {
-        return Err(NotYetPorted("salt menus, tabs, trees and separators"));
-    }
     let font = elements::widget_font();
-    let widget: Option<Box<dyn Element>> =
-        if text.starts_with('"') && text.ends_with('"') && text.len() > 1 {
-            Some(Box::new(TextField::new(&text[1..text.len() - 1], font)))
-        } else if text.starts_with("[X]") {
-            Some(Box::new(RadioCheckbox::new(
-                after(&text, ']'),
-                font,
-                false,
-                true,
-            )))
-        } else if text.starts_with("[]") || text.starts_with("[ ]") {
-            Some(Box::new(RadioCheckbox::new(
-                after(&text, ']'),
-                font,
-                false,
-                false,
-            )))
-        } else if !text.starts_with("[[") && text.starts_with('[') && text.ends_with(']') {
-            Some(Box::new(Button::new(&text[1..text.len() - 1], font)))
-        } else if text.starts_with('^') && text.ends_with('^') && text.len() > 1 {
-            Some(Box::new(Droplist::new(&text[1..text.len() - 1], font)))
-        } else if text.starts_with("(X)") {
-            Some(Box::new(RadioCheckbox::new(
-                after(&text, ')'),
-                font,
-                true,
-                true,
-            )))
-        } else if text.starts_with("()") || text.starts_with("( )") {
-            Some(Box::new(RadioCheckbox::new(
-                after(&text, ')'),
-                font,
-                true,
-                false,
-            )))
-        } else if is_image_or_dictionary_entry(&text) {
-            return Err(NotYetPorted("salt images and dictionary entries"));
-        } else if !text.starts_with('{') && !text.starts_with('}') && !java::trim(&text).is_empty()
-        {
-            Some(Box::new(Text::new(&text, font)))
-        } else {
-            None
-        };
+    let widget: Option<Box<dyn Element>> = if let Some(separator) = line_separator {
+        Some(Box::new(Line::new(separator)))
+    } else if text.starts_with('"') && text.ends_with('"') && text.len() > 1 {
+        Some(Box::new(TextField::new(&text[1..text.len() - 1], font)))
+    } else if text.starts_with("[X]") {
+        Some(Box::new(RadioCheckbox::new(
+            after(&text, ']'),
+            font,
+            false,
+            true,
+        )))
+    } else if text.starts_with("[]") || text.starts_with("[ ]") {
+        Some(Box::new(RadioCheckbox::new(
+            after(&text, ']'),
+            font,
+            false,
+            false,
+        )))
+    } else if !text.starts_with("[[") && text.starts_with('[') && text.ends_with(']') {
+        Some(Box::new(Button::new(&text[1..text.len() - 1], font)))
+    } else if text.starts_with('^') && text.ends_with('^') && text.len() > 1 {
+        Some(Box::new(Droplist::new(&text[1..text.len() - 1], font)))
+    } else if text.starts_with("(X)") {
+        Some(Box::new(RadioCheckbox::new(
+            after(&text, ')'),
+            font,
+            true,
+            true,
+        )))
+    } else if text.starts_with("()") || text.starts_with("( )") {
+        Some(Box::new(RadioCheckbox::new(
+            after(&text, ')'),
+            font,
+            true,
+            false,
+        )))
+    } else if is_image_or_dictionary_entry(&text) {
+        return Err(NotYetPorted("salt images and dictionary entries"));
+    } else if !text.starts_with('{') && !text.starts_with('}') && !java::trim(&text).is_empty() {
+        Some(Box::new(Text::new(&text, font)))
+    } else {
+        None
+    };
     if let Some(widget) = widget {
         let terminator = source.next().expect("just peeked").terminator;
         return Ok(Terminated {
@@ -295,10 +424,7 @@ fn next_element(source: &mut DataSource) -> Result<Terminated<Box<dyn Element>>,
             terminator,
         });
     }
-    if is_pyramid(source)? {
-        return pyramid(source);
-    }
-    Err(NotYetPorted("salt scroll panes and border layouts"))
+    group(source)?.ok_or(NotYetPorted("crash report for an unknown salt element"))
 }
 
 /// `<<` or `<<name` start an image; `<<name>>` reuses a named element.
