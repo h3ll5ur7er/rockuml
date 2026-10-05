@@ -1,0 +1,11 @@
+@startuml
+package "Classic Collections" #DDDDDD {
+  Object <|-- ArrayList
+}
+package net.sourceforge.plantuml {
+  Object <|-- Demo1
+  Demo1 *- Demo2
+}
+note "a floating note" as N1
+Demo1 .. N1
+@enduml

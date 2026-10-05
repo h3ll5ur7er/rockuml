@@ -1,0 +1,20 @@
+@startuml
+!$i = 0
+!while $i < 3
+participant P$i
+!$i = $i + 1
+!endwhile
+!foreach $name in ["Ann", "Ben"]
+P0 -> P1 : from $name
+!endfor
+!if %strlen("abc") == 3
+P1 -> P2 : length ok
+!elseif 1
+P1 -> P2 : unreachable
+!else
+P1 -> P2 : unreachable too
+!endif
+!ifdef UNDEFINED_SYMBOL
+P2 -> P0 : hidden
+!endif
+@enduml

@@ -1,0 +1,153 @@
+DPI: 96
+dimension: [ 259.8081 ; 147.0000 ]
+scaleFactor: 1.0000
+seed: 3428087407345487620
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 97.9573 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 17.0000 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 200.1031 ; 10.0000 ]
+  pt2: [ 249.8081 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 207.1031 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 108.0000 ]
+  pt2: [ 97.9573 ; 136.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 17.0000 ; 125.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 200.1031 ; 108.0000 ]
+  pt2: [ 249.8081 ; 136.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 207.1031 ; 125.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 212.9556 ; 0.0000 ]
+   - [ 222.9556 ; 4.0000 ]
+   - [ 212.9556 ; 8.0000 ]
+   - [ 216.9556 ; 4.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+POLYGON:
+  points:
+   - [ 212.9556 ; 27.0000 ]
+   - [ 222.9556 ; 31.0000 ]
+   - [ 212.9556 ; 35.0000 ]
+   - [ 216.9556 ; 31.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 10.0000 ; 49.0000 ]
+  pt2: [ 249.8081 ; 49.0000 ]
+  stroke: 2.0-2.0-0.5
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 212.9556 ; 75.0000 ]
+   - [ 222.9556 ; 79.0000 ]
+   - [ 212.9556 ; 83.0000 ]
+   - [ 216.9556 ; 79.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 53.9786 ; 79.0000 ]
+  pt2: [ 218.9556 ; 79.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: message 3
+  position: [ 60.9786 ; 74.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 10.0000 ; 97.0000 ]
+  pt2: [ 249.8081 ; 97.0000 ]
+  stroke: 2.0-2.0-0.5
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 212.9556 ; 123.0000 ]
+   - [ 222.9556 ; 127.0000 ]
+   - [ 212.9556 ; 131.0000 ]
+   - [ 216.9556 ; 127.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
