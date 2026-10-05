@@ -13,6 +13,7 @@ pub mod json;
 mod klimt;
 mod pattern;
 pub mod preproc;
+mod skin;
 mod stdlib;
 mod style;
 mod text;

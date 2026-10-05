@@ -1,6 +1,7 @@
 //! PlantUML's style sheets: the `.skin` defaults and `<style>` blocks, CSS-like rules whose properties
 //! merge by specificity and declaration order.
 
+mod from_skinparam;
 mod names;
 mod parser;
 mod signature;
@@ -8,6 +9,7 @@ mod value;
 
 use std::collections::BTreeMap;
 
+pub use from_skinparam::skinparam_styles;
 pub use names::{PName, SName};
 pub use parser::{StyleParser, StyleParsingError};
 pub use signature::StyleSignature;
@@ -125,18 +127,24 @@ impl StyleBuilder {
         let lines: Vec<&str> = text.lines().collect();
         let mut builder = Self::default();
         let styles = StyleParser::new(&mut builder.counter).parse(&lines).ok()?;
-        for style in styles {
-            builder.load(style);
-        }
+        builder.mute(styles);
         Some(builder)
     }
 
-    fn load(&mut self, style: Style) {
-        let merged = match self.storage.get(style.signature()) {
-            Some(existing) => existing.merge_with(&style),
-            None => style,
-        };
-        self.storage.put(merged);
+    /// Adds rules, each merged over an existing rule of the same signature.
+    pub fn mute(&mut self, styles: impl IntoIterator<Item = Style>) {
+        for style in styles {
+            let merged = match self.storage.get(style.signature()) {
+                Some(existing) => existing.merge_with(&style),
+                None => style,
+            };
+            self.storage.put(merged);
+        }
+    }
+
+    /// Numbers declarations parsed or converted for this builder.
+    pub fn counter(&mut self) -> &mut i32 {
+        &mut self.counter
     }
 
     /// The style of an element: every rule that applies to it, merged in storage order.

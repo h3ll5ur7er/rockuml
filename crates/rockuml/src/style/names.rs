@@ -78,6 +78,10 @@ style_names! {
 }
 
 impl SName {
+    pub fn java_name(self) -> &'static str {
+        Self::ALL[self as usize].1
+    }
+
     /// Selectors ignore case and the underscore that keeps Java keywords like `class_` legal.
     pub fn retrieve(name: &str) -> Option<Self> {
         let wanted = name.to_lowercase();
