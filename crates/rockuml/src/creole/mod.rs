@@ -7,9 +7,11 @@ mod atom_text;
 mod atoms;
 mod char_hidder;
 mod commands;
+mod display;
 mod parser;
 mod sheet_block;
 
+pub use display::Display;
 pub use parser::CreoleParser;
 pub use sheet_block::SheetBlock1;
 

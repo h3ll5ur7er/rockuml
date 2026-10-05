@@ -1,5 +1,6 @@
 //! PlantUML's drawing layer (`klimt`): fonts, shapes, and the surfaces they are drawn on.
 
+pub mod blocks;
 pub mod debug;
 pub mod font;
 pub mod geom;
@@ -15,6 +16,16 @@ pub trait TextBlock {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D;
 
     fn draw_u(&self, ug: &UGraphic);
+}
+
+impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        (**self).calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        (**self).draw_u(ug);
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]

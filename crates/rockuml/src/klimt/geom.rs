@@ -13,6 +13,12 @@ impl XDimension2D {
     pub fn delta(self, dx: f64, dy: f64) -> Self {
         Self::new(self.width + dx, self.height + dy)
     }
+
+    /// The space for `self` with `below` stacked under it.
+    #[must_use]
+    pub fn merge_top_bottom(self, below: Self) -> Self {
+        Self::new(self.width.max(below.width), self.height + below.height)
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]

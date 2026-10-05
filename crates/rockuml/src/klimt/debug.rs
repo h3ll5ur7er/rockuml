@@ -134,6 +134,15 @@ impl UGraphicBackend for UGraphicDebug {
             UShape::Text(text) => self.out_text(text, at),
             UShape::Ellipse(ellipse) => self.out_ellipse(ellipse, at, param),
             UShape::Rectangle(rectangle) => self.out_rectangle(rectangle, at, param),
+            UShape::Empty(dimension) => self.lines.extend([
+                "EMPTY:".to_owned(),
+                format!("  pt1: {}", point(at.dx, at.dy)),
+                format!(
+                    "  pt2: {}",
+                    point(at.dx + dimension.width, at.dy + dimension.height)
+                ),
+                String::new(),
+            ]),
             UShape::HorizontalLine => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",

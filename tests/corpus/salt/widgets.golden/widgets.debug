@@ -1,0 +1,191 @@
+DPI: 96
+dimension: [ 266.0925 ; 137.0000 ]
+scaleFactor: 1.0000
+seed: 5563554988301751192
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: Just plain text
+  position: [ 6.0000 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 8.5000 ; 22.5000 ]
+  pt2: [ 257.5925 ; 38.5000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff000000
+  backcolor: ffeeeeee
+
+TEXT:
+  text: This is my button
+  position: [ 10.5000 ; 33.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Unchecked radio
+  position: [ 26.0000 ; 52.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 8.0000 ; 44.0000 ]
+  pt2: [ 18.0000 ; 54.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Checked radio
+  position: [ 26.0000 ; 66.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 8.0000 ; 58.0000 ]
+  pt2: [ 18.0000 ; 68.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 11.0000 ; 61.0000 ]
+  pt2: [ 15.0000 ; 65.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Unchecked box
+  position: [ 26.0000 ; 80.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 8.0000 ; 72.0000 ]
+  pt2: [ 18.0000 ; 82.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Checked box
+  position: [ 26.0000 ; 94.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 8.0000 ; 86.0000 ]
+  pt2: [ 18.0000 ; 96.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 9.0000 ; 91.0000 ]
+   - [ 12.0000 ; 94.0000 ]
+   - [ 19.0000 ; 85.0000 ]
+   - [ 12.0000 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Enter text here
+  position: [ 9.0000 ; 108.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 111.0000 ]
+  pt2: [ 207.0306 ; 111.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 7.0000 ; 108.0000 ]
+  pt2: [ 7.0000 ; 110.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 207.0306 ; 108.0000 ]
+  pt2: [ 207.0306 ; 110.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 115.0000 ]
+  pt2: [ 252.2522 ; 130.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffeeeeee
+
+TEXT:
+  text: This is a droplist
+  position: [ 8.0000 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 241.2522 ; 115.0000 ]
+  pt2: [ 241.2522 ; 130.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+POLYGON:
+  points:
+   - [ 244.2522 ; 121.0000 ]
+   - [ 250.2522 ; 121.0000 ]
+   - [ 247.2522 ; 125.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+

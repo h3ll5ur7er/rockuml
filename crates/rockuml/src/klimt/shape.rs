@@ -1,10 +1,13 @@
 use super::font::FontConfiguration;
+use super::geom::XDimension2D;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum UShape {
     Text(UText),
     Ellipse(UEllipse),
     Rectangle(URectangle),
+    /// Takes up space without drawing anything.
+    Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
     HorizontalLine,
 }
@@ -16,6 +19,7 @@ impl UShape {
             Self::Text(_) => "UText",
             Self::Ellipse(_) => "UEllipse",
             Self::Rectangle(_) => "URectangle",
+            Self::Empty(_) => "UEmpty",
             Self::HorizontalLine => "UHorizontalLine",
         }
     }
@@ -73,6 +77,15 @@ impl URectangle {
             height,
             rx: 0.0,
             ry: 0.0,
+        }
+    }
+
+    #[must_use]
+    pub const fn rounded(self, corner: f64) -> Self {
+        Self {
+            rx: corner,
+            ry: corner,
+            ..self
         }
     }
 }
