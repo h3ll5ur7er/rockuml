@@ -1,0 +1,62 @@
+DPI: 96
+dimension: [ 329.0681 ; 87.0000 ]
+scaleFactor: 1.0000
+seed: -5402088513426207714
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: Hello
+  position: [ 93.8968 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: World
+  position: [ 179.8739 ; 15.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Second
+  position: [ 93.8968 ; 29.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: row
+  position: [ 179.8739 ; 29.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 33.0000 ]
+  pt2: [ 324.0681 ; 82.0000 ]
+
+RECTANGLE:
+  pt1: [ 17.0000 ; 45.0000 ]
+  pt2: [ 311.0681 ; 69.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: A one-line legend
+  position: [ 22.0000 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

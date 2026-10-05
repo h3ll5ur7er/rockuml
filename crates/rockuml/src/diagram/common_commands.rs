@@ -16,9 +16,11 @@ use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::style::{SName, StyleParsingError};
 use crate::text::LineLocation;
 
-/// The common commands, in PlantUML's order: skin parameters and styles, then titles and the like.
+/// The common commands, in the order PlantUML's salt diagrams try them (`addCommonCommands2`, the scale
+/// commands, then the title commands): blank lines, skin parameters and styles, scales, then titles and the like.
 pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
+        single(blank_line_pattern(), |_, _, _| {}),
         single(skinparam_pattern(), set_skinparam),
         Box::new(
             Multiline::new(
@@ -69,19 +71,31 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
             .skipping_quote_lines(),
         ),
         single(labelled("legend", "LEGEND1", "LEGEND2"), set_legend),
-        single(ribbon_pattern("footer"), set_footer),
+        single(Ribbon::Footer.pattern(), |diagram, arg, location| {
+            Ribbon::Footer.set_from_line(diagram, arg, location);
+        }),
         Box::new(Multiline::new(
-            ribbon_block_start("footer").clone(),
+            Ribbon::Footer.block_start().clone(),
             plantuml_regex("^end[%s]?footer$"),
-            set_multiline_footer,
+            |diagram, lines| Ribbon::Footer.set_from_block(diagram, lines),
         )),
-        single(ribbon_pattern("header"), set_header),
+        single(Ribbon::Header.pattern(), |diagram, arg, location| {
+            Ribbon::Header.set_from_line(diagram, arg, location);
+        }),
         Box::new(Multiline::new(
-            ribbon_block_start("header").clone(),
+            Ribbon::Header.block_start().clone(),
             plantuml_regex("^end[%s]?header$"),
-            set_multiline_header,
+            |diagram, lines| Ribbon::Header.set_from_block(diagram, lines),
         )),
     ]
+}
+
+fn blank_line_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::spaces_zero_or_more(),
+        RegexTree::end(),
+    ])
 }
 
 type ApplyLine<D> = fn(&mut D, &RegexResult, &LineLocation);
@@ -252,11 +266,16 @@ fn labelled(keyword: &'static str, quoted: &'static str, plain: &'static str) ->
         RegexTree::start(),
         RegexTree::leaf(keyword),
         RegexTree::leaf("(?:[%s]*:[%s]*|[%s]+)"),
-        RegexTree::or(vec![
-            RegexTree::named(1, quoted, "[%g](.*)[%g]"),
-            RegexTree::named(1, plain, "(.*[%pLN_.].*)"),
-        ]),
+        quoted_or_plain(quoted, plain),
         RegexTree::end(),
+    ])
+}
+
+/// A label in double quotes (group `quoted`), or one with at least a letter, digit, `_` or `.` (group `plain`).
+fn quoted_or_plain(quoted: &'static str, plain: &'static str) -> RegexTree {
+    RegexTree::or(vec![
+        RegexTree::named(1, quoted, "[%g](.*)[%g]"),
+        RegexTree::named(1, plain, "(.*[%pLN_.].*)"),
     ])
 }
 
@@ -293,6 +312,7 @@ fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> Co
             StyleParsingError::Invalid(message) => {
                 CommandError::new(format!("Error in style definition: {message}"))
             }
+            // PlantUML reports this as a crash; rockuml reports the style as faulty.
             StyleParsingError::Unexpected => CommandError::new("Error in style definition"),
         })
 }
@@ -307,11 +327,12 @@ fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &
         .set_caption(label(arg, "DISPLAY"), location);
 }
 
-fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+/// Unlike the other one-line commands, PlantUML does not remember where a one-line legend was written.
+fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
     let legend = Positioned {
         display: label(arg, "LEGEND"),
         alignment: HorizontalAlignment::Center,
-        location: location.clone(),
+        location: None,
     };
     diagram
         .titled()
@@ -361,7 +382,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
             .as_deref()
             .and_then(HorizontalAlignment::from_name)
             .unwrap_or(HorizontalAlignment::Center),
-        location: first_location(&lines).clone(),
+        location: Some(first_location(&lines).clone()),
     };
     let vertical = match vertical.as_deref() {
         Some(top) if top.eq_ignore_ascii_case("top") => VerticalAlignment::Top,
@@ -371,107 +392,110 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
     Ok(())
 }
 
-/// `[left|right|center] header text`, or the same for footers.
-fn ribbon_pattern(keyword: &'static str) -> RegexTree {
-    RegexTree::concat(vec![
-        RegexTree::start(),
-        RegexTree::optional(RegexTree::named(1, "POSITION", "(left|right|center)")),
-        RegexTree::spaces_zero_or_more(),
-        RegexTree::leaf(keyword),
-        RegexTree::or(vec![
-            RegexTree::concat(vec![
-                RegexTree::spaces_zero_or_more(),
-                RegexTree::leaf(":"),
-                RegexTree::spaces_zero_or_more(),
+/// Headers and footers.
+#[derive(Clone, Copy)]
+enum Ribbon {
+    Header,
+    Footer,
+}
+
+impl Ribbon {
+    fn keyword(self) -> &'static str {
+        match self {
+            Self::Header => "header",
+            Self::Footer => "footer",
+        }
+    }
+
+    fn style(self) -> SName {
+        match self {
+            Self::Header => SName::Header,
+            Self::Footer => SName::Footer,
+        }
+    }
+
+    /// `[left|right|center] header text`, or the same for footers.
+    fn pattern(self) -> RegexTree {
+        RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::optional(RegexTree::named(1, "POSITION", "(left|right|center)")),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::leaf(self.keyword()),
+            RegexTree::or(vec![
+                RegexTree::concat(vec![
+                    RegexTree::spaces_zero_or_more(),
+                    RegexTree::leaf(":"),
+                    RegexTree::spaces_zero_or_more(),
+                ]),
+                RegexTree::spaces_one_or_more(),
             ]),
-            RegexTree::spaces_one_or_more(),
-        ]),
-        RegexTree::or(vec![
-            RegexTree::named(1, "LABEL1", "[%g](.*)[%g]"),
-            RegexTree::named(1, "LABEL2", "(.*[%pLN_.].*)"),
-        ]),
-        RegexTree::end(),
-    ])
-}
-
-fn ribbon_block_start(keyword: &str) -> &'static Regex {
-    static HEADER: LazyLock<Regex> =
-        LazyLock::new(|| plantuml_regex("^(?:(left|right|center)?[%s]*)header$"));
-    static FOOTER: LazyLock<Regex> =
-        LazyLock::new(|| plantuml_regex("^(?:(left|right|center)?[%s]*)footer$"));
-    if keyword == "header" {
-        &HEADER
-    } else {
-        &FOOTER
+            quoted_or_plain("LABEL1", "LABEL2"),
+            RegexTree::end(),
+        ])
     }
-}
 
-/// The alignment the command gives, otherwise the one the part's style gives.
-fn ribbon_alignment<D: TitledDiagram>(
-    diagram: &mut D,
-    given: Option<&str>,
-    part: SName,
-) -> HorizontalAlignment {
-    match given.and_then(HorizontalAlignment::from_name) {
-        Some(alignment) => alignment,
-        None => diagram.titled().default_alignment(part),
+    /// `[left|right|center] header` on its own, starting a block.
+    fn block_start(self) -> &'static Regex {
+        static HEADER: LazyLock<Regex> =
+            LazyLock::new(|| plantuml_regex("^(?:(left|right|center)?[%s]*)header$"));
+        static FOOTER: LazyLock<Regex> =
+            LazyLock::new(|| plantuml_regex("^(?:(left|right|center)?[%s]*)footer$"));
+        match self {
+            Self::Header => &HEADER,
+            Self::Footer => &FOOTER,
+        }
     }
-}
 
-fn set_header<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
-    let header = ribbon(diagram, arg, location, SName::Header);
-    diagram.titled().set_header(header);
-}
-
-fn set_footer<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
-    let footer = ribbon(diagram, arg, location, SName::Footer);
-    diagram.titled().set_footer(footer);
-}
-
-fn ribbon<D: TitledDiagram>(
-    diagram: &mut D,
-    arg: &RegexResult,
-    location: &LineLocation,
-    part: SName,
-) -> Positioned {
-    Positioned {
-        display: label(arg, "LABEL"),
-        alignment: ribbon_alignment(diagram, arg.get("POSITION", 0), part),
-        location: location.clone(),
+    fn set<D: TitledDiagram>(self, diagram: &mut D, positioned: Positioned) {
+        match self {
+            Self::Header => diagram.titled().set_header(positioned),
+            Self::Footer => diagram.titled().set_footer(positioned),
+        }
     }
-}
 
-/// A header or footer block, aligned as written before its keyword or else as its style says.
-fn ribbon_block<D: TitledDiagram>(
-    diagram: &mut D,
-    lines: &BlocLines,
-    keyword: &str,
-    part: SName,
-) -> Result<Positioned, CommandError> {
-    let lines = lines.trimmed();
-    let first = lines.first().expect("the start line");
-    let given = ribbon_block_start(keyword)
-        .captures(first.text())
-        .and_then(|captures| captures.get(1).map(|m| m.as_str().to_owned()));
-    let display = lines.sub_extract(1, 1).to_display();
-    if display.lines().is_empty() {
-        return Err(CommandError::new(format!("Empty {keyword}")));
+    /// The alignment the command gives, otherwise the one the ribbon's style gives.
+    fn alignment<D: TitledDiagram>(
+        self,
+        diagram: &mut D,
+        given: Option<&str>,
+    ) -> HorizontalAlignment {
+        match given.and_then(HorizontalAlignment::from_name) {
+            Some(alignment) => alignment,
+            None => diagram.titled().default_alignment(self.style()),
+        }
     }
-    Ok(Positioned {
-        display,
-        alignment: ribbon_alignment(diagram, given.as_deref(), part),
-        location: first.location().clone(),
-    })
-}
 
-fn set_multiline_header<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
-    let header = ribbon_block(diagram, lines, "header", SName::Header)?;
-    diagram.titled().set_header(header);
-    Ok(())
-}
+    fn set_from_line<D: TitledDiagram>(
+        self,
+        diagram: &mut D,
+        arg: &RegexResult,
+        location: &LineLocation,
+    ) {
+        let positioned = Positioned {
+            display: label(arg, "LABEL"),
+            alignment: self.alignment(diagram, arg.get("POSITION", 0)),
+            location: Some(location.clone()),
+        };
+        self.set(diagram, positioned);
+    }
 
-fn set_multiline_footer<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
-    let footer = ribbon_block(diagram, lines, "footer", SName::Footer)?;
-    diagram.titled().set_footer(footer);
-    Ok(())
+    fn set_from_block<D: TitledDiagram>(self, diagram: &mut D, lines: &BlocLines) -> CommandResult {
+        let lines = lines.trimmed();
+        let first = lines.first().expect("a block has a start line");
+        let given = self
+            .block_start()
+            .captures(first.text())
+            .and_then(|captures| captures.get(1).map(|m| m.as_str().to_owned()));
+        let display = lines.sub_extract(1, 1).to_display();
+        if display.lines().is_empty() {
+            return Err(CommandError::new(format!("Empty {}", self.keyword())));
+        }
+        let positioned = Positioned {
+            display,
+            alignment: self.alignment(diagram, given.as_deref()),
+            location: Some(first.location().clone()),
+        };
+        self.set(diagram, positioned);
+        Ok(())
+    }
 }

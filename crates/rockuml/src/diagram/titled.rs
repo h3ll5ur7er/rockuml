@@ -32,7 +32,7 @@ pub struct Titled {
 pub struct Positioned {
     pub display: Display,
     pub alignment: HorizontalAlignment,
-    pub location: LineLocation,
+    pub location: Option<LineLocation>,
 }
 
 /// Where a legend goes: above or below the diagram.
@@ -194,12 +194,12 @@ impl Positioned {
         Self {
             display,
             alignment: HorizontalAlignment::Center,
-            location: location.clone(),
+            location: Some(location.clone()),
         }
     }
 
     fn decoration<'a>(&self, class: &str, style: &Style) -> Decoration<'a> {
-        let mut group = UGroup::at(&self.location);
+        let mut group = UGroup::at(self.location.as_ref());
         group.put(UGroupType::Class, class);
         Decoration {
             block: bordered_text(&self.display, style),

@@ -24,10 +24,12 @@ pub struct UGroup {
 }
 
 impl UGroup {
-    /// A group remembering the source line its element was written on.
-    pub fn at(location: &LineLocation) -> Self {
+    /// A group remembering the source line its element was written on, if known.
+    pub fn at(location: Option<&LineLocation>) -> Self {
         let mut group = Self::default();
-        group.put(UGroupType::DataSourceLine, &location.position().to_string());
+        if let Some(location) = location {
+            group.put(UGroupType::DataSourceLine, &location.position().to_string());
+        }
         group
     }
 
@@ -61,7 +63,7 @@ mod tests {
 
     #[test]
     fn entries_come_in_declaration_order_with_odd_characters_replaced() {
-        let mut group = UGroup::at(&LineLocation::new("x", None).one_line_read());
+        let mut group = UGroup::at(Some(&LineLocation::new("x", None).one_line_read()));
         group.put(UGroupType::Class, "a<b> c-d");
         let entries: Vec<_> = group.entries().collect();
         assert_eq!(
