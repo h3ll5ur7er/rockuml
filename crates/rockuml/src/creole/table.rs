@@ -119,7 +119,7 @@ fn leading_color(text: &str, index: usize) -> Option<HColor> {
     let start = text.find('#')?;
     let end = text.find('>')?;
     let name = text[start..end].split(',').nth(index)?;
-    Some(HColor::parse(name).ok().flatten().unwrap_or(HColor::WHITE))
+    Some(HColor::parse_or_white(name))
 }
 
 fn without_leading_color(text: &str) -> &str {
@@ -138,8 +138,8 @@ fn cell(token: &str, font: &FontConfiguration) -> Cell {
     } else {
         token
     };
-    let stripes = token
-        .split(BLOCK_E1_NEWLINE)
+    let stripes = cell_lines(token)
+        .iter()
         .map(|text| {
             let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full);
             stripe.analyze_and_add(text);
@@ -150,6 +150,29 @@ fn cell(token: &str, font: &FontConfiguration) -> Cell {
         content: SheetBlock1::new(Sheet { stripes }, ClockwiseTopRightBottomLeft::none()),
         back_color,
     }
+}
+
+/// The lines of a table cell or tree item: broken at a written `\n` or a hidden newline, with `\\` written as a
+/// single backslash (PlantUML's `getWithNewlinesInternal`).
+pub(super) fn cell_lines(text: &str) -> Vec<String> {
+    let mut lines = vec![String::new()];
+    let mut chars = text.chars().peekable();
+    while let Some(c) = chars.next() {
+        let current = lines.last_mut().expect("there is always a current line");
+        match c {
+            '\\' if chars.peek().is_some() => match chars.next().expect("peeked") {
+                'n' => lines.push(String::new()),
+                '\\' => current.push('\\'),
+                other => {
+                    current.push('\\');
+                    current.push(other);
+                }
+            },
+            BLOCK_E1_NEWLINE => lines.push(String::new()),
+            _ => current.push(c),
+        }
+    }
+    lines
 }
 
 impl TextBlock for AtomTable {
@@ -233,6 +256,12 @@ mod tests {
         assert!(is_table_line("<#red,#blue>| a |"));
         assert!(!is_table_line("| a"));
         assert!(!is_table_line(" | a |"));
+    }
+
+    #[test]
+    fn cells_break_at_written_newlines() {
+        assert_eq!(cell_lines(r"a\nb\\c\td"), ["a", r"b\c\td"]);
+        assert_eq!(cell_lines("a\u{E100}b"), ["a", "b"]);
     }
 
     #[test]

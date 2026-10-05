@@ -286,7 +286,7 @@ impl SvgGraphics {
         element.set_attribute("y", self.length(text.y));
         self.fill_me(&mut element);
         element.set_attribute("font-size", self.length(f64::from(text.font_size)));
-        if text.text.chars().nth(1).is_some() {
+        if text.text.encode_utf16().nth(1).is_some() {
             element.set_attribute("textLength", self.length(text.text_length));
         }
         if let Some(weight) = &text.font_weight {

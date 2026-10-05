@@ -72,6 +72,11 @@ impl HColor {
         matches!(self, HColor::Simple(color) if color.alpha == 0)
     }
 
+    /// A colour as `parse` reads it; white when the text names none (PlantUML's `getColorOrWhite`).
+    pub fn parse_or_white(text: &str) -> HColor {
+        Self::parse(text).ok().flatten().unwrap_or(Self::WHITE)
+    }
+
     /// Parses a colour name, `#rgb`, `#rrggbb`, `#rrggbbaa`, gradient (`red-blue`) or scheme (`?a:b`).
     pub fn parse(text: &str) -> Result<Option<HColor>, RuntimeException> {
         let text = text.strip_prefix('#').unwrap_or(text);

@@ -163,7 +163,7 @@ impl CreoleCommand for StyleCommand {
             .takes_color
             .then(|| matcher.find_values_by_key("XC").first().copied())
             .flatten()
-            .map(|name| parse_color(name).unwrap_or(HColor::WHITE));
+            .map(HColor::parse_or_white);
         stripe.with_font(
             |font| {
                 let styled = font.with_style(self.style);
@@ -362,7 +362,7 @@ fn open_icon(captures: &Captures, stripe: &mut StripeBuilder) {
     let scale_or_color = group(captures, 4);
     let color = group(captures, 2)
         .or_else(|| get_color(scale_or_color))
-        .map(|name| parse_color(name).unwrap_or(HColor::WHITE));
+        .map(HColor::parse_or_white);
     stripe.add_open_icon(&captures[3], get_scale(scale_or_color, 1.0), color);
 }
 

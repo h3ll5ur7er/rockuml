@@ -6,6 +6,7 @@ use super::atom_text::AtomText;
 use super::atoms::{AtomOpenIconic, AtomWithMargin, Bullet, HorizontalLine};
 use super::code::{self, AtomCode};
 use super::commands::{CreoleCommand, creole_commands};
+use super::display::Display;
 use super::table::{self, AtomTable};
 use super::tree::{self, AtomTree};
 use super::{Atom, CreoleMode, Sheet, Stripe, char_hidder};
@@ -259,9 +260,6 @@ impl StripeStyle {
             },
         ];
 
-        if mode == CreoleMode::NoCreole {
-            return (line.to_owned(), Self::NORMAL);
-        }
         let hidden = char_hidder::hide(line);
         for pattern in &PATTERNS {
             let text = if pattern.on_hidden_text {
@@ -367,7 +365,7 @@ impl StripeBuilder {
             StripeStyleType::HorizontalLine(style) => {
                 let title = (!line.is_empty()).then(|| {
                     CreoleParser::new(self.font.clone(), HorizontalAlignment::Left)
-                        .create_sheet(&[line])
+                        .create_sheet(Display::with_newlines(&line).lines())
                 });
                 self.atoms.push(Box::new(HorizontalLine::new(style, title)));
             }

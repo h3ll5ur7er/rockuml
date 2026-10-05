@@ -3,9 +3,9 @@
 
 use super::parser::StripeBuilder;
 use super::sheet_block::SheetBlock1;
+use super::table::cell_lines;
 use super::{Atom, CreoleMode, Sheet};
 use crate::color::HColor;
-use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
@@ -36,10 +36,10 @@ impl AtomTree {
     }
 
     pub fn add_line(&mut self, line: &str, font: &FontConfiguration) {
-        for text in line.split(BLOCK_E1_NEWLINE) {
-            let level = level_of(text);
+        for text in cell_lines(line) {
+            let level = level_of(&text);
             let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full);
-            stripe.analyze_and_add(without_marker(text));
+            stripe.analyze_and_add(without_marker(&text));
             let sheet = Sheet {
                 stripes: vec![stripe.build()],
             };

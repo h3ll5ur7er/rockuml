@@ -66,8 +66,11 @@ pub enum HorizontalAlignment {
 
 impl HorizontalAlignment {
     pub fn from_name(name: &str) -> Option<Self> {
-        [Self::Left, Self::Center, Self::Right]
-            .into_iter()
-            .find(|alignment| format!("{alignment:?}").eq_ignore_ascii_case(name))
+        match name.to_ascii_lowercase().as_str() {
+            "left" => Some(Self::Left),
+            "center" => Some(Self::Center),
+            "right" => Some(Self::Right),
+            _ => None,
+        }
     }
 }

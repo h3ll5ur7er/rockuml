@@ -45,11 +45,6 @@ impl SheetBlock1 {
         let mut min_max = MinMax::from_origin();
         let mut y = 0.0;
         for stripe in &self.sheet.stripes {
-            if stripe.atoms.is_empty() {
-                positions.push(Vec::new());
-                widths.push(0.0);
-                continue;
-            }
             let (sea, width) = sea(&stripe.atoms, y, string_bounder);
             for position in &sea {
                 min_max = min_max.add_point(
@@ -85,7 +80,6 @@ fn sea(
     top: f64,
     string_bounder: &dyn StringBounder,
 ) -> (Vec<Position>, f64) {
-    debug_assert!(!atoms.is_empty(), "a sea needs atoms to find its top");
     let mut x = 0.0;
     let mut positions: Vec<Position> = atoms
         .iter()
