@@ -68,10 +68,10 @@ impl Display {
                 }
                 BLOCK_E1_REAL_BACKSLASH => current.push('\\'),
                 BLOCK_E1_NEWLINE_LEFT_ALIGN => {
-                    break_line(Some(HorizontalAlignment::Left), &mut current)
+                    break_line(Some(HorizontalAlignment::Left), &mut current);
                 }
                 BLOCK_E1_NEWLINE_RIGHT_ALIGN => {
-                    break_line(Some(HorizontalAlignment::Right), &mut current)
+                    break_line(Some(HorizontalAlignment::Right), &mut current);
                 }
                 BLOCK_E1_INVISIBLE_QUOTE => {}
                 BLOCK_E1_NEWLINE if !raw => break_line(None, &mut current),
