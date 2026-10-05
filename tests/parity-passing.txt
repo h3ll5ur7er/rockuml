@@ -2,7 +2,9 @@
 debug creole/blocks.puml
 debug creole/font-changes.puml
 debug creole/initial-noise.puml
+debug creole/inline-styles.puml
 debug creole/plain.puml
+debug creole/styles-advanced.puml
 debug creole/unicode-tabs.puml
 preproc activity/basic.puml
 preproc activity/swimlanes.puml
@@ -22,6 +24,7 @@ preproc creole/font-changes.puml
 preproc creole/initial-noise.puml
 preproc creole/inline-styles.puml
 preproc creole/plain.puml
+preproc creole/styles-advanced.puml
 preproc creole/unicode-tabs.puml
 preproc error/unknown-syntax.puml
 preproc mindmap/basic.puml
@@ -46,6 +49,9 @@ preproc preprocessor/theme.puml
 preproc preprocessor/themes.puml
 preproc preprocessor/variables-advanced.puml
 preproc preprocessor/variables.puml
+preproc salt/login.puml
+preproc salt/title.puml
+preproc salt/widgets.puml
 preproc sequence/basic.puml
 preproc sequence/groups-and-notes.puml
 preproc sequence/newpage.puml
@@ -70,6 +76,7 @@ url creole/font-changes.puml
 url creole/initial-noise.puml
 url creole/inline-styles.puml
 url creole/plain.puml
+url creole/styles-advanced.puml
 url creole/unicode-tabs.puml
 url error/unknown-syntax.puml
 url mindmap/basic.puml
@@ -94,6 +101,9 @@ url preprocessor/theme.puml
 url preprocessor/themes.puml
 url preprocessor/variables-advanced.puml
 url preprocessor/variables.puml
+url salt/login.puml
+url salt/title.puml
+url salt/widgets.puml
 url sequence/basic.puml
 url sequence/groups-and-notes.puml
 url sequence/newpage.puml

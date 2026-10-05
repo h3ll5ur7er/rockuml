@@ -211,18 +211,29 @@ impl std::fmt::Display for FontStyles {
 pub enum FontPosition {
     #[default]
     Normal,
+    /// Superscript.
+    Exposant,
+    /// Subscript.
+    Indice,
 }
 
 impl FontPosition {
     fn space(self) -> i32 {
         match self {
             Self::Normal => 0,
+            Self::Exposant => -6,
+            Self::Indice => 3,
         }
     }
 
+    /// Raised and lowered text is 3 points smaller, but at least 2.
     fn mute(self, font: UFont) -> UFont {
         match self {
             Self::Normal => font,
+            Self::Exposant | Self::Indice => {
+                let size = (font.size - 3).max(2);
+                font.with_size(size as f32)
+            }
         }
     }
 }
@@ -318,6 +329,23 @@ impl FontConfiguration {
     pub fn with_color(&self, color: HColor) -> Self {
         Self {
             color,
+            ..self.clone()
+        }
+    }
+
+    /// The colour of an underline, strike-through, wave or text background.
+    #[must_use]
+    pub fn with_extended_color(&self, color: HColor) -> Self {
+        Self {
+            extended_color: Some(color),
+            ..self.clone()
+        }
+    }
+
+    #[must_use]
+    pub fn with_position(&self, position: FontPosition) -> Self {
+        Self {
+            position,
             ..self.clone()
         }
     }

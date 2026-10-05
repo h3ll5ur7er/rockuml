@@ -6,8 +6,9 @@ use regex::{Captures, Regex};
 
 use super::parser::StripeBuilder;
 use crate::color::HColor;
-use crate::klimt::font::FontConfiguration;
+use crate::klimt::font::{FontConfiguration, FontPosition, FontStyle};
 use crate::pattern::plantuml_regex;
+use crate::ubrex::UnicodeBracketedExpression;
 
 pub trait CreoleCommand: Send + Sync {
     /// The two characters a line must continue with for the command to be tried.
@@ -23,7 +24,19 @@ pub trait CreoleCommand: Send + Sync {
 /// The commands of PlantUML's `CommandCreoleBuilder.FULL`, in its order: the first that matches wins.
 pub fn full_creole_commands() -> &'static [Box<dyn CreoleCommand>] {
     static COMMANDS: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| {
-        vec![
+        let mut commands: Vec<Box<dyn CreoleCommand>> = Vec::new();
+        for style in [
+            FontStyle::Bold,
+            FontStyle::Italic,
+            FontStyle::Plain,
+            FontStyle::Underline,
+            FontStyle::Strike,
+            FontStyle::Wave,
+            FontStyle::Backcolor,
+        ] {
+            commands.extend(StyleCommand::all_for(style));
+        }
+        commands.extend(vec![
             RegexCommand::boxed(
                 "<s",
                 r"^(\<size[\s:]+(\d+)[%s]*\>(.*?)\</size\>)",
@@ -45,6 +58,8 @@ pub fn full_creole_commands() -> &'static [Box<dyn CreoleCommand>] {
                 change_color_and_size,
             ),
             RegexCommand::boxed("<f", &format!("^({FONT}(.*))$"), 1, change_color_and_size),
+            PositionCommand::boxed(FontPosition::Exposant, "sup"),
+            PositionCommand::boxed(FontPosition::Indice, "sub"),
             RegexCommand::boxed(
                 "<f",
                 &format!(r"^({FAMILY}(.*?)\</font\>)"),
@@ -53,7 +68,8 @@ pub fn full_creole_commands() -> &'static [Box<dyn CreoleCommand>] {
             ),
             RegexCommand::boxed("<f", &format!("^({FAMILY}(.*)$)"), 1, change_family),
             RegexCommand::boxed("\"\"", r#"^(""(.*?)"")"#, 1, monospaced),
-        ]
+        ]);
+        commands
     });
     &COMMANDS
 }
@@ -61,6 +77,161 @@ pub fn full_creole_commands() -> &'static [Box<dyn CreoleCommand>] {
 const COLOR: &str = r"\<color[\s:]+(#[0-9a-fA-F]{1,6}|#?\w+)[%s]*\>";
 const FONT: &str = r"\<font(?:[%s]+size[%s]*=[%s]*[%g]?(\d+)[%g]?|[%s]+color[%s]*=[%s]*[%g]?(#[0-9a-fA-F]{6}|\w+)[%g]?)+[%s]*\>";
 const FAMILY: &str = r"\<font[\s:]+([^>]+)/?\>";
+
+/// Turns on a font style for the text it encloses: `**bold**` (creole), `<b>bold</b>` (legacy) or `<b>`
+/// up to the end of the line.
+struct StyleCommand {
+    starters: Vec<&'static str>,
+    pattern: UnicodeBracketedExpression,
+    style: FontStyle,
+    /// Whether `<u:red>`-like markup may give the style a colour.
+    takes_color: bool,
+}
+
+impl StyleCommand {
+    /// PlantUML's `createCreole`, `createLegacy` and `createLegacyEol`, in that order.
+    fn all_for(style: FontStyle) -> Vec<Box<dyn CreoleCommand>> {
+        let mut commands: Vec<Box<dyn CreoleCommand>> = Vec::new();
+        if let Some(creole) = creole_markup(style) {
+            commands.push(Box::new(Self {
+                starters: vec![creole],
+                pattern: UnicodeBracketedExpression::build(&format!(
+                    "{creole}〶$V=〄+〴.->〘{creole}〙"
+                )),
+                style,
+                takes_color: false,
+            }));
+        }
+        let (activation, deactivation) = legacy_markup(style);
+        let takes_color = matches!(
+            style,
+            FontStyle::Underline | FontStyle::Wave | FontStyle::Backcolor | FontStyle::Strike
+        );
+        for pattern in [
+            format!("{activation}〶$V=〄>〘{deactivation}〙"),
+            format!("{activation}〶$V=〇+〴."),
+        ] {
+            commands.push(Box::new(Self {
+                starters: legacy_starters(style).to_vec(),
+                pattern: UnicodeBracketedExpression::build(&pattern),
+                style,
+                takes_color,
+            }));
+        }
+        commands
+    }
+}
+
+impl CreoleCommand for StyleCommand {
+    fn starters(&self) -> &[&'static str] {
+        &self.starters
+    }
+
+    fn matches(&self, rest: &str) -> bool {
+        let matcher = self.pattern.match_at(rest, 0);
+        matcher
+            .find_values_by_key("V")
+            .first()
+            .is_some_and(|value| !value.is_empty())
+    }
+
+    fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize {
+        let matcher = self.pattern.match_at(rest, 0);
+        let value = matcher.find_values_by_key("V")[0];
+        let color = self
+            .takes_color
+            .then(|| matcher.find_values_by_key("XC").first().copied())
+            .flatten()
+            .map(|name| parse_color(name).unwrap_or(HColor::WHITE));
+        stripe.with_font(
+            |font| {
+                let styled = font.with_style(self.style);
+                color.map_or(styled.clone(), |color| styled.with_extended_color(color))
+            },
+            value,
+        );
+        matcher.accepted_match().len()
+    }
+}
+
+fn creole_markup(style: FontStyle) -> Option<&'static str> {
+    match style {
+        FontStyle::Italic => Some("//"),
+        FontStyle::Bold => Some("**"),
+        FontStyle::Underline => Some("__"),
+        FontStyle::Wave => Some("~~"),
+        FontStyle::Strike => Some("--"),
+        FontStyle::Plain | FontStyle::Backcolor => None,
+    }
+}
+
+fn legacy_starters(style: FontStyle) -> &'static [&'static str] {
+    match style {
+        FontStyle::Plain => &["<p", "<P"],
+        FontStyle::Italic => &["<i", "<I"],
+        FontStyle::Bold | FontStyle::Backcolor => &["<b", "<B"],
+        FontStyle::Underline => &["<u", "<U"],
+        FontStyle::Strike => &["<s", "<S", "<d", "<D"],
+        FontStyle::Wave => &["<w"],
+    }
+}
+
+/// The `UBrex` patterns of the HTML-like tags that open and close a style.
+fn legacy_markup(style: FontStyle) -> (String, &'static str) {
+    const COLOR: &str = "〇?〘:〶$XC=【#〇{6}「0〜9a〜fA〜F」┇〇+〴w】〙>";
+    match style {
+        FontStyle::Plain => ("<「pP」「lL」「aA」「iI」「nN」>".to_owned(), "</「pP」「lL」「aA」「iI」「nN」>"),
+        FontStyle::Italic => ("<「iI」>".to_owned(), "</「iI」>"),
+        FontStyle::Bold => ("<「bB」>".to_owned(), "</「bB」>"),
+        FontStyle::Underline => (format!("<「uU」{COLOR}"), "</「uU」>"),
+        FontStyle::Wave => (format!("<「wW」{COLOR}"), "</「wW」>"),
+        FontStyle::Backcolor => (
+            "<「bB」「aA」「cC」「kK」〇?〘:〶$XC=〘【#〇{6}「0〜9a〜fA〜F」┇〇+〴w 】 〇?〘「-\\|/」【〇{6}「0〜9a〜fA〜F」┇〇+〴w】 〙〙 〙>"
+                .to_owned(),
+            "</「bB」「aA」「cC」「kK」>",
+        ),
+        FontStyle::Strike => (
+            format!("<【strike┇STRIKE┇s┇S┇del┇DEL】{COLOR}"),
+            "</【strike┇STRIKE┇s┇S┇del┇DEL】>",
+        ),
+    }
+}
+
+/// `<sup>raised</sup>` and `<sub>lowered</sub>`.
+struct PositionCommand {
+    pattern: UnicodeBracketedExpression,
+    position: FontPosition,
+}
+
+impl PositionCommand {
+    fn boxed(position: FontPosition, tag: &str) -> Box<dyn CreoleCommand> {
+        Box::new(Self {
+            pattern: UnicodeBracketedExpression::build(&format!("<{tag}>〶$V=〄>〘</{tag}>〙")),
+            position,
+        })
+    }
+}
+
+impl CreoleCommand for PositionCommand {
+    fn starters(&self) -> &[&'static str] {
+        &["<s"]
+    }
+
+    fn matches(&self, rest: &str) -> bool {
+        let matcher = self.pattern.match_at(rest, 0);
+        matcher
+            .find_values_by_key("V")
+            .first()
+            .is_some_and(|value| !value.is_empty())
+    }
+
+    fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize {
+        let matcher = self.pattern.match_at(rest, 0);
+        let value = matcher.find_values_by_key("V")[0];
+        stripe.with_font(|font| font.with_position(self.position), value);
+        matcher.accepted_match().len()
+    }
+}
 
 /// A command described by a regex whose group 1 is everything the command consumes.
 struct RegexCommand {
@@ -166,27 +337,28 @@ fn parse_color(name: &str) -> Option<HColor> {
 mod tests {
     use super::*;
 
-    fn matching(rest: &str) -> Vec<usize> {
+    /// How many commands apply at the start of `rest`.
+    fn applying(rest: &str) -> usize {
         full_creole_commands()
             .iter()
-            .enumerate()
-            .filter(|(_, command)| command.matches(rest))
-            .map(|(index, _)| index)
-            .collect()
+            .filter(|command| command.matches(rest))
+            .count()
     }
 
     #[test]
     fn closed_and_open_ended_forms_both_match() {
-        assert_eq!(matching("<size:9>a</size>b"), [0, 1]);
-        assert_eq!(matching("<size:9>a"), [1]);
-        assert_eq!(matching("<color:red>a</color>"), [2, 3]);
-        assert_eq!(matching("<font color=red size=3>a</font>"), [4, 5, 6, 7]);
-        assert_eq!(matching("\"\"a\"\""), [8]);
+        assert_eq!(applying("<size:9>a</size>b"), 2);
+        assert_eq!(applying("<size:9>a"), 1);
+        assert_eq!(applying("<b>a</b>"), 2);
+        assert_eq!(applying("<b>a"), 1);
+        assert_eq!(applying("<font color=red size=3>a</font>"), 4);
     }
 
     #[test]
-    fn empty_enclosed_text_still_counts_where_plantuml_checks_the_whole_match() {
-        assert_eq!(matching("\"\"\"\""), [8]);
-        assert_eq!(matching("<size:>a"), Vec::<usize>::new());
+    fn plantuml_ignores_commands_around_nothing_except_monospace() {
+        assert_eq!(applying("****"), 0);
+        assert_eq!(applying("<sup></sup>"), 0);
+        assert_eq!(applying("<size:>a"), 0);
+        assert_eq!(applying("\"\"\"\""), 1);
     }
 }
