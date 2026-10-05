@@ -184,12 +184,27 @@ pub fn export(
                 .into_bytes()
         }
         ImageFormat::Svg | ImageFormat::DeterministicSvg => svg().into_bytes(),
-        ImageFormat::Png => png::rasterize(
-            &svg(),
-            (dimension.width as u32, dimension.height as u32),
-            &backcolor,
-            fonts,
-            &diagram.source().metadata(),
-        ),
+        ImageFormat::Png => {
+            let limit = image_size_limit(host);
+            png::rasterize(
+                &svg(),
+                (
+                    (dimension.width as u32).min(limit),
+                    (dimension.height as u32).min(limit),
+                ),
+                &backcolor,
+                fonts,
+                &diagram.source().metadata(),
+            )
+        }
     })
+}
+
+/// PlantUML crops images to `PLANTUML_LIMIT_SIZE` pixels each way.
+fn image_size_limit(host: &dyn Host) -> u32 {
+    const DEFAULT_LIMIT: u32 = 4096;
+    host.getenv("PLANTUML_LIMIT_SIZE")
+        .filter(|limit| !limit.is_empty() && limit.bytes().all(|byte| byte.is_ascii_digit()))
+        .and_then(|limit| limit.parse().ok())
+        .unwrap_or(DEFAULT_LIMIT)
 }

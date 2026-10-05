@@ -20,7 +20,8 @@ pub fn rasterize(
     fonts: &Arc<FontRegistry>,
     metadata: &str,
 ) -> Vec<u8> {
-    let mut pixmap = Pixmap::new(width.max(1), height.max(1)).expect("the size is positive");
+    let mut pixmap = Pixmap::new(width.max(1), height.max(1))
+        .expect("images are at most PLANTUML_LIMIT_SIZE wide");
     if let HColor::Simple(color) = background {
         pixmap.fill(Color::from_rgba8(
             color.red,
@@ -85,7 +86,9 @@ fn font_resolver(fonts: Arc<FontRegistry>) -> FontResolver<'static> {
 
 /// The PNG with a compressed `iTXt` chunk before its end, as PlantUML stores the diagram source.
 fn with_text_chunk(png: &[u8], keyword: &str, text: &str) -> Vec<u8> {
-    const IEND_CHUNK_LENGTH: usize = 12;
+    /// Length, type and checksum.
+    const CHUNK_OVERHEAD: usize = 12;
+    const IEND_CHUNK_LENGTH: usize = CHUNK_OVERHEAD;
     let mut compressed = ZlibEncoder::new(Vec::new(), flate2::Compression::default());
     compressed
         .write_all(text.as_bytes())
@@ -95,7 +98,7 @@ fn with_text_chunk(png: &[u8], keyword: &str, text: &str) -> Vec<u8> {
     data.extend([0, 1, 0, 0, 0]);
     data.extend(compressed.finish().expect("compressing to memory succeeds"));
 
-    let mut chunk = Vec::with_capacity(data.len() + 12);
+    let mut chunk = Vec::with_capacity(data.len() + CHUNK_OVERHEAD);
     chunk.extend(
         u32::try_from(data.len())
             .expect("metadata fits a chunk")

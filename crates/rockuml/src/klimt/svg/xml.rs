@@ -100,21 +100,34 @@ impl XmlNode {
     }
 }
 
-/// PlantUML escapes only what XML requires: `&`, `<`, and in attributes `"`.
+/// PlantUML escapes only what XML requires: `&`, `<`, and in attributes `"`. Characters XML cannot hold at all
+/// (most control characters) are dropped, where PlantUML writes a document no XML reader accepts.
 fn escape_into(out: &mut String, text: &str, in_attribute: bool) {
     for c in text.chars() {
         match c {
             '&' => out.push_str("&amp;"),
             '<' => out.push_str("&lt;"),
             '"' if in_attribute => out.push_str("&quot;"),
-            _ => out.push(c),
+            c if is_xml_char(c) => out.push(c),
+            _ => {}
         }
     }
+}
+
+fn is_xml_char(c: char) -> bool {
+    matches!(c, '\t' | '\n' | '\r' | '\u{20}'..='\u{D7FF}' | '\u{E000}'..='\u{FFFD}' | '\u{10000}'..)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn characters_xml_cannot_hold_are_dropped() {
+        let mut text = XmlNode::new("text");
+        text.set_text_content("a\u{1}b\u{FFFE}c\td");
+        assert_eq!(text.to_xml(), "<text>abc\td</text>");
+    }
 
     #[test]
     fn serialises_compactly_with_attributes_in_insertion_order() {
