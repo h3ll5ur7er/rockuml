@@ -270,19 +270,23 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Backends: DEBUG, SVG (both bounders), PNG via resvg.
 - Error diagram (`PSystemError`) rendering, plus `@startcreole`/`@startsalt` as first end-to-end smoke diagrams.
 - **Exit:** salt/creole and error images pass L1/L2.
-- **Status: in progress** (branch `phase-2-rendering-foundation`). Done, each matching the JDK's debug output on the corpus:
+- **Status: done.** Every ported corpus case matches the golden model in all formats: debug (L1), deterministic SVG (L2),
+  font-measured SVG (L3, byte for byte, except one known font-coverage case) and PNG size (L4). Done:
   - regex tree, UBrex engine, command framework and the command-factory parse loop;
   - style system: skin files, `<style>` sheets, merge priorities, skinparam→style conversion, `SkinParam`;
   - klimt core and the DEBUG backend; creole sheets with lists, headings, separators and all inline markup
     (styles, colours, sizes, fonts, sup/sub);
-  - creole tables, trees, links (`<a>` in SVG) and separators, which span their title, legend or note through
-    PlantUML's stencil;
+  - creole tables, trees, links (`<a>` in SVG), `<code>` blocks, OpenIconic icons and separators, which span their
+    title, legend or note through PlantUML's stencil;
   - `@startcreole`; `@startsalt` grids, widgets, trees, tabs, menus, scroll panes and separators; error images,
     including the welcome text;
-  - common commands: `skinparam`, `<style>`, title, caption, legend, header and footer (one-line and block forms);
+  - common commands: `skinparam`, `<style>`, `scale` (all forms), title, caption, legend, header and footer (one-line
+    and block forms); `skinparam dpi`; gradient colours;
   - SVG with both bounders: `-f svg-deterministic` (width table) and `-tsvg` (embedded Liberation fonts, plus fonts
     registered with `--font` / `ROCKUML_FONTS`). Both match the goldens byte for byte, so L3 needs no ε comparator yet;
-  - PNG: the SVG rasterised by resvg with the same fonts, at PlantUML's image size, with the source in an `iTXt` chunk.
+  - PNG: the SVG rasterised by resvg with the same fonts, at PlantUML's image size (cropped at `PLANTUML_LIMIT_SIZE`),
+    with the source in an `iTXt` chunk;
+  - CLI: exit status 200 for error images, `--font` / `ROCKUML_FONTS`, rendering on a large-stack thread.
 
   Learned along the way / deliberate deviations:
   - Java's `%.4f` rounds the shortest decimal representation half-up, not the exact binary value; `java::format_fixed`
@@ -307,11 +311,21 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     those with the Liberation glyphs, which can differ by a pixel or two (corpus: `creole/escapes` SVG).
   - Several salt menu popups are drawn in creation order; Java's order follows identity hash codes, so it is
     effectively random.
-  - Not yet: salt border layouts, vertical tab bars and images; creole sprites, emoji, OpenIconic, images and
-    `<code>` blocks; the remaining common commands (pragma, scale, sprites, mainframe...); and the `@startuml`
-    best-error selection.
+  - Gradients compare by identity in Java, so a gradient background never counts as "the same as the image's"; rockuml
+    keeps that, as it decides whether titles paint their background.
+  - Moved on: sprites, `<img>` and emoji (all embedded as PNG or rendered through PlantUML's SVG parser) become
+    Phase 2b, with a parity check on decoded pixels instead of PNG bytes. The `@startuml` best-error selection needs
+    the UML diagram factories and moves to Phase 3. Salt border layouts, vertical tab bars and salt images are
+    undocumented or rare and wait until someone needs them.
+
+### Phase 2b — Images (sprites, `<img>`, emoji)
+- `sprite $name [WxH/n] {…}` definitions (monochrome, compressed, SVG) and `<$name>` in creole; stdlib sprites.
+- `<img:…>` (files through `Host`, data URIs) and `<:emoji:>` (PlantUML's SVG parser and the Twemoji set).
+- The parity harness compares embedded images by decoded pixels, as Java's PNG encoding is not worth reproducing.
+- **Exit:** sprite, image and emoji corpus cases pass L1 and L2 with pixel-compared images.
 
 ### Phase 3 — Sequence diagrams (~20k)
+- Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,
   all ~41 commands, notes, groups, refs, dividers, delays, autonumber, boxes, return, activation, create/destroy, newpage.
 - **Exit:** L1 ≥ 98% on the sequence corpus. This is the first genuinely usable release.
