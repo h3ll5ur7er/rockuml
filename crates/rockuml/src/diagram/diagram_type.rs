@@ -69,6 +69,15 @@ const KEYWORDS: [(&str, DiagramType); 30] = [
 ];
 
 impl DiagramType {
+    /// How error messages name the type, like PlantUML's `humanReadableName`.
+    pub fn human_readable_name(self) -> &'static str {
+        match self {
+            Self::Creole => "creole",
+            Self::Salt => "salt",
+            other => unimplemented!("the error name of {other:?} diagrams"),
+        }
+    }
+
     /// The type a start line like `@startmindmap` announces; `None` if it is no start line.
     pub fn of_start_line(line: &str) -> Option<Self> {
         let line = line.trim_start_matches(crate::java::is_whitespace);

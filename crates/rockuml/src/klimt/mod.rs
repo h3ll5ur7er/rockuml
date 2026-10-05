@@ -7,6 +7,7 @@ pub mod geom;
 pub mod shape;
 pub mod ugraphic;
 
+use crate::color::HColor;
 use font::StringBounder;
 use geom::XDimension2D;
 use ugraphic::UGraphic;
@@ -16,6 +17,11 @@ pub trait TextBlock {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D;
 
     fn draw_u(&self, ug: &UGraphic);
+
+    /// The colour the block asks to be drawn on, which stacking blocks paint behind it.
+    fn backcolor(&self) -> Option<HColor> {
+        None
+    }
 }
 
 impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
@@ -25,6 +31,10 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
 
     fn draw_u(&self, ug: &UGraphic) {
         (**self).draw_u(ug);
+    }
+
+    fn backcolor(&self) -> Option<HColor> {
+        (**self).backcolor()
     }
 }
 

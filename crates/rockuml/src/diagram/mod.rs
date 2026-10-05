@@ -3,6 +3,7 @@
 mod common_commands;
 mod creole;
 mod diagram_type;
+mod error;
 mod salt;
 mod source;
 mod titled;
@@ -66,8 +67,8 @@ impl ExportSettings {
 pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let (diagram_type, source) = prepare(block.located_lines());
     match diagram_type {
-        Some(DiagramType::Creole) => Ok(Box::new(CreoleDiagram::create(source)?)),
-        Some(DiagramType::Salt) => Ok(Box::new(salt::SaltDiagram::create(source)?)),
+        Some(DiagramType::Creole) => Ok(CreoleDiagram::create(source)),
+        Some(DiagramType::Salt) => Ok(salt::SaltDiagram::create(source)),
         _ => Err(NotYetPorted("this diagram type")),
     }
 }

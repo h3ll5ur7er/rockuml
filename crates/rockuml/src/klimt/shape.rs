@@ -13,6 +13,11 @@ pub enum UShape {
     },
     /// A closed shape through these points, relative to the current position.
     Polygon(Vec<(f64, f64)>),
+    /// A bitmap of this many pixels.
+    Image {
+        width: f64,
+        height: f64,
+    },
     /// Takes up space without drawing anything.
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
@@ -29,6 +34,7 @@ impl UShape {
             Self::Line { .. } => "ULine",
             Self::Polygon(_) => "UPolygon",
             Self::Empty(_) => "UEmpty",
+            Self::Image { .. } => "UImage",
             Self::HorizontalLine => "UHorizontalLine",
         }
     }

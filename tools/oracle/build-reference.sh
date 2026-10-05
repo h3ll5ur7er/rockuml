@@ -5,6 +5,9 @@
 # Compile-only stubs (tools/oracle/stubs) stand in for them: TeaVM code is unreachable
 # on a JVM, and PDF/Ant are outside the oracle's scope.
 #
+# The jar starts through a small launcher (tools/oracle/launcher) that turns off the minute-dependent
+# donation banners of error images, which would make goldens depend on when they were generated.
+#
 # Graphviz's bundled Windows dot.exe is deliberately left out of the jar so that
 # PlantUML falls back to Smetana, the layout engine rockuml ports.
 set -euo pipefail
@@ -24,7 +27,7 @@ find "$reference_sources" -name '*.java' \
 	| grep -v -E '/plantuml/(ant|openpdf)/' \
 	| to_native_paths > "$build/sources.txt"
 echo "$reference_sources/net/sourceforge/plantuml/openpdf/PdfOption.java" | to_native_paths >> "$build/sources.txt"
-find "$stubs" -name '*.java' | to_native_paths > "$build/stubs.txt"
+find "$stubs" "$oracle_dir/launcher" -name '*.java' | to_native_paths > "$build/stubs.txt"
 
 echo "Compiling $(wc -l < "$build/sources.txt") reference sources..."
 "$jdk_bin/javac" -nowarn -encoding UTF-8 -d "$build/classes" "@$build/sources.txt" "@$build/stubs.txt" \
@@ -36,6 +39,6 @@ echo "Copying resources..."
 	&& find . -type f ! -name '*.java' ! -path './META-INF/*' ! -name 'graphviz.dat' \
 	| tar cf - -T - ) | (cd "$build/classes" && tar xf -)
 
-printf 'Main-Class: net.sourceforge.plantuml.Run\n' > "$build/manifest.txt"
+printf 'Main-Class: rockuml.oracle.OracleMain\n' > "$build/manifest.txt"
 "$jdk_bin/jar" cfm "$reference_jar" "$build/manifest.txt" -C "$build/classes" .
 echo "Built $reference_jar"

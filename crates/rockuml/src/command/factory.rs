@@ -4,16 +4,13 @@ use super::{BlocLines, Command, CommandControl, CommandError, ParserPass};
 use crate::preproc::start_utils;
 use crate::text::StringLocated;
 
-/// Why the lines did not make a diagram.
+/// Why the lines did not make a diagram: no command accepts a line ("Syntax Error?"), or a command could
+/// not apply the lines it accepted.
 #[derive(Clone, Debug, PartialEq)]
-pub enum ParseFailure {
-    /// No command accepts the line.
-    SyntaxError { line: StringLocated },
-    /// A command accepted the lines but could not apply them.
-    ExecutionError {
-        error: CommandError,
-        line: StringLocated,
-    },
+pub struct ParseFailure {
+    pub error: CommandError,
+    /// The lines read up to the failure, the faulty one last.
+    pub trace: Vec<StringLocated>,
 }
 
 /// Runs the lines after the start line through `commands`, up to the end line.
@@ -28,19 +25,21 @@ pub fn execute_lines<D>(
             break;
         }
         let Some((command, block, next)) = candidate(lines, position, commands) else {
-            return Err(ParseFailure::SyntaxError { line: line.clone() });
+            return Err(ParseFailure {
+                error: CommandError::new("Syntax Error?"),
+                trace: lines[..=position].to_vec(),
+            });
         };
         position = next;
         if !command.is_eligible_for(ParserPass::One) {
             continue;
         }
-        let first = block
-            .first()
-            .cloned()
-            .expect("a command takes at least one line");
         command
             .execute(diagram, block, ParserPass::One)
-            .map_err(|error| ParseFailure::ExecutionError { error, line: first })?;
+            .map_err(|error| ParseFailure {
+                error,
+                trace: lines[..position].to_vec(),
+            })?;
     }
     Ok(())
 }
@@ -140,6 +139,7 @@ mod tests {
         let mut words = Vec::new();
         let source = lines(&["@startx", "one", "2", "@endx"]);
         let failure = execute_lines(&source, &mut words, &word_commands()).unwrap_err();
-        assert!(matches!(failure, ParseFailure::SyntaxError { line } if line.text() == "2"));
+        assert_eq!(failure.error.message, "Syntax Error?");
+        assert_eq!(failure.trace.last().map(StringLocated::text), Some("2"));
     }
 }

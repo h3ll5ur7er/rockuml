@@ -32,9 +32,18 @@ impl LineLocation {
         }
     }
 
-    #[cfg(test)]
     pub fn position(&self) -> i32 {
         self.position
+    }
+
+    /// The file or resource the line comes from.
+    pub fn description(&self) -> &str {
+        &self.description
+    }
+
+    /// Where the file was included from.
+    pub fn parent(&self) -> Option<&LineLocation> {
+        self.parent.as_deref()
     }
 }
 

@@ -164,7 +164,7 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
-            UShape::HorizontalLine => {
+            UShape::HorizontalLine | UShape::Image { .. } => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",
                     shape.java_class_name(),

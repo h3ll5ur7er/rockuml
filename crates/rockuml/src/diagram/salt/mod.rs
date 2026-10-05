@@ -8,6 +8,8 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::common_commands::title_command;
+use super::diagram_type::DiagramType;
+use super::error::ErrorDiagram;
 use super::source::UmlSource;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted};
@@ -40,7 +42,8 @@ impl TitledDiagram for SaltDiagram {
 }
 
 impl SaltDiagram {
-    pub fn create(source: UmlSource) -> Result<Self, NotYetPorted> {
+    /// The diagram, or the error image for its first faulty line.
+    pub fn create(source: UmlSource) -> Box<dyn Diagram> {
         let mut diagram = Self {
             source,
             titled: Titled::default(),
@@ -49,9 +52,15 @@ impl SaltDiagram {
         let commands: Vec<Box<dyn Command<SaltDiagram>>> =
             vec![title_command(), Box::new(SingleLine(Anything::new()))];
         let lines = diagram.source.lines().to_vec();
-        factory::execute_lines(&lines, &mut diagram, &commands)
-            .map_err(|_| NotYetPorted("error diagram for salt"))?;
-        Ok(diagram)
+        match factory::execute_lines(&lines, &mut diagram, &commands) {
+            Ok(()) => Box::new(diagram),
+            Err(failure) => Box::new(ErrorDiagram::new(
+                diagram.source,
+                failure.trace,
+                &failure.error.message,
+                Some(DiagramType::Salt),
+            )),
+        }
     }
 
     /// The lines that describe widgets; skinparams, `scale` and sprites are not ported yet.

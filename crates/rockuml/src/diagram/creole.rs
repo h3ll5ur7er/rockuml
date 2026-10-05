@@ -1,3 +1,5 @@
+use super::diagram_type::DiagramType;
+use super::error::ErrorDiagram;
 use super::source::UmlSource;
 use super::{Diagram, ExportSettings, NotYetPorted};
 use crate::creole::{CreoleParser, SheetBlock1};
@@ -14,7 +16,8 @@ pub struct CreoleDiagram {
 }
 
 impl CreoleDiagram {
-    pub fn create(source: UmlSource) -> Result<Self, NotYetPorted> {
+    /// The diagram, or an error image when there is nothing between the start and end lines.
+    pub fn create(source: UmlSource) -> Box<dyn Diagram> {
         let source = source.without_initial_noise();
         let mut lines = Vec::new();
         let content = source
@@ -26,13 +29,19 @@ impl CreoleDiagram {
         for line in content {
             if start_utils::is_end_directive(line) {
                 if source.lines().len() == 2 {
-                    return Err(NotYetPorted("error diagram for an empty description"));
+                    let trace = source.lines().to_vec();
+                    return Box::new(ErrorDiagram::new(
+                        source,
+                        trace,
+                        "Empty description",
+                        Some(DiagramType::Creole),
+                    ));
                 }
                 break;
             }
             lines.push(line.to_owned());
         }
-        Ok(Self { source, lines })
+        Box::new(Self { source, lines })
     }
 }
 

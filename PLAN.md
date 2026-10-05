@@ -272,6 +272,26 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Backends: DEBUG, SVG (both bounders), PNG via resvg.
 - Error diagram (`PSystemError`) rendering, plus `@startcreole`/`@startsalt` as first end-to-end smoke diagrams.
 - **Exit:** salt/creole and error images pass L1/L2.
+- **Status: in progress** (branch `phase-2-rendering-foundation`). Done, each matching the JDK's debug output on the corpus:
+  - regex tree, UBrex engine, command framework and the command-factory parse loop;
+  - style system: skin files, `<style>` sheets, merge priorities, skinparam→style conversion, `SkinParam`;
+  - klimt core and the DEBUG backend; creole sheets with lists, headings, separators and all inline markup
+    (styles, colours, sizes, fonts, sup/sub);
+  - `@startcreole`; `@startsalt` grids and widgets with titles; error images, including the welcome text.
+
+  Learned along the way / deliberate deviations:
+  - Java's `%.4f` rounds the shortest decimal representation half-up, not the exact binary value; `java::format_fixed`
+    reproduces that. Java collections' iteration orders leak into output (regex results, salt grid lines), hence
+    `JavaHashMap` / `JavaHashSet`.
+  - Font names other than Java's logical fonts depend on the fonts installed where Java runs; rockuml names them like a
+    machine without them (`Dialog`).
+  - The oracle starts PlantUML through `tools/oracle/launcher`, which switches off the donation banners error images
+    get in some minutes of the hour; rockuml never shows them.
+  - Where PlantUML crashes while drawing (a creole `----` in SVG, an unclosed salt group) it prints a crash report with
+    a random quote; rockuml does not reproduce crash reports.
+  - Not yet: SVG/PNG backends (need embedded font metrics), salt menus/tabs/trees/scroll/border/images, creole tables,
+    trees, links, sprites, emoji, OpenIconic and images, most common commands (skinparam, style, legend, header...),
+    multi-pass parsing and the `@startuml` best-error selection.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,

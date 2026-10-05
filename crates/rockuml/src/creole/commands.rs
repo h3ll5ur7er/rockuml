@@ -4,6 +4,7 @@ use std::sync::LazyLock;
 
 use regex::{Captures, Regex};
 
+use super::CreoleMode;
 use super::parser::StripeBuilder;
 use crate::color::HColor;
 use crate::klimt::font::{FontConfiguration, FontPosition, FontStyle};
@@ -21,57 +22,66 @@ pub trait CreoleCommand: Send + Sync {
     fn execute(&self, rest: &str, stripe: &mut StripeBuilder) -> usize;
 }
 
-/// The commands of PlantUML's `CommandCreoleBuilder.FULL`, in its order: the first that matches wins.
-pub fn full_creole_commands() -> &'static [Box<dyn CreoleCommand>] {
-    static COMMANDS: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| {
-        let mut commands: Vec<Box<dyn CreoleCommand>> = Vec::new();
-        for style in [
-            FontStyle::Bold,
-            FontStyle::Italic,
-            FontStyle::Plain,
-            FontStyle::Underline,
-            FontStyle::Strike,
-            FontStyle::Wave,
-            FontStyle::Backcolor,
-        ] {
-            commands.extend(StyleCommand::all_for(style));
-        }
-        commands.extend(vec![
-            RegexCommand::boxed(
-                "<s",
-                r"^(\<size[\s:]+(\d+)[%s]*\>(.*?)\</size\>)",
-                2,
-                change_size,
-            ),
-            RegexCommand::boxed("<s", r"^(\<size[\s:]+(\d+)[%s]*\>(.*)$)", 2, change_size),
-            RegexCommand::boxed(
-                "<c",
-                &format!(r"^({COLOR}(.*?)\</color\>)"),
-                2,
-                change_color,
-            ),
-            RegexCommand::boxed("<c", &format!("^({COLOR}(.*)$)"), 2, change_color),
-            RegexCommand::boxed(
-                "<f",
-                &format!(r"^({FONT}(.*?)\</font\>)"),
-                1,
-                change_color_and_size,
-            ),
-            RegexCommand::boxed("<f", &format!("^({FONT}(.*))$"), 1, change_color_and_size),
-            PositionCommand::boxed(FontPosition::Exposant, "sup"),
-            PositionCommand::boxed(FontPosition::Indice, "sub"),
-            RegexCommand::boxed(
-                "<f",
-                &format!(r"^({FAMILY}(.*?)\</font\>)"),
-                1,
-                change_family,
-            ),
-            RegexCommand::boxed("<f", &format!("^({FAMILY}(.*)$)"), 1, change_family),
-            RegexCommand::boxed("\"\"", r#"^(""(.*?)"")"#, 1, monospaced),
-        ]);
-        commands
-    });
-    &COMMANDS
+/// The inline commands of a creole mode, in `CommandCreoleBuilder`'s order: the first that matches wins.
+/// Only full creole reads `__underline__`.
+pub fn creole_commands(mode: CreoleMode) -> &'static [Box<dyn CreoleCommand>] {
+    static FULL: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| build_commands(true));
+    static OTHER: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| build_commands(false));
+    if mode == CreoleMode::Full {
+        &FULL
+    } else {
+        &OTHER
+    }
+}
+
+fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
+    let mut commands: Vec<Box<dyn CreoleCommand>> = Vec::new();
+    for style in [
+        FontStyle::Bold,
+        FontStyle::Italic,
+        FontStyle::Plain,
+        FontStyle::Underline,
+        FontStyle::Strike,
+        FontStyle::Wave,
+        FontStyle::Backcolor,
+    ] {
+        let with_creole = style != FontStyle::Underline || creole_underline;
+        commands.extend(StyleCommand::all_for(style, with_creole));
+    }
+    commands.extend(vec![
+        RegexCommand::boxed(
+            "<s",
+            r"^(\<size[\s:]+(\d+)[%s]*\>(.*?)\</size\>)",
+            2,
+            change_size,
+        ),
+        RegexCommand::boxed("<s", r"^(\<size[\s:]+(\d+)[%s]*\>(.*)$)", 2, change_size),
+        RegexCommand::boxed(
+            "<c",
+            &format!(r"^({COLOR}(.*?)\</color\>)"),
+            2,
+            change_color,
+        ),
+        RegexCommand::boxed("<c", &format!("^({COLOR}(.*)$)"), 2, change_color),
+        RegexCommand::boxed(
+            "<f",
+            &format!(r"^({FONT}(.*?)\</font\>)"),
+            1,
+            change_color_and_size,
+        ),
+        RegexCommand::boxed("<f", &format!("^({FONT}(.*))$"), 1, change_color_and_size),
+        PositionCommand::boxed(FontPosition::Exposant, "sup"),
+        PositionCommand::boxed(FontPosition::Indice, "sub"),
+        RegexCommand::boxed(
+            "<f",
+            &format!(r"^({FAMILY}(.*?)\</font\>)"),
+            1,
+            change_family,
+        ),
+        RegexCommand::boxed("<f", &format!("^({FAMILY}(.*)$)"), 1, change_family),
+        RegexCommand::boxed("\"\"", r#"^(""(.*?)"")"#, 1, monospaced),
+    ]);
+    commands
 }
 
 const COLOR: &str = r"\<color[\s:]+(#[0-9a-fA-F]{1,6}|#?\w+)[%s]*\>";
@@ -90,9 +100,9 @@ struct StyleCommand {
 
 impl StyleCommand {
     /// PlantUML's `createCreole`, `createLegacy` and `createLegacyEol`, in that order.
-    fn all_for(style: FontStyle) -> Vec<Box<dyn CreoleCommand>> {
+    fn all_for(style: FontStyle, with_creole: bool) -> Vec<Box<dyn CreoleCommand>> {
         let mut commands: Vec<Box<dyn CreoleCommand>> = Vec::new();
-        if let Some(creole) = creole_markup(style) {
+        if let Some(creole) = creole_markup(style).filter(|_| with_creole) {
             commands.push(Box::new(Self {
                 starters: vec![creole],
                 pattern: UnicodeBracketedExpression::build(&format!(
@@ -339,7 +349,7 @@ mod tests {
 
     /// How many commands apply at the start of `rest`.
     fn applying(rest: &str) -> usize {
-        full_creole_commands()
+        creole_commands(CreoleMode::Full)
             .iter()
             .filter(|command| command.matches(rest))
             .count()

@@ -18,6 +18,18 @@ pub use sheet_block::SheetBlock1;
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
+/// How much markup a text reads.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum CreoleMode {
+    #[default]
+    Full,
+    /// Inline markup only: no lists, headings or separators.
+    SimpleLine,
+    NoCreole,
+    /// Full creole except `__underline__` and lists.
+    FullButUnderscore,
+}
+
 /// The smallest piece of a creole line: a run of text, an image, a bullet...
 pub trait Atom: TextBlock {
     /// How far the atom sits above the line's bottom: raised for superscript, lowered for subscript.

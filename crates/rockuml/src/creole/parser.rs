@@ -4,8 +4,8 @@ use regex::Regex;
 
 use super::atom_text::AtomText;
 use super::atoms::{Bullet, HorizontalLine};
-use super::commands::{CreoleCommand, full_creole_commands};
-use super::{Atom, Sheet, Stripe, char_hidder};
+use super::commands::{CreoleCommand, creole_commands};
+use super::{Atom, CreoleMode, Sheet, Stripe, char_hidder};
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::HorizontalAlignment;
@@ -16,13 +16,23 @@ use crate::pattern::{java_regex, plantuml_regex};
 pub struct CreoleParser {
     font: FontConfiguration,
     horizontal_alignment: HorizontalAlignment,
+    mode: CreoleMode,
 }
 
 impl CreoleParser {
     pub fn new(font: FontConfiguration, horizontal_alignment: HorizontalAlignment) -> Self {
+        Self::with_mode(font, horizontal_alignment, CreoleMode::Full)
+    }
+
+    pub fn with_mode(
+        font: FontConfiguration,
+        horizontal_alignment: HorizontalAlignment,
+        mode: CreoleMode,
+    ) -> Self {
         Self {
             font,
             horizontal_alignment,
+            mode,
         }
     }
 
@@ -45,12 +55,13 @@ impl CreoleParser {
         alignment: HorizontalAlignment,
         list_numbers: &mut ListNumbers,
     ) -> Vec<Stripe> {
-        let (text, style) = StripeStyle::parse(line);
+        let (text, style) = StripeStyle::parse(line, self.mode);
         java::split(&text, &BLOCK_E1_NEWLINE.to_string())
             .iter()
             .map(|single_line| {
                 let header = self.header(style, list_numbers);
-                let mut stripe = StripeBuilder::new(self.font.clone(), style, alignment, header);
+                let mut stripe =
+                    StripeBuilder::new(self.font.clone(), style, alignment, header, self.mode);
                 stripe.analyze_and_add(single_line);
                 stripe.build()
             })
@@ -132,8 +143,8 @@ impl StripeStyle {
         Self { kind, order }
     }
 
-    /// The line's text without the markup, and its style.
-    fn parse(line: &str) -> (String, Self) {
+    /// The line's text without the markup, and its style. Lists need full creole.
+    fn parse(line: &str, mode: CreoleMode) -> (String, Self) {
         static PATTERNS: [LinePattern; 8] = [
             LinePattern {
                 regex: LazyLock::new(|| plantuml_regex("^--([^-]*)--$")),
@@ -182,6 +193,9 @@ impl StripeStyle {
             },
         ];
 
+        if mode == CreoleMode::NoCreole {
+            return (line.to_owned(), Self::NORMAL);
+        }
         let hidden = char_hidder::hide(line);
         for pattern in &PATTERNS {
             let text = if pattern.on_hidden_text {
@@ -191,6 +205,13 @@ impl StripeStyle {
             };
             if let Some(captures) = pattern.regex.captures(text) {
                 let (text, style) = (pattern.style)(&captures);
+                let is_list = matches!(
+                    style.kind,
+                    StripeStyleType::ListWithoutNumber | StripeStyleType::ListWithNumber
+                );
+                if is_list && mode != CreoleMode::Full {
+                    continue;
+                }
                 let text = if pattern.on_hidden_text {
                     char_hidder::unhide(&text)
                 } else {
@@ -219,14 +240,14 @@ fn item(captures: &regex::Captures, kind: StripeStyleType) -> (String, StripeSty
 
 /// The first command that applies at the start of `rest`. Commands are only looked for where at least
 /// three UTF-16 units remain, as in PlantUML.
-fn command_at(rest: &str) -> Option<&'static dyn CreoleCommand> {
+fn command_at(rest: &str, mode: CreoleMode) -> Option<&'static dyn CreoleCommand> {
     let units: usize = rest.chars().take(3).map(char::len_utf16).sum();
     if units <= 2 {
         return None;
     }
     let prefix_length: usize = rest.chars().take(2).map(char::len_utf8).sum();
     let prefix = &rest[..prefix_length];
-    full_creole_commands()
+    creole_commands(mode)
         .iter()
         .find(|command| command.starters().contains(&prefix) && command.matches(rest))
         .map(AsRef::as_ref)
@@ -238,6 +259,7 @@ pub struct StripeBuilder {
     style: StripeStyle,
     alignment: HorizontalAlignment,
     atoms: Vec<Box<dyn Atom>>,
+    mode: CreoleMode,
 }
 
 impl StripeBuilder {
@@ -246,12 +268,14 @@ impl StripeBuilder {
         style: StripeStyle,
         alignment: HorizontalAlignment,
         header: Option<Box<dyn Atom>>,
+        mode: CreoleMode,
     ) -> Self {
         Self {
             font,
             style,
             alignment,
             atoms: header.into_iter().collect(),
+            mode,
         }
     }
 
@@ -298,7 +322,7 @@ impl StripeBuilder {
         let mut pending = String::new();
         let mut rest = line;
         while let Some(c) = rest.chars().next() {
-            if let Some(command) = command_at(rest) {
+            if let Some(command) = command_at(rest, self.mode) {
                 self.add_text(&mut pending);
                 let consumed = command.execute(rest, self);
                 rest = &rest[consumed..];
@@ -366,7 +390,7 @@ mod tests {
 
     #[test]
     fn line_markup_sets_the_style() {
-        let parsed = |line| StripeStyle::parse(line);
+        let parsed = |line| StripeStyle::parse(line, CreoleMode::Full);
         let style = StripeStyle::of;
         assert_eq!(
             parsed("== Title "),

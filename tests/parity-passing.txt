@@ -6,6 +6,8 @@ debug creole/inline-styles.puml
 debug creole/plain.puml
 debug creole/styles-advanced.puml
 debug creole/unicode-tabs.puml
+debug error/creole-empty.puml
+debug error/salt-keyword.puml
 debug salt/grid-all.puml
 debug salt/grid-nested.puml
 debug salt/grid-titled.puml
@@ -32,6 +34,8 @@ preproc creole/inline-styles.puml
 preproc creole/plain.puml
 preproc creole/styles-advanced.puml
 preproc creole/unicode-tabs.puml
+preproc error/creole-empty.puml
+preproc error/salt-keyword.puml
 preproc error/unknown-syntax.puml
 preproc mindmap/basic.puml
 preproc preprocessor/builtins-color.puml
@@ -87,6 +91,8 @@ url creole/inline-styles.puml
 url creole/plain.puml
 url creole/styles-advanced.puml
 url creole/unicode-tabs.puml
+url error/creole-empty.puml
+url error/salt-keyword.puml
 url error/unknown-syntax.puml
 url mindmap/basic.puml
 url preprocessor/builtins-color.puml
