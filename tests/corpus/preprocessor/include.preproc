@@ -1,7 +1,0 @@
-@startuml
-actor Customer
-actor Clerk
-Customer -> Clerk : order
-Customer -> Clerk : order
-Clerk --> Customer : receipt
-@enduml

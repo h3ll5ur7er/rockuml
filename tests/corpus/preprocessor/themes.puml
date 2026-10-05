@@ -1,0 +1,14 @@
+@startuml
+!theme amiga
+A -> B : theme=%get_current_theme()
+@enduml
+
+@startuml
+!theme bluegray
+!theme spacelab
+A -> B : last=%get_current_theme()
+@enduml
+
+@startuml
+A -> B : themes=%get_all_theme()
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+!define SHOW(x) participant x
+!define LINK(a, b) a -> b : linked
+!define CONST value_of_const
+!definelong LONG(x)
+participant x
+x -> x : long body
+!enddefinelong
+!definelong SHORTLONG(y)
+y -> y : single line definelong
+!enddefinelong
+SHOW(Alice)
+LINK(Alice, Bob)
+LONG(Carl)
+SHORTLONG(Dora)
+A -> B : CONST and CONST2
+!define GLUE(a, b) a##b
+A -> B : GLUE(foo, bar)
+!$var = "v"
+A -> B : $var##suffix and prefix##$var
+LINK("Quoted One", "Quoted Two")
+@enduml

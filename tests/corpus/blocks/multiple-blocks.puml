@@ -1,0 +1,11 @@
+@startuml first
+A -> B
+@enduml
+
+@startuml
+B -> C
+@enduml
+
+@startmindmap
+* root
+@endmindmap

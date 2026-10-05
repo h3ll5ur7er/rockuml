@@ -1,0 +1,27 @@
+@startuml
+!$a = 1
+!$b = $a + 1
+!$c = "text"
+!$d = $c + $b
+!global $g = "global"
+!$a ?= 100
+!$new ?= "set once"
+A -> B : a=$a b=$b c=$c d=$d g=$g new=$new
+!$path = "dir/file"
+A -> B : variable inside word: x$c and $cy and $c! and ${c}
+A -> B : escaped dollar %dollar()c and "$c"
+!$neg = -5
+A -> B : neg=$neg minus=%string($neg - -5)
+!$emoji_😀 = "smile"
+A -> B : $emoji_😀
+!$empty = ""
+A -> B : empty=[$empty] bool=%boolval("1")
+!$list = ["one", "two"]
+A -> B : list=$list first=$list[0]
+!$text_with_newline = "line1\nline2"
+A -> B : $text_with_newline
+!define OLD_STYLE this was defined with !define
+A -> B : OLD_STYLE
+!$num = 0x10
+A -> B : num=$num
+@enduml

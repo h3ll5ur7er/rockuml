@@ -1,0 +1,7 @@
+@startuml
+A -> B : darken=%darken("DodgerBlue", 20) %darken("#ABC", 50) lighten=%lighten("red", 30) %lighten("#123456", 75)
+A -> B : dark=%is_dark("navy") %is_dark("yellow") light=%is_light("white") %is_light("#000")
+A -> B : reverse=%reverse_color("#336699") %reverse_color("lime") hsluv=%reverse_hsluv_color("#336699") %reverse_hsluv_color("gold")
+A -> B : hsl=%hsl_color(120, 100, 50) %hsl_color(240, 50, 25) alpha=%hsl_color(0, 100, 50, 50)
+A -> B : special=%darken("transparent", 10) %lighten("automatic", 10) %darken("red-blue", 10) %darken("#11223344", 10)
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+A -> B : kept ' not a comment here
+A -> B : after block 
+ A -> B : leading inline comment
+A -> B : trailing inline comment 
+A -> B : special  comment

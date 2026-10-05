@@ -1,8 +1,0 @@
-@startuml
-participant P0
-participant P1
-participant P2
-P0 -> P1 : from Ann
-P0 -> P1 : from Ben
-P1 -> P2 : length ok
-@enduml

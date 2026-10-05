@@ -1,0 +1,18 @@
+@startuml
+' a simple comment
+A -> B : kept ' not a comment here
+/' a block comment
+   spanning lines '/
+A -> B : after block /' inline '/
+/' leading '/ A -> B : leading inline comment
+A -> B : trailing inline comment /' tail '/
+A -> B : special /'''tag'''/ comment
+/' unterminated block until here
+still comment
+'/ A -> B : after closing marker
+!function $f()
+' comment inside a function
+!return "f"
+!endfunction
+A -> B : $f()
+@enduml

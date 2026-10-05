@@ -1,0 +1,22 @@
+@startuml
+!$s = "Hello, World"
+A -> B : strlen=%strlen($s) upper=%upper($s) lower=%lower($s)
+A -> B : substr=%substr($s, 7) substr3=%substr($s, 0, 5) past=[%substr($s, 99)] long=%substr($s, 7, 99)
+A -> B : strpos=%strpos($s, "World") missing=%strpos($s, "x") empty=%strpos($s, "")
+A -> B : string=%string(42) intval=%intval("17") boolval=%boolval("TRUE") %boolval("0")
+A -> B : chr=%chr(65)%chr(0x263A) ord=%ord("A") ord_empty=%ord("")
+A -> B : dec2hex=%dec2hex(255) %dec2hex(-1) hex2dec=%hex2dec("ff") %hex2dec("zz")
+A -> B : mod=%mod(17, 5) %mod(-17, 5) eval=%eval("2 + 3 * 4") eval_text=%eval("abc")
+A -> B : size=%size("abc") %size(12) %size(%splitstr("a,b,c", ","))
+A -> B : splitstr=%splitstr("a;b,,c", ",;") regex=%splitstr_regex("a1b22c333", "[0-9]+")
+A -> B : str2json=%str2json('{"k": [1, 2]}') bad=[%str2json("{oops")]
+A -> B : feature=%feature("style") %feature("theme") %feature("other") version=%version()
+A -> B : dollar=%dollar() percent=%percent() true=%true() false=%false()
+A -> B : and=%and(1, 1, 0) or=%or(0, 0, 1) not=%not(0) xor=%xor(1, 0, 0) nand=%nand(1, 1) nor=%nor(0, 0) nxor=%nxor(1, 1)
+A -> B : concat %string("a") + %string("b") and math 7/2=$x
+!$x = 7 / 2
+A -> B : now $x and %strlen("") and %substr("abc", 1, 0)
+A -> B : arithmetic !$y would not expand
+!$y = (1 + 2) * 3 - -4
+A -> B : y=$y compare=%string(10 > 9) %string("10" > "9") %string("a" == "a") %string(1 != 2)
+@enduml

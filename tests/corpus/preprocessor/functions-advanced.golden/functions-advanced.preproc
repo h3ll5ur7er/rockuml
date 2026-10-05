@@ -1,0 +1,14 @@
+@startuml
+A -> B : fact=120
+A -> B : Hello Ann! / Hi Ben! / Hello Cy?
+A -> B : inline=2
+A -> B : bang=3
+rectangle "alpha" as R_alpha
+rectangle "beta" as R_beta
+Ann -> Bob : unquoted call
+Ann -> Cyd : unquoted call
+A -> B : counter=2 local=0
+A -> B : scoped=40 tmp_visible=0
+prefix middle_1 suffix
+A -> B : after mid
+@enduml

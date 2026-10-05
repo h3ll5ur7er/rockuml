@@ -9,9 +9,11 @@ mod ratchet;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicUsize, Ordering};
 
 use check::Outcome;
-use corpus::GoldenKind;
+use corpus::{Case, GoldenKind};
 
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
@@ -33,25 +35,20 @@ fn rockuml_reproduces_the_golden_model() {
     let mut regressions = Vec::new();
     let mut tallies: BTreeMap<(String, GoldenKind), Tally> = BTreeMap::new();
 
-    for case in corpus::discover(&repository_root().join("tests/corpus")) {
+    for (case, kind, outcome) in check_all_in_parallel(rockuml) {
         let area = case.id.split('/').next().unwrap().to_owned();
-        for kind in GoldenKind::ALL {
-            let Some(outcome) = check::check(rockuml, &case, kind) else {
-                continue;
-            };
-            let entry = (kind.extension().to_owned(), case.id.clone());
-            let tally = tallies.entry((area.clone(), kind)).or_default();
-            tally.total += 1;
-            match outcome {
-                Outcome::Pass => {
-                    tally.passed += 1;
-                    passes.insert(entry);
-                }
-                Outcome::Fail(reason) if recorded_passes.contains(&entry) => {
-                    regressions.push(format!("{} {}: {reason}", entry.0, entry.1));
-                }
-                Outcome::Fail(_) => {}
+        let entry = (kind.extension().to_owned(), case.id.clone());
+        let tally = tallies.entry((area, kind)).or_default();
+        tally.total += 1;
+        match outcome {
+            Outcome::Pass => {
+                tally.passed += 1;
+                passes.insert(entry);
             }
+            Outcome::Fail(reason) if recorded_passes.contains(&entry) => {
+                regressions.push(format!("{} {}: {reason}", entry.0, entry.1));
+            }
+            Outcome::Fail(_) => {}
         }
     }
 
@@ -75,6 +72,33 @@ fn rockuml_reproduces_the_golden_model() {
         "regressions:\n{}",
         regressions.join("\n")
     );
+}
+
+/// Every (case, kind) the golden model has output for, checked on all cores.
+fn check_all_in_parallel(rockuml: &Path) -> Vec<(Case, GoldenKind, Outcome)> {
+    let work: Vec<(Case, GoldenKind)> = corpus::discover(&repository_root().join("tests/corpus"))
+        .into_iter()
+        .flat_map(|case| GoldenKind::ALL.map(|kind| (case.clone(), kind)))
+        .collect();
+    let next = AtomicUsize::new(0);
+    let workers = std::thread::available_parallelism().map_or(4, usize::from);
+    let results = Mutex::new(Vec::new());
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| {
+                while let Some((case, kind)) = work.get(next.fetch_add(1, Ordering::Relaxed)) {
+                    if let Some(outcome) = check::check(rockuml, case, *kind) {
+                        results.lock().unwrap().push((case.clone(), *kind, outcome));
+                    }
+                }
+            });
+        }
+    });
+    let mut results = results.into_inner().unwrap();
+    results.sort_by(|(left, left_kind, _), (right, right_kind, _)| {
+        (&left.id, left_kind).cmp(&(&right.id, right_kind))
+    });
+    results
 }
 
 fn print_report(tallies: &BTreeMap<(String, GoldenKind), Tally>) {

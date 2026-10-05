@@ -1,0 +1,17 @@
+@startuml
+class Car {
+  - String model
+  # int year
+  + start() : void
+  {static} + count() : int
+}
+abstract class Vehicle
+interface Drivable
+enum Color {
+  RED
+  GREEN
+}
+Vehicle <|-- Car
+Drivable <|.. Car
+Car --> Color : paint
+@enduml

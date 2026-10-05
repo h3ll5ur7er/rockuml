@@ -1,0 +1,9 @@
+@startdef(id=shared)
+Shared -> Definition : from startdef
+@enddef
+
+@startuml
+!includedef shared
+!includesub fragments/actors.iuml!ORDER
+A -> B : done
+@enduml

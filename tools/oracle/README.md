@@ -21,10 +21,11 @@ bash tools/oracle/generate-goldens.sh path/to/x.puml  # selected cases
 bash tools/oracle/reference-plantuml.sh -f debug x.puml
 ```
 
-For each case, the following goldens are written next to it:
+Each case's goldens are written to `<case>.golden/` beside it. A case can produce several files per kind:
+one per block (`x.preproc`, `x_001.preproc`, …), one per page, or a name chosen by `@startuml name`.
 
-| File | Produced by | Compared by the parity suite |
+| Extension | Produced by | Compared by the parity suite |
 |---|---|---|
-| `x.preproc` | `-preproc` | exactly |
-| `x.debug`, `x_001.debug`, … | `-f debug` (font-independent dump of drawn shapes) | exactly |
-| `x.svg`, `x_001.svg`, … | `-f svg` | not yet (needs a structural comparator) |
+| `.preproc` | `-preproc` | exactly (line endings normalised) |
+| `.debug` | `-f debug` (font-independent dump of drawn shapes) | exactly (render timestamps masked) |
+| `.svg` | `-f svg` | not yet (needs a structural comparator) |

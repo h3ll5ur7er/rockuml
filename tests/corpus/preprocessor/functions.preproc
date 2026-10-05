@@ -1,7 +1,0 @@
-@startuml
-Alice -> Bob : ping
-Bob --> Alice : 42
-Bob -> Carol : hello
-Carol --> Bob : 42
-Carol -> Alice : unquoted
-@enduml

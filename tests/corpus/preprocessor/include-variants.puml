@@ -1,0 +1,17 @@
+@startuml
+!include fragments/with-diagram.iuml
+!include fragments/with-diagram.iuml!1
+!include fragments/with-header.iuml
+!include fragments/nested/inner.iuml
+!include_many fragments/nested/sibling.iuml
+!include_once fragments/nested/sibling.iuml
+!include_once fragments/nested/sibling.iuml
+!$name = "sibling"
+!include fragments/nested/$name.iuml
+!startsub LOCAL
+Local -> Sub : defined in this file
+!endsub
+!includesub LOCAL
+!include <aws/common>
+A -> B : after stdlib include
+@enduml

@@ -6,26 +6,38 @@ use std::path::{Path, PathBuf};
 pub enum GoldenKind {
     Preprocessed,
     Debug,
+    EncodedUrl,
 }
 
 impl GoldenKind {
-    pub const ALL: [GoldenKind; 2] = [GoldenKind::Preprocessed, GoldenKind::Debug];
+    pub const ALL: [GoldenKind; 3] = [
+        GoldenKind::Preprocessed,
+        GoldenKind::Debug,
+        GoldenKind::EncodedUrl,
+    ];
 
     pub fn extension(self) -> &'static str {
         match self {
             GoldenKind::Preprocessed => "preproc",
             GoldenKind::Debug => "debug",
+            GoldenKind::EncodedUrl => "url",
         }
+    }
+
+    pub fn writes_to_stdout(self) -> bool {
+        self == GoldenKind::EncodedUrl
     }
 
     pub fn cli_arguments(self) -> &'static [&'static str] {
         match self {
             GoldenKind::Preprocessed => &["-preproc"],
             GoldenKind::Debug => &["-f", "debug"],
+            GoldenKind::EncodedUrl => &["-encodeurl"],
         }
     }
 }
 
+#[derive(Clone)]
 pub struct Case {
     /// Path relative to the corpus root with `/` separators, stable across platforms.
     pub id: String,
@@ -33,43 +45,20 @@ pub struct Case {
 }
 
 impl Case {
-    fn stem(&self) -> &str {
-        self.source
-            .file_stem()
-            .and_then(|stem| stem.to_str())
-            .unwrap()
-    }
-
-    /// PlantUML names page N of a multi-page diagram `stem_00N.ext`; the first page is `stem.ext`.
+    /// Everything the golden model wrote for this case, keyed by file name.
     pub fn goldens(&self, kind: GoldenKind) -> BTreeMap<String, PathBuf> {
-        let directory = self.source.parent().unwrap();
-        fs::read_dir(directory)
-            .unwrap()
+        let golden_directory = self.source.with_extension("golden");
+        let Ok(entries) = fs::read_dir(golden_directory) else {
+            return BTreeMap::new();
+        };
+        entries
             .map(|entry| entry.unwrap().path())
-            .filter(|path| is_output_of(path, self.stem(), kind))
+            .filter(|path| {
+                path.extension()
+                    .is_some_and(|extension| extension == kind.extension())
+            })
             .map(|path| (file_name(&path), path))
             .collect()
-    }
-}
-
-pub fn is_output_of(path: &Path, stem: &str, kind: GoldenKind) -> bool {
-    if path.extension().and_then(|extension| extension.to_str()) != Some(kind.extension()) {
-        return false;
-    }
-    let Some(output_stem) = path
-        .file_stem()
-        .and_then(|output_stem| output_stem.to_str())
-    else {
-        return false;
-    };
-    match output_stem.strip_prefix(stem) {
-        Some("") => true,
-        Some(suffix) => {
-            suffix.len() == 4
-                && suffix.starts_with('_')
-                && suffix[1..].bytes().all(|byte| byte.is_ascii_digit())
-        }
-        None => false,
     }
 }
 
@@ -102,22 +91,5 @@ fn collect_cases(corpus_root: &Path, directory: &Path, cases: &mut Vec<Case>) {
                 .join("/");
             cases.push(Case { id, source: path });
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn recognises_first_and_subsequent_pages_only() {
-        let is_debug_output = |name: &str| is_output_of(Path::new(name), "flow", GoldenKind::Debug);
-
-        assert!(is_debug_output("flow.debug"));
-        assert!(is_debug_output("flow_001.debug"));
-        assert!(!is_debug_output("flow.svg"));
-        assert!(!is_debug_output("flowchart.debug"));
-        assert!(!is_debug_output("flow_01.debug"));
-        assert!(!is_debug_output("flow_abc.debug"));
     }
 }

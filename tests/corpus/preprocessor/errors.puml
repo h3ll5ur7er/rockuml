@@ -1,0 +1,73 @@
+@startuml
+A -> B : before assert
+!assert 1 == 2 : "custom " + "message"
+A -> B : never reached
+@enduml
+
+@startuml
+!assert 0
+@enduml
+
+@startuml
+A -> B : $undefined_function_call(1)
+!$x = %unknown_builtin(1)
+@enduml
+
+@startuml
+A -> B : %eval("1 / 0")
+@enduml
+
+@startuml
+!endfunction
+@enduml
+
+@startuml
+!include does/not/exist.iuml
+@enduml
+
+@startuml
+!theme does-not-exist
+@enduml
+
+@startuml
+!function $no_return()
+A -> B
+!endfunction
+@enduml
+
+@startuml
+!procedure $p()
+!return 1
+!endprocedure
+@enduml
+
+@startuml
+!final function $f()
+!return 1
+!endfunction
+!function $f()
+!return 2
+!endfunction
+@enduml
+
+@startuml
+!$bad = {"unterminated":
+A -> B
+@enduml
+
+@startuml
+!if 1
+A -> B : unclosed if is fine
+@enduml
+
+@startuml
+!endif
+@enduml
+
+@startuml
+A -> B : %intval("abc")
+@enduml
+
+@startuml
+A -> B : %darken("nosuchcolor", 10)
+@enduml
