@@ -170,6 +170,18 @@ impl UGraphicBackend for UGraphicSvg {
                     points.iter().map(|(x, y)| (at.dx + x, at.dy + y)).collect();
                 self.svg().polygon(&points);
             }
+            UShape::Path(segments) => {
+                // A path filled with the colour of its outline gets no outline in PlantUML.
+                if param.color == param.backcolor {
+                    let svg = self.svg();
+                    svg.set_fill_color(Some(&param.color.to_svg()));
+                    svg.set_stroke_color(Some(""));
+                    svg.set_stroke_width(0.0, None);
+                } else {
+                    self.apply_colors_and_stroke(param);
+                }
+                self.svg().path(at.dx, at.dy, segments);
+            }
             UShape::Image(image) => self.draw_image(image, at),
             UShape::Empty(_) | UShape::HorizontalLine => {}
         }

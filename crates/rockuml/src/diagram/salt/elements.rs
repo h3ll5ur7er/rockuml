@@ -10,7 +10,7 @@ use crate::creole::{CreoleParser, Display, SheetBlock1};
 use crate::java::{self, JavaHashSet};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
-use crate::klimt::shape::{UEllipse, URectangle, UShape};
+use crate::klimt::shape::{UEllipse, URectangle, USegment, UShape};
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
@@ -32,11 +32,11 @@ pub fn widget_font() -> UFont {
     UFont::new("SansSerif", crate::klimt::font::UFontFace::NORMAL, 12)
 }
 
-fn color(name: &str) -> HColor {
+pub fn color(name: &str) -> HColor {
     HColor::parse(name).ok().flatten().unwrap_or(HColor::WHITE)
 }
 
-fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
+pub fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
     let sheet = CreoleParser::new(font.clone(), HorizontalAlignment::Left).create_sheet(lines);
     SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
 }
@@ -364,6 +364,54 @@ impl Element for Droplist {
     }
 }
 
+/// A separator across its cell: `--` plain, `==` double, `..` dotted, `~~` thick.
+pub struct Line {
+    separator: char,
+}
+
+impl Line {
+    pub fn new(separator: char) -> Self {
+        Self { separator }
+    }
+}
+
+impl Element for Line {
+    fn preferred_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        XDimension2D::new(10.0, 6.0)
+    }
+
+    fn draw_u(&self, ug: &UGraphic, z_index: i32, dimension: XDimension2D) {
+        if z_index != 0 {
+            return;
+        }
+        let ug = ug.with_color(color("#A"));
+        let middle = dimension.height / 2.0;
+        let line = UShape::Line {
+            dx: dimension.width,
+            dy: 0.0,
+        };
+        let draw_at =
+            |y: f64, stroke: UStroke| ug.with_stroke(stroke).translated(0.0, y).draw(&line);
+        match self.separator {
+            '=' => {
+                let top = middle - 1.0;
+                draw_at(top, UStroke::SIMPLE);
+                draw_at(top + 2.0, UStroke::SIMPLE);
+            }
+            '.' => draw_at(
+                middle,
+                UStroke {
+                    dash_visible: 1.0,
+                    dash_space: 2.0,
+                    thickness: 1.0,
+                },
+            ),
+            '-' => draw_at(middle, UStroke::SIMPLE),
+            _ => draw_at(middle, UStroke::with_thickness(1.5)),
+        }
+    }
+}
+
 /// Which lines of a grid are drawn: `{` none, `{+` around, `{^` around with a title, `{-` between rows,
 /// `{!` between columns, `{#` all.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -574,6 +622,120 @@ impl Element for Pyramid {
         }
         if z_index == 0 {
             grid.draw_u(&ug, self.title.as_ref());
+        }
+    }
+}
+
+/// Which scroll bars a scroll pane shows: `{S` both, `{SI` vertical, `{S-` horizontal.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ScrollStrategy {
+    Both,
+    VerticalOnly,
+    HorizontalOnly,
+}
+
+impl ScrollStrategy {
+    pub fn from_desc(header: &str) -> Self {
+        if header.ends_with('-') {
+            Self::HorizontalOnly
+        } else if header.ends_with('I') {
+            Self::VerticalOnly
+        } else {
+            Self::Both
+        }
+    }
+}
+
+/// A framed grid with scroll bars along it.
+pub struct PyramidScrolled {
+    pyramid: Pyramid,
+    scroll_strategy: ScrollStrategy,
+}
+
+impl PyramidScrolled {
+    const BAR_THICKNESS: f64 = 15.0;
+    const ARROW_BOX_LENGTH: f64 = 12.0;
+
+    pub fn new(positionner: Positionner, scroll_strategy: ScrollStrategy) -> Self {
+        Self {
+            pyramid: Pyramid::new(positionner, TableStrategy::Outside, None),
+            scroll_strategy,
+        }
+    }
+
+    fn draw_vertical(ug: &UGraphic, width: f64, height: f64) {
+        ug.draw(&UShape::Rectangle(URectangle::new(width, height)));
+        let hline = UShape::Line { dx: width, dy: 0.0 };
+        ug.translated(0.0, Self::ARROW_BOX_LENGTH).draw(&hline);
+        ug.translated(0.0, height - Self::ARROW_BOX_LENGTH)
+            .draw(&hline);
+        let arrows = ug.with_backcolor(HColor::BLACK);
+        arrows
+            .translated(4.0, 4.0)
+            .draw(&triangle([(3.0, 0.0), (6.0, 5.0), (0.0, 5.0)]));
+        arrows
+            .translated(4.0, height - Self::ARROW_BOX_LENGTH + 4.0)
+            .draw(&triangle([(3.0, 5.0), (6.0, 0.0), (0.0, 0.0)]));
+    }
+
+    fn draw_horizontal(ug: &UGraphic, width: f64, height: f64) {
+        ug.draw(&UShape::Rectangle(URectangle::new(width, height)));
+        let vline = UShape::Line {
+            dx: 0.0,
+            dy: height,
+        };
+        ug.translated(Self::ARROW_BOX_LENGTH, 0.0).draw(&vline);
+        ug.translated(width - Self::ARROW_BOX_LENGTH, 0.0)
+            .draw(&vline);
+        let arrows = ug.with_backcolor(HColor::BLACK);
+        arrows
+            .translated(4.0, 4.0)
+            .draw(&triangle([(0.0, 3.0), (5.0, 6.0), (5.0, 0.0)]));
+        arrows
+            .translated(width - Self::ARROW_BOX_LENGTH + 4.0, 4.0)
+            .draw(&triangle([(5.0, 3.0), (0.0, 6.0), (0.0, 0.0)]));
+    }
+}
+
+/// A closed path through three corners, drawn as PlantUML draws it.
+fn triangle(corners: [(f64, f64); 3]) -> UShape {
+    let [(x, y), second, third] = corners;
+    UShape::Path(vec![
+        USegment::MoveTo(x, y),
+        USegment::LineTo(second.0, second.1),
+        USegment::LineTo(third.0, third.1),
+        USegment::LineTo(x, y),
+    ])
+}
+
+impl Element for PyramidScrolled {
+    fn preferred_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        let pyramid = self.pyramid.preferred_dimension(string_bounder);
+        match self.scroll_strategy {
+            ScrollStrategy::HorizontalOnly => pyramid.delta(0.0, 30.0),
+            ScrollStrategy::VerticalOnly => pyramid.delta(30.0, 0.0),
+            ScrollStrategy::Both => pyramid.delta(30.0, 30.0),
+        }
+    }
+
+    /// The bars are drawn in both passes.
+    fn draw_u(&self, ug: &UGraphic, z_index: i32, dimension: XDimension2D) {
+        self.pyramid.draw_u(ug, z_index, dimension);
+        let ug = ug.with_color(HColor::BLACK);
+        let pyramid = self.pyramid.preferred_dimension(ug.string_bounder());
+        if self.scroll_strategy != ScrollStrategy::HorizontalOnly {
+            Self::draw_vertical(
+                &ug.translated(pyramid.width + 4.0, 0.0),
+                Self::BAR_THICKNESS,
+                pyramid.height,
+            );
+        }
+        if self.scroll_strategy != ScrollStrategy::VerticalOnly {
+            Self::draw_horizontal(
+                &ug.translated(0.0, pyramid.height + 4.0),
+                pyramid.width,
+                Self::BAR_THICKNESS,
+            );
         }
     }
 }

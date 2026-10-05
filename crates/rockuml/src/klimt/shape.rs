@@ -13,6 +13,8 @@ pub enum UShape {
     },
     /// A closed shape through these points, relative to the current position.
     Polygon(Vec<(f64, f64)>),
+    /// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
+    Path(Vec<USegment>),
     Image(UImage),
     /// Takes up space without drawing anything.
     Empty(XDimension2D),
@@ -29,11 +31,18 @@ impl UShape {
             Self::Rectangle(_) => "URectangle",
             Self::Line { .. } => "ULine",
             Self::Polygon(_) => "UPolygon",
+            Self::Path(_) => "UPath",
             Self::Empty(_) => "UEmpty",
             Self::Image(_) => "UImage",
             Self::HorizontalLine => "UHorizontalLine",
         }
     }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum USegment {
+    MoveTo(f64, f64),
+    LineTo(f64, f64),
 }
 
 #[derive(Clone, Debug, PartialEq)]
