@@ -17,7 +17,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
 
 /// Salt draws in two passes (`z_index` 0 then 1), so that open drop-lists cover later widgets.
-pub trait Element {
+pub(super) trait Element {
     fn preferred_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D;
 
     fn draw_u(&self, ug: &UGraphic, z_index: i32, dimension: XDimension2D);
@@ -29,26 +29,26 @@ pub trait Element {
 }
 
 /// Every widget's text is `SansSerif` 12.
-pub fn widget_font() -> UFont {
+pub(super) fn widget_font() -> UFont {
     UFont::new("SansSerif", crate::klimt::font::UFontFace::NORMAL, 12)
 }
 
-pub fn color(name: &str) -> HColor {
+pub(super) fn color(name: &str) -> HColor {
     HColor::parse(name).ok().flatten().unwrap_or(HColor::WHITE)
 }
 
-pub fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
+pub(super) fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
     let sheet = CreoleParser::new(font.clone(), HorizontalAlignment::Left).create_sheet(lines);
     SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
 }
 
-pub struct Text {
+pub(super) struct Text {
     block: SheetBlock1,
     text: String,
 }
 
 impl Text {
-    pub fn new(text: &str, font: UFont) -> Self {
+    pub(super) fn new(text: &str, font: UFont) -> Self {
         Self {
             block: text_block(
                 &[text.to_owned()],
@@ -148,7 +148,7 @@ fn purge_all_tags(text: &str) -> String {
     TAG.replace_all(text, "").into_owned()
 }
 
-pub struct Button {
+pub(super) struct Button {
     text: WidgetText,
 }
 
@@ -156,7 +156,7 @@ impl Button {
     const STROKE: f64 = 2.5;
     const MARGIN: f64 = 2.0;
 
-    pub fn new(text: &str, font: UFont) -> Self {
+    pub(super) fn new(text: &str, font: UFont) -> Self {
         Self {
             text: WidgetText::new(text, font),
         }
@@ -199,12 +199,12 @@ impl Element for Button {
     }
 }
 
-pub struct TextField {
+pub(super) struct TextField {
     text: WidgetText,
 }
 
 impl TextField {
-    pub fn new(text: &str, font: UFont) -> Self {
+    pub(super) fn new(text: &str, font: UFont) -> Self {
         Self {
             text: WidgetText::new(text, font),
         }
@@ -236,7 +236,7 @@ impl Element for TextField {
     }
 }
 
-pub struct RadioCheckbox {
+pub(super) struct RadioCheckbox {
     block: SheetBlock1,
     radio: bool,
     checked: bool,
@@ -247,19 +247,19 @@ impl RadioCheckbox {
     const BOX: f64 = 10.0;
     const DOT: f64 = 4.0;
 
-    pub fn checkbox_on(text: &str, font: UFont) -> Self {
+    pub(super) fn checkbox_on(text: &str, font: UFont) -> Self {
         Self::new(text, font, false, true)
     }
 
-    pub fn checkbox_off(text: &str, font: UFont) -> Self {
+    pub(super) fn checkbox_off(text: &str, font: UFont) -> Self {
         Self::new(text, font, false, false)
     }
 
-    pub fn radio_on(text: &str, font: UFont) -> Self {
+    pub(super) fn radio_on(text: &str, font: UFont) -> Self {
         Self::new(text, font, true, true)
     }
 
-    pub fn radio_off(text: &str, font: UFont) -> Self {
+    pub(super) fn radio_off(text: &str, font: UFont) -> Self {
         Self::new(text, font, true, false)
     }
 
@@ -310,7 +310,7 @@ impl Element for RadioCheckbox {
     }
 }
 
-pub struct Droplist {
+pub(super) struct Droplist {
     text: WidgetText,
     open: Option<SheetBlock1>,
 }
@@ -319,7 +319,7 @@ impl Droplist {
     const BOX: f64 = 12.0;
 
     /// `shown^option^option`: the shown value, then the options of an open list.
-    pub fn new(text: &str, font: UFont) -> Self {
+    pub(super) fn new(text: &str, font: UFont) -> Self {
         let shown = text.find('^').map_or(text, |index| &text[..index]);
         let options: Vec<String> = text
             .split('^')
@@ -382,12 +382,12 @@ impl Element for Droplist {
 }
 
 /// A separator across its cell: `--` plain, `==` double, `..` dotted, `~~` thick.
-pub struct Line {
+pub(super) struct Line {
     separator: char,
 }
 
 impl Line {
-    pub fn new(separator: char) -> Self {
+    pub(super) fn new(separator: char) -> Self {
         Self { separator }
     }
 }
@@ -432,7 +432,7 @@ impl Element for Line {
 /// Which lines of a grid are drawn: `{` none, `{+` around, `{^` around with a title, `{-` between rows,
 /// `{!` between columns, `{#` all.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum TableStrategy {
+pub(super) enum TableStrategy {
     None,
     Outside,
     OutsideWithTitle,
@@ -442,7 +442,7 @@ pub enum TableStrategy {
 }
 
 impl TableStrategy {
-    pub fn from_char(c: char) -> Option<Self> {
+    pub(super) fn from_char(c: char) -> Option<Self> {
         match c {
             ' ' => Some(Self::None),
             '+' => Some(Self::Outside),
@@ -476,7 +476,7 @@ impl Cell {
 
 /// Places elements in rows and columns as their terminators say (PlantUML's `Positionner2`).
 #[derive(Default)]
-pub struct Positionner {
+pub(super) struct Positionner {
     row: usize,
     col: usize,
     max_row: usize,
@@ -485,7 +485,7 @@ pub struct Positionner {
 }
 
 impl Positionner {
-    pub fn add(&mut self, element: Box<dyn Element>, terminator: Terminator) {
+    pub(super) fn add(&mut self, element: Box<dyn Element>, terminator: Terminator) {
         let cell = Cell {
             min_row: self.row,
             max_row: self.row,
@@ -498,7 +498,7 @@ impl Positionner {
     }
 
     /// `*`: the previous element spans one more column.
-    pub fn merge_left(&mut self, terminator: Terminator) {
+    pub(super) fn merge_left(&mut self, terminator: Terminator) {
         self.update_max();
         self.advance(terminator);
         if let Some((_, last)) = self.cells.last_mut() {
@@ -523,7 +523,7 @@ impl Positionner {
 }
 
 /// A grid of elements (`{ ... }`), sized so that every element fits its cells.
-pub struct Pyramid {
+pub(super) struct Pyramid {
     cells: Vec<(Box<dyn Element>, Cell)>,
     rows: usize,
     cols: usize,
@@ -545,7 +545,11 @@ impl Pyramid {
     /// Enough rows and columns for every cell. PlantUML counts the cells' last row and column instead
     /// of one past them, and so crashes when a row starting with `*` widens the cell above it beyond
     /// the widest row.
-    pub fn new(positionner: Positionner, strategy: TableStrategy, title: Option<&str>) -> Self {
+    pub(super) fn new(
+        positionner: Positionner,
+        strategy: TableStrategy,
+        title: Option<&str>,
+    ) -> Self {
         let rows = positionner
             .cells
             .iter()
@@ -669,14 +673,14 @@ impl Element for Pyramid {
 
 /// Which scroll bars a scroll pane shows: `{S` both, `{SI` vertical, `{S-` horizontal.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ScrollStrategy {
+pub(super) enum ScrollStrategy {
     Both,
     VerticalOnly,
     HorizontalOnly,
 }
 
 impl ScrollStrategy {
-    pub fn from_desc(header: &str) -> Self {
+    pub(super) fn from_desc(header: &str) -> Self {
         if header.ends_with('-') {
             Self::HorizontalOnly
         } else if header.ends_with('I') {
@@ -688,7 +692,7 @@ impl ScrollStrategy {
 }
 
 /// A framed grid with scroll bars along it.
-pub struct PyramidScrolled {
+pub(super) struct PyramidScrolled {
     pyramid: Pyramid,
     scroll_strategy: ScrollStrategy,
 }
@@ -697,7 +701,7 @@ impl PyramidScrolled {
     const BAR_THICKNESS: f64 = 15.0;
     const ARROW_BOX_LENGTH: f64 = 12.0;
 
-    pub fn new(positionner: Positionner, scroll_strategy: ScrollStrategy) -> Self {
+    pub(super) fn new(positionner: Positionner, scroll_strategy: ScrollStrategy) -> Self {
         Self {
             pyramid: Pyramid::new(positionner, TableStrategy::Outside, None),
             scroll_strategy,

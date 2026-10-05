@@ -8,7 +8,7 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
 /// Lays a sheet out: atoms side by side on their stripe's baseline, stripes stacked top to bottom.
-pub struct SheetBlock1 {
+pub(crate) struct SheetBlock1 {
     sheet: Sheet,
     padding: ClockwiseTopRightBottomLeft,
 }
@@ -27,7 +27,7 @@ struct Layout {
 }
 
 impl SheetBlock1 {
-    pub fn new(sheet: Sheet, padding: ClockwiseTopRightBottomLeft) -> Self {
+    pub(crate) fn new(sheet: Sheet, padding: ClockwiseTopRightBottomLeft) -> Self {
         Self { sheet, padding }
     }
 
@@ -137,12 +137,12 @@ impl TextBlock for SheetBlock1 {
 }
 
 /// A laid-out sheet whose separators span it (PlantUML's `SheetBlock2`), and inside a border, the border's padding.
-pub struct SheetBlock2 {
+pub(crate) struct SheetBlock2 {
     block: Rc<SheetBlock1>,
 }
 
 impl SheetBlock2 {
-    pub fn new(block: SheetBlock1) -> Self {
+    pub(crate) fn new(block: SheetBlock1) -> Self {
         Self {
             block: Rc::new(block),
         }

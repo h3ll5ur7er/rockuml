@@ -2,21 +2,21 @@
 
 use crate::text::StringLocated;
 
-pub const BLOCK_E1_NEWLINE: char = '\u{E100}';
-pub const BLOCK_E1_NEWLINE_LEFT_ALIGN: char = '\u{E101}';
-pub const BLOCK_E1_NEWLINE_RIGHT_ALIGN: char = '\u{E102}';
-pub const BLOCK_E1_BREAKLINE: char = '\u{E103}';
-pub const BLOCK_E1_REAL_BACKSLASH: char = '\u{E110}';
-pub const BLOCK_E1_REAL_TABULATION: char = '\u{E111}';
+pub(crate) const BLOCK_E1_NEWLINE: char = '\u{E100}';
+pub(crate) const BLOCK_E1_NEWLINE_LEFT_ALIGN: char = '\u{E101}';
+pub(crate) const BLOCK_E1_NEWLINE_RIGHT_ALIGN: char = '\u{E102}';
+pub(crate) const BLOCK_E1_BREAKLINE: char = '\u{E103}';
+pub(crate) const BLOCK_E1_REAL_BACKSLASH: char = '\u{E110}';
+pub(crate) const BLOCK_E1_REAL_TABULATION: char = '\u{E111}';
 
 /// Drawn text shows the markers left in it as visible return symbols.
-pub fn make_newlines_visible(text: &str) -> String {
+pub(crate) fn make_newlines_visible(text: &str) -> String {
     text.replace(BLOCK_E1_NEWLINE, "\u{21B5}")
         .replace(BLOCK_E1_BREAKLINE, "\u{23CE}")
 }
 
 /// `%breakline()` ends the current line: split there, except inside `{{ ... }}` embedded diagrams.
-pub fn expand_breaklines(lines: Vec<StringLocated>) -> Vec<StringLocated> {
+pub(crate) fn expand_breaklines(lines: Vec<StringLocated>) -> Vec<StringLocated> {
     let mut result = Vec::with_capacity(lines.len());
     for line in lines {
         if !line.text().contains(BLOCK_E1_BREAKLINE) {

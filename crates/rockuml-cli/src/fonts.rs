@@ -10,7 +10,7 @@ const FONT_EXTENSIONS: [&str; 3] = ["ttf", "otf", "ttc"];
 
 /// The embedded fonts plus those in `ROCKUML_FONTS` and in `paths`; a directory adds every font file in it.
 /// `ROCKUML_FONTS` entries that do not exist are skipped, as the variable is set once for many runs.
-pub fn load(paths: &[PathBuf]) -> Result<FontRegistry, String> {
+pub(crate) fn load(paths: &[PathBuf]) -> Result<FontRegistry, String> {
     let from_environment: Vec<PathBuf> = std::env::var_os(FONT_PATH_VARIABLE)
         .map(|list| {
             std::env::split_paths(&list)

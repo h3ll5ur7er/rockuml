@@ -40,7 +40,7 @@ impl UTranslate {
 
 /// The bounding box of drawn points.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct MinMax {
+pub(crate) struct MinMax {
     min_x: f64,
     min_y: f64,
     max_x: f64,
@@ -49,7 +49,7 @@ pub struct MinMax {
 
 impl MinMax {
     /// A box anchored at the origin, so it always includes (0, 0).
-    pub const fn from_origin() -> Self {
+    pub(crate) const fn from_origin() -> Self {
         Self {
             min_x: 0.0,
             min_y: 0.0,
@@ -59,7 +59,7 @@ impl MinMax {
     }
 
     #[must_use]
-    pub fn add_point(self, x: f64, y: f64) -> Self {
+    pub(crate) fn add_point(self, x: f64, y: f64) -> Self {
         Self {
             min_x: self.min_x.min(x),
             min_y: self.min_y.min(y),
@@ -68,14 +68,14 @@ impl MinMax {
         }
     }
 
-    pub fn dimension(self) -> XDimension2D {
+    pub(crate) fn dimension(self) -> XDimension2D {
         XDimension2D::new(self.max_x - self.min_x, self.max_y - self.min_y)
     }
 }
 
 /// Space around something, in PlantUML's clockwise order.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct ClockwiseTopRightBottomLeft {
+pub(crate) struct ClockwiseTopRightBottomLeft {
     pub top: f64,
     pub right: f64,
     pub bottom: f64,
@@ -83,11 +83,11 @@ pub struct ClockwiseTopRightBottomLeft {
 }
 
 impl ClockwiseTopRightBottomLeft {
-    pub const fn none() -> Self {
+    pub(crate) const fn none() -> Self {
         Self::same(0.0)
     }
 
-    pub const fn same(value: f64) -> Self {
+    pub(crate) const fn same(value: f64) -> Self {
         Self {
             top: value,
             right: value,

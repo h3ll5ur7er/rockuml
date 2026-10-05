@@ -8,7 +8,7 @@ use unicode_general_category::{GeneralCategory, get_general_category};
 pub struct RuntimeException;
 
 /// `Character.isWhitespace`: Unicode separators except the non-breaking ones, plus ASCII control spaces.
-pub fn is_whitespace(c: char) -> bool {
+pub(crate) fn is_whitespace(c: char) -> bool {
     match c {
         '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r' | '\u{1C}'..='\u{1F}' => true,
         '\u{A0}' | '\u{2007}' | '\u{202F}' => false,
@@ -17,7 +17,7 @@ pub fn is_whitespace(c: char) -> bool {
 }
 
 /// `Character.isSpaceChar`: any Unicode space, line or paragraph separator.
-pub fn is_space_char(c: char) -> bool {
+pub(crate) fn is_space_char(c: char) -> bool {
     matches!(
         get_general_category(c),
         GeneralCategory::SpaceSeparator
@@ -27,7 +27,7 @@ pub fn is_space_char(c: char) -> bool {
 }
 
 /// `Character.isLetter`.
-pub fn is_letter(c: char) -> bool {
+pub(crate) fn is_letter(c: char) -> bool {
     matches!(
         get_general_category(c),
         GeneralCategory::UppercaseLetter
@@ -39,22 +39,22 @@ pub fn is_letter(c: char) -> bool {
 }
 
 /// `Character.isLetterOrDigit`.
-pub fn is_letter_or_digit(c: char) -> bool {
+pub(crate) fn is_letter_or_digit(c: char) -> bool {
     is_letter(c) || get_general_category(c) == GeneralCategory::DecimalNumber
 }
 
 /// The regex class `\s`, which in Java is ASCII-only.
-pub fn is_regex_whitespace(c: char) -> bool {
+pub(crate) fn is_regex_whitespace(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')
 }
 
 /// `String.trim`: strips every character up to and including the space character.
-pub fn trim(s: &str) -> &str {
+pub(crate) fn trim(s: &str) -> &str {
     s.trim_matches(|c: char| c <= ' ')
 }
 
 /// `String.split(regex)` drops trailing empty strings; this is the literal-separator version.
-pub fn split(s: &str, separator: &str) -> Vec<String> {
+pub(crate) fn split(s: &str, separator: &str) -> Vec<String> {
     if !s.contains(separator) {
         return vec![s.to_owned()];
     }
@@ -67,7 +67,7 @@ pub fn split(s: &str, separator: &str) -> Vec<String> {
 
 /// `String.split(regex)`: an empty match at the very start yields no leading piece, and trailing empty
 /// pieces are dropped.
-pub fn regex_split(separator: &regex::Regex, s: &str) -> Vec<String> {
+pub(crate) fn regex_split(separator: &regex::Regex, s: &str) -> Vec<String> {
     let mut parts = Vec::new();
     let mut index = 0;
     let mut found = false;
@@ -90,7 +90,7 @@ pub fn regex_split(separator: &regex::Regex, s: &str) -> Vec<String> {
 }
 
 /// `String.hashCode`, computed over UTF-16 code units.
-pub fn string_hash_code(s: &str) -> i32 {
+pub(crate) fn string_hash_code(s: &str) -> i32 {
     s.encode_utf16().fold(0i32, |hash, unit| {
         hash.wrapping_mul(31).wrapping_add(i32::from(unit))
     })
@@ -99,7 +99,7 @@ pub fn string_hash_code(s: &str) -> i32 {
 /// The order in which `java.util.HashMap` iterates `hashes`, given in insertion order with no removals.
 /// Entries go by bucket, then by insertion within a bucket; the table starts at 16 buckets and doubles
 /// whenever it is more than three-quarters full.
-pub fn hash_map_iteration_order(hashes: &[i32]) -> Vec<usize> {
+pub(crate) fn hash_map_iteration_order(hashes: &[i32]) -> Vec<usize> {
     let mut capacity = 16usize;
     while hashes.len() * 4 > capacity * 3 {
         capacity *= 2;
@@ -121,7 +121,7 @@ fn bucket_order(hashes: &[i32], capacity: usize) -> Vec<usize> {
 /// A `java.util.HashMap<String, V>` reduced to what decides its iteration order: the table capacity, the
 /// key hashes and the insertion order within a bucket. Removals are not supported.
 #[derive(Clone, Debug)]
-pub struct JavaHashMap<V> {
+pub(crate) struct JavaHashMap<V> {
     entries: Vec<(String, V)>,
     table: TableSize,
 }
@@ -187,13 +187,13 @@ impl TableSize {
 
 /// A `java.util.HashSet` reduced to what decides its iteration order, for values with a Java hash code.
 #[derive(Clone, Debug, Default)]
-pub struct JavaHashSet<T> {
+pub(crate) struct JavaHashSet<T> {
     entries: Vec<(T, i32)>,
     table: TableSize,
 }
 
 impl<T: PartialEq> JavaHashSet<T> {
-    pub fn insert(&mut self, value: T, hash: i32) {
+    pub(crate) fn insert(&mut self, value: T, hash: i32) {
         if self.entries.iter().any(|(existing, _)| *existing == value) {
             return;
         }
@@ -202,7 +202,7 @@ impl<T: PartialEq> JavaHashSet<T> {
         self.table.after_insert(self.entries.len());
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &T> {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = &T> {
         let hashes: Vec<i32> = self.entries.iter().map(|&(_, hash)| hash).collect();
         self.table
             .iteration_order(&hashes)
@@ -212,18 +212,18 @@ impl<T: PartialEq> JavaHashSet<T> {
 }
 
 impl<V> JavaHashMap<V> {
-    pub fn get(&self, key: &str) -> Option<&V> {
+    pub(crate) fn get(&self, key: &str) -> Option<&V> {
         self.entries
             .iter()
             .find(|(existing, _)| existing == key)
             .map(|(_, value)| value)
     }
 
-    pub fn len(&self) -> usize {
+    pub(crate) fn len(&self) -> usize {
         self.entries.len()
     }
 
-    pub fn put(&mut self, key: String, value: V) {
+    pub(crate) fn put(&mut self, key: String, value: V) {
         if let Some(existing) = self
             .entries
             .iter_mut()
@@ -237,7 +237,7 @@ impl<V> JavaHashMap<V> {
         self.table.after_insert(self.entries.len());
     }
 
-    pub fn put_all(&mut self, other: Self) {
+    pub(crate) fn put_all(&mut self, other: Self) {
         let incoming = other.len();
         if incoming == 0 {
             return;
@@ -248,13 +248,13 @@ impl<V> JavaHashMap<V> {
         }
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = (&str, &V)> {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = (&str, &V)> {
         self.iteration_order()
             .into_iter()
             .map(|index| (self.entries[index].0.as_str(), &self.entries[index].1))
     }
 
-    pub fn into_iter(mut self) -> impl Iterator<Item = (String, V)> {
+    pub(crate) fn into_iter(mut self) -> impl Iterator<Item = (String, V)> {
         let order = self.iteration_order();
         let mut slots: Vec<Option<(String, V)>> = self.entries.drain(..).map(Some).collect();
         order
@@ -274,7 +274,7 @@ impl<V> JavaHashMap<V> {
 
 /// `Double.toString`: the shortest digits that read back the same, in plain notation from 10^-3 up to 10^7
 /// and in Java's own scientific notation (`1.0E-5`) outside it.
-pub fn double_to_string(value: f64) -> String {
+pub(crate) fn double_to_string(value: f64) -> String {
     if value.is_nan() {
         return "NaN".to_owned();
     }
@@ -298,7 +298,7 @@ pub fn double_to_string(value: f64) -> String {
 
 /// `String.format(Locale.US, "%.Nf", value)`. Java rounds the shortest decimal representation half-up, so
 /// 0.15 becomes "0.2" where rounding the exact binary value would give "0.1".
-pub fn format_fixed(value: f64, decimals: usize) -> String {
+pub(crate) fn format_fixed(value: f64, decimals: usize) -> String {
     if value.is_nan() {
         return "NaN".to_owned();
     }
@@ -360,7 +360,7 @@ fn round_up(digits: &mut Vec<u8>) {
 }
 
 /// `StringUtils.seed`: a 64-bit hash of the UTF-16 units, used to seed per-text randomness.
-pub fn string_seed(text: &str) -> i64 {
+pub(crate) fn string_seed(text: &str) -> i64 {
     text.encode_utf16()
         .fold(1_125_899_906_842_597_i64, |hash, unit| {
             hash.wrapping_mul(31).wrapping_add(i64::from(unit))
@@ -368,7 +368,7 @@ pub fn string_seed(text: &str) -> i64 {
 }
 
 /// `java.util.Random`'s 48-bit linear congruential generator, for output that PlantUML seeds.
-pub struct Random {
+pub(crate) struct Random {
     seed: u64,
 }
 
@@ -376,7 +376,7 @@ impl Random {
     const MULTIPLIER: u64 = 0x5_DEEC_E66D;
     const MASK: u64 = (1 << 48) - 1;
 
-    pub fn new(seed: i64) -> Self {
+    pub(crate) fn new(seed: i64) -> Self {
         Self {
             seed: (seed as u64 ^ Self::MULTIPLIER) & Self::MASK,
         }
@@ -387,14 +387,14 @@ impl Random {
         (self.seed >> (48 - bits)) as i32
     }
 
-    pub fn next_double(&mut self) -> f64 {
+    pub(crate) fn next_double(&mut self) -> f64 {
         let high = i64::from(self.next(26)) << 27;
         let low = i64::from(self.next(27));
         (high + low) as f64 * (1.0 / (1u64 << 53) as f64)
     }
 
     /// `None` where Java throws because `bound` is not positive.
-    pub fn next_int(&mut self, bound: i32) -> Option<i32> {
+    pub(crate) fn next_int(&mut self, bound: i32) -> Option<i32> {
         if bound <= 0 {
             return None;
         }

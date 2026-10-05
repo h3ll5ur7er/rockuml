@@ -12,7 +12,7 @@ const REFERENCE_SIZE: f64 = 16.0;
 const WIDTH_BEYOND_BMP: f64 = 16.0;
 const WIDTH_BEYOND_TABLE: f64 = 13.0;
 
-pub struct StringBounderFromWidthTable;
+pub(crate) struct StringBounderFromWidthTable;
 
 impl StringBounder for StringBounderFromWidthTable {
     fn calculate_dimension(&self, font: &UFont, text: &str) -> XDimension2D {

@@ -7,20 +7,20 @@ use crate::pattern::plantuml_regex;
 
 /// How an item ends: the next item goes in the next column, or starts the next row.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Terminator {
+pub(super) enum Terminator {
     NewColumn,
     NewLine,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Terminated<T> {
+pub(super) struct Terminated<T> {
     pub item: T,
     pub terminator: Terminator,
 }
 
 /// The salt source cut into cells: `|` separates columns, line ends rows, `{` and `}` open and close
 /// groups (PlantUML's `DataSourceImpl`).
-pub struct DataSource {
+pub(super) struct DataSource {
     items: Vec<Terminated<String>>,
     position: usize,
 }
@@ -30,7 +30,7 @@ const ESCAPED_OPEN: char = '\u{E001}';
 const ESCAPED_CLOSE: char = '\u{E002}';
 
 impl DataSource {
-    pub fn new(lines: &[String]) -> Self {
+    pub(super) fn new(lines: &[String]) -> Self {
         static BLOCK_START: LazyLock<Regex> =
             LazyLock::new(|| plantuml_regex(r"\{(?:[-+^#!*/]|S-|SI|S)?"));
         let mut items = Vec::new();
@@ -86,11 +86,11 @@ impl DataSource {
     }
 
     /// The item `ahead` places from the current one. Like PlantUML, fails past the end.
-    pub fn peek(&self, ahead: usize) -> Option<&Terminated<String>> {
+    pub(super) fn peek(&self, ahead: usize) -> Option<&Terminated<String>> {
         self.items.get(self.position + ahead)
     }
 
-    pub fn next(&mut self) -> Option<Terminated<String>> {
+    pub(super) fn next(&mut self) -> Option<Terminated<String>> {
         let item = self.items.get(self.position).cloned();
         self.position += 1;
         item

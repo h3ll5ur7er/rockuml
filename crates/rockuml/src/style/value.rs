@@ -45,10 +45,10 @@ impl DarkString {
 
 /// A value written in a style sheet (PlantUML's `ValueImpl`).
 #[derive(Clone, Debug, PartialEq)]
-pub struct Value(DarkString);
+pub(crate) struct Value(DarkString);
 
 impl Value {
-    pub fn regular(text: &str, priority: i32) -> Self {
+    pub(crate) fn regular(text: &str, priority: i32) -> Self {
         Self(DarkString {
             light: Some(text.to_owned()),
             dark: None,
@@ -56,7 +56,7 @@ impl Value {
         })
     }
 
-    pub fn dark(text: &str, priority: i32) -> Self {
+    pub(crate) fn dark(text: &str, priority: i32) -> Self {
         Self(DarkString {
             light: None,
             dark: Some(text.to_owned()),
@@ -66,12 +66,12 @@ impl Value {
 
     /// Only the tests read it: they compare priorities with those PlantUML prints.
     #[cfg(test)]
-    pub fn priority(&self) -> i32 {
+    pub(crate) fn priority(&self) -> i32 {
         self.0.priority
     }
 
     #[must_use]
-    pub fn with_added_priority(&self, delta: i32) -> Self {
+    pub(crate) fn with_added_priority(&self, delta: i32) -> Self {
         Self(DarkString {
             priority: self.0.priority + delta,
             ..self.0.clone()
@@ -80,7 +80,7 @@ impl Value {
 
     /// This value declared over `previous`.
     #[must_use]
-    pub fn merge_with(&self, previous: Option<&Value>) -> Value {
+    pub(crate) fn merge_with(&self, previous: Option<&Value>) -> Value {
         match previous {
             None => self.clone(),
             Some(previous) => Self(self.0.merge_with(&previous.0)),
@@ -93,7 +93,7 @@ impl Value {
 }
 
 /// Reading a property, present or not. A missing property reads as a neutral default.
-pub trait ValueReading {
+pub(crate) trait ValueReading {
     fn as_string(&self) -> String;
     fn as_int(&self) -> i32;
     fn as_int_or_minus_one(&self) -> i32;

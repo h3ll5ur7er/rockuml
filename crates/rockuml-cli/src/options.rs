@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use rockuml::diagram::ImageFormat;
 
 #[derive(Debug, PartialEq)]
-pub enum Command {
+pub(crate) enum Command {
     Version,
     Render(RenderOptions),
     /// Prints the sources encoded in these codes.
@@ -13,7 +13,7 @@ pub enum Command {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct RenderOptions {
+pub(crate) struct RenderOptions {
     pub format: OutputFormat,
     pub output_directory: Option<PathBuf>,
     /// Font files, or directories of them, to measure text with besides the embedded fonts.
@@ -22,7 +22,7 @@ pub struct RenderOptions {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum OutputFormat {
+pub(crate) enum OutputFormat {
     Preprocessed,
     Debug,
     Svg,
@@ -47,7 +47,7 @@ impl OutputFormat {
 
     /// The image format the engine exports this output in; `None` for outputs that are not images or not
     /// ported yet.
-    pub fn image_format(self) -> Option<ImageFormat> {
+    pub(crate) fn image_format(self) -> Option<ImageFormat> {
         match self {
             Self::Debug => Some(ImageFormat::Debug),
             Self::Svg => Some(ImageFormat::Svg),
@@ -58,11 +58,11 @@ impl OutputFormat {
     }
 
     /// Whether text is measured with fonts, which `--font` adds to.
-    pub fn measures_with_fonts(self) -> bool {
+    pub(crate) fn measures_with_fonts(self) -> bool {
         matches!(self, Self::Svg | Self::Png)
     }
 
-    pub fn suffix(self) -> &'static str {
+    pub(crate) fn suffix(self) -> &'static str {
         match self {
             Self::Preprocessed => ".preproc",
             Self::Debug => ".debug",
@@ -73,7 +73,7 @@ impl OutputFormat {
     }
 }
 
-pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, String> {
+pub(crate) fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, String> {
     let mut format = OutputFormat::Svg;
     let mut output_directory = None;
     let mut fonts = Vec::new();

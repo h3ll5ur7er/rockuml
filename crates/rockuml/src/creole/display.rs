@@ -9,13 +9,13 @@ const BLOCK_E1_INVISIBLE_QUOTE: char = '\u{E121}';
 
 /// The lines of a label, with the alignment its line breaks asked for.
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct Display {
+pub(crate) struct Display {
     lines: Vec<String>,
     natural_alignment: Option<HorizontalAlignment>,
 }
 
 impl Display {
-    pub fn create(lines: impl IntoIterator<Item = impl Into<String>>) -> Self {
+    pub(crate) fn create(lines: impl IntoIterator<Item = impl Into<String>>) -> Self {
         Self {
             lines: lines.into_iter().map(Into::into).collect(),
             natural_alignment: None,
@@ -24,7 +24,7 @@ impl Display {
 
     /// A label written on one line: `\n`, `\l` and `\r` break it (left- or right-aligning it for the last
     /// two), except inside `<math>`, `<latex>` and `[[links]]`.
-    pub fn with_newlines(text: &str) -> Self {
+    pub(crate) fn with_newlines(text: &str) -> Self {
         /// A line break, and the alignment it asks for.
         enum Break {
             Plain,
@@ -96,7 +96,7 @@ impl Display {
 
     /// Written `\t` becomes a tabulation.
     #[must_use]
-    pub fn replace_backslash_t(&self) -> Self {
+    pub(crate) fn replace_backslash_t(&self) -> Self {
         Self {
             lines: self
                 .lines
@@ -107,16 +107,16 @@ impl Display {
         }
     }
 
-    pub fn lines(&self) -> &[String] {
+    pub(crate) fn lines(&self) -> &[String] {
         &self.lines
     }
 
-    pub fn natural_alignment(&self) -> Option<HorizontalAlignment> {
+    pub(crate) fn natural_alignment(&self) -> Option<HorizontalAlignment> {
         self.natural_alignment
     }
 
     /// No lines, or a single one of only (ASCII) whitespace.
-    pub fn is_white(&self) -> bool {
+    pub(crate) fn is_white(&self) -> bool {
         match self.lines.as_slice() {
             [] => true,
             [only] => only.chars().all(crate::java::is_regex_whitespace),

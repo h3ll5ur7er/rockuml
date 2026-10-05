@@ -20,7 +20,7 @@ const DEFAULT_FONT_FAMILY: &str = "sans-serif";
 const DECIMALS: usize = 3;
 
 /// The document-wide choices made before drawing starts.
-pub struct SvgOption {
+pub(crate) struct SvgOption {
     /// The whole image's size; the document grows beyond it when shapes stick out.
     pub min_dim: XDimension2D,
     pub backcolor: HColor,
@@ -34,7 +34,7 @@ pub struct SvgOption {
 }
 
 /// A text run with everything that styles it.
-pub struct SvgText<'a> {
+pub(super) struct SvgText<'a> {
     pub text: &'a str,
     pub x: f64,
     pub y: f64,
@@ -47,7 +47,7 @@ pub struct SvgText<'a> {
     pub back_color: Option<String>,
 }
 
-pub struct SvgGraphics {
+pub(super) struct SvgGraphics {
     option: SvgOption,
     defs: XmlNode,
     g_root: XmlNode,
@@ -74,7 +74,7 @@ pub struct SvgGraphics {
 }
 
 impl SvgGraphics {
-    pub fn new(seed: i64, option: SvgOption) -> Self {
+    pub(super) fn new(seed: i64, option: SvgOption) -> Self {
         let mut g_root = XmlNode::new("g");
         g_root.set_attribute("font-family", DEFAULT_FONT_FAMILY);
         g_root.set_attribute("lengthAdjust", "spacing");
@@ -140,15 +140,15 @@ impl SvgGraphics {
     }
 
     /// `None` and fully transparent colours paint nothing.
-    pub fn set_fill_color(&mut self, color: Option<&str>) {
+    pub(super) fn set_fill_color(&mut self, color: Option<&str>) {
         self.fill = fix_color(color);
     }
 
-    pub fn set_stroke_color(&mut self, color: Option<&str>) {
+    pub(super) fn set_stroke_color(&mut self, color: Option<&str>) {
         self.stroke = fix_color(color);
     }
 
-    pub fn set_stroke_width(&mut self, width: f64, dasharray: Option<(f64, f64)>) {
+    pub(super) fn set_stroke_width(&mut self, width: f64, dasharray: Option<(f64, f64)>) {
         self.stroke_width = self.length(width);
         self.stroke_dasharray = dasharray
             .map(|(visible, space)| format!("{},{}", self.length(visible), self.length(space)));
@@ -197,7 +197,7 @@ impl SvgGraphics {
         element
     }
 
-    pub fn rectangle(&mut self, x: f64, y: f64, width: f64, height: f64, rx: f64, ry: f64) {
+    pub(super) fn rectangle(&mut self, x: f64, y: f64, width: f64, height: f64, rx: f64, ry: f64) {
         if height <= 0.0 || width <= 0.0 {
             return;
         }
@@ -210,7 +210,7 @@ impl SvgGraphics {
         self.ensure_visible(x + width, y + height);
     }
 
-    pub fn line(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) {
+    pub(super) fn line(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) {
         let mut element = XmlNode::new("line");
         element.set_attribute("x1", self.length(x1));
         element.set_attribute("y1", self.length(y1));
@@ -222,7 +222,7 @@ impl SvgGraphics {
         self.ensure_visible(x2, y2);
     }
 
-    pub fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
+    pub(super) fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
         let mut element = XmlNode::new("ellipse");
         element.set_attribute("cx", self.length(x));
         element.set_attribute("cy", self.length(y));
@@ -234,7 +234,7 @@ impl SvgGraphics {
         self.ensure_visible(x + x_radius, y + y_radius);
     }
 
-    pub fn polygon(&mut self, points: &[(f64, f64)]) {
+    pub(super) fn polygon(&mut self, points: &[(f64, f64)]) {
         let mut element = XmlNode::new("polygon");
         let coordinates: Vec<String> = points
             .iter()
@@ -249,7 +249,7 @@ impl SvgGraphics {
         }
     }
 
-    pub fn path(&mut self, x: f64, y: f64, segments: &[USegment]) {
+    pub(super) fn path(&mut self, x: f64, y: f64, segments: &[USegment]) {
         self.ensure_visible(x, y);
         let mut d = Vec::with_capacity(segments.len());
         for segment in segments {
@@ -296,7 +296,7 @@ impl SvgGraphics {
         format!("{},{}", self.length(x), self.length(y))
     }
 
-    pub fn text(&mut self, text: &SvgText) {
+    pub(super) fn text(&mut self, text: &SvgText) {
         let mut element = XmlNode::new("text");
         element.set_attribute("x", self.length(text.x));
         element.set_attribute("y", self.length(text.y));
@@ -339,7 +339,7 @@ impl SvgGraphics {
     }
 
     /// A fill painting the gradient, defined on first use (PlantUML's `createSvgGradient`).
-    pub fn gradient_fill(&mut self, gradient: Gradient) -> String {
+    pub(super) fn gradient_fill(&mut self, gradient: Gradient) -> String {
         if let Some((_, id)) = self.gradients.iter().find(|(known, _)| *known == gradient) {
             return format!("url(#{id})");
         }
@@ -402,7 +402,7 @@ impl SvgGraphics {
     }
 
     /// An image embedded as a PNG data URI.
-    pub fn png_image(&mut self, png: &[u8], x: f64, y: f64, width: f64, height: f64) {
+    pub(super) fn png_image(&mut self, png: &[u8], x: f64, y: f64, width: f64, height: f64) {
         let mut element = XmlNode::new("image");
         element.set_attribute("width", self.length(width));
         element.set_attribute("height", self.length(height));
@@ -417,7 +417,7 @@ impl SvgGraphics {
         self.ensure_visible(x + width, y + height);
     }
 
-    pub fn start_group(&mut self, group: &UGroup) {
+    pub(super) fn start_group(&mut self, group: &UGroup) {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
@@ -427,13 +427,13 @@ impl SvgGraphics {
         self.reopen_innermost_link();
     }
 
-    pub fn close_group(&mut self) {
+    pub(super) fn close_group(&mut self) {
         self.close_innermost_link_element();
         self.close_innermost_element();
         self.reopen_innermost_link();
     }
 
-    pub fn open_link(&mut self, url: &str, tooltip: &str) {
+    pub(super) fn open_link(&mut self, url: &str, tooltip: &str) {
         self.close_innermost_link_element();
         self.active_links.push(Link {
             url: if is_javascript(url) {
@@ -447,7 +447,7 @@ impl SvgGraphics {
         self.reopen_innermost_link();
     }
 
-    pub fn close_link(&mut self) {
+    pub(super) fn close_link(&mut self) {
         self.close_innermost_link_element();
         self.active_links.pop().expect("a link is open");
         self.reopen_innermost_link();
@@ -475,7 +475,7 @@ impl SvgGraphics {
     }
 
     /// The finished document; `metadata` is the encoded diagram source PlantUML embeds.
-    pub fn into_xml(mut self, metadata: Option<&str>) -> String {
+    pub(super) fn into_xml(mut self, metadata: Option<&str>) -> String {
         assert!(
             self.open_elements.is_empty(),
             "every group and link is closed"

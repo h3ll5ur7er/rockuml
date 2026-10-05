@@ -1,16 +1,16 @@
 //! Diagram commands: each recognises some source lines and applies them to the diagram being built.
 
 mod bloc_lines;
-pub mod factory;
+pub(crate) mod factory;
 mod multiline;
 mod single_line;
 
-pub use bloc_lines::BlocLines;
-pub use multiline::Multiline;
-pub use single_line::{SingleLine, SingleLineCommand};
+pub(crate) use bloc_lines::BlocLines;
+pub(crate) use multiline::Multiline;
+pub(crate) use single_line::{SingleLine, SingleLineCommand};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum CommandControl {
+pub(crate) enum CommandControl {
     Ok,
     NotOk,
     /// The lines so far start the command but more are needed to complete it.
@@ -18,21 +18,21 @@ pub enum CommandControl {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct CommandError {
+pub(crate) struct CommandError {
     pub message: String,
 }
 
 impl CommandError {
-    pub fn new(message: impl Into<String>) -> Self {
+    pub(crate) fn new(message: impl Into<String>) -> Self {
         Self {
             message: message.into(),
         }
     }
 }
 
-pub type CommandResult = Result<(), CommandError>;
+pub(crate) type CommandResult = Result<(), CommandError>;
 
-pub trait Command<D> {
+pub(crate) trait Command<D> {
     fn is_valid(&self, lines: &BlocLines) -> CommandControl;
 
     fn execute(&self, diagram: &mut D, lines: BlocLines) -> CommandResult;

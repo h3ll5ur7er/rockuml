@@ -1,7 +1,7 @@
 //! The little XML tree PlantUML builds SVG documents with, and its compact serialisation.
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct XmlNode {
+pub(super) struct XmlNode {
     tag_name: String,
     /// In insertion order; setting an attribute again keeps its place.
     attributes: Vec<(String, String)>,
@@ -16,7 +16,7 @@ enum XmlContent {
 }
 
 impl XmlNode {
-    pub fn new(tag_name: &str) -> Self {
+    pub(super) fn new(tag_name: &str) -> Self {
         Self {
             tag_name: tag_name.to_owned(),
             attributes: Vec::new(),
@@ -24,7 +24,7 @@ impl XmlNode {
         }
     }
 
-    pub fn set_attribute(&mut self, name: &str, value: impl Into<String>) {
+    pub(super) fn set_attribute(&mut self, name: &str, value: impl Into<String>) {
         let value = value.into();
         match self.attributes.iter_mut().find(|(known, _)| known == name) {
             Some((_, old)) => *old = value,
@@ -32,33 +32,33 @@ impl XmlNode {
         }
     }
 
-    pub fn append_child(&mut self, child: XmlNode) {
+    pub(super) fn append_child(&mut self, child: XmlNode) {
         self.children.push(XmlContent::Element(child));
     }
 
-    pub fn set_text_content(&mut self, text: &str) {
+    pub(super) fn set_text_content(&mut self, text: &str) {
         self.children = vec![XmlContent::Text(text.to_owned())];
     }
 
-    pub fn append_processing_instruction(&mut self, target: &str, data: &str) {
+    pub(super) fn append_processing_instruction(&mut self, target: &str, data: &str) {
         self.children.push(XmlContent::ProcessingInstruction {
             target: target.to_owned(),
             data: data.to_owned(),
         });
     }
 
-    pub fn has_children(&self) -> bool {
+    pub(super) fn has_children(&self) -> bool {
         !self.children.is_empty()
     }
 
-    pub fn first_element_mut(&mut self) -> Option<&mut XmlNode> {
+    pub(super) fn first_element_mut(&mut self) -> Option<&mut XmlNode> {
         self.children.iter_mut().find_map(|child| match child {
             XmlContent::Element(element) => Some(element),
             _ => None,
         })
     }
 
-    pub fn to_xml(&self) -> String {
+    pub(super) fn to_xml(&self) -> String {
         let mut out = String::new();
         self.write_to(&mut out);
         out

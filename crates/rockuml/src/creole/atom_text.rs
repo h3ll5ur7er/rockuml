@@ -9,7 +9,7 @@ use crate::klimt::url::Url;
 
 /// A run of text in one font.
 #[derive(Clone, Debug)]
-pub struct AtomText {
+pub(super) struct AtomText {
     text: String,
     font: FontConfiguration,
     margins: Margins,
@@ -28,7 +28,7 @@ enum Margins {
 
 impl AtomText {
     /// Text from creole markup, which may still hold escapes and character references.
-    pub fn legacy(text: &str, font: FontConfiguration) -> Self {
+    pub(super) fn legacy(text: &str, font: FontConfiguration) -> Self {
         Self {
             text: manage_special_chars(&char_hidder::unhide(text)),
             font,
@@ -38,7 +38,7 @@ impl AtomText {
     }
 
     /// The label of a link, which clicking on follows it.
-    pub fn link(url: Url, font: FontConfiguration) -> Self {
+    pub(super) fn link(url: Url, font: FontConfiguration) -> Self {
         let label = Self::legacy(&url.label, font);
         Self {
             url: Some(url),
@@ -47,7 +47,7 @@ impl AtomText {
     }
 
     /// The number in front of a `#` list item; `local_number` counts from zero.
-    pub fn list_number(font: FontConfiguration, order: usize, local_number: usize) -> Self {
+    pub(super) fn list_number(font: FontConfiguration, order: usize, local_number: usize) -> Self {
         Self {
             margins: Margins::ListNumber { order },
             ..Self::legacy(&format!("{}.", local_number + 1), font)

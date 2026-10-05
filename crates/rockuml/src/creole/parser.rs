@@ -20,18 +20,18 @@ use crate::openiconic::OpenIconic;
 use crate::pattern::{java_regex, plantuml_regex};
 
 /// Turns the lines of a label into a [`Sheet`] (PlantUML's legacy `CreoleParser`).
-pub struct CreoleParser {
+pub(crate) struct CreoleParser {
     font: FontConfiguration,
     horizontal_alignment: HorizontalAlignment,
     mode: CreoleMode,
 }
 
 impl CreoleParser {
-    pub fn new(font: FontConfiguration, horizontal_alignment: HorizontalAlignment) -> Self {
+    pub(crate) fn new(font: FontConfiguration, horizontal_alignment: HorizontalAlignment) -> Self {
         Self::with_mode(font, horizontal_alignment, CreoleMode::Full)
     }
 
-    pub fn with_mode(
+    pub(crate) fn with_mode(
         font: FontConfiguration,
         horizontal_alignment: HorizontalAlignment,
         mode: CreoleMode,
@@ -43,7 +43,7 @@ impl CreoleParser {
         }
     }
 
-    pub fn create_sheet(&self, lines: &[impl AsRef<str>]) -> Sheet {
+    pub(crate) fn create_sheet(&self, lines: &[impl AsRef<str>]) -> Sheet {
         let mut list_numbers = ListNumbers::default();
         let mut stripes: Vec<Stripe> = Vec::new();
         let mut open_block: Option<MultilineBlock> = None;
@@ -318,7 +318,7 @@ fn command_at(rest: &str, mode: CreoleMode) -> Option<&'static dyn CreoleCommand
 }
 
 /// Collects the atoms of one stripe (PlantUML's `StripeSimple`).
-pub struct StripeBuilder {
+pub(super) struct StripeBuilder {
     font: FontConfiguration,
     style: StripeStyle,
     alignment: HorizontalAlignment,
@@ -417,13 +417,13 @@ impl StripeBuilder {
         }
     }
 
-    pub fn add_url(&mut self, url: Url) {
+    pub(super) fn add_url(&mut self, url: Url) {
         self.atoms
             .push(Box::new(AtomText::link(url, self.font.hyperlink())));
     }
 
     /// An unknown icon is left out.
-    pub fn add_open_icon(&mut self, src: &str, scale: f64, color: Option<HColor>) {
+    pub(super) fn add_open_icon(&mut self, src: &str, scale: f64, color: Option<HColor>) {
         if let Some(open_iconic) = OpenIconic::retrieve(src) {
             self.atoms.push(Box::new(AtomOpenIconic::new(
                 color,
@@ -435,7 +435,7 @@ impl StripeBuilder {
     }
 
     /// Adds `text` in a changed font, then goes back to the current one.
-    pub fn with_font(
+    pub(super) fn with_font(
         &mut self,
         change: impl FnOnce(&FontConfiguration) -> FontConfiguration,
         text: &str,

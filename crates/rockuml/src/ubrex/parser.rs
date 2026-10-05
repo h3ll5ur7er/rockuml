@@ -8,7 +8,7 @@ use super::char_set::{ChallengeCharSet, CharClass, CharClassRaw, ensure_lowercas
 use crate::java;
 
 /// `CompositeList.parseAndBuild`.
-pub fn parse_and_build(definition: &[u16]) -> Vec<Challenge> {
+pub(super) fn parse_and_build(definition: &[u16]) -> Vec<Challenge> {
     assert!(!definition.is_empty(), "empty ubrex");
     let mut input = definition;
     let mut challenges = Vec::new();

@@ -5,7 +5,7 @@ use super::names::{SName, SNames};
 /// What a style rule applies to, or what an element is: selector names, stereotypes, a tree depth, and
 /// whether the rule reaches deeper (`*`).
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct StyleSignature {
+pub(crate) struct StyleSignature {
     names: SNames,
     /// `depth(n)`: -1 when not given.
     level: i32,
@@ -14,7 +14,7 @@ pub struct StyleSignature {
 }
 
 impl StyleSignature {
-    pub fn empty() -> Self {
+    pub(crate) fn empty() -> Self {
         Self {
             names: SNames::default(),
             level: -1,
@@ -23,7 +23,7 @@ impl StyleSignature {
         }
     }
 
-    pub fn of(names: &[SName]) -> Self {
+    pub(crate) fn of(names: &[SName]) -> Self {
         Self {
             names: SNames::of(names),
             ..Self::empty()
@@ -31,7 +31,7 @@ impl StyleSignature {
     }
 
     #[must_use]
-    pub fn with_name(&self, name: SName) -> Self {
+    pub(crate) fn with_name(&self, name: SName) -> Self {
         Self {
             names: self.names.with(name),
             ..self.clone()
@@ -40,7 +40,7 @@ impl StyleSignature {
 
     /// Stereotypes are compared lowercase and without `_` or `.`, so `.Foo_Bar` matches `<<foobar>>`.
     #[must_use]
-    pub fn with_stereotype(&self, stereotype: &str) -> Self {
+    pub(crate) fn with_stereotype(&self, stereotype: &str) -> Self {
         let cleaned: String = stereotype
             .chars()
             .filter(|c| *c != '_' && *c != '.')
@@ -55,7 +55,7 @@ impl StyleSignature {
     }
 
     #[must_use]
-    pub fn with_level(&self, level: i32) -> Self {
+    pub(crate) fn with_level(&self, level: i32) -> Self {
         Self {
             level,
             ..self.clone()
@@ -63,24 +63,24 @@ impl StyleSignature {
     }
 
     #[must_use]
-    pub fn with_star(&self) -> Self {
+    pub(crate) fn with_star(&self) -> Self {
         Self {
             starred: true,
             ..self.clone()
         }
     }
 
-    pub fn has_stereotypes(&self) -> bool {
+    pub(crate) fn has_stereotypes(&self) -> bool {
         !self.stereotypes.is_empty()
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.names.is_empty() && self.stereotypes.is_empty()
     }
 
     /// The signature of `self` and `other` merged into one rule.
     #[must_use]
-    pub fn merge_with(&self, other: &StyleSignature) -> Self {
+    pub(crate) fn merge_with(&self, other: &StyleSignature) -> Self {
         Self {
             names: self.names.union(other.names),
             level: self.level.max(other.level),
@@ -94,7 +94,7 @@ impl StyleSignature {
     }
 
     /// Whether a rule with this signature applies to `element`.
-    pub fn matches(&self, element: &StyleSignature) -> bool {
+    pub(crate) fn matches(&self, element: &StyleSignature) -> bool {
         if self.level != -1 {
             if element.level == -1 {
                 return false;

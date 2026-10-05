@@ -14,16 +14,16 @@ mod sheet_block;
 mod table;
 mod tree;
 
-pub use display::Display;
-pub use parser::CreoleParser;
-pub use sheet_block::{SheetBlock1, SheetBlock2};
+pub(crate) use display::Display;
+pub(crate) use parser::CreoleParser;
+pub(crate) use sheet_block::{SheetBlock1, SheetBlock2};
 
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
 /// How much markup a text reads.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum CreoleMode {
+pub(crate) enum CreoleMode {
     #[default]
     Full,
     /// Full creole except `__underline__` and lists.
@@ -31,16 +31,16 @@ pub enum CreoleMode {
 }
 
 /// The smallest piece of a creole line: a run of text, an image, a bullet...
-pub trait Atom: TextBlock {
+pub(crate) trait Atom: TextBlock {
     /// How far the atom sits above the line's bottom: raised for superscript, lowered for subscript.
     fn starting_altitude(&self, string_bounder: &dyn StringBounder) -> f64;
 }
 
-pub struct Stripe {
+pub(crate) struct Stripe {
     atoms: Vec<Box<dyn Atom>>,
     cell_alignment: HorizontalAlignment,
 }
 
-pub struct Sheet {
+pub(crate) struct Sheet {
     stripes: Vec<Stripe>,
 }

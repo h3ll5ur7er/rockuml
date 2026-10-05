@@ -4,7 +4,7 @@ mod hsl;
 mod hsluv;
 mod named;
 
-pub use hsl::to_rgb as hsl_to_rgb;
+pub(crate) use hsl::to_rgb as hsl_to_rgb;
 use named::NAMED_COLORS;
 
 use crate::java::{self, RuntimeException};

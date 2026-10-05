@@ -4,7 +4,7 @@ use super::{BlocLines, Command, CommandControl, CommandResult};
 
 /// A command spanning lines from one matching `start` to one matching `end` (PlantUML's
 /// `CommandMultilines` and `CommandMultilines2`). Both patterns must match whole trimmed lines.
-pub struct Multiline<D> {
+pub(crate) struct Multiline<D> {
     start: Regex,
     end: Regex,
     /// Lines starting with a quote are comments to drop first.
@@ -13,7 +13,11 @@ pub struct Multiline<D> {
 }
 
 impl<D> Multiline<D> {
-    pub fn new(start: &Regex, end: &Regex, apply: fn(&mut D, &BlocLines) -> CommandResult) -> Self {
+    pub(crate) fn new(
+        start: &Regex,
+        end: &Regex,
+        apply: fn(&mut D, &BlocLines) -> CommandResult,
+    ) -> Self {
         Self {
             start: whole_line(start),
             end: whole_line(end),
@@ -23,7 +27,7 @@ impl<D> Multiline<D> {
     }
 
     #[must_use]
-    pub fn skipping_quote_lines(self) -> Self {
+    pub(crate) fn skipping_quote_lines(self) -> Self {
         Self {
             skip_quote_lines: true,
             ..self

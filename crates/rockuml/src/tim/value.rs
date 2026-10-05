@@ -6,43 +6,43 @@ use std::fmt;
 use crate::json::JsonValue;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum TValue {
+pub(super) enum TValue {
     Int(i32),
     String(String),
     Json(JsonValue),
 }
 
 impl TValue {
-    pub fn from_bool(value: bool) -> Self {
+    pub(super) fn from_bool(value: bool) -> Self {
         TValue::Int(i32::from(value))
     }
 
-    pub fn string(value: impl Into<String>) -> Self {
+    pub(super) fn string(value: impl Into<String>) -> Self {
         TValue::String(value.into())
     }
 
-    pub fn to_int(&self) -> i32 {
+    pub(super) fn to_int(&self) -> i32 {
         match self {
             TValue::Int(value) => *value,
             _ => 0,
         }
     }
 
-    pub fn to_bool(&self) -> bool {
+    pub(super) fn to_bool(&self) -> bool {
         match self {
             TValue::Int(value) => *value != 0,
             _ => !self.to_string().is_empty(),
         }
     }
 
-    pub fn as_json(&self) -> Option<&JsonValue> {
+    pub(super) fn as_json(&self) -> Option<&JsonValue> {
         match self {
             TValue::Json(json) => Some(json),
             _ => None,
         }
     }
 
-    pub fn to_json_value(&self) -> JsonValue {
+    pub(super) fn to_json_value(&self) -> JsonValue {
         match self {
             TValue::Int(value) => JsonValue::from_int(*value),
             TValue::String(string) => JsonValue::String(string.clone()),
@@ -51,7 +51,7 @@ impl TValue {
     }
 
     /// `+` adds numbers and concatenates anything else.
-    pub fn add(&self, other: &TValue) -> TValue {
+    pub(super) fn add(&self, other: &TValue) -> TValue {
         match (self, other) {
             (TValue::Int(a), TValue::Int(b)) => TValue::Int(a.wrapping_add(*b)),
             _ => TValue::String(format!("{self}{other}")),
@@ -59,14 +59,14 @@ impl TValue {
     }
 
     /// `-` on non-numbers concatenates, as PlantUML does.
-    pub fn minus(&self, other: &TValue) -> TValue {
+    pub(super) fn minus(&self, other: &TValue) -> TValue {
         match (self, other) {
             (TValue::Int(a), TValue::Int(b)) => TValue::Int(a.wrapping_sub(*b)),
             _ => TValue::String(format!("{self}{other}")),
         }
     }
 
-    pub fn multiply(&self, other: &TValue) -> TValue {
+    pub(super) fn multiply(&self, other: &TValue) -> TValue {
         match (self, other) {
             (TValue::Int(a), TValue::Int(b)) => TValue::Int(a.wrapping_mul(*b)),
             _ => TValue::String(format!("{self}*{other}")),
@@ -74,7 +74,7 @@ impl TValue {
     }
 
     /// `None` stands for Java's `ArithmeticException` on integer division by zero.
-    pub fn divided_by(&self, other: &TValue) -> Option<TValue> {
+    pub(super) fn divided_by(&self, other: &TValue) -> Option<TValue> {
         match (self, other) {
             (TValue::Int(_), TValue::Int(0)) => None,
             (TValue::Int(a), TValue::Int(b)) => Some(TValue::Int(a.wrapping_div(*b))),
@@ -83,7 +83,7 @@ impl TValue {
     }
 
     /// Numbers compare numerically; anything else compares as text, by UTF-16 code units like Java.
-    pub fn compare(&self, other: &TValue) -> Ordering {
+    pub(super) fn compare(&self, other: &TValue) -> Ordering {
         match (self, other) {
             (TValue::Int(a), TValue::Int(b)) => a.cmp(b),
             _ => self

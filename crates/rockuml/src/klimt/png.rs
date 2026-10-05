@@ -13,7 +13,7 @@ use super::typeface::FontRegistry;
 use crate::color::HColor;
 
 /// `size` is the image's size in pixels; `metadata` the diagram source PlantUML embeds in its PNGs.
-pub fn rasterize(
+pub(crate) fn rasterize(
     svg: &str,
     (width, height): (u32, u32),
     background: &HColor,

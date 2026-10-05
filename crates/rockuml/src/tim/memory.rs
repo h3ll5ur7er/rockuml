@@ -12,13 +12,13 @@ use crate::json::JsonValue;
 use crate::text::StringLocated;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum VariableScope {
+pub(super) enum VariableScope {
     Local,
     Global,
 }
 
 impl VariableScope {
-    pub fn lazy_parse(word: &str) -> Option<Self> {
+    pub(super) fn lazy_parse(word: &str) -> Option<Self> {
         if word.eq_ignore_ascii_case("local") {
             Some(Self::Local)
         } else if word.eq_ignore_ascii_case("global") {
@@ -54,14 +54,14 @@ struct LocalScope {
     local: Variables,
 }
 
-pub struct Memory {
+pub(super) struct Memory {
     globals: Rc<RefCell<Variables>>,
     local: Option<LocalScope>,
     pub contexts: ExecutionContexts,
 }
 
 impl Memory {
-    pub fn new_global() -> Self {
+    pub(super) fn new_global() -> Self {
         Self {
             globals: Rc::default(),
             local: None,
@@ -69,7 +69,7 @@ impl Memory {
         }
     }
 
-    pub fn fork_from_global(&self, arguments: HashMap<String, TValue>) -> Self {
+    pub(super) fn fork_from_global(&self, arguments: HashMap<String, TValue>) -> Self {
         let mut scope = LocalScope::default();
         for (name, value) in arguments {
             scope.overridden.put(&name, value);
@@ -81,7 +81,7 @@ impl Memory {
         }
     }
 
-    pub fn get_variable(&self, name: &str) -> Option<TValue> {
+    pub(super) fn get_variable(&self, name: &str) -> Option<TValue> {
         let Some(scope) = &self.local else {
             return self.globals.borrow().values.get(name).cloned();
         };
@@ -94,7 +94,7 @@ impl Memory {
             .or_else(|| scope.local.values.get(name).cloned())
     }
 
-    pub fn put_variable(
+    pub(super) fn put_variable(
         &mut self,
         name: &str,
         value: TValue,
@@ -121,7 +121,7 @@ impl Memory {
         Ok(())
     }
 
-    pub fn remove_variable(&mut self, name: &str) {
+    pub(super) fn remove_variable(&mut self, name: &str) {
         let Some(local) = &mut self.local else {
             self.globals.borrow_mut().remove(name);
             return;
@@ -135,7 +135,7 @@ impl Memory {
         }
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub(super) fn is_empty(&self) -> bool {
         self.globals.borrow().values.is_empty()
             && self.local.as_ref().is_none_or(|scope| {
                 scope.local.values.is_empty() && scope.overridden.values.is_empty()
@@ -143,7 +143,7 @@ impl Memory {
     }
 
     /// The longest variable name visible in any scope that starts at `position`.
-    pub fn variable_name_at(&self, chars: &[char], position: usize) -> String {
+    pub(super) fn variable_name_at(&self, chars: &[char], position: usize) -> String {
         let global = self
             .globals
             .borrow()
@@ -172,57 +172,57 @@ impl Memory {
 
 /// The `!if`, `!while` and `!foreach` blocks currently open in one scope.
 #[derive(Default)]
-pub struct ExecutionContexts {
+pub(super) struct ExecutionContexts {
     pub ifs: Vec<IfContext>,
     pub whiles: Vec<WhileContext>,
     pub foreachs: Vec<ForeachContext>,
 }
 
 impl ExecutionContexts {
-    pub fn are_all_ifs_ok(&self) -> bool {
+    pub(super) fn are_all_ifs_ok(&self) -> bool {
         self.ifs.iter().all(|context| context.is_true)
     }
 }
 
-pub struct IfContext {
+pub(super) struct IfContext {
     is_true: bool,
     /// A branch of this `!if` has already been taken, so later `!elseif`/`!else` branches are skipped.
     has_been_burnt: bool,
 }
 
 impl IfContext {
-    pub fn new(is_true: bool) -> Self {
+    pub(super) fn new(is_true: bool) -> Self {
         Self {
             is_true,
             has_been_burnt: is_true,
         }
     }
 
-    pub fn has_been_burnt(&self) -> bool {
+    pub(super) fn has_been_burnt(&self) -> bool {
         self.has_been_burnt
     }
 
-    pub fn entering_else_if(&mut self) {
+    pub(super) fn entering_else_if(&mut self) {
         self.is_true = false;
     }
 
-    pub fn now_in_some_else_if(&mut self) {
+    pub(super) fn now_in_some_else_if(&mut self) {
         self.is_true = true;
         self.has_been_burnt = true;
     }
 
-    pub fn now_in_else(&mut self) {
+    pub(super) fn now_in_else(&mut self) {
         self.is_true = !self.has_been_burnt;
     }
 }
 
-pub struct WhileContext {
+pub(super) struct WhileContext {
     pub condition: TokenStack,
     pub start: usize,
     pub skip: bool,
 }
 
-pub struct ForeachContext {
+pub(super) struct ForeachContext {
     pub variable: String,
     pub values: JsonValue,
     pub start: usize,
@@ -231,7 +231,7 @@ pub struct ForeachContext {
 }
 
 impl ForeachContext {
-    pub fn new(variable: String, values: JsonValue, start: usize) -> Self {
+    pub(super) fn new(variable: String, values: JsonValue, start: usize) -> Self {
         Self {
             variable,
             values,
@@ -242,7 +242,7 @@ impl ForeachContext {
     }
 
     /// Arrays yield their elements, objects their member names.
-    pub fn current_value(&self) -> Option<JsonValue> {
+    pub(super) fn current_value(&self) -> Option<JsonValue> {
         match &self.values {
             JsonValue::Array(values) => values.get(self.index).cloned(),
             JsonValue::Object(object) => object
@@ -253,7 +253,7 @@ impl ForeachContext {
         }
     }
 
-    pub fn increment(&mut self) {
+    pub(super) fn increment(&mut self) {
         self.index += 1;
         if self.index >= self.values.container_len().unwrap_or(0) {
             self.skip = true;

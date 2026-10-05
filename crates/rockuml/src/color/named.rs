@@ -1,5 +1,5 @@
 /// The 154 colour names PlantUML knows, matched case-insensitively.
-pub const NAMED_COLORS: [(&str, u32); 154] = [
+pub(super) const NAMED_COLORS: [(&str, u32); 154] = [
     ("AliceBlue", 0xF0F8FF),
     ("AntiqueWhite", 0xFAEBD7),
     ("Aqua", 0x00FFFF),

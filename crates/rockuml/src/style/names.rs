@@ -4,7 +4,7 @@ macro_rules! style_names {
     ($(#[$meta:meta])* $name:ident { $($variant:ident = $java:literal),* $(,)? }) => {
         $(#[$meta])*
         #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
-        pub enum $name {
+        pub(crate) enum $name {
             $($variant),*
         }
 
@@ -78,12 +78,12 @@ style_names! {
 }
 
 impl SName {
-    pub fn java_name(self) -> &'static str {
+    pub(crate) fn java_name(self) -> &'static str {
         Self::ALL[self as usize].1
     }
 
     /// Selectors ignore case and the underscore that keeps Java keywords like `class_` legal.
-    pub fn retrieve(name: &str) -> Option<Self> {
+    pub(crate) fn retrieve(name: &str) -> Option<Self> {
         let wanted = name.to_lowercase();
         Self::ALL
             .iter()
@@ -98,7 +98,7 @@ impl SName {
 }
 
 impl PName {
-    pub fn retrieve(name: &str) -> Option<Self> {
+    pub(crate) fn retrieve(name: &str) -> Option<Self> {
         Self::ALL
             .iter()
             .find(|(_, java)| java.eq_ignore_ascii_case(name))
@@ -108,24 +108,24 @@ impl PName {
 
 /// A set of selector names, like Java's `EnumSet<SName>`.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
-pub struct SNames([u64; 3]);
+pub(super) struct SNames([u64; 3]);
 
 impl SNames {
-    pub fn of(names: &[SName]) -> Self {
+    pub(super) fn of(names: &[SName]) -> Self {
         names
             .iter()
             .fold(Self::default(), |set, &name| set.with(name))
     }
 
     #[must_use]
-    pub fn with(mut self, name: SName) -> Self {
+    pub(super) fn with(mut self, name: SName) -> Self {
         let (word, mask) = name.bit();
         self.0[word] |= mask;
         self
     }
 
     #[must_use]
-    pub fn union(self, other: Self) -> Self {
+    pub(super) fn union(self, other: Self) -> Self {
         Self([
             self.0[0] | other.0[0],
             self.0[1] | other.0[1],
@@ -133,14 +133,14 @@ impl SNames {
         ])
     }
 
-    pub fn contains_all(self, other: Self) -> bool {
+    pub(super) fn contains_all(self, other: Self) -> bool {
         self.0
             .iter()
             .zip(other.0)
             .all(|(mine, theirs)| mine & theirs == theirs)
     }
 
-    pub fn is_empty(self) -> bool {
+    pub(super) fn is_empty(self) -> bool {
         self.0 == [0; 3]
     }
 }

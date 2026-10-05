@@ -18,7 +18,7 @@ use crate::text::LineLocation;
 
 /// The common commands, in the order PlantUML's salt diagrams try them (`addCommonCommands2`, the scale
 /// commands, then the title commands): blank lines, skin parameters and styles, scales, then titles and the like.
-pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
         single(blank_line_pattern(), |_, _, _| {}),
         single(skinparam_pattern(), set_skinparam),

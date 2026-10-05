@@ -3,7 +3,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub enum GoldenKind {
+pub(crate) enum GoldenKind {
     Preprocessed,
     Debug,
     Svg,
@@ -13,7 +13,7 @@ pub enum GoldenKind {
 }
 
 impl GoldenKind {
-    pub const ALL: [GoldenKind; 6] = [
+    pub(crate) const ALL: [GoldenKind; 6] = [
         GoldenKind::Preprocessed,
         GoldenKind::Debug,
         GoldenKind::Svg,
@@ -22,7 +22,7 @@ impl GoldenKind {
         GoldenKind::EncodedUrl,
     ];
 
-    pub fn extension(self) -> &'static str {
+    pub(crate) fn extension(self) -> &'static str {
         match self {
             GoldenKind::Preprocessed => "preproc",
             GoldenKind::Debug => "debug",
@@ -33,11 +33,11 @@ impl GoldenKind {
         }
     }
 
-    pub fn writes_to_stdout(self) -> bool {
+    pub(crate) fn writes_to_stdout(self) -> bool {
         self == GoldenKind::EncodedUrl
     }
 
-    pub fn cli_arguments(self) -> &'static [&'static str] {
+    pub(crate) fn cli_arguments(self) -> &'static [&'static str] {
         match self {
             GoldenKind::Preprocessed => &["-preproc"],
             GoldenKind::Debug => &["-f", "debug"],
@@ -50,7 +50,7 @@ impl GoldenKind {
 }
 
 #[derive(Clone)]
-pub struct Case {
+pub(crate) struct Case {
     /// Path relative to the corpus root with `/` separators, stable across platforms.
     pub id: String,
     pub source: PathBuf,
@@ -58,7 +58,7 @@ pub struct Case {
 
 impl Case {
     /// Everything the golden model wrote for this case, keyed by file name.
-    pub fn goldens(&self, kind: GoldenKind) -> BTreeMap<String, PathBuf> {
+    pub(crate) fn goldens(&self, kind: GoldenKind) -> BTreeMap<String, PathBuf> {
         let golden_directory = self.source.with_extension("golden");
         let Ok(entries) = fs::read_dir(golden_directory) else {
             return BTreeMap::new();
@@ -74,11 +74,11 @@ impl Case {
     }
 }
 
-pub fn file_name(path: &Path) -> String {
+pub(crate) fn file_name(path: &Path) -> String {
     path.file_name().unwrap().to_string_lossy().into_owned()
 }
 
-pub fn discover(corpus_root: &Path) -> Vec<Case> {
+pub(crate) fn discover(corpus_root: &Path) -> Vec<Case> {
     let mut cases = Vec::new();
     collect_cases(corpus_root, corpus_root, &mut cases);
     cases.sort_by(|left, right| left.id.cmp(&right.id));

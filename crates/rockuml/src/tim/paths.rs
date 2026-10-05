@@ -7,7 +7,7 @@ use crate::java::RuntimeException;
 use crate::stdlib::Stdlib;
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum Folder {
+pub(crate) enum Folder {
     Regular(PathBuf),
     /// PlantUML treats an included library file's own path as its folder, so this is that path.
     Stdlib {
@@ -17,13 +17,13 @@ pub enum Folder {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum InputFile {
+pub(super) enum InputFile {
     Local(PathBuf),
     Stdlib { library: String, path: String },
 }
 
 impl InputFile {
-    pub fn read(&self, host: &dyn Host) -> Option<Vec<u8>> {
+    pub(super) fn read(&self, host: &dyn Host) -> Option<Vec<u8>> {
         match self {
             InputFile::Local(path) => host.read_file(path),
             InputFile::Stdlib { library, path } => {
@@ -33,7 +33,7 @@ impl InputFile {
         }
     }
 
-    pub fn parent_folder(&self) -> Folder {
+    pub(super) fn parent_folder(&self) -> Folder {
         match self {
             InputFile::Local(path) => {
                 Folder::Regular(path.parent().map(Path::to_path_buf).unwrap_or_default())
@@ -47,23 +47,23 @@ impl InputFile {
 }
 
 #[derive(Clone, Debug)]
-pub struct PathSystem {
+pub(super) struct PathSystem {
     current: Folder,
 }
 
 impl PathSystem {
-    pub fn new(current: Folder) -> Self {
+    pub(super) fn new(current: Folder) -> Self {
         Self { current }
     }
 
-    pub fn current_folder(&self) -> &Folder {
+    pub(super) fn current_folder(&self) -> &Folder {
         &self.current
     }
 
     /// Fails for URLs, which rockuml does not fetch.
     /// URLs are not files here: where PlantUML resolves one, it fails right after (it cannot take the
     /// folder of a URL), so they report a runtime failure.
-    pub fn input_file(
+    pub(super) fn input_file(
         &self,
         name: &str,
         host: &dyn Host,

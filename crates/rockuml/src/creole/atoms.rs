@@ -13,13 +13,13 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::openiconic::{OpenIconic, OpenIconicBlock};
 
 /// The mark in front of a `*` list item: a disc at the first level, a square below.
-pub struct Bullet {
+pub(super) struct Bullet {
     font: FontConfiguration,
     order: usize,
 }
 
 impl Bullet {
-    pub fn new(font: FontConfiguration, order: usize) -> Self {
+    pub(super) fn new(font: FontConfiguration, order: usize) -> Self {
         Self { font, order }
     }
 }
@@ -56,14 +56,14 @@ impl Atom for Bullet {
 }
 
 /// A separator line (`----`, `====`, `....`), optionally with a title in its middle (`== Title ==`).
-pub struct HorizontalLine {
+pub(super) struct HorizontalLine {
     /// The character the line is drawn with.
     style: char,
     title: Option<SheetBlock1>,
 }
 
 impl HorizontalLine {
-    pub fn new(style: char, title: Option<Sheet>) -> Self {
+    pub(super) fn new(style: char, title: Option<Sheet>) -> Self {
         Self {
             style,
             title: title.map(|sheet| SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())),
@@ -97,14 +97,14 @@ impl Atom for HorizontalLine {
 }
 
 /// An atom with space above and below it, as tables and trees have.
-pub struct AtomWithMargin<A> {
+pub(super) struct AtomWithMargin<A> {
     atom: A,
     top: f64,
     bottom: f64,
 }
 
 impl<A: Atom> AtomWithMargin<A> {
-    pub fn new(atom: A, top: f64, bottom: f64) -> Self {
+    pub(super) fn new(atom: A, top: f64, bottom: f64) -> Self {
         Self { atom, top, bottom }
     }
 }
@@ -128,14 +128,14 @@ impl<A: Atom> Atom for AtomWithMargin<A> {
 }
 
 /// An `OpenIconic` icon (`<&heart>`), sized to the font and in its colour unless given one.
-pub struct AtomOpenIconic {
+pub(super) struct AtomOpenIconic {
     open_iconic: OpenIconic,
     factor: f64,
     color: HColor,
 }
 
 impl AtomOpenIconic {
-    pub fn new(
+    pub(super) fn new(
         new_color: Option<HColor>,
         scale: f64,
         open_iconic: OpenIconic,

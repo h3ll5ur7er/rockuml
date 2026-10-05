@@ -10,14 +10,14 @@ use crate::preproc::start_utils;
 use crate::text::StringLocated;
 
 /// `@startcreole`: the lines are creole markup, shown as they are.
-pub struct CreoleDiagram {
+pub(super) struct CreoleDiagram {
     source: UmlSource,
     lines: Vec<String>,
 }
 
 impl CreoleDiagram {
     /// The diagram, or an error image when there is nothing between the start and end lines.
-    pub fn create(source: UmlSource) -> Box<dyn Diagram> {
+    pub(super) fn create(source: UmlSource) -> Box<dyn Diagram> {
         let source = source.without_initial_noise();
         let mut lines = Vec::new();
         let content = source

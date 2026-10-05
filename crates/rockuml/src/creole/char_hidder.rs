@@ -11,7 +11,7 @@ fn hidden(c: char) -> char {
     char::from_u32(HIDDEN_BASE + u32::from(c)).expect("ASCII stand-ins are private-use characters")
 }
 
-pub fn hide(s: &str) -> String {
+pub(super) fn hide(s: &str) -> String {
     let mut result = String::with_capacity(s.len());
     let mut chars = s.chars().peekable();
     while let Some(c) = chars.next() {
@@ -35,7 +35,7 @@ pub fn hide(s: &str) -> String {
     result
 }
 
-pub fn unhide(s: &str) -> String {
+pub(super) fn unhide(s: &str) -> String {
     s.chars()
         .map(|c| match u32::from(c) {
             code @ 0xE000..=0xE0FF => char::from_u32(code - HIDDEN_BASE).unwrap_or(c),

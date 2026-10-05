@@ -7,7 +7,7 @@ mod bounder;
 use std::fmt;
 use std::sync::Arc;
 
-pub use bounder::StringBounderFonts;
+pub(crate) use bounder::StringBounderFonts;
 use ttf_parser::{Face, name_id};
 
 use super::font::UFontFace;

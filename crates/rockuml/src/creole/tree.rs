@@ -16,17 +16,17 @@ use crate::klimt::ugraphic::UGraphic;
 const LEVEL_WIDTH: f64 = 8.0;
 const MARGIN: f64 = 2.0;
 
-pub fn is_tree_start(line: &str) -> bool {
+pub(super) fn is_tree_start(line: &str) -> bool {
     line.starts_with("|_")
 }
 
-pub struct AtomTree {
+pub(super) struct AtomTree {
     line_color: HColor,
     items: Vec<(SheetBlock1, usize)>,
 }
 
 impl AtomTree {
-    pub fn new(line: &str, font: &FontConfiguration) -> Self {
+    pub(super) fn new(line: &str, font: &FontConfiguration) -> Self {
         let mut tree = Self {
             line_color: font.color().clone(),
             items: Vec::new(),
@@ -35,7 +35,7 @@ impl AtomTree {
         tree
     }
 
-    pub fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+    pub(super) fn add_line(&mut self, line: &str, font: &FontConfiguration) {
         for text in cell_lines(line) {
             let level = level_of(&text);
             let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full);

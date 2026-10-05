@@ -3,7 +3,7 @@
 use crate::java;
 
 /// `CaseMode.ensureLowercase`: ASCII letters only.
-pub fn ensure_lowercase(unit: u16) -> u16 {
+pub(super) fn ensure_lowercase(unit: u16) -> u16 {
     if (u16::from(b'A')..=u16::from(b'Z')).contains(&unit) {
         unit + u16::from(b'a' - b'A')
     } else {
@@ -12,7 +12,7 @@ pub fn ensure_lowercase(unit: u16) -> u16 {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum CharClassRaw {
+pub(super) enum CharClassRaw {
     Any,
     Space,
     Guillemet,
@@ -24,7 +24,7 @@ pub enum CharClassRaw {
 
 impl CharClassRaw {
     /// Two-letter classes are recognised by their first letter; the second is skipped unread.
-    pub fn from_definition(first: char) -> Self {
+    pub(super) fn from_definition(first: char) -> Self {
         match first.to_ascii_lowercase() {
             's' => Self::Space,
             'g' => Self::Guillemet,
@@ -37,7 +37,7 @@ impl CharClassRaw {
         }
     }
 
-    pub fn definition_length(self) -> usize {
+    pub(super) fn definition_length(self) -> usize {
         match self {
             Self::AlphaNumeric | Self::Letter => 2,
             _ => 1,
@@ -63,53 +63,53 @@ impl CharClassRaw {
 
 /// `〴` outside a set: an uppercase letter negates the class.
 #[derive(Clone, Debug)]
-pub struct CharClass {
+pub(super) struct CharClass {
     raw: CharClassRaw,
     negative: bool,
 }
 
 impl CharClass {
-    pub fn from_definition(first: char) -> Self {
+    pub(super) fn from_definition(first: char) -> Self {
         Self {
             raw: CharClassRaw::from_definition(first),
             negative: first.is_ascii_uppercase(),
         }
     }
 
-    pub fn definition_length(&self) -> usize {
+    pub(super) fn definition_length(&self) -> usize {
         self.raw.definition_length()
     }
 
-    pub fn matches(&self, unit: u16) -> bool {
+    pub(super) fn matches(&self, unit: u16) -> bool {
         self.raw.internal_matches(unit) != self.negative
     }
 }
 
 #[derive(Clone, Debug, Default)]
-pub struct ChallengeCharSet {
+pub(super) struct ChallengeCharSet {
     char_classes: Vec<CharClassRaw>,
     char_set: CharSet,
     reversed: bool,
 }
 
 impl ChallengeCharSet {
-    pub fn reverse(&mut self) {
+    pub(super) fn reverse(&mut self) {
         self.reversed = true;
     }
 
-    pub fn add_class(&mut self, class: CharClassRaw) {
+    pub(super) fn add_class(&mut self, class: CharClassRaw) {
         self.char_classes.push(class);
     }
 
-    pub fn add_char(&mut self, unit: u16) {
+    pub(super) fn add_char(&mut self, unit: u16) {
         self.char_set.add_char(unit);
     }
 
-    pub fn add_range(&mut self, start: u16, end: u16) {
+    pub(super) fn add_range(&mut self, start: u16, end: u16) {
         self.char_set.add_range(start, end);
     }
 
-    pub fn matches(&self, unit: u16) -> bool {
+    pub(super) fn matches(&self, unit: u16) -> bool {
         let found = self.char_set.contains(unit)
             || self
                 .char_classes

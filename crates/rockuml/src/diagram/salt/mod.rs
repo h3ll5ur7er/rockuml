@@ -34,7 +34,7 @@ use elements::{
 };
 use tree::Tree;
 
-pub struct SaltDiagram {
+pub(super) struct SaltDiagram {
     source: UmlSource,
     titled: Titled,
     lines: Vec<String>,
@@ -48,7 +48,7 @@ impl TitledDiagram for SaltDiagram {
 
 impl SaltDiagram {
     /// The diagram, or the error image for its first faulty line.
-    pub fn create(source: UmlSource) -> Box<dyn Diagram> {
+    pub(super) fn create(source: UmlSource) -> Box<dyn Diagram> {
         if source.is_empty() {
             let trace = source.lines().iter().take(2).cloned().collect();
             return Box::new(ErrorDiagram::new(

@@ -5,12 +5,12 @@ use crate::klimt::font::{StringBounder, UFont};
 use crate::klimt::geom::XDimension2D;
 
 /// Measures text with real fonts, as PlantUML does for SVG and PNG.
-pub struct StringBounderFonts {
+pub(crate) struct StringBounderFonts {
     fonts: Arc<FontRegistry>,
 }
 
 impl StringBounderFonts {
-    pub fn new(fonts: Arc<FontRegistry>) -> Self {
+    pub(crate) fn new(fonts: Arc<FontRegistry>) -> Self {
         Self { fonts }
     }
 

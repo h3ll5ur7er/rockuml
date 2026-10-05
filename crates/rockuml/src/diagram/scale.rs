@@ -2,7 +2,7 @@
 
 /// A factor, or a size the image is fitted to or capped at.
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum Scale {
+pub(crate) enum Scale {
     Factor(f64),
     Width(f64),
     Height(f64),
@@ -17,7 +17,7 @@ const MAX_FACTOR: f64 = 4.0;
 
 impl Scale {
     /// The factor for an image of this size.
-    pub fn factor(self, width: f64, height: f64) -> f64 {
+    pub(crate) fn factor(self, width: f64, height: f64) -> f64 {
         let capped_at_one = |factor: f64| factor.min(1.0);
         let factor = match self {
             Self::Factor(factor) => factor,

@@ -19,7 +19,7 @@ const PLANTUML_DESCRIPTION: &str = "PlantUML version 1.2026.8 / 149874a [2026-09
 const GREEN: HColor = HColor::Simple(crate::color::XColor::rgb(0x33, 0xFF, 0x02));
 const RED: HColor = HColor::Simple(crate::color::XColor::rgb(0xFF, 0x00, 0x00));
 
-pub struct ErrorDiagram {
+pub(super) struct ErrorDiagram {
     source: UmlSource,
     /// The lines read up to the error, the faulty one last.
     trace: Vec<StringLocated>,
@@ -28,7 +28,7 @@ pub struct ErrorDiagram {
 
 impl ErrorDiagram {
     /// `diagram_type` names the diagram the lines were read as, which the message mentions.
-    pub fn new(
+    pub(super) fn new(
         source: UmlSource,
         trace: Vec<StringLocated>,
         error: &str,

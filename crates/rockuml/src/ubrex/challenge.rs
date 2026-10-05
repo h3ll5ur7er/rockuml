@@ -5,7 +5,7 @@ use std::ops::{Range, RangeInclusive};
 use super::char_set::{ChallengeCharSet, CharClass, ensure_lowercase};
 
 #[derive(Clone, Debug)]
-pub enum Challenge {
+pub(super) enum Challenge {
     /// Holds the lowercase form: every comparison ignores ASCII case.
     SingleChar(u16),
     CharClass(CharClass),
@@ -34,7 +34,11 @@ pub enum Challenge {
 
 impl Challenge {
     /// `None` is Java's `NO_MATCH`.
-    pub fn run_challenge(&self, text: TextNavigator, position: usize) -> Option<ChallengeResult> {
+    pub(super) fn run_challenge(
+        &self,
+        text: TextNavigator,
+        position: usize,
+    ) -> Option<ChallengeResult> {
         match self {
             Self::SingleChar(ch) => {
                 single_unit(text, position, |unit| ensure_lowercase(unit) == *ch)
@@ -132,7 +136,7 @@ fn repeat_until(
 
 /// The counts allowed by `〇{...}`.
 #[derive(Clone, Debug)]
-pub struct Repetition {
+pub(super) struct Repetition {
     values: Vec<RangeInclusive<i64>>,
     min_inclusive: i64,
 }
@@ -147,11 +151,11 @@ impl Default for Repetition {
 }
 
 impl Repetition {
-    pub fn add_range(&mut self, values: RangeInclusive<i64>) {
+    pub(super) fn add_range(&mut self, values: RangeInclusive<i64>) {
         self.values.push(values);
     }
 
-    pub fn set_min_inclusive(&mut self, min: i64) {
+    pub(super) fn set_min_inclusive(&mut self, min: i64) {
         self.min_inclusive = min;
     }
 
@@ -162,7 +166,7 @@ impl Repetition {
 }
 
 #[derive(Debug, Default)]
-pub struct ChallengeResult {
+pub(super) struct ChallengeResult {
     pub full_capture_length: usize,
     pub capture: Capture,
 }
@@ -189,10 +193,10 @@ impl ChallengeResult {
 
 /// The named values of a match, in the order PlantUML lists them: inner names before the name holding them.
 #[derive(Debug, Default)]
-pub struct Capture(Vec<CaptureEntry>);
+pub(super) struct Capture(Vec<CaptureEntry>);
 
 #[derive(Debug)]
-pub struct CaptureEntry {
+pub(super) struct CaptureEntry {
     pub key: String,
     /// UTF-16 units of the matched text.
     pub value: Range<usize>,
@@ -209,19 +213,19 @@ impl Capture {
         }
     }
 
-    pub fn entries(&self) -> &[CaptureEntry] {
+    pub(super) fn entries(&self) -> &[CaptureEntry] {
         &self.0
     }
 }
 
 /// The text a challenge runs over, as UTF-16 units.
 #[derive(Clone, Copy, Debug)]
-pub struct TextNavigator<'a> {
+pub(super) struct TextNavigator<'a> {
     content: &'a [u16],
 }
 
 impl<'a> TextNavigator<'a> {
-    pub fn build(content: &'a [u16]) -> Self {
+    pub(super) fn build(content: &'a [u16]) -> Self {
         Self { content }
     }
 

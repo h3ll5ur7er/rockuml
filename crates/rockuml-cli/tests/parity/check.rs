@@ -8,13 +8,13 @@ use regex::Regex;
 
 use crate::corpus::{Case, GoldenKind, file_name};
 
-pub enum Outcome {
+pub(crate) enum Outcome {
     Pass,
     Fail(String),
 }
 
 /// Returns `None` when the golden model produced nothing of this kind for the case.
-pub fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
+pub(crate) fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
     let goldens = case.goldens(kind);
     if goldens.is_empty() {
         return None;

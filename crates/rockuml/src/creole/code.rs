@@ -7,18 +7,18 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{UShape, UText};
 use crate::klimt::ugraphic::UGraphic;
 
-pub fn is_code_start(line: &str) -> bool {
+pub(super) fn is_code_start(line: &str) -> bool {
     line == "<code>"
 }
 
-pub struct AtomCode {
+pub(super) struct AtomCode {
     font: FontConfiguration,
     lines: Vec<String>,
     terminated: bool,
 }
 
 impl AtomCode {
-    pub fn new(font: &FontConfiguration) -> Self {
+    pub(super) fn new(font: &FontConfiguration) -> Self {
         Self {
             font: font.with_family("monospaced"),
             lines: Vec::new(),
@@ -26,12 +26,12 @@ impl AtomCode {
         }
     }
 
-    pub fn is_terminated(&self) -> bool {
+    pub(super) fn is_terminated(&self) -> bool {
         self.terminated
     }
 
     /// Takes a line of the block, or the `</code>` that ends it.
-    pub fn add_line(&mut self, line: &str) {
+    pub(super) fn add_line(&mut self, line: &str) {
         if line == "</code>" {
             self.terminated = true;
         } else {

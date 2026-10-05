@@ -11,7 +11,7 @@ use super::value::Value;
 use super::{STEREOTYPE_PRIORITY, Style};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub enum StyleParsingError {
+pub(crate) enum StyleParsingError {
     /// PlantUML reports "Error in style definition: " followed by this message.
     Invalid(&'static str),
     /// Input on which PlantUML fails with an unchecked exception.
@@ -286,14 +286,14 @@ fn selector_within(outer: &StyleSignature, selector: &str) -> StyleSignature {
 }
 
 /// Parses style sheets, numbering declarations with a counter shared by everything parsed for one diagram.
-pub struct StyleParser<'a> {
+pub(super) struct StyleParser<'a> {
     counter: &'a mut i32,
     variables: HashMap<String, String>,
     dark: bool,
 }
 
 impl<'a> StyleParser<'a> {
-    pub fn new(counter: &'a mut i32) -> Self {
+    pub(super) fn new(counter: &'a mut i32) -> Self {
         Self {
             counter,
             variables: HashMap::new(),
@@ -301,7 +301,7 @@ impl<'a> StyleParser<'a> {
         }
     }
 
-    pub fn parse(&mut self, lines: &[&str]) -> Result<Vec<Style>, StyleParsingError> {
+    pub(super) fn parse(&mut self, lines: &[&str]) -> Result<Vec<Style>, StyleParsingError> {
         if lines.is_empty() {
             return Ok(Vec::new());
         }

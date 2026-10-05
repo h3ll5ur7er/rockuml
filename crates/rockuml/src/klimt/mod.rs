@@ -1,18 +1,18 @@
 //! PlantUML's drawing layer (`klimt`): fonts, shapes, and the surfaces they are drawn on.
 
-pub mod blocks;
-pub mod debug;
-pub mod font;
-pub mod geom;
-pub mod group;
-pub mod png;
-pub mod shape;
-pub mod stencil;
-pub mod svg;
-pub mod typeface;
-pub mod ugraphic;
-pub mod url;
-pub mod width_table;
+pub(crate) mod blocks;
+pub(crate) mod debug;
+pub(crate) mod font;
+pub(crate) mod geom;
+pub(crate) mod group;
+pub(crate) mod png;
+pub(crate) mod shape;
+pub(crate) mod stencil;
+pub(crate) mod svg;
+pub(crate) mod typeface;
+pub(crate) mod ugraphic;
+pub(crate) mod url;
+pub(crate) mod width_table;
 mod width_table_data;
 
 use crate::color::HColor;
@@ -57,7 +57,7 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum HorizontalAlignment {
+pub(crate) enum HorizontalAlignment {
     #[default]
     Left,
     Center,
@@ -66,7 +66,7 @@ pub enum HorizontalAlignment {
 
 impl HorizontalAlignment {
     /// Where something `width` wide starts when aligned in `available` space.
-    pub fn offset(self, available: f64, width: f64) -> f64 {
+    pub(crate) fn offset(self, available: f64, width: f64) -> f64 {
         match self {
             Self::Left => 0.0,
             Self::Center => (available - width) / 2.0,
@@ -74,7 +74,7 @@ impl HorizontalAlignment {
         }
     }
 
-    pub fn from_name(name: &str) -> Option<Self> {
+    pub(crate) fn from_name(name: &str) -> Option<Self> {
         match name.to_ascii_lowercase().as_str() {
             "left" => Some(Self::Left),
             "center" => Some(Self::Center),

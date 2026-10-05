@@ -12,7 +12,7 @@ use crate::klimt::ugraphic::UGraphic;
 
 /// Tabs side by side, each framed on top and at its sides and joined to the next at the bottom.
 #[derive(Default)]
-pub struct TabBar {
+pub(super) struct TabBar {
     tabs: Vec<Text>,
 }
 
@@ -21,7 +21,7 @@ impl TabBar {
     const MARGIN2: f64 = 3.0;
     const MARGIN3: f64 = 10.0;
 
-    pub fn add_tab(&mut self, tab: &str) {
+    pub(super) fn add_tab(&mut self, tab: &str) {
         self.tabs.push(Text::new(tab, widget_font()));
     }
 }
@@ -70,7 +70,7 @@ impl Element for TabBar {
 
 /// A menu bar whose entries may open a popup, drawn in the second pass over everything else.
 #[derive(Default)]
-pub struct MenuBar {
+pub(super) struct MenuBar {
     entries: Vec<MenuEntry>,
     /// Each popup with the index of the entry that opens it.
     popups: Vec<(usize, MenuPopup)>,
@@ -79,12 +79,12 @@ pub struct MenuBar {
 impl MenuBar {
     const GAP: f64 = 10.0;
 
-    pub fn add_entry(&mut self, text: &str) {
+    pub(super) fn add_entry(&mut self, text: &str) {
         self.entries.push(MenuEntry::new(text));
     }
 
     /// Adds `sub` to the popup of the entry named `entry`.
-    pub fn add_sub_entry(&mut self, entry: &str, sub: &str) -> Result<(), NotYetPorted> {
+    pub(super) fn add_sub_entry(&mut self, entry: &str, sub: &str) -> Result<(), NotYetPorted> {
         let index = self
             .entries
             .iter()

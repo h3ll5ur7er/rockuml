@@ -15,7 +15,7 @@ mod paths;
 mod trie;
 mod value;
 
-pub use paths::Folder;
+pub(crate) use paths::Folder;
 
 /// `Date.toString()` in the host's time zone, as `%filedate()` reports a file's modification time.
 pub fn java_date_string(millis: i64, host: &dyn Host) -> String {
@@ -46,17 +46,17 @@ pub struct PreprocessorEnvironment {
 }
 
 /// `@startdef(id=NAME)` blocks of the same source, for `!includedef NAME`.
-pub trait Definitions {
+pub(crate) trait Definitions {
     fn definition(&self, name: &str) -> Vec<String>;
 }
 
-pub struct Preprocessed {
+pub(crate) struct Preprocessed {
     pub lines: Vec<StringLocated>,
     /// The last line then carries the error message.
     pub failed: bool,
 }
 
-pub fn preprocess_block(
+pub(crate) fn preprocess_block(
     lines: &[StringLocated],
     host: &dyn Host,
     environment: &PreprocessorEnvironment,

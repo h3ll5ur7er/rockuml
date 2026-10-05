@@ -3,7 +3,7 @@ use crate::pattern::{RegexResult, RegexTree};
 use crate::text::{LineLocation, StringLocated};
 
 /// A command that fits on one line, described by its pattern (PlantUML's `SingleLineCommand2`).
-pub trait SingleLineCommand<D> {
+pub(crate) trait SingleLineCommand<D> {
     fn pattern(&self) -> &RegexTree;
 
     fn execute_arg(
@@ -19,7 +19,7 @@ pub trait SingleLineCommand<D> {
 }
 
 /// Adapts a [`SingleLineCommand`] to [`Command`].
-pub struct SingleLine<C>(pub C);
+pub(crate) struct SingleLine<C>(pub C);
 
 impl<C> SingleLine<C> {
     fn trim<D>(&self, line: &StringLocated) -> StringLocated

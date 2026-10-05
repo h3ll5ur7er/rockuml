@@ -14,6 +14,8 @@ rockuml = { path = "crates/rockuml" }
 [workspace.lints.rust]
 unsafe_code = "forbid"
 unused_must_use = "deny"
+# Items only the crate uses are `pub(crate)`, so that unused ones show up as dead code.
+unreachable_pub = "warn"
 
 [workspace.lints.clippy]
 all = { level = "warn", priority = -1 }

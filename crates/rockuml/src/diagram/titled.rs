@@ -14,7 +14,7 @@ use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::text::LineLocation;
 
-pub struct Titled {
+pub(super) struct Titled {
     pub skin: SkinParam,
     /// The diagram's own style name, like `saltDiagram`, for the styles of its legend and background.
     diagram_style: SName,
@@ -29,7 +29,7 @@ pub struct Titled {
 }
 
 /// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
-pub struct Positioned {
+pub(super) struct Positioned {
     pub display: Display,
     pub alignment: HorizontalAlignment,
     pub location: Option<LineLocation>,
@@ -37,18 +37,18 @@ pub struct Positioned {
 
 /// Where a legend goes: above or below the diagram.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum VerticalAlignment {
+pub(super) enum VerticalAlignment {
     Top,
     Bottom,
 }
 
 /// A diagram built from commands that apply to every titled diagram.
-pub trait TitledDiagram {
+pub(super) trait TitledDiagram {
     fn titled(&mut self) -> &mut Titled;
 }
 
 impl Titled {
-    pub fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
+    pub(super) fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
         Self {
             skin: SkinParam::default(),
             diagram_style,
@@ -62,35 +62,35 @@ impl Titled {
         }
     }
 
-    pub fn set_scale(&mut self, scale: Scale) {
+    pub(super) fn set_scale(&mut self, scale: Scale) {
         self.scale = Some(scale);
     }
 
     /// A blank title is ignored.
-    pub fn set_title(&mut self, title: Display, location: &LineLocation) {
+    pub(super) fn set_title(&mut self, title: Display, location: &LineLocation) {
         if !title.is_white() {
             self.title = Some(Positioned::centered(title, location));
         }
     }
 
-    pub fn set_caption(&mut self, caption: Display, location: &LineLocation) {
+    pub(super) fn set_caption(&mut self, caption: Display, location: &LineLocation) {
         self.caption = Some(Positioned::centered(caption, location));
     }
 
-    pub fn set_legend(&mut self, legend: Positioned, vertical: VerticalAlignment) {
+    pub(super) fn set_legend(&mut self, legend: Positioned, vertical: VerticalAlignment) {
         self.legend = Some((legend, vertical));
     }
 
-    pub fn set_header(&mut self, header: Positioned) {
+    pub(super) fn set_header(&mut self, header: Positioned) {
         self.header = Some(header);
     }
 
-    pub fn set_footer(&mut self, footer: Positioned) {
+    pub(super) fn set_footer(&mut self, footer: Positioned) {
         self.footer = Some(footer);
     }
 
     /// Where headers or footers go when the command does not say: as their style aligns text.
-    pub fn default_alignment(&self, part: SName) -> HorizontalAlignment {
+    pub(super) fn default_alignment(&self, part: SName) -> HorizontalAlignment {
         self.document_style(Some(part))
             .value(PName::HorizontalAlignment)
             .as_horizontal_alignment()
@@ -111,7 +111,10 @@ impl Titled {
 
     /// The diagram's drawing with its legend, title, caption, header and footer around it, added in
     /// PlantUML's order.
-    pub fn add_chrome<'a>(&'a self, drawing: Box<dyn TextBlock + 'a>) -> Box<dyn TextBlock + 'a> {
+    pub(super) fn add_chrome<'a>(
+        &'a self,
+        drawing: Box<dyn TextBlock + 'a>,
+    ) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
         if let Some((legend, vertical)) = &self.legend {
             let style = self.style(&[
@@ -160,7 +163,7 @@ impl Titled {
     }
 
     /// The document style's margin if it sets one, otherwise the diagram's own default.
-    pub fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
+    pub(super) fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
         let document = self.document_style(None);
         let margin = if document.has_value(PName::Margin) {
             margin_of(&document, PName::Margin)
@@ -239,7 +242,7 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
 }
 
 /// `Style.getFontConfiguration`.
-pub fn font_configuration(style: &Style) -> FontConfiguration {
+pub(super) fn font_configuration(style: &Style) -> FontConfiguration {
     let size = match style.value(PName::FontSize).as_int_or_minus_one() {
         -1 => 14,
         size => size,

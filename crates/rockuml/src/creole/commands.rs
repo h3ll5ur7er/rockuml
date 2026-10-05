@@ -12,7 +12,7 @@ use crate::klimt::url::Url;
 use crate::pattern::{java_regex, plantuml_regex};
 use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
-pub trait CreoleCommand: Send + Sync {
+pub(super) trait CreoleCommand: Send + Sync {
     /// The two characters a line must continue with for the command to be tried.
     fn starters(&self) -> &[&'static str];
 
@@ -25,7 +25,7 @@ pub trait CreoleCommand: Send + Sync {
 
 /// The inline commands of a creole mode, in `CommandCreoleBuilder`'s order: the first that matches wins.
 /// Only full creole reads `__underline__`.
-pub fn creole_commands(mode: CreoleMode) -> &'static [Box<dyn CreoleCommand>] {
+pub(super) fn creole_commands(mode: CreoleMode) -> &'static [Box<dyn CreoleCommand>] {
     static FULL: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| build_commands(true));
     static OTHER: LazyLock<Vec<Box<dyn CreoleCommand>>> = LazyLock::new(|| build_commands(false));
     if mode == CreoleMode::Full {

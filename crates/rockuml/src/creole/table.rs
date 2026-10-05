@@ -19,13 +19,13 @@ use crate::pattern::java_regex;
 
 const HIDDEN_BAR: char = '\u{E000}';
 
-pub fn is_table_line(line: &str) -> bool {
+pub(super) fn is_table_line(line: &str) -> bool {
     static TABLE_LINE: LazyLock<Regex> =
         LazyLock::new(|| java_regex(r"^(\<#\w+(,#?\w+)?\>)?\|(\=)?.*\|$", false));
     TABLE_LINE.is_match(line)
 }
 
-pub struct AtomTable {
+pub(super) struct AtomTable {
     lines: Vec<Line>,
     line_color: HColor,
 }
@@ -42,7 +42,7 @@ struct Cell {
 
 impl AtomTable {
     /// A table started by `line`, whose colour prefix may also give the colour of the grid.
-    pub fn new(line: &str, font: &FontConfiguration) -> Self {
+    pub(super) fn new(line: &str, font: &FontConfiguration) -> Self {
         let line_color = leading_color(line, 1).unwrap_or_else(|| font.color().clone());
         let mut table = Self {
             lines: Vec::new(),
@@ -52,7 +52,7 @@ impl AtomTable {
         table
     }
 
-    pub fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+    pub(super) fn add_line(&mut self, line: &str, font: &FontConfiguration) {
         let line = line.replace("\\|", &HIDDEN_BAR.to_string());
         let back_color = leading_color(&line, 0);
         let line = if back_color.is_some() {

@@ -3,7 +3,7 @@
 use super::XColor;
 
 /// Hue in degrees, saturation and luminance in percent.
-pub fn from_rgb(color: XColor) -> [f32; 3] {
+pub(super) fn from_rgb(color: XColor) -> [f32; 3] {
     let red = f32::from(color.red) / 255.0;
     let green = f32::from(color.green) / 255.0;
     let blue = f32::from(color.blue) / 255.0;
@@ -33,7 +33,7 @@ pub fn from_rgb(color: XColor) -> [f32; 3] {
     [hue, saturation * 100.0, luminance * 100.0]
 }
 
-pub fn to_rgb(hue: f32, saturation: f32, luminance: f32, alpha: f32) -> XColor {
+pub(crate) fn to_rgb(hue: f32, saturation: f32, luminance: f32, alpha: f32) -> XColor {
     let saturation = saturation.clamp(0.0, 100.0) / 100.0;
     let luminance = luminance.clamp(0.0, 100.0) / 100.0;
     let alpha = alpha.clamp(0.0, 1.0);

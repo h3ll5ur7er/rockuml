@@ -5,7 +5,7 @@ mod xml;
 
 use std::rc::Rc;
 
-pub use graphics::SvgOption;
+pub(crate) use graphics::SvgOption;
 use graphics::{SvgGraphics, SvgText};
 
 use super::font::{FontStyle, StringBounder};
@@ -16,13 +16,13 @@ use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
 use crate::color::HColor;
 
-pub struct UGraphicSvg {
+pub(crate) struct UGraphicSvg {
     graphics: Option<SvgGraphics>,
     string_bounder: Rc<dyn StringBounder>,
 }
 
 impl UGraphicSvg {
-    pub fn new(seed: i64, option: SvgOption, string_bounder: Rc<dyn StringBounder>) -> Self {
+    pub(crate) fn new(seed: i64, option: SvgOption, string_bounder: Rc<dyn StringBounder>) -> Self {
         Self {
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
@@ -30,7 +30,7 @@ impl UGraphicSvg {
     }
 
     /// The finished document, embedding `metadata` (the encoded source) when given.
-    pub fn take_document(&mut self, metadata: Option<&str>) -> String {
+    pub(crate) fn take_document(&mut self, metadata: Option<&str>) -> String {
         self.graphics
             .take()
             .expect("the document is taken once")

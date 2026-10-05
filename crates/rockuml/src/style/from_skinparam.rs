@@ -321,7 +321,7 @@ impl Knowledge {
 
 /// The style rules for `skinparam key value`, numbered with `counter`. `key` is already normalised
 /// (lowercase, `participant` for `sequenceParticipant`...), possibly with a `<<stereotype>>` suffix.
-pub fn skinparam_styles(key: &str, value: &str, counter: &mut i32) -> Vec<Style> {
+pub(super) fn skinparam_styles(key: &str, value: &str, counter: &mut i32) -> Vec<Style> {
     let (key, stereotype) = split_stereotype(key);
     let mut converter = Converter {
         stereotype,

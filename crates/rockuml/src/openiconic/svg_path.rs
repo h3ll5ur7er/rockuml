@@ -3,13 +3,13 @@
 use crate::klimt::geom::UTranslate;
 use crate::klimt::shape::USegment;
 
-pub struct SvgPath {
+pub(super) struct SvgPath {
     movements: Vec<Movement>,
     translate: UTranslate,
 }
 
 impl SvgPath {
-    pub fn new(path: &str, translate: UTranslate) -> Self {
+    pub(super) fn new(path: &str, translate: UTranslate) -> Self {
         let mut movements = Vec::new();
         let mut last = SvgPosition::ORIGIN;
         let mut last_move = SvgPosition::ORIGIN;
@@ -38,7 +38,7 @@ impl SvgPath {
     }
 
     /// The path scaled by `factor`; closing a subpath adds nothing, as in PlantUML.
-    pub fn to_upath(&self, factor: f64) -> Vec<USegment> {
+    pub(super) fn to_upath(&self, factor: f64) -> Vec<USegment> {
         let scaled = |position: SvgPosition| (position.x * factor, position.y * factor);
         let path = self.movements.iter().filter_map(|movement| {
             let arguments = &movement.arguments;

@@ -185,7 +185,7 @@ impl FontStyle {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct FontStyles(u8);
+pub(crate) struct FontStyles(u8);
 
 impl FontStyles {
     fn of(font: &UFont) -> Self {
@@ -200,11 +200,11 @@ impl FontStyles {
     }
 
     #[must_use]
-    pub fn with(self, style: FontStyle) -> Self {
+    pub(crate) fn with(self, style: FontStyle) -> Self {
         Self(self.0 | 1 << style as u8)
     }
 
-    pub fn contains(self, style: FontStyle) -> bool {
+    pub(crate) fn contains(self, style: FontStyle) -> bool {
         self.0 & 1 << style as u8 != 0
     }
 

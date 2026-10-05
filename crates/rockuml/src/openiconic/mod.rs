@@ -15,14 +15,14 @@ use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::pattern::java_regex;
 
-pub struct OpenIconic {
+pub(crate) struct OpenIconic {
     svg_path: SvgPath,
     width: f64,
     height: f64,
 }
 
 impl OpenIconic {
-    pub fn retrieve(name: &str) -> Option<Self> {
+    pub(crate) fn retrieve(name: &str) -> Option<Self> {
         let svg = crate::assets::get(&format!("openiconic/{name}.svg"))?;
         Some(Self::new(
             std::str::from_utf8(svg).expect("the icons are ASCII"),
@@ -48,7 +48,7 @@ impl OpenIconic {
         }
     }
 
-    pub fn as_text_block(&self, color: HColor, factor: f64) -> OpenIconicBlock<'_> {
+    pub(crate) fn as_text_block(&self, color: HColor, factor: f64) -> OpenIconicBlock<'_> {
         OpenIconicBlock {
             icon: self,
             color,
@@ -81,7 +81,7 @@ fn first_quoted(line: &str) -> &str {
     line.split('"').nth(1).expect("a quoted value")
 }
 
-pub struct OpenIconicBlock<'a> {
+pub(crate) struct OpenIconicBlock<'a> {
     icon: &'a OpenIconic,
     color: HColor,
     factor: f64,

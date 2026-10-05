@@ -10,7 +10,7 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::ugraphic::UGraphic;
 
-pub struct Tree {
+pub(super) struct Tree {
     entries: Vec<TreeEntry>,
     strategy: TableStrategy,
     /// Computed on the first measurement: re-measuring nested trees on every call is exponential in
@@ -28,7 +28,7 @@ struct TreeLayout {
 impl Tree {
     const MARGIN: f64 = 10.0;
 
-    pub fn new(strategy: TableStrategy) -> Self {
+    pub(super) fn new(strategy: TableStrategy) -> Self {
         Self {
             entries: Vec::new(),
             strategy,
@@ -37,7 +37,7 @@ impl Tree {
     }
 
     /// A row whose label's leading `+`s give its level.
-    pub fn add_entry(&mut self, text: &str) {
+    pub(super) fn add_entry(&mut self, text: &str) {
         let level = text.chars().take_while(|&c| c == '+').count();
         let label = Text::new(java::trim(&text[level..]), widget_font());
         self.entries.push(TreeEntry {
@@ -47,7 +47,7 @@ impl Tree {
         });
     }
 
-    pub fn add_cell_to_entry(&mut self, element: Box<dyn Element>) {
+    pub(super) fn add_cell_to_entry(&mut self, element: Box<dyn Element>) {
         if let Some(entry) = self.entries.last_mut() {
             entry.others.push(element);
         }

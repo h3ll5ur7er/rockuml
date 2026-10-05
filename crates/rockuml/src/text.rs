@@ -127,7 +127,7 @@ impl StringLocated {
     }
 }
 
-pub fn ends_with_backslash(s: &str) -> bool {
+pub(crate) fn ends_with_backslash(s: &str) -> bool {
     s.ends_with('\\') && !s.ends_with("\\\\")
 }
 

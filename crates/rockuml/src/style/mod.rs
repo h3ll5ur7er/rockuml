@@ -10,45 +10,45 @@ mod value;
 use std::collections::BTreeMap;
 
 use from_skinparam::skinparam_styles;
-pub use names::{PName, SName};
+pub(crate) use names::{PName, SName};
 use parser::StyleParser;
-pub use parser::StyleParsingError;
-pub use signature::StyleSignature;
-pub use value::{Value, ValueReading};
+pub(crate) use parser::StyleParsingError;
+pub(crate) use signature::StyleSignature;
+pub(crate) use value::{Value, ValueReading};
 
 /// Raised for properties of stereotype rules, so that they beat plain rules.
 const STEREOTYPE_PRIORITY: i32 = 1000;
 
 /// The properties of one rule, or of an element once every matching rule is merged.
 #[derive(Clone, Debug, PartialEq)]
-pub struct Style {
+pub(crate) struct Style {
     signature: StyleSignature,
     properties: BTreeMap<PName, Value>,
 }
 
 impl Style {
-    pub fn new(signature: StyleSignature, properties: BTreeMap<PName, Value>) -> Self {
+    pub(crate) fn new(signature: StyleSignature, properties: BTreeMap<PName, Value>) -> Self {
         Self {
             signature,
             properties,
         }
     }
 
-    pub fn signature(&self) -> &StyleSignature {
+    pub(crate) fn signature(&self) -> &StyleSignature {
         &self.signature
     }
 
-    pub fn value(&self, name: PName) -> Option<&Value> {
+    pub(crate) fn value(&self, name: PName) -> Option<&Value> {
         self.properties.get(&name)
     }
 
-    pub fn has_value(&self, name: PName) -> bool {
+    pub(crate) fn has_value(&self, name: PName) -> bool {
         self.properties.contains_key(&name)
     }
 
     /// `other` declared over this style: its properties win unless declared with a lower priority.
     #[must_use]
-    pub fn merge_with(&self, other: &Style) -> Style {
+    pub(crate) fn merge_with(&self, other: &Style) -> Style {
         let mut properties = self.properties.clone();
         for (&name, value) in &other.properties {
             properties.insert(name, value.merge_with(self.properties.get(&name)));
@@ -102,7 +102,7 @@ impl StyleStorage {
 
 /// All rules in force for a diagram: the skin's, then the diagram's own.
 #[derive(Clone, Debug, Default)]
-pub struct StyleBuilder {
+pub(crate) struct StyleBuilder {
     storage: StyleStorage,
     /// Numbers declarations so that later ones get higher priorities.
     counter: i32,
@@ -113,7 +113,7 @@ impl StyleBuilder {
     ///
     /// # Panics
     /// See [`Self::apply_skin`].
-    pub fn load_skin(name: &str) -> Self {
+    pub(crate) fn load_skin(name: &str) -> Self {
         let mut builder = Self::default();
         builder.apply_skin(name);
         builder
@@ -123,7 +123,7 @@ impl StyleBuilder {
     ///
     /// # Panics
     /// If no such skin is embedded, or it does not parse: skins are named by the code, never by users.
-    pub fn apply_skin(&mut self, name: &str) {
+    pub(crate) fn apply_skin(&mut self, name: &str) {
         let text = crate::assets::get(&format!("skin/{name}"))
             .unwrap_or_else(|| panic!("{name} is embedded"));
         let text = String::from_utf8_lossy(text);
@@ -133,7 +133,7 @@ impl StyleBuilder {
     }
 
     /// The rules of a style sheet, merged over the current ones.
-    pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
+    pub(crate) fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
         let styles = StyleParser::new(&mut self.counter).parse(lines)?;
         self.mute(styles);
         Ok(())
@@ -151,13 +151,13 @@ impl StyleBuilder {
     }
 
     /// The rules `skinparam key value` stands for, merged over the current ones.
-    pub fn apply_skinparam(&mut self, key: &str, value: &str) {
+    pub(crate) fn apply_skinparam(&mut self, key: &str, value: &str) {
         let styles = skinparam_styles(key, value, &mut self.counter);
         self.mute(styles);
     }
 
     /// The style of an element: every rule that applies to it, merged in storage order.
-    pub fn merged_style(&self, element: &StyleSignature) -> Option<Style> {
+    pub(crate) fn merged_style(&self, element: &StyleSignature) -> Option<Style> {
         self.storage
             .styles()
             .filter(|style| style.signature().matches(element))

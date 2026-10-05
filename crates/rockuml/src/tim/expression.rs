@@ -20,7 +20,7 @@ use crate::text::StringLocated;
 const COMMERCIAL_MINUS_SIGN: char = '\u{2052}';
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum TokenType {
+pub(super) enum TokenType {
     QuotedString,
     JsonData,
     Operator,
@@ -37,7 +37,7 @@ pub enum TokenType {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct Token {
+pub(super) struct Token {
     surface: String,
     kind: TokenType,
     json: Option<JsonValue>,
@@ -52,7 +52,7 @@ impl Token {
         }
     }
 
-    pub fn is_spaces(&self) -> bool {
+    pub(super) fn is_spaces(&self) -> bool {
         self.kind == TokenType::Spaces
     }
 
@@ -215,7 +215,7 @@ fn is_subtraction_operator(last_token: Option<&Token>) -> bool {
     })
 }
 
-pub fn eat_one_token(
+pub(super) fn eat_one_token(
     last_token: Option<&Token>,
     eater: &mut Eater,
     stop_at_colon: bool,
@@ -266,16 +266,16 @@ pub fn eat_one_token(
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct TokenStack {
+pub(super) struct TokenStack {
     tokens: Vec<Token>,
 }
 
 impl TokenStack {
-    pub fn push(&mut self, token: Token) {
+    pub(super) fn push(&mut self, token: Token) {
         self.tokens.push(token);
     }
 
-    pub fn is_empty(&self) -> bool {
+    pub(super) fn is_empty(&self) -> bool {
         self.tokens.is_empty()
     }
 
@@ -291,7 +291,7 @@ impl TokenStack {
     }
 
     /// Reads a function argument: tokens up to the next top-level `,` or `)`.
-    pub fn eat_until_close_parenthesis_or_comma(eater: &mut Eater) -> TimResult<TokenStack> {
+    pub(super) fn eat_until_close_parenthesis_or_comma(eater: &mut Eater) -> TimResult<TokenStack> {
         let mut result = TokenStack::default();
         let mut level = 0;
         let mut last_significant: Option<Token> = None;
@@ -319,7 +319,7 @@ impl TokenStack {
     }
 
     /// A plain word right before `(` is a function call: retype it and record its argument count.
-    pub fn guess_functions(&mut self, location: &StringLocated) -> TimResult<()> {
+    pub(super) fn guess_functions(&mut self, location: &StringLocated) -> TimResult<()> {
         let mut open = Vec::new();
         let mut pairs = BTreeMap::new();
         for (index, token) in self.tokens.iter().enumerate() {
@@ -344,7 +344,7 @@ impl TokenStack {
         Ok(())
     }
 
-    pub fn get_result(
+    pub(super) fn get_result(
         &self,
         location: &StringLocated,
         context: &mut TContext,

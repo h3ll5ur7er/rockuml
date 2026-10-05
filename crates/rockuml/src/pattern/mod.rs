@@ -7,36 +7,36 @@
 
 mod tree;
 
-pub use tree::{RegexResult, RegexTree};
+pub(crate) use tree::{RegexResult, RegexTree};
 
 use regex::Regex;
 
 /// Compiles like PlantUML's `Pattern2`: `%s`, `%q`, `%g` and `%pLN` macros expanded, case-insensitive.
-pub fn plantuml_regex(pattern: &str) -> Regex {
+pub(crate) fn plantuml_regex(pattern: &str) -> Regex {
     java_regex(&expand_macros(pattern), true)
 }
 
-pub fn java_regex(pattern: &str, case_insensitive: bool) -> Regex {
+pub(crate) fn java_regex(pattern: &str, case_insensitive: bool) -> Regex {
     try_java_regex(pattern, case_insensitive)
         .unwrap_or_else(|| panic!("cannot translate Java regex {pattern:?}"))
 }
 
 /// For patterns written by users, which may be invalid or use Java syntax with no equivalent here.
-pub fn try_java_regex(pattern: &str, case_insensitive: bool) -> Option<Regex> {
+pub(crate) fn try_java_regex(pattern: &str, case_insensitive: bool) -> Option<Regex> {
     let flags = if case_insensitive { "(?i)" } else { "" };
     Regex::new(&format!("{flags}{}", translate(pattern, Dialect::Regex)?)).ok()
 }
 
 /// A Java pattern compiled with whichever engine supports its syntax.
 #[derive(Debug)]
-pub enum JavaPattern {
+pub(crate) enum JavaPattern {
     Plain(Regex),
     WithLookaround(fancy_regex::Regex),
 }
 
 impl JavaPattern {
     /// Compiles like PlantUML's `Pattern2` (macros expanded, case-insensitive).
-    pub fn plantuml(pattern: &str) -> Self {
+    pub(crate) fn plantuml(pattern: &str) -> Self {
         let expanded = expand_macros(pattern);
         if has_lookaround(&expanded) {
             let translated = translate(&expanded, Dialect::FancyRegex)
@@ -49,7 +49,7 @@ impl JavaPattern {
         }
     }
 
-    pub fn is_match(&self, text: &str) -> bool {
+    pub(crate) fn is_match(&self, text: &str) -> bool {
         match self {
             JavaPattern::Plain(regex) => regex.is_match(text),
             JavaPattern::WithLookaround(regex) => regex.is_match(text).unwrap_or(false),
@@ -57,7 +57,7 @@ impl JavaPattern {
     }
 
     /// The groups of the first match, numbered from 1 as in Java; `None` for groups that did not take part.
-    pub fn captures(&self, text: &str) -> Option<Vec<Option<String>>> {
+    pub(crate) fn captures(&self, text: &str) -> Option<Vec<Option<String>>> {
         let groups: Vec<Option<&str>> = match self {
             JavaPattern::Plain(regex) => regex
                 .captures(text)?

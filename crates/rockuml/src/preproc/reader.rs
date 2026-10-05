@@ -11,18 +11,18 @@ use super::start_utils;
 use crate::java;
 use crate::text::{LineLocation, StringLocated, ends_with_backslash};
 
-pub trait ReadLine {
+pub(super) trait ReadLine {
     fn read_line(&mut self) -> Option<StringLocated>;
 }
 
 /// Splits text into lines the way `BufferedReader.readLine` does (`\n`, `\r` or `\r\n`).
-pub struct ReadLineReader {
+pub(super) struct ReadLineReader {
     lines: VecDeque<String>,
     location: LineLocation,
 }
 
 impl ReadLineReader {
-    pub fn new(text: &str, description: &str, parent: Option<LineLocation>) -> Self {
+    pub(super) fn new(text: &str, description: &str, parent: Option<LineLocation>) -> Self {
         Self {
             lines: split_lines(text).map(str::to_owned).collect(),
             location: LineLocation::new(description, parent),
@@ -60,13 +60,13 @@ impl ReadLine for ReadLineReader {
 }
 
 /// Lines given programmatically (configuration, definitions), all reported at one location.
-pub struct ReadLineList {
+pub(super) struct ReadLineList {
     lines: VecDeque<String>,
     location: LineLocation,
 }
 
 impl ReadLineList {
-    pub fn new(lines: impl IntoIterator<Item = String>, location: LineLocation) -> Self {
+    pub(super) fn new(lines: impl IntoIterator<Item = String>, location: LineLocation) -> Self {
         Self {
             lines: lines.into_iter().collect(),
             location,
@@ -83,14 +83,14 @@ impl ReadLine for ReadLineList {
 
 /// Removes the prefix that `@startuml` carries on its line (e.g. `' ` when the diagram sits inside a
 /// comment block) from every following line.
-pub struct UncommentReadLine {
+pub(super) struct UncommentReadLine {
     raw: Box<dyn ReadLine>,
     header_to_remove: Option<String>,
     paused: Rc<Cell<bool>>,
 }
 
 impl UncommentReadLine {
-    pub fn new(raw: Box<dyn ReadLine>) -> Self {
+    pub(super) fn new(raw: Box<dyn ReadLine>) -> Self {
         Self {
             raw,
             header_to_remove: None,
@@ -99,7 +99,7 @@ impl UncommentReadLine {
     }
 
     /// Block extraction pauses and resumes the reader while it already sits inside the filter chain.
-    pub fn pause_switch(&self) -> Rc<Cell<bool>> {
+    pub(super) fn pause_switch(&self) -> Rc<Cell<bool>> {
         Rc::clone(&self.paused)
     }
 }
@@ -129,14 +129,14 @@ impl ReadLine for UncommentReadLine {
 }
 
 /// Injects the `-config` lines right after every `@start` line.
-pub struct ReadFilterAddConfig {
+pub(super) struct ReadFilterAddConfig {
     raw: Box<dyn ReadLine>,
     config: Vec<String>,
     inserted: VecDeque<StringLocated>,
 }
 
 impl ReadFilterAddConfig {
-    pub fn new(raw: Box<dyn ReadLine>, config: Vec<String>) -> Self {
+    pub(super) fn new(raw: Box<dyn ReadLine>, config: Vec<String>) -> Self {
         Self {
             raw,
             config,
@@ -162,13 +162,13 @@ impl ReadLine for ReadFilterAddConfig {
 }
 
 /// Joins lines ending with a backslash to the following line, skipping comment lines in between.
-pub struct ReadFilterMergeLines {
+pub(super) struct ReadFilterMergeLines {
     source: Box<dyn ReadLine>,
     manage_ending_backslash: bool,
 }
 
 impl ReadFilterMergeLines {
-    pub fn new(source: Box<dyn ReadLine>) -> Self {
+    pub(super) fn new(source: Box<dyn ReadLine>) -> Self {
         Self {
             source,
             manage_ending_backslash: true,
@@ -198,7 +198,9 @@ impl ReadLine for ReadFilterMergeLines {
 }
 
 /// Reads the next line that is not a `'` comment or part of a `/' ... '/` block comment.
-pub fn read_line_skipping_quote_comments(source: &mut dyn ReadLine) -> Option<StringLocated> {
+pub(super) fn read_line_skipping_quote_comments(
+    source: &mut dyn ReadLine,
+) -> Option<StringLocated> {
     let mut inside_long_comment = false;
     loop {
         let result = source.read_line()?;
@@ -222,7 +224,7 @@ pub fn read_line_skipping_quote_comments(source: &mut dyn ReadLine) -> Option<St
 }
 
 /// A YAML front-matter block (`---` lines right after `@start`) carries metadata, not diagram text.
-pub fn remove_yaml_header(lines: Vec<StringLocated>) -> Vec<StringLocated> {
+pub(super) fn remove_yaml_header(lines: Vec<StringLocated>) -> Vec<StringLocated> {
     let is_separator = |line: &StringLocated| line.text() == "---";
     if lines.len() > 1
         && is_separator(&lines[1])

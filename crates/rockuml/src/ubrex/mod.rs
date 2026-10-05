@@ -15,12 +15,12 @@ mod parser;
 use challenge::{Challenge, TextNavigator};
 
 #[derive(Clone, Debug)]
-pub struct UnicodeBracketedExpression {
+pub(crate) struct UnicodeBracketedExpression {
     challenge: Challenge,
 }
 
 impl UnicodeBracketedExpression {
-    pub fn build(ubrex: &str) -> Self {
+    pub(crate) fn build(ubrex: &str) -> Self {
         let definition: Vec<u16> = ubrex.encode_utf16().collect();
         Self {
             challenge: Challenge::List(parser::parse_and_build(&definition)),
@@ -31,7 +31,7 @@ impl UnicodeBracketedExpression {
     ///
     /// # Panics
     /// Where Java throws: a repetition of something that matched empty text ("infinite loop").
-    pub fn match_at<'a>(&self, text: &'a str) -> Option<UMatcher<'a>> {
+    pub(crate) fn match_at<'a>(&self, text: &'a str) -> Option<UMatcher<'a>> {
         let content: Vec<u16> = text.encode_utf16().collect();
         let result = self
             .challenge
@@ -49,18 +49,18 @@ impl UnicodeBracketedExpression {
 }
 
 #[derive(Debug)]
-pub struct UMatcher<'a> {
+pub(crate) struct UMatcher<'a> {
     accepted_match: &'a str,
     values: Vec<(String, &'a str)>,
 }
 
 impl<'a> UMatcher<'a> {
-    pub fn accepted_match(&self) -> &'a str {
+    pub(crate) fn accepted_match(&self) -> &'a str {
         self.accepted_match
     }
 
     /// Every value captured under `key`, in match order; nested names are keyed `OUTER/INNER`.
-    pub fn find_values_by_key(&self, key: &str) -> Vec<&'a str> {
+    pub(crate) fn find_values_by_key(&self, key: &str) -> Vec<&'a str> {
         self.values
             .iter()
             .filter(|(entry_key, _)| entry_key == key)

@@ -7,14 +7,14 @@ use crate::text::StringLocated;
 /// Why the lines did not make a diagram: no command accepts a line ("Syntax Error?"), or a command could
 /// not apply the lines it accepted.
 #[derive(Clone, Debug, PartialEq)]
-pub struct ParseFailure {
+pub(crate) struct ParseFailure {
     pub error: CommandError,
     /// The lines read up to the failure, the faulty one last.
     pub trace: Vec<StringLocated>,
 }
 
 /// Runs the lines after the start line through `commands`, up to the end line.
-pub fn execute_lines<D>(
+pub(crate) fn execute_lines<D>(
     lines: &[StringLocated],
     diagram: &mut D,
     commands: &[Box<dyn Command<D>>],

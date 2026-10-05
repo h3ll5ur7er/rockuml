@@ -1,6 +1,6 @@
 /// The kinds of diagram a start line can announce.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum DiagramType {
+pub(super) enum DiagramType {
     /// `@startuml`: sequence, class, activity and the other UML diagrams, told apart by their content.
     Uml,
     Bpm,
@@ -70,7 +70,7 @@ const KEYWORDS: [(&str, DiagramType); 30] = [
 
 impl DiagramType {
     /// How error messages name the type, like PlantUML's `humanReadableName`.
-    pub fn human_readable_name(self) -> &'static str {
+    pub(super) fn human_readable_name(self) -> &'static str {
         match self {
             Self::Uml => {
                 unreachable!("`@startuml` diagrams are named by the type their content reveals")
@@ -108,7 +108,7 @@ impl DiagramType {
     }
 
     /// The type a start line like `@startmindmap` announces; `None` if it is no start line.
-    pub fn of_start_line(line: &str) -> Option<Self> {
+    pub(super) fn of_start_line(line: &str) -> Option<Self> {
         let line = line.trim_start_matches(crate::java::is_whitespace);
         let rest = line.strip_prefix(['@', '\\'])?;
         let word = rest

@@ -8,7 +8,7 @@ use super::ugraphic::{UGraphicBackend, UParam};
 use crate::color::HColor;
 use crate::java::{self, Random};
 
-pub struct StringBounderDebug;
+pub(crate) struct StringBounderDebug;
 
 impl StringBounder for StringBounderDebug {
     fn calculate_dimension(&self, font: &UFont, text: &str) -> XDimension2D {
@@ -20,7 +20,7 @@ impl StringBounder for StringBounderDebug {
 }
 
 /// What the debug document says about the image before listing its shapes.
-pub struct DebugHeader {
+pub(crate) struct DebugHeader {
     pub dimension: XDimension2D,
     pub scale_factor: f64,
     pub seed: i64,
@@ -29,14 +29,14 @@ pub struct DebugHeader {
     pub preserve_aspect_ratio: String,
 }
 
-pub struct UGraphicDebug {
+pub(crate) struct UGraphicDebug {
     lines: Vec<String>,
     /// PlantUML stamps shapes it cannot describe with the time, in `java.util.Date` format.
     render_date: String,
 }
 
 impl UGraphicDebug {
-    pub fn new(render_date: String) -> Self {
+    pub(crate) fn new(render_date: String) -> Self {
         Self {
             lines: Vec::new(),
             render_date,
@@ -44,7 +44,7 @@ impl UGraphicDebug {
     }
 
     /// The document, with lines ending in `\n` on every platform as in PlantUML.
-    pub fn document(&self, header: &DebugHeader) -> String {
+    pub(crate) fn document(&self, header: &DebugHeader) -> String {
         let optional = |value: &Option<String>| value.clone().unwrap_or_else(|| "null".to_owned());
         let header_lines = [
             "DPI: 96".to_owned(),

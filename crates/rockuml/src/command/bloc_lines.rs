@@ -3,17 +3,17 @@
 use crate::text::StringLocated;
 
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct BlocLines {
+pub(crate) struct BlocLines {
     lines: Vec<StringLocated>,
 }
 
 impl BlocLines {
-    pub fn single(line: StringLocated) -> Self {
+    pub(crate) fn single(line: StringLocated) -> Self {
         Self { lines: vec![line] }
     }
 
     #[cfg(test)]
-    pub fn from_texts(texts: &[&str]) -> Self {
+    pub(crate) fn from_texts(texts: &[&str]) -> Self {
         let location = crate::text::LineLocation::new("test", None);
         let lines = texts
             .iter()
@@ -24,30 +24,30 @@ impl BlocLines {
     }
 
     #[must_use]
-    pub fn add(mut self, line: StringLocated) -> Self {
+    pub(crate) fn add(mut self, line: StringLocated) -> Self {
         self.lines.push(line);
         self
     }
 
-    pub fn len(&self) -> usize {
+    pub(crate) fn len(&self) -> usize {
         self.lines.len()
     }
 
-    pub fn first(&self) -> Option<&StringLocated> {
+    pub(crate) fn first(&self) -> Option<&StringLocated> {
         self.lines.first()
     }
 
-    pub fn last(&self) -> Option<&StringLocated> {
+    pub(crate) fn last(&self) -> Option<&StringLocated> {
         self.lines.last()
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &StringLocated> {
+    pub(crate) fn iter(&self) -> impl Iterator<Item = &StringLocated> {
         self.lines.iter()
     }
 
     /// Without the first `start` and last `end` lines, like the opening and closing lines of a block.
     #[must_use]
-    pub fn sub_extract(&self, start: usize, end: usize) -> Self {
+    pub(crate) fn sub_extract(&self, start: usize, end: usize) -> Self {
         let last = self.lines.len().saturating_sub(end).max(start);
         Self {
             lines: self.lines[start.min(last)..last].to_vec(),
@@ -56,7 +56,7 @@ impl BlocLines {
 
     /// Every line trimmed.
     #[must_use]
-    pub fn trimmed(&self) -> Self {
+    pub(crate) fn trimmed(&self) -> Self {
         Self {
             lines: self.lines.iter().map(StringLocated::trimmed).collect(),
         }
@@ -64,7 +64,7 @@ impl BlocLines {
 
     /// Without the lines that start with a quote (comments), once trimmed.
     #[must_use]
-    pub fn without_quote_lines(&self) -> Self {
+    pub(crate) fn without_quote_lines(&self) -> Self {
         Self {
             lines: self
                 .lines
@@ -77,7 +77,7 @@ impl BlocLines {
 
     /// Removes the indentation all non-empty lines share, one column at a time.
     #[must_use]
-    pub fn without_empty_columns(&self) -> Self {
+    pub(crate) fn without_empty_columns(&self) -> Self {
         let removable = |lines: &[StringLocated]| {
             let filled: Vec<&StringLocated> = lines
                 .iter()
@@ -101,7 +101,7 @@ impl BlocLines {
 
     /// From line `reference` on, removes up to as much leading space as that line has.
     #[must_use]
-    pub fn trim_smart(&self, reference: usize) -> Self {
+    pub(crate) fn trim_smart(&self, reference: usize) -> Self {
         let Some(reference_line) = self.lines.get(reference) else {
             return self.clone();
         };
@@ -122,7 +122,7 @@ impl BlocLines {
     }
 
     /// The lines as a label, without the empty line PlantUML leaves after a closing `}}`.
-    pub fn to_display(&self) -> crate::creole::Display {
+    pub(crate) fn to_display(&self) -> crate::creole::Display {
         let mut texts: Vec<&str> = self.lines.iter().map(StringLocated::text).collect();
         if texts.len() > 2 && texts[texts.len() - 1].is_empty() && texts[texts.len() - 2] == "}}" {
             texts.pop();

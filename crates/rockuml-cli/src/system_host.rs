@@ -6,7 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use rockuml::host::Host;
 
-pub struct SystemHost;
+pub(crate) struct SystemHost;
 
 impl Host for SystemHost {
     fn read_file(&self, path: &Path) -> Option<Vec<u8>> {
@@ -68,7 +68,7 @@ fn resolves_to_private_network(url: &str) -> bool {
     })
 }
 
-pub fn millis_since_epoch(time: SystemTime) -> i64 {
+pub(crate) fn millis_since_epoch(time: SystemTime) -> i64 {
     time.duration_since(UNIX_EPOCH).map_or(0, |elapsed| {
         i64::try_from(elapsed.as_millis()).unwrap_or(i64::MAX)
     })

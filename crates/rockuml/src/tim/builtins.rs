@@ -159,7 +159,7 @@ impl TFunction for InvokeProcedure {
 
 /// Registers the builtins in PlantUML's order: lookups may iterate them, so the order is observable.
 #[allow(clippy::too_many_lines, reason = "one table row per builtin")]
-pub fn register(functions: &mut FunctionsSet) {
+pub(super) fn register(functions: &mut FunctionsSet) {
     let builtins: [BuiltinEntry; 74] = [
         ("%false", 0, |n| n == 0, |_| Ok(TValue::from_bool(false))),
         ("%true", 0, |n| n == 0, |_| Ok(TValue::from_bool(true))),

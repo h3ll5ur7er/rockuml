@@ -5,14 +5,14 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-pub struct OutputNamer {
+pub(crate) struct OutputNamer {
     input_file_name: String,
     suffix: &'static str,
     unnamed_count: usize,
 }
 
 impl OutputNamer {
-    pub fn new(input_file_name: &str, suffix: &'static str) -> Self {
+    pub(crate) fn new(input_file_name: &str, suffix: &'static str) -> Self {
         Self {
             input_file_name: input_file_name.to_owned(),
             suffix,
@@ -20,7 +20,7 @@ impl OutputNamer {
         }
     }
 
-    pub fn next_name(&mut self, name_from_diagram: Option<&str>) -> String {
+    pub(crate) fn next_name(&mut self, name_from_diagram: Option<&str>) -> String {
         if let Some(name) = name_from_diagram {
             return change_extension(name, self.suffix, 0);
         }

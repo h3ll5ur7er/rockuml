@@ -10,7 +10,7 @@ use crate::color::HColor;
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
 
 /// A block inside padding, with a border and background drawn around both.
-pub struct TextBlockBordered<T> {
+pub(crate) struct TextBlockBordered<T> {
     inner: T,
     stroke: UStroke,
     border: HColor,
@@ -20,7 +20,7 @@ pub struct TextBlockBordered<T> {
 }
 
 impl<T: TextBlock> TextBlockBordered<T> {
-    pub fn new(
+    pub(crate) fn new(
         inner: T,
         stroke: UStroke,
         border: HColor,
@@ -83,13 +83,13 @@ impl<T: TextBlock> TextBlock for TextBlockBordered<T> {
 }
 
 /// A block with empty space around it.
-pub struct TextBlockMarged<T> {
+pub(crate) struct TextBlockMarged<T> {
     inner: T,
     margin: ClockwiseTopRightBottomLeft,
 }
 
 impl<T: TextBlock> TextBlockMarged<T> {
-    pub fn new(inner: T, margin: ClockwiseTopRightBottomLeft) -> Self {
+    pub(crate) fn new(inner: T, margin: ClockwiseTopRightBottomLeft) -> Self {
         Self { inner, margin }
     }
 }
@@ -114,21 +114,21 @@ impl<T: TextBlock> TextBlock for TextBlockMarged<T> {
 }
 
 /// A block with other blocks above and below it, as titles, captions, legends, headers and footers are.
-pub struct DecorateEntityImage<'a> {
+pub(crate) struct DecorateEntityImage<'a> {
     original: Box<dyn TextBlock + 'a>,
     top: Option<Decoration<'a>>,
     bottom: Option<Decoration<'a>>,
 }
 
 /// A block placed above or below another, drawn in its own group.
-pub struct Decoration<'a> {
+pub(crate) struct Decoration<'a> {
     pub block: Box<dyn TextBlock + 'a>,
     pub alignment: HorizontalAlignment,
     pub group: UGroup,
 }
 
 impl<'a> DecorateEntityImage<'a> {
-    pub fn new(
+    pub(crate) fn new(
         original: Box<dyn TextBlock + 'a>,
         top: Option<Decoration<'a>>,
         bottom: Option<Decoration<'a>>,
@@ -182,13 +182,16 @@ impl TextBlock for DecorateEntityImage<'_> {
 }
 
 /// Blocks stacked top to bottom, each on the full width in its own background colour if it has one.
-pub struct TextBlockVertical<'a> {
+pub(crate) struct TextBlockVertical<'a> {
     blocks: Vec<Box<dyn TextBlock + 'a>>,
     alignment: HorizontalAlignment,
 }
 
 impl<'a> TextBlockVertical<'a> {
-    pub fn new(blocks: Vec<Box<dyn TextBlock + 'a>>, alignment: HorizontalAlignment) -> Self {
+    pub(crate) fn new(
+        blocks: Vec<Box<dyn TextBlock + 'a>>,
+        alignment: HorizontalAlignment,
+    ) -> Self {
         Self { blocks, alignment }
     }
 }
@@ -225,13 +228,13 @@ impl TextBlock for TextBlockVertical<'_> {
 }
 
 /// A block that asks to be drawn on a colour; the block stacking it paints it.
-pub struct WithBackcolor<T> {
+pub(crate) struct WithBackcolor<T> {
     inner: T,
     color: HColor,
 }
 
 impl<T: TextBlock> WithBackcolor<T> {
-    pub fn new(inner: T, color: HColor) -> Self {
+    pub(crate) fn new(inner: T, color: HColor) -> Self {
         Self { inner, color }
     }
 }
@@ -251,14 +254,14 @@ impl<T: TextBlock> TextBlock for WithBackcolor<T> {
 }
 
 /// Lines of text without creole markup, each at least 10 high.
-pub struct TextBlockRaw {
+pub(crate) struct TextBlockRaw {
     lines: Vec<String>,
     font: FontConfiguration,
 }
 
 impl TextBlockRaw {
     /// An empty line is kept as a single space.
-    pub fn new(
+    pub(crate) fn new(
         lines: impl IntoIterator<Item = impl Into<String>>,
         font: FontConfiguration,
     ) -> Self {

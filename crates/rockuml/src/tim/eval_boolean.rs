@@ -3,7 +3,7 @@
 use crate::java;
 
 /// `None` when the expression does not parse (PlantUML throws there).
-pub fn eval(expression: &str, mut is_defined: impl FnMut(&str) -> bool) -> Option<bool> {
+pub(super) fn eval(expression: &str, mut is_defined: impl FnMut(&str) -> bool) -> Option<bool> {
     let mut parser = Parser {
         chars: expression.chars().collect(),
         position: 0,

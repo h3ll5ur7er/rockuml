@@ -13,7 +13,7 @@ use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
 #[derive(Default)]
-pub struct SkinParam {
+pub(crate) struct SkinParam {
     /// Loaded from the default skin when first needed.
     style_builder: OnceCell<StyleBuilder>,
     params: HashMap<String, String>,
@@ -32,17 +32,17 @@ impl SkinParam {
         self.style_builder.get_mut().expect("just initialised")
     }
 
-    pub fn merged_style(&self, element: &StyleSignature) -> Option<Style> {
+    pub(crate) fn merged_style(&self, element: &StyleSignature) -> Option<Style> {
         self.style_builder().merged_style(element)
     }
 
     /// The rules of a `<style>` block, merged over the current ones.
-    pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
+    pub(crate) fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
         self.style_builder_mut().apply_style_sheet(lines)
     }
 
     /// `skinparam key value`: remembered under the normalised key, and turned into style rules.
-    pub fn set_param(&mut self, key: &str, value: &str) {
+    pub(crate) fn set_param(&mut self, key: &str, value: &str) {
         for normalised in clean_for_key(key) {
             self.params
                 .insert(normalised.clone(), java::trim(value).to_owned());
@@ -53,7 +53,7 @@ impl SkinParam {
         }
     }
 
-    pub fn value(&self, key: &str) -> Option<String> {
+    pub(crate) fn value(&self, key: &str) -> Option<String> {
         if let Some(known) = self.looked_up.borrow().get(key) {
             return known.clone();
         }

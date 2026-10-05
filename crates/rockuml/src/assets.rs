@@ -3,7 +3,7 @@
 include!(concat!(env!("OUT_DIR"), "/assets.rs"));
 
 /// `path` is relative to the assets directory with `/` separators, e.g. `themes/puml-theme-amiga.puml`.
-pub fn get(path: &str) -> Option<&'static [u8]> {
+pub(crate) fn get(path: &str) -> Option<&'static [u8]> {
     FILES
         .binary_search_by(|(name, _)| (*name).cmp(path))
         .ok()

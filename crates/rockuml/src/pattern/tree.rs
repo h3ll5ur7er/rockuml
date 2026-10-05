@@ -12,7 +12,7 @@ use crate::java::JavaHashMap;
 type Captured = Vec<Option<String>>;
 
 #[derive(Debug)]
-pub enum RegexTree {
+pub(crate) enum RegexTree {
     Leaf {
         name: Option<&'static str>,
         group_count: usize,
@@ -24,7 +24,7 @@ pub enum RegexTree {
 }
 
 impl RegexTree {
-    pub fn leaf(pattern: &'static str) -> Self {
+    pub(crate) fn leaf(pattern: &'static str) -> Self {
         Self::Leaf {
             name: None,
             group_count: 0,
@@ -32,7 +32,7 @@ impl RegexTree {
         }
     }
 
-    pub fn named(group_count: usize, name: &'static str, pattern: &'static str) -> Self {
+    pub(crate) fn named(group_count: usize, name: &'static str, pattern: &'static str) -> Self {
         Self::Leaf {
             name: Some(name),
             group_count,
@@ -40,31 +40,31 @@ impl RegexTree {
         }
     }
 
-    pub fn start() -> Self {
+    pub(crate) fn start() -> Self {
         Self::leaf("^")
     }
 
-    pub fn end() -> Self {
+    pub(crate) fn end() -> Self {
         Self::leaf("$")
     }
 
-    pub fn spaces_zero_or_more() -> Self {
+    pub(crate) fn spaces_zero_or_more() -> Self {
         Self::leaf("[%s]*")
     }
 
-    pub fn spaces_one_or_more() -> Self {
+    pub(crate) fn spaces_one_or_more() -> Self {
         Self::leaf("[%s]+")
     }
 
-    pub fn concat(parts: Vec<RegexTree>) -> Self {
+    pub(crate) fn concat(parts: Vec<RegexTree>) -> Self {
         Self::Concat(parts, OnceLock::new())
     }
 
-    pub fn or(alternatives: Vec<RegexTree>) -> Self {
+    pub(crate) fn or(alternatives: Vec<RegexTree>) -> Self {
         Self::Or(alternatives)
     }
 
-    pub fn optional(part: RegexTree) -> Self {
+    pub(crate) fn optional(part: RegexTree) -> Self {
         Self::Optional(Box::new(part))
     }
 
@@ -82,12 +82,12 @@ impl RegexTree {
     }
 
     /// Whether the line matches anywhere (PlantUML's `find`). Only concatenations are matched directly.
-    pub fn is_match(&self, line: &str) -> bool {
+    pub(crate) fn is_match(&self, line: &str) -> bool {
         self.compiled().is_match(line)
     }
 
     /// The named groups of the first match.
-    pub fn matcher(&self, line: &str) -> Option<RegexResult> {
+    pub(crate) fn matcher(&self, line: &str) -> Option<RegexResult> {
         let groups = self.compiled().captures(line)?;
         let mut groups = groups.into_iter();
         Some(RegexResult {
@@ -140,17 +140,17 @@ impl RegexTree {
 
 /// The groups of a match, by the names the command's pattern gave them.
 #[derive(Debug)]
-pub struct RegexResult {
+pub(crate) struct RegexResult {
     data: JavaHashMap<Captured>,
 }
 
 impl RegexResult {
-    pub fn get(&self, name: &str, index: usize) -> Option<&str> {
+    pub(crate) fn get(&self, name: &str, index: usize) -> Option<&str> {
         self.data.get(name)?.get(index)?.as_deref()
     }
 
     /// The first group whose name starts with `prefix` and that matched, in Java's `HashMap` order.
-    pub fn get_lazzy(&self, prefix: &str, index: usize) -> Option<&str> {
+    pub(crate) fn get_lazzy(&self, prefix: &str, index: usize) -> Option<&str> {
         self.data
             .iter()
             .filter(|(name, _)| name.starts_with(prefix))
