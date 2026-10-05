@@ -101,7 +101,7 @@ Crates that close the gaps:
 |---|---|---|
 | **Input** | Every valid core PlantUML file renders and every invalid one fails, including preprocessor, stdlib, themes, skinparam, `<style>` | **100% for Tier 1+2 diagrams** |
 | **Errors** | Same error message and line number; same red error image layout | Tier 1 |
-| **Geometry** | `-tdebug` output **identical** to Java's | Tier 1, the main CI gate |
+| **Geometry** | `-f debug` output **identical** to Java's | Tier 1, the main CI gate |
 | **Deterministic SVG** | `SVG_DETERMINISTIC` output identical after normalising version/date comments | Tier 1 |
 | **Default SVG** | Same structure and ids; coordinates within ε of Java-on-Windows | Tier 1 |
 | **PNG** | Same pixel dimensions, visually equivalent (antialiasing differs from Java2D) | Tier 1 |
@@ -219,7 +219,7 @@ Graphviz.** Java then uses Smetana, which is the engine we port, so layouts are 
 | Level | Java command | Comparison |
 |---|---|---|
 | L0 preprocessor | `-preproc` | exact text |
-| L1 geometry | `-tdebug` | exact text (after removing the timestamp in the header line) |
+| L1 geometry | `-f debug` | exact text (render timestamps masked) |
 | L2 det. SVG | `SVG_DETERMINISTIC` (via `-t svg` + deterministic option / API helper in the oracle tool) | exact after normalisation |
 | L3 SVG | `-tsvg` (generated on Windows) | XML-structural diff, numeric ε = 0.5 px |
 | L4 PNG | `-tpng` | same width × height; perceptual diff report (not gating) |
@@ -238,9 +238,9 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 
 ### Phase 0 — Bootstrap
 - Install Rust (rustup) and add the `wasm32-unknown-unknown` target. Create the workspace skeleton and `jcompat`.
-- CI matrix: windows-msvc, linux-musl (static), macOS universal, wasm. Release artifacts are single files.
+- CI matrix (once a remote exists): windows-msvc, linux-musl (static), macOS universal, wasm. Release artifacts are single files.
 - Oracle tooling, initial corpus, golden generation.
-- **Exit:** `rockuml --version` builds on all 4 targets. Goldens exist for about 300 inputs.
+- **Exit:** `rockuml --version` works; the library builds for wasm; parity harness and seed corpus are in place. Each later phase grows the corpus with the cases its features need.
 
 ### Phase 1 — Text front-end (~25k Java lines)
 - `ReadLineReader`, `UncommentReadLine`, line merging, `-config`, `StartUtils`, `BlockUml`, YAML header removal, `jaws`.
