@@ -3,7 +3,7 @@
 
 use super::font::{StringBounder, UFont};
 use super::geom::{UTranslate, XDimension2D};
-use super::shape::{UShape, UText};
+use super::shape::{UEllipse, URectangle, UShape, UText};
 use super::ugraphic::{UGraphicBackend, UParam};
 use crate::color::HColor;
 use crate::java::{self, Random};
@@ -29,12 +29,20 @@ pub struct DebugHeader {
     pub preserve_aspect_ratio: String,
 }
 
-#[derive(Default)]
 pub struct UGraphicDebug {
     lines: Vec<String>,
+    /// PlantUML stamps shapes it cannot describe with the time, in `java.util.Date` format.
+    render_date: String,
 }
 
 impl UGraphicDebug {
+    pub fn new(render_date: String) -> Self {
+        Self {
+            lines: Vec::new(),
+            render_date,
+        }
+    }
+
     /// The document, with lines ending in `\n` on every platform as in PlantUML.
     pub fn into_document(self, header: &DebugHeader) -> String {
         let optional = |value: &Option<String>| value.clone().unwrap_or_else(|| "null".to_owned());
@@ -79,12 +87,61 @@ impl UGraphicDebug {
             String::new(),
         ]);
     }
+
+    fn out_ellipse(&mut self, ellipse: &UEllipse, at: UTranslate, param: &UParam) {
+        self.lines.extend([
+            "ELLIPSE:".to_owned(),
+            format!("  pt1: {}", point(at.dx, at.dy)),
+            format!(
+                "  pt2: {}",
+                point(at.dx + ellipse.width, at.dy + ellipse.height)
+            ),
+            format!("  start: {}", java::double_to_string(ellipse.start)),
+            format!("  extend: {}", java::double_to_string(ellipse.extend)),
+        ]);
+        self.out_style(param);
+    }
+
+    fn out_rectangle(&mut self, rectangle: &URectangle, at: UTranslate, param: &UParam) {
+        self.lines.extend([
+            "RECTANGLE:".to_owned(),
+            format!("  pt1: {}", point(at.dx, at.dy)),
+            format!(
+                "  pt2: {}",
+                point(at.dx + rectangle.width, at.dy + rectangle.height)
+            ),
+            format!("  xCorner: {}", rectangle.rx as i32),
+            format!("  yCorner: {}", rectangle.ry as i32),
+        ]);
+        self.out_style(param);
+    }
+
+    /// Shadows are not ported yet, so every shape is listed without one.
+    fn out_style(&mut self, param: &UParam) {
+        self.lines.extend([
+            format!("  stroke: {}", param.stroke),
+            "  shadow: 0".to_owned(),
+            format!("  color: {}", color_to_string(Some(&param.color))),
+            format!("  backcolor: {}", color_to_string(Some(&param.backcolor))),
+            String::new(),
+        ]);
+    }
 }
 
 impl UGraphicBackend for UGraphicDebug {
-    fn draw(&mut self, shape: &UShape, at: UTranslate, _param: &UParam) {
+    fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
         match shape {
             UShape::Text(text) => self.out_text(text, at),
+            UShape::Ellipse(ellipse) => self.out_ellipse(ellipse, at, param),
+            UShape::Rectangle(rectangle) => self.out_rectangle(rectangle, at, param),
+            UShape::HorizontalLine => {
+                let undescribed = format!(
+                    "UGraphicDebug {} {}",
+                    shape.java_class_name(),
+                    self.render_date
+                );
+                self.lines.push(undescribed);
+            }
         }
     }
 }

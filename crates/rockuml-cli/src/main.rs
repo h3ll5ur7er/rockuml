@@ -129,7 +129,7 @@ fn write_outputs(
                 .flat_map(|line| [line, LINE_SEPARATOR])
                 .collect::<String>(),
             OutputFormat::Debug => match rockuml::diagram::create(block) {
-                Ok(diagram) => rockuml::diagram::export_debug(diagram.as_ref()),
+                Ok(diagram) => rockuml::diagram::export_debug(diagram.as_ref(), &SystemHost),
                 Err(not_ported) => {
                     eprintln!("rockuml: {}: {not_ported}", output.display());
                     all_rendered = false;

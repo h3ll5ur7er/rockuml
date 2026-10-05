@@ -4,6 +4,7 @@
 //! [`SheetBlock1`] lays out.
 
 mod atom_text;
+mod atoms;
 mod char_hidder;
 mod parser;
 mod sheet_block;

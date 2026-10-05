@@ -11,6 +11,17 @@ use crate::klimt::ugraphic::UGraphic;
 pub struct AtomText {
     text: String,
     font: FontConfiguration,
+    margins: Margins,
+}
+
+/// Space kept free beside the text, measured in the text's own font.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Margins {
+    None,
+    /// A list number is indented by its nesting depth and followed by the width of a dot.
+    ListNumber {
+        order: usize,
+    },
 }
 
 impl AtomText {
@@ -19,7 +30,36 @@ impl AtomText {
         Self {
             text: manage_special_chars(&char_hidder::unhide(text)),
             font,
+            margins: Margins::None,
         }
+    }
+
+    /// The number in front of a `#` list item; `local_number` counts from zero.
+    pub fn list_number(font: FontConfiguration, order: usize, local_number: usize) -> Self {
+        Self {
+            margins: Margins::ListNumber { order },
+            ..Self::legacy(&format!("{}.", local_number + 1), font)
+        }
+    }
+
+    fn margin_left(&self, string_bounder: &dyn StringBounder) -> f64 {
+        match self.margins {
+            Margins::None => 0.0,
+            Margins::ListNumber { order } => self.width_of("9. ", string_bounder) * order as f64,
+        }
+    }
+
+    fn margin_right(&self, string_bounder: &dyn StringBounder) -> f64 {
+        match self.margins {
+            Margins::None => 0.0,
+            Margins::ListNumber { .. } => self.width_of(".", string_bounder),
+        }
+    }
+
+    fn width_of(&self, text: &str, string_bounder: &dyn StringBounder) -> f64 {
+        string_bounder
+            .calculate_dimension(&self.font.font(), text)
+            .width
     }
 
     fn is_tabulation(c: char) -> bool {
@@ -86,10 +126,12 @@ impl TextBlock for AtomText {
         } else {
             rect.width
         };
-        XDimension2D::new(width, rect.height.max(10.0))
+        let margins = self.margin_left(string_bounder) + self.margin_right(string_bounder);
+        XDimension2D::new(width + margins, rect.height.max(10.0))
     }
 
     fn draw_u(&self, ug: &UGraphic) {
+        let ug = &ug.translated(self.margin_left(ug.string_bounder()), 0.0);
         let string_bounder = ug.string_bounder();
         let font = self.font.font();
         let rect = string_bounder.calculate_dimension(&font, &self.text);

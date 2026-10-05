@@ -3,6 +3,22 @@ use super::font::FontConfiguration;
 #[derive(Clone, Debug, PartialEq)]
 pub enum UShape {
     Text(UText),
+    Ellipse(UEllipse),
+    Rectangle(URectangle),
+    /// A separator across whatever contains it; only containers that know their width can draw it.
+    HorizontalLine,
+}
+
+impl UShape {
+    /// The name of the Java class PlantUML draws this shape with.
+    pub fn java_class_name(&self) -> &'static str {
+        match self {
+            Self::Text(_) => "UText",
+            Self::Ellipse(_) => "UEllipse",
+            Self::Rectangle(_) => "URectangle",
+            Self::HorizontalLine => "UHorizontalLine",
+        }
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -18,6 +34,45 @@ impl UText {
             text: crate::jaws::make_newlines_visible(text),
             font,
             orientation: 0,
+        }
+    }
+}
+
+/// An ellipse, or an arc of one when `extend` is non-zero.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct UEllipse {
+    pub width: f64,
+    pub height: f64,
+    pub start: f64,
+    pub extend: f64,
+}
+
+impl UEllipse {
+    pub const fn new(width: f64, height: f64) -> Self {
+        Self {
+            width,
+            height,
+            start: 0.0,
+            extend: 0.0,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct URectangle {
+    pub width: f64,
+    pub height: f64,
+    pub rx: f64,
+    pub ry: f64,
+}
+
+impl URectangle {
+    pub const fn new(width: f64, height: f64) -> Self {
+        Self {
+            width,
+            height,
+            rx: 0.0,
+            ry: 0.0,
         }
     }
 }

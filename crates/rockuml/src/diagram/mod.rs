@@ -8,6 +8,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::color::HColor;
+use crate::host::Host;
 use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
@@ -87,7 +88,7 @@ fn prepare(lines: &[StringLocated]) -> (Option<DiagramType>, UmlSource) {
 }
 
 /// The diagram in PlantUML's `debug` format, which lists every drawn shape.
-pub fn export_debug(diagram: &dyn Diagram) -> String {
+pub fn export_debug(diagram: &dyn Diagram, host: &dyn Host) -> String {
     let settings = diagram.export_settings();
     let text_block = diagram.text_block();
     let string_bounder = Rc::new(StringBounderDebug);
@@ -96,7 +97,8 @@ pub fn export_debug(diagram: &dyn Diagram) -> String {
         .calculate_dimension(string_bounder.as_ref())
         .delta(margin.left + margin.right, margin.top + margin.bottom);
 
-    let output = Rc::new(RefCell::new(UGraphicDebug::default()));
+    let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
+    let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
     let ug = UGraphic::new(
         output.clone(),
         string_bounder as Rc<dyn StringBounder>,
@@ -104,7 +106,11 @@ pub fn export_debug(diagram: &dyn Diagram) -> String {
     );
     text_block.draw_u(&ug.translated(margin.left, margin.top));
 
-    output.take().into_document(&DebugHeader {
+    drop(ug);
+    let output = Rc::into_inner(output)
+        .expect("the drawing surfaces are gone")
+        .into_inner();
+    output.into_document(&DebugHeader {
         dimension,
         scale_factor: 1.0,
         seed: settings.seed,

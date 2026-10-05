@@ -15,11 +15,15 @@ pub struct UStroke {
 }
 
 impl UStroke {
-    pub const SIMPLE: Self = Self {
-        dash_visible: 0.0,
-        dash_space: 0.0,
-        thickness: 1.0,
-    };
+    pub const SIMPLE: Self = Self::with_thickness(1.0);
+
+    pub const fn with_thickness(thickness: f64) -> Self {
+        Self {
+            dash_visible: 0.0,
+            dash_space: 0.0,
+            thickness,
+        }
+    }
 }
 
 impl fmt::Display for UStroke {
@@ -96,6 +100,29 @@ impl UGraphic {
             translate: UTranslate::new(dx, dy).compose(self.translate),
             ..self.clone()
         }
+    }
+
+    /// Lines are drawn in `color`.
+    #[must_use]
+    pub fn with_color(&self, color: HColor) -> Self {
+        let mut copy = self.clone();
+        copy.param.color = color;
+        copy
+    }
+
+    /// Shapes are filled with `backcolor`.
+    #[must_use]
+    pub fn with_backcolor(&self, backcolor: HColor) -> Self {
+        let mut copy = self.clone();
+        copy.param.backcolor = backcolor;
+        copy
+    }
+
+    #[must_use]
+    pub fn with_stroke(&self, stroke: UStroke) -> Self {
+        let mut copy = self.clone();
+        copy.param.stroke = stroke;
+        copy
     }
 
     pub fn draw(&self, shape: &UShape) {
