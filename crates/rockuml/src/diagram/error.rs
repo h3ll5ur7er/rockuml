@@ -5,7 +5,7 @@ use super::source::UmlSource;
 use super::{Diagram, ExportSettings, NotYetPorted};
 use crate::color::HColor;
 use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
-use crate::klimt::blocks::{Marged, RawText, Vertical, WithBackcolor};
+use crate::klimt::blocks::{TextBlockMarged, TextBlockRaw, TextBlockVertical, WithBackcolor};
 use crate::klimt::font::{FontConfiguration, FontStyle, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UImage, UShape};
@@ -112,14 +112,14 @@ impl Diagram for ErrorDiagram {
         let mut body = self.body_lines();
         let faulty = body.pop().expect("the body has the blank line at least");
         let location = WithBackcolor::new(
-            Marged::new(
-                RawText::new(self.location_lines(), bold(HColor::BLACK)),
+            TextBlockMarged::new(
+                TextBlockRaw::new(self.location_lines(), bold(HColor::BLACK)),
                 margins(1.0, 1.0, 1.0, 4.0),
             ),
             GREEN,
         );
-        let header = Marged::new(
-            RawText::new(
+        let header = TextBlockMarged::new(
+            TextBlockRaw::new(
                 [PLANTUML_DESCRIPTION],
                 sans_serif(12, GREEN)
                     .with_style(FontStyle::Bold)
@@ -132,21 +132,29 @@ impl Diagram for ErrorDiagram {
             .with_extended_color(RED);
         // Stacked pairwise like PlantUML, which matters: a background spans the width of its own pair.
         let below: [Box<dyn TextBlock>; 3] = [
-            Box::new(RawText::new(body, bold(GREEN))),
-            Box::new(RawText::new([faulty], wavy)),
-            Box::new(RawText::new([format!(" {}", self.message)], bold(RED))),
+            Box::new(TextBlockRaw::new(body, bold(GREEN))),
+            Box::new(TextBlockRaw::new([faulty], wavy)),
+            Box::new(TextBlockRaw::new([format!(" {}", self.message)], bold(RED))),
         ];
-        let report = below
-            .into_iter()
-            .fold(Box::new(location) as Box<dyn TextBlock>, |above, next| {
-                Box::new(Vertical::new(vec![above, next], HorizontalAlignment::Left))
-            });
-        let image = Vertical::new(vec![Box::new(header), report], HorizontalAlignment::Left);
-        let image = Marged::new(image, ClockwiseTopRightBottomLeft::same(5.0));
+        let report =
+            below
+                .into_iter()
+                .fold(Box::new(location) as Box<dyn TextBlock>, |above, next| {
+                    Box::new(TextBlockVertical::new(
+                        vec![above, next],
+                        HorizontalAlignment::Left,
+                    ))
+                });
+        let image =
+            TextBlockVertical::new(vec![Box::new(header), report], HorizontalAlignment::Left);
+        let image = TextBlockMarged::new(image, ClockwiseTopRightBottomLeft::same(5.0));
         let image = WithBackcolor::new(image, HColor::BLACK);
         if self.source.lines().len() < 5 {
             let blocks: Vec<Box<dyn TextBlock>> = vec![Box::new(Welcome::new()), Box::new(image)];
-            return Ok(Box::new(Vertical::new(blocks, HorizontalAlignment::Left)));
+            return Ok(Box::new(TextBlockVertical::new(
+                blocks,
+                HorizontalAlignment::Left,
+            )));
         }
         Ok(Box::new(image))
     }

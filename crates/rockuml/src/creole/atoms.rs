@@ -4,7 +4,7 @@ use super::sheet_block::SheetBlock1;
 use super::{Atom, Sheet};
 use crate::color::HColor;
 use crate::klimt::TextBlock;
-use crate::klimt::blocks::Marged;
+use crate::klimt::blocks::TextBlockMarged;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
@@ -148,8 +148,8 @@ impl AtomOpenIconic {
         }
     }
 
-    fn as_text_block(&self) -> Marged<OpenIconicBlock<'_>> {
-        Marged::new(
+    fn as_text_block(&self) -> TextBlockMarged<OpenIconicBlock<'_>> {
+        TextBlockMarged::new(
             self.open_iconic
                 .as_text_block(self.color.clone(), self.factor),
             ClockwiseTopRightBottomLeft {

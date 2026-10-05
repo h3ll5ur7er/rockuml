@@ -4,7 +4,7 @@
 use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
-use crate::klimt::blocks::{Bordered, Decorated, Decoration, Marged};
+use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
@@ -122,13 +122,17 @@ impl Titled {
             ]);
             let decoration = Some(legend.decoration("legend", &style));
             result = match vertical {
-                VerticalAlignment::Top => Box::new(Decorated::new(result, decoration, None)),
-                VerticalAlignment::Bottom => Box::new(Decorated::new(result, None, decoration)),
+                VerticalAlignment::Top => {
+                    Box::new(DecorateEntityImage::new(result, decoration, None))
+                }
+                VerticalAlignment::Bottom => {
+                    Box::new(DecorateEntityImage::new(result, None, decoration))
+                }
             };
         }
         if let Some(title) = &self.title {
             let style = self.document_style(Some(SName::Title));
-            result = Box::new(Decorated::new(
+            result = Box::new(DecorateEntityImage::new(
                 result,
                 Some(title.decoration("title", &style)),
                 None,
@@ -136,7 +140,7 @@ impl Titled {
         }
         if let Some(caption) = &self.caption {
             let style = self.document_style(Some(SName::Caption));
-            result = Box::new(Decorated::new(
+            result = Box::new(DecorateEntityImage::new(
                 result,
                 None,
                 Some(caption.decoration("caption", &style)),
@@ -150,7 +154,7 @@ impl Titled {
         let header = ribbon(&self.header, SName::Header, "header");
         let footer = ribbon(&self.footer, SName::Footer, "footer");
         if header.is_some() || footer.is_some() {
-            result = Box::new(Decorated::new(result, header, footer));
+            result = Box::new(DecorateEntityImage::new(result, header, footer));
         }
         result
     }
@@ -220,7 +224,7 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
     let sheet =
         CreoleParser::new(font_configuration(style), alignment).create_sheet(display.lines());
     let text = SheetBlock2::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()));
-    let bordered = Bordered::new(
+    let bordered = TextBlockBordered::new(
         text,
         stroke(style),
         style.value(PName::LineColor).as_color(),
@@ -228,7 +232,10 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
         f64::from(style.value(PName::RoundCorner).as_int()),
         margin_of(style, PName::Padding),
     );
-    Box::new(Marged::new(bordered, margin_of(style, PName::Margin)))
+    Box::new(TextBlockMarged::new(
+        bordered,
+        margin_of(style, PName::Margin),
+    ))
 }
 
 /// `Style.getFontConfiguration`.

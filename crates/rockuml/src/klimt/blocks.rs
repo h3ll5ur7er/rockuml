@@ -10,7 +10,7 @@ use crate::color::HColor;
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
 
 /// A block inside padding, with a border and background drawn around both.
-pub struct Bordered<T> {
+pub struct TextBlockBordered<T> {
     inner: T,
     stroke: UStroke,
     border: HColor,
@@ -19,7 +19,7 @@ pub struct Bordered<T> {
     padding: ClockwiseTopRightBottomLeft,
 }
 
-impl<T: TextBlock> Bordered<T> {
+impl<T: TextBlock> TextBlockBordered<T> {
     pub fn new(
         inner: T,
         stroke: UStroke,
@@ -46,7 +46,7 @@ impl<T: TextBlock> Bordered<T> {
     }
 }
 
-impl<T: TextBlock> TextBlock for Bordered<T> {
+impl<T: TextBlock> TextBlock for TextBlockBordered<T> {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         self.frame(string_bounder).delta(1.0, 1.0)
     }
@@ -83,18 +83,18 @@ impl<T: TextBlock> TextBlock for Bordered<T> {
 }
 
 /// A block with empty space around it.
-pub struct Marged<T> {
+pub struct TextBlockMarged<T> {
     inner: T,
     margin: ClockwiseTopRightBottomLeft,
 }
 
-impl<T: TextBlock> Marged<T> {
+impl<T: TextBlock> TextBlockMarged<T> {
     pub fn new(inner: T, margin: ClockwiseTopRightBottomLeft) -> Self {
         Self { inner, margin }
     }
 }
 
-impl<T: TextBlock> TextBlock for Marged<T> {
+impl<T: TextBlock> TextBlock for TextBlockMarged<T> {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         let margin = self.margin;
         self.inner
@@ -114,7 +114,7 @@ impl<T: TextBlock> TextBlock for Marged<T> {
 }
 
 /// A block with other blocks above and below it, as titles, captions, legends, headers and footers are.
-pub struct Decorated<'a> {
+pub struct DecorateEntityImage<'a> {
     original: Box<dyn TextBlock + 'a>,
     top: Option<Decoration<'a>>,
     bottom: Option<Decoration<'a>>,
@@ -127,7 +127,7 @@ pub struct Decoration<'a> {
     pub group: UGroup,
 }
 
-impl<'a> Decorated<'a> {
+impl<'a> DecorateEntityImage<'a> {
     pub fn new(
         original: Box<dyn TextBlock + 'a>,
         top: Option<Decoration<'a>>,
@@ -150,7 +150,7 @@ fn dimension_of(
     })
 }
 
-impl TextBlock for Decorated<'_> {
+impl TextBlock for DecorateEntityImage<'_> {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         let top = dimension_of(self.top.as_ref(), string_bounder);
         let bottom = dimension_of(self.bottom.as_ref(), string_bounder);
@@ -186,18 +186,18 @@ impl TextBlock for Decorated<'_> {
 }
 
 /// Blocks stacked top to bottom, each on the full width in its own background colour if it has one.
-pub struct Vertical<'a> {
+pub struct TextBlockVertical<'a> {
     blocks: Vec<Box<dyn TextBlock + 'a>>,
     alignment: HorizontalAlignment,
 }
 
-impl<'a> Vertical<'a> {
+impl<'a> TextBlockVertical<'a> {
     pub fn new(blocks: Vec<Box<dyn TextBlock + 'a>>, alignment: HorizontalAlignment) -> Self {
         Self { blocks, alignment }
     }
 }
 
-impl TextBlock for Vertical<'_> {
+impl TextBlock for TextBlockVertical<'_> {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         self.blocks
             .iter()
@@ -258,13 +258,13 @@ impl<T: TextBlock> TextBlock for WithBackcolor<T> {
     }
 }
 
-/// Lines of text without creole markup, each at least 10 high (PlantUML's `TextBlockRaw`).
-pub struct RawText {
+/// Lines of text without creole markup, each at least 10 high.
+pub struct TextBlockRaw {
     lines: Vec<String>,
     font: FontConfiguration,
 }
 
-impl RawText {
+impl TextBlockRaw {
     /// An empty line is kept as a single space.
     pub fn new(
         lines: impl IntoIterator<Item = impl Into<String>>,
@@ -323,7 +323,7 @@ impl RawText {
     }
 }
 
-impl TextBlock for RawText {
+impl TextBlock for TextBlockRaw {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         self.lines
             .iter()
