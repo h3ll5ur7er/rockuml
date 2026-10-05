@@ -127,7 +127,10 @@ impl Operator {
         match self {
             Self::Multiplication | Self::Division => 97,
             Self::Addition | Self::Subtraction => 96,
-            Self::LessThan | Self::GreaterThan | Self::LessThanOrEquals | Self::GreaterThanOrEquals => 94,
+            Self::LessThan
+            | Self::GreaterThan
+            | Self::LessThanOrEquals
+            | Self::GreaterThanOrEquals => 94,
             Self::Equals | Self::NotEquals => 93,
             Self::LogicalAnd => 89,
             Self::LogicalOr => 88,
@@ -137,7 +140,12 @@ impl Operator {
     fn is_single_char(self) -> bool {
         matches!(
             self,
-            Self::Multiplication | Self::Division | Self::Addition | Self::Subtraction | Self::LessThan | Self::GreaterThan
+            Self::Multiplication
+                | Self::Division
+                | Self::Addition
+                | Self::Subtraction
+                | Self::LessThan
+                | Self::GreaterThan
         )
     }
 
@@ -199,12 +207,19 @@ fn is_subtraction_operator(last_token: Option<&Token>) -> bool {
     last_token.is_some_and(|token| {
         !matches!(
             token.kind,
-            TokenType::Operator | TokenType::OpenParenMath | TokenType::Comma | TokenType::Affectation
+            TokenType::Operator
+                | TokenType::OpenParenMath
+                | TokenType::Comma
+                | TokenType::Affectation
         )
     })
 }
 
-pub fn eat_one_token(last_token: Option<&Token>, eater: &mut Eater, stop_at_colon: bool) -> TimResult<Option<Token>> {
+pub fn eat_one_token(
+    last_token: Option<&Token>,
+    eater: &mut Eater,
+    stop_at_colon: bool,
+) -> TimResult<Option<Token>> {
     let mut c = eater.peek_char();
     if c == '\0' || (stop_at_colon && c == ':') {
         return Ok(None);
@@ -219,7 +234,9 @@ pub fn eat_one_token(last_token: Option<&Token>, eater: &mut Eater, stop_at_colo
             eater.eat_one_char()?;
             Token::new(c, TokenType::Operator)
         } else {
-            let surface: String = [eater.eat_one_char()?, eater.eat_one_char()?].iter().collect();
+            let surface: String = [eater.eat_one_char()?, eater.eat_one_char()?]
+                .iter()
+                .collect();
             Token::new(surface, TokenType::Operator)
         }
     } else if c == '=' {
@@ -264,7 +281,12 @@ impl TokenStack {
 
     fn without_spaces(&self) -> TokenStack {
         TokenStack {
-            tokens: self.tokens.iter().filter(|token| !token.is_spaces()).cloned().collect(),
+            tokens: self
+                .tokens
+                .iter()
+                .filter(|token| !token.is_spaces())
+                .cloned()
+                .collect(),
         }
     }
 
@@ -282,7 +304,8 @@ impl TokenStack {
             if level == 0 && (c == ',' || c == ')') {
                 return Ok(result);
             }
-            let token = eat_one_token(last_significant.as_ref(), eater, false)?.ok_or(TimError::Fatal)?;
+            let token =
+                eat_one_token(last_significant.as_ref(), eater, false)?.ok_or(TimError::Fatal)?;
             match token.kind {
                 TokenType::OpenParenMath => level += 1,
                 TokenType::CloseParenMath => level -= 1,
@@ -311,15 +334,22 @@ impl TokenStack {
         for (open_index, close_index) in pairs {
             if open_index > 0 && self.tokens[open_index - 1].kind == TokenType::PlainText {
                 self.tokens[open_index - 1].kind = TokenType::FunctionName;
-                let argument_count = count_function_arguments(&self.tokens[open_index + 1..], location)?;
-                self.tokens[open_index] = Token::new(argument_count.to_string(), TokenType::OpenParenFunc);
+                let argument_count =
+                    count_function_arguments(&self.tokens[open_index + 1..], location)?;
+                self.tokens[open_index] =
+                    Token::new(argument_count.to_string(), TokenType::OpenParenFunc);
                 self.tokens[close_index] = Token::new(")", TokenType::CloseParenFunc);
             }
         }
         Ok(())
     }
 
-    pub fn get_result(&self, location: &StringLocated, context: &mut TContext, memory: &mut Memory) -> TimResult<TValue> {
+    pub fn get_result(
+        &self,
+        location: &StringLocated,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<TValue> {
         let mut tokens = self.without_spaces();
         tokens.guess_functions(location)?;
         let queue = shunting_yard(&tokens.tokens, context, memory, location)?;
@@ -329,7 +359,10 @@ impl TokenStack {
 
 fn count_function_arguments(tokens: &[Token], location: &StringLocated) -> TimResult<usize> {
     let first = tokens.first().ok_or(TimError::Fatal)?;
-    if matches!(first.kind, TokenType::CloseParenMath | TokenType::CloseParenFunc) {
+    if matches!(
+        first.kind,
+        TokenType::CloseParenMath | TokenType::CloseParenFunc
+    ) {
         return Ok(0);
     }
     let mut count = 1;
@@ -373,7 +406,8 @@ fn shunting_yard(
     memory: &mut Memory,
     location: &StringLocated,
 ) -> TimResult<Vec<Token>> {
-    static VARIABLE_NAME: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[a-zA-Z0-9.$_]+$").unwrap());
+    static VARIABLE_NAME: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"^[a-zA-Z0-9.$_]+$").unwrap());
 
     let mut output = Vec::new();
     let mut operators: Vec<Token> = Vec::new();
@@ -383,17 +417,25 @@ fn shunting_yard(
             TokenType::FunctionName | TokenType::OpenParenFunc | TokenType::OpenParenMath => {
                 operators.push(token.clone());
             }
-            TokenType::PlainText => match context.variable_for_expression(memory, &token.surface, location)? {
-                Some(value) => output.push(Token::from(&value)),
-                None if VARIABLE_NAME.is_match(&token.surface) => {
-                    output.push(Token::new(token.surface.clone(), TokenType::QuotedString));
+            TokenType::PlainText => {
+                match context.variable_for_expression(memory, &token.surface, location)? {
+                    Some(value) => output.push(Token::from(&value)),
+                    None if VARIABLE_NAME.is_match(&token.surface) => {
+                        output.push(Token::new(token.surface.clone(), TokenType::QuotedString));
+                    }
+                    None => {
+                        return fail(
+                            format!("Parsing syntax error about {}", token.surface),
+                            location,
+                        );
+                    }
                 }
-                None => return fail(format!("Parsing syntax error about {}", token.surface), location),
-            },
+            }
             TokenType::Operator | TokenType::Affectation => {
                 while let Some(top) = operators.last() {
                     let pops = top.kind == TokenType::FunctionName
-                        || (top.is_operator_or_affectation() && top.precedence() >= token.precedence());
+                        || (top.is_operator_or_affectation()
+                            && top.precedence() >= token.precedence());
                     if !pops {
                         break;
                     }
@@ -402,7 +444,10 @@ fn shunting_yard(
                 operators.push(token.clone());
             }
             TokenType::CloseParenFunc => {
-                while operators.last().is_some_and(|top| top.kind != TokenType::OpenParenFunc) {
+                while operators
+                    .last()
+                    .is_some_and(|top| top.kind != TokenType::OpenParenFunc)
+                {
                     output.push(operators.pop().unwrap());
                 }
                 output.push(operators.pop().ok_or(TimError::Fatal)?);
@@ -418,7 +463,10 @@ fn shunting_yard(
                 operators.pop();
             }
             TokenType::Comma => {
-                while operators.last().is_some_and(|top| top.kind != TokenType::OpenParenFunc) {
+                while operators
+                    .last()
+                    .is_some_and(|top| top.kind != TokenType::OpenParenFunc)
+                {
                     output.push(operators.pop().unwrap());
                 }
             }
@@ -441,10 +489,14 @@ fn evaluate_reverse_polish(
     while let Some(token) = tokens.next() {
         match token.kind {
             TokenType::Number => {
-                stack.push(TValue::Int(token.surface.parse().map_err(|_| TimError::Fatal)?));
+                stack.push(TValue::Int(
+                    token.surface.parse().map_err(|_| TimError::Fatal)?,
+                ));
             }
             TokenType::QuotedString => stack.push(TValue::string(token.surface.clone())),
-            TokenType::JsonData => stack.push(TValue::Json(token.json.clone().ok_or(TimError::Fatal)?)),
+            TokenType::JsonData => {
+                stack.push(TValue::Json(token.json.clone().ok_or(TimError::Fatal)?))
+            }
             TokenType::Affectation => {
                 let value = stack.pop().ok_or(TimError::Fatal)?;
                 let name = stack.pop().ok_or(TimError::Fatal)?;
@@ -461,22 +513,32 @@ fn evaluate_reverse_polish(
             TokenType::OpenParenFunc => {
                 let declared: usize = token.surface.parse().map_err(|_| TimError::Fatal)?;
                 let positional = declared.checked_sub(named.len()).ok_or(TimError::Fatal)?;
-                let Some(name) = tokens.next().filter(|next| next.kind == TokenType::FunctionName) else {
+                let Some(name) = tokens
+                    .next()
+                    .filter(|next| next.kind == TokenType::FunctionName)
+                else {
                     return fail("rpn43", location);
                 };
                 let signature = FunctionSignature::new(&name.surface, positional);
                 let Some(function) = context.function_smart(&signature) else {
-                    return fail(format!("Unknown built-in function {}", name.surface), location);
+                    return fail(
+                        format!("Unknown built-in function {}", name.surface),
+                        location,
+                    );
                 };
                 if !function.can_cover(positional, &Default::default()) {
                     return fail(
-                        format!("Bad number of arguments for {}", function.signature().name()),
+                        format!(
+                            "Bad number of arguments for {}",
+                            function.signature().name()
+                        ),
                         location,
                     );
                 }
                 let split = stack.len().checked_sub(positional).ok_or(TimError::Fatal)?;
                 let arguments = stack.split_off(split);
-                let result = function.execute_return_function(context, memory, location, &arguments, &named)?;
+                let result = function
+                    .execute_return_function(context, memory, location, &arguments, &named)?;
                 named.clear();
                 stack.push(result);
             }
@@ -494,7 +556,11 @@ mod tests {
     fn tokens(text: &str) -> Vec<(TokenType, String)> {
         let mut eater = Eater::new(StringLocated::new(text, LineLocation::new("t", None)));
         let stack = eater.eat_token_stack().unwrap();
-        stack.tokens.into_iter().map(|token| (token.kind, token.surface)).collect()
+        stack
+            .tokens
+            .into_iter()
+            .map(|token| (token.kind, token.surface))
+            .collect()
     }
 
     #[test]
@@ -502,7 +568,12 @@ mod tests {
         use TokenType::{Number, Operator, Spaces};
         assert_eq!(
             tokens("3 -1"),
-            [(Number, "3".into()), (Spaces, " ".into()), (Operator, COMMERCIAL_MINUS_SIGN.to_string()), (Number, "1".into())]
+            [
+                (Number, "3".into()),
+                (Spaces, " ".into()),
+                (Operator, COMMERCIAL_MINUS_SIGN.to_string()),
+                (Number, "1".into())
+            ]
         );
         assert_eq!(tokens("3*-1")[2], (Number, "-1".into()));
     }
@@ -516,7 +587,10 @@ mod tests {
 
     #[test]
     fn plain_text_stops_at_breaking_characters() {
-        assert_eq!(tokens("$var.field[0]+1")[0], (TokenType::PlainText, "$var.field[0]".into()));
+        assert_eq!(
+            tokens("$var.field[0]+1")[0],
+            (TokenType::PlainText, "$var.field[0]".into())
+        );
     }
 
     #[test]
@@ -525,7 +599,11 @@ mod tests {
         let mut eater = Eater::new(location.clone());
         let mut stack = eater.eat_token_stack().unwrap().without_spaces();
         stack.guess_functions(&location).unwrap();
-        let surfaces: Vec<_> = stack.tokens.iter().map(|token| (token.kind, token.surface.as_str())).collect();
+        let surfaces: Vec<_> = stack
+            .tokens
+            .iter()
+            .map(|token| (token.kind, token.surface.as_str()))
+            .collect();
         assert_eq!(surfaces[0], (TokenType::FunctionName, "f"));
         assert_eq!(surfaces[1], (TokenType::OpenParenFunc, "3"));
         assert_eq!(surfaces[5], (TokenType::OpenParenFunc, "1"));

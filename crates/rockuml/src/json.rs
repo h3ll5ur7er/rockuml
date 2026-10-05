@@ -55,7 +55,9 @@ impl JsonObject {
     }
 
     pub fn members(&self) -> impl Iterator<Item = (&str, &JsonValue)> {
-        self.members.iter().map(|(name, value)| (name.as_str(), value))
+        self.members
+            .iter()
+            .map(|(name, value)| (name.as_str(), value))
     }
 
     pub fn len(&self) -> usize {
@@ -426,7 +428,9 @@ impl Parser {
             }
             while self.read_digit() {}
         }
-        Ok(JsonValue::Number(self.chars[start..self.index].iter().collect()))
+        Ok(JsonValue::Number(
+            self.chars[start..self.index].iter().collect(),
+        ))
     }
 
     fn expected(&self, what: &str) -> ParseError {
@@ -486,15 +490,25 @@ mod tests {
     #[test]
     fn errors_report_line_and_column() {
         let error = parse("{\n  \"a\" 1}").unwrap_err();
-        assert_eq!((error.message.as_str(), error.line, error.column), ("Expected ':'", 2, 7));
+        assert_eq!(
+            (error.message.as_str(), error.line, error.column),
+            ("Expected ':'", 2, 7)
+        );
         assert_eq!(parse("[1,").unwrap_err().message, "Unexpected end of input");
     }
 
     #[test]
     fn deep_merge_combines_nested_objects() {
-        let JsonValue::Object(mut base) = parse(r#"{"a":{"x":1},"b":2}"#).unwrap() else { panic!() };
-        let JsonValue::Object(patch) = parse(r#"{"a":{"y":3},"b":4}"#).unwrap() else { panic!() };
+        let JsonValue::Object(mut base) = parse(r#"{"a":{"x":1},"b":2}"#).unwrap() else {
+            panic!()
+        };
+        let JsonValue::Object(patch) = parse(r#"{"a":{"y":3},"b":4}"#).unwrap() else {
+            panic!()
+        };
         base.deep_merge(&patch);
-        assert_eq!(JsonValue::Object(base).to_string(), r#"{"a":{"x":1,"y":3},"b":4}"#);
+        assert_eq!(
+            JsonValue::Object(base).to_string(),
+            r#"{"a":{"x":1,"y":3},"b":4}"#
+        );
     }
 }

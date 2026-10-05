@@ -95,7 +95,8 @@ impl<'a> TContext<'a> {
     ) -> TimResult<Option<TValue>> {
         let mut lines = code_iterator(body.to_vec());
         while let Some(line) = lines.peek(self, memory)? {
-            let result = self.execute_one_line_safe(memory, &line, function_type, in_return_function)?;
+            let result =
+                self.execute_one_line_safe(memory, &line, function_type, in_return_function)?;
             if result.is_some() {
                 return Ok(result);
             }
@@ -125,7 +126,8 @@ impl<'a> TContext<'a> {
         function_type: Option<FunctionType>,
         in_return_function: bool,
     ) -> TimResult<Option<TValue>> {
-        static ONLY_WHITESPACE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[\t\n\x0B\x0C\r ]+$").unwrap());
+        static ONLY_WHITESPACE: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^[\t\n\x0B\x0C\r ]+$").unwrap());
 
         let in_function = function_type == Some(FunctionType::ReturnFunction);
         match line_type(line.text()) {
@@ -173,9 +175,14 @@ impl<'a> TContext<'a> {
             }
             _ if ONLY_WHITESPACE.is_match(line.text()) => {}
             other => {
-                let function_type = function_type.map_or("null".to_owned(), |kind| java_enum_name(&format!("{kind:?}")));
+                let function_type = function_type.map_or("null".to_owned(), |kind| {
+                    java_enum_name(&format!("{kind:?}"))
+                });
                 return fail(
-                    format!("Compile Error {function_type} {}", java_enum_name(&format!("{other:?}"))),
+                    format!(
+                        "Compile Error {function_type} {}",
+                        java_enum_name(&format!("{other:?}"))
+                    ),
                     line,
                 );
             }
@@ -249,7 +256,13 @@ impl<'a> TContext<'a> {
                 match function.function_type() {
                     FunctionType::Procedure => {
                         self.pending_add = Some(result);
-                        function.execute_procedure(self, memory, line, &call.values, &call.named)?;
+                        function.execute_procedure(
+                            self,
+                            memory,
+                            line,
+                            &call.values,
+                            &call.named,
+                        )?;
                         let remaining: String = chars[index + call.end_position..].iter().collect();
                         if !remaining.is_empty() {
                             self.append_to_last_result(&remaining)?;
@@ -258,11 +271,23 @@ impl<'a> TContext<'a> {
                     }
                     FunctionType::LegacyDefinelong => {
                         self.pending_add = Some(chars[..index].iter().collect());
-                        function.execute_procedure(self, memory, line, &call.values, &call.named)?;
+                        function.execute_procedure(
+                            self,
+                            memory,
+                            line,
+                            &call.values,
+                            &call.named,
+                        )?;
                         return Ok(None);
                     }
                     FunctionType::ReturnFunction | FunctionType::LegacyDefine => {
-                        let value = function.execute_return_function(self, memory, line, &call.values, &call.named)?;
+                        let value = function.execute_return_function(
+                            self,
+                            memory,
+                            line,
+                            &call.values,
+                            &call.named,
+                        )?;
                         result.push_str(&value.to_string());
                         index += call.end_position;
                     }
@@ -285,7 +310,10 @@ impl<'a> TContext<'a> {
 
     /// A function name counts only at the start of a word, or right after `\n` written in the source.
     fn function_name_at(&self, chars: &[char], position: usize) -> Option<String> {
-        if is_just_after_a_letter(chars, position) && chars[position] != '%' && chars[position] != '$' {
+        if is_just_after_a_letter(chars, position)
+            && chars[position] != '%'
+            && chars[position] != '$'
+        {
             return None;
         }
         self.functions.name_called_at(chars, position)
@@ -362,7 +390,9 @@ impl<'a> TContext<'a> {
                         index += 1;
                     }
                     let inside = line.with_text(chars[start..index].iter().collect::<String>());
-                    let key = self.apply_functions_and_variables(memory, &inside)?.ok_or(TimError::Fatal)?;
+                    let key = self
+                        .apply_functions_and_variables(memory, &inside)?
+                        .ok_or(TimError::Fatal)?;
                     selected = match &selected {
                         Some(JsonValue::Array(values)) => {
                             let position: usize = key.parse().map_err(|_| TimError::Fatal)?;
@@ -398,7 +428,10 @@ impl<'a> TContext<'a> {
             return Ok(memory.get_variable(name));
         }
         let expanded = self
-            .apply_functions_and_variables(memory, &StringLocated::new(name, location.location().clone()))?
+            .apply_functions_and_variables(
+                memory,
+                &StringLocated::new(name, location.location().clone()),
+            )?
             .ok_or(TimError::Fatal)?;
         Ok(Some(match json::parse(&expanded) {
             Ok(json) => TValue::Json(json),
@@ -406,7 +439,11 @@ impl<'a> TContext<'a> {
         }))
     }
 
-    pub fn execute_affectation(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
+    pub fn execute_affectation(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+    ) -> TimResult<()> {
         let mut eater = Eater::new(line.trimmed());
         eater.skip_spaces();
         eater.check_and_eat("!")?;
@@ -435,7 +472,11 @@ impl<'a> TContext<'a> {
         memory.put_variable(&name, value, scope, eater.line())
     }
 
-    fn execute_affectation_define(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
+    fn execute_affectation_define(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+    ) -> TimResult<()> {
         let mut eater = Eater::new(line.trimmed());
         eater.skip_spaces();
         eater.check_and_eat("!define")?;
@@ -443,11 +484,22 @@ impl<'a> TContext<'a> {
         let name = eater.eat_and_get_varname()?;
         eater.skip_spaces();
         let definition = line.with_text(eater.eat_all_to_end());
-        let value = self.apply_functions_and_variables(memory, &definition)?.ok_or(TimError::Fatal)?;
-        memory.put_variable(&name, TValue::string(value), Some(VariableScope::Global), eater.line())
+        let value = self
+            .apply_functions_and_variables(memory, &definition)?
+            .ok_or(TimError::Fatal)?;
+        memory.put_variable(
+            &name,
+            TValue::string(value),
+            Some(VariableScope::Global),
+            eater.line(),
+        )
     }
 
-    pub fn execute_legacy_define(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
+    pub fn execute_legacy_define(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+    ) -> TimResult<()> {
         if self.functions.pending().is_some() {
             return fail("already0048", line);
         }
@@ -455,13 +507,18 @@ impl<'a> TContext<'a> {
         eater.skip_spaces();
         eater.check_and_eat("!define")?;
         eater.skip_spaces();
-        let mut function = eater.eat_declare_function(self, memory, true, false, FunctionType::LegacyDefine)?;
+        let mut function =
+            eater.eat_declare_function(self, memory, true, false, FunctionType::LegacyDefine)?;
         function.set_legacy_definition(eater.eat_all_to_end());
         self.functions.add(Rc::new(function));
         Ok(())
     }
 
-    pub fn execute_legacy_definelong(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
+    pub fn execute_legacy_definelong(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+    ) -> TimResult<()> {
         if self.functions.pending().is_some() {
             return fail("already0068", line);
         }
@@ -469,13 +526,19 @@ impl<'a> TContext<'a> {
         eater.skip_spaces();
         eater.check_and_eat("!definelong")?;
         eater.skip_spaces();
-        let function = eater.eat_declare_function(self, memory, true, true, FunctionType::LegacyDefinelong)?;
+        let function =
+            eater.eat_declare_function(self, memory, true, true, FunctionType::LegacyDefinelong)?;
         self.functions.start_pending(function);
         Ok(())
     }
 
     /// `![unquoted|final ]function NAME(...)` or `!procedure`, possibly with a one-line `return` body.
-    pub fn declare_function(&mut self, memory: &mut Memory, line: &StringLocated, kind: FunctionType) -> TimResult<()> {
+    pub fn declare_function(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+        kind: FunctionType,
+    ) -> TimResult<()> {
         if self.functions.pending().is_some() {
             return fail("already0068", line);
         }
@@ -497,7 +560,11 @@ impl<'a> TContext<'a> {
                 break;
             }
         }
-        let keyword = if kind == FunctionType::Procedure { "procedure" } else { "function" };
+        let keyword = if kind == FunctionType::Procedure {
+            "procedure"
+        } else {
+            "function"
+        };
         eater.check_and_eat(keyword)?;
         eater.skip_spaces();
         let mut function = eater.eat_declare_function(self, memory, unquoted, false, kind)?;
@@ -550,7 +617,10 @@ impl<'a> TContext<'a> {
             ("SVG_TITLE", None),
         ];
         let simplify = |s: &str| -> String {
-            s.chars().filter(char::is_ascii_alphabetic).map(|c| c.to_ascii_lowercase()).collect()
+            s.chars()
+                .filter(char::is_ascii_alphabetic)
+                .map(|c| c.to_ascii_lowercase())
+                .collect()
         };
         let mut eater = Eater::new(line.clone());
         eater.skip_spaces();
@@ -563,21 +633,33 @@ impl<'a> TContext<'a> {
             Err(TimError::Eater(_)) => None,
             Err(other) => return Err(other),
         };
-        if let Some((name, default)) = OPTIONS.iter().find(|(name, _)| simplify(name) == simplify(&key)) {
-            if let Some(value) = value.map(|value| value.to_string()).or(default.map(str::to_owned)) {
+        if let Some((name, default)) = OPTIONS
+            .iter()
+            .find(|(name, _)| simplify(name) == simplify(&key))
+        {
+            if let Some(value) = value
+                .map(|value| value.to_string())
+                .or(default.map(str::to_owned))
+            {
                 self.options.push(((*name).to_owned(), value));
             }
         }
         Ok(())
     }
 
-    fn eat_directive_argument(&mut self, memory: &mut Memory, line: &StringLocated, keyword: &str) -> TimResult<String> {
+    fn eat_directive_argument(
+        &mut self,
+        memory: &mut Memory,
+        line: &StringLocated,
+        keyword: &str,
+    ) -> TimResult<String> {
         let mut eater = Eater::new(line.trimmed());
         eater.skip_spaces();
         eater.check_and_eat(keyword)?;
         eater.skip_spaces();
         let argument = line.with_text(eater.eat_all_to_end());
-        self.apply_functions_and_variables(memory, &argument)?.ok_or(TimError::Fatal)
+        self.apply_functions_and_variables(memory, &argument)?
+            .ok_or(TimError::Fatal)
     }
 
     fn execute_import(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
@@ -606,16 +688,25 @@ impl<'a> TContext<'a> {
         }
         eater.skip_spaces();
         let argument = line.with_text(eater.eat_all_to_end());
-        let mut what = self.apply_functions_and_variables(memory, &argument)?.ok_or(TimError::Fatal)?;
+        let mut what = self
+            .apply_functions_and_variables(memory, &argument)?
+            .ok_or(TimError::Fatal)?;
         if let Some(bang) = what.rfind('!') {
             what.truncate(bang);
         }
 
-        let included = if let Some(stdlib_path) = what.strip_prefix('<').and_then(|rest| rest.strip_suffix('>')) {
+        let included = if let Some(stdlib_path) = what
+            .strip_prefix('<')
+            .and_then(|rest| rest.strip_suffix('>'))
+        {
             let file = self.input_file(&what, line)?.ok_or(TimError::Fatal)?;
             let description = format!("<{stdlib_path}>");
-            stdlib::puml_resource(stdlib_path)
-                .map(|content| (file.parent_folder(), lines_of(&content, &description, &description, None)))
+            stdlib::puml_resource(stdlib_path).map(|content| {
+                (
+                    file.parent_folder(),
+                    lines_of(&content, &description, &description, None),
+                )
+            })
         } else if what.starts_with("http://") || what.starts_with("https://") {
             return fail("Cannot open URL", line);
         } else if what.starts_with('[') && what.ends_with(']') {
@@ -641,7 +732,9 @@ impl<'a> TContext<'a> {
     }
 
     fn input_file(&self, name: &str, line: &StringLocated) -> TimResult<Option<InputFile>> {
-        self.paths.input_file(name, self.host).map_err(|message| EaterException::new(message, line).into())
+        self.paths
+            .input_file(name, self.host)
+            .map_err(|message| EaterException::new(message, line).into())
     }
 
     fn execute_includesub(&mut self, memory: &mut Memory, line: &StringLocated) -> TimResult<()> {
@@ -710,10 +803,15 @@ impl<'a> TContext<'a> {
         let mut from = None;
         if let Some(position) = name.to_lowercase().find(" from ") {
             let from_text = java::trim(&name[position + " from ".len()..]).to_owned();
-            from = Some(self.apply_functions_and_variables(memory, &line.with_text(from_text))?.ok_or(TimError::Fatal)?);
+            from = Some(
+                self.apply_functions_and_variables(memory, &line.with_text(from_text))?
+                    .ok_or(TimError::Fatal)?,
+            );
             name = java::trim(&name[..position]).to_owned();
         }
-        let real_name = self.apply_functions_and_variables(memory, &line.with_text(name.clone()))?.ok_or(TimError::Fatal)?;
+        let real_name = self
+            .apply_functions_and_variables(memory, &line.with_text(name.clone()))?
+            .ok_or(TimError::Fatal)?;
         let Some(theme) = self.load_theme(&real_name, from.as_deref(), line)? else {
             let location = from.map(|from| format!(" in {from}")).unwrap_or_default();
             return fail(format!("Cannot load theme {real_name}{location}"), line);
@@ -724,7 +822,12 @@ impl<'a> TContext<'a> {
         outcome.map(|_| ())
     }
 
-    fn load_theme(&self, name: &str, from: Option<&str>, line: &StringLocated) -> TimResult<Option<Vec<StringLocated>>> {
+    fn load_theme(
+        &self,
+        name: &str,
+        from: Option<&str>,
+        line: &StringLocated,
+    ) -> TimResult<Option<Vec<StringLocated>>> {
         let file_name = format!("puml-theme-{name}.puml");
         let Some(from) = from else {
             let resource = format!("themes/{file_name}");
@@ -732,11 +835,16 @@ impl<'a> TContext<'a> {
                 let description = format!("</{resource}>");
                 return Ok(Some(lines_of(content, &description, &description, None)));
             }
-            let local = self.input_file(&file_name, line)?.and_then(|file| file.read(self.host));
+            let local = self
+                .input_file(&file_name, line)?
+                .and_then(|file| file.read(self.host));
             let description = format!("theme {name}");
             return Ok(local.map(|content| lines_of(&content, &description, &description, None)));
         };
-        if let Some(library) = from.strip_prefix('<').and_then(|rest| rest.strip_suffix('>')) {
+        if let Some(library) = from
+            .strip_prefix('<')
+            .and_then(|rest| rest.strip_suffix('>'))
+        {
             let content = stdlib::puml_resource(&format!("{library}/{file_name}"));
             let description = format!("{name} from {from}");
             return Ok(content.map(|content| lines_of(&content, &description, &description, None)));
@@ -745,7 +853,9 @@ impl<'a> TContext<'a> {
             return fail("Cannot open URL", line);
         }
         let separator = if from.ends_with('/') { "" } else { "/" };
-        let file = self.input_file(&format!("{from}{separator}{file_name}"), line)?.ok_or(TimError::Fatal)?;
+        let file = self
+            .input_file(&format!("{from}{separator}{file_name}"), line)?
+            .ok_or(TimError::Fatal)?;
         let content = file.read(self.host).ok_or(TimError::Fatal)?;
         let description = format!("{name} from {from}");
         Ok(Some(lines_of(&content, &description, &description, None)))
@@ -753,7 +863,11 @@ impl<'a> TContext<'a> {
 
     /// Takes the output lines a procedure wrote since `start` back out, joined into one value.
     pub fn extract_from_result(&mut self, start: usize) -> String {
-        let extracted: Vec<String> = self.result.drain(start..).map(|line| line.text().to_owned()).collect();
+        let extracted: Vec<String> = self
+            .result
+            .drain(start..)
+            .map(|line| line.text().to_owned())
+            .collect();
         extracted.join(&jaws::BLOCK_E1_NEWLINE.to_string())
     }
 
@@ -792,12 +906,16 @@ fn variable_name_at(memory: &Memory, chars: &[char], position: usize) -> Option<
         return None;
     }
     let after = position + name.chars().count();
-    (after == chars.len() || !is_letter_or_emoji_or_underscore_or_digit(chars[after])).then_some(name)
+    (after == chars.len() || !is_letter_or_emoji_or_underscore_or_digit(chars[after]))
+        .then_some(name)
 }
 
 fn is_just_after_a_letter(chars: &[char], position: usize) -> bool {
-    let after_backslash_n = position > 1 && chars[position - 2] == '\\' && chars[position - 1] == 'n';
-    position > 0 && is_letter_or_emoji_or_underscore_or_digit(chars[position - 1]) && !after_backslash_n
+    let after_backslash_n =
+        position > 1 && chars[position - 2] == '\\' && chars[position - 1] == 'n';
+    position > 0
+        && is_letter_or_emoji_or_underscore_or_digit(chars[position - 1])
+        && !after_backslash_n
 }
 
 fn is_java_identifier_part(c: char) -> bool {
@@ -884,7 +1002,11 @@ impl FunctionCall {
         eater.skip_spaces();
         if eater.peek_char() == ')' {
             eater.check_and_eat_char(')')?;
-            return Ok(Self { values, named, end_position: eater.position() });
+            return Ok(Self {
+                values,
+                named,
+                end_position: eater.position(),
+            });
         }
         loop {
             eater.skip_spaces();
@@ -900,7 +1022,10 @@ impl FunctionCall {
                 };
                 let read = eater.eat_and_get_optional_quoted_string()?;
                 let value = context
-                    .apply_functions_and_variables(memory, &StringLocated::new(read, call.location().clone()))?
+                    .apply_functions_and_variables(
+                        memory,
+                        &StringLocated::new(read, call.location().clone()),
+                    )?
                     .ok_or(TimError::Fatal)?;
                 match name {
                     Some(name) => {
@@ -918,7 +1043,10 @@ impl FunctionCall {
                 } else {
                     None
                 };
-                let mut tokens = super::expression::TokenStack::eat_until_close_parenthesis_or_comma(&mut eater)?;
+                let mut tokens =
+                    super::expression::TokenStack::eat_until_close_parenthesis_or_comma(
+                        &mut eater,
+                    )?;
                 tokens.guess_functions(eater.line())?;
                 let value = tokens.get_result(eater.line(), context, memory)?;
                 match name {
@@ -932,10 +1060,19 @@ impl FunctionCall {
             match eater.eat_one_char()? {
                 ',' => {}
                 ')' => break,
-                _ if unquoted => return fail("unquoted function/procedure cannot use expression.", eater.line()),
+                _ if unquoted => {
+                    return fail(
+                        "unquoted function/procedure cannot use expression.",
+                        eater.line(),
+                    );
+                }
                 _ => return fail("call001", eater.line()),
             }
         }
-        Ok(Self { values, named, end_position: eater.position() })
+        Ok(Self {
+            values,
+            named,
+            end_position: eater.position(),
+        })
     }
 }

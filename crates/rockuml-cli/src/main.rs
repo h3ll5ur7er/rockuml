@@ -31,11 +31,24 @@ fn main() -> ExitCode {
                 ExitCode::FAILURE
             }
         },
+        Ok(Command::DecodeUrl(codes)) => decode_urls(&codes),
         Err(error) => {
             eprintln!("rockuml: {error}");
             ExitCode::FAILURE
         }
     }
+}
+
+/// PlantUML wraps the decoded source, which already has its own start and end lines, in another pair.
+fn decode_urls(codes: &[String]) -> ExitCode {
+    for code in codes {
+        let Ok(source) = rockuml::url_code::decode(code) else {
+            eprintln!("rockuml: not a PlantUML code: {code}");
+            return ExitCode::FAILURE;
+        };
+        print!("@startuml{LINE_SEPARATOR}{source}{LINE_SEPARATOR}@enduml{LINE_SEPARATOR}");
+    }
+    ExitCode::SUCCESS
 }
 
 fn render_all(options: &RenderOptions) -> Result<(), String> {
@@ -66,8 +79,18 @@ fn render_file(file: &Path, options: &RenderOptions) -> Result<(), String> {
             .unwrap_or_default(),
         environment: environment_of(file, &file_name),
     };
+    let blocks = rockuml::preproc::preprocess(&source, &SystemHost);
+    if options.format == OutputFormat::EncodedUrl {
+        for block in blocks {
+            print!(
+                "{}{LINE_SEPARATOR}",
+                rockuml::url_code::encode(&block.source_text())
+            );
+        }
+        return Ok(());
+    }
     let mut namer = OutputNamer::new(&file_name, options.format.suffix());
-    for block in rockuml::preproc::preprocess(&source, &SystemHost) {
+    for block in blocks {
         let output = output_directory.join(namer.next_name(block.output_name().as_deref()));
         let content = match options.format {
             OutputFormat::Preprocessed => block
@@ -85,7 +108,9 @@ fn render_file(file: &Path, options: &RenderOptions) -> Result<(), String> {
 /// What `%filename()` and `%filedate()` report. `%dirpath()` stays empty: PlantUML only reveals the
 /// directory under its INSECURE security profile.
 fn environment_of(file: &Path, file_name: &str) -> PreprocessorEnvironment {
-    let modified = fs::metadata(file).and_then(|metadata| metadata.modified()).ok();
+    let modified = fs::metadata(file)
+        .and_then(|metadata| metadata.modified())
+        .ok();
     PreprocessorEnvironment {
         filename: Some(file_name.to_owned()),
         filedate: modified.map(|time| {

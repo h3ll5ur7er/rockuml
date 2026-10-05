@@ -11,7 +11,8 @@ pub fn plantuml_regex(pattern: &str) -> Regex {
 }
 
 pub fn java_regex(pattern: &str, case_insensitive: bool) -> Regex {
-    try_java_regex(pattern, case_insensitive).unwrap_or_else(|| panic!("cannot translate Java regex {pattern:?}"))
+    try_java_regex(pattern, case_insensitive)
+        .unwrap_or_else(|| panic!("cannot translate Java regex {pattern:?}"))
 }
 
 /// For patterns written by users, which may be invalid or use Java syntax with no equivalent here.

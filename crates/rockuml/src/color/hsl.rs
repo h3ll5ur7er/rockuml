@@ -81,7 +81,11 @@ mod tests {
 
     #[test]
     fn primary_colours_round_trip() {
-        for color in [XColor::rgb(255, 0, 0), XColor::rgb(0, 128, 0), XColor::rgb(30, 144, 255)] {
+        for color in [
+            XColor::rgb(255, 0, 0),
+            XColor::rgb(0, 128, 0),
+            XColor::rgb(30, 144, 255),
+        ] {
             let [hue, saturation, luminance] = from_rgb(color);
             assert_eq!(to_rgb(hue, saturation, luminance, 1.0), color);
         }

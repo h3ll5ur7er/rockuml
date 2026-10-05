@@ -37,7 +37,11 @@ impl Trie {
         let mut position = position;
         loop {
             let Some(&c) = chars.get(position) else {
-                return if node.children.contains_key(&END) { matched } else { String::new() };
+                return if node.children.contains_key(&END) {
+                    matched
+                } else {
+                    String::new()
+                };
             };
             match node.children.get(&c) {
                 Some(child) if !child.children.is_empty() => {
@@ -45,7 +49,13 @@ impl Trie {
                     node = child;
                     position += 1;
                 }
-                _ => return if node.children.contains_key(&END) { matched } else { String::new() },
+                _ => {
+                    return if node.children.contains_key(&END) {
+                        matched
+                    } else {
+                        String::new()
+                    };
+                }
             }
         }
     }
@@ -63,7 +73,10 @@ mod tests {
     fn matches_a_stored_name_at_the_position() {
         let mut trie = Trie::default();
         trie.add("$name");
-        assert_eq!(trie.longest_match_starting_in(&chars("x $name y"), 2), "$name");
+        assert_eq!(
+            trie.longest_match_starting_in(&chars("x $name y"), 2),
+            "$name"
+        );
         assert_eq!(trie.longest_match_starting_in(&chars("x $nam"), 2), "");
     }
 

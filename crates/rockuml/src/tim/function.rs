@@ -133,8 +133,16 @@ pub struct UserFunction {
 }
 
 impl UserFunction {
-    pub fn new(name: String, arguments: Vec<FunctionArgument>, unquoted: bool, function_type: FunctionType) -> Self {
-        let names = arguments.iter().map(|argument| argument.name.clone()).collect();
+    pub fn new(
+        name: String,
+        arguments: Vec<FunctionArgument>,
+        unquoted: bool,
+        function_type: FunctionType,
+    ) -> Self {
+        let names = arguments
+            .iter()
+            .map(|argument| argument.name.clone())
+            .collect();
         Self {
             signature: FunctionSignature::with_named(&name, arguments.len(), names),
             arguments,
@@ -206,13 +214,17 @@ impl TFunction for UserFunction {
     }
 
     fn can_cover(&self, argument_count: usize, named_arguments: &HashSet<String>) -> bool {
-        if !named_arguments.is_subset(&self.signature.named_arguments) || argument_count > self.arguments.len() {
+        if !named_arguments.is_subset(&self.signature.named_arguments)
+            || argument_count > self.arguments.len()
+        {
             return false;
         }
         let needed = self
             .arguments
             .iter()
-            .filter(|argument| !named_arguments.contains(&argument.name) && argument.default.is_none())
+            .filter(|argument| {
+                !named_arguments.contains(&argument.name) && argument.default.is_none()
+            })
             .count();
         argument_count >= needed
     }
@@ -235,15 +247,24 @@ impl TFunction for UserFunction {
     ) -> TimResult<TValue> {
         if self.function_type == FunctionType::LegacyDefine {
             let mut local = self.new_memory(memory, arguments, &HashMap::new())?;
-            let definition = location.with_text(self.legacy_definition.clone().ok_or(TimError::Fatal)?);
+            let definition =
+                location.with_text(self.legacy_definition.clone().ok_or(TimError::Fatal)?);
             let expanded = context.apply_functions_and_variables(&mut local, &definition)?;
             return Ok(TValue::string(expanded.unwrap_or_default()));
         }
         if self.function_type != FunctionType::ReturnFunction {
-            return fail("Illegal call here. Is there a return directive in your function?", location);
+            return fail(
+                "Illegal call here. Is there a return directive in your function?",
+                location,
+            );
         }
         let mut local = self.new_memory(memory, arguments, named)?;
-        match context.execute_lines(&mut local, &self.body, Some(FunctionType::ReturnFunction), true)? {
+        match context.execute_lines(
+            &mut local,
+            &self.body,
+            Some(FunctionType::ReturnFunction),
+            true,
+        )? {
             Some(result) => Ok(result),
             None => fail("No return directive found in your function", location),
         }
@@ -257,7 +278,10 @@ impl TFunction for UserFunction {
         arguments: &[TValue],
         named: &HashMap<String, TValue>,
     ) -> TimResult<()> {
-        if !matches!(self.function_type, FunctionType::Procedure | FunctionType::LegacyDefinelong) {
+        if !matches!(
+            self.function_type,
+            FunctionType::Procedure | FunctionType::LegacyDefinelong
+        ) {
             return Err(TimError::Fatal);
         }
         let mut local = self.new_memory(memory, arguments, named)?;
@@ -282,7 +306,11 @@ impl FunctionsSet {
 
     pub fn add(&mut self, function: Rc<dyn TFunction>) {
         self.names.add(&format!("{}(", function.signature().name()));
-        match self.functions.iter().position(|existing| existing.signature() == function.signature()) {
+        match self
+            .functions
+            .iter()
+            .position(|existing| existing.signature() == function.signature())
+        {
             Some(index) => self.functions[index] = function,
             None => self.functions.push(function),
         }
@@ -298,10 +326,18 @@ impl FunctionsSet {
     /// The function with exactly this signature, or else the first one with the same name that accepts
     /// the arguments, in the order a Java `HashMap` would offer them.
     pub fn get_smart(&self, searched: &FunctionSignature) -> Option<Rc<dyn TFunction>> {
-        if let Some(exact) = self.functions.iter().find(|function| function.signature() == searched) {
+        if let Some(exact) = self
+            .functions
+            .iter()
+            .find(|function| function.signature() == searched)
+        {
             return Some(Rc::clone(exact));
         }
-        let hashes: Vec<i32> = self.functions.iter().map(|function| function.signature().java_hash_code()).collect();
+        let hashes: Vec<i32> = self
+            .functions
+            .iter()
+            .map(|function| function.signature().java_hash_code())
+            .collect();
         java::hash_map_iteration_order(&hashes)
             .into_iter()
             .map(|index| &self.functions[index])
@@ -317,7 +353,8 @@ impl FunctionsSet {
     }
 
     pub fn is_legacy_define(&self, name: &str) -> bool {
-        self.with_name(name).any(|function| function.function_type().is_legacy())
+        self.with_name(name)
+            .any(|function| function.function_type().is_legacy())
     }
 
     pub fn is_unquoted(&self, name: &str) -> bool {
@@ -325,7 +362,9 @@ impl FunctionsSet {
     }
 
     fn with_name<'a>(&'a self, name: &'a str) -> impl Iterator<Item = &'a Rc<dyn TFunction>> {
-        self.functions.iter().filter(move |function| function.signature().name() == name)
+        self.functions
+            .iter()
+            .filter(move |function| function.signature().name() == name)
     }
 
     /// The name of a function called at `position`, i.e. a known name directly followed by `(`.
@@ -354,9 +393,17 @@ impl FunctionsSet {
     }
 
     /// Registers a `!function` or `!procedure` declaration, honouring `!final`.
-    pub fn declare(&mut self, function: UserFunction, is_final: bool, location: &StringLocated) -> TimResult<()> {
+    pub fn declare(
+        &mut self,
+        function: UserFunction,
+        is_final: bool,
+        location: &StringLocated,
+    ) -> TimResult<()> {
         let signature = function.signature.clone();
-        let already_defined = self.functions.iter().any(|existing| *existing.signature() == signature);
+        let already_defined = self
+            .functions
+            .iter()
+            .any(|existing| *existing.signature() == signature);
         if already_defined && (is_final || self.finals.contains(&signature)) {
             return fail("This function is already defined", location);
         }
@@ -379,9 +426,16 @@ mod tests {
     fn function(name: &str, arguments: &[(&str, Option<i32>)]) -> UserFunction {
         let arguments = arguments
             .iter()
-            .map(|(name, default)| FunctionArgument::new((*name).to_owned(), default.map(TValue::Int)))
+            .map(|(name, default)| {
+                FunctionArgument::new((*name).to_owned(), default.map(TValue::Int))
+            })
             .collect();
-        UserFunction::new(name.to_owned(), arguments, false, FunctionType::ReturnFunction)
+        UserFunction::new(
+            name.to_owned(),
+            arguments,
+            false,
+            FunctionType::ReturnFunction,
+        )
     }
 
     #[test]

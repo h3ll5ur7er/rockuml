@@ -53,10 +53,22 @@ fn keyword(word: &str) -> String {
 
 static PATTERNS: LazyLock<Vec<(LineType, Regex)>> = LazyLock::new(|| {
     let patterns = [
-        (LineType::LegacyDefine, format!(r"^[%s]*!define[%s]+{IDENTIFIER}\(")),
-        (LineType::LegacyDefinelong, format!(r"^[%s]*!definelong[%s]+{IDENTIFIER}\b")),
-        (LineType::AffectationDefine, format!(r"^[%s]*!define[%s]+{IDENTIFIER}\b")),
-        (LineType::Affectation, format!(r"^[%s]*![%s]*(local|global)?[%s]*\$?{IDENTIFIER}[%s]*\??=")),
+        (
+            LineType::LegacyDefine,
+            format!(r"^[%s]*!define[%s]+{IDENTIFIER}\("),
+        ),
+        (
+            LineType::LegacyDefinelong,
+            format!(r"^[%s]*!definelong[%s]+{IDENTIFIER}\b"),
+        ),
+        (
+            LineType::AffectationDefine,
+            format!(r"^[%s]*!define[%s]+{IDENTIFIER}\b"),
+        ),
+        (
+            LineType::Affectation,
+            format!(r"^[%s]*![%s]*(local|global)?[%s]*\$?{IDENTIFIER}[%s]*\??="),
+        ),
         (LineType::Ifdef, keyword("!ifdef")),
         (LineType::Undef, keyword("!undef")),
         (LineType::Ifndef, keyword("!ifndef")),
@@ -77,10 +89,16 @@ static PATTERNS: LazyLock<Vec<(LineType, Regex)>> = LazyLock::new(|| {
         (LineType::Endwhile, keyword("!endwhile")),
         (LineType::Foreach, keyword("!foreach")),
         (LineType::Endforeach, keyword("!endfor")),
-        (LineType::EndFunction, r"^[%s]*!end[%s]*(?:function|definelong|procedure)\b".to_owned()),
+        (
+            LineType::EndFunction,
+            r"^[%s]*!end[%s]*(?:function|definelong|procedure)\b".to_owned(),
+        ),
         (LineType::Return, keyword("!return")),
         (LineType::Theme, keyword("!theme")),
-        (LineType::Include, r"^[%s]*!include[%s]*(?:(?:url|_many|_once))?\b".to_owned()),
+        (
+            LineType::Include,
+            r"^[%s]*!include[%s]*(?:(?:url|_many|_once))?\b".to_owned(),
+        ),
         (LineType::IncludeDef, keyword("!includedef")),
         (LineType::Import, keyword("!import")),
         (LineType::Startsub, keyword("!startsub")),
@@ -97,7 +115,8 @@ static PATTERNS: LazyLock<Vec<(LineType, Regex)>> = LazyLock::new(|| {
 });
 
 static COMMENT_SIMPLE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*'"));
-static COMMENT_ONE_LINE_BLOCK: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*/'.*'/[%s]*$"));
+static COMMENT_ONE_LINE_BLOCK: LazyLock<Regex> =
+    LazyLock::new(|| plantuml_regex("^[%s]*/'.*'/[%s]*$"));
 static COMMENT_LONG_START: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*/'"));
 
 pub fn line_type(line: &str) -> LineType {
@@ -176,7 +195,13 @@ mod tests {
 
     #[test]
     fn function_declarations_accept_modifiers() {
-        assert_eq!(line_type("!unquoted function $f()"), LineType::DeclareReturnFunction);
-        assert_eq!(line_type("!final procedure P()"), LineType::DeclareProcedure);
+        assert_eq!(
+            line_type("!unquoted function $f()"),
+            LineType::DeclareReturnFunction
+        );
+        assert_eq!(
+            line_type("!final procedure P()"),
+            LineType::DeclareProcedure
+        );
     }
 }

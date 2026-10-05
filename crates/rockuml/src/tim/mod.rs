@@ -67,7 +67,12 @@ pub fn preprocess_block(
     let mut memory = Memory::new_global();
     if let Some(first) = lines.first() {
         for (name, value) in &environment.defines {
-            let _ = memory.put_variable(name, TValue::string(value.clone()), Some(VariableScope::Global), first);
+            let _ = memory.put_variable(
+                name,
+                TValue::string(value.clone()),
+                Some(VariableScope::Global),
+                first,
+            );
         }
     }
     let outcome = context.execute_lines(&mut memory, lines, None, false);

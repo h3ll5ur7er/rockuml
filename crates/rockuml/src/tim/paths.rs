@@ -9,7 +9,10 @@ use crate::stdlib::Stdlib;
 pub enum Folder {
     Regular(PathBuf),
     /// PlantUML treats an included library file's own path as its folder, so this is that path.
-    Stdlib { library: String, path: String },
+    Stdlib {
+        library: String,
+        path: String,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -31,7 +34,9 @@ impl InputFile {
 
     pub fn parent_folder(&self) -> Folder {
         match self {
-            InputFile::Local(path) => Folder::Regular(path.parent().map(Path::to_path_buf).unwrap_or_default()),
+            InputFile::Local(path) => {
+                Folder::Regular(path.parent().map(Path::to_path_buf).unwrap_or_default())
+            }
             InputFile::Stdlib { library, path } => Folder::Stdlib {
                 library: library.clone(),
                 path: path.clone(),
@@ -59,9 +64,14 @@ impl PathSystem {
         if name.starts_with("http://") || name.starts_with("https://") {
             return Err(format!("Cannot open URL {name}"));
         }
-        if let Some(inner) = name.strip_prefix('<').and_then(|rest| rest.strip_suffix('>')) {
+        if let Some(inner) = name
+            .strip_prefix('<')
+            .and_then(|rest| rest.strip_suffix('>'))
+        {
             let full = inner.to_lowercase();
-            let (library, path) = full.split_once('/').ok_or_else(|| format!("Bad stdlib path {name}"))?;
+            let (library, path) = full
+                .split_once('/')
+                .ok_or_else(|| format!("Bad stdlib path {name}"))?;
             let library = Stdlib::retrieve(library).map(|library| library.name().to_owned());
             return Ok(library.map(|library| InputFile::Stdlib {
                 library,
@@ -70,7 +80,10 @@ impl PathSystem {
         }
         if let Some(relative) = name.strip_prefix("::") {
             let relative = relative.strip_prefix('/').unwrap_or(relative);
-            return Ok(existing(host, normalize(&host.current_directory().join(relative))));
+            return Ok(existing(
+                host,
+                normalize(&host.current_directory().join(relative)),
+            ));
         }
         if let Some(relative) = name.strip_prefix("~/") {
             let Some(home) = host.home_directory() else {
@@ -81,7 +94,11 @@ impl PathSystem {
         Ok(match &self.current {
             Folder::Regular(directory) => {
                 let path = Path::new(name);
-                let path = if path.is_absolute() { path.to_path_buf() } else { directory.join(path) };
+                let path = if path.is_absolute() {
+                    path.to_path_buf()
+                } else {
+                    directory.join(path)
+                };
                 existing(host, path)
             }
             Folder::Stdlib { library, path } => Some(InputFile::Stdlib {
@@ -132,7 +149,9 @@ mod tests {
     #[test]
     fn stdlib_names_resolve_case_insensitively() {
         let paths = PathSystem::new(Folder::Regular(PathBuf::new()));
-        let file = paths.input_file("<C4/C4_Container>", &IsolatedHost).unwrap();
+        let file = paths
+            .input_file("<C4/C4_Container>", &IsolatedHost)
+            .unwrap();
         assert_eq!(
             file,
             Some(InputFile::Stdlib {
@@ -146,7 +165,11 @@ mod tests {
     #[test]
     fn urls_are_refused() {
         let paths = PathSystem::new(Folder::Regular(PathBuf::new()));
-        assert!(paths.input_file("https://example.com/x.puml", &IsolatedHost).is_err());
+        assert!(
+            paths
+                .input_file("https://example.com/x.puml", &IsolatedHost)
+                .is_err()
+        );
     }
 
     #[test]

@@ -38,6 +38,7 @@ impl Host for SystemHost {
 }
 
 pub fn millis_since_epoch(time: SystemTime) -> i64 {
-    time.duration_since(UNIX_EPOCH)
-        .map_or(0, |elapsed| i64::try_from(elapsed.as_millis()).unwrap_or(i64::MAX))
+    time.duration_since(UNIX_EPOCH).map_or(0, |elapsed| {
+        i64::try_from(elapsed.as_millis()).unwrap_or(i64::MAX)
+    })
 }

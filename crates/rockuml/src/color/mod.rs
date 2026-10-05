@@ -19,7 +19,12 @@ pub struct XColor {
 
 impl XColor {
     pub const fn rgb(red: u8, green: u8, blue: u8) -> Self {
-        Self { red, green, blue, alpha: 255 }
+        Self {
+            red,
+            green,
+            blue,
+            alpha: 255,
+        }
     }
 
     /// An opaque colour from `0xRRGGBB`; higher bits are ignored.
@@ -29,7 +34,8 @@ impl XColor {
 
     /// Perceived brightness, 0 to 255.
     pub fn gray_scale(self) -> u32 {
-        (u32::from(self.red) * 299 + u32::from(self.green) * 587 + u32::from(self.blue) * 114) / 1000
+        (u32::from(self.red) * 299 + u32::from(self.green) * 587 + u32::from(self.blue) * 114)
+            / 1000
     }
 }
 
@@ -47,7 +53,12 @@ impl HColor {
     pub fn parse(text: &str) -> Result<Option<HColor>, RuntimeException> {
         let text = text.strip_prefix('#').unwrap_or(text);
         if text.eq_ignore_ascii_case("transparent") || text.eq_ignore_ascii_case("background") {
-            return Ok(Some(HColor::Simple(XColor { red: 0, green: 0, blue: 0, alpha: 0 })));
+            return Ok(Some(HColor::Simple(XColor {
+                red: 0,
+                green: 0,
+                blue: 0,
+                alpha: 0,
+            })));
         }
         if text.eq_ignore_ascii_case("automatic") {
             return Ok(Some(HColor::Automagic));
@@ -107,7 +118,11 @@ impl HColor {
     /// The RGB complement.
     pub fn reverse(&self) -> HColor {
         match self {
-            HColor::Simple(color) => HColor::Simple(XColor::rgb(255 - color.red, 255 - color.green, 255 - color.blue)),
+            HColor::Simple(color) => HColor::Simple(XColor::rgb(
+                255 - color.red,
+                255 - color.green,
+                255 - color.blue,
+            )),
             other => other.clone(),
         }
     }
@@ -135,7 +150,10 @@ impl HColor {
                 format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
             }
             HColor::Simple(color) => {
-                format!("#{:02x}{:02x}{:02x}{:02x}", color.alpha, color.red, color.green, color.blue)
+                format!(
+                    "#{:02x}{:02x}{:02x}{:02x}",
+                    color.alpha, color.red, color.green, color.blue
+                )
             }
             HColor::Automagic => "?HColorAutomagic".to_owned(),
             HColor::Scheme => "?HColorScheme".to_owned(),
@@ -146,11 +164,16 @@ impl HColor {
 
 fn parse_simple_color(text: &str) -> Option<XColor> {
     let text = text.strip_prefix('#').unwrap_or(text);
-    let nibbles: Option<Vec<u8>> = text.chars().map(|c| c.to_digit(16).map(|digit| digit as u8)).collect();
+    let nibbles: Option<Vec<u8>> = text
+        .chars()
+        .map(|c| c.to_digit(16).map(|digit| digit as u8))
+        .collect();
     let from_hex = match nibbles.as_deref() {
         Some(&[gray]) => Some(XColor::rgb(gray * 17, gray * 17, gray * 17)),
         Some(&[red, green, blue]) => Some(XColor::rgb(red * 17, green * 17, blue * 17)),
-        Some(&[r1, r2, g1, g2, b1, b2]) => Some(XColor::rgb(r1 << 4 | r2, g1 << 4 | g2, b1 << 4 | b2)),
+        Some(&[r1, r2, g1, g2, b1, b2]) => {
+            Some(XColor::rgb(r1 << 4 | r2, g1 << 4 | g2, b1 << 4 | b2))
+        }
         Some(&[r1, r2, g1, g2, b1, b2, a1, a2]) => Some(XColor {
             red: r1 << 4 | r2,
             green: g1 << 4 | g2,
@@ -177,7 +200,9 @@ mod tests {
     use super::*;
 
     fn parsed(text: &str) -> String {
-        HColor::parse(text).unwrap().map_or("none".to_owned(), |color| color.as_string())
+        HColor::parse(text)
+            .unwrap()
+            .map_or("none".to_owned(), |color| color.as_string())
     }
 
     #[test]

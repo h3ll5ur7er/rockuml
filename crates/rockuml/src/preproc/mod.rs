@@ -41,6 +41,11 @@ impl PreprocessedBlock {
         self.lines.iter().map(StringLocated::text)
     }
 
+    /// The lines joined as PlantUML does when it encodes a diagram's source: each followed by `\n`.
+    pub fn source_text(&self) -> String {
+        self.lines().flat_map(|line| [line, "\n"]).collect()
+    }
+
     /// Whether preprocessing stopped at an error, reported on the last line.
     pub fn failed(&self) -> bool {
         self.failed
@@ -76,10 +81,13 @@ pub(crate) fn read_lines_of_first_diagram(
     plain_description: &str,
     parent: Option<LineLocation>,
 ) -> Vec<StringLocated> {
-    let detected = read_all(UncommentReadLine::new(Box::new(ReadFilterMergeLines::new(Box::new(
-        ReadLineReader::new(text, extracted_description, None),
-    )))));
-    let Some(start) = detected.iter().position(|line| start_utils::is_start_directive(line.text())) else {
+    let detected = read_all(UncommentReadLine::new(Box::new(ReadFilterMergeLines::new(
+        Box::new(ReadLineReader::new(text, extracted_description, None)),
+    ))));
+    let Some(start) = detected
+        .iter()
+        .position(|line| start_utils::is_start_directive(line.text()))
+    else {
         return read_all(ReadLineReader::new(text, plain_description, parent));
     };
     detected
@@ -90,10 +98,26 @@ pub(crate) fn read_lines_of_first_diagram(
 }
 
 /// An `!includesub` source: comment prefixes removed, then continuation lines merged.
-pub(crate) fn read_uncommented_merged_lines(text: &str, description: &str, parent: Option<LineLocation>) -> Vec<StringLocated> {
-    read_all(ReadFilterMergeLines::new(Box::new(UncommentReadLine::new(Box::new(
-        ReadLineReader::new(text, description, parent),
-    )))))
+pub(crate) fn read_uncommented_merged_lines(
+    text: &str,
+    description: &str,
+    parent: Option<LineLocation>,
+) -> Vec<StringLocated> {
+    read_all(ReadFilterMergeLines::new(Box::new(UncommentReadLine::new(
+        Box::new(ReadLineReader::new(text, description, parent)),
+    ))))
+}
+
+/// Lines with the comment prefix of the `@start` line removed, nothing else changed.
+pub(crate) fn read_uncommented_lines(text: &str, description: &str) -> Vec<String> {
+    read_all(UncommentReadLine::new(Box::new(ReadLineReader::new(
+        text,
+        description,
+        None,
+    ))))
+    .into_iter()
+    .map(|line| line.text().to_owned())
+    .collect()
 }
 
 fn read_all(mut reader: impl ReadLine) -> Vec<StringLocated> {
@@ -127,7 +151,12 @@ impl Definitions for EarlierDefinitions<'_> {
         let signature = format!("@startdef(id={name})");
         self.0
             .iter()
-            .find(|block| block.lines.first().is_some_and(|first| first.text().eq_ignore_ascii_case(&signature)))
+            .find(|block| {
+                block
+                    .lines
+                    .first()
+                    .is_some_and(|first| first.text().eq_ignore_ascii_case(&signature))
+            })
             .map(|block| {
                 let inner = &block.lines[1..block.lines.len().saturating_sub(1).max(1)];
                 inner.iter().map(|line| line.text().to_owned()).collect()
@@ -155,7 +184,11 @@ mod tests {
     }
 
     fn preprocessed(lines: &[&str]) -> Vec<String> {
-        preprocess_text(&lines.join("\n")).remove(0).lines().map(str::to_owned).collect()
+        preprocess_text(&lines.join("\n"))
+            .remove(0)
+            .lines()
+            .map(str::to_owned)
+            .collect()
     }
 
     #[test]
@@ -169,7 +202,10 @@ mod tests {
             "A -> B : $twice($x)",
             "@enduml",
         ];
-        assert_eq!(preprocessed(&source), ["@startuml", "A -> B : 4", "@enduml"]);
+        assert_eq!(
+            preprocessed(&source),
+            ["@startuml", "A -> B : 4", "@enduml"]
+        );
     }
 
     #[test]
@@ -177,7 +213,10 @@ mod tests {
         let source = ["@startuml", "!assert 0 : \"boom\"", "A -> B", "@enduml"].join("\n");
         let block = preprocess_text(&source).remove(0);
         assert!(block.failed());
-        assert_eq!(block.lines().collect::<Vec<_>>(), ["@startuml", "!assert 0 : \"boom\""]);
+        assert_eq!(
+            block.lines().collect::<Vec<_>>(),
+            ["@startuml", "!assert 0 : \"boom\""]
+        );
     }
 
     #[test]

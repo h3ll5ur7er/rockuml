@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, Output};
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -20,21 +20,11 @@ pub fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
         return None;
     }
 
-    let output_directory = tempfile::tempdir().unwrap();
-    let run = Command::new(rockuml)
-        .args(kind.cli_arguments())
-        .arg("-o")
-        .arg(output_directory.path())
-        .arg(&case.source)
-        .output()
-        .unwrap();
-
-    let produced: BTreeMap<String, String> = fs::read_dir(output_directory.path())
-        .unwrap()
-        .map(|entry| entry.unwrap().path())
-        .map(|path| (file_name(&path), read_normalised(&path)))
-        .collect();
-
+    let (produced, run) = if kind.writes_to_stdout() {
+        run_to_stdout(rockuml, case, kind)
+    } else {
+        run_to_files(rockuml, case, kind)
+    };
     if produced.is_empty() {
         return Some(Outcome::Fail(format!(
             "produced no output ({}): {}",
@@ -50,6 +40,41 @@ pub fn check(rockuml: &Path, case: &Case, kind: GoldenKind) -> Option<Outcome> {
             .collect(),
         &produced,
     ))
+}
+
+type Produced = (BTreeMap<String, String>, Output);
+
+fn run_to_files(rockuml: &Path, case: &Case, kind: GoldenKind) -> Produced {
+    let output_directory = tempfile::tempdir().unwrap();
+    let run = Command::new(rockuml)
+        .args(kind.cli_arguments())
+        .arg("-o")
+        .arg(output_directory.path())
+        .arg(&case.source)
+        .output()
+        .unwrap();
+    let produced = fs::read_dir(output_directory.path())
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .map(|path| (file_name(&path), read_normalised(&path)))
+        .collect();
+    (produced, run)
+}
+
+/// The golden model's stdout was saved as `<stem>.<extension>`.
+fn run_to_stdout(rockuml: &Path, case: &Case, kind: GoldenKind) -> Produced {
+    let run = Command::new(rockuml)
+        .args(kind.cli_arguments())
+        .arg(&case.source)
+        .output()
+        .unwrap();
+    let stdout = normalise(&String::from_utf8_lossy(&run.stdout));
+    let mut produced = BTreeMap::new();
+    if !stdout.is_empty() {
+        let stem = case.source.file_stem().unwrap().to_string_lossy();
+        produced.insert(format!("{stem}.{}", kind.extension()), stdout);
+    }
+    (produced, run)
 }
 
 fn compare(expected: &BTreeMap<String, String>, produced: &BTreeMap<String, String>) -> Outcome {

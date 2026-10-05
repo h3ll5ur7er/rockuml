@@ -70,11 +70,13 @@ impl Stdlib {
     }
 
     pub fn version(&self) -> Option<String> {
-        self.metadata_value("VERSION").or_else(|| self.metadata_value("version"))
+        self.metadata_value("VERSION")
+            .or_else(|| self.metadata_value("version"))
     }
 
     pub fn source(&self) -> Option<String> {
-        self.metadata_value("SOURCE").or_else(|| self.metadata_value("source"))
+        self.metadata_value("SOURCE")
+            .or_else(|| self.metadata_value("source"))
     }
 
     /// `file` is the lowercase path inside the library without the `.puml` extension.
@@ -92,7 +94,10 @@ impl Stdlib {
 
     fn read_channel(&self, channel: &str) -> Option<HashMap<String, Vec<u8>>> {
         let data = decompress(assets::get(&format!("stdlib/{}/{channel}.spm", self.name))?)?;
-        let mut input = DataInput { data: &data, position: 0 };
+        let mut input = DataInput {
+            data: &data,
+            position: 0,
+        };
         let count = input.read_int()?;
         let mut entries = HashMap::new();
         for _ in 0..count {
@@ -118,7 +123,12 @@ pub fn puml_resource(full_name: &str) -> Option<Vec<u8>> {
 /// The folder names of all libraries, sorted.
 pub fn library_names() -> Vec<String> {
     let mut names: Vec<String> = assets::get("stdlib/home.spm")
-        .map(|home| String::from_utf8_lossy(home).lines().map(str::to_owned).collect())
+        .map(|home| {
+            String::from_utf8_lossy(home)
+                .lines()
+                .map(str::to_owned)
+                .collect()
+        })
         .unwrap_or_default();
     names.sort();
     names.dedup();
@@ -134,7 +144,10 @@ pub fn json_resource(full_name: &str) -> Result<Option<Vec<u8>>, RuntimeExceptio
     let Some(library) = Stdlib::retrieve(library).filter(|library| library.has_info()) else {
         return Ok(None);
     };
-    library.json_resource(file).map(Some).ok_or(RuntimeException)
+    library
+        .json_resource(file)
+        .map(Some)
+        .ok_or(RuntimeException)
 }
 
 fn decompress(compressed: &[u8]) -> Option<Vec<u8>> {
@@ -171,7 +184,10 @@ impl<'a> DataInput<'a> {
             let first = u16::from(bytes[index]);
             let (unit, width) = match first {
                 0x00..=0x7F => (first, 1),
-                0xC0..=0xDF => ((first & 0x1F) << 6 | u16::from(*bytes.get(index + 1)?) & 0x3F, 2),
+                0xC0..=0xDF => (
+                    (first & 0x1F) << 6 | u16::from(*bytes.get(index + 1)?) & 0x3F,
+                    2,
+                ),
                 _ => (
                     (first & 0x0F) << 12
                         | (u16::from(*bytes.get(index + 1)?) & 0x3F) << 6
@@ -207,7 +223,10 @@ mod tests {
     #[test]
     fn modified_utf8_decodes_nul_and_surrogate_pairs() {
         let bytes = [0, 8, 0xC0, 0x80, 0xED, 0xA0, 0xBD, 0xED, 0xB8, 0x80];
-        let mut input = DataInput { data: &bytes, position: 0 };
+        let mut input = DataInput {
+            data: &bytes,
+            position: 0,
+        };
         assert_eq!(input.read_utf().as_deref(), Some("\0😀"));
     }
 }

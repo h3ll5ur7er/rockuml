@@ -54,6 +54,9 @@ mod tests {
             StringLocated::new("a\u{E103}b\u{E103}", location.clone()),
             StringLocated::new("{{x\u{E103}y}}", location),
         ];
-        assert_eq!(texts(&expand_breaklines(lines)), ["a", "b", "", "{{x\u{E103}y}}"]);
+        assert_eq!(
+            texts(&expand_breaklines(lines)),
+            ["a", "b", "", "{{x\u{E103}y}}"]
+        );
     }
 }

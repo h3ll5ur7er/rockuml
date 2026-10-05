@@ -14,7 +14,11 @@ fn main() {
     let mut entries: Vec<(String, PathBuf)> = files
         .into_iter()
         .map(|file| {
-            let name = file.strip_prefix(&assets).unwrap().to_string_lossy().replace('\\', "/");
+            let name = file
+                .strip_prefix(&assets)
+                .unwrap()
+                .to_string_lossy()
+                .replace('\\', "/");
             (name, file)
         })
         .collect();
@@ -22,10 +26,19 @@ fn main() {
 
     let mut table = String::from("pub static FILES: &[(&str, &[u8])] = &[\n");
     for (name, file) in entries {
-        writeln!(table, "    ({name:?}, include_bytes!({:?})),", file.display().to_string()).unwrap();
+        writeln!(
+            table,
+            "    ({name:?}, include_bytes!({:?})),",
+            file.display().to_string()
+        )
+        .unwrap();
     }
     table.push_str("];\n");
-    fs::write(Path::new(&env::var("OUT_DIR").unwrap()).join("assets.rs"), table).unwrap();
+    fs::write(
+        Path::new(&env::var("OUT_DIR").unwrap()).join("assets.rs"),
+        table,
+    )
+    .unwrap();
 }
 
 fn collect(directory: &Path, files: &mut Vec<PathBuf>) {

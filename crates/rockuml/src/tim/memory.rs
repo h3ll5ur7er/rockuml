@@ -110,7 +110,8 @@ impl Memory {
         };
         if scope == Some(VariableScope::Global) {
             self.globals.borrow_mut().put(name, value);
-        } else if scope == Some(VariableScope::Local) || local.overridden.values.contains_key(name) {
+        } else if scope == Some(VariableScope::Local) || local.overridden.values.contains_key(name)
+        {
             local.overridden.put(name, value);
         } else if self.globals.borrow().values.contains_key(name) {
             self.globals.borrow_mut().put(name, value);
@@ -136,24 +137,36 @@ impl Memory {
 
     pub fn is_empty(&self) -> bool {
         self.globals.borrow().values.is_empty()
-            && self
-                .local
-                .as_ref()
-                .is_none_or(|scope| scope.local.values.is_empty() && scope.overridden.values.is_empty())
+            && self.local.as_ref().is_none_or(|scope| {
+                scope.local.values.is_empty() && scope.overridden.values.is_empty()
+            })
     }
 
     /// The longest variable name visible in any scope that starts at `position`.
     pub fn variable_name_at(&self, chars: &[char], position: usize) -> String {
-        let global = self.globals.borrow().names.longest_match_starting_in(chars, position);
+        let global = self
+            .globals
+            .borrow()
+            .names
+            .longest_match_starting_in(chars, position);
         let Some(scope) = &self.local else {
             return global;
         };
         [
-            scope.overridden.names.longest_match_starting_in(chars, position),
+            scope
+                .overridden
+                .names
+                .longest_match_starting_in(chars, position),
             scope.local.names.longest_match_starting_in(chars, position),
         ]
         .into_iter()
-        .fold(global, |longest, candidate| if candidate.len() > longest.len() { candidate } else { longest })
+        .fold(global, |longest, candidate| {
+            if candidate.len() > longest.len() {
+                candidate
+            } else {
+                longest
+            }
+        })
     }
 }
 
@@ -232,7 +245,10 @@ impl ForeachContext {
     pub fn current_value(&self) -> Option<JsonValue> {
         match &self.values {
             JsonValue::Array(values) => values.get(self.index).cloned(),
-            JsonValue::Object(object) => object.names().nth(self.index).map(|name| JsonValue::String(name.to_owned())),
+            JsonValue::Object(object) => object
+                .names()
+                .nth(self.index)
+                .map(|name| JsonValue::String(name.to_owned())),
             _ => None,
         }
     }
@@ -257,10 +273,16 @@ mod tests {
     #[test]
     fn functions_see_and_update_globals() {
         let mut global = Memory::new_global();
-        global.put_variable("$g", TValue::Int(1), None, &location()).unwrap();
+        global
+            .put_variable("$g", TValue::Int(1), None, &location())
+            .unwrap();
         let mut local = global.fork_from_global(HashMap::new());
-        local.put_variable("$g", TValue::Int(2), None, &location()).unwrap();
-        local.put_variable("$l", TValue::Int(3), None, &location()).unwrap();
+        local
+            .put_variable("$g", TValue::Int(2), None, &location())
+            .unwrap();
+        local
+            .put_variable("$l", TValue::Int(3), None, &location())
+            .unwrap();
         assert_eq!(global.get_variable("$g"), Some(TValue::Int(2)));
         assert_eq!(global.get_variable("$l"), None);
         assert_eq!(local.get_variable("$l"), Some(TValue::Int(3)));
@@ -269,9 +291,13 @@ mod tests {
     #[test]
     fn arguments_shadow_globals() {
         let mut global = Memory::new_global();
-        global.put_variable("$x", TValue::Int(1), None, &location()).unwrap();
+        global
+            .put_variable("$x", TValue::Int(1), None, &location())
+            .unwrap();
         let mut local = global.fork_from_global(HashMap::from([("$x".to_owned(), TValue::Int(9))]));
-        local.put_variable("$x", TValue::Int(10), None, &location()).unwrap();
+        local
+            .put_variable("$x", TValue::Int(10), None, &location())
+            .unwrap();
         assert_eq!(local.get_variable("$x"), Some(TValue::Int(10)));
         assert_eq!(global.get_variable("$x"), Some(TValue::Int(1)));
     }
@@ -279,7 +305,16 @@ mod tests {
     #[test]
     fn local_scope_is_rejected_at_top_level() {
         let mut global = Memory::new_global();
-        assert!(global.put_variable("$x", TValue::Int(1), Some(VariableScope::Local), &location()).is_err());
+        assert!(
+            global
+                .put_variable(
+                    "$x",
+                    TValue::Int(1),
+                    Some(VariableScope::Local),
+                    &location()
+                )
+                .is_err()
+        );
     }
 
     #[test]

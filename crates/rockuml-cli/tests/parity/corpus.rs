@@ -6,22 +6,33 @@ use std::path::{Path, PathBuf};
 pub enum GoldenKind {
     Preprocessed,
     Debug,
+    EncodedUrl,
 }
 
 impl GoldenKind {
-    pub const ALL: [GoldenKind; 2] = [GoldenKind::Preprocessed, GoldenKind::Debug];
+    pub const ALL: [GoldenKind; 3] = [
+        GoldenKind::Preprocessed,
+        GoldenKind::Debug,
+        GoldenKind::EncodedUrl,
+    ];
 
     pub fn extension(self) -> &'static str {
         match self {
             GoldenKind::Preprocessed => "preproc",
             GoldenKind::Debug => "debug",
+            GoldenKind::EncodedUrl => "url",
         }
+    }
+
+    pub fn writes_to_stdout(self) -> bool {
+        self == GoldenKind::EncodedUrl
     }
 
     pub fn cli_arguments(self) -> &'static [&'static str] {
         match self {
             GoldenKind::Preprocessed => &["-preproc"],
             GoldenKind::Debug => &["-f", "debug"],
+            GoldenKind::EncodedUrl => &["-encodeurl"],
         }
     }
 }

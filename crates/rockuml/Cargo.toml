@@ -11,6 +11,7 @@ workspace = true
 
 [dependencies]
 brotli-decompressor = "6.0.1"
+flate2 = "1.1.10"
 jiff = "0.2.37"
 regex = "1.13.1"
 unicode-general-category = "1.1.0"

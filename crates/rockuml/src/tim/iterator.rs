@@ -15,24 +15,40 @@ use crate::java;
 use crate::text::StringLocated;
 
 pub trait CodeIterator {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>>;
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>>;
     fn next(&mut self) -> TimResult<()>;
     fn code_position(&self) -> usize;
-    fn jump_to_code_position(&mut self, position: usize, location: &StringLocated) -> TimResult<()>;
+    fn jump_to_code_position(&mut self, position: usize, location: &StringLocated)
+    -> TimResult<()>;
 }
 
 /// Builds the full chain over `lines`.
 pub fn code_iterator(lines: Vec<StringLocated>) -> Box<dyn CodeIterator> {
     let lines = Box::new(Lines::new(lines));
     let long_comments = Box::new(LongComments { source: lines });
-    let short_comments = Box::new(ShortComments { source: long_comments });
-    let inner_comments = Box::new(InnerComments { source: short_comments });
-    let subs = Box::new(Subs { source: inner_comments, replaying: None });
+    let short_comments = Box::new(ShortComments {
+        source: long_comments,
+    });
+    let inner_comments = Box::new(InnerComments {
+        source: short_comments,
+    });
+    let subs = Box::new(Subs {
+        source: inner_comments,
+        replaying: None,
+    });
     let return_functions = Box::new(ReturnFunctions { source: subs });
-    let procedures = Box::new(Procedures { source: return_functions });
+    let procedures = Box::new(Procedures {
+        source: return_functions,
+    });
     let ifs = Box::new(Ifs { source: procedures });
     let legacy_defines = Box::new(LegacyDefines { source: ifs });
-    let whiles = Box::new(Whiles { source: legacy_defines });
+    let whiles = Box::new(Whiles {
+        source: legacy_defines,
+    });
     let foreachs = Box::new(Foreachs { source: whiles });
     Box::new(Affectations { source: foreachs })
 }
@@ -43,7 +59,11 @@ macro_rules! delegate_position {
             self.source.code_position()
         }
 
-        fn jump_to_code_position(&mut self, position: usize, location: &StringLocated) -> TimResult<()> {
+        fn jump_to_code_position(
+            &mut self,
+            position: usize,
+            location: &StringLocated,
+        ) -> TimResult<()> {
             self.source.jump_to_code_position(position, location)
         }
     };
@@ -67,7 +87,11 @@ struct Lines {
 
 impl Lines {
     fn new(lines: Vec<StringLocated>) -> Self {
-        Self { lines, current: 0, jumps: 0 }
+        Self {
+            lines,
+            current: 0,
+            jumps: 0,
+        }
     }
 
     fn current_line(&self) -> Option<StringLocated> {
@@ -92,7 +116,11 @@ impl CodeIterator for Lines {
         self.current
     }
 
-    fn jump_to_code_position(&mut self, position: usize, location: &StringLocated) -> TimResult<()> {
+    fn jump_to_code_position(
+        &mut self,
+        position: usize,
+        location: &StringLocated,
+    ) -> TimResult<()> {
         self.jumps += 1;
         if self.jumps > 999 {
             return fail("Infinite loop?", location);
@@ -107,7 +135,11 @@ struct LongComments {
 }
 
 impl CodeIterator for LongComments {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         loop {
             let Some(line) = self.source.peek(context, memory)? else {
                 return Ok(None);
@@ -133,7 +165,11 @@ struct ShortComments {
 }
 
 impl CodeIterator for ShortComments {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             if line_type(line.text()) != LineType::CommentSimple {
                 return Ok(Some(line));
@@ -152,8 +188,15 @@ struct InnerComments {
 }
 
 impl CodeIterator for InnerComments {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
-        Ok(self.source.peek(context, memory)?.map(|line| line.remove_inner_comment()))
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
+        Ok(self
+            .source
+            .peek(context, memory)?
+            .map(|line| line.remove_inner_comment()))
     }
 
     delegate_navigation!();
@@ -166,7 +209,11 @@ struct Subs {
 }
 
 impl CodeIterator for Subs {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         if let Some(replaying) = &self.replaying {
             return Ok(replaying.current_line());
         }
@@ -231,7 +278,11 @@ struct ReturnFunctions {
 }
 
 impl CodeIterator for ReturnFunctions {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             let pending_is_function = context
                 .functions
@@ -240,7 +291,11 @@ impl CodeIterator for ReturnFunctions {
             if pending_is_function {
                 context.log(&line);
                 if line_type(line.text()) == LineType::EndFunction {
-                    if !context.functions.pending().is_some_and(UserFunction::contains_return) {
+                    if !context
+                        .functions
+                        .pending()
+                        .is_some_and(UserFunction::contains_return)
+                    {
                         return fail(
                             "This function does not have any !return directive. Declare it as a procedure instead ?",
                             &line,
@@ -272,10 +327,17 @@ struct Procedures {
 }
 
 impl CodeIterator for Procedures {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             let pending_is_procedure = context.functions.pending().is_some_and(|pending| {
-                matches!(pending.function_type(), FunctionType::Procedure | FunctionType::LegacyDefinelong)
+                matches!(
+                    pending.function_type(),
+                    FunctionType::Procedure | FunctionType::LegacyDefinelong
+                )
             });
             if pending_is_procedure {
                 context.log(&line);
@@ -306,11 +368,22 @@ struct Ifs {
 }
 
 impl CodeIterator for Ifs {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             let kind = line_type(line.text());
-            let is_conditional =
-                matches!(kind, LineType::If | LineType::Ifdef | LineType::Ifndef | LineType::Else | LineType::Elseif | LineType::Endif);
+            let is_conditional = matches!(
+                kind,
+                LineType::If
+                    | LineType::Ifdef
+                    | LineType::Ifndef
+                    | LineType::Else
+                    | LineType::Elseif
+                    | LineType::Endif
+            );
             if is_conditional {
                 context.log(&line);
                 execute_conditional(kind, &line, context, memory)?;
@@ -330,7 +403,12 @@ impl CodeIterator for Ifs {
     delegate_navigation!();
 }
 
-fn execute_conditional(kind: LineType, line: &StringLocated, context: &mut TContext, memory: &mut Memory) -> TimResult<()> {
+fn execute_conditional(
+    kind: LineType,
+    line: &StringLocated,
+    context: &mut TContext,
+    memory: &mut Memory,
+) -> TimResult<()> {
     match kind {
         LineType::If => {
             let is_true = if memory.contexts.are_all_ifs_ok() {
@@ -367,7 +445,9 @@ fn execute_conditional(kind: LineType, line: &StringLocated, context: &mut TCont
             }
             let last = memory.contexts.ifs.len() - 1;
             memory.contexts.ifs[last].entering_else_if();
-            if !memory.contexts.ifs[last].has_been_burnt() && eval_condition_after(line, "!elseif", context, memory)? {
+            if !memory.contexts.ifs[last].has_been_burnt()
+                && eval_condition_after(line, "!elseif", context, memory)?
+            {
                 memory.contexts.ifs[last].now_in_some_else_if();
             }
         }
@@ -385,7 +465,12 @@ fn execute_conditional(kind: LineType, line: &StringLocated, context: &mut TCont
     Ok(())
 }
 
-fn eval_condition_after(line: &StringLocated, keyword: &str, context: &mut TContext, memory: &mut Memory) -> TimResult<bool> {
+fn eval_condition_after(
+    line: &StringLocated,
+    keyword: &str,
+    context: &mut TContext,
+    memory: &mut Memory,
+) -> TimResult<bool> {
     let mut eater = Eater::new(line.clone());
     eater.skip_spaces();
     eater.check_and_eat(keyword)?;
@@ -398,7 +483,11 @@ struct LegacyDefines {
 }
 
 impl CodeIterator for LegacyDefines {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             match line_type(line.text()) {
                 LineType::LegacyDefine => {
@@ -424,11 +513,20 @@ struct Whiles {
 }
 
 impl CodeIterator for Whiles {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         let mut level = 0;
         while let Some(line) = self.source.peek(context, memory)? {
             let kind = line_type(line.text());
-            if memory.contexts.whiles.last().is_some_and(|current| current.skip) {
+            if memory
+                .contexts
+                .whiles
+                .last()
+                .is_some_and(|current| current.skip)
+            {
                 if kind == LineType::While {
                     level += 1;
                 } else if kind == LineType::Endwhile {
@@ -449,7 +547,9 @@ impl CodeIterator for Whiles {
                     eater.check_and_eat("!while")?;
                     eater.skip_spaces();
                     let condition = eater.eat_token_stack()?;
-                    let is_true = condition.get_result(&line.trimmed(), context, memory)?.to_bool();
+                    let is_true = condition
+                        .get_result(&line.trimmed(), context, memory)?
+                        .to_bool();
                     memory.contexts.whiles.push(WhileContext {
                         condition,
                         start: self.source.code_position(),
@@ -483,11 +583,20 @@ struct Foreachs {
 }
 
 impl CodeIterator for Foreachs {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         let mut level = 0;
         while let Some(line) = self.source.peek(context, memory)? {
             let kind = line_type(line.text());
-            if memory.contexts.foreachs.last().is_some_and(|current| current.skip) {
+            if memory
+                .contexts
+                .foreachs
+                .last()
+                .is_some_and(|current| current.skip)
+            {
                 if kind == LineType::Foreach {
                     level += 1;
                 } else if kind == LineType::Endforeach {
@@ -530,7 +639,12 @@ impl CodeIterator for Foreachs {
 }
 
 impl Foreachs {
-    fn start_foreach(&mut self, line: &StringLocated, context: &mut TContext, memory: &mut Memory) -> TimResult<()> {
+    fn start_foreach(
+        &mut self,
+        line: &StringLocated,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<()> {
         let mut eater = Eater::new(line.clone());
         eater.skip_spaces();
         eater.check_and_eat("!foreach")?;
@@ -545,7 +659,11 @@ impl Foreachs {
             None => 0,
             Some(values) => values.container_len().ok_or(TimError::Fatal)?,
         };
-        let mut foreach = ForeachContext::new(variable, values.unwrap_or(crate::json::JsonValue::Null), self.source.code_position());
+        let mut foreach = ForeachContext::new(
+            variable,
+            values.unwrap_or(crate::json::JsonValue::Null),
+            self.source.code_position(),
+        );
         let skip = length == 0;
         foreach.skip = skip;
         memory.contexts.foreachs.push(foreach);
@@ -560,7 +678,12 @@ fn set_loop_variable(memory: &mut Memory, location: &StringLocated) -> TimResult
     let current = memory.contexts.foreachs.last().ok_or(TimError::Fatal)?;
     let value = current.current_value().ok_or(TimError::Fatal)?;
     let variable = current.variable.clone();
-    memory.put_variable(&variable, TValue::Json(value), Some(VariableScope::Global), location)
+    memory.put_variable(
+        &variable,
+        TValue::Json(value),
+        Some(VariableScope::Global),
+        location,
+    )
 }
 
 struct Affectations {
@@ -568,7 +691,11 @@ struct Affectations {
 }
 
 impl CodeIterator for Affectations {
-    fn peek(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<Option<StringLocated>> {
+    fn peek(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<Option<StringLocated>> {
         while let Some(line) = self.source.peek(context, memory)? {
             if line_type(line.text()) != LineType::Affectation {
                 return Ok(Some(line));

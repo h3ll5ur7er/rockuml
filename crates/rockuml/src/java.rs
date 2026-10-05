@@ -86,8 +86,9 @@ pub fn regex_split(separator: &regex::Regex, s: &str) -> Vec<String> {
 
 /// `String.hashCode`, computed over UTF-16 code units.
 pub fn string_hash_code(s: &str) -> i32 {
-    s.encode_utf16()
-        .fold(0i32, |hash, unit| hash.wrapping_mul(31).wrapping_add(i32::from(unit)))
+    s.encode_utf16().fold(0i32, |hash, unit| {
+        hash.wrapping_mul(31).wrapping_add(i32::from(unit))
+    })
 }
 
 /// The order in which `java.util.HashMap` iterates `hashes`, given in insertion order with no removals.

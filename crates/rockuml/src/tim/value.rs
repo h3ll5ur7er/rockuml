@@ -90,7 +90,10 @@ impl TValue {
     pub fn compare(&self, other: &TValue) -> Ordering {
         match (self, other) {
             (TValue::Int(a), TValue::Int(b)) => a.cmp(b),
-            _ => self.to_string().encode_utf16().cmp(other.to_string().encode_utf16()),
+            _ => self
+                .to_string()
+                .encode_utf16()
+                .cmp(other.to_string().encode_utf16()),
         }
     }
 }
@@ -112,17 +115,32 @@ mod tests {
 
     #[test]
     fn arithmetic_on_numbers_wraps_like_java_int() {
-        assert_eq!(TValue::Int(i32::MAX).add(&TValue::Int(1)), TValue::Int(i32::MIN));
-        assert_eq!(TValue::Int(7).divided_by(&TValue::Int(2)), Some(TValue::Int(3)));
-        assert_eq!(TValue::Int(-7).divided_by(&TValue::Int(2)), Some(TValue::Int(-3)));
+        assert_eq!(
+            TValue::Int(i32::MAX).add(&TValue::Int(1)),
+            TValue::Int(i32::MIN)
+        );
+        assert_eq!(
+            TValue::Int(7).divided_by(&TValue::Int(2)),
+            Some(TValue::Int(3))
+        );
+        assert_eq!(
+            TValue::Int(-7).divided_by(&TValue::Int(2)),
+            Some(TValue::Int(-3))
+        );
         assert_eq!(TValue::Int(1).divided_by(&TValue::Int(0)), None);
     }
 
     #[test]
     fn operators_on_text_concatenate() {
         assert_eq!(TValue::string("a").add(&TValue::Int(1)).to_string(), "a1");
-        assert_eq!(TValue::string("a").minus(&TValue::string("b")).to_string(), "ab");
-        assert_eq!(TValue::string("a").multiply(&TValue::Int(2)).to_string(), "a*2");
+        assert_eq!(
+            TValue::string("a").minus(&TValue::string("b")).to_string(),
+            "ab"
+        );
+        assert_eq!(
+            TValue::string("a").multiply(&TValue::Int(2)).to_string(),
+            "a*2"
+        );
     }
 
     #[test]
@@ -135,6 +153,9 @@ mod tests {
     #[test]
     fn json_strings_print_without_quotes() {
         assert_eq!(TValue::Json(JsonValue::String("x".into())).to_string(), "x");
-        assert_eq!(TValue::Json(crate::json::parse("[\"x\"]").unwrap()).to_string(), "[\"x\"]");
+        assert_eq!(
+            TValue::Json(crate::json::parse("[\"x\"]").unwrap()).to_string(),
+            "[\"x\"]"
+        );
     }
 }

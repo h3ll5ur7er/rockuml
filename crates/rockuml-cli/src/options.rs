@@ -6,6 +6,8 @@ use std::path::PathBuf;
 pub enum Command {
     Version,
     Render(RenderOptions),
+    /// Prints the sources encoded in these codes.
+    DecodeUrl(Vec<String>),
 }
 
 #[derive(Debug, PartialEq)]
@@ -20,6 +22,8 @@ pub enum OutputFormat {
     Preprocessed,
     Debug,
     Svg,
+    /// Prints each diagram's URL code instead of writing a file.
+    EncodedUrl,
 }
 
 impl OutputFormat {
@@ -37,6 +41,7 @@ impl OutputFormat {
             Self::Preprocessed => ".preproc",
             Self::Debug => ".debug",
             Self::Svg => ".svg",
+            Self::EncodedUrl => "",
         }
     }
 }
@@ -50,6 +55,10 @@ pub fn parse(arguments: impl IntoIterator<Item = String>) -> Result<Command, Str
         match argument.as_str() {
             "--version" => return Ok(Command::Version),
             "-preproc" | "--preproc" => format = OutputFormat::Preprocessed,
+            "-encodeurl" | "--encode-url" | "-computeurl" | "--compute-url" => {
+                format = OutputFormat::EncodedUrl
+            }
+            "-decodeurl" | "--decode-url" => return Ok(Command::DecodeUrl(arguments.collect())),
             "-tsvg" | "-svg" | "--svg" => format = OutputFormat::Svg,
             "-f" | "--format" => {
                 let name = arguments.next().ok_or("missing format name after -f")?;

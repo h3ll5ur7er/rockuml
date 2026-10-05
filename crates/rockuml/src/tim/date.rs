@@ -10,14 +10,21 @@ use crate::host::Host;
 use crate::text::StringLocated;
 
 /// `%date()`, `%date(format)`, `%date(format, epochSeconds)` or `%date(format, epochSeconds, zone)`.
-pub fn format_date(host: &dyn Host, arguments: &[TValue], location: &StringLocated) -> TimResult<TValue> {
+pub fn format_date(
+    host: &dyn Host,
+    arguments: &[TValue],
+    location: &StringLocated,
+) -> TimResult<TValue> {
     let local_zone = || {
         host.local_time_zone()
             .and_then(|name| TimeZone::get(&name).ok())
             .unwrap_or(TimeZone::UTC)
     };
     let Some(format) = arguments.first() else {
-        return Ok(TValue::string(java_date_to_string(host.current_time_millis(), &local_zone())));
+        return Ok(TValue::string(java_date_to_string(
+            host.current_time_millis(),
+            &local_zone(),
+        )));
     };
     let millis = match arguments.get(1) {
         Some(seconds) => 1000 * i64::from(seconds.to_int()),
@@ -41,15 +48,35 @@ pub fn java_date_to_string(millis: i64, zone: &TimeZone) -> String {
     simple_date_format("EEE MMM dd HH:mm:ss zzz yyyy", millis, zone).unwrap_or_default()
 }
 
-const DAY_NAMES: [&str; 7] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DAY_NAMES: [&str; 7] = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
 const MONTH_NAMES: [&str; 12] = [
-    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
     "December",
 ];
 
 /// `None` for patterns `SimpleDateFormat` rejects.
 pub fn simple_date_format(pattern: &str, millis: i64, zone: &TimeZone) -> Option<String> {
-    let time = Timestamp::from_millisecond(millis).ok()?.to_zoned(zone.clone());
+    let time = Timestamp::from_millisecond(millis)
+        .ok()?
+        .to_zoned(zone.clone());
     let chars: Vec<char> = pattern.chars().collect();
     let mut result = String::new();
     let mut index = 0;
@@ -105,13 +132,21 @@ fn field(letter: char, count: usize, time: &Zoned) -> Option<String> {
         'D' => padded(i64::from(date.day_of_year())),
         'E' => {
             let name = DAY_NAMES[usize::try_from(date.weekday().to_monday_zero_offset()).ok()?];
-            if count >= 4 { name.to_owned() } else { name[..3].to_owned() }
+            if count >= 4 {
+                name.to_owned()
+            } else {
+                name[..3].to_owned()
+            }
         }
         'u' => padded(i64::from(date.weekday().to_monday_one_offset())),
         'F' => padded((i64::from(date.day()) - 1) / 7 + 1),
         'a' => if time.hour() < 12 { "AM" } else { "PM" }.to_owned(),
         'H' => padded(i64::from(time.hour())),
-        'k' => padded(if time.hour() == 0 { 24 } else { i64::from(time.hour()) }),
+        'k' => padded(if time.hour() == 0 {
+            24
+        } else {
+            i64::from(time.hour())
+        }),
         'K' => padded(i64::from(time.hour()) % 12),
         'h' => padded(match i64::from(time.hour()) % 12 {
             0 => 12,
@@ -145,7 +180,11 @@ fn month(month: i64, count: usize) -> String {
 }
 
 fn abbreviation(time: &Zoned) -> String {
-    let abbreviation = time.time_zone().to_offset_info(time.timestamp()).abbreviation().to_owned();
+    let abbreviation = time
+        .time_zone()
+        .to_offset_info(time.timestamp())
+        .abbreviation()
+        .to_owned();
     if abbreviation.starts_with(['+', '-']) {
         format!("GMT{}", offset(time, true, true))
     } else {
@@ -176,13 +215,19 @@ mod tests {
     #[test]
     fn formats_numeric_fields_with_padding() {
         let millis = 1_759_668_558_007;
-        assert_eq!(utc("yyyy-MM-dd HH:mm:ss.SSS", millis).as_deref(), Some("2025-10-05 12:49:18.007"));
+        assert_eq!(
+            utc("yyyy-MM-dd HH:mm:ss.SSS", millis).as_deref(),
+            Some("2025-10-05 12:49:18.007")
+        );
         assert_eq!(utc("yy/M/d h a", millis).as_deref(), Some("25/10/5 12 PM"));
     }
 
     #[test]
     fn formats_names_and_quoted_text() {
-        assert_eq!(utc("EEE, MMM d ''yy 'at' HH", 0).as_deref(), Some("Thu, Jan 1 '70 at 00"));
+        assert_eq!(
+            utc("EEE, MMM d ''yy 'at' HH", 0).as_deref(),
+            Some("Thu, Jan 1 '70 at 00")
+        );
         assert_eq!(utc("EEEE MMMM", 0).as_deref(), Some("Thursday January"));
     }
 
@@ -195,6 +240,9 @@ mod tests {
     #[test]
     fn date_to_string_uses_the_zone_abbreviation() {
         let zone = TimeZone::get("Europe/Zurich").unwrap();
-        assert_eq!(java_date_to_string(1_759_668_558_000, &zone), "Sun Oct 05 14:49:18 CEST 2025");
+        assert_eq!(
+            java_date_to_string(1_759_668_558_000, &zone),
+            "Sun Oct 05 14:49:18 CEST 2025"
+        );
     }
 }

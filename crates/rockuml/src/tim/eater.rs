@@ -55,7 +55,10 @@ impl Eater {
 
     /// Like Java's `charAt`, reading past the end is a runtime failure.
     pub fn eat_one_char(&mut self) -> TimResult<char> {
-        let c = *self.chars.get(self.position).ok_or(super::error::TimError::Fatal)?;
+        let c = *self
+            .chars
+            .get(self.position)
+            .ok_or(super::error::TimError::Fatal)?;
         self.position += 1;
         Ok(c)
     }
@@ -87,7 +90,9 @@ impl Eater {
     }
 
     pub fn check_and_eat(&mut self, expected: &str) -> TimResult<()> {
-        expected.chars().try_for_each(|c| self.check_and_eat_char(c))
+        expected
+            .chars()
+            .try_for_each(|c| self.check_and_eat_char(c))
     }
 
     pub fn safe_check_and_eat_char(&mut self, expected: char) -> bool {
@@ -208,7 +213,11 @@ impl Eater {
         AFFECTATION.is_match(&rest)
     }
 
-    pub fn eat_expression(&mut self, context: &mut TContext, memory: &mut Memory) -> TimResult<TValue> {
+    pub fn eat_expression(
+        &mut self,
+        context: &mut TContext,
+        memory: &mut Memory,
+    ) -> TimResult<TValue> {
         let c = self.peek_char();
         if c == '{' || c == '[' {
             let data = self.eat_all_to_end();
@@ -313,7 +322,10 @@ mod tests {
     #[test]
     fn unquoted_arguments_stop_at_top_level_comma() {
         let mut eater = eater("f(a, b), c");
-        assert_eq!(eater.eat_and_get_optional_quoted_string().unwrap(), "f(a, b)");
+        assert_eq!(
+            eater.eat_and_get_optional_quoted_string().unwrap(),
+            "f(a, b)"
+        );
         assert_eq!(eater.peek_char(), ',');
     }
 
