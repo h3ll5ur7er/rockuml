@@ -7,6 +7,7 @@ pub mod geom;
 pub mod group;
 pub mod png;
 pub mod shape;
+pub mod stencil;
 pub mod svg;
 pub mod typeface;
 pub mod ugraphic;
@@ -24,6 +25,12 @@ pub trait TextBlock {
 
     fn draw_u(&self, ug: &UGraphic);
 
+    /// Draws the block inside a border's padding. Blocks whose separators span them let those span the padding
+    /// too.
+    fn draw_in_padding(&self, ug: &UGraphic, _left: f64, _right: f64) {
+        self.draw_u(ug);
+    }
+
     /// The colour the block asks to be drawn on, which stacking blocks paint behind it.
     fn backcolor(&self) -> Option<HColor> {
         None
@@ -37,6 +44,10 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
 
     fn draw_u(&self, ug: &UGraphic) {
         (**self).draw_u(ug);
+    }
+
+    fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
+        (**self).draw_in_padding(ug, left, right);
     }
 
     fn backcolor(&self) -> Option<HColor> {

@@ -6,6 +6,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
+use crate::klimt::stencil::UHorizontalLine;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 
 /// The mark in front of a `*` list item: a disc at the first level, a square below.
@@ -53,12 +54,15 @@ impl Atom for Bullet {
 
 /// A separator line (`----`, `====`, `....`), optionally with a title in its middle (`== Title ==`).
 pub struct HorizontalLine {
+    /// The character the line is drawn with.
+    style: char,
     title: Option<SheetBlock1>,
 }
 
 impl HorizontalLine {
-    pub fn new(title: Option<Sheet>) -> Self {
+    pub fn new(style: char, title: Option<Sheet>) -> Self {
         Self {
+            style,
             title: title.map(|sheet| SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())),
         }
     }
@@ -76,7 +80,10 @@ impl TextBlock for HorizontalLine {
     fn draw_u(&self, ug: &UGraphic) {
         let height = self.calculate_dimension(ug.string_bounder()).height;
         ug.translated(0.0, height / 2.0)
-            .draw(&UShape::HorizontalLine);
+            .draw_horizontal_line(&UHorizontalLine {
+                style: self.style,
+                title: self.title.as_ref().map(|title| title as &dyn TextBlock),
+            });
     }
 }
 

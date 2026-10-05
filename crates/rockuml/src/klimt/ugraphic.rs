@@ -6,6 +6,7 @@ use super::font::StringBounder;
 use super::geom::UTranslate;
 use super::group::UGroup;
 use super::shape::UShape;
+use super::stencil::{Stencil, StencilFrame, UHorizontalLine};
 use crate::color::HColor;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -66,6 +67,7 @@ pub struct UGraphic {
     default_background: HColor,
     translate: UTranslate,
     param: UParam,
+    stencil: Option<StencilFrame>,
 }
 
 impl UGraphic {
@@ -84,6 +86,7 @@ impl UGraphic {
                 backcolor: HColor::NONE,
                 stroke: UStroke::SIMPLE,
             },
+            stencil: None,
         }
     }
 
@@ -138,6 +141,37 @@ impl UGraphic {
 
     pub fn close_group(&self) {
         self.backend.borrow_mut().close_group();
+    }
+
+    /// Separators drawn on the result span `stencil`, which is placed where this surface is.
+    #[must_use]
+    pub fn with_stencil(&self, stencil: Rc<dyn Stencil>) -> Self {
+        Self {
+            stencil: Some(StencilFrame {
+                stencil,
+                origin: self.translate,
+            }),
+            ..self.clone()
+        }
+    }
+
+    /// Draws the separator across the stencil, or as a bare separator shape where there is none (which only
+    /// the debug format lists).
+    pub fn draw_horizontal_line(&self, line: &UHorizontalLine) {
+        let Some(frame) = &self.stencil else {
+            self.draw(&UShape::HorizontalLine);
+            return;
+        };
+        let at_stencil = Self {
+            translate: frame.origin,
+            stencil: None,
+            ..self.clone()
+        };
+        line.draw_line_internal(
+            &at_stencil,
+            frame.stencil.as_ref(),
+            self.translate.dy - frame.origin.dy,
+        );
     }
 
     pub fn draw(&self, shape: &UShape) {

@@ -1,6 +1,9 @@
+use std::rc::Rc;
+
 use super::{Atom, Sheet};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D};
+use crate::klimt::stencil::Stencil;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
@@ -128,5 +131,54 @@ impl TextBlock for SheetBlock1 {
                 atom.draw_u(&ug.translated(position.x, position.y));
             }
         }
+    }
+}
+
+/// A laid-out sheet whose separators span it (PlantUML's `SheetBlock2`), and inside a border, the border's padding.
+pub struct SheetBlock2 {
+    block: Rc<SheetBlock1>,
+}
+
+impl SheetBlock2 {
+    pub fn new(block: SheetBlock1) -> Self {
+        Self {
+            block: Rc::new(block),
+        }
+    }
+}
+
+impl TextBlock for SheetBlock2 {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.block.calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.draw_in_padding(ug, 0.0, 0.0);
+    }
+
+    fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
+        let stencil = SheetStencil {
+            sheet: self.block.clone(),
+            left,
+            right,
+        };
+        self.block.draw_u(&ug.with_stencil(Rc::new(stencil)));
+    }
+}
+
+/// The width of a sheet, widened on each side.
+struct SheetStencil {
+    sheet: Rc<SheetBlock1>,
+    left: f64,
+    right: f64,
+}
+
+impl Stencil for SheetStencil {
+    fn starting_x(&self, _string_bounder: &dyn StringBounder, _y: f64) -> f64 {
+        -self.left
+    }
+
+    fn ending_x(&self, string_bounder: &dyn StringBounder, _y: f64) -> f64 {
+        self.sheet.calculate_dimension(string_bounder).width + self.right
     }
 }

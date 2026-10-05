@@ -2,7 +2,7 @@
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
 use super::ExportSettings;
-use crate::creole::{CreoleParser, Display, SheetBlock1};
+use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{Bordered, Decorated, Decoration, Marged};
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
@@ -205,7 +205,7 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
     });
     let sheet =
         CreoleParser::new(font_configuration(style), alignment).create_sheet(display.lines());
-    let text = SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none());
+    let text = SheetBlock2::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()));
     let bordered = Bordered::new(
         text,
         stroke(style),

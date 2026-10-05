@@ -13,7 +13,7 @@ mod sheet_block;
 
 pub use display::Display;
 pub use parser::CreoleParser;
-pub use sheet_block::SheetBlock1;
+pub use sheet_block::{SheetBlock1, SheetBlock2};
 
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};

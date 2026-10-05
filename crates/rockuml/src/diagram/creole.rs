@@ -2,7 +2,7 @@ use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
 use super::source::UmlSource;
 use super::{Diagram, ExportSettings, NotYetPorted};
-use crate::creole::{CreoleParser, SheetBlock1};
+use crate::creole::{CreoleParser, SheetBlock1, SheetBlock2};
 use crate::klimt::font::{FontConfiguration, UFont};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -53,13 +53,54 @@ impl Diagram for CreoleDiagram {
     fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let font = FontConfiguration::black_blue_true(UFont::serif(14));
         let sheet = CreoleParser::new(font, HorizontalAlignment::Left).create_sheet(&self.lines);
-        Ok(Box::new(SheetBlock1::new(
+        // Unlike PlantUML, whose sheet has no stencil here and so cannot draw its separators.
+        Ok(Box::new(SheetBlock2::new(SheetBlock1::new(
             sheet,
             ClockwiseTopRightBottomLeft::none(),
-        )))
+        ))))
     }
 
     fn export_settings(&self) -> ExportSettings {
         ExportSettings::without_skin(self.source.seed())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+
+    use super::*;
+    use crate::diagram::{ImageFormat, export};
+    use crate::fonts::FontRegistry;
+    use crate::host::IsolatedHost;
+    use crate::text::{LineLocation, StringLocated};
+
+    #[test]
+    fn separators_span_the_sheet() {
+        let lines = ["@startcreole", "Some text", "----", "More", "@endcreole"];
+        let location = LineLocation::new("test", None);
+        let source = UmlSource::new(
+            lines
+                .iter()
+                .map(|line| StringLocated::new(*line, location.clone()))
+                .collect(),
+            lines.iter().map(|line| (*line).to_owned()).collect(),
+        );
+        let diagram = CreoleDiagram::create(source);
+        let debug = export(
+            diagram.as_ref(),
+            ImageFormat::Debug,
+            &Arc::new(FontRegistry::default()),
+            &IsolatedHost,
+        )
+        .unwrap();
+        let debug = String::from_utf8(debug).unwrap();
+        assert!(
+            debug.contains(
+                "LINE:
+  pt1: [ 0.0000 ; "
+            ),
+            "{debug}"
+        );
     }
 }

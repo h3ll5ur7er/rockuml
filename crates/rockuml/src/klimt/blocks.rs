@@ -71,9 +71,11 @@ impl<T: TextBlock> TextBlock for Bordered<T> {
                 .with_stroke(self.stroke)
                 .draw(&UShape::Rectangle(rectangle));
         }
-        self.inner.draw_u(
+        self.inner.draw_in_padding(
             &ug.with_color(border)
                 .translated(self.padding.left, self.padding.top),
+            self.padding.left,
+            self.padding.right,
         );
     }
 }

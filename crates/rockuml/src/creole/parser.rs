@@ -287,12 +287,12 @@ impl StripeBuilder {
                 self.font = heading_font(&self.font, self.style.order);
                 self.modify_stripe(&line);
             }
-            StripeStyleType::HorizontalLine(_) => {
+            StripeStyleType::HorizontalLine(style) => {
                 let title = (!line.is_empty()).then(|| {
                     CreoleParser::new(self.font.clone(), HorizontalAlignment::Left)
                         .create_sheet(&[line])
                 });
-                self.atoms.push(Box::new(HorizontalLine::new(title)));
+                self.atoms.push(Box::new(HorizontalLine::new(style, title)));
             }
             _ => self.modify_stripe(&line),
         }
