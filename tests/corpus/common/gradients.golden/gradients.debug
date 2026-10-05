@@ -1,0 +1,92 @@
+DPI: 96
+dimension: [ 594.0147 ; 108.0000 ]
+scaleFactor: 1.0000
+seed: -656841067527119340
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 200.1508 ; 5.0000 ]
+  pt2: [ 393.8638 ; 40.0000 ]
+
+RECTANGLE:
+  pt1: [ 205.1508 ; 10.0000 ]
+  pt2: [ 387.8638 ; 34.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: Gradient title
+  position: [ 210.1508 ; 25.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: HColorGradient <timestamp>
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Hello
+  position: [ 230.1952 ; 50.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: World
+  position: [ 308.5220 ; 50.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 54.0000 ]
+  pt2: [ 589.0147 ; 103.0000 ]
+
+RECTANGLE:
+  pt1: [ 17.0000 ; 66.0000 ]
+  pt2: [ 576.0147 ; 90.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: HColorGradient <timestamp>
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: Legend with 
+  position: [ 22.0000 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: gradient back
+  position: [ 188.0444 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [BACKCOLOR]
+  color: ff000000
+  extendedColor: HColorGradient <timestamp>
+
+TEXT:
+  text:  and 
+  position: [ 375.4767 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: plain back
+  position: [ 457.4291 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [BACKCOLOR]
+  color: ff000000
+  extendedColor: ffffc0cb
+

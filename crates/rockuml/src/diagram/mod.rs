@@ -167,7 +167,7 @@ pub fn export(
     let svg = || {
         let option = SvgOption {
             min_dim: dimension,
-            backcolor: Some(backcolor.to_svg()),
+            backcolor: backcolor.clone(),
             scale: scale_factor,
             preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
             root_attributes: settings

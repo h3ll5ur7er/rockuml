@@ -79,10 +79,13 @@ impl UGraphicDebug {
             format!("  position: {}", point(at.dx, at.dy)),
             format!("  orientation: {}", text.orientation),
             format!("  font: {}", text.font.to_string_debug()),
-            format!("  color: {}", color_to_string(Some(text.font.color()))),
+            format!(
+                "  color: {}",
+                color_to_string(Some(text.font.color()), &self.render_date)
+            ),
             format!(
                 "  extendedColor: {}",
-                color_to_string(text.font.extended_color())
+                color_to_string(text.font.extended_color(), &self.render_date)
             ),
             String::new(),
         ]);
@@ -160,8 +163,14 @@ impl UGraphicDebug {
         self.lines.extend([
             format!("  stroke: {}", param.stroke),
             "  shadow: 0".to_owned(),
-            format!("  color: {}", color_to_string(Some(&param.color))),
-            format!("  backcolor: {}", color_to_string(Some(&param.backcolor))),
+            format!(
+                "  color: {}",
+                color_to_string(Some(&param.color), &self.render_date)
+            ),
+            format!(
+                "  backcolor: {}",
+                color_to_string(Some(&param.backcolor), &self.render_date)
+            ),
             String::new(),
         ]);
     }
@@ -180,7 +189,10 @@ impl UGraphicBackend for UGraphicDebug {
                     format!("  pt2: {}", point(at.dx + dx, at.dy + dy)),
                     format!("  stroke: {}", param.stroke),
                     "  shadow: 0".to_owned(),
-                    format!("  color: {}", color_to_string(Some(&param.color))),
+                    format!(
+                        "  color: {}",
+                        color_to_string(Some(&param.color), &self.render_date)
+                    ),
                     String::new(),
                 ]);
             }
@@ -224,12 +236,13 @@ fn point(x: f64, y: f64) -> String {
     )
 }
 
-fn color_to_string(color: Option<&HColor>) -> String {
+/// PlantUML describes colours other than plain ones by their class and the time.
+fn color_to_string(color: Option<&HColor>, render_date: &str) -> String {
     match color {
         None => "NULL_COLOR".to_owned(),
         Some(color) if color.is_transparent() => "NULL_COLOR".to_owned(),
         Some(HColor::Simple(color)) => format!("{:x}", color.argb()),
-        Some(other) => unimplemented!("debug output of {other:?}"),
+        Some(other) => format!("{} {render_date}", other.java_class_name()),
     }
 }
 

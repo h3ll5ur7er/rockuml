@@ -10,6 +10,7 @@ use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
 
 use super::xml::XmlNode;
+use crate::color::{Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
@@ -22,8 +23,7 @@ const DECIMALS: usize = 3;
 pub struct SvgOption {
     /// The whole image's size; the document grows beyond it when shapes stick out.
     pub min_dim: XDimension2D,
-    /// `None` for a transparent image.
-    pub backcolor: Option<String>,
+    pub backcolor: HColor,
     /// Every length is multiplied by it on output.
     pub scale: f64,
     pub preserve_aspect_ratio: String,
@@ -65,6 +65,11 @@ pub struct SvgGraphics {
     filter_uid: String,
     /// Text background colours and the filters that paint them.
     back_color_filters: HashMap<String, String>,
+    gradient_id: String,
+    /// Gradients and the ids they are defined under.
+    gradients: Vec<(Gradient, String)>,
+    /// The background as the `<svg>` style gives it; none for gradients, which a rectangle paints instead.
+    background_style: Option<String>,
     painted_background: bool,
 }
 
@@ -86,16 +91,27 @@ impl SvgGraphics {
             max_y: 10,
             filter_uid: format!("b{}", radix36(seed.unsigned_abs())),
             back_color_filters: HashMap::new(),
+            gradient_id: format!("g{}", radix36(seed.unsigned_abs())),
+            gradients: Vec::new(),
+            background_style: None,
             painted_background: false,
             option,
         };
         graphics.stroke_width = graphics.length(1.0);
         let XDimension2D { width, height } = graphics.option.min_dim;
         graphics.ensure_visible(width, height);
-        if let Some(color) = graphics.option.backcolor.clone()
-            && !["#00000000", "#000000", "#FFFFFF"].contains(&color.as_str())
-        {
-            graphics.paint_background(&color);
+        match graphics.option.backcolor.clone() {
+            HColor::Gradient(gradient) => {
+                let fill = graphics.gradient_fill(gradient);
+                graphics.paint_background(&fill);
+            }
+            other => {
+                let color = other.to_svg();
+                if !["#00000000", "#000000", "#FFFFFF"].contains(&color.as_str()) {
+                    graphics.paint_background(&color);
+                }
+                graphics.background_style = Some(color);
+            }
         }
         graphics
     }
@@ -322,6 +338,39 @@ impl SvgGraphics {
         self.ensure_visible(text.x + text.text_length, text.y);
     }
 
+    /// A fill painting the gradient, defined on first use (PlantUML's `createSvgGradient`).
+    pub fn gradient_fill(&mut self, gradient: Gradient) -> String {
+        if let Some((_, id)) = self.gradients.iter().find(|(known, _)| *known == gradient) {
+            return format!("url(#{id})");
+        }
+        let id = format!("{}{}", self.gradient_id, self.gradients.len());
+        let (x1, y1, x2, y2) = match gradient.policy {
+            '|' => ("0%", "50%", "100%", "50%"),
+            '\\' => ("0%", "100%", "100%", "0%"),
+            '-' => ("50%", "0%", "50%", "100%"),
+            _ => ("0%", "0%", "100%", "100%"),
+        };
+        let mut element = XmlNode::new("linearGradient");
+        for (name, value) in [
+            ("x1", x1),
+            ("y1", y1),
+            ("x2", x2),
+            ("y2", y2),
+            ("id", id.as_str()),
+        ] {
+            element.set_attribute(name, value);
+        }
+        for (color, offset) in [(gradient.from, "0%"), (gradient.to, "100%")] {
+            let mut stop = XmlNode::new("stop");
+            stop.set_attribute("stop-color", shorten_color(&HColor::Simple(color).to_rgb()));
+            stop.set_attribute("offset", offset);
+            element.append_child(stop);
+        }
+        self.defs.append_child(element);
+        self.gradients.push((gradient, id.clone()));
+        format!("url(#{id})")
+    }
+
     /// The id of a filter flooding the text's box with `color`, created on first use.
     fn back_color_filter(&mut self, color: &str) -> String {
         if let Some(id) = self.back_color_filters.get(color) {
@@ -458,8 +507,7 @@ impl SvgGraphics {
         let (width, height) = (scaled(self.max_x), scaled(self.max_y));
         let mut style = format!("width:{width}px;height:{height}px;");
         if let Some(color) = self
-            .option
-            .backcolor
+            .background_style
             .as_deref()
             .filter(|color| *color != "#00000000")
         {
@@ -610,7 +658,7 @@ mod tests {
             42,
             SvgOption {
                 min_dim: XDimension2D::new(20.0, 30.0),
-                backcolor: Some("#FFFFFF".to_owned()),
+                backcolor: HColor::WHITE,
                 scale: 1.0,
                 preserve_aspect_ratio: "none".to_owned(),
                 root_attributes: Vec::new(),
@@ -674,6 +722,20 @@ mod tests {
         assert_eq!(decoded_title("a<U+221E>b\\nc"), "a\u{221E}b\nc");
         assert!(is_javascript("Java Script:alert(1)"));
         assert!(!is_javascript("https://plantuml.com"));
+    }
+
+    #[test]
+    fn gradients_are_defined_once_and_painted_by_reference() {
+        let mut graphics = graphics();
+        let HColor::Gradient(gradient) = HColor::parse("red|blue").unwrap().unwrap() else {
+            panic!("a gradient");
+        };
+        let fill = graphics.gradient_fill(gradient);
+        assert_eq!(fill, "url(#g160)");
+        assert_eq!(graphics.gradient_fill(gradient), fill);
+        let xml = graphics.into_xml(None);
+        let definition = r##"<linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="g160"><stop stop-color="#F00" offset="0%"/><stop stop-color="#00F" offset="100%"/></linearGradient>"##;
+        assert!(xml.contains(definition), "{xml}");
     }
 
     #[test]

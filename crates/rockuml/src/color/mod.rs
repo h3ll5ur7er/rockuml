@@ -53,7 +53,17 @@ pub enum HColor {
     Simple(XColor),
     Automagic,
     Scheme,
-    Gradient,
+    Gradient(Gradient),
+}
+
+/// A colour fading into another, like `red-blue`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Gradient {
+    pub from: XColor,
+    pub to: XColor,
+    /// The character written between the colours, which gives the direction: `|` left to right, `-` top to
+    /// bottom, `/` and `\` diagonally.
+    pub policy: char,
 }
 
 impl HColor {
@@ -109,10 +119,16 @@ impl HColor {
         }
         for (index, c) in text.char_indices() {
             if matches!(c, '-' | '\\' | '|' | '/')
-                && parse_simple_color(&text[..index]).is_some()
-                && parse_simple_color(&text[index + 1..]).is_some()
+                && let (Some(from), Some(to)) = (
+                    parse_simple_color(&text[..index]),
+                    parse_simple_color(&text[index + 1..]),
+                )
             {
-                return Ok(Some(HColor::Gradient));
+                return Ok(Some(HColor::Gradient(Gradient {
+                    from,
+                    to,
+                    policy: c,
+                })));
             }
         }
         Ok(None)
@@ -185,11 +201,23 @@ impl HColor {
         format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
     }
 
-    /// Only plain colours are ported to the drawing formats; the others draw black.
+    /// Where one colour is needed, a gradient gives its first. Automagic and scheme colours are not ported to
+    /// the drawing formats yet and draw black.
     fn as_xcolor(&self) -> XColor {
         match self {
             HColor::Simple(color) => *color,
-            HColor::Automagic | HColor::Scheme | HColor::Gradient => XColor::rgb(0, 0, 0),
+            HColor::Gradient(gradient) => gradient.from,
+            HColor::Automagic | HColor::Scheme => XColor::rgb(0, 0, 0),
+        }
+    }
+
+    /// The name of the Java class PlantUML represents the colour with.
+    pub fn java_class_name(&self) -> &'static str {
+        match self {
+            HColor::Simple(_) => "HColorSimple",
+            HColor::Automagic => "HColorAutomagic",
+            HColor::Scheme => "HColorScheme",
+            HColor::Gradient(_) => "HColorGradient",
         }
     }
 
@@ -206,9 +234,7 @@ impl HColor {
                     color.alpha, color.red, color.green, color.blue
                 )
             }
-            HColor::Automagic => "?HColorAutomagic".to_owned(),
-            HColor::Scheme => "?HColorScheme".to_owned(),
-            HColor::Gradient => "?HColorGradient".to_owned(),
+            other => format!("?{}", other.java_class_name()),
         }
     }
 }

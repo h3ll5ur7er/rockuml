@@ -52,12 +52,14 @@ impl<T: TextBlock> TextBlock for Bordered<T> {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let background =
-            if self.background.is_transparent() || &self.background == ug.default_background() {
-                HColor::NONE
-            } else {
-                self.background.clone()
-            };
+        // PlantUML compares gradients by identity, so a gradient never matches the image's background.
+        let same_as_image = &self.background == ug.default_background()
+            && !matches!(self.background, HColor::Gradient(_));
+        let background = if self.background.is_transparent() || same_as_image {
+            HColor::NONE
+        } else {
+            self.background.clone()
+        };
         let border = if self.stroke.thickness == 0.0 {
             background.clone()
         } else {

@@ -44,10 +44,20 @@ impl UGraphicSvg {
     }
 
     fn apply_colors_and_stroke(&mut self, param: &UParam) {
+        let fill = self.paint(&param.backcolor);
+        let stroke = self.paint(&param.color);
         let svg = self.svg();
-        svg.set_fill_color(Some(&param.backcolor.to_svg()));
-        svg.set_stroke_color(Some(&param.color.to_svg()));
+        svg.set_fill_color(Some(&fill));
+        svg.set_stroke_color(Some(&stroke));
         apply_stroke(svg, param.stroke);
+    }
+
+    /// How SVG paints a colour: gradients by reference to their definition.
+    fn paint(&mut self, color: &HColor) -> String {
+        match color {
+            HColor::Gradient(gradient) => self.svg().gradient_fill(*gradient),
+            other => other.to_svg(),
+        }
     }
 
     fn draw_text(&mut self, shape: &UText, at: UTranslate) {
@@ -101,10 +111,29 @@ impl UGraphicSvg {
         if configuration.contains_style(FontStyle::Wave) {
             decorations.push("wavy underline");
         }
-        let back_color = configuration
-            .contains_style(FontStyle::Backcolor)
-            .then(|| configuration.extended_color().map(HColor::to_rgb))
-            .flatten();
+        let mut back_color = None;
+        if configuration.contains_style(FontStyle::Backcolor) {
+            match configuration.extended_color() {
+                Some(HColor::Gradient(gradient)) => {
+                    // A filter floods with one colour, so gradients go on a rectangle a little below the line.
+                    const PATCH: f64 = 2.0;
+                    let fill = self.svg().gradient_fill(*gradient);
+                    let svg = self.svg();
+                    svg.set_fill_color(Some(&fill));
+                    svg.set_stroke_color(None);
+                    svg.rectangle(
+                        x,
+                        at.dy - dimension.height + PATCH,
+                        dimension.width,
+                        dimension.height,
+                        0.0,
+                        0.0,
+                    );
+                }
+                Some(color) => back_color = Some(color.to_rgb()),
+                None => {}
+            }
+        }
 
         let svg = self.svg();
         svg.set_fill_color(Some(&configuration.color().to_svg()));

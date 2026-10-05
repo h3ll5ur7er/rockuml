@@ -1,0 +1,19 @@
+@startsalt
+skinparam backgroundColor #FFFFFF-#AAAAFF
+<style>
+legend {
+  BackgroundColor yellow|orange
+  LineColor red/blue
+}
+title {
+  FontColor red-blue
+}
+</style>
+title Gradient title
+legend
+  Legend with <back:red\blue>gradient back</back> and <back:pink>plain back</back>
+endlegend
+{
+  Hello | World
+}
+@endsalt
