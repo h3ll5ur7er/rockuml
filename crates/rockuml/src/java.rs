@@ -221,6 +221,101 @@ impl<V> JavaHashMap<V> {
     }
 }
 
+/// `Double.toString`: the shortest digits that read back the same, in plain notation from 10^-3 up to 10^7
+/// and in Java's own scientific notation (`1.0E-5`) outside it.
+pub fn double_to_string(value: f64) -> String {
+    if value.is_nan() {
+        return "NaN".to_owned();
+    }
+    if value.is_infinite() {
+        return if value > 0.0 { "Infinity" } else { "-Infinity" }.to_owned();
+    }
+    let magnitude = value.abs();
+    if magnitude == 0.0 || (1e-3..1e7).contains(&magnitude) {
+        return format!("{value:?}");
+    }
+    let scientific = format!("{value:e}");
+    let (mantissa, exponent) = scientific
+        .split_once('e')
+        .expect("{:e} always has an exponent");
+    if mantissa.contains('.') {
+        format!("{mantissa}E{exponent}")
+    } else {
+        format!("{mantissa}.0E{exponent}")
+    }
+}
+
+/// `String.format(Locale.US, "%.Nf", value)`. Java rounds the shortest decimal representation half-up, so
+/// 0.15 becomes "0.2" where rounding the exact binary value would give "0.1".
+pub fn format_fixed(value: f64, decimals: usize) -> String {
+    if value.is_nan() {
+        return "NaN".to_owned();
+    }
+    if value.is_infinite() {
+        return if value > 0.0 { "Infinity" } else { "-Infinity" }.to_owned();
+    }
+    let scientific = format!("{:e}", value.abs());
+    let (mantissa, exponent) = scientific
+        .split_once('e')
+        .expect("{:e} always has an exponent");
+    let exponent: i32 = exponent.parse().expect("{:e} exponents are integers");
+    let significant: Vec<u8> = mantissa
+        .bytes()
+        .filter(u8::is_ascii_digit)
+        .map(|digit| digit - b'0')
+        .collect();
+
+    // Digits of the integer part and the first `decimals` fraction digits, as one number scaled by 10^decimals.
+    let kept_len = exponent + 1 + decimals as i32;
+    let digit_at = |index: i32| -> u8 {
+        usize::try_from(index)
+            .ok()
+            .and_then(|index| significant.get(index).copied())
+            .unwrap_or(0)
+    };
+    let mut kept: Vec<u8> = (0..kept_len.max(0)).map(digit_at).collect();
+    if digit_at(kept_len) >= 5 && kept_len >= 0 {
+        round_up(&mut kept);
+    }
+
+    let integer_len = kept.len().saturating_sub(decimals);
+    let (integer, fraction) = kept.split_at(integer_len);
+    let mut text = String::new();
+    if value.is_sign_negative() {
+        text.push('-');
+    }
+    if integer.is_empty() {
+        text.push('0');
+    }
+    text.extend(integer.iter().map(|digit| char::from(b'0' + digit)));
+    if decimals > 0 {
+        text.push('.');
+        text.extend(std::iter::repeat_n('0', decimals - fraction.len()));
+        text.extend(fraction.iter().map(|digit| char::from(b'0' + digit)));
+    }
+    text
+}
+
+fn round_up(digits: &mut Vec<u8>) {
+    for digit in digits.iter_mut().rev() {
+        if *digit == 9 {
+            *digit = 0;
+        } else {
+            *digit += 1;
+            return;
+        }
+    }
+    digits.insert(0, 1);
+}
+
+/// `StringUtils.seed`: a 64-bit hash of the UTF-16 units, used to seed per-text randomness.
+pub fn string_seed(text: &str) -> i64 {
+    text.encode_utf16()
+        .fold(1_125_899_906_842_597_i64, |hash, unit| {
+            hash.wrapping_mul(31).wrapping_add(i64::from(unit))
+        })
+}
+
 /// `java.util.Random`'s 48-bit linear congruential generator, for output that PlantUML seeds.
 pub struct Random {
     seed: u64,
@@ -239,6 +334,12 @@ impl Random {
     fn next(&mut self, bits: u32) -> i32 {
         self.seed = (self.seed.wrapping_mul(Self::MULTIPLIER).wrapping_add(0xB)) & Self::MASK;
         (self.seed >> (48 - bits)) as i32
+    }
+
+    pub fn next_double(&mut self) -> f64 {
+        let high = i64::from(self.next(26)) << 27;
+        let low = i64::from(self.next(27));
+        (high + low) as f64 * (1.0 / (1u64 << 53) as f64)
     }
 
     /// `None` where Java throws because `bound` is not positive.
@@ -272,6 +373,59 @@ mod tests {
         assert_eq!(Random::new(7).next_int(16), Some(11));
         assert_eq!(Random::new(-3).next_int(1000), Some(164));
         assert_eq!(Random::new(1).next_int(0), None);
+        assert_eq!(
+            Random::new(string_seed("Hello world")).next_double(),
+            0.523_651_822_298_342_1
+        );
+        assert_eq!(Random::new(-5).next_double(), 0.269_300_957_969_324_85);
+        assert_eq!(Random::new(0).next_double(), 0.730_967_787_376_657);
+    }
+
+    #[test]
+    fn doubles_print_like_java() {
+        let cases = [
+            (1.0, "1.0"),
+            (0.0, "0.0"),
+            (-0.0, "-0.0"),
+            (1.5, "1.5"),
+            (0.001, "0.001"),
+            (0.000_1, "1.0E-4"),
+            (1.0e7, "1.0E7"),
+            (-1.25e-5, "-1.25E-5"),
+            (9_999_999.0, "9999999.0"),
+            (108.388_888_888_888_89, "108.38888888888889"),
+        ];
+        for (value, expected) in cases {
+            assert_eq!(double_to_string(value), expected);
+        }
+    }
+
+    /// Expectations printed by the JDK's `String.format(Locale.US, ...)`.
+    #[test]
+    fn fixed_point_formatting_rounds_like_java() {
+        let cases = [
+            (0.15, 4, "0.1500"),
+            (0.15, 1, "0.2"),
+            (1.000_05, 4, "1.0001"),
+            (2.5, 0, "3"),
+            (-0.000_01, 4, "-0.0000"),
+            (-0.0, 0, "-0"),
+            (0.031_25, 4, "0.0313"),
+            (0.031_25, 1, "0.0"),
+            (108.388_888_888_888_89, 4, "108.3889"),
+            (1e-7, 4, "0.0000"),
+            (123_456_789.123_456_79, 4, "123456789.1235"),
+            (0.000_05, 4, "0.0001"),
+            (0.999_95, 4, "1.0000"),
+            (2.675, 1, "2.7"),
+        ];
+        for (value, decimals, expected) in cases {
+            assert_eq!(
+                format_fixed(value, decimals),
+                expected,
+                "{value} with {decimals} decimals"
+            );
+        }
     }
 
     /// Orders observed on the JDK for maps built like PlantUML's regex results: putAll of child maps.

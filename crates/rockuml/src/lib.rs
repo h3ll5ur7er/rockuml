@@ -3,11 +3,14 @@
 mod assets;
 mod color;
 mod command;
+mod creole;
 mod deflate;
+pub mod diagram;
 pub mod host;
 mod java;
 mod jaws;
 pub mod json;
+mod klimt;
 mod pattern;
 pub mod preproc;
 mod stdlib;

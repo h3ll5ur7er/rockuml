@@ -9,6 +9,12 @@ pub const BLOCK_E1_BREAKLINE: char = '\u{E103}';
 pub const BLOCK_E1_REAL_BACKSLASH: char = '\u{E110}';
 pub const BLOCK_E1_REAL_TABULATION: char = '\u{E111}';
 
+/// Drawn text shows the markers left in it as visible return symbols.
+pub fn make_newlines_visible(text: &str) -> String {
+    text.replace(BLOCK_E1_NEWLINE, "\u{21B5}")
+        .replace(BLOCK_E1_BREAKLINE, "\u{23CE}")
+}
+
 /// `%breakline()` ends the current line: split there, except inside `{{ ... }}` embedded diagrams.
 pub fn expand_breaklines(lines: Vec<StringLocated>) -> Vec<StringLocated> {
     let mut result = Vec::with_capacity(lines.len());

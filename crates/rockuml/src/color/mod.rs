@@ -32,6 +32,14 @@ impl XColor {
         Self::rgb((rgb >> 16) as u8, (rgb >> 8) as u8, rgb as u8)
     }
 
+    /// Java's `Color.getRGB()`: alpha in the top byte.
+    pub fn argb(self) -> u32 {
+        u32::from(self.alpha) << 24
+            | u32::from(self.red) << 16
+            | u32::from(self.green) << 8
+            | u32::from(self.blue)
+    }
+
     /// Perceived brightness, 0 to 255.
     pub fn gray_scale(self) -> u32 {
         (u32::from(self.red) * 299 + u32::from(self.green) * 587 + u32::from(self.blue) * 114)
@@ -49,6 +57,20 @@ pub enum HColor {
 }
 
 impl HColor {
+    pub const BLACK: HColor = HColor::Simple(XColor::rgb(0, 0, 0));
+    pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
+    /// No colour: nothing is painted.
+    pub const NONE: HColor = HColor::Simple(XColor {
+        red: 0,
+        green: 0,
+        blue: 0,
+        alpha: 0,
+    });
+
+    pub fn is_transparent(&self) -> bool {
+        matches!(self, HColor::Simple(color) if color.alpha == 0)
+    }
+
     /// Parses a colour name, `#rgb`, `#rrggbb`, `#rrggbbaa`, gradient (`red-blue`) or scheme (`?a:b`).
     pub fn parse(text: &str) -> Result<Option<HColor>, RuntimeException> {
         let text = text.strip_prefix('#').unwrap_or(text);

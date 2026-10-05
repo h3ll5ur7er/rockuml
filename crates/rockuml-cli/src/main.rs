@@ -31,6 +31,7 @@ fn main() -> ExitCode {
             eprintln!("Some diagram description contains errors");
             ExitCode::from(DIAGRAM_ERROR_STATUS)
         }
+        Ok(ExitStatus::SomeNotRendered) => ExitCode::FAILURE,
         Err(error) => {
             eprintln!("rockuml: {error}");
             ExitCode::FAILURE
@@ -41,6 +42,8 @@ fn main() -> ExitCode {
 enum ExitStatus {
     Success,
     DiagramErrors,
+    /// Some diagrams need parts of PlantUML that rockuml does not have yet.
+    SomeNotRendered,
 }
 
 fn print_version() -> Result<ExitStatus, String> {
@@ -74,7 +77,9 @@ fn render_all(options: &RenderOptions) -> Result<ExitStatus, String> {
         {
             status = ExitStatus::DiagramErrors;
         }
-        write_outputs(file, &blocks, options)?;
+        if !write_outputs(file, &blocks, options)? {
+            status = ExitStatus::SomeNotRendered;
+        }
     }
     Ok(status)
 }
@@ -96,20 +101,22 @@ fn preprocess_file(file: &Path) -> Result<Vec<PreprocessedBlock>, String> {
     Ok(rockuml::preproc::preprocess(&source, &SystemHost))
 }
 
+/// Whether every block could be rendered; those that cannot are reported and skipped.
 fn write_outputs(
     file: &Path,
     blocks: &[PreprocessedBlock],
     options: &RenderOptions,
-) -> Result<(), String> {
+) -> Result<bool, String> {
     if options.format == OutputFormat::EncodedUrl {
         for block in blocks {
             write_stdout(&format!(
                 "{}{LINE_SEPARATOR}",
-                rockuml::url_code::encode(&block.source_text())
+                rockuml::diagram::encoded_url(block)
             ))?;
         }
-        return Ok(());
+        return Ok(true);
     }
+    let mut all_rendered = true;
     let output_directory = output_directory(file, options.output_directory.as_deref());
     fs::create_dir_all(&output_directory)
         .map_err(|error| format!("cannot create {}: {error}", output_directory.display()))?;
@@ -121,12 +128,20 @@ fn write_outputs(
                 .lines()
                 .flat_map(|line| [line, LINE_SEPARATOR])
                 .collect::<String>(),
+            OutputFormat::Debug => match rockuml::diagram::create(block) {
+                Ok(diagram) => rockuml::diagram::export_debug(diagram.as_ref()),
+                Err(not_ported) => {
+                    eprintln!("rockuml: {}: {not_ported}", output.display());
+                    all_rendered = false;
+                    continue;
+                }
+            },
             format => return Err(format!("{format:?} output is not implemented yet")),
         };
         fs::write(&output, content)
             .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
     }
-    Ok(())
+    Ok(all_rendered)
 }
 
 /// A reader that closed the pipe (`rockuml ... | head`) simply wants no more output.

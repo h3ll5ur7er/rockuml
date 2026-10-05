@@ -1,0 +1,102 @@
+DPI: 96
+dimension: [ 280.9015 ; 124.0000 ]
+scaleFactor: 1.0000
+seed: -316446262665446537
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: Heading 1
+  position: [ 0.0000 ; 14.0000 ]
+  orientation: 0
+  font: Serif.bold/18 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Heading 2
+  position: [ 0.0000 ; 30.4444 ]
+  orientation: 0
+  font: Serif.bold/16 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 3.0000 ; 38.0000 ]
+  pt2: [ 8.0000 ; 43.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: bullet
+  position: [ 12.0000 ; 44.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 9.0000 ; 52.0000 ]
+  pt2: [ 12.5000 ; 55.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: nested bullet
+  position: [ 16.0000 ; 58.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 1.
+  position: [ 0.0000 ; 72.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: numbered
+  position: [ 39.8836 ; 72.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 2.
+  position: [ 0.0000 ; 86.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: numbered again
+  position: [ 39.8397 ; 86.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UHorizontalLine <timestamp>
+UGraphicDebug UHorizontalLine <timestamp>
+TEXT:
+  text: plain
+  position: [ 0.0000 ; 120.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
