@@ -8,7 +8,7 @@ use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
 use crate::klimt::blocks::{Marged, RawText, Vertical, WithBackcolor};
 use crate::klimt::font::{FontConfiguration, FontStyle, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
-use crate::klimt::shape::UShape;
+use crate::klimt::shape::{UImage, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::text::StringLocated;
@@ -211,10 +211,11 @@ impl TextBlock for Welcome {
         let inner_width = self.calculate_dimension(ug.string_bounder()).width - 2.0 * Self::MARGIN;
         self.text.draw_u(&ug.with_color(HColor::BLACK));
         ug.translated(inner_width - Self::LOGO_WIDTH - 1.0, 1.0)
-            .draw(&UShape::Image {
+            .draw(&UShape::Image(UImage {
+                png: crate::assets::get("images/plantuml-logo.png").expect("the logo is embedded"),
                 width: Self::LOGO_WIDTH,
                 height: Self::LOGO_HEIGHT,
-            });
+            }));
     }
 
     fn backcolor(&self) -> Option<HColor> {

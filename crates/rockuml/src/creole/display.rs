@@ -112,9 +112,7 @@ impl Display {
     pub fn is_white(&self) -> bool {
         match self.lines.as_slice() {
             [] => true,
-            [only] => only
-                .chars()
-                .all(|c| matches!(c, ' ' | '\t' | '\n' | '\x0B' | '\x0C' | '\r')),
+            [only] => only.chars().all(crate::java::is_regex_whitespace),
             _ => false,
         }
     }

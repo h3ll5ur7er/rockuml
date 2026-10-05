@@ -2,6 +2,8 @@
 
 use std::path::PathBuf;
 
+use rockuml::diagram::ImageFormat;
+
 #[derive(Debug, PartialEq)]
 pub enum Command {
     Version,
@@ -22,6 +24,8 @@ pub enum OutputFormat {
     Preprocessed,
     Debug,
     Svg,
+    /// SVG with text measured by a fixed width table instead of fonts, identical on every machine.
+    DeterministicSvg,
     /// Prints each diagram's URL code instead of writing a file.
     EncodedUrl,
 }
@@ -32,7 +36,18 @@ impl OutputFormat {
             "preproc" => Some(Self::Preprocessed),
             "debug" => Some(Self::Debug),
             "svg" => Some(Self::Svg),
+            "svg-deterministic" => Some(Self::DeterministicSvg),
             _ => None,
+        }
+    }
+
+    /// The image format the engine exports this output in; `None` for outputs that are not images or not
+    /// ported yet.
+    pub fn image_format(self) -> Option<ImageFormat> {
+        match self {
+            Self::Debug => Some(ImageFormat::Debug),
+            Self::DeterministicSvg => Some(ImageFormat::DeterministicSvg),
+            Self::Preprocessed | Self::Svg | Self::EncodedUrl => None,
         }
     }
 
@@ -40,7 +55,7 @@ impl OutputFormat {
         match self {
             Self::Preprocessed => ".preproc",
             Self::Debug => ".debug",
-            Self::Svg => ".svg",
+            Self::Svg | Self::DeterministicSvg => ".svg",
             Self::EncodedUrl => "",
         }
     }

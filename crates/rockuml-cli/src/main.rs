@@ -9,6 +9,7 @@ use std::process::ExitCode;
 
 use naming::OutputNamer;
 use options::{Command, OutputFormat, RenderOptions};
+use rockuml::diagram::{ImageFormat, NotYetPorted};
 use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 use system_host::SystemHost;
 
@@ -128,22 +129,29 @@ fn write_outputs(
                 .lines()
                 .flat_map(|line| [line, LINE_SEPARATOR])
                 .collect::<String>(),
-            OutputFormat::Debug => match rockuml::diagram::create(block)
-                .and_then(|diagram| rockuml::diagram::export_debug(diagram.as_ref(), &SystemHost))
-            {
-                Ok(document) => document,
-                Err(not_ported) => {
-                    eprintln!("rockuml: {}: {not_ported}", output.display());
-                    all_rendered = false;
-                    continue;
+            format => {
+                let image_format = format
+                    .image_format()
+                    .ok_or_else(|| format!("{format:?} output is not implemented yet"))?;
+                match render(block, image_format) {
+                    Ok(document) => document,
+                    Err(not_ported) => {
+                        eprintln!("rockuml: {}: {not_ported}", output.display());
+                        all_rendered = false;
+                        continue;
+                    }
                 }
-            },
-            format => return Err(format!("{format:?} output is not implemented yet")),
+            }
         };
         fs::write(&output, content)
             .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
     }
     Ok(all_rendered)
+}
+
+fn render(block: &PreprocessedBlock, format: ImageFormat) -> Result<String, NotYetPorted> {
+    let diagram = rockuml::diagram::create(block)?;
+    rockuml::diagram::export(diagram.as_ref(), format, &SystemHost)
 }
 
 /// A reader that closed the pipe (`rockuml ... | head`) simply wants no more output.

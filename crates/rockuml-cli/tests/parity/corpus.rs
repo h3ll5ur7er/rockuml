@@ -6,13 +6,15 @@ use std::path::{Path, PathBuf};
 pub enum GoldenKind {
     Preprocessed,
     Debug,
+    DeterministicSvg,
     EncodedUrl,
 }
 
 impl GoldenKind {
-    pub const ALL: [GoldenKind; 3] = [
+    pub const ALL: [GoldenKind; 4] = [
         GoldenKind::Preprocessed,
         GoldenKind::Debug,
+        GoldenKind::DeterministicSvg,
         GoldenKind::EncodedUrl,
     ];
 
@@ -20,6 +22,7 @@ impl GoldenKind {
         match self {
             GoldenKind::Preprocessed => "preproc",
             GoldenKind::Debug => "debug",
+            GoldenKind::DeterministicSvg => "dsvg",
             GoldenKind::EncodedUrl => "url",
         }
     }
@@ -32,6 +35,7 @@ impl GoldenKind {
         match self {
             GoldenKind::Preprocessed => &["-preproc"],
             GoldenKind::Debug => &["-f", "debug"],
+            GoldenKind::DeterministicSvg => &["-f", "svg-deterministic"],
             GoldenKind::EncodedUrl => &["-encodeurl"],
         }
     }

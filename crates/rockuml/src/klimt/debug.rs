@@ -96,8 +96,8 @@ impl UGraphicDebug {
                 "  pt2: {}",
                 point(at.dx + ellipse.width, at.dy + ellipse.height)
             ),
-            format!("  start: {}", java::double_to_string(ellipse.start)),
-            format!("  extend: {}", java::double_to_string(ellipse.extend)),
+            "  start: 0.0".to_owned(),
+            "  extend: 0.0".to_owned(),
         ]);
         self.out_style(param);
     }
@@ -164,7 +164,7 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
-            UShape::HorizontalLine | UShape::Image { .. } => {
+            UShape::HorizontalLine | UShape::Image(_) => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",
                     shape.java_class_name(),

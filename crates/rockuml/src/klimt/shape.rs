@@ -13,11 +13,7 @@ pub enum UShape {
     },
     /// A closed shape through these points, relative to the current position.
     Polygon(Vec<(f64, f64)>),
-    /// A bitmap of this many pixels.
-    Image {
-        width: f64,
-        height: f64,
-    },
+    Image(UImage),
     /// Takes up space without drawing anything.
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
@@ -34,7 +30,7 @@ impl UShape {
             Self::Line { .. } => "ULine",
             Self::Polygon(_) => "UPolygon",
             Self::Empty(_) => "UEmpty",
-            Self::Image { .. } => "UImage",
+            Self::Image(_) => "UImage",
             Self::HorizontalLine => "UHorizontalLine",
         }
     }
@@ -57,24 +53,24 @@ impl UText {
     }
 }
 
-/// An ellipse, or an arc of one when `extend` is non-zero.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct UEllipse {
     pub width: f64,
     pub height: f64,
-    pub start: f64,
-    pub extend: f64,
 }
 
 impl UEllipse {
     pub const fn new(width: f64, height: f64) -> Self {
-        Self {
-            width,
-            height,
-            start: 0.0,
-            extend: 0.0,
-        }
+        Self { width, height }
     }
+}
+
+/// A bitmap, kept as PNG data.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct UImage {
+    pub png: &'static [u8],
+    pub width: f64,
+    pub height: f64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

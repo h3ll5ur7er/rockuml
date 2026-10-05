@@ -33,12 +33,18 @@ pub struct Source<'a> {
 /// One diagram's source after preprocessing, from its `@start` line to its `@end` line.
 pub struct PreprocessedBlock {
     lines: Vec<StringLocated>,
+    /// The block as written, before preprocessing.
+    raw_lines: Vec<String>,
     failed: bool,
 }
 
 impl PreprocessedBlock {
     pub(crate) fn located_lines(&self) -> &[StringLocated] {
         &self.lines
+    }
+
+    pub(crate) fn raw_lines(&self) -> &[String] {
+        &self.raw_lines
     }
 
     pub fn lines(&self) -> impl Iterator<Item = &str> {
@@ -182,6 +188,7 @@ pub fn preprocess(source: &Source, host: &dyn Host) -> Vec<PreprocessedBlock> {
         );
         blocks.push(PreprocessedBlock {
             lines: preprocessed.lines,
+            raw_lines: lines.iter().map(|line| line.text().to_owned()).collect(),
             failed: preprocessed.failed,
         });
     }

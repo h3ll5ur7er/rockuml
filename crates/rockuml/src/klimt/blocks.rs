@@ -2,6 +2,7 @@
 
 use super::font::{FontConfiguration, StringBounder};
 use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use super::group::UGroup;
 use super::shape::{URectangle, UShape, UText};
 use super::ugraphic::{UGraphic, UStroke};
 use super::{HorizontalAlignment, TextBlock};
@@ -111,15 +112,22 @@ impl<T: TextBlock> TextBlock for Marged<T> {
 /// A block with other blocks above and below it, as titles, captions, legends, headers and footers are.
 pub struct Decorated<'a> {
     original: Box<dyn TextBlock + 'a>,
-    top: Option<(Box<dyn TextBlock + 'a>, HorizontalAlignment)>,
-    bottom: Option<(Box<dyn TextBlock + 'a>, HorizontalAlignment)>,
+    top: Option<Decoration<'a>>,
+    bottom: Option<Decoration<'a>>,
+}
+
+/// A block placed above or below another, drawn in its own group.
+pub struct Decoration<'a> {
+    pub block: Box<dyn TextBlock + 'a>,
+    pub alignment: HorizontalAlignment,
+    pub group: UGroup,
 }
 
 impl<'a> Decorated<'a> {
     pub fn new(
         original: Box<dyn TextBlock + 'a>,
-        top: Option<(Box<dyn TextBlock + 'a>, HorizontalAlignment)>,
-        bottom: Option<(Box<dyn TextBlock + 'a>, HorizontalAlignment)>,
+        top: Option<Decoration<'a>>,
+        bottom: Option<Decoration<'a>>,
     ) -> Self {
         Self {
             original,
@@ -130,11 +138,11 @@ impl<'a> Decorated<'a> {
 }
 
 fn dimension_of(
-    decoration: Option<&(Box<dyn TextBlock + '_>, HorizontalAlignment)>,
+    decoration: Option<&Decoration<'_>>,
     string_bounder: &dyn StringBounder,
 ) -> XDimension2D {
-    decoration.map_or_else(XDimension2D::default, |(block, _)| {
-        block.calculate_dimension(string_bounder)
+    decoration.map_or_else(XDimension2D::default, |decoration| {
+        decoration.block.calculate_dimension(string_bounder)
     })
 }
 
@@ -151,22 +159,24 @@ impl TextBlock for Decorated<'_> {
         let total = self.calculate_dimension(string_bounder);
         let original = self.original.calculate_dimension(string_bounder);
         let top_height = dimension_of(self.top.as_ref(), string_bounder).height;
-        let x_of = |block: &dyn TextBlock, alignment: HorizontalAlignment| {
-            let width = block.calculate_dimension(string_bounder).width;
-            match alignment {
+        let draw_decoration = |decoration: &Decoration, y: f64| {
+            let width = decoration.block.calculate_dimension(string_bounder).width;
+            let x = match decoration.alignment {
                 HorizontalAlignment::Left => 0.0,
                 HorizontalAlignment::Center => (total.width - width) / 2.0,
                 HorizontalAlignment::Right => total.width - width,
-            }
+            };
+            ug.start_group(&decoration.group);
+            decoration.block.draw_u(&ug.translated(x, y));
+            ug.close_group();
         };
-        if let Some((top, alignment)) = &self.top {
-            top.draw_u(&ug.translated(x_of(top.as_ref(), *alignment), 0.0));
+        if let Some(top) = &self.top {
+            draw_decoration(top, 0.0);
         }
         self.original
             .draw_u(&ug.translated((total.width - original.width) / 2.0, top_height));
-        if let Some((bottom, alignment)) = &self.bottom {
-            let x = x_of(bottom.as_ref(), *alignment);
-            bottom.draw_u(&ug.translated(x, top_height + original.height));
+        if let Some(bottom) = &self.bottom {
+            draw_decoration(bottom, top_height + original.height);
         }
     }
 }

@@ -4,8 +4,12 @@ pub mod blocks;
 pub mod debug;
 pub mod font;
 pub mod geom;
+pub mod group;
 pub mod shape;
+pub mod svg;
 pub mod ugraphic;
+pub mod width_table;
+mod width_table_data;
 
 use crate::color::HColor;
 use font::StringBounder;

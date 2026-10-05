@@ -43,6 +43,11 @@ pub fn is_letter_or_digit(c: char) -> bool {
     is_letter(c) || get_general_category(c) == GeneralCategory::DecimalNumber
 }
 
+/// The regex class `\s`, which in Java is ASCII-only.
+pub fn is_regex_whitespace(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')
+}
+
 /// `String.trim`: strips every character up to and including the space character.
 pub fn trim(s: &str) -> &str {
     s.trim_matches(|c: char| c <= ' ')

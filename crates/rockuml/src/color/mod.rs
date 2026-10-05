@@ -164,6 +164,29 @@ impl HColor {
         }
     }
 
+    /// `#RRGGBB`, with the alpha appended when translucent, or `#00000000` when transparent.
+    pub fn to_svg(&self) -> String {
+        match self.as_xcolor() {
+            color if color.alpha == 0 => "#00000000".to_owned(),
+            color if color.alpha == 255 => self.to_rgb(),
+            color => format!("{}{:02X}", self.to_rgb(), color.alpha),
+        }
+    }
+
+    /// `#RRGGBB`, ignoring transparency.
+    pub fn to_rgb(&self) -> String {
+        let color = self.as_xcolor();
+        format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
+    }
+
+    /// Only plain colours are ported to the drawing formats; the others draw black.
+    fn as_xcolor(&self) -> XColor {
+        match self {
+            HColor::Simple(color) => *color,
+            HColor::Automagic | HColor::Scheme | HColor::Gradient => XColor::rgb(0, 0, 0),
+        }
+    }
+
     /// `#RRGGBB`, `#aarrggbb` when translucent, or `transparent`.
     pub fn as_string(&self) -> String {
         match self {

@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use super::titled::{TitledDiagram, VerticalAlignment};
+use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, ParserPass, SingleLine,
     SingleLineCommand,
@@ -63,7 +63,7 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
     ]
 }
 
-type ApplyLine<D> = fn(&mut D, &RegexResult);
+type ApplyLine<D> = fn(&mut D, &RegexResult, &LineLocation);
 
 /// A single-line command made of a pattern and what to do with what it matched.
 struct Single<D> {
@@ -86,11 +86,11 @@ impl<D: TitledDiagram> SingleLineCommand<D> for Single<D> {
     fn execute_arg(
         &self,
         diagram: &mut D,
-        _: &LineLocation,
+        location: &LineLocation,
         arg: &RegexResult,
         _: ParserPass,
     ) -> CommandResult {
-        (self.apply)(diagram, arg);
+        (self.apply)(diagram, arg, location);
         Ok(())
     }
 }
@@ -125,7 +125,7 @@ fn skinparam_pattern() -> RegexTree {
     ])
 }
 
-fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
+fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
     let name = arg.get("NAME", 0).unwrap_or_default().to_lowercase();
     let value = arg.get("VALUE", 0).unwrap_or_default();
     diagram.titled().skin.set_param(&name, value);
@@ -146,21 +146,25 @@ fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> Co
         })
 }
 
-fn set_title<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
-    diagram.titled().set_title(label(arg, "TITLE"));
+fn set_title<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+    diagram.titled().set_title(label(arg, "TITLE"), location);
 }
 
-fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
-    diagram.titled().set_caption(label(arg, "DISPLAY"));
+fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+    diagram
+        .titled()
+        .set_caption(label(arg, "DISPLAY"), location);
 }
 
-fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
-    let legend = label(arg, "LEGEND");
-    diagram.titled().set_legend(
-        legend,
-        HorizontalAlignment::Center,
-        VerticalAlignment::Bottom,
-    );
+fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+    let legend = Positioned {
+        display: label(arg, "LEGEND"),
+        alignment: HorizontalAlignment::Center,
+        location: location.clone(),
+    };
+    diagram
+        .titled()
+        .set_legend(legend, VerticalAlignment::Bottom);
 }
 
 /// The lines between a block's first and last line, without their common indentation.
@@ -171,14 +175,18 @@ fn block_body(lines: &BlocLines) -> Option<Display> {
 
 fn set_multiline_title<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
     let title = block_body(lines).ok_or_else(|| CommandError::new("No title defined"))?;
-    diagram.titled().set_title(title);
+    diagram.titled().set_title(title, first_location(lines));
     Ok(())
 }
 
 fn set_multiline_caption<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
     let caption = block_body(lines).ok_or_else(|| CommandError::new("No caption defined"))?;
-    diagram.titled().set_caption(caption);
+    diagram.titled().set_caption(caption, first_location(lines));
     Ok(())
+}
+
+fn first_location(lines: &BlocLines) -> &LineLocation {
+    lines.first().expect("a block has a start line").location()
 }
 
 /// `legend [top|bottom] [left|right|center]`.
@@ -196,15 +204,19 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
     });
     let (vertical, horizontal) = captures.unwrap_or_default();
     let legend = block_body(&lines).ok_or_else(|| CommandError::new("No legend defined"))?;
-    let horizontal = horizontal
-        .as_deref()
-        .and_then(HorizontalAlignment::from_name)
-        .unwrap_or(HorizontalAlignment::Center);
+    let legend = Positioned {
+        display: legend,
+        alignment: horizontal
+            .as_deref()
+            .and_then(HorizontalAlignment::from_name)
+            .unwrap_or(HorizontalAlignment::Center),
+        location: first_location(&lines).clone(),
+    };
     let vertical = match vertical.as_deref() {
         Some(top) if top.eq_ignore_ascii_case("top") => VerticalAlignment::Top,
         _ => VerticalAlignment::Bottom,
     };
-    diagram.titled().set_legend(legend, horizontal, vertical);
+    diagram.titled().set_legend(legend, vertical);
     Ok(())
 }
 
@@ -255,42 +267,60 @@ fn ribbon_alignment<D: TitledDiagram>(
     }
 }
 
-fn set_header<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
-    let alignment = ribbon_alignment(diagram, arg.get("POSITION", 0), SName::Header);
-    diagram.titled().set_header(label(arg, "LABEL"), alignment);
+fn set_header<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+    let header = ribbon(diagram, arg, location, SName::Header);
+    diagram.titled().set_header(header);
 }
 
-fn set_footer<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult) {
-    let alignment = ribbon_alignment(diagram, arg.get("POSITION", 0), SName::Footer);
-    diagram.titled().set_footer(label(arg, "LABEL"), alignment);
+fn set_footer<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
+    let footer = ribbon(diagram, arg, location, SName::Footer);
+    diagram.titled().set_footer(footer);
 }
 
-/// The alignment written before the keyword, and the block's text.
-fn ribbon_block(lines: &BlocLines, keyword: &str) -> (Option<String>, Display) {
+fn ribbon<D: TitledDiagram>(
+    diagram: &mut D,
+    arg: &RegexResult,
+    location: &LineLocation,
+    part: SName,
+) -> Positioned {
+    Positioned {
+        display: label(arg, "LABEL"),
+        alignment: ribbon_alignment(diagram, arg.get("POSITION", 0), part),
+        location: location.clone(),
+    }
+}
+
+/// A header or footer block, aligned as written before its keyword or else as its style says.
+fn ribbon_block<D: TitledDiagram>(
+    diagram: &mut D,
+    lines: &BlocLines,
+    keyword: &str,
+    part: SName,
+) -> Result<Positioned, CommandError> {
     let lines = lines.trimmed();
     let first = lines.first().expect("the start line");
-    let alignment = ribbon_block_start(keyword)
+    let given = ribbon_block_start(keyword)
         .captures(first.text())
         .and_then(|captures| captures.get(1).map(|m| m.as_str().to_owned()));
-    (alignment, lines.sub_extract(1, 1).to_display())
+    let display = lines.sub_extract(1, 1).to_display();
+    if display.lines().is_empty() {
+        return Err(CommandError::new(format!("Empty {keyword}")));
+    }
+    Ok(Positioned {
+        display,
+        alignment: ribbon_alignment(diagram, given.as_deref(), part),
+        location: first.location().clone(),
+    })
 }
 
 fn set_multiline_header<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
-    let (given, header) = ribbon_block(lines, "header");
-    if header.lines().is_empty() {
-        return Err(CommandError::new("Empty header"));
-    }
-    let alignment = ribbon_alignment(diagram, given.as_deref(), SName::Header);
-    diagram.titled().set_header(header, alignment);
+    let header = ribbon_block(diagram, lines, "header", SName::Header)?;
+    diagram.titled().set_header(header);
     Ok(())
 }
 
 fn set_multiline_footer<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
-    let (given, footer) = ribbon_block(lines, "footer");
-    if footer.lines().is_empty() {
-        return Err(CommandError::new("Empty footer"));
-    }
-    let alignment = ribbon_alignment(diagram, given.as_deref(), SName::Footer);
-    diagram.titled().set_footer(footer, alignment);
+    let footer = ribbon_block(diagram, lines, "footer", SName::Footer)?;
+    diagram.titled().set_footer(footer);
     Ok(())
 }

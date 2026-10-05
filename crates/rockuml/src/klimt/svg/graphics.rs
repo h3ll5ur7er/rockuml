@@ -1,0 +1,507 @@
+//! Builds the SVG document shape by shape (PlantUML's `SvgGraphics`).
+
+use std::collections::HashMap;
+use std::fmt::Write;
+
+use base64::Engine;
+use base64::prelude::BASE64_STANDARD;
+
+use super::xml::XmlNode;
+use crate::java;
+use crate::klimt::geom::XDimension2D;
+use crate::klimt::group::UGroup;
+
+const DEFAULT_FONT_FAMILY: &str = "sans-serif";
+const DECIMALS: usize = 3;
+
+/// The document-wide choices made before drawing starts.
+pub struct SvgOption {
+    /// The whole image's size; the document grows beyond it when shapes stick out.
+    pub min_dim: XDimension2D,
+    /// `None` for a transparent image.
+    pub backcolor: Option<String>,
+    pub preserve_aspect_ratio: String,
+    /// Extra attributes of the `<svg>` element, like `data-diagram-type`.
+    pub root_attributes: Vec<(String, String)>,
+}
+
+/// A text run with everything that styles it.
+pub struct SvgText<'a> {
+    pub text: &'a str,
+    pub x: f64,
+    pub y: f64,
+    pub font_family: &'a str,
+    pub font_size: i32,
+    pub font_weight: Option<String>,
+    pub font_style: Option<&'static str>,
+    pub text_decoration: Option<String>,
+    pub text_length: f64,
+    pub back_color: Option<String>,
+}
+
+pub struct SvgGraphics {
+    option: SvgOption,
+    defs: XmlNode,
+    g_root: XmlNode,
+    /// Groups not closed yet, innermost last; shapes go into the innermost.
+    open_groups: Vec<XmlNode>,
+    fill: String,
+    stroke: String,
+    stroke_width: String,
+    stroke_dasharray: Option<String>,
+    max_x: i32,
+    max_y: i32,
+    filter_uid: String,
+    /// Text background colours and the filters that paint them.
+    back_color_filters: HashMap<String, String>,
+    painted_background: bool,
+}
+
+impl SvgGraphics {
+    pub fn new(seed: i64, option: SvgOption) -> Self {
+        let mut g_root = XmlNode::new("g");
+        g_root.set_attribute("font-family", DEFAULT_FONT_FAMILY);
+        g_root.set_attribute("lengthAdjust", "spacing");
+        let mut graphics = Self {
+            defs: XmlNode::new("defs"),
+            g_root,
+            open_groups: Vec::new(),
+            fill: "black".to_owned(),
+            stroke: "black".to_owned(),
+            stroke_width: String::new(),
+            stroke_dasharray: None,
+            max_x: 10,
+            max_y: 10,
+            filter_uid: format!("b{}", radix36(seed.unsigned_abs())),
+            back_color_filters: HashMap::new(),
+            painted_background: false,
+            option,
+        };
+        graphics.stroke_width = number(1.0);
+        let XDimension2D { width, height } = graphics.option.min_dim;
+        graphics.ensure_visible(width, height);
+        if let Some(color) = graphics.option.backcolor.clone()
+            && !["#00000000", "#000000", "#FFFFFF"].contains(&color.as_str())
+        {
+            graphics.paint_background(&color);
+        }
+        graphics
+    }
+
+    /// A rectangle behind everything, sized to the whole document once it is known.
+    fn paint_background(&mut self, color: &str) {
+        self.set_fill_color(Some(color));
+        self.set_stroke_color(None);
+        let background = self.rectangle_element(0.0, 0.0, 0.0, 0.0);
+        self.g_root.append_child(background);
+        self.painted_background = true;
+    }
+
+    fn ensure_visible(&mut self, x: f64, y: f64) {
+        if x > f64::from(self.max_x) {
+            self.max_x = (x + 1.0) as i32;
+        }
+        if y > f64::from(self.max_y) {
+            self.max_y = (y + 1.0) as i32;
+        }
+    }
+
+    /// `None` and fully transparent colours paint nothing.
+    pub fn set_fill_color(&mut self, color: Option<&str>) {
+        self.fill = fix_color(color);
+    }
+
+    pub fn set_stroke_color(&mut self, color: Option<&str>) {
+        self.stroke = fix_color(color);
+    }
+
+    pub fn set_stroke_width(&mut self, width: f64, dasharray: Option<(f64, f64)>) {
+        self.stroke_width = number(width);
+        self.stroke_dasharray =
+            dasharray.map(|(visible, space)| format!("{},{}", number(visible), number(space)));
+    }
+
+    fn current_group(&mut self) -> &mut XmlNode {
+        self.open_groups.last_mut().unwrap_or(&mut self.g_root)
+    }
+
+    fn fill_me(&self, element: &mut XmlNode) {
+        let is_argb = self.fill.len() == 9
+            && self.fill.starts_with('#')
+            && self.fill[1..].bytes().all(|byte| byte.is_ascii_hexdigit());
+        if is_argb {
+            element.set_attribute("fill", shorten_color(&self.fill[..7]));
+            let alpha = u8::from_str_radix(&self.fill[7..], 16).expect("checked hex digits");
+            element.set_attribute("fill-opacity", opacity(f64::from(alpha) / 255.0));
+        } else {
+            element.set_attribute("fill", shorten_color(&self.fill));
+        }
+    }
+
+    fn style_me(&self, element: &mut XmlNode, extra_style: &str) {
+        if self.stroke_width == "0" {
+            return;
+        }
+        let mut style = format!("stroke:{};", shorten_color(&self.stroke));
+        if self.stroke != "none" {
+            write!(style, "stroke-width:{};", self.stroke_width).expect("writing to a String");
+            if let Some(dasharray) = &self.stroke_dasharray {
+                write!(style, "stroke-dasharray:{dasharray};").expect("writing to a String");
+            }
+        }
+        style.push_str(extra_style);
+        element.set_attribute("style", style);
+    }
+
+    fn rectangle_element(&self, x: f64, y: f64, width: f64, height: f64) -> XmlNode {
+        let mut element = XmlNode::new("rect");
+        element.set_attribute("x", number(x));
+        element.set_attribute("y", number(y));
+        element.set_attribute("width", number(width));
+        element.set_attribute("height", number(height));
+        self.fill_me(&mut element);
+        self.style_me(&mut element, "");
+        element
+    }
+
+    pub fn rectangle(&mut self, x: f64, y: f64, width: f64, height: f64, rx: f64, ry: f64) {
+        if height <= 0.0 || width <= 0.0 {
+            return;
+        }
+        let mut element = self.rectangle_element(x, y, width, height);
+        if rx > 0.0 && ry > 0.0 {
+            element.set_attribute("rx", number(rx));
+            element.set_attribute("ry", number(ry));
+        }
+        self.current_group().append_child(element);
+        self.ensure_visible(x + width, y + height);
+    }
+
+    pub fn line(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) {
+        let mut element = XmlNode::new("line");
+        element.set_attribute("x1", number(x1));
+        element.set_attribute("y1", number(y1));
+        element.set_attribute("x2", number(x2));
+        element.set_attribute("y2", number(y2));
+        self.style_me(&mut element, "");
+        self.current_group().append_child(element);
+        self.ensure_visible(x1, y1);
+        self.ensure_visible(x2, y2);
+    }
+
+    pub fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
+        let mut element = XmlNode::new("ellipse");
+        element.set_attribute("cx", number(x));
+        element.set_attribute("cy", number(y));
+        element.set_attribute("rx", number(x_radius));
+        element.set_attribute("ry", number(y_radius));
+        self.fill_me(&mut element);
+        self.style_me(&mut element, "");
+        self.current_group().append_child(element);
+        self.ensure_visible(x + x_radius, y + y_radius);
+    }
+
+    pub fn polygon(&mut self, points: &[(f64, f64)]) {
+        let mut element = XmlNode::new("polygon");
+        let coordinates: Vec<String> = points
+            .iter()
+            .flat_map(|&(x, y)| [number(x), number(y)])
+            .collect();
+        element.set_attribute("points", coordinates.join(","));
+        self.fill_me(&mut element);
+        self.style_me(&mut element, "stroke-linejoin:miter;stroke-miterlimit:10;");
+        self.current_group().append_child(element);
+        for &(x, y) in points {
+            self.ensure_visible(x, y);
+        }
+    }
+
+    pub fn text(&mut self, text: &SvgText) {
+        let mut element = XmlNode::new("text");
+        element.set_attribute("x", number(text.x));
+        element.set_attribute("y", number(text.y));
+        self.fill_me(&mut element);
+        element.set_attribute("font-size", number(f64::from(text.font_size)));
+        if text.text.chars().nth(1).is_some() {
+            element.set_attribute("textLength", number(text.text_length));
+        }
+        if let Some(weight) = &text.font_weight {
+            element.set_attribute("font-weight", weight.as_str());
+        }
+        if let Some(style) = text.font_style {
+            element.set_attribute("font-style", style);
+        }
+        if let Some(decoration) = &text.text_decoration {
+            element.set_attribute("text-decoration", decoration.as_str());
+        }
+        let family = if text.font_family.eq_ignore_ascii_case("monospaced") {
+            "monospace"
+        } else {
+            text.font_family
+        };
+        if !family.eq_ignore_ascii_case(DEFAULT_FONT_FAMILY) {
+            element.set_attribute("font-family", family);
+        }
+        let content =
+            if family.eq_ignore_ascii_case("monospace") || family.eq_ignore_ascii_case("courier") {
+                text.text.replace(' ', "\u{A0}")
+            } else {
+                text.text.to_owned()
+            };
+        if let Some(color) = &text.back_color {
+            let filter = self.back_color_filter(color);
+            element.set_attribute("filter", format!("url(#{filter})"));
+        }
+        element.set_text_content(&content);
+        self.current_group().append_child(element);
+        self.ensure_visible(text.x, text.y);
+        self.ensure_visible(text.x + text.text_length, text.y);
+    }
+
+    /// The id of a filter flooding the text's box with `color`, created on first use.
+    fn back_color_filter(&mut self, color: &str) -> String {
+        if let Some(id) = self.back_color_filters.get(color) {
+            return id.clone();
+        }
+        let id = format!("{}{}", self.filter_uid, self.back_color_filters.len());
+        self.back_color_filters.insert(color.to_owned(), id.clone());
+        let mut filter = XmlNode::new("filter");
+        for (name, value) in [
+            ("id", id.as_str()),
+            ("x", "0"),
+            ("y", "0"),
+            ("width", "1"),
+            ("height", "1"),
+        ] {
+            filter.set_attribute(name, value);
+        }
+        let mut flood = XmlNode::new("feFlood");
+        flood.set_attribute("flood-color", color);
+        flood.set_attribute("result", "flood");
+        filter.append_child(flood);
+        let mut composite = XmlNode::new("feComposite");
+        composite.set_attribute("in", "SourceGraphic");
+        composite.set_attribute("in2", "flood");
+        composite.set_attribute("operator", "over");
+        filter.append_child(composite);
+        self.defs.append_child(filter);
+        id
+    }
+
+    /// An image embedded as a PNG data URI.
+    pub fn png_image(&mut self, png: &[u8], x: f64, y: f64, width: f64, height: f64) {
+        let mut element = XmlNode::new("image");
+        element.set_attribute("width", number(width));
+        element.set_attribute("height", number(height));
+        element.set_attribute("x", number(x));
+        element.set_attribute("y", number(y));
+        element.set_attribute(
+            "xlink:href",
+            format!("data:image/png;base64,{}", BASE64_STANDARD.encode(png)),
+        );
+        self.current_group().append_child(element);
+        self.ensure_visible(x, y);
+        self.ensure_visible(x + width, y + height);
+    }
+
+    pub fn start_group(&mut self, group: &UGroup) {
+        let mut element = XmlNode::new("g");
+        for (kind, value) in group.entries() {
+            element.set_attribute(kind.svg_attribute_name(), value);
+        }
+        self.open_groups.push(element);
+    }
+
+    /// Empty groups are dropped.
+    pub fn close_group(&mut self) {
+        let group = self.open_groups.pop().expect("a group is open");
+        if group.has_children() {
+            self.current_group().append_child(group);
+        }
+    }
+
+    /// The finished document; `metadata` is the encoded diagram source PlantUML embeds.
+    pub fn into_xml(mut self, metadata: Option<&str>) -> String {
+        assert!(self.open_groups.is_empty(), "every group is closed");
+        if let Some(metadata) = metadata {
+            self.g_root
+                .append_processing_instruction("plantuml-src", metadata);
+        }
+        if self.painted_background {
+            let (width, height) = (number(f64::from(self.max_x)), number(f64::from(self.max_y)));
+            let background = self
+                .g_root
+                .first_element_mut()
+                .expect("the background is painted first");
+            background.set_attribute("width", width);
+            background.set_attribute("height", height);
+        }
+        let mut svg = XmlNode::new("svg");
+        svg.set_attribute("xmlns", "http://www.w3.org/2000/svg");
+        svg.set_attribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        svg.set_attribute("version", "1.1");
+        for (name, value) in &self.option.root_attributes {
+            svg.set_attribute(name, value.as_str());
+        }
+        let mut style = format!("width:{}px;height:{}px;", self.max_x, self.max_y);
+        if let Some(color) = self
+            .option
+            .backcolor
+            .as_deref()
+            .filter(|color| *color != "#00000000")
+        {
+            write!(style, "background:{color};").expect("writing to a String");
+        }
+        svg.set_attribute("style", style);
+        svg.set_attribute("width", format!("{}px", number(f64::from(self.max_x))));
+        svg.set_attribute("height", format!("{}px", number(f64::from(self.max_y))));
+        svg.set_attribute("viewBox", format!("0 0 {} {}", self.max_x, self.max_y));
+        svg.set_attribute("zoomAndPan", "magnify");
+        svg.set_attribute(
+            "preserveAspectRatio",
+            self.option.preserve_aspect_ratio.as_str(),
+        );
+        svg.set_attribute("contentStyleType", "text/css");
+        svg.append_processing_instruction("plantuml", crate::PLANTUML_VERSION);
+        svg.append_child(self.defs);
+        svg.append_child(self.g_root);
+        svg.to_xml()
+    }
+}
+
+/// Three decimals without trailing zeros.
+fn number(value: f64) -> String {
+    if value == 0.0 {
+        return "0".to_owned();
+    }
+    trim_zeros(&java::format_fixed(value, DECIMALS))
+}
+
+fn opacity(value: f64) -> String {
+    if value <= 0.0 {
+        "0".to_owned()
+    } else if value >= 1.0 {
+        "1".to_owned()
+    } else {
+        trim_zeros(&java::format_fixed(value, DECIMALS))
+    }
+}
+
+fn fix_color(color: Option<&str>) -> String {
+    match color {
+        None | Some("#00000000") => "none".to_owned(),
+        Some(color) => color.to_owned(),
+    }
+}
+
+/// `#RRGGBB` as `#RGB` when each channel's two digits are the same.
+fn shorten_color(color: &str) -> String {
+    let bytes = color.as_bytes();
+    if bytes.len() == 7
+        && bytes[0] == b'#'
+        && bytes[1] == bytes[2]
+        && bytes[3] == bytes[4]
+        && bytes[5] == bytes[6]
+    {
+        format!(
+            "#{}{}{}",
+            bytes[1] as char, bytes[3] as char, bytes[5] as char
+        )
+    } else {
+        color.to_owned()
+    }
+}
+
+/// Java's `Long.toString(value, 36)`.
+fn radix36(mut value: u64) -> String {
+    const DIGITS: &[u8; 36] = b"0123456789abcdefghijklmnopqrstuvwxyz";
+    let mut digits = Vec::new();
+    loop {
+        digits.push(DIGITS[(value % 36) as usize]);
+        value /= 36;
+        if value == 0 {
+            break;
+        }
+    }
+    digits.reverse();
+    String::from_utf8(digits).expect("ASCII digits")
+}
+
+fn trim_zeros(number: &str) -> String {
+    match number.split_once('.') {
+        Some((integer, fraction)) => {
+            let fraction = fraction.trim_end_matches('0');
+            if fraction.is_empty() {
+                integer.to_owned()
+            } else {
+                format!("{integer}.{fraction}")
+            }
+        }
+        None => number.to_owned(),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn graphics() -> SvgGraphics {
+        SvgGraphics::new(
+            42,
+            SvgOption {
+                min_dim: XDimension2D::new(20.0, 30.0),
+                backcolor: Some("#FFFFFF".to_owned()),
+                preserve_aspect_ratio: "none".to_owned(),
+                root_attributes: Vec::new(),
+            },
+        )
+    }
+
+    #[test]
+    fn numbers_have_three_decimals_without_trailing_zeros() {
+        assert_eq!(number(0.0), "0");
+        assert_eq!(number(14.6666666), "14.667");
+        assert_eq!(number(2.5), "2.5");
+        assert_eq!(number(3.0), "3");
+    }
+
+    #[test]
+    fn ids_are_written_in_base_36() {
+        assert_eq!(radix36(0), "0");
+        assert_eq!(radix36(42), "16");
+        assert_eq!(radix36(36 * 36), "100");
+    }
+
+    #[test]
+    fn colours_are_shortened() {
+        assert_eq!(shorten_color("#FFAA00"), "#FA0");
+        assert_eq!(shorten_color("#FFAA01"), "#FFAA01");
+        assert_eq!(shorten_color("none"), "none");
+    }
+
+    #[test]
+    fn the_document_covers_the_minimum_size_and_every_shape() {
+        let mut graphics = graphics();
+        graphics.set_fill_color(Some("#FF0000"));
+        graphics.set_stroke_color(Some("#000000"));
+        graphics.rectangle(1.0, 2.0, 40.5, 3.0, 0.0, 0.0);
+        let xml = graphics.into_xml(None);
+        let size =
+            r#"style="width:42px;height:31px;background:#FFFFFF;" width="42px" height="31px""#;
+        assert!(xml.contains(size), "{xml}");
+        let rectangle = r##"<rect x="1" y="2" width="40.5" height="3" fill="#F00" style="stroke:#000;stroke-width:1;"/>"##;
+        assert!(xml.contains(rectangle), "{xml}");
+    }
+
+    #[test]
+    fn empty_groups_are_dropped() {
+        let mut graphics = graphics();
+        graphics.start_group(&UGroup::default());
+        graphics.close_group();
+        assert!(
+            graphics
+                .into_xml(None)
+                .contains("<g font-family=\"sans-serif\" lengthAdjust=\"spacing\"/>")
+        );
+    }
+}

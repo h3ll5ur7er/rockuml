@@ -46,7 +46,7 @@ impl SaltDiagram {
     pub fn create(source: UmlSource) -> Box<dyn Diagram> {
         let mut diagram = Self {
             source,
-            titled: Titled::new(crate::style::SName::SaltDiagram),
+            titled: Titled::new(crate::style::SName::SaltDiagram, "SALT"),
             lines: Vec::new(),
         };
         let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = common_commands();

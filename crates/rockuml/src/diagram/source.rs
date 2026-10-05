@@ -4,15 +4,17 @@ use crate::text::{StringLocated, ends_with_backslash};
 /// A diagram's preprocessed lines, from its `@start` line to its `@end` line (PlantUML's `UmlSource`).
 pub struct UmlSource {
     lines: Vec<StringLocated>,
+    /// The diagram as written, before preprocessing.
+    raw_lines: Vec<String>,
 }
 
 impl UmlSource {
-    pub fn new(lines: Vec<StringLocated>) -> Self {
-        Self { lines }
+    pub fn new(lines: Vec<StringLocated>, raw_lines: Vec<String>) -> Self {
+        Self { lines, raw_lines }
     }
 
     /// For `@startuml` diagrams, a line ending with a single backslash continues on the next line.
-    pub fn with_continuations_joined(lines: &[StringLocated]) -> Self {
+    pub fn with_continuations_joined(lines: &[StringLocated], raw_lines: Vec<String>) -> Self {
         let mut joined = Vec::with_capacity(lines.len());
         let mut pending = String::new();
         for line in lines {
@@ -24,7 +26,10 @@ impl UmlSource {
                 joined.push(line.with_text(std::mem::take(&mut pending)));
             }
         }
-        Self { lines: joined }
+        Self {
+            lines: joined,
+            raw_lines,
+        }
     }
 
     /// The lines as PlantUML encodes them into a URL: each followed by `\n`.
@@ -33,6 +38,23 @@ impl UmlSource {
             .iter()
             .flat_map(|line| [line.text(), "\n"])
             .collect()
+    }
+
+    /// What PlantUML embeds into images to recover the source: the raw source, the preprocessed one when it
+    /// differs, and the version.
+    pub fn metadata(&self) -> String {
+        let raw: String = self
+            .raw_lines
+            .iter()
+            .flat_map(|line| [line.as_str(), "\n"])
+            .collect();
+        let plain = self.plain_string();
+        let version = crate::PLANTUML_VERSION;
+        if raw == plain {
+            format!("{raw}\n{version}")
+        } else {
+            format!("{raw}\n{plain}\n{version}")
+        }
     }
 
     pub fn lines(&self) -> &[StringLocated] {
@@ -62,7 +84,7 @@ impl UmlSource {
             .take_while(|line| is_noise(line.text()))
             .count();
         lines.drain(1..=noise);
-        Self { lines }
+        Self { lines, ..self }
     }
 }
 
@@ -85,6 +107,7 @@ mod tests {
                 .iter()
                 .map(|line| StringLocated::new(*line, location.clone()))
                 .collect(),
+            lines.iter().map(|line| (*line).to_owned()).collect(),
         )
     }
 
@@ -107,7 +130,7 @@ mod tests {
     #[test]
     fn continuations_are_joined_onto_the_last_line() {
         let lines = source(&["@startuml", "a \\", "b \\", "c", "d \\\\", "@enduml"]);
-        let joined = UmlSource::with_continuations_joined(lines.lines());
+        let joined = UmlSource::with_continuations_joined(lines.lines(), Vec::new());
         assert_eq!(texts(&joined), ["@startuml", "a b c", "d \\\\", "@enduml"]);
     }
 

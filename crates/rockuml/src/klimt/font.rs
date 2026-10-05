@@ -91,6 +91,16 @@ impl UFont {
         }
     }
 
+    /// The family as SVG names it: generic names for Java's logical fonts, double quotes made single.
+    pub fn svg_family(&self) -> String {
+        match &*self.family {
+            "Serif" => "serif".to_owned(),
+            "SansSerif" => "sans-serif".to_owned(),
+            "Monospaced" => "monospace".to_owned(),
+            family => family.replace('"', "'"),
+        }
+    }
+
     /// The name Java's AWT gives the font, like `Serif.bold`. Only Java's logical fonts are named the same on
     /// every machine; any other family is named as on a machine without it, which AWT replaces by `Dialog`.
     fn portable_name(&self) -> String {
@@ -276,6 +286,15 @@ impl FontConfiguration {
 
     pub fn color(&self) -> &HColor {
         &self.color
+    }
+
+    /// The face of the font before styles apply.
+    pub fn base_face(&self) -> UFontFace {
+        self.font.face
+    }
+
+    pub fn contains_style(&self, style: FontStyle) -> bool {
+        self.styles.contains(style)
     }
 
     pub fn extended_color(&self) -> Option<&HColor> {

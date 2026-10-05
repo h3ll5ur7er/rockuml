@@ -4,6 +4,7 @@ use std::rc::Rc;
 
 use super::font::StringBounder;
 use super::geom::UTranslate;
+use super::group::UGroup;
 use super::shape::UShape;
 use crate::color::HColor;
 
@@ -50,6 +51,11 @@ pub struct UParam {
 /// Receives the shapes of one output document.
 pub trait UGraphicBackend {
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam);
+
+    /// Formats without groups ignore them.
+    fn start_group(&mut self, _group: &UGroup) {}
+
+    fn close_group(&mut self) {}
 }
 
 /// A drawing surface positioned somewhere on a document; cheap to derive moved or restyled copies from.
@@ -123,6 +129,15 @@ impl UGraphic {
         let mut copy = self.clone();
         copy.param.stroke = stroke;
         copy
+    }
+
+    /// Shapes drawn until the matching `close_group` belong to `group`.
+    pub fn start_group(&self, group: &UGroup) {
+        self.backend.borrow_mut().start_group(group);
+    }
+
+    pub fn close_group(&self) {
+        self.backend.borrow_mut().close_group();
     }
 
     pub fn draw(&self, shape: &UShape) {

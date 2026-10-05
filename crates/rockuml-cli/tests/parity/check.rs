@@ -56,7 +56,11 @@ fn run_to_files(rockuml: &Path, case: &Case, kind: GoldenKind) -> Produced {
     let produced = fs::read_dir(output_directory.path())
         .unwrap()
         .map(|entry| entry.unwrap().path())
-        .map(|path| (file_name(&path), read_normalised(&path)))
+        .map(|path| {
+            // Deterministic SVGs are written as `.svg`, but kept beside the font-measured ones as `.dsvg`.
+            let golden_name = path.with_extension(kind.extension());
+            (file_name(&golden_name), read_normalised(&path))
+        })
         .collect();
     (produced, run)
 }

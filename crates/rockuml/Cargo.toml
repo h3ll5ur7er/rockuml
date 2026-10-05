@@ -10,6 +10,7 @@ publish.workspace = true
 workspace = true
 
 [dependencies]
+base64 = "0.23.1"
 brotli-decompressor = "6.0.1"
 fancy-regex = "0.19.2"
 flate2 = "1.1.10"

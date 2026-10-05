@@ -3,23 +3,34 @@
 
 use super::ExportSettings;
 use crate::creole::{CreoleParser, Display, SheetBlock1};
-use crate::klimt::blocks::{Bordered, Decorated, Marged};
+use crate::klimt::blocks::{Bordered, Decorated, Decoration, Marged};
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::ugraphic::UStroke;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
+use crate::text::LineLocation;
 
 pub struct Titled {
     pub skin: SkinParam,
-    /// The diagram's own style name, like `saltDiagram`, for the styles of its legend.
+    /// The diagram's own style name, like `saltDiagram`, for the styles of its legend and background.
     diagram_style: SName,
-    title: Option<Display>,
-    caption: Option<Display>,
-    legend: Option<(Display, HorizontalAlignment, VerticalAlignment)>,
-    header: Option<(Display, HorizontalAlignment)>,
-    footer: Option<(Display, HorizontalAlignment)>,
+    /// The name SVG documents announce the diagram type with, like `SALT`.
+    diagram_type: &'static str,
+    title: Option<Positioned>,
+    caption: Option<Positioned>,
+    legend: Option<(Positioned, VerticalAlignment)>,
+    header: Option<Positioned>,
+    footer: Option<Positioned>,
+}
+
+/// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
+pub struct Positioned {
+    pub display: Display,
+    pub alignment: HorizontalAlignment,
+    pub location: LineLocation,
 }
 
 /// Where a legend goes: above or below the diagram.
@@ -35,10 +46,11 @@ pub trait TitledDiagram {
 }
 
 impl Titled {
-    pub fn new(diagram_style: SName) -> Self {
+    pub fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
         Self {
             skin: SkinParam::default(),
             diagram_style,
+            diagram_type,
             title: None,
             caption: None,
             legend: None,
@@ -48,31 +60,26 @@ impl Titled {
     }
 
     /// A blank title is ignored.
-    pub fn set_title(&mut self, title: Display) {
+    pub fn set_title(&mut self, title: Display, location: &LineLocation) {
         if !title.is_white() {
-            self.title = Some(title);
+            self.title = Some(Positioned::centered(title, location));
         }
     }
 
-    pub fn set_caption(&mut self, caption: Display) {
-        self.caption = Some(caption);
+    pub fn set_caption(&mut self, caption: Display, location: &LineLocation) {
+        self.caption = Some(Positioned::centered(caption, location));
     }
 
-    pub fn set_legend(
-        &mut self,
-        legend: Display,
-        horizontal: HorizontalAlignment,
-        vertical: VerticalAlignment,
-    ) {
-        self.legend = Some((legend, horizontal, vertical));
+    pub fn set_legend(&mut self, legend: Positioned, vertical: VerticalAlignment) {
+        self.legend = Some((legend, vertical));
     }
 
-    pub fn set_header(&mut self, header: Display, alignment: HorizontalAlignment) {
-        self.header = Some((header, alignment));
+    pub fn set_header(&mut self, header: Positioned) {
+        self.header = Some(header);
     }
 
-    pub fn set_footer(&mut self, footer: Display, alignment: HorizontalAlignment) {
-        self.footer = Some((footer, alignment));
+    pub fn set_footer(&mut self, footer: Positioned) {
+        self.footer = Some(footer);
     }
 
     /// Where headers or footers go when the command does not say: as their style aligns text.
@@ -86,8 +93,12 @@ impl Titled {
     fn document_style(&self, name: Option<SName>) -> Style {
         let mut names = vec![SName::Root, SName::Document];
         names.extend(name);
+        self.style(&names)
+    }
+
+    fn style(&self, names: &[SName]) -> Style {
         self.skin
-            .merged_style(&StyleSignature::of(&names))
+            .merged_style(&StyleSignature::of(names))
             .expect("the skin styles the document")
     }
 
@@ -95,51 +106,42 @@ impl Titled {
     /// PlantUML's order.
     pub fn add_chrome<'a>(&'a self, drawing: Box<dyn TextBlock + 'a>) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
-        if let Some((legend, horizontal, vertical)) = &self.legend {
-            let names = [
+        if let Some((legend, vertical)) = &self.legend {
+            let style = self.style(&[
                 SName::Root,
                 SName::Document,
                 self.diagram_style,
                 SName::Legend,
-            ];
-            let style = self
-                .skin
-                .merged_style(&StyleSignature::of(&names))
-                .expect("the skin styles the document");
-            let block = Some((bordered_text(legend, &style), *horizontal));
+            ]);
+            let decoration = Some(legend.decoration("legend", &style));
             result = match vertical {
-                VerticalAlignment::Top => Box::new(Decorated::new(result, block, None)),
-                VerticalAlignment::Bottom => Box::new(Decorated::new(result, None, block)),
+                VerticalAlignment::Top => Box::new(Decorated::new(result, decoration, None)),
+                VerticalAlignment::Bottom => Box::new(Decorated::new(result, None, decoration)),
             };
         }
         if let Some(title) = &self.title {
-            let block = bordered_text(title, &self.document_style(Some(SName::Title)));
+            let style = self.document_style(Some(SName::Title));
             result = Box::new(Decorated::new(
                 result,
-                Some((block, HorizontalAlignment::Center)),
+                Some(title.decoration("title", &style)),
                 None,
             ));
         }
         if let Some(caption) = &self.caption {
-            let block = bordered_text(caption, &self.document_style(Some(SName::Caption)));
+            let style = self.document_style(Some(SName::Caption));
             result = Box::new(Decorated::new(
                 result,
                 None,
-                Some((block, HorizontalAlignment::Center)),
+                Some(caption.decoration("caption", &style)),
             ));
         }
-        let ribbon = |part: &Option<(Display, HorizontalAlignment)>, name| {
+        let ribbon = |part: &Option<Positioned>, name, class| {
             part.as_ref()
-                .filter(|(display, _)| !display.lines().is_empty())
-                .map(|(display, alignment)| {
-                    (
-                        bordered_text(display, &self.document_style(Some(name))),
-                        *alignment,
-                    )
-                })
+                .filter(|part| !part.display.lines().is_empty())
+                .map(|part| part.decoration(class, &self.document_style(Some(name))))
         };
-        let header = ribbon(&self.header, SName::Header);
-        let footer = ribbon(&self.footer, SName::Footer);
+        let header = ribbon(&self.header, SName::Header, "header");
+        let footer = ribbon(&self.footer, SName::Footer, "footer");
         if header.is_some() || footer.is_some() {
             result = Box::new(Decorated::new(result, header, footer));
         }
@@ -154,9 +156,12 @@ impl Titled {
         } else {
             ClockwiseTopRightBottomLeft::same(default_margin)
         };
+        let background = self.style(&[SName::Root, SName::Document, self.diagram_style]);
         ExportSettings {
             margin,
             seed,
+            backcolor: Some(background.value(PName::BackGroundColor).as_color()),
+            diagram_type: Some(self.diagram_type),
             svg_link_target: Some(
                 self.skin
                     .value("svglinktarget")
@@ -166,6 +171,26 @@ impl Titled {
                 .skin
                 .value("preserveaspectratio")
                 .unwrap_or_else(|| "none".to_owned()),
+        }
+    }
+}
+
+impl Positioned {
+    fn centered(display: Display, location: &LineLocation) -> Self {
+        Self {
+            display,
+            alignment: HorizontalAlignment::Center,
+            location: location.clone(),
+        }
+    }
+
+    fn decoration<'a>(&self, class: &str, style: &Style) -> Decoration<'a> {
+        let mut group = UGroup::at(&self.location);
+        group.put(UGroupType::Class, class);
+        Decoration {
+            block: bordered_text(&self.display, style),
+            alignment: self.alignment,
+            group,
         }
     }
 }
