@@ -4,6 +4,7 @@ use regex::Regex;
 
 use super::atom_text::AtomText;
 use super::atoms::{Bullet, HorizontalLine};
+use super::commands::{CreoleCommand, full_creole_commands};
 use super::{Atom, Sheet, Stripe, char_hidder};
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
@@ -216,8 +217,23 @@ fn item(captures: &regex::Captures, kind: StripeStyleType) -> (String, StripeSty
     )
 }
 
+/// The first command that applies at the start of `rest`. Commands are only looked for where at least
+/// three UTF-16 units remain, as in PlantUML.
+fn command_at(rest: &str) -> Option<&'static dyn CreoleCommand> {
+    let units: usize = rest.chars().take(3).map(char::len_utf16).sum();
+    if units <= 2 {
+        return None;
+    }
+    let prefix_length: usize = rest.chars().take(2).map(char::len_utf8).sum();
+    let prefix = &rest[..prefix_length];
+    full_creole_commands()
+        .iter()
+        .find(|command| command.starters().contains(&prefix) && command.matches(rest))
+        .map(AsRef::as_ref)
+}
+
 /// Collects the atoms of one stripe (PlantUML's `StripeSimple`).
-struct StripeBuilder {
+pub struct StripeBuilder {
     font: FontConfiguration,
     style: StripeStyle,
     alignment: HorizontalAlignment,
@@ -277,11 +293,41 @@ impl StripeBuilder {
         line
     }
 
+    /// Splits the line into runs of plain text and inline commands, which add their own atoms.
     fn modify_stripe(&mut self, line: &str) {
-        if !line.is_empty() {
-            self.atoms
-                .push(Box::new(AtomText::legacy(line, self.font.clone())));
+        let mut pending = String::new();
+        let mut rest = line;
+        while let Some(c) = rest.chars().next() {
+            if let Some(command) = command_at(rest) {
+                self.add_text(&mut pending);
+                let consumed = command.execute(rest, self);
+                rest = &rest[consumed..];
+            } else {
+                pending.push(c);
+                rest = &rest[c.len_utf8()..];
+            }
         }
+        self.add_text(&mut pending);
+    }
+
+    fn add_text(&mut self, pending: &mut String) {
+        if !pending.is_empty() {
+            let text = std::mem::take(pending);
+            self.atoms
+                .push(Box::new(AtomText::legacy(&text, self.font.clone())));
+        }
+    }
+
+    /// Adds `text` in a changed font, then goes back to the current one.
+    pub fn with_font(
+        &mut self,
+        change: impl FnOnce(&FontConfiguration) -> FontConfiguration,
+        text: &str,
+    ) {
+        let current = self.font.clone();
+        self.font = change(&current);
+        self.analyze_and_add(text);
+        self.font = current;
     }
 
     fn build(mut self) -> Stripe {

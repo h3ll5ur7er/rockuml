@@ -277,10 +277,22 @@ impl FontConfiguration {
 
     #[must_use]
     pub fn bigger(&self, delta: f64) -> Self {
+        self.with_size((f64::from(self.font.size) + delta) as f32)
+    }
+
+    #[must_use]
+    pub fn with_size(&self, size: f32) -> Self {
         Self {
-            font: self
-                .font
-                .with_size((f64::from(self.font.size) + delta) as f32),
+            font: self.font.with_size(size),
+            ..self.clone()
+        }
+    }
+
+    /// The font family changes; the face and size stay.
+    #[must_use]
+    pub fn with_family(&self, family: &str) -> Self {
+        Self {
+            font: UFont::new(family, self.font.face, self.font.size),
             ..self.clone()
         }
     }
