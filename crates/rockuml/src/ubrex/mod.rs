@@ -2,11 +2,9 @@
 //! brackets (`〶$NAME=〇+「〤>」`, `【a┇b】`...) that matches without backtracking.
 //!
 //! Java runs it over UTF-16 units, and so does this port: a pattern step such as `〴.` consumes one unit,
-//! letter classes never match a surrogate half, and a look-behind sees a surrogate pair reversed. Callers
-//! work with `&str`, so positions and results are UTF-8 byte offsets into the text they pass in. A Java
-//! match can end between the two halves of a surrogate pair, which no `&str` can express; there the
-//! accepted text and the captured values widen to the whole character. No PlantUML pattern stops inside
-//! a pair.
+//! and letter classes never match a surrogate half. Callers work with `&str`. A Java match can end
+//! between the two halves of a surrogate pair, which no `&str` can express; there the accepted text and
+//! the captured values widen to the whole character. No PlantUML pattern stops inside a pair.
 //!
 //! Malformed patterns panic, as Java throws: PlantUML only builds them from constants.
 
@@ -29,20 +27,17 @@ impl UnicodeBracketedExpression {
         }
     }
 
-    /// Java's `match(String, int)`, `None` where its `startMatch()` is false; `position` is a byte
-    /// offset into `text`.
+    /// Java's `match(text, 0)`, `None` where its `startMatch()` is false.
     ///
     /// # Panics
-    /// Where Java throws: a repetition of something that matched empty text ("infinite loop"), or a
-    /// look-behind inside a look-behind.
-    pub fn match_at<'a>(&self, text: &'a str, position: usize) -> Option<UMatcher<'a>> {
+    /// Where Java throws: a repetition of something that matched empty text ("infinite loop").
+    pub fn match_at<'a>(&self, text: &'a str) -> Option<UMatcher<'a>> {
         let content: Vec<u16> = text.encode_utf16().collect();
-        let start = text[..position].encode_utf16().count();
         let result = self
             .challenge
-            .run_challenge(TextNavigator::build(&content), start)?;
+            .run_challenge(TextNavigator::build(&content), 0)?;
         Some(UMatcher {
-            accepted_match: utf16_slice(text, start..start + result.full_capture_length),
+            accepted_match: utf16_slice(text, 0..result.full_capture_length),
             values: result
                 .capture
                 .entries()

@@ -58,22 +58,25 @@ impl JavaPattern {
 
     /// The groups of the first match, numbered from 1 as in Java; `None` for groups that did not take part.
     pub fn captures(&self, text: &str) -> Option<Vec<Option<String>>> {
-        let to_vec =
-            |count: usize, group: &dyn Fn(usize) -> Option<String>| (1..count).map(group).collect();
-        match self {
-            JavaPattern::Plain(regex) => {
-                let captures = regex.captures(text)?;
-                Some(to_vec(captures.len(), &|index| {
-                    captures.get(index).map(|group| group.as_str().to_owned())
-                }))
-            }
-            JavaPattern::WithLookaround(regex) => {
-                let captures = regex.captures(text).ok()??;
-                Some(to_vec(captures.len(), &|index| {
-                    captures.get(index).map(|group| group.as_str().to_owned())
-                }))
-            }
-        }
+        let groups: Vec<Option<&str>> = match self {
+            JavaPattern::Plain(regex) => regex
+                .captures(text)?
+                .iter()
+                .map(|group| group.map(|group| group.as_str()))
+                .collect(),
+            JavaPattern::WithLookaround(regex) => regex
+                .captures(text)
+                .ok()??
+                .iter()
+                .map(|group| group.map(|group| group.as_str()))
+                .collect(),
+        };
+        Some(
+            groups[1..]
+                .iter()
+                .map(|group| group.map(str::to_owned))
+                .collect(),
+        )
     }
 }
 
@@ -133,7 +136,12 @@ fn translate(pattern: &str, dialect: Dialect) -> Option<String> {
                 class_depth -= 1;
                 result.push(c);
             }
-            // The regex crate reads `&&`, `~~` and `--` inside classes as set operations; Java does not.
+            // Java and both regex crates read `&&` inside a class as an intersection; only the regex crates
+            // also read `~~` and `--` as set operations.
+            '&' if class_depth > 0 && chars.peek() == Some(&'&') => {
+                chars.next();
+                result.push_str("&&");
+            }
             '&' | '~' if class_depth > 0 => {
                 result.push('\\');
                 result.push(c);
@@ -230,6 +238,24 @@ mod tests {
         assert!(java_regex(r"x\b", false).is_match("xé"));
         assert!(JavaPattern::plantuml(r"x\b(?!y)").is_match("xé"));
         assert!(!JavaPattern::plantuml(r"x\b(?!y)").is_match("xa"));
+    }
+
+    #[test]
+    fn class_intersections_are_kept_like_java() {
+        let consonants = java_regex("^[a-z&&[^aeiou]]+$", false);
+        assert!(consonants.is_match("xyz"));
+        assert!(!consonants.is_match("abc"));
+        let with_lookaround = JavaPattern::plantuml("^(?!q)[a-z&&[^aeiou]]+$");
+        assert!(matches!(with_lookaround, JavaPattern::WithLookaround(_)));
+        assert!(with_lookaround.is_match("xyz"));
+        assert!(!with_lookaround.is_match("abc"));
+    }
+
+    #[test]
+    fn single_ampersands_and_doubled_operators_of_the_regex_crate_are_literal() {
+        let regex = java_regex("^[&~-]+$", false);
+        assert!(regex.is_match("&~-"));
+        assert!(java_regex("^[a~~b]+$", false).is_match("~"));
     }
 
     #[test]

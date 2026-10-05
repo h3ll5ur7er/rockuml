@@ -164,7 +164,7 @@ impl CreoleCommand for StyleCommand {
 
 /// Whether `pattern` matches at the start of `rest` with a non-empty `V`.
 fn captures_value(pattern: &UnicodeBracketedExpression, rest: &str) -> bool {
-    pattern.match_at(rest, 0).is_some_and(|matcher| {
+    pattern.match_at(rest).is_some_and(|matcher| {
         matcher
             .find_values_by_key("V")
             .first()
@@ -174,7 +174,7 @@ fn captures_value(pattern: &UnicodeBracketedExpression, rest: &str) -> bool {
 
 fn matched<'a>(pattern: &UnicodeBracketedExpression, rest: &'a str) -> UMatcher<'a> {
     pattern
-        .match_at(rest, 0)
+        .match_at(rest)
         .expect("a creole command executes only where it matches")
 }
 

@@ -11,16 +11,12 @@ use crate::java;
 pub fn parse_and_build(definition: &[u16]) -> Vec<Challenge> {
     assert!(!definition.is_empty(), "empty ubrex");
     let mut input = definition;
-    parse_and_consume_now(&mut input)
-}
-
-fn parse_and_consume_now(input: &mut &[u16]) -> Vec<Challenge> {
     let mut challenges = Vec::new();
     while !input.is_empty() {
         if char_at(input, 0) == ' ' {
-            jump(input, 1);
+            jump(&mut input, 1);
         } else {
-            challenges.extend(parse(input));
+            challenges.extend(parse(&mut input));
         }
     }
     challenges
@@ -40,7 +36,7 @@ fn jump(input: &mut &[u16], step: usize) {
 fn parse(input: &mut &[u16]) -> Vec<Challenge> {
     match char_at(input, 0) {
         '┇' => panic!("┇ outside an alternative"),
-        '〒' => vec![manage_look_around(input)],
+        '〒' => vec![manage_end_of_text(input)],
         '【' => vec![manage_alternative(input)],
         '〇' => manage_quantifier(input),
         '〄' => manage_up_to(input),
@@ -62,29 +58,11 @@ fn parse_single(input: &mut &[u16]) -> Challenge {
     challenge
 }
 
-fn manage_look_around(input: &mut &[u16]) -> Challenge {
-    jump(input, 1);
-    let (behind, positive) = match char_at(input, 0) {
-        '$' => {
-            jump(input, 1);
-            return Challenge::EndOfText;
-        }
-        '=' => (false, true),
-        '!' => (false, false),
-        '<' => match char_at(input, 1) {
-            '=' => (true, true),
-            '!' => (true, false),
-            _ => panic!("syntax error after 〒<"),
-        },
-        _ => panic!("syntax error after 〒"),
-    };
-    jump(input, if behind { 2 } else { 1 });
-    let origin = Box::new(parse_single(input));
-    if behind {
-        Challenge::LookBehind { origin, positive }
-    } else {
-        Challenge::LookAhead { origin, positive }
-    }
+/// Only `〒$`: no ported command uses the look-arounds that share its prefix.
+fn manage_end_of_text(input: &mut &[u16]) -> Challenge {
+    assert!(char_at(input, 1) == '$', "syntax error after 〒");
+    jump(input, 2);
+    Challenge::EndOfText
 }
 
 fn manage_class(input: &mut &[u16]) -> Challenge {
@@ -102,27 +80,12 @@ fn manage_quantifier(input: &mut &[u16]) -> Vec<Challenge> {
             let repetition = parse_repetition(input);
             Challenge::Repetition(repetition, Box::new(parse_single(input)))
         }
-        'l' => return manage_quantifier_lazzy(input),
         '+' => Challenge::OneOrMore(Box::new(parse_single(input))),
         '*' => Challenge::ZeroOrMore(Box::new(parse_single(input))),
         '?' => Challenge::Optional(Box::new(parse_single(input))),
         _ => panic!("unknown quantifier 〇{operator}"),
     };
     vec![challenge]
-}
-
-/// The rest of the enclosing list is only peeked at as a stop condition, then matched again as siblings.
-fn manage_quantifier_lazzy(input: &mut &[u16]) -> Vec<Challenge> {
-    jump(input, 1);
-    let origin = Box::new(parse_single(input));
-    let remaining = parse_and_consume_now(input);
-    let stop_condition = Box::new(Challenge::List(remaining.clone()));
-    let mut result = vec![Challenge::OneOrMoreUpTo {
-        origin,
-        stop_condition,
-    }];
-    result.extend(remaining);
-    result
 }
 
 /// `Repetition.parse`: `;`-separated counts (`3`), ranges (`2-4`) and minimums (`5+`) up to `}`.

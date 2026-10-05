@@ -9,9 +9,10 @@ mod value;
 
 use std::collections::BTreeMap;
 
-pub use from_skinparam::skinparam_styles;
+use from_skinparam::skinparam_styles;
 pub use names::{PName, SName};
-pub use parser::{StyleParser, StyleParsingError};
+use parser::StyleParser;
+pub use parser::StyleParsingError;
 pub use signature::StyleSignature;
 pub use value::{Value, ValueReading};
 
@@ -108,20 +109,38 @@ pub struct StyleBuilder {
 }
 
 impl StyleBuilder {
-    /// The builder with the rules of one of PlantUML's embedded `.skin` files, like `plantuml.skin`;
-    /// `None` if there is no such skin.
-    pub fn load_skin(name: &str) -> Option<Self> {
-        let text = crate::assets::get(&format!("skin/{name}"))?;
+    /// The builder with the rules of one of PlantUML's embedded `.skin` files, like `plantuml.skin`.
+    ///
+    /// # Panics
+    /// See [`Self::apply_skin`].
+    pub fn load_skin(name: &str) -> Self {
+        let mut builder = Self::default();
+        builder.apply_skin(name);
+        builder
+    }
+
+    /// The rules of an embedded `.skin` file, merged over the current ones.
+    ///
+    /// # Panics
+    /// If no such skin is embedded, or it does not parse: skins are named by the code, never by users.
+    pub fn apply_skin(&mut self, name: &str) {
+        let text = crate::assets::get(&format!("skin/{name}"))
+            .unwrap_or_else(|| panic!("{name} is embedded"));
         let text = String::from_utf8_lossy(text);
         let lines: Vec<&str> = text.lines().collect();
-        let mut builder = Self::default();
-        let styles = StyleParser::new(&mut builder.counter).parse(&lines).ok()?;
-        builder.mute(styles);
-        Some(builder)
+        self.apply_style_sheet(&lines)
+            .unwrap_or_else(|error| panic!("{name} parses: {error:?}"));
+    }
+
+    /// The rules of a style sheet, merged over the current ones.
+    pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
+        let styles = StyleParser::new(&mut self.counter).parse(lines)?;
+        self.mute(styles);
+        Ok(())
     }
 
     /// Adds rules, each merged over an existing rule of the same signature.
-    pub fn mute(&mut self, styles: impl IntoIterator<Item = Style>) {
+    fn mute(&mut self, styles: impl IntoIterator<Item = Style>) {
         for style in styles {
             let merged = match self.storage.get(style.signature()) {
                 Some(existing) => existing.merge_with(&style),
@@ -131,9 +150,10 @@ impl StyleBuilder {
         }
     }
 
-    /// Numbers declarations parsed or converted for this builder.
-    pub fn counter(&mut self) -> &mut i32 {
-        &mut self.counter
+    /// The rules `skinparam key value` stands for, merged over the current ones.
+    pub fn apply_skinparam(&mut self, key: &str, value: &str) {
+        let styles = skinparam_styles(key, value, &mut self.counter);
+        self.mute(styles);
     }
 
     /// The style of an element: every rule that applies to it, merged in storage order.
@@ -172,7 +192,7 @@ mod tests {
             Class, ClassDiagram, Document, Element, Header, MindmapDiagram, Node, Participant,
             Root, SequenceDiagram, Title,
         };
-        let builder = StyleBuilder::load_skin("plantuml.skin").unwrap();
+        let builder = StyleBuilder::load_skin("plantuml.skin");
         let cases: [(&[SName], &str); 6] = [
             (
                 &[Root],

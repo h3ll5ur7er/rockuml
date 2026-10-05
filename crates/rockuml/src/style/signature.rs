@@ -4,7 +4,7 @@ use super::names::{SName, SNames};
 
 /// What a style rule applies to, or what an element is: selector names, stereotypes, a tree depth, and
 /// whether the rule reaches deeper (`*`).
-#[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct StyleSignature {
     names: SNames,
     /// `depth(n)`: -1 when not given.
@@ -16,8 +16,10 @@ pub struct StyleSignature {
 impl StyleSignature {
     pub fn empty() -> Self {
         Self {
+            names: SNames::default(),
             level: -1,
-            ..Self::default()
+            starred: false,
+            stereotypes: BTreeSet::new(),
         }
     }
 

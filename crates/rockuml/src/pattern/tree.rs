@@ -68,7 +68,7 @@ impl RegexTree {
         Self::Optional(Box::new(part))
     }
 
-    pub fn pattern_string(&self) -> String {
+    fn pattern_string(&self) -> String {
         match self {
             Self::Leaf { pattern, .. } => (*pattern).to_owned(),
             Self::Concat(parts, _) => parts.iter().map(Self::pattern_string).collect(),
