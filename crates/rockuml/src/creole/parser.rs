@@ -4,6 +4,7 @@ use regex::Regex;
 
 use super::atom_text::AtomText;
 use super::atoms::{AtomWithMargin, Bullet, HorizontalLine};
+use super::code::{self, AtomCode};
 use super::commands::{CreoleCommand, creole_commands};
 use super::table::{self, AtomTable};
 use super::tree::{self, AtomTree};
@@ -58,6 +59,8 @@ impl CreoleParser {
                 open_block = Some(MultilineBlock::Table(AtomTable::new(&line, &self.font)));
             } else if tree::is_tree_start(&line) {
                 open_block = Some(MultilineBlock::Tree(AtomTree::new(&line, &self.font)));
+            } else if code::is_code_start(&line) {
+                open_block = Some(MultilineBlock::Code(AtomCode::new(&self.font)));
             } else {
                 let alignment = stripes
                     .last()
@@ -107,20 +110,22 @@ impl CreoleParser {
     }
 }
 
-/// A table or tree, which following lines of the same kind extend.
+/// A table, tree or code block, which following lines extend.
 enum MultilineBlock {
     Table(AtomTable),
     Tree(AtomTree),
+    Code(AtomCode),
 }
 
 impl MultilineBlock {
-    /// Tables and trees keep this much space above and below them.
+    /// Tables and trees keep this much space above and below them; code blocks none.
     const MARGIN: f64 = 2.0;
 
     fn continues_with(&self, line: &str) -> bool {
         match self {
             Self::Table(_) => table::is_table_line(line),
             Self::Tree(_) => tree::is_tree_start(java::trim(line)),
+            Self::Code(code) => !code.is_terminated(),
         }
     }
 
@@ -128,6 +133,7 @@ impl MultilineBlock {
         match self {
             Self::Table(table) => table.add_line(line, font),
             Self::Tree(tree) => tree.add_line(line, font),
+            Self::Code(code) => code.add_line(line),
         }
     }
 
@@ -136,6 +142,7 @@ impl MultilineBlock {
         let atom: Box<dyn Atom> = match self {
             Self::Table(table) => Box::new(AtomWithMargin::new(table, Self::MARGIN, Self::MARGIN)),
             Self::Tree(tree) => Box::new(AtomWithMargin::new(tree, Self::MARGIN, Self::MARGIN)),
+            Self::Code(code) => Box::new(code),
         };
         Stripe {
             atoms: vec![atom],

@@ -5,6 +5,7 @@ debug common/multiline.puml
 debug common/skinparam.puml
 debug common/style.puml
 debug creole/blocks.puml
+debug creole/code.puml
 debug creole/escapes.puml
 debug creole/font-changes.puml
 debug creole/initial-noise.puml
@@ -37,6 +38,7 @@ dsvg common/multiline.puml
 dsvg common/skinparam.puml
 dsvg common/style.puml
 dsvg creole/blocks.puml
+dsvg creole/code.puml
 dsvg creole/escapes.puml
 dsvg creole/font-changes.puml
 dsvg creole/initial-noise.puml
@@ -69,6 +71,7 @@ png common/multiline.puml
 png common/skinparam.puml
 png common/style.puml
 png creole/blocks.puml
+png creole/code.puml
 png creole/escapes.puml
 png creole/font-changes.puml
 png creole/initial-noise.puml
@@ -114,11 +117,13 @@ preproc common/skinparam.puml
 preproc common/style.puml
 preproc component/basic.puml
 preproc creole/blocks.puml
+preproc creole/code.puml
 preproc creole/escapes.puml
 preproc creole/font-changes.puml
 preproc creole/initial-noise.puml
 preproc creole/inline-styles.puml
 preproc creole/links.puml
+preproc creole/openiconic.puml
 preproc creole/plain.puml
 preproc creole/styles-advanced.puml
 preproc creole/table-styles.puml
@@ -175,6 +180,7 @@ svg common/multiline.puml
 svg common/skinparam.puml
 svg common/style.puml
 svg creole/blocks.puml
+svg creole/code.puml
 svg creole/font-changes.puml
 svg creole/initial-noise.puml
 svg creole/inline-styles.puml
@@ -219,11 +225,13 @@ url common/skinparam.puml
 url common/style.puml
 url component/basic.puml
 url creole/blocks.puml
+url creole/code.puml
 url creole/escapes.puml
 url creole/font-changes.puml
 url creole/initial-noise.puml
 url creole/inline-styles.puml
 url creole/links.puml
+url creole/openiconic.puml
 url creole/plain.puml
 url creole/styles-advanced.puml
 url creole/table-styles.puml

@@ -6,6 +6,7 @@
 mod atom_text;
 mod atoms;
 mod char_hidder;
+mod code;
 mod commands;
 mod display;
 mod parser;
