@@ -49,6 +49,15 @@ impl TitledDiagram for SaltDiagram {
 impl SaltDiagram {
     /// The diagram, or the error image for its first faulty line.
     pub fn create(source: UmlSource) -> Box<dyn Diagram> {
+        if source.is_empty() {
+            let trace = source.lines().iter().take(2).cloned().collect();
+            return Box::new(ErrorDiagram::new(
+                source,
+                trace,
+                "Empty description",
+                Some(DiagramType::Salt),
+            ));
+        }
         let mut diagram = Self {
             source,
             titled: Titled::new(crate::style::SName::SaltDiagram, "SALT"),
@@ -69,7 +78,7 @@ impl SaltDiagram {
     }
 
     /// The lines that describe widgets. PlantUML drops `hide stereotype` and skinparams, which have no
-    /// say over widgets; `scale` and sprites are not ported yet.
+    /// say over widgets; sprites are not ported yet.
     fn widget_lines(&self) -> Result<Vec<String>, NotYetPorted> {
         let mut lines = Vec::new();
         for line in &self.lines {

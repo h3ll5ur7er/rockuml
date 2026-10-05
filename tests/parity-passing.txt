@@ -27,6 +27,7 @@ debug creole/tree.puml
 debug creole/unicode-tabs.puml
 debug creole/wide.puml
 debug error/creole-empty.puml
+debug error/salt-empty.puml
 debug error/salt-keyword.puml
 debug salt/grid-all.puml
 debug salt/grid-nested.puml
@@ -69,6 +70,7 @@ dsvg creole/tree.puml
 dsvg creole/unicode-tabs.puml
 dsvg creole/wide.puml
 dsvg error/creole-empty.puml
+dsvg error/salt-empty.puml
 dsvg error/salt-keyword.puml
 dsvg salt/grid-all.puml
 dsvg salt/grid-nested.puml
@@ -111,6 +113,7 @@ png creole/tree.puml
 png creole/unicode-tabs.puml
 png creole/wide.puml
 png error/creole-empty.puml
+png error/salt-empty.puml
 png error/salt-keyword.puml
 png salt/grid-all.puml
 png salt/grid-nested.puml
@@ -166,6 +169,7 @@ preproc creole/tree.puml
 preproc creole/unicode-tabs.puml
 preproc creole/wide.puml
 preproc error/creole-empty.puml
+preproc error/salt-empty.puml
 preproc error/salt-keyword.puml
 preproc error/unknown-syntax.puml
 preproc mindmap/basic.puml
@@ -236,6 +240,7 @@ svg creole/tree.puml
 svg creole/unicode-tabs.puml
 svg creole/wide.puml
 svg error/creole-empty.puml
+svg error/salt-empty.puml
 svg error/salt-keyword.puml
 svg salt/grid-all.puml
 svg salt/grid-nested.puml
@@ -291,6 +296,7 @@ url creole/tree.puml
 url creole/unicode-tabs.puml
 url creole/wide.puml
 url error/creole-empty.puml
+url error/salt-empty.puml
 url error/salt-keyword.puml
 url error/unknown-syntax.puml
 url mindmap/basic.puml

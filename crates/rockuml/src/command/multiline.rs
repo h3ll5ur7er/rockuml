@@ -3,7 +3,7 @@ use regex::Regex;
 use super::{BlocLines, Command, CommandControl, CommandResult};
 
 /// A command spanning lines from one matching `start` to one matching `end` (PlantUML's
-/// `CommandMultilines` and `CommandMultilines2`). Both patterns are tried on trimmed lines.
+/// `CommandMultilines` and `CommandMultilines2`). Both patterns must match whole trimmed lines.
 pub struct Multiline<D> {
     start: Regex,
     end: Regex,
@@ -15,8 +15,8 @@ pub struct Multiline<D> {
 impl<D> Multiline<D> {
     pub fn new(start: Regex, end: Regex, apply: fn(&mut D, &BlocLines) -> CommandResult) -> Self {
         Self {
-            start,
-            end,
+            start: whole_line(&start),
+            end: whole_line(&end),
             skip_quote_lines: false,
             apply,
         }
@@ -37,6 +37,11 @@ impl<D> Multiline<D> {
             lines.clone()
         }
     }
+}
+
+/// Java matches these patterns with `matches()`, against the whole line.
+fn whole_line(pattern: &Regex) -> Regex {
+    Regex::new(&format!("^(?:{})$", pattern.as_str())).expect("an anchored valid pattern is valid")
 }
 
 impl<D> Command<D> for Multiline<D> {

@@ -1,4 +1,5 @@
 use crate::java;
+use crate::preproc::start_utils;
 use crate::text::{StringLocated, ends_with_backslash};
 
 /// A diagram's preprocessed lines, from its `@start` line to its `@end` line (PlantUML's `UmlSource`).
@@ -55,6 +56,16 @@ impl UmlSource {
         } else {
             format!("{raw}\n{plain}\n{version}")
         }
+    }
+
+    /// Whether the source holds nothing but its start and end lines, comments and blank lines.
+    pub fn is_empty(&self) -> bool {
+        self.lines.iter().map(StringLocated::text).all(|line| {
+            start_utils::is_start_directive(line)
+                || start_utils::is_end_directive(line)
+                || line.trim_start_matches(java::is_regex_whitespace).starts_with('\'')
+                || java::trim(line).is_empty()
+        })
     }
 
     pub fn lines(&self) -> &[StringLocated] {
