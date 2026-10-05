@@ -1,0 +1,7 @@
+This text is outside of the diagram and is not included.
+@startuml
+Included -> FromDiagram : first block
+@enduml
+@startuml
+Second -> Block : never included
+@enduml

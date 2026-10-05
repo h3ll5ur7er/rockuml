@@ -1,0 +1,6 @@
+@startuml
+A -> B : %date("yyyy-MM-dd HH:mm:ss", 1700000000, "UTC")
+A -> B : %date("EEE, d MMM yyyy h:mm a", 1700000000, "UTC")
+A -> B : %date("EEEE MMMM dd 'at' HH 'o''clock' z Z X", 1700000000, "America/New_York")
+A -> B : %date("D u yy S", 1700000000, "Europe/Zurich")
+@enduml

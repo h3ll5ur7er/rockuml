@@ -1,7 +1,7 @@
 DPI: 96
-dimension: [ 1248.8282 ; 297.0000 ]
+dimension: [ 1248.8282 ; 311.0000 ]
 scaleFactor: 1.0000
-seed: 2333012450446057818
+seed: 6774587511787072405
 svgLinkTarget: null
 hoverPathColorRGB: null
 preserveAspectRatio: none
@@ -155,7 +155,7 @@ TEXT:
 UGraphicDebug UImage <timestamp>
 RECTANGLE:
   pt1: [ 0.0000 ; 178.0000 ]
-  pt2: [ 1248.8282 ; 297.0000 ]
+  pt2: [ 1248.8282 ; 311.0000 ]
   xCorner: 0
   yCorner: 0
   stroke: 0.0-0.0-1.0
@@ -165,7 +165,7 @@ RECTANGLE:
 
 EMPTY:
   pt1: [ 0.0000 ; 178.0000 ]
-  pt2: [ 763.0276 ; 297.0000 ]
+  pt2: [ 1214.7997 ; 311.0000 ]
 
 EMPTY:
   pt1: [ 5.0000 ; 183.0000 ]
@@ -181,7 +181,7 @@ TEXT:
 
 RECTANGLE:
   pt1: [ 5.0000 ; 203.0000 ]
-  pt2: [ 597.3898 ; 222.0000 ]
+  pt2: [ 428.4383 ; 222.0000 ]
   xCorner: 0
   yCorner: 0
   stroke: 0.0-0.0-1.0
@@ -191,10 +191,10 @@ RECTANGLE:
 
 EMPTY:
   pt1: [ 5.0000 ; 203.0000 ]
-  pt2: [ 597.3898 ; 222.0000 ]
+  pt2: [ 428.4383 ; 222.0000 ]
 
 TEXT:
-  text: [From unknown-syntax.puml (line 3) ]
+  text: [From errors.puml (line 35) ]
   position: [ 6.0000 ; 218.0000 ]
   orientation: 0
   font: SansSerif.bold/14 [BOLD]
@@ -218,7 +218,7 @@ TEXT:
   extendedColor: NULL_COLOR
 
 TEXT:
-  text: Alice -> Bob: fine
+  text: !function $no_return()
   position: [ 5.0000 ; 264.0000 ]
   orientation: 0
   font: SansSerif.bold/14 [BOLD]
@@ -226,16 +226,24 @@ TEXT:
   extendedColor: NULL_COLOR
 
 TEXT:
-  text: this line is not plantuml
+  text: A -> B
   position: [ 5.0000 ; 278.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: !endfunction
+  position: [ 5.0000 ; 292.0000 ]
   orientation: 0
   font: SansSerif.bold/14 [BOLD, WAVE]
   color: ff33ff02
   extendedColor: ffff0000
 
 TEXT:
-  text:  Syntax Error? (Assumed diagram type: sequence)
-  position: [ 5.0000 ; 292.0000 ]
+  text:  This function does not have any !return directive. Declare it as a procedure instead ?
+  position: [ 5.0000 ; 306.0000 ]
   orientation: 0
   font: SansSerif.bold/14 [BOLD]
   color: ffff0000

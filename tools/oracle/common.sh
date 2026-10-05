@@ -28,6 +28,7 @@ to_native_paths() {
 
 jdk_bin="$(find_jdk_bin)"
 
+# A fixed locale keeps goldens independent of the machine that generates them.
 reference_plantuml() {
-	"$jdk_bin/java" -Djava.awt.headless=true -jar "$reference_jar" "$@"
+	"$jdk_bin/java" -Djava.awt.headless=true -Duser.language=en -Duser.country=US -jar "$reference_jar" "$@"
 }

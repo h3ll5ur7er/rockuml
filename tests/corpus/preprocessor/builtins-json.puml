@@ -1,0 +1,28 @@
+@startuml
+!$data = {"name": "rock", "tags": ["a", "b"], "nested": {"x": 1, "y": {"z": true}}}
+A -> B : name=$data.name tag=$data.tags[1] nested=$data.nested.x whole=$data.nested
+A -> B : keys=%get_json_keys($data) types=%get_json_type($data) %get_json_type($data.tags) %get_json_type("s") %get_json_type(1)
+!$k = "name"
+A -> B : by_key=$data[$k] index_expr=$data.tags[%strlen("x")]
+!$added = %json_add($data.tags, "c")
+A -> B : added=$added original=$data.tags
+!$obj = %json_add({"a": 1}, "b", 2)
+A -> B : obj=$obj exists=%json_key_exists($obj, "b") %json_key_exists($obj, "q") %json_key_exists("notjson", "a")
+A -> B : removed=%json_remove($obj, "a") arr_removed=%json_remove(["x", "y", "z"], 1) out_of_range=%json_remove(["x"], 5)
+A -> B : set=%json_set($obj, "a", "changed") arr_set=%json_set(["x", "y"], 0, "w") deep=%json_set({"p": {"q": 1}}, {"p": {"r": 2}})
+A -> B : merged=%json_merge({"a": 1}, {"b": 2, "a": 3}) arrays=%json_merge([1], [2, 3]) mixed=%json_merge([1], {"a": 1})
+!foreach $key in $data.nested
+A -> B : nested key $key
+!endfor
+!foreach $item in [{"n": 1}, {"n": 2}]
+A -> B : item $item.n
+!endfor
+!$multi = {
+  "first": 1,
+  "second": [
+    "x",
+    "y"
+  ]
+}
+A -> B : multi=$multi
+@enduml

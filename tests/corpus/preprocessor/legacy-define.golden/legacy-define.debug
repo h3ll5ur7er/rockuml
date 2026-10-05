@@ -1,0 +1,142 @@
+DPI: 96
+dimension: [ 763.0276 ; 217.0000 ]
+scaleFactor: 1.0000
+seed: -2902955954127595214
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 763.0276 ; 217.0000 ]
+
+EMPTY:
+  pt1: [ 5.0000 ; 5.0000 ]
+  pt2: [ 711.4921 ; 25.0000 ]
+
+TEXT:
+  text: PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]
+  position: [ 5.0000 ; 17.0000 ]
+  orientation: 0
+  font: SansSerif.bolditalic/12 [ITALIC, BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 628.5108 ; 44.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff33ff02
+  backcolor: ff33ff02
+
+EMPTY:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 456.0222 ; 44.0000 ]
+
+TEXT:
+  text: [From legacy-define.puml (line 21) ]
+  position: [ 6.0000 ; 40.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 5.0000 ; 58.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: @startuml
+  position: [ 5.0000 ; 72.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: participant Alice
+  position: [ 5.0000 ; 86.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Alice -> Bob : linked
+  position: [ 5.0000 ; 100.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: participant Carl
+  position: [ 5.0000 ; 114.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Carl -> Carl : long body
+  position: [ 5.0000 ; 128.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Dora -> Dora : single line definelong
+  position: [ 5.0000 ; 142.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: A -> B : value_of_const and CONST2
+  position: [ 5.0000 ; 156.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: A -> B : foobar
+  position: [ 5.0000 ; 170.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: A -> B : vsuffix and prefixv
+  position: [ 5.0000 ; 184.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Quoted One -> Quoted Two : linked
+  position: [ 5.0000 ; 198.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD, WAVE]
+  color: ff33ff02
+  extendedColor: ffff0000
+
+TEXT:
+  text:  Syntax Error? (Assumed diagram type: sequence)
+  position: [ 5.0000 ; 212.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ffff0000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,12 @@
+@startuml
+A -> B : a=1 b=2 c=text d=text2 g=global new=set once
+A -> B : variable inside word: xtext and $cy and text! and ${c}
+A -> B : escaped dollar $c and "text"
+A -> B : neg=-5 minus=0
+A -> B : smile
+A -> B : empty=[] bool=1
+A -> B : list=["one","two"] first=one
+A -> B : line1\nline2
+A -> B : this was defined with !define
+A -> B : num=x10
+@enduml

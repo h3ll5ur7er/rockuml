@@ -1,0 +1,10 @@
+@startuml one two  three
+A -> B : exists=1 0 fn=0 1
+A -> B : fn_after=1 value=1 missing=[]
+A -> B : set=[] dynamic=99
+A -> B : call=42
+C -> B : says hi
+A -> B : captured=[D -> B : says hi]
+A -> B : xargs=[@startuml one two  three]
+A -> B : stdlib=2.13.0 theme={}
+@enduml

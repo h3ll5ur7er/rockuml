@@ -1,0 +1,18 @@
+@startuml
+Included -> FromDiagram : first block
+Included -> FromDiagram : first block
+Header -> Stripped : yaml header removed
+Inner -> Relative : included from a nested folder
+Sibling -> Resolved : relative to the including file
+Sibling -> Resolved : relative to the including file
+Sibling -> Resolved : relative to the including file
+Sibling -> Resolved : relative to the including file
+Sibling -> Resolved : relative to the including file
+Local -> Sub : defined in this file
+Local -> Sub : defined in this file
+
+
+
+skinparam defaultTextAlignment center
+A -> B : after stdlib include
+@enduml

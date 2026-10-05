@@ -1,0 +1,5 @@
+@startuml
+Shared -> Definition : from startdef
+Customer -> Clerk : order
+A -> B : done
+@enduml

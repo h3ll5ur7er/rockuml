@@ -1,0 +1,16 @@
+@startuml
+A -> B : two
+  A -> B : nested true
+A -> B : outer else
+A -> B : i=0 j=0
+A -> B : i=0 j=1
+A -> B : i=1 j=0
+A -> B : i=1 j=1
+A -> B : x1
+A -> B : x2
+A -> B : y1
+A -> B : y2
+A -> B : ifdef expression
+A -> B : ifndef
+A -> B : undef worked
+@enduml

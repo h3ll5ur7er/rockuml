@@ -1,0 +1,172 @@
+DPI: 96
+dimension: [ 4212.5491 ; 180.0000 ]
+scaleFactor: 1.0417
+seed: -7138994663804999226
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 77.1754 ; 68.0000 ]
+  pt2: [ 85.1754 ; 112.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 80.6754 ; 68.0000 ]
+  pt2: [ 80.6754 ; 112.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ff999999
+
+RECTANGLE:
+  pt1: [ 4128.3740 ; 68.0000 ]
+  pt2: [ 4136.3740 ; 112.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 4131.8740 ; 68.0000 ]
+  pt2: [ 4131.8740 ; 112.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ff999999
+
+RECTANGLE:
+  pt1: [ 55.0000 ; 20.0000 ]
+  pt2: [ 106.3507 ; 62.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff304d6d
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: A
+  position: [ 75.0000 ; 44.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 4106.1989 ; 20.0000 ]
+  pt2: [ 4157.5491 ; 62.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff304d6d
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: B
+  position: [ 4126.1989 ; 44.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 55.0000 ; 117.0000 ]
+  pt2: [ 106.3507 ; 159.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff304d6d
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: A
+  position: [ 75.0000 ; 141.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 4106.1989 ; 117.0000 ]
+  pt2: [ 4157.5491 ; 159.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff304d6d
+  backcolor: HColorGradient <timestamp>
+
+TEXT:
+  text: B
+  position: [ 4126.1989 ; 141.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 4119.8740 ; 90.0000 ]
+   - [ 4129.8740 ; 94.0000 ]
+   - [ 4119.8740 ; 98.0000 ]
+   - [ 4123.8740 ; 94.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff446e9b
+  backcolor: ff446e9b
+
+LINE:
+  pt1: [ 80.6754 ; 94.0000 ]
+  pt2: [ 4125.8740 ; 94.0000 ]
+  stroke: 0.0-0.0-3.0
+  shadow: 0
+  color: ff446e9b
+
+TEXT:
+  text: last={"name":"spacelab","display_name":"Spacelab","description":"Theme based off of the bootstrap theme of the same name","author":"Brett Schwarz","release":
+  position: [ 87.6754 ; 89.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"license":"MIT","version":
+  position: [ 2339.0159 ; 89.3333 ]
+  orientation: 0
+  font: Monospaced.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"source":"https:
+  position: [ 2753.9550 ; 89.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: github.com/bschwarz/puml-themes","inspiration":"https:
+  position: [ 2953.1108 ; 89.3333 ]
+  orientation: 0
+  font: Verdana Italic.italic/12 [ITALIC]
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: bootswatch.com/spacelab/"}
+  position: [ 3742.0835 ; 89.3333 ]
+  orientation: 0
+  font: Verdana.plain/12 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+

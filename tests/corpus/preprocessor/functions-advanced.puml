@@ -1,0 +1,45 @@
+@startuml
+!function $fact($n)
+!if $n <= 1
+!return 1
+!endif
+!return $n * $fact($n - 1)
+!endfunction
+A -> B : fact=$fact(5)
+!function $greet($name, $greeting = "Hello", $suffix = "!")
+!return $greeting + " " + $name + $suffix
+!endfunction
+A -> B : $greet("Ann") / $greet("Ben", "Hi") / $greet("Cy", $suffix = "?")
+!function $inline($x) return $x + 1
+A -> B : inline=$inline(1)
+!function $bang($x) !return $x + 2
+A -> B : bang=$bang(1)
+!procedure $box($title)
+rectangle "$title" as R_$title
+!endprocedure
+$box(alpha)
+$box("beta")
+!unquoted procedure UQ($a, $b)
+$a -> $b : unquoted call
+!endprocedure
+UQ(Ann, Bob)
+UQ(Ann, $b = Cyd)
+!$global_counter = 0
+!procedure $count()
+!$global_counter = $global_counter + 1
+!$local_only = 5
+!endprocedure
+$count()
+$count()
+A -> B : counter=$global_counter local=%variable_exists("$local_only")
+!function $scoped($v)
+!local $tmp = $v * 10
+!return $tmp
+!endfunction
+A -> B : scoped=$scoped(4) tmp_visible=%variable_exists("$tmp")
+!procedure $mid($x)
+middle_$x
+!endprocedure
+prefix $mid(1) suffix
+A -> B : after mid
+@enduml

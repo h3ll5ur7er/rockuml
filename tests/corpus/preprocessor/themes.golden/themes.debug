@@ -1,0 +1,172 @@
+DPI: 96
+dimension: [ 4363.6874 ; 135.0000 ]
+scaleFactor: 1.0000
+seed: 6395565145661991383
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 28.1213 ; 45.0000 ]
+  pt2: [ 36.1213 ; 90.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 31.6213 ; 45.0000 ]
+  pt2: [ 31.6213 ; 90.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffffffff
+
+RECTANGLE:
+  pt1: [ 4328.5664 ; 45.0000 ]
+  pt2: [ 4336.5664 ; 90.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 4332.0664 ; 45.0000 ]
+  pt2: [ 4332.0664 ; 90.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffffffff
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 15.0000 ]
+  pt2: [ 43.2425 ; 39.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ff0b58a8
+
+TEXT:
+  text: A
+  position: [ 25.0000 ; 30.8889 ]
+  orientation: 0
+  font: Verdana.plain/14 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 4320.4455 ; 15.0000 ]
+  pt2: [ 4343.6874 ; 39.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ff0b58a8
+
+TEXT:
+  text: B
+  position: [ 4325.4455 ; 30.8889 ]
+  orientation: 0
+  font: Verdana.plain/14 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 95.0000 ]
+  pt2: [ 43.2425 ; 119.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ff0b58a8
+
+TEXT:
+  text: A
+  position: [ 25.0000 ; 110.8889 ]
+  orientation: 0
+  font: Verdana.plain/14 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 4320.4455 ; 95.0000 ]
+  pt2: [ 4343.6874 ; 119.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ff0b58a8
+
+TEXT:
+  text: B
+  position: [ 4325.4455 ; 110.8889 ]
+  orientation: 0
+  font: Verdana.plain/14 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 4320.0664 ; 68.0000 ]
+   - [ 4330.0664 ; 72.0000 ]
+   - [ 4320.0664 ; 76.0000 ]
+   - [ 4324.0664 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ffffffff
+
+LINE:
+  pt1: [ 31.6213 ; 72.0000 ]
+  pt2: [ 4326.0664 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+
+TEXT:
+  text: theme={"name":"amiga","display_name":"Amiga Workbench 1.x","description":"A white on blue theme based on Amiga Workbench 1.x","author":"Matthew Leather","release":
+  position: [ 38.6213 ; 67.1111 ]
+  orientation: 0
+  font: Verdana.plain/13 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"license":
+  position: [ 2551.5218 ; 67.1111 ]
+  orientation: 0
+  font: Dialog.plain/13 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"version":
+  position: [ 2702.4367 ; 67.1111 ]
+  orientation: 0
+  font: Verdana.plain/13 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"source":
+  position: [ 2827.8246 ; 67.1111 ]
+  orientation: 0
+  font: Dialog.plain/13 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ,"inspiration":"https://en.wikipedia.org/wiki/Workbench_(AmigaOS)#Workbench_1.x"}
+  position: [ 2949.6281 ; 67.1111 ]
+  orientation: 0
+  font: Verdana.plain/13 []
+  color: ffffffff
+  extendedColor: NULL_COLOR
+

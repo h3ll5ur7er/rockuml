@@ -1,0 +1,6 @@
+@startuml
+A -> B : name=rock tag=b nested=1 whole={"x":1,"y":{"z":true}}
+A -> B : keys=["name","tags","nested"] types=object array string number
+A -> B : by_key=rock index_expr=b
+A -> B : added=["a","b","c"] original=["a","b"]
+!$obj = %json_add({"a": 1}, "b", 2)

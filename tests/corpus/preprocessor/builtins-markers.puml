@@ -1,0 +1,10 @@
+@startuml
+A -> B : backslash=%backslash() tab=[%tab()]
+A -> B : newline=first%newline()second short=a%n()b
+A -> B : breakline=one%breakline()two
+A -> B : align=%left_align()left %right_align()right
+note over A
+  multi%breakline()line note
+end note
+A -> B : {{ embedded%breakline()kept }}
+@enduml

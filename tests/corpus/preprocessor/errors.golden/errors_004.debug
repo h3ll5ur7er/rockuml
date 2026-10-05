@@ -1,20 +1,10 @@
 DPI: 96
-dimension: [ 1248.8282 ; 297.0000 ]
+dimension: [ 1248.8282 ; 226.0000 ]
 scaleFactor: 1.0000
-seed: 2333012450446057818
+seed: 6774587509404680462
 svgLinkTarget: null
 hoverPathColorRGB: null
 preserveAspectRatio: none
-
-RECTANGLE:
-  pt1: [ 0.0000 ; 0.0000 ]
-  pt2: [ 1248.8282 ; 178.0000 ]
-  xCorner: 0
-  yCorner: 0
-  stroke: 0.0-0.0-1.0
-  shadow: 0
-  color: ffffffff
-  backcolor: ffffffff
 
 TEXT:
   text: Welcome to PlantUML!
@@ -152,92 +142,36 @@ TEXT:
   color: ff000000
   extendedColor: NULL_COLOR
 
-UGraphicDebug UImage <timestamp>
-RECTANGLE:
-  pt1: [ 0.0000 ; 178.0000 ]
-  pt2: [ 1248.8282 ; 297.0000 ]
-  xCorner: 0
-  yCorner: 0
-  stroke: 0.0-0.0-1.0
-  shadow: 0
-  color: ff000000
-  backcolor: ff000000
-
-EMPTY:
-  pt1: [ 0.0000 ; 178.0000 ]
-  pt2: [ 763.0276 ; 297.0000 ]
-
-EMPTY:
-  pt1: [ 5.0000 ; 183.0000 ]
-  pt2: [ 711.4921 ; 203.0000 ]
-
 TEXT:
-  text: PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]
-  position: [ 5.0000 ; 195.0000 ]
+  text:  
+  position: [ 5.0000 ; 182.3333 ]
   orientation: 0
-  font: SansSerif.bolditalic/12 [ITALIC, BOLD]
-  color: ff33ff02
-  extendedColor: NULL_COLOR
-
-RECTANGLE:
-  pt1: [ 5.0000 ; 203.0000 ]
-  pt2: [ 597.3898 ; 222.0000 ]
-  xCorner: 0
-  yCorner: 0
-  stroke: 0.0-0.0-1.0
-  shadow: 0
-  color: ff33ff02
-  backcolor: ff33ff02
-
-EMPTY:
-  pt1: [ 5.0000 ; 203.0000 ]
-  pt2: [ 597.3898 ; 222.0000 ]
-
-TEXT:
-  text: [From unknown-syntax.puml (line 3) ]
-  position: [ 6.0000 ; 218.0000 ]
-  orientation: 0
-  font: SansSerif.bold/14 [BOLD]
+  font: SansSerif.plain/12 []
   color: ff000000
   extendedColor: NULL_COLOR
 
 TEXT:
   text:  
-  position: [ 5.0000 ; 236.0000 ]
+  position: [ 5.0000 ; 194.3333 ]
   orientation: 0
-  font: SansSerif.bold/14 [BOLD]
-  color: ff33ff02
+  font: SansSerif.plain/12 []
+  color: ff000000
   extendedColor: NULL_COLOR
 
 TEXT:
-  text: @startuml
-  position: [ 5.0000 ; 250.0000 ]
+  text:  
+  position: [ 5.0000 ; 206.3333 ]
   orientation: 0
-  font: SansSerif.bold/14 [BOLD]
-  color: ff33ff02
+  font: SansSerif.plain/12 []
+  color: ff000000
   extendedColor: NULL_COLOR
 
 TEXT:
-  text: Alice -> Bob: fine
-  position: [ 5.0000 ; 264.0000 ]
+  text:  
+  position: [ 5.0000 ; 218.3333 ]
   orientation: 0
-  font: SansSerif.bold/14 [BOLD]
-  color: ff33ff02
+  font: SansSerif.plain/12 []
+  color: ff000000
   extendedColor: NULL_COLOR
 
-TEXT:
-  text: this line is not plantuml
-  position: [ 5.0000 ; 278.0000 ]
-  orientation: 0
-  font: SansSerif.bold/14 [BOLD, WAVE]
-  color: ff33ff02
-  extendedColor: ffff0000
-
-TEXT:
-  text:  Syntax Error? (Assumed diagram type: sequence)
-  position: [ 5.0000 ; 292.0000 ]
-  orientation: 0
-  font: SansSerif.bold/14 [BOLD]
-  color: ffff0000
-  extendedColor: NULL_COLOR
-
+UGraphicDebug UImage <timestamp>

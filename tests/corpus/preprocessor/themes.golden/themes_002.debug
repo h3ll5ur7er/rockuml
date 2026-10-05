@@ -1,0 +1,140 @@
+DPI: 96
+dimension: [ 6854.3965 ; 123.0000 ]
+scaleFactor: 1.0000
+seed: -1322057491604639142
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 20.1213 ; 39.0000 ]
+  pt2: [ 28.1213 ; 84.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 23.6213 ; 39.0000 ]
+  pt2: [ 23.6213 ; 84.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 6827.2756 ; 39.0000 ]
+  pt2: [ 6835.2756 ; 84.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 6830.7756 ; 39.0000 ]
+  pt2: [ 6830.7756 ; 84.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 37.2425 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: A
+  position: [ 17.0000 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6817.1546 ; 10.0000 ]
+  pt2: [ 6844.3965 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: B
+  position: [ 6824.1546 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 84.0000 ]
+  pt2: [ 37.2425 ; 112.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: A
+  position: [ 17.0000 ; 101.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6817.1546 ; 84.0000 ]
+  pt2: [ 6844.3965 ; 112.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: B
+  position: [ 6824.1546 ; 101.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 6818.7756 ; 62.0000 ]
+   - [ 6828.7756 ; 66.0000 ]
+   - [ 6818.7756 ; 70.0000 ]
+   - [ 6822.7756 ; 66.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 23.6213 ; 66.0000 ]
+  pt2: [ 6824.7756 ; 66.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: themes=["_none_","amiga","aws-orange","black-knight","bluegray","blueprint","carbon-gray","cerulean","cerulean-outline","cloudscape-design","crt-amber","crt-green","cyborg","cyborg-outline","hacker","lightgray","mars","materia","materia-outline","metal","mimeograph","minty","mono","plain","reddress-darkblue","reddress-darkgreen","reddress-darkorange","reddress-darkred","reddress-lightblue","reddress-lightgreen","reddress-lightorange","reddress-lightred","sandstone","silver","sketchy","sketchy-outline","spacelab","spacelab-white","sunlust","superhero","superhero-outline","toy","united","vibrant"]
+  position: [ 30.6213 ; 61.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

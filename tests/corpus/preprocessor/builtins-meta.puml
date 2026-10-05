@@ -1,0 +1,18 @@
+@startuml one two  three
+!$known = 1
+A -> B : exists=%variable_exists("$known") %variable_exists("$unknown") fn=%function_exists("$twice") %function_exists("%strlen")
+!function $twice($v)
+!return $v * 2
+!endfunction
+A -> B : fn_after=%function_exists("$twice") value=%get_variable_value("$known") missing=[%get_variable_value("$nope")]
+A -> B : set=[%set_variable_value("$dynamic", 99)] dynamic=$dynamic
+A -> B : call=%call_user_func("$twice", 21)
+!procedure $say($who)
+$who -> B : says hi
+!endprocedure
+%invoke_procedure("$say", "C")
+!$captured = %retrieve_procedure("$say", "D")
+A -> B : captured=[$captured]
+A -> B : xargs=[%xargs()]
+A -> B : stdlib=%get_stdlib("c4", "version") theme=%get_current_theme()
+@enduml

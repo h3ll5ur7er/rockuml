@@ -30,9 +30,17 @@ generate_case() {
 	reference_plantuml -preproc -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -f debug -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
 	reference_plantuml -f svg -o "$native_golden_dir" "$case_file" > /dev/null 2>&1 || true
+	mask_render_timestamps "$golden_dir"
 }
 
-export -f generate_case reference_plantuml to_native_paths
+# The debug format stamps the current time next to shapes it cannot describe. Masking it keeps
+# regenerated goldens stable; the parity test masks rockuml's output the same way.
+mask_render_timestamps() {
+	find "$1" -name '*.debug' -exec sed -i -E \
+		's/(Mon|Tue|Wed|Thu|Fri|Sat|Sun) [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} [^ ]+ [0-9]{4}/<timestamp>/g' {} +
+}
+
+export -f generate_case mask_render_timestamps reference_plantuml to_native_paths
 export jdk_bin reference_jar
 
 list_cases "$@" | xargs -0 -P "$(nproc)" -I {} bash -c 'generate_case "$1"' _ {}

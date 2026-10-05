@@ -1,0 +1,7 @@
+@startuml
+A -> B : darken=#0074E4 #465E75 lighten=#FF4C4D #1F5B97
+A -> B : dark=1 0 light=1 0
+A -> B : reverse=#CC9966 #FF00FF hsluv=#B1CCF4 #6F5C00
+A -> B : hsl=#00FF00 #202060 alpha=#80ff0000
+A -> B : special=#000000 ?HColorAutomagic ?HColorGradient #0F1F2E
+@enduml

@@ -1,0 +1,3 @@
+@startuml
+A -> B : before assert
+!assert 1 == 2 : "custom " + "message"

@@ -1,0 +1,12 @@
+@startuml
+A -> B : backslash= tab=[]
+A -> B : newline=firstsecond short=ab
+A -> B : breakline=one
+two
+A -> B : align=left right
+note over A
+  multi
+line note
+end note
+A -> B : {{ embeddedkept }}
+@enduml

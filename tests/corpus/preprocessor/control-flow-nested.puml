@@ -1,0 +1,57 @@
+@startuml
+!$level = 2
+!if $level == 1
+A -> B : one
+!elseif $level == 2
+A -> B : two
+  !if %true()
+  A -> B : nested true
+  !else
+  A -> B : nested false
+  !endif
+!elseif $level == 2
+A -> B : second elseif never runs
+!else
+A -> B : else
+!endif
+!if 0
+  !if 1
+  A -> B : inside a false branch
+  !endif
+!else
+A -> B : outer else
+!endif
+!$i = 0
+!while $i < 2
+  !$j = 0
+  !while $j < 2
+A -> B : i=$i j=$j
+    !$j = $j + 1
+  !endwhile
+  !$i = $i + 1
+!endwhile
+!while 0
+A -> B : never
+!endwhile
+!foreach $a in ["x", "y"]
+  !foreach $b in [1, 2]
+A -> B : $a$b
+  !endfor
+!endfor
+!foreach $empty in []
+A -> B : never in empty
+!endfor
+!define DEFINED_ONE
+!ifdef DEFINED_ONE && !UNDEFINED_TWO
+A -> B : ifdef expression
+!endif
+!ifndef UNDEFINED_TWO
+A -> B : ifndef
+!endif
+!undef DEFINED_ONE
+!ifdef DEFINED_ONE
+A -> B : undefined again
+!else
+A -> B : undef worked
+!endif
+@enduml

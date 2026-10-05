@@ -1,0 +1,11 @@
+@startuml
+participant Alice
+Alice -> Bob : linked
+participant Carl
+Carl -> Carl : long body
+Dora -> Dora : single line definelong
+A -> B : value_of_const and CONST2
+A -> B : foobar
+A -> B : vsuffix and prefixv
+Quoted One -> Quoted Two : linked
+@enduml
