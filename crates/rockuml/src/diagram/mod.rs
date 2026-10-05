@@ -5,6 +5,7 @@ mod creole;
 mod diagram_type;
 mod error;
 mod salt;
+mod scale;
 mod source;
 mod titled;
 
@@ -27,6 +28,7 @@ use crate::preproc::PreprocessedBlock;
 use crate::text::StringLocated;
 use creole::CreoleDiagram;
 use diagram_type::DiagramType;
+use scale::Scale;
 pub use source::UmlSource;
 
 /// Names a part of PlantUML that rockuml does not have yet.
@@ -49,6 +51,9 @@ pub trait Diagram {
     fn export_settings(&self) -> ExportSettings;
 }
 
+/// The resolution diagrams are drawn for unless `skinparam dpi` says otherwise.
+const DEFAULT_DPI: u32 = 96;
+
 /// How a diagram is placed on the image, and the image-wide options the skin decides.
 pub struct ExportSettings {
     pub(super) margin: ClockwiseTopRightBottomLeft,
@@ -57,6 +62,9 @@ pub struct ExportSettings {
     pub(super) backcolor: Option<HColor>,
     /// The type name SVG documents announce, for diagrams that have a skin.
     pub(super) diagram_type: Option<&'static str>,
+    pub(super) scale: Option<Scale>,
+    /// Images are drawn for this resolution; it scales PNGs and SVGs alike.
+    pub(super) dpi: u32,
     pub(super) svg_link_target: Option<String>,
     pub(super) preserve_aspect_ratio: String,
 }
@@ -69,6 +77,8 @@ impl ExportSettings {
             seed,
             backcolor: None,
             diagram_type: None,
+            scale: None,
+            dpi: DEFAULT_DPI,
             svg_link_target: None,
             preserve_aspect_ratio: "none".to_owned(),
         }
@@ -135,6 +145,11 @@ pub fn export(
     let dimension = text_block
         .calculate_dimension(string_bounder.as_ref())
         .delta(margin.left + margin.right, margin.top + margin.bottom);
+    let scale_factor = settings
+        .scale
+        .map_or(1.0, |scale| scale.factor(dimension.width, dimension.height))
+        * f64::from(settings.dpi)
+        / f64::from(DEFAULT_DPI);
     let backcolor = settings
         .backcolor
         .clone()
@@ -148,6 +163,7 @@ pub fn export(
         let option = SvgOption {
             min_dim: dimension,
             backcolor: Some(backcolor.to_svg()),
+            scale: scale_factor,
             preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
             root_attributes: settings
                 .diagram_type
@@ -175,7 +191,7 @@ pub fn export(
                 .borrow()
                 .document(&DebugHeader {
                     dimension,
-                    scale_factor: 1.0,
+                    scale_factor,
                     seed: settings.seed,
                     svg_link_target: settings.svg_link_target.clone(),
                     hover_path_color_rgb: None,
@@ -189,8 +205,8 @@ pub fn export(
             png::rasterize(
                 &svg(),
                 (
-                    (dimension.width as u32).min(limit),
-                    (dimension.height as u32).min(limit),
+                    ((dimension.width * scale_factor) as u32).min(limit),
+                    ((dimension.height * scale_factor) as u32).min(limit),
                 ),
                 &backcolor,
                 fonts,

@@ -24,6 +24,8 @@ pub struct SvgOption {
     pub min_dim: XDimension2D,
     /// `None` for a transparent image.
     pub backcolor: Option<String>,
+    /// Every length is multiplied by it on output.
+    pub scale: f64,
     pub preserve_aspect_ratio: String,
     /// Extra attributes of the `<svg>` element, like `data-diagram-type`.
     pub root_attributes: Vec<(String, String)>,
@@ -87,7 +89,7 @@ impl SvgGraphics {
             painted_background: false,
             option,
         };
-        graphics.stroke_width = number(1.0);
+        graphics.stroke_width = graphics.length(1.0);
         let XDimension2D { width, height } = graphics.option.min_dim;
         graphics.ensure_visible(width, height);
         if let Some(color) = graphics.option.backcolor.clone()
@@ -105,6 +107,11 @@ impl SvgGraphics {
         let background = self.rectangle_element(0.0, 0.0, 0.0, 0.0);
         self.g_root.append_child(background);
         self.painted_background = true;
+    }
+
+    /// A length on output: scaled, three decimals without trailing zeros.
+    fn length(&self, value: f64) -> String {
+        decimal(value * self.option.scale)
     }
 
     fn ensure_visible(&mut self, x: f64, y: f64) {
@@ -126,9 +133,9 @@ impl SvgGraphics {
     }
 
     pub fn set_stroke_width(&mut self, width: f64, dasharray: Option<(f64, f64)>) {
-        self.stroke_width = number(width);
-        self.stroke_dasharray =
-            dasharray.map(|(visible, space)| format!("{},{}", number(visible), number(space)));
+        self.stroke_width = self.length(width);
+        self.stroke_dasharray = dasharray
+            .map(|(visible, space)| format!("{},{}", self.length(visible), self.length(space)));
     }
 
     fn current_group(&mut self) -> &mut XmlNode {
@@ -165,10 +172,10 @@ impl SvgGraphics {
 
     fn rectangle_element(&self, x: f64, y: f64, width: f64, height: f64) -> XmlNode {
         let mut element = XmlNode::new("rect");
-        element.set_attribute("x", number(x));
-        element.set_attribute("y", number(y));
-        element.set_attribute("width", number(width));
-        element.set_attribute("height", number(height));
+        element.set_attribute("x", self.length(x));
+        element.set_attribute("y", self.length(y));
+        element.set_attribute("width", self.length(width));
+        element.set_attribute("height", self.length(height));
         self.fill_me(&mut element);
         self.style_me(&mut element, "");
         element
@@ -180,8 +187,8 @@ impl SvgGraphics {
         }
         let mut element = self.rectangle_element(x, y, width, height);
         if rx > 0.0 && ry > 0.0 {
-            element.set_attribute("rx", number(rx));
-            element.set_attribute("ry", number(ry));
+            element.set_attribute("rx", self.length(rx));
+            element.set_attribute("ry", self.length(ry));
         }
         self.current_group().append_child(element);
         self.ensure_visible(x + width, y + height);
@@ -189,10 +196,10 @@ impl SvgGraphics {
 
     pub fn line(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) {
         let mut element = XmlNode::new("line");
-        element.set_attribute("x1", number(x1));
-        element.set_attribute("y1", number(y1));
-        element.set_attribute("x2", number(x2));
-        element.set_attribute("y2", number(y2));
+        element.set_attribute("x1", self.length(x1));
+        element.set_attribute("y1", self.length(y1));
+        element.set_attribute("x2", self.length(x2));
+        element.set_attribute("y2", self.length(y2));
         self.style_me(&mut element, "");
         self.current_group().append_child(element);
         self.ensure_visible(x1, y1);
@@ -201,10 +208,10 @@ impl SvgGraphics {
 
     pub fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
         let mut element = XmlNode::new("ellipse");
-        element.set_attribute("cx", number(x));
-        element.set_attribute("cy", number(y));
-        element.set_attribute("rx", number(x_radius));
-        element.set_attribute("ry", number(y_radius));
+        element.set_attribute("cx", self.length(x));
+        element.set_attribute("cy", self.length(y));
+        element.set_attribute("rx", self.length(x_radius));
+        element.set_attribute("ry", self.length(y_radius));
         self.fill_me(&mut element);
         self.style_me(&mut element, "");
         self.current_group().append_child(element);
@@ -215,7 +222,7 @@ impl SvgGraphics {
         let mut element = XmlNode::new("polygon");
         let coordinates: Vec<String> = points
             .iter()
-            .flat_map(|&(x, y)| [number(x), number(y)])
+            .flat_map(|&(x, y)| [self.length(x), self.length(y)])
             .collect();
         element.set_attribute("points", coordinates.join(","));
         self.fill_me(&mut element);
@@ -234,7 +241,11 @@ impl SvgGraphics {
                 USegment::MoveTo(dx, dy) => ('M', dx, dy),
                 USegment::LineTo(dx, dy) => ('L', dx, dy),
             };
-            d.push(format!("{command}{},{}", number(x + dx), number(y + dy)));
+            d.push(format!(
+                "{command}{},{}",
+                self.length(x + dx),
+                self.length(y + dy)
+            ));
             self.ensure_visible(x + dx, y + dy);
         }
         let mut element = XmlNode::new("path");
@@ -246,12 +257,12 @@ impl SvgGraphics {
 
     pub fn text(&mut self, text: &SvgText) {
         let mut element = XmlNode::new("text");
-        element.set_attribute("x", number(text.x));
-        element.set_attribute("y", number(text.y));
+        element.set_attribute("x", self.length(text.x));
+        element.set_attribute("y", self.length(text.y));
         self.fill_me(&mut element);
-        element.set_attribute("font-size", number(f64::from(text.font_size)));
+        element.set_attribute("font-size", self.length(f64::from(text.font_size)));
         if text.text.chars().nth(1).is_some() {
-            element.set_attribute("textLength", number(text.text_length));
+            element.set_attribute("textLength", self.length(text.text_length));
         }
         if let Some(weight) = &text.font_weight {
             element.set_attribute("font-weight", weight.as_str());
@@ -319,10 +330,10 @@ impl SvgGraphics {
     /// An image embedded as a PNG data URI.
     pub fn png_image(&mut self, png: &[u8], x: f64, y: f64, width: f64, height: f64) {
         let mut element = XmlNode::new("image");
-        element.set_attribute("width", number(width));
-        element.set_attribute("height", number(height));
-        element.set_attribute("x", number(x));
-        element.set_attribute("y", number(y));
+        element.set_attribute("width", self.length(width));
+        element.set_attribute("height", self.length(height));
+        element.set_attribute("x", self.length(x));
+        element.set_attribute("y", self.length(y));
         element.set_attribute(
             "xlink:href",
             format!("data:image/png;base64,{}", BASE64_STANDARD.encode(png)),
@@ -400,7 +411,10 @@ impl SvgGraphics {
                 .append_processing_instruction("plantuml-src", metadata);
         }
         if self.painted_background {
-            let (width, height) = (number(f64::from(self.max_x)), number(f64::from(self.max_y)));
+            let (width, height) = (
+                self.length(f64::from(self.max_x)),
+                self.length(f64::from(self.max_y)),
+            );
             let background = self
                 .g_root
                 .first_element_mut()
@@ -415,7 +429,9 @@ impl SvgGraphics {
         for (name, value) in &self.option.root_attributes {
             svg.set_attribute(name, value.as_str());
         }
-        let mut style = format!("width:{}px;height:{}px;", self.max_x, self.max_y);
+        let scaled = |max: i32| (f64::from(max) * self.option.scale) as i32;
+        let (width, height) = (scaled(self.max_x), scaled(self.max_y));
+        let mut style = format!("width:{width}px;height:{height}px;");
         if let Some(color) = self
             .option
             .backcolor
@@ -425,9 +441,12 @@ impl SvgGraphics {
             write!(style, "background:{color};").expect("writing to a String");
         }
         svg.set_attribute("style", style);
-        svg.set_attribute("width", format!("{}px", number(f64::from(self.max_x))));
-        svg.set_attribute("height", format!("{}px", number(f64::from(self.max_y))));
-        svg.set_attribute("viewBox", format!("0 0 {} {}", self.max_x, self.max_y));
+        svg.set_attribute("width", format!("{}px", self.length(f64::from(self.max_x))));
+        svg.set_attribute(
+            "height",
+            format!("{}px", self.length(f64::from(self.max_y))),
+        );
+        svg.set_attribute("viewBox", format!("0 0 {width} {height}"));
         svg.set_attribute("zoomAndPan", "magnify");
         svg.set_attribute(
             "preserveAspectRatio",
@@ -442,7 +461,7 @@ impl SvgGraphics {
 }
 
 /// Three decimals without trailing zeros.
-fn number(value: f64) -> String {
+fn decimal(value: f64) -> String {
     if value == 0.0 {
         return "0".to_owned();
     }
@@ -567,6 +586,7 @@ mod tests {
             SvgOption {
                 min_dim: XDimension2D::new(20.0, 30.0),
                 backcolor: Some("#FFFFFF".to_owned()),
+                scale: 1.0,
                 preserve_aspect_ratio: "none".to_owned(),
                 root_attributes: Vec::new(),
                 link_target: None,
@@ -576,10 +596,10 @@ mod tests {
 
     #[test]
     fn numbers_have_three_decimals_without_trailing_zeros() {
-        assert_eq!(number(0.0), "0");
-        assert_eq!(number(14.6666666), "14.667");
-        assert_eq!(number(2.5), "2.5");
-        assert_eq!(number(3.0), "3");
+        assert_eq!(decimal(0.0), "0");
+        assert_eq!(decimal(14.6666666), "14.667");
+        assert_eq!(decimal(2.5), "2.5");
+        assert_eq!(decimal(3.0), "3");
     }
 
     #[test]

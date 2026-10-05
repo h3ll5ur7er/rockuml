@@ -1,7 +1,8 @@
 //! What every diagram with a skin shares: skinparams and styles, and the title drawn around it
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
-use super::ExportSettings;
+use super::scale::Scale;
+use super::{DEFAULT_DPI, ExportSettings};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{Bordered, Decorated, Decoration, Marged};
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
@@ -24,6 +25,7 @@ pub struct Titled {
     legend: Option<(Positioned, VerticalAlignment)>,
     header: Option<Positioned>,
     footer: Option<Positioned>,
+    scale: Option<Scale>,
 }
 
 /// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
@@ -56,7 +58,12 @@ impl Titled {
             legend: None,
             header: None,
             footer: None,
+            scale: None,
         }
+    }
+
+    pub fn set_scale(&mut self, scale: Scale) {
+        self.scale = Some(scale);
     }
 
     /// A blank title is ignored.
@@ -162,6 +169,13 @@ impl Titled {
             seed,
             backcolor: Some(background.value(PName::BackGroundColor).as_color()),
             diagram_type: Some(self.diagram_type),
+            scale: self.scale,
+            dpi: self
+                .skin
+                .value("dpi")
+                .filter(|dpi| !dpi.is_empty() && dpi.bytes().all(|byte| byte.is_ascii_digit()))
+                .and_then(|dpi| dpi.parse().ok())
+                .unwrap_or(DEFAULT_DPI),
             svg_link_target: Some(
                 self.skin
                     .value("svglinktarget")

@@ -1,9 +1,11 @@
 //! Commands every diagram with a skin understands (PlantUML's `CommonCommands`).
 
+use std::marker::PhantomData;
 use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::scale::Scale;
 use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, SingleLine, SingleLineCommand,
@@ -26,6 +28,26 @@ pub fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>>
             )
             .skipping_quote_lines(),
         ),
+        scale(scale_pattern(), scale_factor),
+        scale(sized("WIDTH", "HEIGHT", false), |arg| {
+            Ok(Scale::WidthAndHeight(
+                number(arg, "WIDTH")?,
+                number(arg, "HEIGHT")?,
+            ))
+        }),
+        scale(width_or_height_pattern(), scale_width_or_height),
+        scale(capped("WIDTH", "width"), |arg| {
+            Ok(Scale::MaxWidth(number(arg, "WIDTH")?))
+        }),
+        scale(capped("HEIGHT", "height"), |arg| {
+            Ok(Scale::MaxHeight(number(arg, "HEIGHT")?))
+        }),
+        scale(sized("WIDTH", "HEIGHT", true), |arg| {
+            Ok(Scale::MaxWidthAndHeight(
+                number(arg, "WIDTH")?,
+                number(arg, "HEIGHT")?,
+            ))
+        }),
         single(labelled("title", "TITLE1", "TITLE2"), set_title),
         single(labelled("caption", "DISPLAY1", "DISPLAY2"), set_caption),
         Box::new(Multiline::new(
@@ -91,6 +113,137 @@ impl<D: TitledDiagram> SingleLineCommand<D> for Single<D> {
         (self.apply)(diagram, arg, location);
         Ok(())
     }
+}
+
+/// A `scale` command and how it reads the scale.
+struct ScaleCommand<D> {
+    pattern: RegexTree,
+    read: fn(&RegexResult) -> Result<Scale, CommandError>,
+    diagram: PhantomData<D>,
+}
+
+fn scale<D: TitledDiagram + 'static>(
+    pattern: RegexTree,
+    read: fn(&RegexResult) -> Result<Scale, CommandError>,
+) -> Box<dyn Command<D>> {
+    Box::new(SingleLine(ScaleCommand {
+        pattern,
+        read,
+        diagram: PhantomData,
+    }))
+}
+
+impl<D: TitledDiagram> SingleLineCommand<D> for ScaleCommand<D> {
+    fn pattern(&self) -> &RegexTree {
+        &self.pattern
+    }
+
+    fn execute_arg(&self, diagram: &mut D, _: &LineLocation, arg: &RegexResult) -> CommandResult {
+        diagram.titled().set_scale((self.read)(arg)?);
+        Ok(())
+    }
+}
+
+const NUMBER: &str = "([0-9.]+)";
+
+fn number(arg: &RegexResult, name: &str) -> Result<f64, CommandError> {
+    arg.get(name, 0)
+        .and_then(|text| text.parse().ok())
+        .ok_or_else(|| CommandError::new("Invalid number"))
+}
+
+/// `scale 1.5` or `scale 3/2`.
+fn scale_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("scale"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "SCALE", NUMBER),
+        RegexTree::optional(RegexTree::concat(vec![
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::leaf("/"),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::named(1, "DIV", NUMBER),
+        ])),
+        RegexTree::end(),
+    ])
+}
+
+fn scale_factor(arg: &RegexResult) -> Result<Scale, CommandError> {
+    let zero = || CommandError::new("Scale cannot be zero");
+    let mut factor = number(arg, "SCALE")?;
+    if factor == 0.0 {
+        return Err(zero());
+    }
+    if arg.get("DIV", 0).is_some() {
+        let divisor = number(arg, "DIV")?;
+        if divisor == 0.0 {
+            return Err(zero());
+        }
+        factor /= divisor;
+    }
+    Ok(Scale::Factor(factor))
+}
+
+/// `scale 800*600`, or with `max` before the size, `scale max 800x600`.
+fn sized(width: &'static str, height: &'static str, max: bool) -> RegexTree {
+    let mut parts = vec![
+        RegexTree::start(),
+        RegexTree::leaf("scale"),
+        RegexTree::spaces_one_or_more(),
+    ];
+    if max {
+        parts.extend([RegexTree::leaf("max"), RegexTree::spaces_one_or_more()]);
+    }
+    parts.extend([
+        RegexTree::named(1, width, NUMBER),
+        RegexTree::spaces_zero_or_more(),
+        RegexTree::leaf("[*x]"),
+        RegexTree::spaces_zero_or_more(),
+        RegexTree::named(1, height, NUMBER),
+        RegexTree::end(),
+    ]);
+    RegexTree::concat(parts)
+}
+
+/// `scale 800 width` or `scale 600 height`.
+fn width_or_height_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("scale"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "VALUE", NUMBER),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "WIDTH", "(width|height)"),
+        RegexTree::end(),
+    ])
+}
+
+fn scale_width_or_height(arg: &RegexResult) -> Result<Scale, CommandError> {
+    let size = number(arg, "VALUE")?;
+    let is_width = arg
+        .get("WIDTH", 0)
+        .is_some_and(|dimension| dimension.eq_ignore_ascii_case("width"));
+    Ok(if is_width {
+        Scale::Width(size)
+    } else {
+        Scale::Height(size)
+    })
+}
+
+/// `scale max 800 width` or `scale max 600 height`.
+fn capped(name: &'static str, dimension: &'static str) -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("scale"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::leaf("max"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, name, NUMBER),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::leaf(dimension),
+        RegexTree::end(),
+    ])
 }
 
 /// `keyword text`, `keyword: text` or `keyword "text"`, the text in group `quoted` or `plain`.
