@@ -7,10 +7,8 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use crate::java;
-use crate::pattern::{java_regex, plantuml_regex};
-use crate::style::{
-    Style, StyleBuilder, StyleParser, StyleParsingError, StyleSignature, skinparam_styles,
-};
+use crate::pattern::java_regex;
+use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
@@ -24,10 +22,9 @@ pub struct SkinParam {
 }
 
 impl SkinParam {
-    pub fn style_builder(&self) -> &StyleBuilder {
-        self.style_builder.get_or_init(|| {
-            StyleBuilder::load_skin(DEFAULT_SKIN).expect("the default skin is embedded")
-        })
+    fn style_builder(&self) -> &StyleBuilder {
+        self.style_builder
+            .get_or_init(|| StyleBuilder::load_skin(DEFAULT_SKIN))
     }
 
     fn style_builder_mut(&mut self) -> &mut StyleBuilder {
@@ -41,10 +38,7 @@ impl SkinParam {
 
     /// The rules of a `<style>` block, merged over the current ones.
     pub fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
-        let builder = self.style_builder_mut();
-        let styles = StyleParser::new(builder.counter()).parse(lines)?;
-        builder.mute(styles);
-        Ok(())
+        self.style_builder_mut().apply_style_sheet(lines)
     }
 
     /// `skinparam key value`: remembered under the normalised key, and turned into style rules.
@@ -52,19 +46,10 @@ impl SkinParam {
         for normalised in clean_for_key(key) {
             self.params
                 .insert(normalised.clone(), java::trim(value).to_owned());
-            let builder = self.style_builder_mut();
-            let styles = skinparam_styles(&normalised, value, builder.counter());
-            builder.mute(styles);
+            self.style_builder_mut().apply_skinparam(&normalised, value);
         }
         if key.eq_ignore_ascii_case("style") && value.eq_ignore_ascii_case("strictuml") {
-            let strict =
-                crate::assets::get("skin/strictuml.skin").expect("strictuml.skin is embedded");
-            let text = String::from_utf8_lossy(strict);
-            let lines: Vec<&str> = text.lines().collect();
-            let builder = self.style_builder_mut();
-            if let Ok(styles) = StyleParser::new(builder.counter()).parse(&lines) {
-                builder.mute(styles);
-            }
+            self.style_builder_mut().apply_skin("strictuml.skin");
         }
     }
 
@@ -95,15 +80,15 @@ fn clean_for_key(key: &str) -> Vec<String> {
         )
     });
     static ALIGN: LazyLock<Regex> = LazyLock::new(|| java_regex("align$", false));
-    static STEREOTYPE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"\<\<(.*?)\>\>"));
-    static STEREOTYPE_EXACT_CASE: LazyLock<Regex> =
-        LazyLock::new(|| java_regex(r"\<\<(.*?)\>\>", false));
+    // PlantUML finds the stereotypes case-insensitively and removes them case-sensitively, which is the
+    // same for a pattern without letters.
+    static STEREOTYPE: LazyLock<Regex> = LazyLock::new(|| java_regex(r"\<\<(.*?)\>\>", false));
 
     let key = java::trim(&key.to_lowercase()).replace(['_', '.'], "");
     let key = SEQUENCE.replace_all(&key, "$1");
     let key = ARROW.replace_all(&key, "arrow");
     let key = ALIGN.replace_all(&key, "alignment");
-    let without_stereotypes = STEREOTYPE_EXACT_CASE.replace_all(&key, "");
+    let without_stereotypes = STEREOTYPE.replace_all(&key, "");
     let keys: Vec<String> = STEREOTYPE
         .captures_iter(&key)
         .map(|captures| format!("{without_stereotypes}<<{}>>", &captures[1]))
@@ -146,6 +131,15 @@ mod tests {
             "#ABCDEF"
         );
         assert_eq!(skin.value("backgroundcolor").as_deref(), Some("#ABCDEF"));
+    }
+
+    #[test]
+    fn the_strictuml_style_loads_its_skin() {
+        let mut skin = SkinParam::default();
+        skin.set_param("style", "strictuml");
+        let element = StyleSignature::of(&[SName::Root, SName::Element]);
+        let shadowing = skin.merged_style(&element).unwrap();
+        assert_eq!(shadowing.value(PName::Shadowing).as_string(), "0.0");
     }
 
     #[test]

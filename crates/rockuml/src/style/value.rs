@@ -5,7 +5,7 @@ use crate::klimt::font::UFontFace;
 /// A property's value as written, for the light scheme and the `@media dark` one. Later declarations get
 /// higher priorities and win merges.
 #[derive(Clone, Debug, PartialEq)]
-pub struct DarkString {
+struct DarkString {
     light: Option<String>,
     dark: Option<String>,
     priority: i32,
@@ -150,14 +150,12 @@ impl ValueReading for Option<&Value> {
         }
     }
 
-    /// Unknown colour names read as white.
+    /// Unknown colour names read as white. PlantUML fails on a colour declared only for dark mode; here
+    /// it reads as missing.
     fn as_color(&self) -> HColor {
-        let Some(value) = self else {
+        let Some(text) = self.and_then(Value::light) else {
             return HColor::BLACK;
         };
-        let text = value
-            .light()
-            .unwrap_or_else(|| unimplemented!("a colour declared only for dark mode: {value:?}"));
         if text.eq_ignore_ascii_case("none") || text.eq_ignore_ascii_case("transparent") {
             return HColor::NONE;
         }
@@ -188,6 +186,16 @@ mod tests {
         let combined = dark.merge_with(Some(&light));
         assert_eq!(Some(&combined).as_string(), "white");
         assert_eq!(combined.priority(), 1);
+    }
+
+    #[test]
+    fn a_colour_declared_only_for_dark_mode_reads_as_missing() {
+        let dark = Value::dark("red", 1);
+        assert_eq!(Some(&dark).as_color(), HColor::BLACK);
+        assert_eq!(
+            Some(&Value::regular("red", 1)).as_color(),
+            HColor::parse("red").unwrap().unwrap()
+        );
     }
 
     #[test]

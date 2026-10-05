@@ -23,21 +23,13 @@ pub enum Challenge {
     ZeroOrMore(Box<Challenge>),
     OneOrMore(Box<Challenge>),
     Repetition(Repetition, Box<Challenge>),
-    /// Stands for both `ChallengeLazzyOneOrMore` and `ChallengeOneOrMoreUpToOldVersion`, which run the same
-    /// loop: the stop condition is only peeked at, the parser places it after this challenge as well.
+    /// `ChallengeOneOrMoreUpToOldVersion`: the stop condition is only peeked at, the parser places it after
+    /// this challenge as well.
     OneOrMoreUpTo {
         origin: Box<Challenge>,
         stop_condition: Box<Challenge>,
     },
     UpTo(Box<Challenge>),
-    LookAhead {
-        origin: Box<Challenge>,
-        positive: bool,
-    },
-    LookBehind {
-        origin: Box<Challenge>,
-        positive: bool,
-    },
 }
 
 impl Challenge {
@@ -53,7 +45,7 @@ impl Challenge {
             Self::List(challenges) => run_all(challenges, text, position),
             Self::Named { name, challenges } => {
                 let mut result = run_all(challenges, text, position)?;
-                let value = text.range(position, position + result.full_capture_length);
+                let value = position..position + result.full_capture_length;
                 result.capture.prefix_keys(name);
                 result.capture.add(name.clone(), value);
                 Some(result)
@@ -80,14 +72,6 @@ impl Challenge {
             Self::UpTo(origin) => (position..=text.length())
                 .find(|&current| origin.run_challenge(text, current).is_some())
                 .map(|current| ChallengeResult::of_length(current - position)),
-            Self::LookAhead { origin, positive } => {
-                let found = origin.run_challenge(text, position).is_some();
-                (found == *positive).then(ChallengeResult::default)
-            }
-            Self::LookBehind { origin, positive } => {
-                let found = origin.run_challenge(text.reverse(position), 0).is_some();
-                (found == *positive).then(ChallengeResult::default)
-            }
         }
     }
 }
@@ -230,27 +214,15 @@ impl Capture {
     }
 }
 
-/// The text a challenge runs over: UTF-16 units, read backwards inside a look-behind.
+/// The text a challenge runs over, as UTF-16 units.
 #[derive(Clone, Copy, Debug)]
 pub struct TextNavigator<'a> {
     content: &'a [u16],
-    reversed: bool,
 }
 
 impl<'a> TextNavigator<'a> {
     pub fn build(content: &'a [u16]) -> Self {
-        Self {
-            content,
-            reversed: false,
-        }
-    }
-
-    fn reverse(self, position: usize) -> Self {
-        assert!(!self.reversed, "a look-behind cannot contain a look-behind");
-        Self {
-            content: &self.content[..position],
-            reversed: true,
-        }
+        Self { content }
     }
 
     fn length(self) -> usize {
@@ -258,20 +230,6 @@ impl<'a> TextNavigator<'a> {
     }
 
     fn char_at(self, index: usize) -> u16 {
-        if self.reversed {
-            self.content[self.length() - index - 1]
-        } else {
-            self.content[index]
-        }
-    }
-
-    /// Where `begin..end` lies in the content. Backwards, that range holds the text reversed, but
-    /// look-arounds drop their captures so no value is ever read from it.
-    fn range(self, begin: usize, end: usize) -> Range<usize> {
-        if self.reversed {
-            self.length() - end..self.length() - begin
-        } else {
-            begin..end
-        }
+        self.content[index]
     }
 }

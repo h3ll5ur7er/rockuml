@@ -83,18 +83,14 @@ impl CharInspector {
     }
 
     fn jump(&mut self) {
-        let Some(mut line) = self.line else {
+        let Some(line) = self.line else {
             return;
         };
         self.position += 1;
-        if self.position >= self.lines[line].len() {
-            line += 1;
+        if self.position == self.lines[line].len() {
             self.position = 0;
+            self.line = Some(line + 1).filter(|&next| next < self.lines.len());
         }
-        while line < self.lines.len() && self.lines[line].is_empty() {
-            line += 1;
-        }
-        self.line = (line < self.lines.len()).then_some(line);
     }
 }
 
@@ -214,10 +210,6 @@ impl Context {
         }
     }
 
-    fn is_root(&self) -> bool {
-        self.signatures[0].is_empty()
-    }
-
     /// Opens `selectors` (comma-separated, maybe starred) inside every currently open selector.
     fn push(self, selectors: &str) -> Self {
         let selectors = selectors.strip_prefix(':').unwrap_or(selectors);
@@ -243,8 +235,18 @@ impl Context {
         }
     }
 
-    fn pop(self) -> Self {
-        *self.parent.expect("only nested contexts are closed")
+    /// Like PlantUML, keeps a context open whose first signature is empty: the root, and also a top-level
+    /// `depth(n)` block, whose closing bracket therefore closes nothing. A selector list without
+    /// selectors has no first signature, on which PlantUML fails.
+    fn close(self) -> Result<Self, StyleParsingError> {
+        let first = self
+            .signatures
+            .first()
+            .ok_or(StyleParsingError::Unexpected)?;
+        if first.is_empty() {
+            return Ok(self);
+        }
+        Ok(*self.parent.expect("the root's signature is empty"))
     }
 
     fn styles(&self) -> impl Iterator<Item = Style> {
@@ -368,9 +370,7 @@ impl<'a> StyleParser<'a> {
                 }
                 (Token::CloseBracket, _) => {
                     styles.extend(context.styles());
-                    if !context.is_root() {
-                        context = context.pop();
-                    }
+                    context = context.close()?;
                 }
                 (Token::Media(_), _) => self.dark = true,
                 (Token::Colon, Token::Text(selector)) => {
@@ -380,6 +380,8 @@ impl<'a> StyleParser<'a> {
                         return Err(StyleParsingError::Unexpected);
                     }
                     let star = if starred { "*" } else { "" };
+                    // `push` strips one colon, so passing PlantUML's along lets a quoted selector keep
+                    // a colon of its own.
                     context = context.push(&format!(":{selector}{star}"));
                     index = bracket + 1;
                 }
@@ -511,6 +513,15 @@ mod tests {
     }
 
     #[test]
+    fn a_top_level_depth_block_stays_open_like_in_plantuml() {
+        let styles = parse("depth(1) {\n}\nnode {\n FontSize 9\n}").unwrap();
+        assert_eq!(
+            styles[0].signature(),
+            &StyleSignature::empty().with_level(1).with_name(SName::Node)
+        );
+    }
+
+    #[test]
     fn malformed_sheets_are_reported_like_plantuml() {
         assert_eq!(
             parse("root {\n FontSize\n}"),
@@ -524,5 +535,6 @@ mod tests {
             parse("root {\n FontSize 1 ,{\n}"),
             Err(StyleParsingError::Invalid("bad definition"))
         );
+        assert_eq!(parse(",,{ }"), Err(StyleParsingError::Unexpected));
     }
 }

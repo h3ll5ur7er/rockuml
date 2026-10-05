@@ -453,8 +453,8 @@ impl Converter<'_> {
         let mut signature = StyleSignature::of(selector);
         let value = match self.stereotype {
             Some(stereotypes) => {
-                for stereotype in stereotypes.split('&') {
-                    signature = signature.with_stereotype(stereotype);
+                for stereotype in crate::java::split(stereotypes, "&") {
+                    signature = signature.with_stereotype(&stereotype);
                 }
                 value.with_added_priority(STEREOTYPE_PRIORITY)
             }
@@ -524,6 +524,20 @@ mod tests {
             1 + STEREOTYPE_PRIORITY
         );
         assert!(styles[0].signature().has_stereotypes());
+    }
+
+    #[test]
+    fn a_trailing_ampersand_adds_no_stereotype() {
+        let signature = |key| {
+            let mut counter = 0;
+            skinparam_styles(key, "red", &mut counter)[0]
+                .signature()
+                .clone()
+        };
+        assert_eq!(
+            signature("nodebackgroundcolor<<db&>>"),
+            signature("nodebackgroundcolor<<db>>")
+        );
     }
 
     #[test]

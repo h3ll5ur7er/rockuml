@@ -41,10 +41,6 @@ impl BlocLines {
         self.lines.last()
     }
 
-    pub fn get(&self, index: usize) -> Option<&StringLocated> {
-        self.lines.get(index)
-    }
-
     pub fn iter(&self) -> impl Iterator<Item = &StringLocated> {
         self.lines.iter()
     }

@@ -20,15 +20,12 @@ pub enum CommandControl {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct CommandError {
     pub message: String,
-    /// Ranks errors when several diagram types fail, to report the most plausible one.
-    pub score: i32,
 }
 
 impl CommandError {
     pub fn new(message: impl Into<String>) -> Self {
         Self {
             message: message.into(),
-            score: 0,
         }
     }
 }
