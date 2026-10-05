@@ -22,7 +22,19 @@ const LINE_SEPARATOR: &str = if cfg!(windows) { "\r\n" } else { "\n" };
 /// PlantUML's exit status when at least one diagram has errors.
 const DIAGRAM_ERROR_STATUS: u8 = 200;
 
+/// Deeply nested diagrams recurse deeply; the main thread's stack is only 1 MiB on Windows.
+const STACK_SIZE: usize = 64 * 1024 * 1024;
+
 fn main() -> ExitCode {
+    std::thread::Builder::new()
+        .stack_size(STACK_SIZE)
+        .spawn(run)
+        .expect("a thread can be started")
+        .join()
+        .unwrap_or(ExitCode::FAILURE)
+}
+
+fn run() -> ExitCode {
     let result = match options::parse(std::env::args().skip(1)) {
         Ok(Command::Version) => print_version(),
         Ok(Command::DecodeUrl(codes)) => decode_urls(&codes),
