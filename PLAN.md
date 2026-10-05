@@ -250,6 +250,16 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Stdlib `.spm` reader (Brotli + Java `DataInputStream` / modified-UTF-8 records), sprites and images from stdlib.
 - URL codec (`P/code`): `-encodeurl` / `-decodeurl` parity.
 - **Exit:** L0 at 100% on the corpus. `-preproc`, `-encodeurl` and `-decodeurl` match Java.
+- **Status: done.** 42/42 `-preproc` and 42/42 `-encodeurl` corpus cases match. Learned along the way:
+  - The engine is one crate with modules (`tim`, `preproc`, `json`, `color`, `deflate`, `url_code`, `java`...) rather than
+    the `ru-*` crates sketched in §4; split crates later only if compile times or reuse call for it.
+  - Java's `Deflater` output (zlib 1.3.1, level 9) is reproduced by a port of zlib's deflate: other deflaters choose
+    different matches, and the encoded source also appears in SVG/PNG metadata.
+  - Deliberate deviations: where PlantUML crashes the whole file with an unchecked exception (division by zero in an
+    assignment, `!include` of an unknown stdlib library), rockuml reports "Fatal parsing error" on the line instead.
+    `%getenv` cannot read JVM system properties other than `path.separator`/`line.separator`.
+  - The oracle runs with a fixed `en_US` locale; `%date` uses English names like it.
+  - jiff needs its bundled tz database on wasm (`tzdb-bundle-always`) for named time zones in `%date`.
 
 ### Phase 2 — Rendering foundation (~45k Java lines)
 - `ru-regex`: Pattern2 + RegexLeaf/Concat/... + ubrex.
@@ -328,7 +338,6 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Install rustup (stable + `wasm32-unknown-unknown`). Get a portable JDK zip and the 1.2026.8 jar into `tools/` for the oracle only.
-2. `git init`, create the workspace skeleton (Phase 0), write `jcompat` (UTF-16 strings, java Random, number formatting).
-3. Build the corpus and generate goldens (L0, L1, L2).
-4. Start Phase 1 (preprocessor). It is self-contained and testable with `-preproc` from day one.
+1. Phase 2: regex/command framework, `PSystemBuilder`, style/skin, klimt core and the DEBUG backend, starting with
+   error diagrams (every unported diagram type currently fails) and `@startcreole`/`@startsalt`.
+2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
