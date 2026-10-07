@@ -5,7 +5,6 @@ mod commands;
 
 use super::UnportedDiagram;
 use crate::command::Command;
-use crate::command::ParserPass;
 use crate::command::unported::{self, NotPortedCommands};
 use crate::diagram::common_commands::add_common_commands1;
 use crate::diagram::cuca_commands::note;
@@ -22,8 +21,12 @@ pub(super) fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
         commands::link_long_activity(),
         commands::note_activity(),
         commands::note_activity_multi_line(),
-        note::note_on_link(ParserPass::One),
-        note::note_on_link_multi_line(ParserPass::One),
+        unported::single_line("CommandFactoryNoteOnLink", note::note_on_link_pattern()).boxed(),
+        Box::new(unported::multi_line(
+            "CommandFactoryNoteOnLink",
+            note::note_on_link_multi_line_pattern(),
+            &note::END_NOTE_ON_LINK,
+        )),
         if_command(),
         else_command(),
         endif(),

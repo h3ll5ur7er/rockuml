@@ -7,7 +7,7 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
-use super::cuca::CucaDiagram;
+use super::cuca::{CucaDiagram, EntityDiagram};
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
@@ -60,9 +60,9 @@ impl CommandFactory for StateDiagramFactory {
             commands::end_state(),
             commands::add_field(),
             commands::concurrent_state(),
-            note::note_on_entity_multi_line(code_for_state(), ParserPass::Three, true),
-            note::note_on_entity_multi_line(code_for_state(), ParserPass::Three, false),
-            note::note_on_entity(code_for_state(), ParserPass::Three),
+            note::note_on_entity_multi_line(code_for_state, ParserPass::Three, true),
+            note::note_on_entity_multi_line(code_for_state, ParserPass::Three, false),
+            note::note_on_entity(code_for_state, ParserPass::Three),
             note::note_on_link(ParserPass::Two),
             note::note_on_link_multi_line(ParserPass::Two),
             cuca_commands::url(),
@@ -128,15 +128,15 @@ fn concurrent_region(cuca: &CucaDiagram, entity: EntityId) -> Option<EntityId> {
     None
 }
 
-impl TitledDiagram for StateDiagram {
-    fn titled(&mut self) -> &mut Titled {
-        &mut self.cuca.titled
+impl EntityDiagram for StateDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
     }
 }
 
-impl super::cuca::EntityDiagram for StateDiagram {
-    fn cuca(&mut self) -> &mut CucaDiagram {
-        &mut self.cuca
+impl TitledDiagram for StateDiagram {
+    fn titled(&mut self) -> &mut Titled {
+        &mut self.cuca.titled
     }
 }
 

@@ -1,10 +1,18 @@
 //! The drawings of single entities, which the layout places as nodes (PlantUML's `svek.image` package).
 
 mod entity_image_description;
+mod entity_image_note;
+mod entity_image_note_link;
 mod entity_image_port;
+mod entity_image_tips;
+mod opale;
 
 pub(crate) use entity_image_description::EntityImageDescription;
+pub(crate) use entity_image_note::{EntityImageNote, OpaleLink};
+pub(crate) use entity_image_note_link::EntityImageNoteLink;
 pub(crate) use entity_image_port::EntityImagePort;
+pub(crate) use entity_image_tips::EntityImageTips;
+pub(crate) use opale::{get_corner, get_polygon_normal};
 
 use crate::abel::Entity;
 use crate::diagram::cuca::CucaDiagram;

@@ -333,10 +333,6 @@ fn the_commands_build_plantumls_model() {
     assert_eq!(cases.len(), 68);
     let mut failures = Vec::new();
     for (case, (expected, _)) in &cases {
-        // The note commands are ported with the notes.
-        if expected.contains(" NOTE ") {
-            continue;
-        }
         let actual = dump_model(&read(case));
         if &actual != expected {
             failures.push(format!(

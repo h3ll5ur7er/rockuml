@@ -9,7 +9,7 @@ use super::builder::CommandFactory;
 use super::common_commands::{
     add_common_commands2, add_common_hides, add_common_scale_commands, add_title_commands,
 };
-use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram};
+use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram, EntityDiagram};
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
@@ -85,16 +85,16 @@ impl CommandFactory for ClassDiagramFactory {
             commands::stereotype(),
             commands::link_class(),
             commands::link_lollipop(),
-            commands::tip_on_entity_multi_line_with_bracket(),
-            commands::tip_on_entity_multi_line(),
-            note::note_on_entity(code_for_class(), ParserPass::One),
+            note::tip_on_entity_multi_line(true),
+            note::tip_on_entity_multi_line(false),
+            note::note_on_entity(code_for_class, ParserPass::One),
             cuca_commands::url(),
-            note::note_on_entity_multi_line(code_for_class(), ParserPass::One, true),
-            note::note_on_entity_multi_line(code_for_class(), ParserPass::One, false),
+            note::note_on_entity_multi_line(code_for_class, ParserPass::One, true),
+            note::note_on_entity_multi_line(code_for_class, ParserPass::One, false),
             note::note_multi_line(),
             note::note_on_link(ParserPass::One),
             note::note_on_link_multi_line(ParserPass::One),
-            commands::constraint_on_links(),
+            note::constraint_on_links(),
             commands::diamond_association(),
             cuca_commands::create_element_multilines_type0(),
             cuca_commands::create_element_multilines_type1(),
@@ -143,15 +143,15 @@ impl AbstractDiagram for ClassDiagram {
     }
 }
 
-impl TitledDiagram for ClassDiagram {
-    fn titled(&mut self) -> &mut Titled {
-        &mut self.diagram.cuca.titled
+impl EntityDiagram for ClassDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.diagram.cuca
     }
 }
 
-impl super::cuca::EntityDiagram for ClassDiagram {
-    fn cuca(&mut self) -> &mut CucaDiagram {
-        &mut self.diagram.cuca
+impl TitledDiagram for ClassDiagram {
+    fn titled(&mut self) -> &mut Titled {
+        &mut self.diagram.cuca.titled
     }
 }
 
