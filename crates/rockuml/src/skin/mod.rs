@@ -178,7 +178,7 @@ impl SkinParam {
     /// `getAsInt`: the value if it is only digits.
     fn as_int(&self, key: &str) -> Option<i32> {
         self.value(key)
-            .filter(|value| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit()))
+            .filter(|value| is_digits(value))
             .and_then(|value| value.parse().ok())
     }
 
@@ -301,7 +301,7 @@ impl SkinParam {
     /// `roundCorner` when written in digits, else 0 (`getRoundCorner(CornerParam.DEFAULT, null)`).
     pub(crate) fn get_round_corner(&self) -> f64 {
         self.value("roundcorner")
-            .filter(|value| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit()))
+            .filter(|value| is_digits(value))
             .and_then(|value| value.parse().ok())
             .unwrap_or(0.0)
     }
@@ -321,9 +321,13 @@ impl SkinParam {
     }
 }
 
+/// `isDigits`: ASCII digits only, at least one.
+fn is_digits(value: &str) -> bool {
+    !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit())
+}
+
 /// `\d+(\.\d+)?`.
 fn is_int_or_decimal(value: &str) -> bool {
-    let is_digits = |part: &str| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit());
     match value.split_once('.') {
         Some((int, decimals)) => is_digits(int) && is_digits(decimals),
         None => is_digits(value),

@@ -1,7 +1,7 @@
 //! Fonts set by legacy skin parameters like `classStereotypeFontSize`, for the texts that styles do not
 //! cover (PlantUML's `FontParam` and `SkinParam.getFont`).
 
-use super::SkinParam;
+use super::{SkinParam, is_digits};
 use crate::color::HColor;
 use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
 use crate::stereo::Stereotype;
@@ -72,8 +72,6 @@ impl SkinParam {
 
     /// `getFont`: the skin parameters of the font, then the default font's, then the parameter's own.
     pub(crate) fn get_font(&self, param: FontParam, stereotype: Option<&Stereotype>) -> UFont {
-        let is_digits =
-            |value: &String| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit());
         let family = self
             .font_value(param, "fontname", stereotype)
             .or_else(|| {
@@ -104,8 +102,8 @@ impl SkinParam {
             );
         let size = self
             .font_value(param, "fontsize", stereotype)
-            .filter(is_digits)
-            .or_else(|| self.value("defaultfontsize").filter(is_digits))
+            .filter(|value| is_digits(value))
+            .or_else(|| self.value("defaultfontsize").filter(|value| is_digits(value)))
             .and_then(|value| value.parse().ok())
             .unwrap_or_else(|| param.default_size());
         UFont::new(&family, face, size)
