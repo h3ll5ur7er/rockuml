@@ -8,9 +8,10 @@ use std::collections::HashSet;
 
 use crate::cgraph::attr::agget;
 use crate::cgraph::graph::agnnodes;
-use crate::cgraph::obj::{agcontains, agraphof, agroot};
+use crate::cgraph::obj::{agcontains, agroot};
 use crate::cgraph::{M_aghead, M_agtail, aghead, agtail};
 use crate::common::ns::rank;
+use crate::common::splines::selfRightSpace;
 use crate::common::utils::late_int;
 use crate::core::Globals;
 use crate::core::consts::{
@@ -155,28 +156,6 @@ fn allocate_aux_edges(zz: &mut Globals, g: GraphId) {
         alloc_elist(&mut zz.edge_lists, 3, &mut out);
         zz.nd_mut(n).in_ = in_;
         zz.nd_mut(n).out = out;
-    }
-}
-
-/// `selfRightSpace` (`common/splines.c`): the room a self loop takes right of its node.
-fn selfRightSpace(zz: &Globals, e: EdgeId) -> i32 {
-    let info = zz.ed(e);
-    let (tp, hp) = (info.tail_port, info.head_port);
-    if (!tp.defined && !hp.defined)
-        || ((tp.side & (1 << 3)) == 0
-            && (hp.side & (1 << 3)) == 0
-            && (tp.side != hp.side || (tp.side & ((1 << 2) | (1 << 0))) == 0))
-    {
-        let mut sw = 18;
-        if let Some(l) = info.label {
-            let dimen = zz.textlabels[l].dimen;
-            let flip = zz.gd(agraphof(zz, aghead(zz, e))).GD_flip();
-            let label_width = if flip { dimen.y } else { dimen.x };
-            sw = (f64::from(sw) + label_width) as i32;
-        }
-        sw
-    } else {
-        0
     }
 }
 

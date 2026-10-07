@@ -9,16 +9,17 @@ use crate::cgraph::graph::agnnodes;
 use crate::cgraph::node::{agfstnode, agnxtnode};
 use crate::cgraph::obj::agroot;
 use crate::common::geom::ccwrotatepf;
-use crate::common::utils::{DIST2, dotneato_closest, gv_nodesize, late_bool, updateBB};
+use crate::common::splines::{edgeMidpoint, getsplinepoints};
+use crate::common::utils::{gv_nodesize, late_bool, updateBB};
 use crate::core::Globals;
 use crate::core::consts::{
-    EDGE_LABEL, EDGE_XLABEL, ET_CURVED, ET_NONE, ET_SPLINE, GRAPH_LABEL, HEAD_LABEL, INT_MAX,
-    LABEL_AT_LEFT, LABEL_AT_RIGHT, LABEL_AT_TOP, LEFT_IX, MILLIPOINT, NODE_XLABEL, NORMAL,
-    RANKDIR_BT, RANKDIR_LR, RANKDIR_RL, RANKDIR_TB, RIGHT_IX, TAIL_LABEL, TOP_IX,
+    EDGE_LABEL, EDGE_XLABEL, ET_NONE, GRAPH_LABEL, HEAD_LABEL, INT_MAX, LABEL_AT_LEFT,
+    LABEL_AT_RIGHT, LABEL_AT_TOP, LEFT_IX, NODE_XLABEL, RANKDIR_BT, RANKDIR_LR, RANKDIR_RL,
+    RANKDIR_TB, RIGHT_IX, TAIL_LABEL, TOP_IX,
 };
 use crate::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
 use crate::core::jmath::{INCH2PS, max, min};
-use crate::h::{boxf, pointf, pointfof, splines};
+use crate::h::{boxf, pointf, pointfof};
 use crate::label::{label_params_t, object_t, placeLabels, xlabel_t};
 
 /// `State` once dot has routed the edges.
@@ -134,7 +135,7 @@ fn centerPt(xlp: &xlabel_t) -> pointf {
 
 /// `edgeTailpoint`: where the edge's drawing starts.
 fn edgeTailpoint(zz: &Globals, e: EdgeId) -> pointf {
-    let spl = getsplinepoints(zz, e).expect("getsplinepoints: no spline points");
+    let spl = zz.splines[getsplinepoints(zz, e).expect("getsplinepoints: no spline points")];
     let bez = zz.beziers.get(spl.list.expect("spline list"), 0);
     if bez.sflag != 0 {
         bez.sp
@@ -145,7 +146,7 @@ fn edgeTailpoint(zz: &Globals, e: EdgeId) -> pointf {
 
 /// `edgeHeadpoint`: where the edge's drawing ends.
 fn edgeHeadpoint(zz: &Globals, e: EdgeId) -> pointf {
-    let spl = getsplinepoints(zz, e).expect("getsplinepoints: no spline points");
+    let spl = zz.splines[getsplinepoints(zz, e).expect("getsplinepoints: no spline points")];
     let bez = zz.beziers.get(spl.list.expect("spline list"), spl.size - 1);
     if bez.eflag != 0 {
         bez.ep
@@ -515,54 +516,4 @@ fn place_graph_label(zz: &mut Globals, g: GraphId) {
     for c in 1..=zz.gd(g).n_cluster {
         place_graph_label(zz, GD_clust(zz, g, c));
     }
-}
-
-// What follows belongs to splines.c; postproc.c is its only caller in the phases ported so far.
-
-/// `getsplinepoints` (`splines.c`): the edge's splines, or those of the edge it stands for.
-fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<splines> {
-    let mut le = e;
-    loop {
-        if let Some(sp) = zz.ed(le).spl {
-            return Some(zz.splines[sp]);
-        }
-        if zz.ed(le).edge_type == NORMAL {
-            return None;
-        }
-        le = zz.ed(le).to_orig.expect("ED_to_orig");
-    }
-}
-
-/// `edgeMidpoint` (`splines.c`): the point of a spline edge closest to the middle of its end points.
-fn edgeMidpoint(zz: &Globals, g: GraphId, e: EdgeId) -> pointf {
-    let et = zz.gd(g).flags & (7 << 1);
-    let spl = zz.splines[zz.ed(e).spl.expect("ED_spl")];
-    let (p, q) = endPoints(zz, &spl);
-    if DIST2(p, q) < MILLIPOINT * MILLIPOINT {
-        unimplemented!("edgeMidpoint of a degenerate spline");
-    } else if et == ET_SPLINE || et == ET_CURVED {
-        let d = pointf {
-            x: (q.x + p.x) / 2.0,
-            y: (p.y + q.y) / 2.0,
-        };
-        dotneato_closest(zz, &spl, d)
-    } else {
-        unimplemented!("edgeMidpoint of a polyline");
-    }
-}
-
-/// `endPoints` (`splines.c`): the first and the last point of the splines.
-fn endPoints(zz: &Globals, spl: &splines) -> (pointf, pointf) {
-    let list = spl.list.expect("spline list");
-    let bz = zz.beziers.get(list, 0);
-    if bz.sflag != 0 {
-        unimplemented!("endPoints with a start arrow");
-    }
-    let p = zz.pointfs.get(bz.list.expect("bezier points"), 0);
-    let bz = zz.beziers.get(list, spl.size - 1);
-    if bz.eflag != 0 {
-        unimplemented!("endPoints with an end arrow");
-    }
-    let q = zz.pointfs.get(bz.list.expect("bezier points"), bz.size - 1);
-    (p, q)
 }

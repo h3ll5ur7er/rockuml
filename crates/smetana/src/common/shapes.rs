@@ -326,7 +326,7 @@ fn invflip_angle(angle: f64, rankdir: i32) -> f64 {
 /// `compassPort`: fills `pp` for the compass point `compass` on box `bp` (the node's box if `None`). Returns
 /// whether the compass point was not recognized. Smetana never clips to the shape here (`ictxt` is NULL).
 #[allow(clippy::too_many_lines, reason = "one Graphviz function")]
-fn compassPort(
+pub(crate) fn compassPort(
     zz: &Globals,
     n: NodeId,
     bp: Option<boxf>,

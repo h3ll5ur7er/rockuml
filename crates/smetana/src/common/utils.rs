@@ -5,6 +5,7 @@ use crate::cgraph::attr::{agget, agxget};
 use crate::cgraph::obj::agraphof;
 use crate::cgraph::refstr::aghtmlstr;
 use crate::cgraph::{Agobj, aghead, agtail};
+use crate::common::geom::DIST2;
 use crate::common::labels::make_label;
 use crate::common::shapes::{EN_shape_kind, bind_shape, initfn, portfn, shapeOf};
 use crate::core::Globals;
@@ -479,7 +480,7 @@ pub(crate) fn late_bool(attr: Option<SymId>, def: i32) -> bool {
 
 /// `dotneato_closest` (`utils.c`): the point of the bezier segment nearest to `pt`, found by bisection. Smetana
 /// only implements the first step, so it throws unless that step already decides.
-pub(crate) fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> pointf {
+pub fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> pointf {
     let list = spl.list.expect("spline list");
     let mut besti = -1;
     let mut bestj = -1;
@@ -507,40 +508,43 @@ pub(crate) fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> point
     let dlow2 = DIST2(c[0], pt);
     let dhigh2 = DIST2(c[3], pt);
     // The first step of the bisection over [0, 1].
-    let pt2 = Bezier(&c, 0.5);
+    let pt2 = Bezier(&c, 3, 0.5, None, None);
     if (dlow2 - dhigh2).abs() < 1.0 {
         return pt2;
     }
     unimplemented!("dotneato_closest beyond its first bisection step")
 }
 
-/// `Bezier` (`utils.c`) of degree 3, without the halves: the point at `t` by de Casteljau's algorithm.
-pub(crate) fn Bezier(V: &[pointf; 4], t: f64) -> pointf {
-    const W: usize = 5 + 1;
-    let degree: usize = 3;
-    let mut tx = [0.0; W * W];
-    let mut ty = [0.0; W * W];
-    for j in 0..=degree {
-        tx[j] = V[j].x;
-        ty[j] = V[j].y;
-    }
+const W_DEGREE: usize = 5;
+
+/// `Bezier`: the point at `t` of the Bézier curve with control points `V[0..=degree]`, filling in the control
+/// points of the two halves split there if `Left` or `Right` is given.
+pub fn Bezier(
+    V: &[pointf],
+    degree: usize,
+    t: f64,
+    Left: Option<&mut [pointf]>,
+    Right: Option<&mut [pointf]>,
+) -> pointf {
+    let mut Vtemp = [[pointf::default(); W_DEGREE + 1]; W_DEGREE + 1];
+    Vtemp[0][..=degree].copy_from_slice(&V[..=degree]);
     for i in 1..=degree {
         for j in 0..=degree - i {
-            tx[i * W + j] = (1.0 - t) * tx[(i - 1) * W + j] + t * tx[(i - 1) * W + j + 1];
-            ty[i * W + j] = (1.0 - t) * ty[(i - 1) * W + j] + t * ty[(i - 1) * W + j + 1];
+            Vtemp[i][j].x = (1.0 - t) * Vtemp[i - 1][j].x + t * Vtemp[i - 1][j + 1].x;
+            Vtemp[i][j].y = (1.0 - t) * Vtemp[i - 1][j].y + t * Vtemp[i - 1][j + 1].y;
         }
     }
-    pointf {
-        x: tx[degree * W],
-        y: ty[degree * W],
+    if let Some(Left) = Left {
+        for j in 0..=degree {
+            Left[j] = Vtemp[j][0];
+        }
     }
-}
-
-/// `DIST2`.
-pub(crate) fn DIST2(p: pointf, q: pointf) -> f64 {
-    let a = p.x - q.x;
-    let b = p.y - q.y;
-    a * a + b * b
+    if let Some(Right) = Right {
+        for j in 0..=degree {
+            Right[j] = Vtemp[degree - j][j];
+        }
+    }
+    Vtemp[degree][0]
 }
 
 #[cfg(test)]
