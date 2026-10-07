@@ -1,0 +1,7 @@
+@startuml
+Bob -[#red]> Alice : hello
+Alice -[#0000FF]->Bob : ok
+Bob -[#green,bold]> Alice : bold green
+Alice -[dotted]> Bob : dotted
+Bob -[#FF8800,dashed,thickness=3]> Alice : thick dashed
+@enduml

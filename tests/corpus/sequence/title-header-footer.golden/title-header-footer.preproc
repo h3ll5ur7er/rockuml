@@ -1,0 +1,11 @@
+@startuml
+header Page Header
+footer Page %page% of %lastpage%
+title Example Title
+caption figure 1
+legend right
+  Short legend
+endlegend
+Alice -> Bob : message 1
+Alice -> Bob : message 2
+@enduml

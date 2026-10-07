@@ -1,0 +1,8 @@
+@startuml
+participant Alice
+participant Bob
+Alice -> Alice : This is a signal to self.\nIt also demonstrates\nmultiline \ntext
+Bob <- Bob : left self
+Alice -> Alice
+Bob --> Bob : dashed self
+@enduml

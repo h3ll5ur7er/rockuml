@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob : create
+activate Bob
+Bob -> Alice : bye
+destroy Bob
+@enduml

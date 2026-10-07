@@ -1,0 +1,346 @@
+DPI: 96
+dimension: [ 688.4850 ; 313.0000 ]
+scaleFactor: 1.0000
+seed: 2679111855601948768
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 245.8729 ; 39.0000 ]
+  pt2: [ 253.8729 ; 274.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 249.3729 ; 39.0000 ]
+  pt2: [ 249.3729 ; 274.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 324.7041 ; 39.0000 ]
+  pt2: [ 332.7041 ; 274.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 328.2041 ; 39.0000 ]
+  pt2: [ 328.2041 ; 274.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 205.3943 ; 10.0000 ]
+  pt2: [ 293.3516 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 212.3943 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 303.3516 ; 10.0000 ]
+  pt2: [ 353.0566 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 310.3516 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 205.3943 ; 274.0000 ]
+  pt2: [ 293.3516 ; 302.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 212.3943 ; 291.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 303.3516 ; 274.0000 ]
+  pt2: [ 353.0566 ; 302.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 310.3516 ; 291.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 229.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 229.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 219.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ff00ffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 219.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 219.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 229.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 219.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ff00ffff
+
+TEXT:
+  text: This is displayed
+  position: [ 21.0000 ; 67.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: left of Alice.
+  position: [ 21.0000 ; 80.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 419.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 419.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 409.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 409.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 409.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 419.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 409.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: This is displayed right of Alice.
+  position: [ 260.3729 ; 113.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 342.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 342.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 332.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 332.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 332.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 342.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 332.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: This is displayed over Alice.
+  position: [ 83.8809 ; 146.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 279.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 279.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffaaaa
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 269.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 279.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffaaaa
+
+TEXT:
+  text: This is displayed
+  position: [ 155.1791 ; 179.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  over Bob and Alice.
+  position: [ 155.1791 ; 192.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 49.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 339.0000 ; 49.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 339.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 329.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 329.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 329.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 339.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 329.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: This is yet another
+  position: [ 124.9082 ; 225.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: example of
+  position: [ 124.9082 ; 238.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: a long note.
+  position: [ 124.9082 ; 251.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,5 @@
+@startuml
+Alice -> Bob : This is a rather long message that will make the space between participants grow quite a lot
+Bob -> Charlie : short
+Alice -> Charlie : spans two participants with a long text
+@enduml

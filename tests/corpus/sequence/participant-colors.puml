@@ -1,0 +1,9 @@
+@startuml
+participant Alice #lightblue
+participant Bob #red/yellow
+actor Carol #technology
+database Db #pink;line:red;line.bold;text:red
+Alice -> Bob
+Bob -> Carol
+Carol -> Db
+@enduml

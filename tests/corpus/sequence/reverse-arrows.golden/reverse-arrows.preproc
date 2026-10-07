@@ -1,0 +1,6 @@
+@startuml
+Alice <- Bob : reversed
+Alice <-- Bob : reversed dashed
+Alice <<- Bob : async
+Alice o<- Bob
+@enduml

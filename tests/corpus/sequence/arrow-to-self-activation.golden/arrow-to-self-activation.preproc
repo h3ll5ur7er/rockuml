@@ -1,0 +1,6 @@
+@startuml
+Alice -> Alice ++ : start work
+Alice -> Bob : call
+Bob --> Alice
+Alice -> Alice -- : done
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+actor A
+boundary B
+control C
+entity E
+database D
+collections Co
+queue Q
+A -> B
+B -> C
+C -> E
+E -> D
+D -> Co
+Co -> Q
+Q -> A
+@enduml

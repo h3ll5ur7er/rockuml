@@ -1,0 +1,8 @@
+@startuml
+participant Alice [[http://plantuml.com]]
+participant "Bob" [[http://plantuml.com/sequence-diagram]]
+Alice -> Bob : [[http://plantuml.com/start{tooltip} hello]]
+url of Alice is [[http://www.google.com]]
+Bob -> Alice : [[http://example.com]]
+note right : see [[http://example.com/note note link]]
+@enduml

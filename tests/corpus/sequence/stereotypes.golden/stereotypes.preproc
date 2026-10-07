@@ -1,0 +1,7 @@
+@startuml
+participant "Bob" as Bob << Generated >>
+participant Alice << (C,#ADD1B2) Testable >>
+participant Carl << (D,orchid) >>
+Bob -> Alice : First message
+Alice -> Carl
+@enduml

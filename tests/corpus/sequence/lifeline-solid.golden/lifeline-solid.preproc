@@ -1,0 +1,7 @@
+@startuml
+skinparam lifelineStrategy solid
+Alice -> Bob : hello
+activate Bob
+Bob -> Alice : ok
+deactivate Bob
+@enduml

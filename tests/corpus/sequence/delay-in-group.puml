@@ -1,0 +1,8 @@
+@startuml
+Alice -> Bob : start
+group waiting
+  ...
+  Bob -> Alice : later
+  ...10 minutes...
+end
+@enduml
