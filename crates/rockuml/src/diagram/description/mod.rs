@@ -175,6 +175,10 @@ impl TitledDiagram for DescriptionDiagram {
     fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
         Some(&mut self.cuca)
     }
+
+    fn description_diagram(&mut self) -> Option<&mut DescriptionDiagram> {
+        Some(self)
+    }
 }
 
 impl Diagram for DescriptionDiagram {

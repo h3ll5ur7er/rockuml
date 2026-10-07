@@ -13,7 +13,7 @@ use super::builder::CommandFactory;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
-use crate::abel::DisplayPositioned;
+use crate::abel::{DisplayPositioned, EntityPortion};
 use crate::color::{Colors, HColor};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, CommandError, CommandResult};
@@ -58,6 +58,8 @@ pub(crate) struct SequenceDiagram {
     current_englober: Option<usize>,
     autoactivate: bool,
     link_anchors: Vec<LinkAnchor>,
+    /// What `hide stereotype` hid of every participant, as a set.
+    hidden_portions: Vec<EntityPortion>,
 }
 
 /// `{start} <-> {end} : text`, a duration between two anchored messages.
@@ -70,6 +72,10 @@ pub(crate) struct LinkAnchor {
 impl TitledDiagram for SequenceDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.titled
+    }
+
+    fn sequence_diagram(&mut self) -> Option<&mut SequenceDiagram> {
+        Some(self)
     }
 }
 
@@ -103,6 +109,7 @@ impl CommandFactory for SequenceDiagramFactory {
             current_englober: None,
             autoactivate: false,
             link_anchors: Vec::new(),
+            hidden_portions: Vec::new(),
         }
     }
 
@@ -126,6 +133,19 @@ impl AbstractDiagram for SequenceDiagram {
 }
 
 impl SequenceDiagram {
+    /// `hide` or `show` of portions of every participant (`hideOrShow`).
+    pub(crate) fn hide_or_show(&mut self, portions: &[EntityPortion], show: bool) {
+        self.hidden_portions
+            .retain(|hidden| !portions.contains(hidden));
+        if !show {
+            self.hidden_portions.extend_from_slice(portions);
+        }
+    }
+
+    pub(crate) fn is_hidden_portion(&self, portion: EntityPortion) -> bool {
+        self.hidden_portions.contains(&portion)
+    }
+
     pub(crate) fn participant(&self, id: ParticipantId) -> &Participant {
         &self.participants[id.0]
     }

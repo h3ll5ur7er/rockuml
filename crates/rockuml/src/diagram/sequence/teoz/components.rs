@@ -3,6 +3,7 @@
 
 use std::rc::Rc;
 
+use crate::abel::EntityPortion;
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
@@ -51,8 +52,10 @@ fn participant_display(diagram: &SequenceDiagram, participant: ParticipantId) ->
         model.display.clone()
     };
     match &model.stereotype {
-        Some((stereotype, top)) => display.with_stereotype(stereotype.clone(), *top),
-        None => display,
+        Some((stereotype, top)) if !diagram.is_hidden_portion(EntityPortion::Stereotype) => {
+            display.with_stereotype(stereotype.clone(), *top)
+        }
+        _ => display,
     }
 }
 

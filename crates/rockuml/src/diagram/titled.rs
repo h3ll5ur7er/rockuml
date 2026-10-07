@@ -16,6 +16,8 @@ use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::sprite::SpriteContainer;
 
 use super::cuca::CucaDiagram;
+use super::description::DescriptionDiagram;
+use super::sequence::SequenceDiagram;
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
@@ -124,6 +126,16 @@ pub(super) trait TitledDiagram {
     /// The entities of a diagram that has them, whose names `set separator` splits.
     fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
         self.class_or_object_diagram()
+    }
+
+    /// A description diagram, which applies `hide` and `show` by gender its own way.
+    fn description_diagram(&mut self) -> Option<&mut DescriptionDiagram> {
+        None
+    }
+
+    /// A sequence diagram, whose participants `hide stereotype` applies to.
+    fn sequence_diagram(&mut self) -> Option<&mut SequenceDiagram> {
+        None
     }
 
     /// `hide empty description`, which only state diagrams heed.

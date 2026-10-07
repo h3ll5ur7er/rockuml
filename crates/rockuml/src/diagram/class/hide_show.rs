@@ -1,12 +1,12 @@
 //! `hide` and `show` of portions of entities, by type, stereotype or name, and of members by visibility
 //! (PlantUML's `CommandHideShowByGender` and `CommandHideShowByVisibility`). Every diagram reads these lines;
-//! class and object diagrams apply them.
+//! class, object, description and sequence diagrams apply them.
 
 use super::ClassDiagram;
 use crate::abel::{EntityGender, EntityPortion, LeafType};
-use crate::command::unported::NotPortedCommands;
 use crate::command::{Command, CommandError, CommandResult, PatternCommand, SingleLine};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
+use crate::diagram::description::DescriptionDiagram;
 use crate::diagram::titled::TitledDiagram;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::skin::visibility_modifier::VisibilityModifier;
@@ -39,7 +39,13 @@ pub(in crate::diagram) fn hide_show_by_gender<D: TitledDiagram + 'static>() -> B
             if let Some(cuca) = diagram.class_or_object_diagram() {
                 return execute_class_diagram(cuca, arg);
             }
-            diagram.command_not_ported("CommandHideShowByGender");
+            if let Some(description) = diagram.description_diagram() {
+                return execute_description_diagram(description, arg);
+            }
+            if let Some(sequence) = diagram.sequence_diagram() {
+                let portion = get_entity_portion(arg.get("PORTION", 0).unwrap_or_default());
+                sequence.hide_or_show(&portion.as_set(), is_show(arg));
+            }
             Ok(())
         },
     )))
@@ -66,6 +72,38 @@ fn empty_by_gender(portion: EntityPortion) -> EntityGender {
 
 fn and(gender1: EntityGender, gender2: EntityGender) -> EntityGender {
     EntityGender::And(Box::new(gender1), Box::new(gender2))
+}
+
+fn is_show(arg: &RegexResult) -> bool {
+    arg.get("COMMAND", 0)
+        .is_some_and(|command| command.eq_ignore_ascii_case("show"))
+}
+
+fn execute_description_diagram(
+    diagram: &mut DescriptionDiagram,
+    arg: &RegexResult,
+) -> CommandResult {
+    let portion = get_entity_portion(arg.get("PORTION", 0).unwrap_or_default());
+    let cuca = diagram.cuca();
+    let gender = match arg.get("GENDER", 0) {
+        None => EntityGender::All,
+        Some(arg1) => match class_type(arg1) {
+            Some(leaf_type) => EntityGender::ByEntityType(leaf_type),
+            None if arg1.starts_with("<<") => EntityGender::ByStereotype(arg1.to_owned()),
+            None => {
+                let quark = cuca.quark_in_context(true, DescriptionDiagram::clean_id(arg1))?;
+                let Some(entity) = cuca.quark(quark).get_data() else {
+                    return Err(CommandError::new(format!(
+                        "No such element {}",
+                        cuca.quark(quark).get_name()
+                    )));
+                };
+                EntityGender::ByEntityAlone(entity)
+            }
+        },
+    };
+    cuca.hide_or_show(&gender, portion, is_show(arg));
+    Ok(())
 }
 
 fn execute_class_diagram(cuca: &mut CucaDiagram, arg: &RegexResult) -> CommandResult {
@@ -101,9 +139,7 @@ fn execute_class_diagram(cuca: &mut CucaDiagram, arg: &RegexResult) -> CommandRe
     if !cuca.entity(current_group).is_root() {
         gender = and(gender, EntityGender::ByPackage(current_group));
     }
-    let show = arg
-        .get("COMMAND", 0)
-        .is_some_and(|command| command.eq_ignore_ascii_case("show"));
+    let show = is_show(arg);
     if empty_members {
         for portion in [EntityPortion::Field, EntityPortion::Method] {
             let gender = and(gender.clone(), empty_by_gender(portion));
@@ -189,10 +225,7 @@ pub(in crate::diagram) fn hide_show_by_visibility<D: TitledDiagram + 'static>()
                     visibilities.push(method);
                 }
             }
-            let show = arg
-                .get("COMMAND", 0)
-                .is_some_and(|command| command.eq_ignore_ascii_case("show"));
-            cuca.hide_or_show_visibility_modifier(&visibilities, show);
+            cuca.hide_or_show_visibility_modifier(&visibilities, is_show(arg));
             Ok(())
         },
     )))
