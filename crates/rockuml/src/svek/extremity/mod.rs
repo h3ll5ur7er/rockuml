@@ -43,6 +43,8 @@ pub(crate) use plus::ExtremityFactoryPlus;
 pub(crate) use square::ExtremityFactorySquare;
 pub(crate) use triangle::ExtremityFactoryTriangle;
 
+use crate::color::HColor;
+use crate::decoration::LinkDecor;
 use crate::klimt::UDrawable;
 use crate::klimt::affine::XAffineTransform;
 use crate::klimt::geom::XPoint2D;
@@ -61,6 +63,43 @@ pub(crate) trait Extremity: UDrawable {
 pub(crate) trait ExtremityFactory {
     /// The decoration at `p0`, the end of a link arriving there along `angle` radians.
     fn create_udrawable(&self, p0: XPoint2D, angle: f64) -> Box<dyn Extremity>;
+}
+
+impl LinkDecor {
+    /// What draws the decoration; `None` draws nothing. Hollow decorations are filled with `background_color`
+    /// (`getExtremityFactoryComplete`).
+    pub(crate) fn get_extremity_factory_complete(
+        self,
+        background_color: HColor,
+    ) -> Option<Box<dyn ExtremityFactory>> {
+        let bg = background_color;
+        Some(match self {
+            Self::Extends => Box::new(ExtremityFactoryTriangle::new(18.0, 6.0, 18.0)),
+            Self::Plus => Box::new(ExtremityFactoryPlus::new(bg)),
+            Self::Redefines => Box::new(ExtremityFactoryExtendsLike::new(bg, false)),
+            Self::DefinedBy => Box::new(ExtremityFactoryExtendsLike::new(bg, true)),
+            Self::HalfArrowUp => Box::new(ExtremityFactoryHalfArrow::new(1)),
+            Self::HalfArrowDown => Box::new(ExtremityFactoryHalfArrow::new(-1)),
+            Self::ArrowTriangle => Box::new(ExtremityFactoryTriangle::new(8.0, 3.0, 8.0)),
+            Self::Crowfoot => Box::new(ExtremityFactoryCrowfoot),
+            Self::CircleCrowfoot => Box::new(ExtremityFactoryCircleCrowfoot),
+            Self::LineCrowfoot => Box::new(ExtremityFactoryLineCrowfoot),
+            Self::CircleLine => Box::new(ExtremityFactoryCircleLine),
+            Self::DoubleLine => Box::new(ExtremityFactoryDoubleLine),
+            Self::CircleCross => Box::new(ExtremityFactoryCircleCross::new(bg)),
+            Self::Arrow => Box::new(ExtremityFactoryArrow),
+            Self::ArrowAndCircle => Box::new(ExtremityFactoryArrowAndCircle::new(bg)),
+            Self::NotNavigable => Box::new(ExtremityFactoryNotNavigable),
+            Self::Aggregation => Box::new(ExtremityFactoryDiamond::new(false)),
+            Self::Composition => Box::new(ExtremityFactoryDiamond::new(true)),
+            Self::Circle => Box::new(ExtremityFactoryCircle::new(false, bg)),
+            Self::CircleFill => Box::new(ExtremityFactoryCircle::new(true, bg)),
+            Self::Square => Box::new(ExtremityFactorySquare::new(bg)),
+            Self::Parenthesis => Box::new(ExtremityFactoryParenthesis),
+            Self::CircleConnect => Box::new(ExtremityFactoryCircleConnect::new(bg)),
+            Self::None => return None,
+        })
+    }
 }
 
 /// Snaps an angle within a twentieth of a degree of a right angle onto it, so that links along an axis get

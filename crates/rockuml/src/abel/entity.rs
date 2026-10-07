@@ -10,6 +10,7 @@ use super::{
 };
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::decoration::symbol::{PackageStyle, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
@@ -30,6 +31,7 @@ pub(crate) enum EntityType {
     Group(GroupType),
 }
 
+#[derive(Clone)]
 pub(crate) struct Entity {
     id: EntityId,
     quark: QuarkId,
@@ -52,6 +54,8 @@ pub(crate) struct Entity {
     packed: bool,
     pub is_static: bool,
     pub colors: Colors,
+    /// The symbol a description element or a group is drawn as; see [`Entity::get_usymbol`].
+    pub usymbol: Option<USymbol>,
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
     port_short_names: JavaHashSet<String>,
@@ -90,6 +94,7 @@ impl Entity {
             packed: false,
             is_static: false,
             colors: Colors::default(),
+            usymbol: None,
             tips: Vec::new(),
             port_short_names: JavaHashSet::default(),
             concurrent_separator: None,
@@ -174,6 +179,21 @@ impl Entity {
 
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {
         self.leaf_or_group = EntityType::Group(new_type);
+    }
+
+    /// Use cases and circles are always drawn as their symbol.
+    pub(crate) fn get_usymbol(&self) -> Option<USymbol> {
+        match self.get_leaf_type() {
+            Some(LeafType::Usecase) => Some(USymbols::USECASE),
+            Some(LeafType::UsecaseBusiness) => Some(USymbols::USECASE_BUSINESS),
+            Some(LeafType::Circle) => Some(USymbols::INTERFACE),
+            _ => self.usymbol,
+        }
+    }
+
+    /// The style a stereotype like `<<Node>>` gives a package.
+    pub(crate) fn get_package_style(&self) -> Option<PackageStyle> {
+        PackageStyle::from_stereotype(self.stereotype.as_ref()?.label_double_comparator())
     }
 
     pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {

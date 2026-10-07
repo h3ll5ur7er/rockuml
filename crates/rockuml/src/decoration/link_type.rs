@@ -189,6 +189,41 @@ impl LinkType {
 
     /// The stroke of the line: the style's own thickness wins, then a plain `default_thickness` lends its
     /// thickness to the style, and a dashed one replaces it.
+    /// What kind of relation the link draws, as SVG tells it in `data-link-type`.
+    pub(crate) fn get_link_type_name(self) -> Option<&'static str> {
+        let has = |decor: LinkDecor| self.decor1 == decor || self.decor2 == decor;
+        let has_any = |decors: &[LinkDecor]| decors.iter().any(|decor| has(*decor));
+        if has(LinkDecor::Composition) {
+            Some("composition")
+        } else if has(LinkDecor::Aggregation) {
+            Some("aggregation")
+        } else if has(LinkDecor::Extends) {
+            Some("extension")
+        } else if has(LinkDecor::Redefines) {
+            Some("redefines")
+        } else if has(LinkDecor::DefinedBy) {
+            Some("definedby")
+        } else if has_any(&[LinkDecor::Arrow, LinkDecor::ArrowTriangle]) {
+            Some("dependency")
+        } else if has(LinkDecor::NotNavigable) {
+            Some("not_navigable")
+        } else if has_any(&[
+            LinkDecor::Crowfoot,
+            LinkDecor::CircleCrowfoot,
+            LinkDecor::LineCrowfoot,
+        ]) {
+            Some("crowfoot")
+        } else if has_any(&[LinkDecor::CircleLine, LinkDecor::DoubleLine])
+            || (self.decor1 == LinkDecor::None && self.decor2 == LinkDecor::None)
+        {
+            Some("association")
+        } else if has(LinkDecor::Plus) {
+            Some("nested")
+        } else {
+            None
+        }
+    }
+
     pub(crate) fn get_stroke3(self, default_thickness: Option<UStroke>) -> UStroke {
         if self.link_style.is_thickness_overrided() {
             return self.link_style.get_stroke3();

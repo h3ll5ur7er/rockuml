@@ -7,6 +7,7 @@ use crate::pattern::try_java_regex;
 use crate::plasma::MAGIC_SEPARATOR;
 use crate::stereo::Stereotype;
 
+#[derive(Clone)]
 pub(super) struct HideOrShow {
     what: String,
     show: bool,

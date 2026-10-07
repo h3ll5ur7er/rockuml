@@ -39,6 +39,7 @@ use crate::klimt::HorizontalAlignment;
 use crate::text::LineLocation;
 
 /// A text placed around a diagram or a group, like a title or a legend, and the source line that wrote it.
+#[derive(Clone)]
 pub(crate) struct DisplayPositioned {
     pub display: Display,
     pub alignment: HorizontalAlignment,
@@ -50,6 +51,7 @@ pub(crate) struct DisplayPositioned {
 pub(crate) struct TogetherId(pub(crate) usize);
 
 /// Entities to lay out close together; blocks nest.
+#[derive(Clone)]
 pub(crate) struct Together {
     pub parent: Option<TogetherId>,
 }

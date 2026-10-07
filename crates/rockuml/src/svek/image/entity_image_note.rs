@@ -3,7 +3,7 @@
 use std::rc::Rc;
 
 use super::opale::{self, MARGIN_X1, MARGIN_X2, MARGIN_Y, Opale};
-use crate::abel::{Direction, Entity};
+use crate::abel::{Direction, Entity, EntityId, LinkId};
 use crate::color::{ColorType, HColor};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::font::StringBounder;
@@ -16,8 +16,9 @@ use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
 use crate::skin::component::TextBlockEmpty;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::stereo::Stereotype;
+use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
 
 /// Where the one link of a note drawn as a callout runs once laid out, instead of being drawn itself.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -40,23 +41,19 @@ pub(crate) struct EntityImageNote {
     stroke: UStroke,
     round_corner: f64,
     text_block: Box<dyn TextBlock>,
+    /// The link drawn as a callout, and the entity at its other end.
+    opale_link: Option<(LinkId, EntityId)>,
 }
 
 impl EntityImageNote {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let base = AbstractEntityImage::new(entity, diagram);
         let skin = diagram.skin();
-        let signature = StyleSignature::of(&[
-            SName::Root,
-            SName::Element,
+        let style = note_style(
+            &skin.current_style_builder(),
             base.get_style_name(),
-            SName::Note,
-        ])
-        .with_tobechanged(base.get_stereo());
-        let style = skin
-            .current_style_builder()
-            .merged_style(&signature)
-            .expect("the skin styles notes");
+            base.get_stereo(),
+        );
         let note_background_color = entity
             .colors
             .get(ColorType::Back)
@@ -94,6 +91,7 @@ impl EntityImageNote {
             stroke: style.stroke(),
             round_corner: skin.get_round_corner(),
             text_block,
+            opale_link: None,
             base,
         }
     }
@@ -172,6 +170,16 @@ impl EntityImageNote {
     }
 }
 
+/// The style of a note in a diagram styled `style_name` (`getStyleSignature().getMergedStyle`).
+pub(super) fn note_style(
+    builder: &StyleBuilder,
+    style_name: SName,
+    stereotype: Option<&Stereotype>,
+) -> Style {
+    StyleSignature::of(&[SName::Root, SName::Element, style_name, SName::Note])
+        .get_merged_style_with(builder, stereotype)
+}
+
 /// The side of a `width` by `height` note nearest to `pt`.
 fn get_opale_strategy(width: f64, height: f64, pt: XPoint2D) -> Direction {
     let d1 = (width - pt.x).abs();
@@ -213,5 +221,29 @@ impl IEntityImage for EntityImageNote {
 
     fn is_hidden(&self) -> bool {
         self.base.is_hidden()
+    }
+
+    fn set_opale_link(&mut self, link: LinkId, other: EntityId) {
+        self.opale_link = Some((link, other));
+    }
+
+    fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
+        let opale_link = self.opale_link.map(|(link, other)| {
+            let edge = layout
+                .get_smetana_edge(link)
+                .expect("a note's callout follows its link's route");
+            let start = edge.get_start_point().expect("routed links have ends");
+            let end = edge.get_end_point().expect("routed links have ends");
+            let node = layout.get_node(self.base.get_entity());
+            OpaleLink {
+                start,
+                end,
+                node_min: XPoint2D::new(node.get_min_x(), node.get_min_y()),
+                other_force: layout
+                    .get_node(other)
+                    .get_magnetic_border_force_at(ug.string_bounder(), end),
+            }
+        });
+        self.draw_with(ug, opale_link);
     }
 }

@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+use super::entity_image_note::note_style;
 use super::opale::Opale;
 use crate::abel::{Direction, Entity, Position};
 use crate::color::ColorType;
@@ -12,8 +13,8 @@ use crate::klimt::stencil::RectangleStencil;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::style::{PName, ValueReading};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
 
 /// The space between two tips.
 const Y_SPACING: f64 = 10.0;
@@ -35,16 +36,11 @@ impl EntityImageTips {
             .get_tips()
             .iter()
             .map(|(member, tip)| {
-                let signature = StyleSignature::of(&[
-                    SName::Root,
-                    SName::Element,
+                let style = note_style(
+                    &style_builder,
                     base.get_style_name(),
-                    SName::Note,
-                ])
-                .with_tobechanged(tip.stereotype.as_ref());
-                let style = style_builder
-                    .merged_style(&signature)
-                    .expect("the skin styles notes");
+                    tip.stereotype.as_ref(),
+                );
                 let note_background_color = tip
                     .colors
                     .get(ColorType::Back)
@@ -135,7 +131,7 @@ impl TextBlock for EntityImageTips {
             })
     }
 
-    /// Tips are only drawn in a layout, next to their entity's members (see `draw_tips`).
+    /// Tips are only drawn in a layout, next to their entity's members.
     fn draw_u(&self, _ug: &UGraphic) {}
 
     fn backcolor(&self) -> Option<crate::color::HColor> {
@@ -150,5 +146,33 @@ impl IEntityImage for EntityImageTips {
 
     fn is_hidden(&self) -> bool {
         self.base.is_hidden()
+    }
+
+    /// Next to the entity at the other end of the tips' link (`Bibliotekon.getOnlyOther`).
+    fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
+        let me = self.base.get_entity();
+        let Some(other) = layout
+            .diagram
+            .get_links()
+            .find(|link| link.contains(me))
+            .map(|link| link.get_other(me))
+        else {
+            return;
+        };
+        let Some(node_other) = layout.bibliotekon.get_node(other) else {
+            return;
+        };
+        let node_me = layout.get_node(me);
+        let string_bounder = ug.string_bounder();
+        self.draw_tips(
+            ug,
+            XPoint2D::new(node_me.get_min_x(), node_me.get_min_y()),
+            XPoint2D::new(node_other.get_min_x(), node_other.get_min_y()),
+            &|member| {
+                node_other
+                    .get_image()
+                    .get_inner_position(member, string_bounder)
+            },
+        );
     }
 }
