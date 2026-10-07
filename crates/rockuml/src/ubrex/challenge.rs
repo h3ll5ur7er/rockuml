@@ -23,8 +23,8 @@ pub(super) enum Challenge {
     ZeroOrMore(Box<Challenge>),
     OneOrMore(Box<Challenge>),
     Repetition(Repetition, Box<Challenge>),
-    /// `ChallengeOneOrMoreUpToOldVersion`: the stop condition is only peeked at, the parser places it after
-    /// this challenge as well.
+    /// `ChallengeOneOrMoreUpToOldVersion` and `ChallengeLazzyOneOrMore`: the stop condition is only peeked
+    /// at, the parser places it after this challenge as well.
     OneOrMoreUpTo {
         origin: Box<Challenge>,
         stop_condition: Box<Challenge>,

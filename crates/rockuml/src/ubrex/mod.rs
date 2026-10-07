@@ -8,6 +8,7 @@
 //!
 //! Malformed patterns panic, as Java throws: PlantUML only builds them from constants.
 
+pub(crate) mod builder;
 mod challenge;
 mod char_set;
 mod parser;
@@ -25,6 +26,12 @@ impl UnicodeBracketedExpression {
         Self {
             challenge: Challenge::List(parser::parse_and_build(&definition)),
         }
+    }
+
+    /// Java's `match(text, 0).exactMatch()`: the expression matches the whole text.
+    pub(crate) fn exact_match(&self, text: &str) -> bool {
+        self.match_at(text)
+            .is_some_and(|matcher| matcher.accepted_match().len() == text.len())
     }
 
     /// Java's `match(text, 0)`, `None` where its `startMatch()` is false.

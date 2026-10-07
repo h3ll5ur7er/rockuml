@@ -18,6 +18,11 @@ pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
     ])
 }
 
+/// Tags like `$tag1 $tag2`, captured under `name` (`Stereotag.pattern`).
+pub(crate) fn tags_pattern(name: &'static str) -> RegexTree {
+    RegexTree::named(4, name, r"((\$[^%s{}%g<>$]+)([%s]+(\$[^%s{}%g<>$]+))*)?")
+}
+
 /// A letter in a coloured circle drawn before the labels.
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Spot {

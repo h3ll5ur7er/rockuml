@@ -1,4 +1,4 @@
-use super::{BlocLines, Command, CommandControl, CommandError, CommandResult};
+use super::{BlocLines, Command, CommandControl, CommandError, CommandResult, ParserPass};
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::{LineLocation, StringLocated};
 
@@ -15,6 +15,20 @@ pub(crate) trait SingleLineCommand<D> {
 
     fn trims_line(&self) -> bool {
         true
+    }
+
+    /// A line the pattern accepts but the command refuses: executing it is a syntax error.
+    fn is_forbidden(&self, _line: &str) -> bool {
+        false
+    }
+
+    /// Whether the line ends with `{`, which may also stand alone on the next line.
+    fn syntax_with_final_bracket(&self) -> bool {
+        false
+    }
+
+    fn is_eligible_for(&self, pass: ParserPass) -> bool {
+        pass == ParserPass::One
     }
 }
 
@@ -64,12 +78,45 @@ impl<C> SingleLine<C> {
     }
 }
 
+/// The line with ` {` appended, as if the bracket on the next line were on it.
+fn with_final_bracket(line: &StringLocated) -> BlocLines {
+    BlocLines::single(line.append(" {"))
+}
+
+impl<C> SingleLine<C> {
+    /// The line, then `{` alone on the next one.
+    fn is_valid_bracket<D>(&self, lines: &BlocLines) -> CommandControl
+    where
+        C: SingleLineCommand<D>,
+    {
+        let mut lines = lines.iter();
+        let (Some(first), Some(second)) = (lines.next(), lines.next()) else {
+            unreachable!("two lines were counted");
+        };
+        if self.trim(second).text() != "{" {
+            return CommandControl::NotOk;
+        }
+        Command::<D>::is_valid(self, &with_final_bracket(first))
+    }
+}
+
 impl<D, C: SingleLineCommand<D>> Command<D> for SingleLine<C> {
     fn is_valid(&self, lines: &BlocLines) -> CommandControl {
+        let final_bracket = self.0.syntax_with_final_bracket();
+        if lines.len() == 2 && final_bracket {
+            return self.is_valid_bracket::<D>(lines);
+        }
         let (Some(first), 1) = (lines.first(), lines.len()) else {
             return CommandControl::NotOk;
         };
-        if self.0.pattern().is_match(self.trim(first).text()) {
+        let line = self.trim(first);
+        if final_bracket && !line.text().ends_with('{') {
+            return match self.is_valid(&with_final_bracket(first)) {
+                CommandControl::Ok => CommandControl::OkPartial,
+                _ => CommandControl::NotOk,
+            };
+        }
+        if self.0.pattern().is_match(line.text()) {
             CommandControl::Ok
         } else {
             CommandControl::NotOk
@@ -77,10 +124,17 @@ impl<D, C: SingleLineCommand<D>> Command<D> for SingleLine<C> {
     }
 
     fn execute(&self, diagram: &mut D, lines: BlocLines) -> CommandResult {
+        let lines = match (lines.first(), lines.len()) {
+            (Some(first), 2) if self.0.syntax_with_final_bracket() => with_final_bracket(first),
+            _ => lines,
+        };
         let (Some(first), 1) = (lines.first(), lines.len()) else {
             panic!("a single-line command executes exactly one line, got {lines:?}");
         };
         let line = self.trim(first);
+        if self.0.is_forbidden(line.text()) {
+            return Err(CommandError::new(format!("Syntax error: {}", line.text())));
+        }
         let Some(arg) = self.0.pattern().matcher(line.text()) else {
             return Err(CommandError::new(format!(
                 "Cannot parse line {}",
@@ -88,6 +142,10 @@ impl<D, C: SingleLineCommand<D>> Command<D> for SingleLine<C> {
             )));
         };
         self.0.execute_arg(diagram, first.location(), &arg)
+    }
+
+    fn is_eligible_for(&self, pass: ParserPass) -> bool {
+        self.0.is_eligible_for(pass)
     }
 }
 

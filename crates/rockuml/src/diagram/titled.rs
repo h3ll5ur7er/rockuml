@@ -5,7 +5,8 @@ use std::rc::Rc;
 
 use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
-use super::{DEFAULT_DPI, ExportSettings, UmlSource, parse_digits};
+use super::{DEFAULT_DPI, ExportSettings, NotYetPorted, UmlSource, parse_digits};
+use crate::command::unported::NotPortedCommands;
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
 
@@ -35,6 +36,8 @@ pub(super) struct Titled {
     scale: Option<Scale>,
     /// Without repeats, in the order they came.
     warnings: Vec<Warning>,
+    /// The first thing the diagram holds that rockuml cannot draw yet.
+    not_ported: Option<NotYetPorted>,
 }
 
 /// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
@@ -113,6 +116,12 @@ pub(super) trait TitledDiagram {
     fn titled(&mut self) -> &mut Titled;
 }
 
+impl<D: TitledDiagram> NotPortedCommands for D {
+    fn command_not_ported(&mut self, command: &'static str) {
+        self.titled().not_ported(NotYetPorted(command));
+    }
+}
+
 impl Titled {
     /// The skin draws the images of `source`.
     pub(super) fn new(
@@ -133,7 +142,17 @@ impl Titled {
             mainframe: None,
             scale: None,
             warnings: Vec::new(),
+            not_ported: None,
         }
+    }
+
+    /// Keeps the first thing not ported, which the diagram is reported by.
+    pub(super) fn not_ported(&mut self, what: NotYetPorted) {
+        self.not_ported.get_or_insert(what);
+    }
+
+    pub(super) fn not_ported_part(&self) -> Option<NotYetPorted> {
+        self.not_ported
     }
 
     pub(super) fn add_warning(&mut self, warning: Warning) {
@@ -271,12 +290,16 @@ impl Titled {
     }
 
     /// The document style's margin if it sets one, otherwise the diagram's own default.
-    pub(super) fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
+    pub(super) fn export_settings(
+        &self,
+        seed: i64,
+        default_margins: ClockwiseTopRightBottomLeft,
+    ) -> ExportSettings {
         let document = self.document_style(None);
         let margin = if document.has_value(PName::Margin) {
             document.margin()
         } else {
-            ClockwiseTopRightBottomLeft::same(default_margin)
+            default_margins
         };
         let background = self.style(&[SName::Root, SName::Document, self.diagram_style]);
         ExportSettings {

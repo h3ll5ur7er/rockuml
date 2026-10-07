@@ -683,7 +683,7 @@ pub(super) fn url() -> Box<dyn Command<SequenceDiagram>> {
             some_spaces(),
             RegexTree::optional(leaf("is")),
             spaces(),
-            RegexTree::named(12, "URL", Url::command_pattern()),
+            Url::mandatory_pattern(),
         ],
         |diagram, _location, arg| {
             let code = arg.get("CODE", 0).unwrap_or_default().to_owned();

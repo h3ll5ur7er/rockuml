@@ -75,6 +75,32 @@ impl BlocLines {
         }
     }
 
+    /// A `{` alone on the second line joins the first, when that does not end with one already.
+    #[must_use]
+    pub(crate) fn eventually_move_bracket(&self) -> Self {
+        match self.lines.as_slice() {
+            [first, second, rest @ ..]
+                if !first.trimmed().text().ends_with('{') && second.trimmed().text() == "{" =>
+            {
+                let mut lines = vec![first.append(" {")];
+                lines.extend(rest.iter().cloned());
+                Self { lines }
+            }
+            _ => self.clone(),
+        }
+    }
+
+    /// The lines as one, joined by hidden newlines that line breaks in labels keep.
+    #[must_use]
+    pub(crate) fn to_single_line_with_hidden_new_line(&self) -> Self {
+        let separator = crate::jaws::BLOCK_E1_NEWLINE.to_string();
+        let texts: Vec<&str> = self.lines.iter().map(StringLocated::text).collect();
+        match self.lines.first() {
+            Some(first) => Self::single(first.with_text(texts.join(&separator))),
+            None => self.clone(),
+        }
+    }
+
     /// Removes the indentation all non-empty lines share, one column at a time.
     #[must_use]
     pub(crate) fn without_empty_columns(&self) -> Self {

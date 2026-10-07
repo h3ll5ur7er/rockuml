@@ -2,6 +2,7 @@
 //! (PlantUML's `Colors` and `ColorParser`).
 
 use super::HColor;
+use crate::pattern::RegexTree;
 
 /// Which part of an element a colour paints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -35,6 +36,11 @@ pub(crate) const COLORS_REGEXP: &str = concat!(
     r"(?:#(?:\w+[-\\|/]?\w+;)?(?:(?:text|back|header|line|line\.dashed|line\.dotted|line\.bold|shadowing)",
     r"(?::\w+[-\\|/]?\w+)?(?:;|(?![\w;:.])))+)|(?:#\w+[-\\|/]?\w+)"
 );
+
+/// An optional colour specification, captured under `name` (`ColorParser.simpleColor`).
+pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
+    RegexTree::named(1, name, format!("({COLORS_REGEXP})?"))
+}
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Colors {

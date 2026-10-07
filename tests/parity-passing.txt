@@ -36,6 +36,9 @@ debug creole/wide.puml
 debug error/creole-empty.puml
 debug error/salt-empty.puml
 debug error/salt-keyword.puml
+debug error/sequence-unclosed-note.puml
+debug error/sequence-unknown-line.puml
+debug error/unknown-syntax.puml
 debug images/emoji-note-title.puml
 debug images/emoji-scale-color.puml
 debug images/emoji-transforms.puml
@@ -63,6 +66,7 @@ debug images/stdlib-archimate-svg.puml
 debug images/stdlib-office.puml
 debug preprocessor/builtins-color.puml
 debug preprocessor/builtins-date.puml
+debug preprocessor/builtins-markers.puml
 debug preprocessor/builtins-meta.puml
 debug preprocessor/builtins-strings.puml
 debug preprocessor/comments.puml
@@ -71,6 +75,7 @@ debug preprocessor/control-flow.puml
 debug preprocessor/functions.puml
 debug preprocessor/include-variants.puml
 debug preprocessor/include.puml
+debug preprocessor/legacy-define.puml
 debug preprocessor/variables-advanced.puml
 debug preprocessor/variables.puml
 debug salt/grid-all.puml
@@ -213,6 +218,9 @@ dsvg creole/wide.puml
 dsvg error/creole-empty.puml
 dsvg error/salt-empty.puml
 dsvg error/salt-keyword.puml
+dsvg error/sequence-unclosed-note.puml
+dsvg error/sequence-unknown-line.puml
+dsvg error/unknown-syntax.puml
 dsvg images/emoji-note-title.puml
 dsvg images/emoji-scale-color.puml
 dsvg images/emoji-transforms.puml
@@ -246,6 +254,7 @@ dsvg preprocessor/control-flow.puml
 dsvg preprocessor/functions.puml
 dsvg preprocessor/include-variants.puml
 dsvg preprocessor/include.puml
+dsvg preprocessor/legacy-define.puml
 dsvg preprocessor/theme.puml
 dsvg preprocessor/variables-advanced.puml
 dsvg preprocessor/variables.puml
@@ -388,6 +397,9 @@ png creole/wide.puml
 png error/creole-empty.puml
 png error/salt-empty.puml
 png error/salt-keyword.puml
+png error/sequence-unclosed-note.puml
+png error/sequence-unknown-line.puml
+png error/unknown-syntax.puml
 png images/emoji-note-title.puml
 png images/emoji-scale-color.puml
 png images/emoji-transforms.puml
@@ -415,14 +427,17 @@ png images/stdlib-archimate-svg.puml
 png images/stdlib-office.puml
 png preprocessor/builtins-color.puml
 png preprocessor/builtins-date.puml
+png preprocessor/builtins-markers.puml
 png preprocessor/builtins-meta.puml
 png preprocessor/builtins-strings.puml
 png preprocessor/comments.puml
 png preprocessor/control-flow-nested.puml
 png preprocessor/control-flow.puml
+png preprocessor/functions-advanced.puml
 png preprocessor/functions.puml
 png preprocessor/include-variants.puml
 png preprocessor/include.puml
+png preprocessor/legacy-define.puml
 png preprocessor/variables-advanced.puml
 png preprocessor/variables.puml
 png salt/grid-all.puml
@@ -773,6 +788,9 @@ svg creole/wide.puml
 svg error/creole-empty.puml
 svg error/salt-empty.puml
 svg error/salt-keyword.puml
+svg error/sequence-unclosed-note.puml
+svg error/sequence-unknown-line.puml
+svg error/unknown-syntax.puml
 svg images/emoji-note-title.puml
 svg images/emoji-scale-color.puml
 svg images/emoji-transforms.puml
@@ -806,6 +824,7 @@ svg preprocessor/control-flow.puml
 svg preprocessor/functions.puml
 svg preprocessor/include-variants.puml
 svg preprocessor/include.puml
+svg preprocessor/legacy-define.puml
 svg preprocessor/variables-advanced.puml
 svg preprocessor/variables.puml
 svg salt/grid-all.puml
