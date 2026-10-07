@@ -156,7 +156,7 @@ fn decorate(
     let position_top = diagram
         .skin()
         .value("stereotypeposition")
-        .is_some_and(|position| position.eq_ignore_ascii_case("top"));
+        .is_none_or(|position| !position.eq_ignore_ascii_case("bottom"));
     if let Some(stereotype) = arg.get("STEREO", 0) {
         let stereotype = Stereotype::with_spot(stereotype).map_err(|_| super::no_such_color())?;
         diagram.participant_mut(participant).stereotype = Some((stereotype, position_top));

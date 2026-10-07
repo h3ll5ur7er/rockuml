@@ -18,6 +18,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::arrow::ArrowConfiguration;
 use crate::skin::component::{
     ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text, creole_text,
+    stereotyped_component_text,
 };
 use crate::skin::rose::actor::ComponentRoseActor;
 use crate::skin::rose::englober::ComponentRoseEnglober;
@@ -36,13 +37,24 @@ use crate::skin::rose::{self, MessageLabel, NoteShape};
 use crate::skin::symbol::{Boundary, Control, EntityDomain, SmallDatabase, SmallQueue};
 use crate::style::{PName, SName, StyleBuilder, ValueReading};
 
-/// The display of a participant as its boxes show it: underlined if the skin asks for it.
+/// The display of a participant as its boxes show it: underlined if the skin asks for it, with its
+/// stereotype.
 fn participant_display(diagram: &SequenceDiagram, participant: ParticipantId) -> Display {
-    let display = &diagram.participant(participant).display;
-    if diagram.skin().force_sequence_participant_underlined() {
-        Display::create(display.lines().iter().map(|line| format!("<u>{line}")))
+    let model = diagram.participant(participant);
+    let display = if diagram.skin().force_sequence_participant_underlined() {
+        Display::create(
+            model
+                .display
+                .lines()
+                .iter()
+                .map(|line| format!("<u>{line}")),
+        )
     } else {
-        display.clone()
+        model.display.clone()
+    };
+    match &model.stereotype {
+        Some((stereotype, top)) => display.with_stereotype(stereotype.clone(), *top),
+        None => display,
     }
 }
 
@@ -53,9 +65,10 @@ pub(super) fn participant_component(
     head: bool,
 ) -> Box<dyn Component> {
     let model = diagram.participant(participant);
-    let (style, _stereo) = participant_styles(model);
+    let (style, stereo) = participant_styles(model);
     let display = participant_display(diagram, participant);
-    let text_block = component_text(&display, style.font_configuration(), &style);
+    let text_block =
+        stereotyped_component_text(&display, style.font_configuration(), &style, &stereo);
     let fashion = style.symbol_context(&Colors::default());
     match model.kind {
         ParticipantType::Participant | ParticipantType::Collections => {
@@ -117,12 +130,10 @@ pub(super) fn lifeline(
         &sequence_signature(SName::LifeLine),
         model.stereotype.as_ref().map(|(stereotype, _)| stereotype),
     );
-    let display = participant_display(diagram, participant);
-    let tooltip = display.lines().first().cloned().unwrap_or_default();
     Box::new(ComponentRoseLine::new(
         style.value(PName::LineColor).as_color(),
         style.stroke(),
-        &tooltip,
+        &participant_display(diagram, participant).tooltip_text(),
     ))
 }
 

@@ -369,6 +369,16 @@ impl FontConfiguration {
         }
     }
 
+    /// Another font and colour, with the styles kept (`forceFont`).
+    #[must_use]
+    pub fn force_font(&self, font: UFont, color: HColor) -> Self {
+        Self {
+            font,
+            color,
+            ..self.clone()
+        }
+    }
+
     /// The font family changes; the face and size stay.
     #[must_use]
     pub fn with_family(&self, family: &str) -> Self {

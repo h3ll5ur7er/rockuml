@@ -15,6 +15,7 @@ use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
 use crate::klimt::shape::USegment;
+use crate::klimt::typeface::GlyphSegment;
 
 const DEFAULT_FONT_FAMILY: &str = "sans-serif";
 const DECIMALS: usize = 3;
@@ -291,6 +292,32 @@ impl SvgGraphics {
         let mut element = XmlNode::new("path");
         element.set_attribute("d", d.join(" "));
         self.style_me(&mut element, "");
+        self.fill_me(&mut element);
+        self.current_group().append_child(element);
+    }
+
+    /// A glyph's outline moved by (`x`, `y`), filled without outline (`drawPathIterator`).
+    pub(super) fn glyph_path(&mut self, x: f64, y: f64, segments: &[GlyphSegment]) {
+        let mut d = String::new();
+        for segment in segments {
+            let at = |(dx, dy): (f64, f64)| (x + dx, y + dy);
+            let (command, points) = match *segment {
+                GlyphSegment::MoveTo(dx, dy) => ("M", vec![at((dx, dy))]),
+                GlyphSegment::LineTo(dx, dy) => ("L", vec![at((dx, dy))]),
+                GlyphSegment::QuadTo { ctrl, end } => ("Q", vec![at(ctrl), at(end)]),
+                GlyphSegment::CubicTo { ctrl1, ctrl2, end } => {
+                    ("C", vec![at(ctrl1), at(ctrl2), at(end)])
+                }
+                GlyphSegment::Close => ("Z", Vec::new()),
+            };
+            let points: Vec<String> = points
+                .into_iter()
+                .map(|(x, y)| self.visible_point(x, y))
+                .collect();
+            write!(d, "{command}{} ", points.join(" ")).expect("writing to a string");
+        }
+        let mut element = XmlNode::new("path");
+        element.set_attribute("d", d);
         self.fill_me(&mut element);
         self.current_group().append_child(element);
     }

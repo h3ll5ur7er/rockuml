@@ -232,6 +232,17 @@ impl UGraphicBackend for UGraphicDebug {
                 self.out_style(param);
             }
             UShape::Path(segments) => self.out_path(segments, param),
+            UShape::CenteredCharacter(centered) => self.lines.extend([
+                "CENTERED_CHAR:".to_owned(),
+                format!("  char: {}", centered.character),
+                format!("  position: {}", point(at.dx, at.dy)),
+                format!("  font: {}", centered.font),
+                format!(
+                    "  color: {}",
+                    color_to_string(Some(&param.color), &self.render_date)
+                ),
+                String::new(),
+            ]),
             UShape::Empty(dimension) => self.lines.extend([
                 "EMPTY:".to_owned(),
                 format!("  pt1: {}", point(at.dx, at.dy)),

@@ -1,4 +1,4 @@
-use super::font::FontConfiguration;
+use super::font::{FontConfiguration, UFont};
 use super::geom::XDimension2D;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -16,6 +16,8 @@ pub enum UShape {
     /// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
     Path(Vec<USegment>),
     Image(UImage),
+    /// A letter centred on the current position, as in a stereotype's spot.
+    CenteredCharacter(UCenteredCharacter),
     /// Takes up space without drawing anything.
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
@@ -34,6 +36,7 @@ impl UShape {
             Self::Path(_) => "UPath",
             Self::Empty(_) => "UEmpty",
             Self::Image(_) => "UImage",
+            Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
         }
     }
@@ -104,6 +107,12 @@ impl UText {
             font,
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct UCenteredCharacter {
+    pub character: char,
+    pub font: UFont,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

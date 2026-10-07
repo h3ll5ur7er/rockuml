@@ -193,6 +193,7 @@ pub fn export(
             settings.seed,
             option,
             string_bounder.clone(),
+            (format != ImageFormat::DeterministicSvg).then(|| fonts.clone()),
         )));
         draw(output.clone(), backcolor.clone());
         let metadata = crate::url_code::encode(&diagram.source().metadata());
