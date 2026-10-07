@@ -1,9 +1,11 @@
 //! PlantUML's default look of sequence diagrams (`skin.rose`): one component per kind of element.
 
+pub(crate) mod actor;
 pub(crate) mod arrow;
 pub(crate) mod life;
 pub(crate) mod line;
 pub(crate) mod participant;
+pub(crate) mod queue;
 
 use arrow::{ArrowParts, ComponentRoseArrow};
 

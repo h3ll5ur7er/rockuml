@@ -95,6 +95,7 @@ mod tests {
         let diagram = CreoleDiagram::create(source);
         let debug = export(
             diagram.as_ref(),
+            0,
             ImageFormat::Debug,
             &Arc::new(FontRegistry::default()),
             &IsolatedHost,

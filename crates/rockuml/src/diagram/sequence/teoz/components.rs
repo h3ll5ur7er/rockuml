@@ -1,6 +1,7 @@
 //! The components drawing each part of the diagram, with the styles PlantUML gives them (the
 //! `createComponent` calls of PlantUML's teoz tiles).
 
+use crate::color::Colors;
 use crate::creole::Display;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{LiveColors, MessageCommon, ParticipantId, ParticipantType};
@@ -8,14 +9,21 @@ use crate::diagram::sequence::styles::{
     merged, merged_with_stereotype, message_style, participant_styles, sequence_signature,
     sequence_signature2,
 };
+use crate::klimt::TextBlock;
+use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::skin::arrow::ArrowConfiguration;
-use crate::skin::component::{ArrowComponent, Component, TextualPart, component_text};
+use crate::skin::component::{
+    ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text,
+};
+use crate::skin::rose::actor::ComponentRoseActor;
 use crate::skin::rose::life::{
     ComponentRoseActiveLine, ComponentRoseDelayLine, ComponentRoseDestroy,
 };
 use crate::skin::rose::line::ComponentRoseLine;
 use crate::skin::rose::participant::ComponentRoseParticipant;
+use crate::skin::rose::queue::ComponentRoseQueue;
 use crate::skin::rose::{self, MessageLabel};
+use crate::skin::symbol::{Boundary, Control, EntityDomain, SmallDatabase, SmallQueue};
 use crate::style::{PName, SName, StyleBuilder, ValueReading};
 
 /// The display of a participant as its boxes show it: underlined if the skin asks for it.
@@ -28,7 +36,7 @@ fn participant_display(diagram: &SequenceDiagram, participant: ParticipantId) ->
     }
 }
 
-/// A participant's head (`head`) or tail box.
+/// A participant's head (`head`) or tail, whose name goes below or above a symbol.
 pub(super) fn participant_component(
     diagram: &SequenceDiagram,
     participant: ParticipantId,
@@ -37,24 +45,56 @@ pub(super) fn participant_component(
     let model = diagram.participant(participant);
     let (style, _stereo) = participant_styles(model);
     let display = participant_display(diagram, participant);
-    let _ = head;
+    let text_block = component_text(&display, style.font_configuration(), &style);
+    let fashion = style.symbol_context(&Colors::default());
     match model.kind {
         ParticipantType::Participant | ParticipantType::Collections => {
-            let padding = style.padding();
-            let text = TextualPart::new(
-                component_text(&display, style.font_configuration(), &style),
-                padding,
-            );
             Box::new(ComponentRoseParticipant::new(
-                text,
-                style.symbol_context(&crate::color::Colors::default()),
+                TextualPart::new(text_block, style.padding()),
+                fashion,
                 style.value(PName::MinimumWidth).as_double(),
                 model.kind == ParticipantType::Collections,
                 style.margin(),
             ))
         }
-        other => todo!("{other:?} heads"),
+        ParticipantType::Queue => Box::new(ComponentRoseQueue::new(Box::new(SmallQueue::new(
+            text_block, fashion,
+        )))),
+        ParticipantType::Actor => with_symbol(
+            text_block,
+            diagram.skin().actor_style().text_block(fashion),
+            head,
+        ),
+        ParticipantType::Boundary => {
+            with_symbol(text_block, Box::new(Boundary::new(fashion)), head)
+        }
+        ParticipantType::Control => with_symbol(text_block, Box::new(Control::new(fashion)), head),
+        ParticipantType::Entity => {
+            with_symbol(text_block, Box::new(EntityDomain::new(fashion)), head)
+        }
+        ParticipantType::Database => {
+            let room = Box::new(TextBlockEmpty {
+                dimension: XDimension2D::new(16.0, 17.0),
+            });
+            with_symbol(
+                text_block,
+                Box::new(SmallDatabase::new(room, fashion)),
+                head,
+            )
+        }
     }
+}
+
+fn with_symbol(
+    text_block: Box<dyn TextBlock>,
+    symbol: Box<dyn TextBlock>,
+    head: bool,
+) -> Box<dyn Component> {
+    let text = TextualPart::new(
+        text_block,
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 3.0, 0.0, 3.0),
+    );
+    Box::new(ComponentRoseActor::new(text, symbol, head))
 }
 
 pub(super) fn lifeline(
@@ -113,7 +153,7 @@ pub(super) fn activation_box(
         colors.and_then(|colors| colors.back.as_ref()),
     );
     Box::new(ComponentRoseActiveLine::new(
-        style.symbol_context(&crate::color::Colors::default()),
+        style.symbol_context(&Colors::default()),
         close_up,
         close_down,
     ))
