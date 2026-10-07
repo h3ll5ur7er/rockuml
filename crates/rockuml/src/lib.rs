@@ -1,5 +1,6 @@
 //! PlantUML-compatible diagram engine.
 
+mod abel;
 mod assets;
 mod color;
 mod command;
@@ -20,6 +21,7 @@ pub mod json;
 mod klimt;
 mod openiconic;
 mod pattern;
+mod plasma;
 pub mod preproc;
 mod real;
 mod security_profile;

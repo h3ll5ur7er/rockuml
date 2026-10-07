@@ -5,7 +5,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::pattern::plantuml_regex;
+use crate::pattern::{RegexTree, plantuml_regex};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Url {
@@ -59,9 +59,14 @@ impl Url {
         ))
     }
 
-    /// The pattern of a `[[...]]` markup in a command, with its 12 groups (`UrlBuilder.MANDATORY`).
-    pub fn command_pattern() -> String {
-        format!("({})", Forms::alternatives())
+    /// A `[[...]]` markup in a command, with its 12 groups (`UrlBuilder.MANDATORY`).
+    pub(crate) fn mandatory_pattern() -> RegexTree {
+        RegexTree::named(12, "URL", format!("({})", Forms::alternatives()))
+    }
+
+    /// `UrlBuilder.OPTIONAL`.
+    pub(crate) fn optional_pattern() -> RegexTree {
+        RegexTree::optional(Self::mandatory_pattern())
     }
 
     /// The length of the `[[...]]` markup at the start of `text`, if there is one.

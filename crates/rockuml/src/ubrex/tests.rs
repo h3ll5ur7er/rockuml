@@ -702,4 +702,17 @@ mod non_bmp {
         assert_eq!(matcher.find_values_by_key("V"), [GRIN]);
         assert_eq!(accepted("「〤a」", GRIN), Some(GRIN));
     }
+
+    /// `〇l+` repeats as little as lets the rest of its list match next.
+    #[test]
+    fn a_lazzy_repetition_stops_where_the_rest_matches() {
+        let pattern = "if 〇+〴s 〶$IF2=〇l+〴. 〘then〙";
+        let matcher = matched(pattern, "if a b then");
+        assert_eq!(matcher.accepted_match(), "if a b then");
+        assert_eq!(matcher.find_values_by_key("IF2"), ["a b "]);
+        assert_eq!(accepted(pattern, "if x then then"), Some("if x then"));
+        assert_eq!(values(pattern, "if x then then", "IF2"), ["x "]);
+        assert_eq!(accepted(pattern, "if then"), None);
+        assert_eq!(accepted(pattern, "if abc"), None);
+    }
 }

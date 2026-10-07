@@ -20,12 +20,15 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::pattern::java_regex;
-use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
+use crate::style::{
+    PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
+};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
@@ -115,6 +118,24 @@ impl SkinParam {
     fn value_is(&self, key: &str, expected: &str) -> bool {
         self.value(key)
             .is_some_and(|value| value.eq_ignore_ascii_case(expected))
+    }
+
+    /// `skinparam backgroundColor`, or the document style's background.
+    pub(crate) fn get_background_color(&self) -> HColor {
+        match self.value("backgroundcolor") {
+            Some(value)
+                if value.eq_ignore_ascii_case("transparent")
+                    || value.eq_ignore_ascii_case("none") =>
+            {
+                HColor::NONE
+            }
+            Some(value) => HColor::parse_or_white(&value),
+            None => self
+                .merged_style(&StyleSignature::of(&[SName::Root, SName::Document]))
+                .expect("the skin styles the document")
+                .value(PName::BackGroundColor)
+                .as_color(),
+        }
     }
 
     pub(crate) fn strict_uml_style(&self) -> bool {
@@ -247,7 +268,6 @@ fn clean_for_key(key: &str) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::style::{PName, SName, ValueReading};
 
     #[test]
     fn keys_are_normalised_like_plantuml() {
@@ -275,6 +295,24 @@ mod tests {
             "#ABCDEF"
         );
         assert_eq!(skin.value("backgroundcolor").as_deref(), Some("#ABCDEF"));
+    }
+
+    #[test]
+    fn the_background_comes_from_the_skinparam_or_the_document() {
+        let background = |value: Option<&str>| {
+            let mut skin = SkinParam::default();
+            if let Some(value) = value {
+                skin.set_param("backgroundColor", value);
+            }
+            skin.get_background_color()
+        };
+        assert_eq!(background(None), HColor::WHITE);
+        assert_eq!(
+            background(Some("#ABCDEF")),
+            HColor::parse("#ABCDEF").unwrap().unwrap()
+        );
+        assert_eq!(background(Some("Transparent")), HColor::NONE);
+        assert_eq!(background(Some("nosuchcolor")), HColor::WHITE);
     }
 
     #[test]

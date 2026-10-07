@@ -170,6 +170,13 @@ impl HorizontalAlignment {
     }
 }
 
+/// Where a legend goes: above or below what it explains.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum VerticalAlignment {
+    Top,
+    Bottom,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

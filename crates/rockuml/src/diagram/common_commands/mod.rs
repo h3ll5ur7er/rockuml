@@ -2,6 +2,7 @@
 
 mod skin_block;
 mod sprite;
+mod unported;
 
 use std::marker::PhantomData;
 use std::sync::LazyLock;
@@ -10,63 +11,22 @@ use regex::Regex;
 
 use super::chrome::Warning;
 use super::scale::Scale;
-use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
+use super::titled::TitledDiagram;
+use crate::abel::DisplayPositioned;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
 };
 use crate::creole::Display;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::VerticalAlignment;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::style::{SName, StyleParsingError};
 use crate::text::LineLocation;
 
-/// The common commands, in the order PlantUML's salt diagrams try them (`addCommonCommands2`, the scale
-/// commands, then the title commands): blank lines, skin parameters and styles, scales, then titles and the like.
-/// Sequence diagrams try the title commands first (`addCommonCommands1`), but no line matches both groups, so
-/// one order serves both.
-pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+/// Titles, captions, legends, headers and footers (`CommonCommands.addTitleCommands`).
+pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
-        single(blank_line_pattern(), |_, _, _| {}),
-        single(pragma_pattern(), define_pragma),
-        single(skinparam_pattern(), set_skinparam),
-        Box::new(skin_block::SkinParamBlock),
-        sprite::multi_line(),
-        sprite::single_line(),
-        sprite::md5(),
-        sprite::svg(),
-        sprite::stdlib(),
-        sprite::stdlib_svg(),
-        sprite::svg_multi_line(),
-        sprite::file(),
-        Box::new(
-            Multiline::new(
-                &plantuml_regex(r"^\<style\>$"),
-                &plantuml_regex(r"^[%s]*\</?style\>[%s]*$"),
-                apply_style_sheet,
-            )
-            .skipping_quote_lines(),
-        ),
-        scale(scale_pattern(), scale_factor),
-        scale(sized("WIDTH", "HEIGHT", false), |arg| {
-            Ok(Scale::WidthAndHeight(
-                number(arg, "WIDTH")?,
-                number(arg, "HEIGHT")?,
-            ))
-        }),
-        scale(width_or_height_pattern(), scale_width_or_height),
-        scale(capped("WIDTH", "width"), |arg| {
-            Ok(Scale::MaxWidth(number(arg, "WIDTH")?))
-        }),
-        scale(capped("HEIGHT", "height"), |arg| {
-            Ok(Scale::MaxHeight(number(arg, "HEIGHT")?))
-        }),
-        scale(sized("WIDTH", "HEIGHT", true), |arg| {
-            Ok(Scale::MaxWidthAndHeight(
-                number(arg, "WIDTH")?,
-                number(arg, "HEIGHT")?,
-            ))
-        }),
         single(labelled("title", "TITLE1", "TITLE2"), set_title),
         single(mainframe_pattern(), set_mainframe),
         single(labelled("caption", "DISPLAY1", "DISPLAY2"), set_caption),
@@ -105,7 +65,85 @@ pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comma
             &plantuml_regex("^end[%s]?header$"),
             |diagram, lines| Ribbon::Header.set_from_block(diagram, lines),
         )),
+        unported::namespace_separator(),
     ]
+}
+
+/// Blank lines, pragmas, skin parameters, sprites and styles (`CommonCommands.addCommonCommands2`).
+pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+    vec![
+        single(blank_line_pattern(), |_, _, _| {}),
+        single(pragma_pattern(), define_pragma),
+        unported::assume_transparent(),
+        single(skinparam_pattern(), set_skinparam),
+        Box::new(skin_block::SkinParamBlock),
+        unported::skin(),
+        unported::minwidth(),
+        unported::page(),
+        unported::rotate(),
+        sprite::multi_line(),
+        sprite::single_line(),
+        sprite::md5(),
+        sprite::svg(),
+        sprite::stdlib(),
+        sprite::stdlib_svg(),
+        sprite::svg_multi_line(),
+        sprite::file(),
+        unported::style_single_line_css(),
+        Box::new(
+            Multiline::new(
+                &plantuml_regex(r"^\<style\>$"),
+                &plantuml_regex(r"^[%s]*\</?style\>[%s]*$"),
+                apply_style_sheet,
+            )
+            .skipping_quote_lines(),
+        ),
+        unported::style_import(),
+    ]
+}
+
+/// `scale` in its forms (`CommonCommands.addCommonScaleCommands`).
+pub(super) fn add_common_scale_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+    vec![
+        scale(scale_pattern(), scale_factor),
+        scale(sized("WIDTH", "HEIGHT", false), |arg| {
+            Ok(Scale::WidthAndHeight(
+                number(arg, "WIDTH")?,
+                number(arg, "HEIGHT")?,
+            ))
+        }),
+        scale(width_or_height_pattern(), scale_width_or_height),
+        scale(capped("WIDTH", "width"), |arg| {
+            Ok(Scale::MaxWidth(number(arg, "WIDTH")?))
+        }),
+        scale(capped("HEIGHT", "height"), |arg| {
+            Ok(Scale::MaxHeight(number(arg, "HEIGHT")?))
+        }),
+        scale(sized("WIDTH", "HEIGHT", true), |arg| {
+            Ok(Scale::MaxWidthAndHeight(
+                number(arg, "WIDTH")?,
+                number(arg, "HEIGHT")?,
+            ))
+        }),
+    ]
+}
+
+/// Hiding parts of entities (`CommonCommands.addCommonHides`).
+pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+    vec![
+        unported::hide_empty_description(),
+        unported::hide_show_by_visibility(),
+        unported::hide_show_by_gender(),
+    ]
+}
+
+/// The titles, then the second group, the scales and the hides (`CommonCommands.addCommonCommands1`).
+pub(super) fn add_common_commands1<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
+    let mut commands = add_title_commands();
+    commands.extend(add_common_commands2());
+    commands.extend(add_common_scale_commands());
+    commands.extend(add_common_hides());
+    commands
 }
 
 fn blank_line_pattern() -> RegexTree {
@@ -391,7 +429,7 @@ fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &
 
 /// Unlike the other one-line commands, PlantUML does not remember where a one-line legend was written.
 fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
-    let legend = Positioned {
+    let legend = DisplayPositioned {
         display: label(arg, "LEGEND"),
         alignment: HorizontalAlignment::Center,
         location: None,
@@ -438,7 +476,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
     });
     let (vertical, horizontal) = captures.unwrap_or_default();
     let legend = block_body(&lines).ok_or_else(|| CommandError::new("No legend defined"))?;
-    let legend = Positioned {
+    let legend = DisplayPositioned {
         display: legend,
         alignment: horizontal
             .as_deref()
@@ -508,7 +546,7 @@ impl Ribbon {
         }
     }
 
-    fn set<D: TitledDiagram>(self, diagram: &mut D, positioned: Positioned) {
+    fn set<D: TitledDiagram>(self, diagram: &mut D, positioned: DisplayPositioned) {
         match self {
             Self::Header => diagram.titled().set_header(positioned),
             Self::Footer => diagram.titled().set_footer(positioned),
@@ -533,7 +571,7 @@ impl Ribbon {
         arg: &RegexResult,
         location: &LineLocation,
     ) {
-        let positioned = Positioned {
+        let positioned = DisplayPositioned {
             display: label(arg, "LABEL"),
             alignment: self.alignment(diagram, arg.get("POSITION", 0)),
             location: Some(location.clone()),
@@ -552,7 +590,7 @@ impl Ribbon {
         if display.lines().is_empty() {
             return Err(CommandError::new(format!("Empty {}", self.keyword())));
         }
-        let positioned = Positioned {
+        let positioned = DisplayPositioned {
             display,
             alignment: self.alignment(diagram, given.as_deref()),
             location: Some(first.location().clone()),

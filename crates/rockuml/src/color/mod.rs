@@ -5,7 +5,7 @@ mod hsl;
 mod hsluv;
 mod named;
 
-pub(crate) use colors::{COLORS_REGEXP, ColorType, Colors, NoSuchColor};
+pub(crate) use colors::{ColorType, Colors, NoSuchColor, optional_pattern};
 pub(crate) use hsl::to_rgb as hsl_to_rgb;
 use named::NAMED_COLORS;
 

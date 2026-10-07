@@ -5,7 +5,9 @@ use std::rc::Rc;
 
 use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
-use super::{DEFAULT_DPI, ExportSettings, UmlSource, parse_digits};
+use super::{DEFAULT_DPI, ExportSettings, NotYetPorted, UmlSource, parse_digits};
+use crate::abel::DisplayPositioned;
+use crate::command::unported::NotPortedCommands;
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
 
@@ -14,7 +16,7 @@ use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::sprite::SpriteContainer;
 
 use crate::klimt::font::StringBounder;
-use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::text::LineLocation;
@@ -26,15 +28,17 @@ pub(super) struct Titled {
     diagram_style: SName,
     /// The name SVG documents announce the diagram type with, like `SALT`.
     diagram_type: &'static str,
-    title: Option<Positioned>,
-    caption: Option<Positioned>,
-    legend: Option<(Positioned, VerticalAlignment)>,
-    header: Option<Positioned>,
-    footer: Option<Positioned>,
+    title: Option<DisplayPositioned>,
+    caption: Option<DisplayPositioned>,
+    legend: Option<(DisplayPositioned, VerticalAlignment)>,
+    header: Option<DisplayPositioned>,
+    footer: Option<DisplayPositioned>,
     mainframe: Option<Display>,
     scale: Option<Scale>,
     /// Without repeats, in the order they came.
     warnings: Vec<Warning>,
+    /// The first thing the diagram holds that rockuml cannot draw yet.
+    not_ported: Option<NotYetPorted>,
 }
 
 /// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
@@ -47,6 +51,7 @@ pub(super) struct Pragma {
 pub(super) enum PragmaKey {
     SequenceMessageSpan,
     Teoz,
+    UseIntermediatePackages,
 }
 
 impl PragmaKey {
@@ -60,6 +65,7 @@ impl PragmaKey {
         match simplified.as_str() {
             "sequencemessagespan" => Some(Self::SequenceMessageSpan),
             "teoz" => Some(Self::Teoz),
+            "useintermediatepackages" => Some(Self::UseIntermediatePackages),
             _ => None,
         }
     }
@@ -68,7 +74,7 @@ impl PragmaKey {
     fn default_value(self) -> Option<&'static str> {
         match self {
             Self::Teoz => Some("true"),
-            Self::SequenceMessageSpan => None,
+            Self::SequenceMessageSpan | Self::UseIntermediatePackages => None,
         }
     }
 }
@@ -83,6 +89,16 @@ impl Pragma {
         self.values.push((key, value));
     }
 
+    /// `false` or `off`.
+    pub(super) fn is_false(&self, key: PragmaKey) -> bool {
+        self.values.iter().any(|(known, value)| {
+            *known == key
+                && value.as_deref().is_some_and(|value| {
+                    value.eq_ignore_ascii_case("false") || value.eq_ignore_ascii_case("off")
+                })
+        })
+    }
+
     /// `true` or `on`.
     pub(super) fn is_true(&self, key: PragmaKey) -> bool {
         self.values.iter().any(|(known, value)| {
@@ -94,23 +110,15 @@ impl Pragma {
     }
 }
 
-/// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
-pub(super) struct Positioned {
-    pub display: Display,
-    pub alignment: HorizontalAlignment,
-    pub location: Option<LineLocation>,
-}
-
-/// Where a legend goes: above or below the diagram.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(super) enum VerticalAlignment {
-    Top,
-    Bottom,
-}
-
 /// A diagram built from commands that apply to every titled diagram.
 pub(super) trait TitledDiagram {
     fn titled(&mut self) -> &mut Titled;
+}
+
+impl<D: TitledDiagram> NotPortedCommands for D {
+    fn command_not_ported(&mut self, command: &'static str) {
+        self.titled().not_ported(NotYetPorted(command));
+    }
 }
 
 impl Titled {
@@ -133,7 +141,21 @@ impl Titled {
             mainframe: None,
             scale: None,
             warnings: Vec::new(),
+            not_ported: None,
         }
+    }
+
+    /// Keeps the first thing not ported, which the diagram is reported by.
+    pub(super) fn not_ported(&mut self, what: NotYetPorted) {
+        self.not_ported.get_or_insert(what);
+    }
+
+    pub(super) fn not_ported_part(&self) -> Option<NotYetPorted> {
+        self.not_ported
+    }
+
+    pub(super) fn diagram_style(&self) -> SName {
+        self.diagram_style
     }
 
     pub(super) fn add_warning(&mut self, warning: Warning) {
@@ -153,23 +175,23 @@ impl Titled {
     /// A blank title is ignored.
     pub(super) fn set_title(&mut self, title: Display, location: &LineLocation) {
         if !title.is_white() {
-            self.title = Some(Positioned::centered(title, location));
+            self.title = Some(DisplayPositioned::centered(title, location));
         }
     }
 
     pub(super) fn set_caption(&mut self, caption: Display, location: &LineLocation) {
-        self.caption = Some(Positioned::centered(caption, location));
+        self.caption = Some(DisplayPositioned::centered(caption, location));
     }
 
-    pub(super) fn set_legend(&mut self, legend: Positioned, vertical: VerticalAlignment) {
+    pub(super) fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
         self.legend = Some((legend, vertical));
     }
 
-    pub(super) fn set_header(&mut self, header: Positioned) {
+    pub(super) fn set_header(&mut self, header: DisplayPositioned) {
         self.header = Some(header);
     }
 
-    pub(super) fn set_footer(&mut self, footer: Positioned) {
+    pub(super) fn set_footer(&mut self, footer: DisplayPositioned) {
         self.footer = Some(footer);
     }
 
@@ -208,7 +230,7 @@ impl Titled {
         &'a self,
         drawing: Box<dyn TextBlock + 'a>,
         string_bounder: &Rc<dyn StringBounder>,
-        title: Option<&'a Positioned>,
+        title: Option<&'a DisplayPositioned>,
     ) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
         if !self.warnings.is_empty() {
@@ -257,7 +279,7 @@ impl Titled {
                 Some(caption.decoration("caption", &style, &self.skin)),
             ));
         }
-        let ribbon = |part: &Option<Positioned>, name, class| {
+        let ribbon = |part: &Option<DisplayPositioned>, name, class| {
             part.as_ref()
                 .filter(|part| !part.display.lines().is_empty())
                 .map(|part| part.decoration(class, &self.document_style(Some(name)), &self.skin))
@@ -271,12 +293,16 @@ impl Titled {
     }
 
     /// The document style's margin if it sets one, otherwise the diagram's own default.
-    pub(super) fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
+    pub(super) fn export_settings(
+        &self,
+        seed: i64,
+        default_margins: ClockwiseTopRightBottomLeft,
+    ) -> ExportSettings {
         let document = self.document_style(None);
         let margin = if document.has_value(PName::Margin) {
             document.margin()
         } else {
-            ClockwiseTopRightBottomLeft::same(default_margin)
+            default_margins
         };
         let background = self.style(&[SName::Root, SName::Document, self.diagram_style]);
         ExportSettings {
@@ -304,7 +330,7 @@ impl Titled {
     }
 }
 
-impl Positioned {
+impl DisplayPositioned {
     fn centered(display: Display, location: &LineLocation) -> Self {
         Self {
             display,

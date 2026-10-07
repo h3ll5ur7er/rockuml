@@ -18,6 +18,11 @@ pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
     ])
 }
 
+/// Tags like `$tag1 $tag2`, captured under `name` (`Stereotag.pattern`).
+pub(crate) fn tags_pattern(name: &'static str) -> RegexTree {
+    RegexTree::named(4, name, r"((\$[^%s{}%g<>$]+)([%s]+(\$[^%s{}%g<>$]+))*)?")
+}
+
 /// A letter in a coloured circle drawn before the labels.
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Spot {
@@ -87,6 +92,26 @@ impl Stereotype {
             .collect()
     }
 
+    /// The labels as written, like `<<a>><<b>>` (`getLabel(Guillemet.DOUBLE_COMPARATOR)`).
+    pub(crate) fn label_double_comparator(&self) -> &str {
+        &self.label
+    }
+
+    /// Each label as written, like `<<a>>` (`getLabels(Guillemet.DOUBLE_COMPARATOR)`).
+    pub(crate) fn labels_double_comparator(&self) -> Vec<String> {
+        cut_labels(&self.label)
+    }
+
+    /// Each label's text, without brackets or the space next to them.
+    pub(crate) fn multiple_labels(&self) -> Vec<String> {
+        static LABEL: LazyLock<Regex> =
+            LazyLock::new(|| java_regex(r"\<\<\s?((?:\<&\w+\>|[^<>])+?)\s?\>\>", false));
+        LABEL
+            .captures_iter(&self.label)
+            .map(|captures| captures[1].to_owned())
+            .collect()
+    }
+
     /// The names style rules can select the stereotype by.
     pub(crate) fn style_names(&self) -> Vec<String> {
         cut_labels(&self.label)
@@ -104,6 +129,12 @@ impl std::fmt::Display for Stereotype {
             None => f.write_str(&self.label),
         }
     }
+}
+
+/// A `$tag` on an entity, named without its `$`, which `hide $tag` selects.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Stereotag {
+    pub name: String,
 }
 
 /// `StringUtils.isEmpty`: only spaces and tabs.
@@ -150,6 +181,20 @@ mod tests {
             ["\u{AB}Generated\u{BB}", "\u{AB}Big\u{BB}"]
         );
         assert_eq!(stereotype.style_names(), ["Generated", "Big"]);
+    }
+
+    #[test]
+    fn labels_are_compared_as_written_or_bare() {
+        let stereotype = Stereotype::new("<< Generated >><<Big>>");
+        assert_eq!(
+            stereotype.label_double_comparator(),
+            "<< Generated >><<Big>>"
+        );
+        assert_eq!(
+            stereotype.labels_double_comparator(),
+            ["<< Generated >>", "<<Big>>"]
+        );
+        assert_eq!(stereotype.multiple_labels(), ["Generated", "Big"]);
     }
 
     #[test]

@@ -1,0 +1,6 @@
+@startuml
+participant Alice
+Alice -> Bob : hello
+note left of Alice : hi
+interface Foo
+@enduml

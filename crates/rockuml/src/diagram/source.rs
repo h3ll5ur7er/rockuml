@@ -12,6 +12,7 @@ pub(crate) const BASE64_TAG_START: &str = "data:image/png;base64,";
 pub(crate) const BASE64_TAG_REPLACEMENT: &str = "data:image/png;md5,";
 
 /// A diagram's preprocessed lines, from its `@start` line to its `@end` line (PlantUML's `UmlSource`).
+#[derive(Clone)]
 pub struct UmlSource {
     lines: Vec<StringLocated>,
     /// The diagram as written, before preprocessing.
@@ -110,14 +111,19 @@ impl UmlSource {
     /// commands have no use for.
     #[must_use]
     pub fn without_initial_noise(self) -> Self {
+        let noise = self.initial_noise();
         let mut lines = self.lines;
-        let noise = lines
+        lines.drain(1..=noise);
+        Self { lines, ..self }
+    }
+
+    /// How many lines [`Self::without_initial_noise`] drops.
+    pub(crate) fn initial_noise(&self) -> usize {
+        self.lines
             .iter()
             .skip(1)
             .take_while(|line| is_noise(line.text()))
-            .count();
-        lines.drain(1..=noise);
-        Self { lines, ..self }
+            .count()
     }
 
     /// Replaces each `data:image/png;base64,` payload by `data:image/png;md5,` and the MD5 of the data, which

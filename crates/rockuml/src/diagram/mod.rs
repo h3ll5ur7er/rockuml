@@ -1,15 +1,23 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+mod builder;
+mod chen;
 mod chrome;
+mod class;
 mod common_commands;
 mod creole;
+pub(crate) mod cuca;
+mod cuca_commands;
+mod description;
 mod diagram_type;
 mod error;
 mod salt;
 mod scale;
 mod sequence;
 mod source;
+mod state;
 mod titled;
+mod unported;
 
 pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
 
@@ -103,6 +111,8 @@ impl ExportSettings {
     }
 }
 
+type Create = fn(UmlSource, &[StringLocated]) -> Result<Box<dyn Diagram>, NotYetPorted>;
+
 /// The diagram of a block. `host` supplies the files and URLs its images name.
 pub fn create(
     block: &PreprocessedBlock,
@@ -110,14 +120,15 @@ pub fn create(
 ) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let (diagram_type, mut source) = prepare(block);
     // Known first, so that diagrams rockuml cannot draw read no images.
-    let create: fn(UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> = match diagram_type {
-        Some(DiagramType::Creole) => |source| Ok(CreoleDiagram::create(source)),
-        Some(DiagramType::Salt) => |source| Ok(salt::SaltDiagram::create(source)),
-        Some(DiagramType::Uml) => sequence::SequenceDiagram::create,
+    let create: Create = match diagram_type {
+        Some(DiagramType::Creole) => |source, _| Ok(CreoleDiagram::create(source)),
+        Some(DiagramType::Salt) => |source, _| Ok(salt::SaltDiagram::create(source)),
+        Some(DiagramType::Uml) => builder::create_uml,
+        Some(DiagramType::ChenEer) => |source, _| builder::create_chen(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_image_files(block.directory(), host);
-    create(source)
+    create(source, block.located_lines())
 }
 
 /// The diagram's source encoded as in a PlantUML server URL.

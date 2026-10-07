@@ -34,6 +34,15 @@ impl RegexTree {
         }
     }
 
+    /// A leaf whose groups have no name.
+    pub(crate) fn counted(group_count: usize, pattern: impl Into<Cow<'static, str>>) -> Self {
+        Self::Leaf {
+            name: None,
+            group_count,
+            pattern: pattern.into(),
+        }
+    }
+
     pub(crate) fn named(
         group_count: usize,
         name: &'static str,
