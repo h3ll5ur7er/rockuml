@@ -533,18 +533,24 @@ impl<'a> StripeBuilder<'a> {
         )));
     }
 
-    pub(super) fn font_size(&self) -> f64 {
-        self.font.font().size_2d()
+    pub(super) fn actual_font_configuration(&self) -> &FontConfiguration {
+        &self.font
     }
 
-    /// An unknown sprite is left out.
+    /// An unknown sprite is left out. A `<back>` colour paints behind it.
     pub(super) fn add_sprite(&mut self, name: &str, scale: f64, forced_color: Option<HColor>) {
         if let Some(sprite) = self.sprites.get_sprite(name) {
+            let back_color = self
+                .font
+                .contains_style(FontStyle::Backcolor)
+                .then(|| self.font.extended_color().cloned())
+                .flatten();
             self.atoms.push(Rc::new(AtomSprite::new(
                 self.font.color().clone(),
                 forced_color,
                 scale,
                 sprite,
+                back_color,
             )));
         }
     }

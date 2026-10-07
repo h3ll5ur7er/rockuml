@@ -14,7 +14,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::affine::XAffineTransform;
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{UTranslate, XDimension2D};
-use crate::klimt::shape::{UEllipse, UImageSvg, USegment, UShape, UText};
+use crate::klimt::shape::{UEllipse, URectangle, USegment, UShape, UText, svg_declared_size};
 use crate::klimt::sprite::Sprite;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::openiconic::SvgPath;
@@ -24,6 +24,7 @@ pub(crate) struct SvgNanoParser {
     svg: Cow<'static, str>,
     /// Where the elements PlantUML draws, and the ends of groups, are in `svg`, in document order.
     data: Vec<Range<usize>>,
+    declared_size: (u32, u32),
 }
 
 impl SvgNanoParser {
@@ -50,7 +51,11 @@ impl SvgNanoParser {
             })
             .map(|element| element.range())
             .collect();
-        Self { svg, data }
+        Self {
+            declared_size: svg_declared_size(&svg),
+            svg,
+            data,
+        }
     }
 
     fn data(&self) -> impl Iterator<Item = &str> {
@@ -119,14 +124,16 @@ impl Sprite for SvgNanoParser {
         font_color: &HColor,
         forced_color: Option<&HColor>,
         scale: f64,
+        back_color: Option<&HColor>,
     ) -> Box<dyn TextBlock + '_> {
-        let data = UImageSvg::new(self.svg.to_string(), scale);
+        let (width, height) = self.declared_size;
         Box::new(SpriteBlock {
             parser: self,
             font_color: font_color.clone(),
             forced_color: forced_color.cloned(),
             scale,
-            dimension: XDimension2D::new(data.width(), data.height()),
+            back_color: back_color.cloned(),
+            dimension: XDimension2D::new(f64::from(width) * scale, f64::from(height) * scale),
         })
     }
 }
@@ -136,6 +143,7 @@ struct SpriteBlock<'a> {
     font_color: HColor,
     forced_color: Option<HColor>,
     scale: f64,
+    back_color: Option<HColor>,
     dimension: XDimension2D,
 }
 
@@ -145,6 +153,12 @@ impl TextBlock for SpriteBlock<'_> {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
+        if let Some(back_color) = &self.back_color {
+            let rectangle = URectangle::new(self.dimension.width, self.dimension.height);
+            ug.with_backcolor(back_color.clone())
+                .with_color(back_color.clone())
+                .draw(&UShape::Rectangle(rectangle));
+        }
         self.parser.draw_u(
             ug,
             self.scale,
@@ -593,7 +607,7 @@ mod tests {
     fn a_sprite_measures_its_view_box_rounded_up_else_its_size_attributes() {
         let dimension = |svg: &str, scale| {
             SvgNanoParser::new(svg.to_owned())
-                .as_text_block(&HColor::BLACK, None, scale)
+                .as_text_block(&HColor::BLACK, None, scale, None)
                 .calculate_dimension(&StringBounderDebug)
         };
         assert_eq!(

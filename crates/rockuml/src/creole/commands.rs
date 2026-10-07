@@ -392,7 +392,8 @@ fn emoji(captures: &Captures, stripe: &mut StripeBuilder) {
 /// `<$name>`, `<#color$name>`, `<$name*2>` or `<$name{scale=2,color=red}>`, sized to the font.
 fn sprite(captures: &Captures, stripe: &mut StripeBuilder) {
     let scale_or_color = group(captures, 4);
-    let scale = get_scale(scale_or_color, 1.0) * stripe.font_size() / 13.0;
+    let scale =
+        get_scale(scale_or_color, 1.0) * stripe.actual_font_configuration().size_2d() / 13.0;
     let color = group(captures, 2)
         .or_else(|| get_color(scale_or_color))
         .map(HColor::parse_or_white);

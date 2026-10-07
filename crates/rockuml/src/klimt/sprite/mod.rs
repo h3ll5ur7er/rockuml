@@ -16,12 +16,14 @@ use super::TextBlock;
 use crate::color::HColor;
 
 pub(crate) trait Sprite {
-    /// The sprite drawn in `forced_color`, or else `font_color`, at `scale`.
+    /// The sprite drawn in `forced_color`, or else `font_color`, at `scale`. Only SVG sprites paint the
+    /// text's `back_color` behind them.
     fn as_text_block(
         &self,
         font_color: &HColor,
         forced_color: Option<&HColor>,
         scale: f64,
+        back_color: Option<&HColor>,
     ) -> Box<dyn TextBlock + '_>;
 }
 

@@ -18,6 +18,7 @@ impl Sprite for SpriteColor {
         _font_color: &HColor,
         _forced_color: Option<&HColor>,
         scale: f64,
+        _back_color: Option<&HColor>,
     ) -> Box<dyn TextBlock + '_> {
         Box::new(ColorBlock {
             image: &self.image,

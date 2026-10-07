@@ -227,6 +227,7 @@ pub(super) struct AtomSprite {
     forced_color: Option<HColor>,
     scale: f64,
     sprite: Rc<dyn Sprite>,
+    back_color: Option<HColor>,
 }
 
 impl AtomSprite {
@@ -235,28 +236,34 @@ impl AtomSprite {
         forced_color: Option<HColor>,
         scale: f64,
         sprite: Rc<dyn Sprite>,
+        back_color: Option<HColor>,
     ) -> Self {
         Self {
             font_color,
             forced_color,
             scale,
             sprite,
+            back_color,
         }
     }
 
-    fn as_text_block(&self) -> Box<dyn TextBlock + '_> {
-        self.sprite
-            .as_text_block(&self.font_color, self.forced_color.as_ref(), self.scale)
+    fn as_text_block(&self, back_color: Option<&HColor>) -> Box<dyn TextBlock + '_> {
+        self.sprite.as_text_block(
+            &self.font_color,
+            self.forced_color.as_ref(),
+            self.scale,
+            back_color,
+        )
     }
 }
 
 impl TextBlock for AtomSprite {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        self.as_text_block().calculate_dimension(string_bounder)
+        self.as_text_block(None).calculate_dimension(string_bounder)
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        self.as_text_block().draw_u(ug);
+        self.as_text_block(self.back_color.as_ref()).draw_u(ug);
     }
 }
 

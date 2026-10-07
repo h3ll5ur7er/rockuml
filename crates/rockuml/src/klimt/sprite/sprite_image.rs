@@ -77,6 +77,7 @@ impl Sprite for SpriteImage {
         font_color: &HColor,
         forced_color: Option<&HColor>,
         scale: f64,
+        _back_color: Option<&HColor>,
     ) -> Box<dyn TextBlock + '_> {
         Box::new(ImageBlock {
             img: &self.img,
@@ -118,7 +119,7 @@ mod tests {
     fn dimension(name: &str) -> Option<XDimension2D> {
         SpriteImage::from_internal(name).map(|sprite| {
             sprite
-                .as_text_block(&HColor::BLACK, None, 1.0)
+                .as_text_block(&HColor::BLACK, None, 1.0, None)
                 .calculate_dimension(&StringBounderDebug)
         })
     }

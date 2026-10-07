@@ -237,11 +237,12 @@ pub struct UImageSvg {
 
 impl UImageSvg {
     pub(crate) fn new(svg: String, scale: f64) -> Self {
+        let (data_width, data_height) = svg_declared_size(&svg);
         Self {
-            data_width: declared_size(&svg, "width"),
-            data_height: declared_size(&svg, "height"),
             svg,
             scale,
+            data_width,
+            data_height,
         }
     }
 
@@ -305,24 +306,33 @@ impl UImageSvg {
     }
 }
 
-/// The viewBox's size rounded up, else the root's `width` or `height` attribute. A document declaring
-/// neither, which PlantUML refuses, takes no room.
-fn declared_size(svg: &str, name: &str) -> u32 {
+/// The width and height an SVG document declares: its viewBox's size rounded up, else its root's `width`
+/// and `height` attributes. A document declaring neither, which PlantUML refuses, takes no room.
+pub(crate) fn svg_declared_size(svg: &str) -> (u32, u32) {
     static VIEWBOX: LazyLock<Regex> = LazyLock::new(|| {
         Regex::new(r#"viewBox[= "']+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)"#)
             .unwrap()
     });
+    static WIDTH: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"(?i)<svg[^>]+width\W+(\d+)").unwrap());
+    static HEIGHT: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"(?i)<svg[^>]+height\W+(\d+)").unwrap());
+
     if let Some(captures) = VIEWBOX.captures(svg) {
-        let group = if name == "width" { 3 } else { 4 };
-        return captures[group]
-            .parse::<f64>()
-            .map_or(0, |size| size.ceil() as u32);
+        let rounded_up = |group: usize| {
+            captures[group]
+                .parse::<f64>()
+                .map_or(0, |size| size.ceil() as u32)
+        };
+        return (rounded_up(3), rounded_up(4));
     }
-    Regex::new(&format!(r"(?i)<svg[^>]+{name}\W+(\d+)"))
-        .unwrap()
-        .captures(svg)
-        .and_then(|captures| captures[1].parse().ok())
-        .unwrap_or(0)
+    let attribute = |pattern: &Regex| {
+        pattern
+            .captures(svg)
+            .and_then(|captures| captures[1].parse().ok())
+            .unwrap_or(0)
+    };
+    (attribute(&WIDTH), attribute(&HEIGHT))
 }
 
 fn gray_scale(rgb: u32) -> u32 {

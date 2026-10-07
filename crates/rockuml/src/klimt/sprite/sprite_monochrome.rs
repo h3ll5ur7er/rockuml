@@ -99,6 +99,7 @@ impl Sprite for SpriteMonochrome {
         font_color: &HColor,
         forced_color: Option<&HColor>,
         scale: f64,
+        _back_color: Option<&HColor>,
     ) -> Box<dyn TextBlock + '_> {
         Box::new(MonochromeBlock {
             sprite: self,
