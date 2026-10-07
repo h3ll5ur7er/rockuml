@@ -9,6 +9,7 @@ mod cucadiagram;
 mod decoration;
 mod deflate;
 pub mod diagram;
+mod direction;
 mod emoji;
 mod file_policy;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.

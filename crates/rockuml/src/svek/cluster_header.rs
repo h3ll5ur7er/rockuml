@@ -134,6 +134,9 @@ fn get_stereo_block(
     if diagram.get_style_name() == SName::StateDiagram && g.get_usymbol().is_none() {
         return empty();
     }
+    if let Some(sprite) = stereotype.get_sprite(diagram.skin()) {
+        return Rc::from(sprite);
+    }
     let visible_stereotypes = diagram
         .get_visible_stereotype_labels(g.id())
         .unwrap_or_default();

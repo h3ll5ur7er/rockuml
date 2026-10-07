@@ -1,8 +1,8 @@
 //! A note's outline: a box with its top right corner folded, which may reach out to a point like a callout
 //! (PlantUML's `Opale`).
 
-use crate::abel::Direction;
 use crate::color::HColor;
+use crate::direction::Direction;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{XDimension2D, XPoint2D};

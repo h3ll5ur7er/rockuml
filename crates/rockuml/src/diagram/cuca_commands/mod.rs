@@ -1,7 +1,7 @@
 //! Commands the diagrams of entities and links share (class, description and state diagrams), which
 //! PlantUML keeps in its `command`, `classdiagram`, `descdiagram` and `objectdiagram` packages.
 
-mod labels;
+pub(super) mod labels;
 pub(super) mod note;
 
 use std::sync::LazyLock;
@@ -20,7 +20,7 @@ use crate::command::{
 };
 use crate::creole::Display;
 use crate::cucadiagram::get_linked_entry;
-use crate::decoration::symbol::USymbols;
+use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
 use crate::java;
 use crate::json::JsonValue;
@@ -36,17 +36,9 @@ pub(super) fn stereotype(stereo: &str) -> Result<Stereotype, CommandError> {
     Stereotype::with_spot(stereo).map_err(|_| CommandError::bad_color())
 }
 
-/// The colours captured under `name`, an unnamed one painting the background (`ColorParser.simpleColor`).
-pub(super) fn colors(arg: &RegexResult, name: &str) -> Result<Colors, CommandError> {
-    arg.get(name, 0)
-        .map(|data| Colors::parse(data, ColorType::Back).map_err(|_| CommandError::bad_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
-}
-
 /// The colours of `COLOR`, then the line colour and style of `##[style]color`.
 pub(super) fn colors_with_line(arg: &RegexResult) -> Result<Colors, CommandError> {
-    let mut colors = colors(arg, "COLOR")?;
+    let mut colors = colors(arg, ColorType::Back)?;
     if let Some(line_color) = arg.get("LINECOLOR", 1) {
         let color = HColor::parse(line_color)
             .ok()
@@ -65,24 +57,12 @@ pub(super) fn url_of(arg: &RegexResult) -> Option<Url> {
     arg.get("URL", 0).and_then(Url::parse)
 }
 
-/// `$tag1 $tag2` (`CommandCreateClassMultilines.addTags`).
-pub(super) fn add_tags(entity: &mut Entity, tags: Option<&str>) {
-    let Some(tags) = tags else {
-        return;
-    };
-    for tag in tags.split(' ').filter(|tag| !tag.is_empty()) {
-        entity.add_stereotag(Stereotag {
-            name: tag[1..].to_owned(),
-        });
-    }
-}
-
 /// The display a declaration names, or else its name, read without creole lists.
 pub(super) fn display_or_name(display: Option<&str>, name: &str) -> Display {
     display.map_or_else(|| Display::with_newlines(name), Display::with_newlines)
 }
 
-/// PlantUML's `CommandFootboxIgnored`: footboxes are for sequence diagrams.
+/// PlantUML's `CommandFootboxIgnored`: `hide footbox` means nothing outside sequence diagrams.
 pub(super) fn footbox_ignored<D: 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -445,7 +425,7 @@ pub(super) fn create_json_single_line<D: EntityDiagram + 'static>() -> Box<dyn C
     )))
 }
 
-/// PlantUML's `CommandEndPackage`.
+/// PlantUML's `CommandEndPackage`: `}` leaves the innermost group or `together` block.
 pub(super) fn end_package<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -463,7 +443,7 @@ pub(super) fn end_package<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
-/// PlantUML's `CommandPackageWithUSymbol`: `node Name {`, `cloud "Display" as Name {`...
+/// PlantUML's `CommandPackageWithUSymbol`: `node "Name" as N {` opens a group drawn as the symbol.
 pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -524,19 +504,22 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
             RegexTree::end(),
         ]),
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
-            let cuca = diagram.cuca();
-            let code_arg = CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default());
+            let code_arg =
+                CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default()).to_owned();
+            let colors = colors(arg, ColorType::Back)?;
             let code = if code_arg.is_empty() {
-                cuca.get_unique_sequence("##")
+                diagram.cuca().get_unique_sequence("##")
             } else {
-                code_arg.to_owned()
+                code_arg.clone()
             };
-            let ident = cuca.quark_in_context(false, CucaDiagram::clean_id(&code));
-            let display_arg = arg.get_lazzy("DISPLAY", 0).map(CucaDiagram::clean_id);
+            let code = diagram.clean_id(&code).to_owned();
+            let cuca = diagram.cuca();
+            let ident = cuca.quark_in_context(false, &code);
             let display = if code_arg.is_empty() {
                 Display::default()
             } else {
-                display_or_name(display_arg, cuca.quark(ident).get_name())
+                let display_arg = arg.get_lazzy("DISPLAY", 0).map(CucaDiagram::clean_id);
+                Display::with_newlines(display_arg.unwrap_or(cuca.quark(ident).get_name()))
             };
             let skin = cuca.skin();
             let usymbol = USymbols::from_string(
@@ -547,13 +530,12 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
             );
             cuca.goto_group(Some(location), ident, display, GroupType::Package);
             let group = cuca.get_current_group();
-            let colors = colors(arg, "COLOR")?;
             let entity = cuca.entity_mut(group);
             if usymbol.is_some() {
                 entity.usymbol = usymbol;
             }
-            if let Some(stereo) = arg.get_lazzy("STEREOTYPE", 0) {
-                entity.stereotype = Some(Stereotype::new(stereo));
+            if let Some(stereotype) = arg.get_lazzy("STEREOTYPE", 0) {
+                entity.stereotype = Some(Stereotype::new(stereotype));
             }
             if let Some(url) = url_of(arg) {
                 entity.url = Some(url);
@@ -565,7 +547,7 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
     )))
 }
 
-/// PlantUML's `CommandTogether`.
+/// PlantUML's `CommandTogether`: `together {` keeps the elements up to its `}` close in the layout.
 pub(super) fn together<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -582,7 +564,7 @@ pub(super) fn together<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
-/// PlantUML's `CommandUrl`: `url of Foo is [[link]]`.
+/// PlantUML's `CommandUrl`: `url of A is [[...]]`.
 pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -599,9 +581,11 @@ pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
             RegexTree::end(),
         ]),
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
+            let code = diagram
+                .clean_id(arg.get("CODE", 0).unwrap_or_default())
+                .to_owned();
             let cuca = diagram.cuca();
-            let code = arg.get("CODE", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(code));
+            let quark = cuca.quark_in_context(true, &code);
             let Some(entity) = cuca.quark(quark).get_data() else {
                 return Err(CommandError::new(format!(
                     "{} does not exist",
@@ -614,15 +598,17 @@ pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
-/// PlantUML's `CommandCreateElementMultilines`.
-pub(super) fn create_element_multilines_type0<D: NotPortedCommands + 'static>()
--> Box<dyn Command<D>> {
-    Box::new(
-        unported::multi_line(
-            "CommandCreateElementMultilines",
-            RegexTree::concat(vec![
+/// The keywords that declare description elements, the longer of two that start alike first
+/// (`CommandCreateElementFull.ALL_TYPES`).
+pub(super) const ALL_TYPES: &str = "person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout";
+
+/// PlantUML's `CommandCreateElementMultilines` of type 0: `node N as "` with a description up to the
+/// closing quote.
+pub(super) fn create_element_multilines_type0<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
+    fn start() -> RegexTree {
+        RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::named(1, "TYPE", r"(person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout)[%s]+"),
+            RegexTree::named(1, "TYPE", format!("({ALL_TYPES})[%s]+")),
             RegexTree::named(1, "CODE", r"([%pLN_.]+)"),
             stereo::optional_pattern("STEREO"),
             Url::optional_pattern(),
@@ -634,22 +620,17 @@ pub(super) fn create_element_multilines_type0<D: NotPortedCommands + 'static>()
             RegexTree::leaf(r"[%g]"),
             RegexTree::named(1, "DESC", r"([^%g]*)"),
             RegexTree::end(),
-        ]),
-            &plantuml_regex(r"^(.*)[%g]$"),
-        )
-        .skipping_quote_lines(),
-    )
+        ])
+    }
+    create_element_multilines(start, &plantuml_regex(r"^(.*)[%g]$"))
 }
 
-/// PlantUML's `CommandCreateElementMultilines`.
-pub(super) fn create_element_multilines_type1<D: NotPortedCommands + 'static>()
--> Box<dyn Command<D>> {
-    Box::new(
-        unported::multi_line(
-            "CommandCreateElementMultilines",
-            RegexTree::concat(vec![
+/// PlantUML's `CommandCreateElementMultilines` of type 1: `node N [` with a description up to `]`.
+pub(super) fn create_element_multilines_type1<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
+    fn start() -> RegexTree {
+        RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::named(1, "TYPE", r"(person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout)[%s]+"),
+            RegexTree::named(1, "TYPE", format!("({ALL_TYPES})[%s]+")),
             RegexTree::named(1, "CODE", r"([%pLN_.]+)"),
             stereo::optional_pattern("STEREO"),
             Url::optional_pattern(),
@@ -659,11 +640,122 @@ pub(super) fn create_element_multilines_type1<D: NotPortedCommands + 'static>()
             RegexTree::leaf(r"\["),
             RegexTree::named(1, "DESC", r"(.*)"),
             RegexTree::end(),
-        ]),
-            &plantuml_regex(r"^([^\[\]]*)\]$"),
-        )
+        ])
+    }
+    create_element_multilines(start, &plantuml_regex(r"^([^\[\]]*)\]$"))
+}
+
+fn create_element_multilines<D: EntityDiagram + 'static>(
+    start: fn() -> RegexTree,
+    end: &Regex,
+) -> Box<dyn Command<D>> {
+    let end_pattern = Regex::new(&format!("^(?:{})$", end.as_str())).expect("a valid pattern");
+    let start_pattern = start();
+    Box::new(
+        Multiline::starting_with_owned(start(), end, move |diagram: &mut D, lines: &BlocLines| {
+            let location = lines.first().map(|first| first.location().clone());
+            let lines = lines.trim_smart(1);
+            let first = lines.first().expect("a block has a first line").trimmed();
+            let head = start_pattern
+                .matcher(first.text())
+                .expect("the first line matched");
+            let last = lines.last().expect("a block has a last line").trimmed();
+            let line_last = end_pattern
+                .captures(last.text())
+                .and_then(|captures| captures.get(1))
+                .map_or("", |matched| matched.as_str())
+                .to_owned();
+            let keyword = head.get("TYPE", 0).unwrap_or_default();
+            let (leaf_type, usymbol) = if keyword.eq_ignore_ascii_case("usecase") {
+                (LeafType::Usecase, USymbols::USECASE)
+            } else if keyword.eq_ignore_ascii_case("usecase/") {
+                (LeafType::UsecaseBusiness, USymbols::USECASE_BUSINESS)
+            } else {
+                let skin = diagram.cuca().skin();
+                let usymbol = USymbols::from_string(
+                    keyword,
+                    skin.actor_style(),
+                    skin.component_style(),
+                    skin.package_style(),
+                )
+                .unwrap_or_else(|| panic!("{keyword} names a symbol"));
+                (LeafType::Description, usymbol)
+            };
+            let mut texts: Vec<String> = lines
+                .sub_extract(1, 1)
+                .iter()
+                .map(|line| line.text().to_owned())
+                .collect();
+            if let Some(desc_start) = head.get("DESC", 0).filter(|desc| !desc.is_empty()) {
+                texts.insert(0, desc_start.to_owned());
+            }
+            if !line_last.is_empty() {
+                texts.push(line_last);
+            }
+            let display = Display::create(texts);
+            let colors = colors(&head, ColorType::Back)?;
+            let code = diagram
+                .clean_id(head.get("CODE", 0).unwrap_or_default())
+                .to_owned();
+            let cuca = diagram.cuca();
+            let quark = cuca.quark_in_context(true, &code);
+            let entity = if let Some(existing) = cuca.quark(quark).get_data() {
+                existing
+            } else {
+                let created = cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type);
+                cuca.entity_mut(created).usymbol = Some(usymbol);
+                created
+            };
+            if exists_with_bad_type3(cuca.entity(entity), leaf_type, Some(usymbol)) {
+                return Err(CommandError::new(format!(
+                    "This element ({}) is already defined",
+                    cuca.quark(quark).get_name()
+                )));
+            }
+            let entity = cuca.entity_mut(entity);
+            if let Some(stereotype) = head.get("STEREO", 0) {
+                entity.stereotype =
+                    Some(Stereotype::with_spot(stereotype).map_err(|_| CommandError::bad_color())?);
+            }
+            if let Some(url) = head.get("URL", 0).and_then(Url::parse) {
+                entity.url = Some(url);
+            }
+            entity.colors = colors;
+            Ok(())
+        })
         .skipping_quote_lines(),
     )
+}
+
+/// Whether `other` cannot be declared again as `leaf_type` drawn as `usymbol`
+/// (`CommandCreateElementFull.existsWithBadType3`).
+pub(super) fn exists_with_bad_type3(
+    other: &Entity,
+    leaf_type: LeafType,
+    usymbol: Option<USymbol>,
+) -> bool {
+    other.get_leaf_type() != Some(leaf_type)
+        || usymbol.is_some_and(|usymbol| other.get_usymbol() != Some(usymbol))
+}
+
+/// `$tag1 $tag2`, which `hide $tag1` selects (`CommandCreateClassMultilines.addTags`).
+pub(super) fn add_tags(entity: &mut Entity, tags: Option<&str>) {
+    let Some(tags) = tags else {
+        return;
+    };
+    for tag in tags.split(' ').filter(|tag| !tag.is_empty()) {
+        entity.add_stereotag(Stereotag {
+            name: tag.strip_prefix('$').unwrap_or(tag).to_owned(),
+        });
+    }
+}
+
+/// The colours a `COLOR` specification gives, the main one painting `main_type`.
+pub(super) fn colors(arg: &RegexResult, main_type: ColorType) -> Result<Colors, CommandError> {
+    arg.get("COLOR", 0)
+        .map(|data| Colors::parse(data, main_type).map_err(|_| CommandError::bad_color()))
+        .transpose()
+        .map(Option::unwrap_or_default)
 }
 
 /// Whether the block holds JSON data, with or without the braces around it

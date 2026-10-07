@@ -661,7 +661,7 @@ impl SingleLineCommand<ClassDiagram> for Package {
             Display::with_newlines(&display),
             GroupType::Package,
         );
-        let colors = colors(arg, "COLOR")?;
+        let colors = colors(arg, ColorType::Back)?;
         let group = cuca.get_current_group();
         let entity = cuca.entity_mut(group);
         if usymbol.is_some() {
@@ -1155,9 +1155,10 @@ fn execute_link_class(
     };
     let labels = Labels::new(arg);
     let manage_visibility = cuca.skin().class_attribute_icon_size() > 0;
-    let link_arg = LinkArg::build_managing(labels.get_display(), queue, manage_visibility)
-        .with_quantifier(labels.first_label.clone(), labels.second_label.clone())
-        .with_role(labels.first_role.clone(), labels.second_role.clone())
+    let label = labels.get_label_link().map(Display::with_newlines);
+    let link_arg = LinkArg::build_managing(label, queue, manage_visibility)
+        .with_quantifier(labels.get_first_label(), labels.get_second_label())
+        .with_role(labels.get_first_role(), labels.get_second_role())
         .with_kal(
             arg.get("QUALIFIER1", 0).map(str::to_owned),
             arg.get("QUALIFIER2", 0).map(str::to_owned),
@@ -1168,7 +1169,7 @@ fn execute_link_class(
     if matches!(dir, Direction::Left | Direction::Up) {
         link = cuca.get_inv(link);
     }
-    let colors = colors(arg, "COLOR")?;
+    let colors = colors(arg, ColorType::Back)?;
     let stereotype = arg.get("STEREOTYPE", 0).map(crate::stereo::Stereotype::new);
     let link_mut: &mut Link = cuca.link_mut(link);
     link_mut.link_arrow = labels.get_link_arrow();

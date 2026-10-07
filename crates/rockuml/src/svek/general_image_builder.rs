@@ -4,10 +4,10 @@ use super::image::{
     EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
     EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
-    EntityImageJson, EntityImageLollipopInterface, EntityImageMap, EntityImageNote,
-    EntityImageObject, EntityImagePseudoState, EntityImageState, EntityImageState2,
-    EntityImageStateBorder, EntityImageStateEmptyDescription, EntityImageSynchroBar,
-    EntityImageTips,
+    EntityImageDescription, EntityImageJson, EntityImageLollipopInterface, EntityImageMap,
+    EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState, EntityImageState,
+    EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
+    EntityImageSynchroBar, EntityImageTips,
 };
 use super::{Bibliotekon, IEntityImage};
 use crate::abel::{Entity, EntityId, LeafType};
@@ -37,7 +37,7 @@ pub(crate) fn create_entity_image_block(
     match leaf_type {
         LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
         LeafType::Activity => not_ported("EntityImageActivity"),
-        LeafType::Portin | LeafType::Portout => not_ported("EntityImagePort"),
+        LeafType::Portin | LeafType::Portout => Ok(Box::new(EntityImagePort::new(entity, diagram))),
         LeafType::State => Ok(state_image(entity, diagram)),
         LeafType::CircleStart => Ok(Box::new(EntityImageCircleStart::new(entity, diagram))),
         LeafType::CircleEnd => Ok(Box::new(EntityImageCircleEnd::new(entity, diagram))),
@@ -57,14 +57,14 @@ pub(crate) fn create_entity_image_block(
         LeafType::Circle
         | LeafType::Description
         | LeafType::Usecase
-        | LeafType::UsecaseBusiness => not_ported("EntityImageDescription"),
+        | LeafType::UsecaseBusiness => Ok(Box::new(EntityImageDescription::new(entity, diagram))),
         LeafType::SynchroBar | LeafType::StateForkJoin => {
             Ok(Box::new(EntityImageSynchroBar::new(entity, diagram)))
         }
         LeafType::ArcCircle => not_ported("EntityImageArcCircle"),
         LeafType::EmptyPackage => {
             if entity.get_usymbol().is_some() {
-                not_ported("EntityImageDescription")
+                Ok(Box::new(EntityImageDescription::new(entity, diagram)))
             } else {
                 not_ported("EntityImageEmptyPackage")
             }

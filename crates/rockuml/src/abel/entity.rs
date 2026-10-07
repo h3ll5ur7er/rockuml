@@ -219,7 +219,7 @@ impl Entity {
 
     /// The style a stereotype like `<<Node>>` gives a package.
     pub(crate) fn get_package_style(&self) -> Option<PackageStyle> {
-        PackageStyle::from_stereotype(self.stereotype.as_ref()?.label_double_comparator())
+        PackageStyle::from_stereotype(&self.stereotype.as_ref()?.label_double_comparator())
     }
 
     pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {
@@ -263,7 +263,7 @@ impl Entity {
                 .stereotype
                 .as_ref()
                 .map_or(EntityPosition::Normal, |stereotype| {
-                    EntityPosition::from_stereotype(stereotype.label_double_comparator())
+                    EntityPosition::from_stereotype(&stereotype.label_double_comparator())
                 }),
             _ => EntityPosition::Normal,
         }

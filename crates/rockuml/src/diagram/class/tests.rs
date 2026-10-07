@@ -215,9 +215,6 @@ fn repository_tests() -> &'static std::path::Path {
     std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests"))
 }
 
-/// Cases whose description elements are drawn by images not ported yet.
-const WITH_DESCRIPTION_ELEMENTS: [&str; 2] = ["class/allowmixing", "class/kinds-records"];
-
 /// The bridge makes the graph PlantUML makes for every class and object case, call for call.
 #[test]
 fn the_smetana_graph_is_the_one_plantuml_lays_out() {
@@ -231,9 +228,6 @@ fn the_smetana_graph_is_the_one_plantuml_lays_out() {
         for entry in directories {
             let name = entry.expect("a trace directory").file_name();
             let case = format!("{area}/{}", name.to_string_lossy());
-            if WITH_DESCRIPTION_ELEMENTS.contains(&case.as_str()) {
-                continue;
-            }
             let text =
                 std::fs::read_to_string(repository_tests().join(format!("corpus/{case}.puml")))
                     .expect("corpus case");
@@ -258,5 +252,5 @@ fn the_smetana_graph_is_the_one_plantuml_lays_out() {
             checked += 1;
         }
     }
-    assert_eq!(checked, 71, "every case with a trace is checked");
+    assert_eq!(checked, 73, "every case with a trace is checked");
 }

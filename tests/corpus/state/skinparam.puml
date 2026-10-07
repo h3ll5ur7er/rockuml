@@ -6,7 +6,7 @@ skinparam state {
   BackgroundColor Peru
   BackgroundColor<<Warning>> Olive
   BorderColor Gray
-  FontName Impact
+  FontName Monospaced
 }
 [*] --> NotShooting
 state "Not Shooting State" as NotShooting {
