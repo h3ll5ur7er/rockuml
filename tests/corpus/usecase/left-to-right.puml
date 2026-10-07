@@ -1,0 +1,11 @@
+@startuml
+left to right direction
+actor Driver
+actor Mechanic
+usecase "Start engine" as S
+usecase "Refuel" as R
+usecase "Repair" as F
+Driver --> S
+Driver --> R
+Mechanic --> F
+@enduml

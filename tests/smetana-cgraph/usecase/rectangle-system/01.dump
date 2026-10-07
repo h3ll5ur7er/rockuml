@@ -1,0 +1,55 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 4
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011" "zent0003"
+graph ids "g" "cluster6"
+node ids "sh0012" "sh0013" "sh0010" "sh0011" "zent0003"
+in "g" node "sh0012" out e1> in edges e1> degree 0 1
+in "g" node "sh0013" out in e4< edges e4< degree 1 0
+in "g" node "sh0010" out in e2< edges e2< degree 1 0
+in "g" node "sh0011" out e3> in edges e3> degree 0 1
+in "g" node "zent0003" out e4> e2> in e1< e3< edges e4> e2> e1< e3< degree 2 2
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+in "cluster6" node "zent0003" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+induce "cluster6" e3> e2>
+in "cluster6" node "sh0010" out in e2< edges e2< degree 1 0
+in "cluster6" node "sh0011" out e3> in edges e3> degree 0 1
+in "cluster6" node "zent0003" out e2> in e3< edges e2> e3< degree 1 1
+contains "cluster6" 0 0 1 1 1 0 1 1 0
+attr "g" "margin" "16"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "1.9382773987465727"
+attr "sh0012" "height" "1.0277777777777777"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "1.253603123231782"
+attr "sh0013" "height" "1.0277777777777777"
+attr "cluster6" "label" "_dim_102_17_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "2.0552443359615684"
+attr "sh0010" "height" "0.4777155338589804"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.4700655460118288"
+attr "sh0011" "height" "0.3606797758690325"
+attr "zent0003" "shape" "box"
+attr "zent0003" "width" "0.1"
+attr "zent0003" "height" "0.1"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "0"
+attr e2> "label" "_dim_81_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "0"
+attr e3> "label" "_dim_118_17_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr "g" "rankdir" "LR"

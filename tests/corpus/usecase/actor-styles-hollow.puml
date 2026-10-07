@@ -1,0 +1,10 @@
+@startuml
+skinparam actorStyle hollow
+actor Visitor
+actor Member
+usecase Browse
+usecase Post
+Visitor --> Browse
+Member --> Browse
+Member --> Post
+@enduml

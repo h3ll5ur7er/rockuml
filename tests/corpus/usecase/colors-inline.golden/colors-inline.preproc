@@ -1,0 +1,7 @@
+@startuml
+actor Alice #pink;line:red;line.bold;text:red
+usecase Login #palegreen;line:green;line.dashed;text:green
+usecase Logout #aliceblue;line:blue;line.dotted;text:blue
+Alice --> Login
+Alice --> Logout
+@enduml

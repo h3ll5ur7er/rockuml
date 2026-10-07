@@ -1,0 +1,8 @@
+@startuml
+skinparam actorStyle awesome
+actor Customer
+actor Clerk
+usecase "Buy" as UC1
+Customer --> UC1
+Clerk --> UC1
+@enduml

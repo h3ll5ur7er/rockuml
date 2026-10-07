@@ -1,0 +1,14 @@
+@startuml
+title Library Use Cases
+actor Reader
+actor Librarian
+usecase "Borrow book" as B
+usecase "Return book" as R
+usecase "Register reader" as G
+Reader --> B
+Reader --> R
+Librarian --> G
+legend
+  Readers need a card.
+endlegend
+@enduml
