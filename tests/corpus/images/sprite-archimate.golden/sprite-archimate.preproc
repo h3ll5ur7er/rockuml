@@ -1,0 +1,4 @@
+@startuml
+Alice -> Bob : <$archimate/actor> actor
+Bob -> Alice : <$archimate/business-process> <$archimate/node*2>
+@enduml

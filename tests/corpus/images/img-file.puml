@@ -1,0 +1,5 @@
+@startuml
+Alice -> Bob : <img:icon.png> from a file
+Bob -> Alice : <img icon.png{scale=3}>
+note over Alice : <img:missing.png>
+@enduml

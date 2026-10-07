@@ -1,0 +1,10 @@
+@startuml
+sprite $ring [16x16/16z] ROz50e0m40EvBk7_twsjXmvK9lNdWhm7CTrzODUkE6WWMxy5S9OStVDEiFte2OuZ7Up_-RmVdyVtuVloUvW9
+Alice -> Bob : <$ring*2> doubled
+Bob -> Alice : <$ring{scale=0.5}> halved
+Alice -> Bob : <#red$ring> red
+Bob -> Alice : <$ring{scale=1.5,color=blue}> blue
+Alice -> Bob : <size:26><$ring></size> bigger font
+Bob -> Alice : <color:green><$ring> green text</color>
+note over Alice : <back:yellow><$ring></back> on yellow
+@enduml

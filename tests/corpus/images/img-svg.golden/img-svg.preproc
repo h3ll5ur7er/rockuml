@@ -1,0 +1,4 @@
+@startuml
+Alice -> Bob : <img:shape.svg> an svg file
+Bob -> Alice : <img:shape.svg{scale=2}>
+@enduml
