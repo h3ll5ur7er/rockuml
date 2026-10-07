@@ -42,7 +42,7 @@ impl<'a> PlayingSpace<'a> {
             max.push(dolls_max);
         }
         let current_y = YGauge::create(&arguments.y_origin.add_fixed(STARTING_Y), 0.0);
-        let mut events = (0..arguments.diagram.events().len()).peekable();
+        let mut events = 0..arguments.diagram.events().len();
         let tiles = build_several(&arguments, &mut events, current_y)?;
         for tile in &tiles {
             min.push(tile.min_x());

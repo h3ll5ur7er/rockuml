@@ -13,6 +13,8 @@ use super::tile::{Tile, TileArguments};
 use super::y_gauge::YGauge;
 use crate::diagram::sequence::model::{EventId, Note, NotePosition, ParticipantId};
 use crate::diagram::sequence::styles::{merged, sequence_signature_root};
+use crate::klimt::font::StringBounder;
+use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::real::Real;
@@ -406,16 +408,84 @@ pub(super) enum Side {
     Right,
 }
 
+/// A note beside a wrapped tile, what the tiles of notes beside messages share.
+struct NoteBeside {
+    side: Side,
+    component: Box<dyn Component>,
+}
+
+impl NoteBeside {
+    fn new(arguments: &TileArguments<'_>, note: &Note, side: Side, folded: bool) -> Self {
+        Self {
+            side,
+            component: components::note(arguments.diagram, note, folded, false),
+        }
+    }
+
+    fn width(&self, string_bounder: &dyn StringBounder) -> f64 {
+        self.component.preferred_width(string_bounder)
+    }
+
+    /// The tile and the note side by side are as high as the higher of the two.
+    fn height_beside(&self, tile: &dyn Tile<'_>, string_bounder: &dyn StringBounder) -> f64 {
+        tile.preferred_height()
+            .max(self.component.preferred_height(string_bounder))
+    }
+
+    /// The left of `tile` with the note at `note_x` beside it.
+    fn min_x(&self, tile: &dyn Tile<'_>, note_x: Real) -> Real {
+        match self.side {
+            Side::Left => note_x,
+            Side::Right => tile.min_x(),
+        }
+    }
+
+    fn max_x(
+        &self,
+        tile: &dyn Tile<'_>,
+        note_x: &Real,
+        string_bounder: &dyn StringBounder,
+    ) -> Real {
+        match self.side {
+            Side::Left => tile.max_x(),
+            Side::Right => note_x.add_fixed(self.width(string_bounder)),
+        }
+    }
+
+    fn draw_u(&self, ug: &UGraphic, (x, y): (f64, f64), context: Context2D) {
+        let dimension = self.component.preferred_dimension(ug.string_bounder());
+        self.component.draw_u(
+            &ug.translated(x, y),
+            &Area::new(dimension.width, dimension.height),
+            context,
+        );
+    }
+
+    /// Only the note's side of the tile it wraps reaches past the tile, for a group's frame to clear.
+    fn stable_min_x(&self, wrapper: &dyn Tile<'_>) -> Vec<Real> {
+        match self.side {
+            Side::Left => vec![wrapper.drawn_min_x()],
+            Side::Right => Vec::new(),
+        }
+    }
+
+    fn stable_max_x(&self, wrapper: &dyn Tile<'_>) -> Vec<Real> {
+        match self.side {
+            Side::Left => Vec::new(),
+            Side::Right => vec![wrapper.drawn_max_x()],
+        }
+    }
+}
+
 /// A note beside a message between participants or with the border.
 pub(super) struct CommunicationTileNoteSide<'a> {
     arguments: Rc<TileArguments<'a>>,
     tile: Box<dyn Tile<'a> + 'a>,
-    side: Side,
+    note: NoteBeside,
     participant: ParticipantId,
     /// The message creates the participant the note is beside.
     create: bool,
     y_gauge: YGauge,
-    component: Box<dyn Component>,
 }
 
 impl<'a> CommunicationTileNoteSide<'a> {
@@ -427,15 +497,13 @@ impl<'a> CommunicationTileNoteSide<'a> {
         participant: ParticipantId,
         create: bool,
     ) -> Self {
-        let component = components::note(arguments.diagram, note, false, false);
         let mut wrapper = Self {
             y_gauge: tile.y_gauge().clone(),
+            note: NoteBeside::new(&arguments, note, side, false),
             arguments,
             tile,
-            side,
             participant,
             create,
-            component,
         };
         wrapper.y_gauge = wrapped_gauge(wrapper.tile.y_gauge(), wrapper.preferred_height());
         wrapper
@@ -445,19 +513,13 @@ impl<'a> CommunicationTileNoteSide<'a> {
         self.arguments.living_space(self.participant)
     }
 
-    fn note_width(&self) -> f64 {
-        self.component
-            .preferred_dimension(self.arguments.string_bounder())
-            .width
-    }
-
     fn note_position(&self) -> Real {
         let string_bounder = self.arguments.string_bounder();
         let living_space = self.living_space();
-        match self.side {
+        match self.note.side {
             Side::Left => living_space
                 .pos_c(string_bounder)
-                .add_fixed(-self.note_width()),
+                .add_fixed(-self.note.width(string_bounder)),
             Side::Right if self.create => living_space.pos_d(string_bounder),
             Side::Right => {
                 let level =
@@ -484,11 +546,8 @@ impl<'a> Tile<'a> for CommunicationTileNoteSide<'a> {
     }
 
     fn preferred_height(&self) -> f64 {
-        let note_height = self
-            .component
-            .preferred_dimension(self.arguments.string_bounder())
-            .height;
-        self.tile.preferred_height().max(note_height)
+        self.note
+            .height_beside(self.tile.as_ref(), self.arguments.string_bounder())
     }
 
     fn on_gauge_resolved(&self) {
@@ -500,40 +559,30 @@ impl<'a> Tile<'a> for CommunicationTileNoteSide<'a> {
     }
 
     fn min_x(&self) -> Real {
-        match self.side {
-            Side::Left => self.note_position(),
-            Side::Right => self.tile.min_x(),
-        }
+        self.note.min_x(self.tile.as_ref(), self.note_position())
     }
 
     fn max_x(&self) -> Real {
-        match self.side {
-            Side::Left => self.tile.max_x(),
-            Side::Right => self.note_position().add_fixed(self.note_width()),
-        }
+        self.note.max_x(
+            self.tile.as_ref(),
+            &self.note_position(),
+            self.arguments.string_bounder(),
+        )
     }
 
     fn draw_u(&self, ug: &UGraphic, context: Context2D) {
         self.tile.draw_u(ug, context);
-        let dimension = self.component.preferred_dimension(ug.string_bounder());
         let x = self.note_position().current_value();
-        let ug = ug.translated(x, self.y_gauge.min.current_value());
-        self.component
-            .draw_u(&ug, &Area::new(dimension.width, dimension.height), context);
+        self.note
+            .draw_u(ug, (x, self.y_gauge.min.current_value()), context);
     }
 
     fn stable_min_x(&self) -> Vec<Real> {
-        match self.side {
-            Side::Left => vec![self.drawn_min_x()],
-            Side::Right => Vec::new(),
-        }
+        self.note.stable_min_x(self)
     }
 
     fn stable_max_x(&self) -> Vec<Real> {
-        match self.side {
-            Side::Left => Vec::new(),
-            Side::Right => vec![self.drawn_max_x()],
-        }
+        self.note.stable_max_x(self)
     }
 }
 
@@ -574,6 +623,11 @@ impl<'a> CommunicationTileNoteLevel<'a> {
         };
         wrapper.y_gauge = wrapped_gauge(wrapper.tile.y_gauge(), wrapper.preferred_height());
         wrapper
+    }
+
+    fn note_dimension(&self) -> XDimension2D {
+        self.component
+            .preferred_dimension(self.arguments.string_bounder())
     }
 
     fn middle_message(&self) -> f64 {
@@ -617,11 +671,7 @@ impl<'a> Tile<'a> for CommunicationTileNoteLevel<'a> {
     }
 
     fn preferred_height(&self) -> f64 {
-        let note_height = self
-            .component
-            .preferred_dimension(self.arguments.string_bounder())
-            .height;
-        self.tile.preferred_height() + note_height + SPACE_Y
+        self.tile.preferred_height() + self.note_dimension().height + SPACE_Y
     }
 
     fn on_gauge_resolved(&self) {
@@ -637,15 +687,12 @@ impl<'a> Tile<'a> for CommunicationTileNoteLevel<'a> {
     }
 
     fn max_x(&self) -> Real {
-        let width = self
-            .component
-            .preferred_dimension(self.arguments.string_bounder())
-            .width;
+        let width = self.note_dimension().width;
         Real::max(vec![self.tile.max_x(), self.tile.min_x().add_fixed(width)])
     }
 
     fn draw_u(&self, ug: &UGraphic, context: Context2D) {
-        let dimension = self.component.preferred_dimension(ug.string_bounder());
+        let dimension = self.note_dimension();
         let area = Area::new(dimension.width, dimension.height);
         let x_note = self.tile.min_x().current_value();
         let middle = self.middle_message();
@@ -689,9 +736,8 @@ impl<'a> Tile<'a> for CommunicationTileNoteLevel<'a> {
 pub(super) struct CommunicationTileSelfNote<'a> {
     arguments: Rc<TileArguments<'a>>,
     tile: CommunicationTileSelf<'a>,
-    side: Side,
+    note: NoteBeside,
     y_gauge: YGauge,
-    component: Box<dyn Component>,
 }
 
 impl<'a> CommunicationTileSelfNote<'a> {
@@ -701,26 +747,22 @@ impl<'a> CommunicationTileSelfNote<'a> {
         note: &'a Note,
         side: Side,
     ) -> Self {
-        let component = components::note(arguments.diagram, note, true, false);
         let mut wrapper = Self {
             y_gauge: tile.y_gauge().clone(),
+            note: NoteBeside::new(&arguments, note, side, true),
             arguments,
             tile,
-            side,
-            component,
         };
         wrapper.y_gauge = wrapped_gauge(wrapper.tile.y_gauge(), wrapper.preferred_height());
         wrapper
     }
 
     fn note_width(&self) -> f64 {
-        self.component
-            .preferred_dimension(self.arguments.string_bounder())
-            .width
+        self.note.width(self.arguments.string_bounder())
     }
 
     fn note_position(&self) -> Real {
-        match self.side {
+        match self.note.side {
             Side::Left => self.tile.min_x().add_fixed(-self.note_width()),
             Side::Right => self.tile.max_x(),
         }
@@ -741,11 +783,8 @@ impl<'a> Tile<'a> for CommunicationTileSelfNote<'a> {
     }
 
     fn preferred_height(&self) -> f64 {
-        let note_height = self
-            .component
-            .preferred_dimension(self.arguments.string_bounder())
-            .height;
-        self.tile.preferred_height().max(note_height)
+        self.note
+            .height_beside(&self.tile, self.arguments.string_bounder())
     }
 
     fn on_gauge_resolved(&self) {
@@ -756,7 +795,7 @@ impl<'a> Tile<'a> for CommunicationTileSelfNote<'a> {
         self.tile.add_constraints();
         let string_bounder = self.arguments.string_bounder();
         let living_space = self.tile.living_space1();
-        match self.side {
+        match self.note.side {
             Side::Left => {
                 let overflow = living_space.pos_b().current_value() - self.min_x().current_value();
                 if overflow > 0.0 {
@@ -774,28 +813,26 @@ impl<'a> Tile<'a> for CommunicationTileSelfNote<'a> {
     }
 
     fn min_x(&self) -> Real {
-        match self.side {
-            Side::Left => self.note_position(),
-            Side::Right => self.tile.min_x(),
-        }
+        self.note.min_x(&self.tile, self.note_position())
     }
 
     fn max_x(&self) -> Real {
-        match self.side {
-            Side::Left => self.tile.max_x(),
-            Side::Right => self.note_position().add_fixed(self.note_width()),
-        }
+        self.note.max_x(
+            &self.tile,
+            &self.note_position(),
+            self.arguments.string_bounder(),
+        )
     }
 
     fn drawn_min_x(&self) -> Real {
-        match self.side {
+        match self.note.side {
             Side::Left => self.tile.drawn_min_x().add_fixed(-self.note_width()),
             Side::Right => self.tile.drawn_min_x(),
         }
     }
 
     fn drawn_max_x(&self) -> Real {
-        match self.side {
+        match self.note.side {
             Side::Left => self.tile.drawn_max_x(),
             Side::Right => self.tile.drawn_max_x().add_fixed(self.note_width()),
         }
@@ -803,24 +840,16 @@ impl<'a> Tile<'a> for CommunicationTileSelfNote<'a> {
 
     fn draw_u(&self, ug: &UGraphic, context: Context2D) {
         self.tile.draw_u(ug, context);
-        let dimension = self.component.preferred_dimension(ug.string_bounder());
         let x = self.note_position().current_value();
-        let ug = ug.translated(x, self.y_gauge.min.current_value());
-        self.component
-            .draw_u(&ug, &Area::new(dimension.width, dimension.height), context);
+        self.note
+            .draw_u(ug, (x, self.y_gauge.min.current_value()), context);
     }
 
     fn stable_min_x(&self) -> Vec<Real> {
-        match self.side {
-            Side::Left => vec![self.drawn_min_x()],
-            Side::Right => Vec::new(),
-        }
+        self.note.stable_min_x(self)
     }
 
     fn stable_max_x(&self) -> Vec<Real> {
-        match self.side {
-            Side::Left => Vec::new(),
-            Side::Right => vec![self.drawn_max_x()],
-        }
+        self.note.stable_max_x(self)
     }
 }

@@ -3,7 +3,6 @@
 
 use std::cell::OnceCell;
 use std::collections::HashSet;
-use std::iter::Peekable;
 use std::rc::Rc;
 
 use super::blotter::Blotter;
@@ -85,7 +84,7 @@ impl<'a> GroupingTile<'a> {
     /// The group and the tiles of its events, which it takes from `events` up to its end.
     pub(super) fn new(
         arguments: &Rc<TileArguments<'a>>,
-        events: &mut Peekable<impl Iterator<Item = EventId>>,
+        events: &mut impl Iterator<Item = EventId>,
         event: EventId,
         start: &'a GroupingStart,
         current_y: &YGauge,
@@ -126,10 +125,7 @@ impl<'a> GroupingTile<'a> {
                     tile.frame.clone(),
                     &current_y,
                 )),
-                _ => match build_one(arguments, events, child, &current_y)? {
-                    Some(child_tile) => child_tile,
-                    None => continue,
-                },
+                _ => build_one(arguments, events, child, &current_y)?,
             };
             current_y = child_tile.y_gauge().clone();
             tile.tiles.push(child_tile);

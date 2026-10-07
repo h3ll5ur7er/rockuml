@@ -1,0 +1,5 @@
+@startuml
+skinparam sequenceParticipant underline
+participant "aaaaaaaaaaaa\rb" as a
+a -> a : x
+@enduml

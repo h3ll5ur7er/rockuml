@@ -171,8 +171,7 @@ pub(crate) fn stereotyped_component_text(
     stereo: &Style,
     max_width: f64,
 ) -> Box<dyn TextBlock> {
-    if display.stereotype().is_none() && display.lines().len() == 1 && display.lines()[0].is_empty()
-    {
+    if display.stereotype().is_none() && display.is_single_empty_line() {
         return Box::new(TextBlockEmpty::default());
     }
     let alignment = display

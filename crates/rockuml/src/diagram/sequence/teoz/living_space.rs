@@ -8,7 +8,7 @@ use std::rc::Rc;
 use super::components;
 use super::key::Key;
 use crate::diagram::sequence::SequenceDiagram;
-use crate::diagram::sequence::model::{Event, EventId, LiveColors, ParticipantId};
+use crate::diagram::sequence::model::{Event, EventId, LifeEventType, LiveColors, ParticipantId};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
@@ -81,15 +81,15 @@ impl<'a> LivingSpace<'a> {
         self.live_boxes.add_step(event, y);
     }
 
-    fn head(&self, top: bool) -> Box<dyn Component> {
-        components::participant_component(self.diagram, self.participant, top)
+    fn head_or_tail(&self, head: bool) -> Box<dyn Component> {
+        components::participant_component(self.diagram, self.participant, head)
     }
 
     pub(super) fn head_preferred_dimension(
         &self,
         string_bounder: &dyn StringBounder,
     ) -> XDimension2D {
-        self.head(true).preferred_dimension(string_bounder)
+        self.head_or_tail(true).preferred_dimension(string_bounder)
     }
 
     fn preferred_width(&self, string_bounder: &dyn StringBounder) -> f64 {
@@ -112,7 +112,7 @@ impl<'a> LivingSpace<'a> {
     /// The centre, after the widest nesting of activation boxes.
     pub(super) fn pos_c2(&self, string_bounder: &dyn StringBounder) -> Real {
         self.pos_c(string_bounder)
-            .add_fixed(self.live_boxes.max_position(string_bounder))
+            .add_fixed(self.live_boxes.max_position())
     }
 
     pub(super) fn pos_d(&self, string_bounder: &dyn StringBounder) -> Real {
@@ -166,7 +166,6 @@ impl<'a> LivingSpace<'a> {
 
     pub(super) fn delay_on(&self, y: f64, height: f64) {
         self.delays.borrow_mut().insert(Key(y), height);
-        self.live_boxes.delay_on(y, height);
     }
 
     /// The head a creation message ends on, left of `ug` when `right_aligned`.
@@ -186,7 +185,7 @@ impl<'a> LivingSpace<'a> {
         if self.create.get() && alignment == VerticalAlignment::Bottom {
             return;
         }
-        let component = self.head(head);
+        let component = self.head_or_tail(head);
         let dimension = component.preferred_dimension(ug.string_bounder());
         let ug = if right_aligned {
             ug.translated(-dimension.width, 0.0)
@@ -217,8 +216,13 @@ impl<'a> LivingSpace<'a> {
         if alive {
             self.draw_line(ug, context, alive_since, height);
         }
-        self.live_boxes
-            .draw_boxes(ug, context, self.first_create_y(), height);
+        self.live_boxes.draw_boxes(
+            ug,
+            context,
+            self.first_create_y(),
+            height,
+            &self.delays.borrow(),
+        );
     }
 
     fn first_create_y(&self) -> f64 {
@@ -248,10 +252,10 @@ impl<'a> LivingSpace<'a> {
     }
 
     fn draw_line_part(&self, ug: &UGraphic, context: Context2D, y1: f64, y2: f64, delay: bool) {
-        if y2 == y1 {
+        // Delays of parallel groups can overlap, which PlantUML fails on; the overlap is left out.
+        if y2 <= y1 {
             return;
         }
-        assert!(y2 > y1, "lifelines go down");
         let component = if delay {
             components::delay_line(self.diagram, self.participant)
         } else {
@@ -384,7 +388,6 @@ struct LiveBoxes<'a> {
     participant: ParticipantId,
     /// The y each event concerning the participant was placed at.
     events_step: RefCell<HashMap<EventId, f64>>,
-    delays: RefCell<BTreeMap<Key, f64>>,
     level_cache: OnceCell<LevelCache>,
 }
 
@@ -401,7 +404,6 @@ impl<'a> LiveBoxes<'a> {
             diagram,
             participant,
             events_step: RefCell::new(HashMap::new()),
-            delays: RefCell::new(BTreeMap::new()),
             level_cache: OnceCell::new(),
         }
     }
@@ -541,9 +543,7 @@ impl<'a> LiveBoxes<'a> {
             match next {
                 Event::Note(_) => {}
                 Event::LifeEvent(life) => {
-                    if life.participant == self.participant
-                        && life.kind == crate::diagram::sequence::model::LifeEventType::Destroy
-                    {
+                    if life.participant == self.participant && life.kind == LifeEventType::Destroy {
                         return true;
                     }
                 }
@@ -614,8 +614,7 @@ impl<'a> LiveBoxes<'a> {
                 }
                 _ => position = potential,
             }
-            if let Some(common) = event.message_common() {
-                let _ = common;
+            if event.message_common().is_some() {
                 if last_message.is_some_and(|last| self.diagram.is_parallel_with(id, last)) {
                     continue;
                 }
@@ -664,23 +663,26 @@ impl<'a> LiveBoxes<'a> {
                 }
             }
         }
-        max.max(0) as usize
+        max as usize
     }
 
-    fn max_position(&self, string_bounder: &dyn StringBounder) -> f64 {
-        let _ = string_bounder;
+    fn max_position(&self) -> f64 {
         ComponentRoseActiveLine::WIDTH / 2.0 * self.max_value() as f64
     }
 
-    fn delay_on(&self, y: f64, height: f64) {
-        self.delays.borrow_mut().insert(Key(y), height);
-    }
-
-    fn draw_boxes(&self, ug: &UGraphic, context: Context2D, create_y: f64, end_y: f64) {
+    /// The boxes, cut where `delays` are.
+    fn draw_boxes(
+        &self,
+        ug: &UGraphic,
+        context: Context2D,
+        create_y: f64,
+        end_y: f64,
+        delays: &BTreeMap<Key, f64>,
+    ) {
         let stairs = self.stairs(create_y, end_y);
         let max = stairs.iter().map(|step| step.indent).max().unwrap_or(0);
         for level in 1..=max {
-            self.draw_one_level(ug, level, &stairs, context);
+            self.draw_one_level(ug, level, &stairs, delays, context);
         }
         for step in &stairs {
             if step.indent == 0 {
@@ -689,7 +691,14 @@ impl<'a> LiveBoxes<'a> {
         }
     }
 
-    fn draw_one_level(&self, ug: &UGraphic, level: usize, stairs: &[Step], context: Context2D) {
+    fn draw_one_level(
+        &self,
+        ug: &UGraphic,
+        level: usize,
+        stairs: &[Step],
+        delays: &BTreeMap<Key, f64>,
+        context: Context2D,
+    ) {
         let ug = ug.translated(
             (level - 1) as f64 * ComponentRoseActiveLine::WIDTH / 2.0,
             0.0,
@@ -700,7 +709,7 @@ impl<'a> LiveBoxes<'a> {
             match start {
                 None if step.indent == level => start = Some(step),
                 Some(open) if is_last || step.indent < level => {
-                    self.draw_box(&ug, open, step.value, context);
+                    self.draw_box(&ug, open, step.value, delays, context);
                     if step.indent > 0 {
                         self.draw_destroy_if_needed(&ug, step, context);
                     }
@@ -712,8 +721,15 @@ impl<'a> LiveBoxes<'a> {
     }
 
     /// `LiveBoxesDrawer.doDrawing`: the box from `start` to `end`, cut by delays.
-    fn draw_box(&self, ug: &UGraphic, start: &Step, end: f64, context: Context2D) {
-        let segments = cut_segment(start.value, end, &self.delays.borrow());
+    fn draw_box(
+        &self,
+        ug: &UGraphic,
+        start: &Step,
+        end: f64,
+        delays: &BTreeMap<Key, f64>,
+        context: Context2D,
+    ) {
+        let segments = cut_segment(start.value, end, delays);
         let count = segments.len();
         for (index, (y1, y2)) in segments.into_iter().enumerate() {
             let close_up = index == 0;

@@ -14,11 +14,17 @@ pub(crate) mod self_arrow;
 pub(crate) mod separators;
 
 use arrow::{ArrowParts, ComponentRoseArrow};
+use note::{ComponentRoseNote, ComponentRoseNoteBox, ComponentRoseNoteHexagonal};
 use self_arrow::ComponentRoseSelfArrow;
 
 use super::SkinParam;
 use super::arrow::{ArrowConfiguration, ArrowDirection};
-use super::component::{ArrowComponent, TextualPart, component_text, creole_text, with_margin};
+use super::body::enhanced_text;
+use super::component::{
+    ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text, creole_text,
+    with_margin,
+};
+use crate::color::Colors;
 use crate::creole::Display;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
@@ -187,14 +193,13 @@ pub(crate) fn create_component_note(
     shape: NoteShape,
     skin: &SkinParam,
     display: &Display,
-    colors: &crate::color::Colors,
+    colors: &Colors,
     over_several: bool,
-) -> Box<dyn super::component::Component> {
-    use note::{ComponentRoseNote, ComponentRoseNoteBox, ComponentRoseNoteHexagonal};
+) -> Box<dyn Component> {
     let fashion = style.symbol_context(colors);
     let font = style.font_configuration();
     let alignment = style.horizontal_alignment().unwrap_or_default();
-    let margin = ClockwiseTopRightBottomLeft::top_right_bottom_left;
+    let padding = ClockwiseTopRightBottomLeft::top_right_bottom_left;
     match shape {
         NoteShape::Folded => {
             let (text_alignment, position) = if over_several {
@@ -210,41 +215,35 @@ pub(crate) fn create_component_note(
                 let text_alignment = skin.note_text_alignment(HorizontalAlignment::Left);
                 (text_alignment, text_alignment)
             };
-            let padding = if text_alignment == HorizontalAlignment::Center {
-                margin(5.0, 15.0, 5.0, 15.0)
+            let text_padding = if text_alignment == HorizontalAlignment::Center {
+                padding(5.0, 15.0, 5.0, 15.0)
             } else {
-                margin(5.0, 15.0, 5.0, 6.0)
+                padding(5.0, 15.0, 5.0, 6.0)
             };
-            let text = if is_single_empty_line(display) {
-                Box::new(super::component::TextBlockEmpty {
-                    dimension: XDimension2D::default(),
-                }) as Box<dyn TextBlock>
+            let text = if display.is_single_empty_line() {
+                Box::new(TextBlockEmpty::default()) as Box<dyn TextBlock>
             } else {
-                super::body::enhanced_text(display, font, alignment, style)
+                enhanced_text(display, font, alignment, style)
             };
             Box::new(ComponentRoseNote::new(
-                TextualPart::new(text, padding),
+                TextualPart::new(text, text_padding),
                 fashion,
-                Some(position),
+                position,
             ))
         }
         NoteShape::Hexagonal => Box::new(ComponentRoseNoteHexagonal::new(
             TextualPart::new(
                 component_text(display, font, style, style.wrap_width()),
-                margin(4.0, 12.0, 4.0, 12.0),
+                padding(4.0, 12.0, 4.0, 12.0),
             ),
             fashion,
         )),
         NoteShape::Box => Box::new(ComponentRoseNoteBox::new(
             TextualPart::new(
                 component_text(display, font, style, style.wrap_width()),
-                margin(4.0, 4.0, 4.0, 4.0),
+                padding(4.0, 4.0, 4.0, 4.0),
             ),
             fashion,
         )),
     }
-}
-
-fn is_single_empty_line(display: &Display) -> bool {
-    display.lines().len() == 1 && display.lines()[0].is_empty()
 }

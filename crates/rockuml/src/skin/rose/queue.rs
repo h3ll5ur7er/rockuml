@@ -5,25 +5,25 @@ use crate::skin::component::{Area, Component};
 
 /// A queue: its symbol holds the name.
 pub(crate) struct ComponentRoseQueue {
-    stickman: Box<dyn TextBlock>,
+    symbol: Box<dyn TextBlock>,
 }
 
 impl ComponentRoseQueue {
-    pub(crate) fn new(stickman: Box<dyn TextBlock>) -> Self {
-        Self { stickman }
+    pub(crate) fn new(symbol: Box<dyn TextBlock>) -> Self {
+        Self { symbol }
     }
 }
 
 impl Component for ComponentRoseQueue {
     fn preferred_width(&self, string_bounder: &dyn StringBounder) -> f64 {
-        self.stickman.calculate_dimension(string_bounder).width
+        self.symbol.calculate_dimension(string_bounder).width
     }
 
     fn preferred_height(&self, string_bounder: &dyn StringBounder) -> f64 {
-        self.stickman.calculate_dimension(string_bounder).height
+        self.symbol.calculate_dimension(string_bounder).height
     }
 
     fn draw_internal(&self, ug: &UGraphic, _area: &Area) {
-        self.stickman.draw_u(ug);
+        self.symbol.draw_u(ug);
     }
 }
