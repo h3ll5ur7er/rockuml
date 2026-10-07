@@ -39,6 +39,8 @@ public class StateImageDump {
 			{ "border", "state S {", "  state e1 <<entryPoint>>", "  state x1 <<exitPoint>>",
 					"  state i1 <<inputPin>>", "  state o1 <<outputPin>>", "  state ei <<expansionInput>>",
 					"  state eo <<expansionOutput>>", "}" }, //
+			{ "sdl", "state \"Req(Id)\" as ReqId <<sdlreceive>>", "state Plain <<sdlreceive>>",
+					"state \"Two\\nLines\" as Two <<sdlreceive>>", "state Send <<sdlsend>>", "Plain --> ReqId" }, //
 			{ "left-to-right", "left to right direction", "state f <<fork>>", "state S {",
 					"  state ei <<expansionInput>>", "}", "f --> S" }, //
 	};

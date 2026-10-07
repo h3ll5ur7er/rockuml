@@ -48,7 +48,7 @@ pub(crate) struct SkinParam {
     rankdir: Rankdir,
 }
 
-/// Which way graphs are laid out: ranks top to bottom, or left to right (PlantUML's `Rankdir`).
+/// Which way entity diagrams flow (PlantUML's `Rankdir`).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(crate) enum Rankdir {
     #[default]
@@ -193,6 +193,23 @@ impl SkinParam {
         self.value("packageStyle")
             .and_then(|value| PackageStyle::from_string(&value))
             .unwrap_or(PackageStyle::Folder)
+    }
+
+    /// `stereotypeAlignment`, centred by default.
+    pub(crate) fn stereotype_alignment(&self) -> HorizontalAlignment {
+        self.value("stereotypealignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Center)
+    }
+
+    /// `defaultTextAlignment`, or else `default`.
+    pub(crate) fn default_text_alignment(
+        &self,
+        default: HorizontalAlignment,
+    ) -> HorizontalAlignment {
+        self.value("defaulttextalignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(default)
     }
 
     /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.

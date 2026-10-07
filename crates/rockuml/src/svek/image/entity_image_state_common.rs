@@ -3,12 +3,14 @@
 
 use crate::abel::Entity;
 use crate::color::{ColorType, Colors, HColor};
-use crate::creole::{CreoleMode, SheetBlock2};
+use crate::creole::{CreoleMode, Display, SheetBlock2};
 use crate::diagram::cuca::CucaDiagram;
+use crate::klimt::TextBlock;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::url::Url;
+use crate::skin::component::TextBlockEmpty;
 use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
 use crate::svek::AbstractEntityImage;
@@ -34,6 +36,29 @@ pub(crate) fn get_style_state(
         None => state_signature(),
     };
     signature.get_merged_style_with(builder, stereotype)
+}
+
+/// The description lines of a composite state, drawn under its name (`Entity.getStateDescription`).
+pub(crate) fn get_state_description(group: &Entity, diagram: &CucaDiagram) -> Box<dyn TextBlock> {
+    let details = group.bodier.get_raw_body();
+    if details.is_empty() {
+        return Box::new(TextBlockEmpty::default());
+    }
+    let style = get_style_state(
+        Some(SName::Description),
+        group.stereotype.as_ref(),
+        &diagram.skin().current_style_builder(),
+    );
+    let lines = details
+        .iter()
+        .flat_map(|line| Display::with_newlines(line).lines().to_vec());
+    Box::new(Display::create(lines).create0(
+        style.font_configuration(),
+        style.horizontal_alignment().unwrap_or_default(),
+        diagram.skin(),
+        0.0,
+        CreoleMode::Full,
+    ))
 }
 
 pub(crate) struct EntityImageStateCommon {

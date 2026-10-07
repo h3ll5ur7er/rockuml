@@ -7,6 +7,7 @@ mod entity_image_circle_end;
 mod entity_image_circle_start;
 mod entity_image_pseudo_state;
 mod entity_image_state;
+mod entity_image_state2;
 mod entity_image_state_border;
 mod entity_image_state_common;
 mod entity_image_state_empty_description;
@@ -18,7 +19,9 @@ pub(crate) use entity_image_circle_start::EntityImageCircleStart;
 pub(crate) use entity_image_pseudo_state::EntityImagePseudoState;
 pub(crate) use entity_image_state::EntityImageState;
 pub(crate) use entity_image_state_border::EntityImageStateBorder;
+pub(crate) use entity_image_state_common::{get_state_description, get_style_state};
 pub(crate) use entity_image_state_empty_description::EntityImageStateEmptyDescription;
+pub(crate) use entity_image_state2::EntityImageState2;
 pub(crate) use entity_image_synchro_bar::EntityImageSynchroBar;
 
 use super::IEntityImage;
@@ -60,6 +63,13 @@ pub(crate) fn create_state_entity_image(
         }
         LeafType::State if hide_empty_description && leaf.bodier.get_raw_body().is_empty() => {
             Box::new(EntityImageStateEmptyDescription::new(leaf, diagram))
+        }
+        LeafType::State
+            if leaf.stereotype.as_ref().is_some_and(|stereotype| {
+                stereotype.label_double_comparator() == "<<sdlreceive>>"
+            }) =>
+        {
+            Box::new(EntityImageState2::new(leaf, diagram))
         }
         LeafType::State => Box::new(EntityImageState::new(leaf, diagram)),
         LeafType::CircleStart => Box::new(EntityImageCircleStart::new(leaf, diagram)),

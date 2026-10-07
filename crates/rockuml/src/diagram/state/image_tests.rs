@@ -86,7 +86,7 @@ fn fixture_cases() -> Vec<FixtureCase> {
 #[test]
 fn state_images_draw_like_plantuml() {
     let cases = fixture_cases();
-    assert_eq!(cases.len(), 8);
+    assert_eq!(cases.len(), 9);
     let mut count = 0;
     let mut failures = Vec::new();
     for (name, source, dumps) in cases {

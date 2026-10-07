@@ -1262,6 +1262,171 @@ LINE:
   color: ff181818
 
 
+--- case sdl
+@startuml
+state "Req(Id)" as ReqId <<sdlreceive>>
+state Plain <<sdlreceive>>
+state "Two\nLines" as Two <<sdlreceive>>
+state Send <<sdlsend>>
+Plain --> ReqId
+@enduml
+=== sdl ent0001 ReqId
+dimension: 140.7495972607631 44.0
+shape: RECTANGLE
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 140.7496 ; 44.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 46.9165 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 46.9165 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 39.9165 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 15.0000 ; 20.0000 ]
+  pt2: [ 115.7496 ; 34.0000 ]
+
+TEXT:
+  text: Req(Id)
+  position: [ 21.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== sdl ent0002 Plain
+dimension: 137.12098317719514 44.0
+shape: RECTANGLE
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 137.1210 ; 44.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 45.7070 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 45.7070 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 38.7070 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 15.0000 ; 20.0000 ]
+  pt2: [ 112.1210 ; 34.0000 ]
+
+TEXT:
+  text: Plain
+  position: [ 21.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== sdl ent0003 Two
+dimension: 122.48673241786977 58.0
+shape: RECTANGLE
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 122.4867 ; 58.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 40.8289 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 40.8289 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 33.8289 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 15.0000 ; 20.0000 ]
+  pt2: [ 97.4867 ; 48.0000 ]
+
+TEXT:
+  text: Two
+  position: [ 38.4269 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Lines
+  position: [ 21.0000 ; 44.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== sdl ent0004 Send
+dimension: 71.9263460412472 50.0
+shape: ROUND_RECTANGLE
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 71.9263 ; 50.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 0.0000 ; 24.0000 ]
+  pt2: [ 71.9263 ; 24.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Send
+  position: [ 10.0000 ; 15.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 --- case left-to-right
 @startuml
 left to right direction
