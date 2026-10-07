@@ -28,6 +28,16 @@ impl Position {
         .find(|(name, _)| s.to_uppercase() == *name)
         .map(|(_, position)| position)
     }
+
+    /// `RIGHT`, `LEFT`, `BOTTOM` or `TOP`.
+    pub(crate) fn name(self) -> &'static str {
+        match self {
+            Self::Right => "RIGHT",
+            Self::Left => "LEFT",
+            Self::Bottom => "BOTTOM",
+            Self::Top => "TOP",
+        }
+    }
 }
 
 /// How much of a link note a link prints, when a link cut in two shares one note between its halves.

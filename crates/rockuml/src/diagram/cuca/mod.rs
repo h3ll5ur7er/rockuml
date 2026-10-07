@@ -47,6 +47,12 @@ pub(crate) struct Failure {
     pub score: i32,
 }
 
+/// A diagram of entities and links, which the commands class, description and state diagrams share work on
+/// (in PlantUML, the subclasses of `CucaDiagram`).
+pub(crate) trait EntityDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram;
+}
+
 /// `hide` or `show` of a portion of the entities of a gender.
 struct EntityHideOrShow {
     gender: EntityGender,
