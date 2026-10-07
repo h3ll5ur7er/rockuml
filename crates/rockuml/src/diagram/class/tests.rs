@@ -143,8 +143,7 @@ fn objects_maps_and_json_get_their_bodies() {
     assert_eq!(members(&diagram, "user", true), [r#"name = "Dummy""#]);
     let cuca = &diagram.diagram.cuca;
     let map_link = cuca.get_links().next().unwrap();
-    let city = cuca.entity(map_link.get_entity1());
-    assert_eq!(city.get_port_short_names().collect::<Vec<_>>(), ["USA"]);
+    assert_eq!(map_link.get_entity2(), entity(&diagram, "user"));
     assert_eq!(map_link.get_length(), 1);
     assert_eq!(
         cuca.entity(entity(&diagram, "J")).get_leaf_type(),
@@ -253,5 +252,5 @@ fn the_smetana_graph_is_the_one_plantuml_lays_out() {
             checked += 1;
         }
     }
-    assert_eq!(checked, 75, "every case with a trace is checked");
+    assert_eq!(checked, 79, "every case with a trace is checked");
 }

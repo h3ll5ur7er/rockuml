@@ -46,18 +46,6 @@ impl LinkType {
         }
     }
 
-    pub(crate) fn is_double_decorated(self) -> bool {
-        self.decor1 != LinkDecor::None && self.decor2 != LinkDecor::None
-    }
-
-    pub(crate) fn looks_like_reverted_for_svg(self) -> bool {
-        self.decor1 == LinkDecor::None && self.decor2 != LinkDecor::None
-    }
-
-    pub(crate) fn looks_like_no_decor_at_all_svg(self) -> bool {
-        (self.decor1 == LinkDecor::None) == (self.decor2 == LinkDecor::None)
-    }
-
     #[must_use]
     pub(crate) fn without_decors1(self) -> Self {
         Self {
@@ -167,12 +155,10 @@ impl LinkType {
         self.decor2
     }
 
+    /// Only Graphviz layouts draw the middle decoration; the tests check it is read like PlantUML.
+    #[cfg(test)]
     pub(crate) fn get_middle_decor(self) -> LinkMiddleDecor {
         self.middle_decor
-    }
-
-    pub(crate) fn is_extends(self) -> bool {
-        self.decor1 == LinkDecor::Extends || self.decor2 == LinkDecor::Extends
     }
 
     /// The start half, for the first part of a link cut in two.
@@ -187,8 +173,6 @@ impl LinkType {
         self.without_decors1()
     }
 
-    /// The stroke of the line: the style's own thickness wins, then a plain `default_thickness` lends its
-    /// thickness to the style, and a dashed one replaces it.
     /// What kind of relation the link draws, as SVG tells it in `data-link-type`.
     pub(crate) fn get_link_type_name(self) -> Option<&'static str> {
         let has = |decor: LinkDecor| self.decor1 == decor || self.decor2 == decor;
@@ -224,6 +208,8 @@ impl LinkType {
         }
     }
 
+    /// The stroke of the line: the style's own thickness wins, then a plain `default_thickness` lends its
+    /// thickness to the style, and a dashed one replaces it.
     pub(crate) fn get_stroke3(self, default_thickness: Option<UStroke>) -> UStroke {
         if self.link_style.is_thickness_overrided() {
             return self.link_style.get_stroke3();
@@ -261,17 +247,6 @@ mod tests {
         assert_eq!(link_type.get_part1().get_decor2(), LinkDecor::None);
         assert_eq!(link_type.get_part1().get_decor1(), LinkDecor::Extends);
         assert_eq!(link_type.get_part2().get_decor1(), LinkDecor::None);
-        assert!(link_type.is_extends());
-        assert!(link_type.is_double_decorated());
-    }
-
-    #[test]
-    fn svg_comments_follow_the_decorations() {
-        let none = LinkDecor::None;
-        assert!(LinkType::new(none, LinkDecor::Arrow).looks_like_reverted_for_svg());
-        assert!(LinkType::new(none, none).looks_like_no_decor_at_all_svg());
-        assert!(LinkType::new(LinkDecor::Arrow, LinkDecor::Arrow).looks_like_no_decor_at_all_svg());
-        assert!(!LinkType::new(LinkDecor::Arrow, none).looks_like_no_decor_at_all_svg());
     }
 
     #[test]

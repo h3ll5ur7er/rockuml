@@ -9,16 +9,6 @@ use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolStack;
 
-fn arc_to(end: (f64, f64), radius: f64, sweep: bool) -> USegment {
-    USegment::ArcTo {
-        radius: (radius, radius),
-        x_axis_rotation: 0.0,
-        large_arc: false,
-        sweep,
-        end,
-    }
-}
-
 /// The inside is filled without an outline; the outline leaves the top open.
 fn draw_stack(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
     const BORDER: f64 = 15.0;
@@ -41,13 +31,13 @@ fn draw_stack(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
         vec![
             USegment::MoveTo(0.0, 0.0),
             USegment::LineTo(BORDER - r, 0.0),
-            arc_to((BORDER, r), r, true),
+            USegment::arc_to((BORDER, r), r, true),
             USegment::LineTo(BORDER, height - r),
-            arc_to((BORDER + r, height), r, false),
+            USegment::arc_to((BORDER + r, height), r, false),
             USegment::LineTo(width - BORDER - r, height),
-            arc_to((width - BORDER, height - r), r, false),
+            USegment::arc_to((width - BORDER, height - r), r, false),
             USegment::LineTo(width - BORDER, r),
-            arc_to((width - BORDER + r, 0.0), r, true),
+            USegment::arc_to((width - BORDER + r, 0.0), r, true),
             USegment::LineTo(width, 0.0),
         ]
     };

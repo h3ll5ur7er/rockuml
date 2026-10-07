@@ -182,7 +182,7 @@ fn dump_opale(words: &[&str]) -> String {
         node_min: NOTE_CORNER,
         other_force: UTranslate::new(fx, fy),
     };
-    dump(&image, |ug| image.draw_with(ug, Some(link)))
+    dump(&image, |ug| image.draw_as_callout(ug, link))
 }
 
 /// `NoteDump.LINK_NOTES`: the colour or `-`, then the lines.

@@ -3,7 +3,7 @@
 
 use std::rc::Rc;
 
-use super::{entity_group, half_rounded};
+use super::entity_group;
 use crate::abel::{Entity, EntityPortion};
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, Display};
@@ -21,7 +21,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::TextBlockEmpty;
 use crate::skin::font_param::FontParam;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 /// How tall an object without fields is.
 const MARGIN_EMPTY_FIELDS_OR_METHOD: f64 = 13.0;
@@ -42,7 +42,6 @@ pub(crate) struct EntityImageObject {
     header_backcolor: HColor,
     backcolor: HColor,
     stroke: UStroke,
-    has_ports: bool,
 }
 
 fn object_signature(more: &[SName]) -> StyleSignature {
@@ -135,7 +134,6 @@ impl EntityImageObject {
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: style.stroke(),
-            has_ports: entity.get_port_short_names().next().is_some(),
         }
     }
 
@@ -213,7 +211,7 @@ impl TextBlock for EntityImageObject {
         if self.backcolor != self.header_backcolor {
             ug.with_backcolor(self.header_backcolor.clone())
                 .with_stroke(self.stroke)
-                .draw(&half_rounded(total.width, title.height, self.round_corner));
+                .draw(&URectangle::new(total.width, title.height).half_rounded(self.round_corner));
         }
         let mut header: Vec<&dyn TextBlock> = Vec::new();
         if let Some(stereo) = &self.stereo {
@@ -254,16 +252,4 @@ impl TextBlock for EntityImageObject {
     }
 }
 
-impl IEntityImage for EntityImageObject {
-    fn get_shape_type(&self) -> ShapeType {
-        if self.has_ports {
-            ShapeType::RectangleHtmlForPorts
-        } else {
-            ShapeType::Rectangle
-        }
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageObject {}

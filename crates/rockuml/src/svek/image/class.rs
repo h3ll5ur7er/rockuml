@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use super::entity_group;
 use crate::abel::{Entity, EntityPortion, LeafType};
-use crate::color::{ColorType, Colors, HColor};
+use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, Display};
 use crate::cucadiagram::BodyContext;
 use crate::diagram::cuca::CucaDiagram;
@@ -22,7 +22,7 @@ use crate::skin::SkinParam;
 use crate::skin::component::TextBlockEmpty;
 use crate::skin::font_param::FontParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 pub(crate) struct EntityImageClass {
     image: AbstractEntityImage,
@@ -37,11 +37,6 @@ pub(crate) struct EntityImageClass {
     header_backcolor: HColor,
     backcolor: HColor,
     stroke: UStroke,
-    has_ports: bool,
-}
-
-fn margin(top: f64, right: f64, bottom: f64, left: f64) -> ClockwiseTopRightBottomLeft {
-    ClockwiseTopRightBottomLeft::top_right_bottom_left(top, right, bottom, left)
 }
 
 impl EntityImageClass {
@@ -90,8 +85,7 @@ impl EntityImageClass {
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
-            stroke: get_stroke(&style, colors),
-            has_ports: entity.get_port_short_names().next().is_some(),
+            stroke: style.stroke_with(colors),
         }
     }
 
@@ -182,21 +176,9 @@ impl TextBlock for EntityImageClass {
     }
 }
 
-impl IEntityImage for EntityImageClass {
-    fn get_shape_type(&self) -> ShapeType {
-        if self.has_ports {
-            ShapeType::RectangleHtmlForPorts
-        } else {
-            ShapeType::Rectangle
-        }
-    }
+impl IEntityImage for EntityImageClass {}
 
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
 /// `root element classDiagram class`, then `more`, with the entity's `<<<style>>>` names.
-/// `root element classDiagram class`, then `more`.
 fn class_signature(entity: &Entity, more: &[SName]) -> StyleSignature {
     let mut names = vec![
         SName::Root,
@@ -214,13 +196,6 @@ fn entity_style_builder(entity: &Entity, skin: &SkinParam) -> Rc<crate::style::S
         .style_builder()
         .cloned()
         .unwrap_or_else(|| skin.current_style_builder())
-}
-
-/// `Style.getStroke(colors)`: the element's own line style wins.
-pub(super) fn get_stroke(style: &Style, colors: &Colors) -> UStroke {
-    colors
-        .get_specific_line_stroke()
-        .unwrap_or_else(|| style.stroke())
 }
 
 /// `EntityImageClassHeader`.
@@ -257,11 +232,17 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             false,
         );
         name = Box::new(TextBlockHorizontal {
-            left: Box::new(TextBlockMarged::new(icon, margin(4.0, 0.0, 0.0, 0.0))),
+            left: Box::new(TextBlockMarged::new(
+                icon,
+                ClockwiseTopRightBottomLeft::top_right_bottom_left(4.0, 0.0, 0.0, 0.0),
+            )),
             right: name,
         });
     }
-    let name = Box::new(TextBlockMarged::new(name, margin(0.0, 3.0, 0.0, 3.0)));
+    let name = Box::new(TextBlockMarged::new(
+        name,
+        ClockwiseTopRightBottomLeft::margin1_margin2(0.0, 3.0),
+    ));
     let stereotype_font = skin.get_font_configuration(FontParam::ClassStereotype, stereotype);
     let stereo = diagram
         .get_visible_stereotype_labels(entity.id())
@@ -274,7 +255,10 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
                 0.0,
                 CreoleMode::Full,
             );
-            Box::new(TextBlockMarged::new(block, margin(0.0, 1.0, 0.0, 1.0)))
+            Box::new(TextBlockMarged::new(
+                block,
+                ClockwiseTopRightBottomLeft::margin1_margin2(0.0, 1.0),
+            ))
         });
     let generic = generic.map(|generic| -> Box<dyn TextBlock> {
         let style_generic = class_signature(entity, &[SName::Generic])
@@ -287,18 +271,24 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             CreoleMode::Full,
         );
         let block = TextBlockGeneric {
-            block: Box::new(TextBlockMarged::new(block, margin(1.0, 1.0, 1.0, 1.0))),
+            block: Box::new(TextBlockMarged::new(
+                block,
+                ClockwiseTopRightBottomLeft::same(1.0),
+            )),
             background: style_generic.value(PName::BackGroundColor).as_color(),
             border: style_generic.value(PName::LineColor).as_color(),
         };
-        Box::new(TextBlockMarged::new(block, margin(1.0, 1.0, 1.0, 1.0)))
+        Box::new(TextBlockMarged::new(
+            block,
+            ClockwiseTopRightBottomLeft::same(1.0),
+        ))
     });
     let circled_character = diagram
         .show_portion(EntityPortion::CircledCharacter, entity.id())
         .then(|| -> Box<dyn TextBlock> {
             Box::new(TextBlockMarged::new(
                 circled_character(entity, leaf_type, skin),
-                margin(5.0, 0.0, 5.0, 4.0),
+                ClockwiseTopRightBottomLeft::top_right_bottom_left(5.0, 0.0, 5.0, 4.0),
             ))
         });
     HeaderLayout {

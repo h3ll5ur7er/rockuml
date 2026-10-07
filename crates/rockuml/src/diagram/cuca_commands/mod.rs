@@ -203,14 +203,13 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 cuca.entity_mut(entity).colors = colors_with_line(&header)?;
                 for entry in lines.sub_extract(1, 1).iter() {
                     let entry = entry.text();
-                    if !cuca.entity_mut(entity).bodier.add_field_or_method(entry) {
+                    if !cuca.entity_mut(entity).bodier.add_field_or_method(entry)? {
                         return Err(CommandError::new(
                             "Map definition should contains key => value",
                         ));
                     }
                     if let Some(arrow) = get_linked_entry(entry) {
                         let x = entry.find(arrow).expect("the link is in the entry");
-                        let key = java::trim(&entry[..x]).to_owned();
                         let dest = java::trim(&entry[x + arrow.len()..]);
                         let ident2 = cuca.quark_in_context(true, dest)?;
                         let Some(entity2) = cuca.quark(ident2).get_data() else {
@@ -228,7 +227,6 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                             link_type,
                             LinkArg::no_display(length),
                         );
-                        cuca.set_port_members(link, Some(key), None);
                         cuca.add_link(link);
                     }
                 }

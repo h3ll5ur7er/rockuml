@@ -58,7 +58,8 @@ impl ClusterDecoration {
         }
     }
 
-    /// The symbol around the cluster's area; `None` for a style without a symbol.
+    /// The symbol around the cluster's area; `None` for a style or symbol without a big form, which PlantUML
+    /// fails to draw and so leaves out.
     pub(crate) fn get_text_block(
         &self,
         back_color: HColor,
@@ -71,7 +72,7 @@ impl ClusterDecoration {
         let symbol_context = Fashion::new(back_color, border_color)
             .with_stroke(self.default_stroke)
             .with_corner(round_corner, diagonal_corner);
-        Some(self.symbol?.as_big(
+        self.symbol?.as_big(
             self.title.clone(),
             title_alignment,
             self.stereo.clone(),
@@ -79,6 +80,6 @@ impl ClusterDecoration {
             self.rectangle_area.get_height(),
             symbol_context,
             stereo_alignment,
-        ))
+        )
     }
 }

@@ -11,12 +11,11 @@ use crate::klimt::shape::{UEllipse, UShape};
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 const SIZE: f64 = 22.0;
 
 pub(crate) struct EntityImagePseudoState {
-    base: AbstractEntityImage,
     desc: SheetBlock2,
     border_color: HColor,
     background_color: HColor,
@@ -53,7 +52,6 @@ impl EntityImagePseudoState {
             CreoleMode::Full,
         );
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             desc,
             border_color: style.value(PName::LineColor).as_color(),
             background_color: style.value(PName::BackGroundColor).as_color(),
@@ -80,12 +78,4 @@ impl TextBlock for EntityImagePseudoState {
     }
 }
 
-impl IEntityImage for EntityImagePseudoState {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Circle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImagePseudoState {}

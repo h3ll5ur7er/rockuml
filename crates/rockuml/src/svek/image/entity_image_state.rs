@@ -12,9 +12,10 @@ use crate::klimt::group::UGroup;
 use crate::klimt::shape::{UEllipse, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, ValueReading};
 use crate::svek::rounded_container::RoundedContainer;
-use crate::svek::{IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
+use crate::svek::{IEntityImage, MARGIN, MARGIN_LINE};
 
 const MIN_WIDTH: f64 = 50.0;
 const MIN_HEIGHT: f64 = 50.0;
@@ -37,11 +38,7 @@ impl EntityImageState {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let common = EntityImageStateCommon::new(entity, diagram);
         let stereotype = entity.stereotype.as_ref();
-        let with_symbol = stereotype.is_some_and(|stereotype| {
-            stereotype
-                .label_double_comparator()
-                .eq_ignore_ascii_case("<<O-O>>")
-        });
+        let with_symbol = stereotype.is_some_and(Stereotype::is_with_oo_symbol);
         let builder = diagram.skin().current_style_builder();
         let style_name = get_style_state(Some(SName::Name), stereotype, &builder);
         let style_description = get_style_state(Some(SName::Description), stereotype, &builder);
@@ -107,10 +104,7 @@ impl TextBlock for EntityImageState {
         let string_bounder = ug.string_bounder();
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_name = common.name.calculate_dimension(string_bounder);
-        let stroke = common
-            .colors
-            .get_specific_line_stroke()
-            .unwrap_or_else(|| common.style_state.stroke());
+        let stroke = common.style_state.stroke_with(&common.colors);
         let inner = common
             .apply_color(ug, &common.style_state)
             .with_stroke(stroke);
@@ -161,12 +155,4 @@ impl TextBlock for EntityImageState {
     }
 }
 
-impl IEntityImage for EntityImageState {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.common.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageState {}

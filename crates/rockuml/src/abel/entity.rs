@@ -12,7 +12,6 @@ use crate::creole::Display;
 use crate::cucadiagram::Bodier;
 use crate::decoration::symbol::{PackageStyle, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
-use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
 use crate::klimt::url::Url;
 use crate::plasma::QuarkId;
@@ -59,7 +58,6 @@ pub(crate) struct Entity {
     pub usymbol: Option<USymbol>,
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
-    port_short_names: JavaHashSet<String>,
     pub visibility_modifier: Option<VisibilityModifier>,
     /// The character a state's concurrent regions were separated with, `--` or `||`.
     pub concurrent_separator: Option<char>,
@@ -95,7 +93,6 @@ impl Entity {
             colors: Colors::default(),
             usymbol: None,
             tips: Vec::new(),
-            port_short_names: JavaHashSet::default(),
             bodier: match entity_type {
                 EntityType::Leaf(leaf_type) => Bodier::for_leaf(leaf_type),
                 EntityType::Group(_) => Bodier::for_group(),
@@ -305,16 +302,6 @@ impl Entity {
 
     pub(crate) fn get_tips(&self) -> &[(String, Tip)] {
         &self.tips
-    }
-
-    /// In Java's `HashSet` order.
-    pub(crate) fn get_port_short_names(&self) -> impl Iterator<Item = &String> {
-        self.port_short_names.iter()
-    }
-
-    pub(crate) fn add_port_short_name(&mut self, port_short_name: String) {
-        let hash = string_hash_code(&port_short_name);
-        self.port_short_names.insert(port_short_name, hash);
     }
 
     /// The group the entity is in; `None` for the root, or below a quark no entity holds yet.

@@ -288,10 +288,6 @@ impl Link {
     }
 
     /// The visibility the label starts with, drawn as an icon before it.
-    #[allow(
-        dead_code,
-        reason = "the drawing of link labels reads it, which the parallel drawing work ports"
-    )]
     pub(crate) fn get_visibility_modifier(&self) -> Option<VisibilityModifier> {
         self.link_arg.get_visibility_modifier()
     }

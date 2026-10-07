@@ -11,7 +11,6 @@ C : a //creole// **body**
 @enduml
 === plain ent0001 A
 dimension: 177.71636931021342 62.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 177.7164 ; 62.0000 ]
@@ -56,7 +55,6 @@ TEXT:
 
 === plain ent0002 B
 dimension: 50.0 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 50.0000 ; 50.0000 ]
@@ -85,7 +83,6 @@ TEXT:
 
 === plain ent0003 C
 dimension: 237.0566340408627 62.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 237.0566 ; 62.0000 ]
@@ -154,7 +151,6 @@ TEXT:
 
 === plain ent0004 *start*
 dimension: 20.0 20.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 20.0000 ; 20.0000 ]
@@ -168,7 +164,6 @@ ELLIPSE:
 
 === plain ent0006 *end*
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -208,7 +203,6 @@ W --> Z2[H*]
 @enduml
 === pseudo ent0001 c
 dimension: 24.0 24.0
-shape: DIAMOND
 POLYGON:
   points:
    - [ 12.0000 ; 0.0000 ]
@@ -224,7 +218,6 @@ POLYGON:
 
 === pseudo ent0002 f
 dimension: 80.0 8.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 80.0000 ; 8.0000 ]
@@ -238,7 +231,6 @@ RECTANGLE:
 
 === pseudo ent0003 j
 dimension: 80.0 8.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 80.0000 ; 8.0000 ]
@@ -252,7 +244,6 @@ RECTANGLE:
 
 === pseudo ent0004 h
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -274,7 +265,6 @@ TEXT:
 
 === pseudo ent0005 d
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -296,7 +286,6 @@ TEXT:
 
 === pseudo ent0006 e
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -320,7 +309,6 @@ ELLIPSE:
 
 === pseudo ent0007 s
 dimension: 20.0 20.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 20.0000 ; 20.0000 ]
@@ -334,7 +322,6 @@ ELLIPSE:
 
 === pseudo ent0008 X
 dimension: 50.0 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 50.0000 ; 50.0000 ]
@@ -363,7 +350,6 @@ TEXT:
 
 === pseudo ent0010 Y
 dimension: 50.0 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 50.0000 ; 50.0000 ]
@@ -392,7 +378,6 @@ TEXT:
 
 === pseudo ent0011 *historical*
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -414,7 +399,6 @@ TEXT:
 
 === pseudo ent0014 *deephistory*
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -436,7 +420,6 @@ TEXT:
 
 === pseudo ent0016 bar
 dimension: 80.0 8.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 80.0000 ; 8.0000 ]
@@ -450,7 +433,6 @@ RECTANGLE:
 
 === pseudo ent0018 W
 dimension: 50.0 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 50.0000 ; 50.0000 ]
@@ -479,7 +461,6 @@ TEXT:
 
 === pseudo ent0019 *historical*Z
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -501,7 +482,6 @@ TEXT:
 
 === pseudo ent0022 *deephistory*Z2
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -532,7 +512,6 @@ Red --> [*]
 @enduml
 === colors ent0001 Red
 dimension: 67.85403035378901 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 67.8540 ; 50.0000 ]
@@ -561,7 +540,6 @@ TEXT:
 
 === colors ent0002 Blue
 dimension: 86.31324730348818 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 86.3132 ; 50.0000 ]
@@ -590,7 +568,6 @@ TEXT:
 
 === colors ent0003 Mixed
 dimension: 83.66077506090475 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 83.6608 ; 50.0000 ]
@@ -619,7 +596,6 @@ TEXT:
 
 === colors ent0004 Sym
 dimension: 67.80943643678143 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 67.8094 ; 50.0000 ]
@@ -675,7 +651,6 @@ TEXT:
 
 === colors ent0005 Bold
 dimension: 88.05148324947068 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 88.0515 ; 50.0000 ]
@@ -712,7 +687,6 @@ TEXT:
 
 === colors ent0006 *end*
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -743,7 +717,6 @@ state Busy : working
 @enduml
 === hide-empty ent0001 Busy
 dimension: 107.86085728485733 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 107.8609 ; 50.0000 ]
@@ -780,7 +753,6 @@ TEXT:
 
 === hide-empty ent0002 *start*
 dimension: 20.0 20.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 20.0000 ; 20.0000 ]
@@ -794,7 +766,6 @@ ELLIPSE:
 
 === hide-empty ent0003 Idle
 dimension: 76.35878506934922 40.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 76.3588 ; 40.0000 ]
@@ -831,7 +802,6 @@ state Other : with a body
 @enduml
 === skinparam ent0001 Idle
 dimension: 86.35878506934922 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 86.3588 ; 50.0000 ]
@@ -860,7 +830,6 @@ TEXT:
 
 === skinparam ent0002 Other
 dimension: 153.3500129557887 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 153.3500 ; 50.0000 ]
@@ -897,7 +866,6 @@ TEXT:
 
 === skinparam ent0003 *start*
 dimension: 20.0 20.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 20.0000 ; 20.0000 ]
@@ -911,7 +879,6 @@ ELLIPSE:
 
 === skinparam ent0005 *end*
 dimension: 22.0 22.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 22.0000 ; 22.0000 ]
@@ -951,7 +918,6 @@ state A : described
 @enduml
 === style ent0001 A
 dimension: 144.62566013083884 50.0
-shape: ROUND_RECTANGLE
 PATH:
    - type: SEG_MOVETO
      pt1: [ 12.5000 ; 0.0000 ]
@@ -1051,7 +1017,6 @@ TEXT:
 
 === style ent0002 *start*
 dimension: 20.0 20.0
-shape: CIRCLE
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 20.0000 ; 20.0000 ]
@@ -1076,7 +1041,6 @@ state S {
 @enduml
 === border ent0002 e1
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: e1
   position: [ -6.4900 ; 22.8889 ]
@@ -1098,7 +1062,6 @@ ELLIPSE:
 
 === border ent0003 x1
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: x1
   position: [ -8.6916 ; 22.8889 ]
@@ -1134,7 +1097,6 @@ LINE:
 
 === border ent0004 i1
 dimension: 12.0 12.0
-shape: RECTANGLE
 TEXT:
   text: i1
   position: [ -6.5527 ; 22.8889 ]
@@ -1156,7 +1118,6 @@ RECTANGLE:
 
 === border ent0005 o1
 dimension: 12.0 12.0
-shape: RECTANGLE
 TEXT:
   text: o1
   position: [ -8.5255 ; 22.8889 ]
@@ -1178,7 +1139,6 @@ RECTANGLE:
 
 === border ent0006 ei
 dimension: 48.0 12.0
-shape: RECTANGLE
 TEXT:
   text: ei
   position: [ -6.4348 ; 22.8889 ]
@@ -1221,7 +1181,6 @@ LINE:
 
 === border ent0007 eo
 dimension: 48.0 12.0
-shape: RECTANGLE
 TEXT:
   text: eo
   position: [ -6.4336 ; 22.8889 ]
@@ -1272,7 +1231,6 @@ Plain --> ReqId
 @enduml
 === sdl ent0001 ReqId
 dimension: 140.7495972607631 44.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 140.7496 ; 44.0000 ]
@@ -1312,7 +1270,6 @@ TEXT:
 
 === sdl ent0002 Plain
 dimension: 137.12098317719514 44.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 137.1210 ; 44.0000 ]
@@ -1352,7 +1309,6 @@ TEXT:
 
 === sdl ent0003 Two
 dimension: 122.48673241786977 58.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 122.4867 ; 58.0000 ]
@@ -1400,7 +1356,6 @@ TEXT:
 
 === sdl ent0004 Send
 dimension: 71.9263460412472 50.0
-shape: ROUND_RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 71.9263 ; 50.0000 ]
@@ -1438,7 +1393,6 @@ f --> S
 @enduml
 === left-to-right ent0001 f
 dimension: 8.0 80.0
-shape: RECTANGLE
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
   pt2: [ 8.0000 ; 80.0000 ]
@@ -1452,7 +1406,6 @@ RECTANGLE:
 
 === left-to-right ent0003 ei
 dimension: 12.0 48.0
-shape: RECTANGLE
 TEXT:
   text: ei
   position: [ -6.4348 ; 22.8889 ]

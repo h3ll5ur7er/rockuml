@@ -1,0 +1,10 @@
+@startuml
+component Web
+component Api
+database Store
+actor User
+User --> Web : +browses
+Web --> Api : -calls
+Api ..> Store : #reads
+Store --> User : ~reports
+@enduml

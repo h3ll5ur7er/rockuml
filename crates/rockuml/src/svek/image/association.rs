@@ -10,7 +10,7 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::{UEllipse, UShape};
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 pub(crate) struct EntityImageAssociation {
     image: AbstractEntityImage,
@@ -64,15 +64,7 @@ impl TextBlock for EntityImageAssociation {
     }
 }
 
-impl IEntityImage for EntityImageAssociation {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Diamond
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageAssociation {}
 
 pub(crate) struct EntityImageAssociationPoint {
     image: AbstractEntityImage,
@@ -116,12 +108,4 @@ impl TextBlock for EntityImageAssociationPoint {
     }
 }
 
-impl IEntityImage for EntityImageAssociationPoint {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Circle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageAssociationPoint {}

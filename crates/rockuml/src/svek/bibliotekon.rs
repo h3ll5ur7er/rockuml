@@ -1,5 +1,7 @@
 //! The nodes and clusters of one layout, by entity (PlantUML's `Bibliotekon`, without the Graphviz edges).
 
+use std::collections::HashMap;
+
 use super::{Cluster, ClusterHeader, ClusterId, ColorSequence, IEntityImage, SvekNode};
 use crate::abel::{Entity, EntityId};
 use crate::klimt::font::StringBounder;
@@ -7,8 +9,10 @@ use crate::klimt::font::StringBounder;
 pub(crate) struct Bibliotekon {
     /// The root cluster first, then every other cluster in the order they were opened.
     clusters: Vec<Cluster>,
-    /// In the order they were created.
+    cluster_of_group: HashMap<EntityId, ClusterId>,
+    /// In the order their leaves were first given a node.
     nodes: Vec<SvekNode>,
+    node_of_leaf: HashMap<EntityId, usize>,
     color_sequence: ColorSequence,
 }
 
@@ -19,12 +23,16 @@ impl Bibliotekon {
         let root_cluster = Cluster::new(None, root, None, &mut color_sequence);
         Self {
             clusters: vec![root_cluster],
+            cluster_of_group: HashMap::from([(root, ClusterId(0))]),
             nodes: Vec::new(),
+            node_of_leaf: HashMap::new(),
             color_sequence,
         }
     }
 
-    /// A node for `ent` drawn by `image`, laid out in `cluster`.
+    /// A node for `ent` drawn by `image`, laid out in `cluster`. A leaf given a node again keeps its place among
+    /// the nodes with the new one, as in PlantUML's map: an empty package, printed as a group's child, is printed
+    /// again as a leaf of its parent.
     pub(crate) fn create_node(
         &mut self,
         ent: &Entity,
@@ -32,8 +40,13 @@ impl Bibliotekon {
         cluster: ClusterId,
         string_bounder: &dyn StringBounder,
     ) {
-        let node = SvekNode::new(ent.id(), image, &mut self.color_sequence, string_bounder);
-        self.nodes.push(node);
+        let node = SvekNode::new(image, &mut self.color_sequence, string_bounder);
+        if let Some(&index) = self.node_of_leaf.get(&ent.id()) {
+            self.nodes[index] = node;
+        } else {
+            self.node_of_leaf.insert(ent.id(), self.nodes.len());
+            self.nodes.push(node);
+        }
         self.clusters[cluster.0].add_node(ent.id());
     }
 
@@ -52,6 +65,7 @@ impl Bibliotekon {
         );
         let id = ClusterId(self.clusters.len());
         self.clusters.push(child);
+        self.cluster_of_group.entry(g).or_insert(id);
         id
     }
 
@@ -61,28 +75,25 @@ impl Bibliotekon {
 
     /// The cluster of a group; the root group has none.
     pub(crate) fn get_cluster(&self, ent: EntityId) -> Option<&Cluster> {
-        self.clusters[1..]
-            .iter()
-            .find(|cluster| cluster.get_group() == ent)
+        match self.cluster_of_group.get(&ent) {
+            Some(&ClusterId(0)) | None => None,
+            Some(&id) => Some(self.cluster(id)),
+        }
     }
 
     /// The clusters right inside the cluster of `group`, in the order they were opened.
     pub(crate) fn get_children(&self, group: EntityId) -> impl Iterator<Item = &Cluster> {
-        let parent = self
-            .clusters
-            .iter()
-            .position(|cluster| cluster.get_group() == group)
-            .map(ClusterId);
+        let parent = self.cluster_of_group.get(&group).copied();
         self.clusters
             .iter()
             .filter(move |cluster| parent.is_some() && cluster.get_parent_cluster() == parent)
     }
 
     pub(crate) fn get_node(&self, ent: EntityId) -> Option<&SvekNode> {
-        self.nodes.iter().find(|node| node.get_leaf() == ent)
+        Some(&self.nodes[*self.node_of_leaf.get(&ent)?])
     }
 
     pub(crate) fn get_node_mut(&mut self, ent: EntityId) -> Option<&mut SvekNode> {
-        self.nodes.iter_mut().find(|node| node.get_leaf() == ent)
+        Some(&mut self.nodes[*self.node_of_leaf.get(&ent)?])
     }
 }

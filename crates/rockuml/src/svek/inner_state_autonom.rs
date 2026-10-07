@@ -3,7 +3,7 @@
 
 use super::image::{EntityImageState, entity_group, get_state_description, get_style_state};
 use super::rounded_container::RoundedContainer;
-use super::{IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
+use super::{IEntityImage, MARGIN, MARGIN_LINE};
 use crate::abel::Entity;
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, SheetBlock2};
@@ -14,6 +14,7 @@ use crate::klimt::group::UGroup;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, ValueReading};
 
 pub(crate) struct InnerStateAutonom {
@@ -75,15 +76,11 @@ impl InnerStateAutonom {
                 .cloned()
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             url: group.url.clone(),
-            with_symbol: group.stereotype.as_ref().is_some_and(|stereotype| {
-                stereotype
-                    .label_double_comparator()
-                    .eq_ignore_ascii_case("<<O-O>>")
-            }),
-            stroke: group
-                .colors
-                .get_specific_line_stroke()
-                .unwrap_or_else(|| style.stroke()),
+            with_symbol: group
+                .stereotype
+                .as_ref()
+                .is_some_and(Stereotype::is_with_oo_symbol),
+            stroke: style.stroke_with(&group.colors),
             rounded: style.value(PName::RoundCorner).as_double(),
             description_alignment: style_description.horizontal_alignment().unwrap_or_default(),
             north_backcolor,
@@ -170,12 +167,4 @@ impl TextBlock for InnerStateAutonom {
     }
 }
 
-impl IEntityImage for InnerStateAutonom {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.im.is_hidden()
-    }
-}
+impl IEntityImage for InnerStateAutonom {}

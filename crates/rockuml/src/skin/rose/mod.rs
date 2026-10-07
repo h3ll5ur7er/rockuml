@@ -209,7 +209,7 @@ pub(crate) fn create_component_note(
             let text = if display.is_single_empty_line() {
                 Box::new(TextBlockEmpty::default()) as Box<dyn TextBlock>
             } else {
-                enhanced_text(display, font, alignment, style, skin)
+                enhanced_text(display, font, alignment, style.wrap_width(), style, skin)
             };
             Box::new(ComponentRoseNote::new(
                 TextualPart::new(text, text_padding),

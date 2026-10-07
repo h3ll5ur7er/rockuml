@@ -180,7 +180,6 @@ pub(super) fn associate() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(cardinality, 3),
                 colors,
-                true,
             );
             Ok(())
         },
@@ -242,7 +241,6 @@ pub(super) fn simple_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(None, 3),
                 colors,
-                true,
             );
             Ok(())
         },
@@ -304,7 +302,6 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(None, 2),
                 colors.clone(),
-                true,
             );
             for subclass in java::split(subclasses, ",") {
                 let subclass_entity =
@@ -320,7 +317,6 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                     subclass_link_type,
                     LinkArg::build(None, 3),
                     colors.clone(),
-                    false,
                 );
             }
             Ok(())
@@ -342,8 +338,7 @@ fn is_double(arg: &RegexResult) -> bool {
     arg.get("PARTICIPATION", 0) == Some("=")
 }
 
-/// Adds a link between two entities in `colors`; `with_ports` reads ports from their names, as links
-/// written between two names do.
+/// Adds a link between two entities in `colors`.
 fn add_link(
     cuca: &mut CucaDiagram,
     location: &LineLocation,
@@ -351,17 +346,8 @@ fn add_link(
     link_type: LinkType,
     link_arg: LinkArg,
     colors: Colors,
-    with_ports: bool,
 ) {
     let link = cuca.new_link(Some(location), entity1, entity2, link_type, link_arg);
-    if with_ports {
-        let port = |entity: EntityId, cuca: &CucaDiagram| {
-            cuca.get_port_id(cuca.entity(entity).get_name(cuca))
-                .map(str::to_owned)
-        };
-        let (port1, port2) = (port(entity1, cuca), port(entity2, cuca));
-        cuca.set_port_members(link, port1, port2);
-    }
     cuca.link_mut(link).set_colors(colors);
     cuca.add_link(link);
 }

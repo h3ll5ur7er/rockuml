@@ -5,7 +5,7 @@ use super::Member;
 use crate::color::Colors;
 use crate::creole::{CreoleMode, Display};
 use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged};
-use crate::klimt::font::StringBounder;
+use crate::klimt::font::{FontStyle, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D, XRectangle2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::url::Url;
@@ -187,10 +187,10 @@ fn create_text_block(
                 text.insert(0, '~');
             }
             if member.is_abstract() {
-                config = config.with_style(crate::klimt::font::FontStyle::Italic);
+                config = config.with_style(FontStyle::Italic);
             }
             if member.is_static() {
-                config = config.with_style(crate::klimt::font::FontStyle::Underline);
+                config = config.with_style(FontStyle::Underline);
             }
             text
         }

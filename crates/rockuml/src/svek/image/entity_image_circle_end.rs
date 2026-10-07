@@ -10,12 +10,11 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
 use crate::klimt::ugraphic::UGraphic;
 use crate::style::{SName, StyleSignature};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 const SIZE: f64 = 22.0;
 
 pub(crate) struct EntityImageCircleEnd {
-    base: AbstractEntityImage,
     group: UGroup,
     circle: CircleEnd,
 }
@@ -31,7 +30,6 @@ impl EntityImageCircleEnd {
         ])
         .get_merged_style(&diagram.skin().current_style_builder());
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             group: entity_group(entity, diagram, "end_entity", entity.get_location()),
             circle: CircleEnd::new(&style, &entity.colors),
         }
@@ -50,12 +48,4 @@ impl TextBlock for EntityImageCircleEnd {
     }
 }
 
-impl IEntityImage for EntityImageCircleEnd {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Circle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageCircleEnd {}

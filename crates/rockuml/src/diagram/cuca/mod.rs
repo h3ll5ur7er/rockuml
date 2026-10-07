@@ -175,14 +175,6 @@ impl CucaDiagram {
         id.rfind("::").map_or(id, |x| &id[..x])
     }
 
-    /// The `port` of `id::port`, unless `::` separates namespaces.
-    pub(crate) fn get_port_id<'a>(&self, id: &'a str) -> Option<&'a str> {
-        if self.get_namespace_separator() == Some("::") {
-            return None;
-        }
-        id.rfind("::").map(|x| &id[x + 2..])
-    }
-
     /// The innermost group the commands are in.
     pub(crate) fn get_current_group(&self) -> EntityId {
         self.stacks
@@ -709,23 +701,6 @@ impl CucaDiagram {
         let inv = self.link(link).get_inv(uid);
         self.links.push(inv);
         id
-    }
-
-    /// The link's entities learn the names of the ports it ends at; only PlantUML's XMI export reads the
-    /// ports off the link itself.
-    pub(crate) fn set_port_members(
-        &mut self,
-        link: LinkId,
-        port1: Option<String>,
-        port2: Option<String>,
-    ) {
-        let (cl1, cl2) = (self.link(link).get_entity1(), self.link(link).get_entity2());
-        if let Some(port1) = port1 {
-            self.entity_mut(cl1).add_port_short_name(port1);
-        }
-        if let Some(port2) = port2 {
-            self.entity_mut(cl2).add_port_short_name(port2);
-        }
     }
 
     /// Adds the link, unless it is `single` and the same two entities are linked already.

@@ -62,14 +62,6 @@ impl LinkStyle {
         }
     }
 
-    /// The style's own stroke if it has one, otherwise `stroke`.
-    pub(crate) fn mute_stroke(self, stroke: UStroke) -> UStroke {
-        match self.kind {
-            Type::Dashed | Type::Dotted | Type::Bold => self.get_stroke3(),
-            Type::Normal | Type::Invisible => stroke,
-        }
-    }
-
     fn non_zero_thickness(self) -> f64 {
         self.thickness.unwrap_or(1.0)
     }
@@ -127,9 +119,5 @@ mod tests {
             "0.0-0.0-2.0"
         );
         assert_eq!(LinkStyle::NORMAL.get_stroke3(), UStroke::SIMPLE);
-        assert_eq!(
-            LinkStyle::NORMAL.mute_stroke(UStroke::with_thickness(3.0)),
-            UStroke::with_thickness(3.0)
-        );
     }
 }

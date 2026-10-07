@@ -19,15 +19,16 @@ fn is_block_separator(line: &str) -> bool {
         || (line.starts_with("__") && line.ends_with("__"))
 }
 
+/// `BodyFactory.create3`: lines wrap at `max_width`; `style` draws the separators.
 pub(crate) fn enhanced_text(
     display: &Display,
     font: FontConfiguration,
     alignment: HorizontalAlignment,
+    max_width: f64,
     style: &Style,
     sprites: &dyn SpriteContainer,
 ) -> Box<dyn TextBlock> {
     let thickness = style.value(PName::LineThickness).as_double();
-    let max_width = style.wrap_width();
     let mut blocks: Vec<Box<dyn TextBlock>> = Vec::new();
     let mut separator: Option<(char, Option<Box<dyn TextBlock>>)> = None;
     let mut lines: Vec<String> = Vec::new();

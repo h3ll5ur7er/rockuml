@@ -189,6 +189,11 @@ impl ClockwiseTopRightBottomLeft {
         }
     }
 
+    /// `margin1` above and below, `margin2` left and right.
+    pub(crate) const fn margin1_margin2(margin1: f64, margin2: f64) -> Self {
+        Self::top_right_bottom_left(margin1, margin2, margin1, margin2)
+    }
+
     pub(crate) const fn same(value: f64) -> Self {
         Self {
             top: value,
@@ -313,6 +318,48 @@ impl RectangleArea {
     /// Inside, the right and lower borders excluded.
     pub(crate) fn contains(self, p: XPoint2D) -> bool {
         p.x >= self.min_x && p.x < self.max_x && p.y >= self.min_y && p.y < self.max_y
+    }
+
+    /// The smallest rectangle around both.
+    #[must_use]
+    pub(crate) fn merge(self, other: Self) -> Self {
+        Self::new(
+            self.min_x.min(other.min_x),
+            self.min_y.min(other.min_y),
+            self.max_x.max(other.max_x),
+            self.max_y.max(other.max_y),
+        )
+    }
+
+    /// The smallest rectangle around this one and `point`.
+    #[must_use]
+    pub(crate) fn merge_point(self, point: XPoint2D) -> Self {
+        Self::new(
+            self.min_x.min(point.x),
+            self.min_y.min(point.y),
+            self.max_x.max(point.x),
+            self.max_y.max(point.y),
+        )
+    }
+
+    #[must_use]
+    pub(crate) fn with_min_x(self, min_x: f64) -> Self {
+        Self { min_x, ..self }
+    }
+
+    #[must_use]
+    pub(crate) fn with_max_x(self, max_x: f64) -> Self {
+        Self { max_x, ..self }
+    }
+
+    #[must_use]
+    pub(crate) fn with_min_y(self, min_y: f64) -> Self {
+        Self { min_y, ..self }
+    }
+
+    #[must_use]
+    pub(crate) fn with_max_y(self, max_y: f64) -> Self {
+        Self { max_y, ..self }
     }
 }
 

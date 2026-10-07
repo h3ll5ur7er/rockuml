@@ -1,13 +1,8 @@
 //! The drawing of one entity as a node of the layout (PlantUML's `IEntityImage` and `AbstractEntityImage`).
 
-#![allow(
-    dead_code,
-    reason = "the images of the class, description, state and note families read the rest"
-)]
-
 use std::rc::Rc;
 
-use super::{Bibliotekon, Margins, ShapeType, SvekNode};
+use super::{Bibliotekon, SvekNode};
 use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
@@ -20,21 +15,6 @@ use crate::stereo::Stereotype;
 use crate::style::SName;
 
 pub(crate) trait IEntityImage: TextBlock {
-    fn get_shape_type(&self) -> ShapeType;
-
-    /// Room links keep clear of around the drawing; none unless the image says so, as in
-    /// `AbstractEntityImage`.
-    fn get_shield(&self, _string_bounder: &dyn StringBounder) -> Margins {
-        Margins::NONE
-    }
-
-    /// How far the drawing spills over the node's width on each side.
-    fn get_overscan_x(&self, _string_bounder: &dyn StringBounder) -> f64 {
-        0.0
-    }
-
-    fn is_hidden(&self) -> bool;
-
     /// `EntityImageNote.setOpaleLink`: a note whose single link goes to `other` draws that link as part of
     /// its outline, which the layout then leaves out. The layout asks notes only.
     fn set_opale_link(&mut self, _link: LinkId, _other: EntityId) {
@@ -72,22 +52,6 @@ impl TextBlock for Rc<dyn IEntityImage> {
 }
 
 impl IEntityImage for Rc<dyn IEntityImage> {
-    fn get_shape_type(&self) -> ShapeType {
-        (**self).get_shape_type()
-    }
-
-    fn get_shield(&self, string_bounder: &dyn StringBounder) -> Margins {
-        (**self).get_shield(string_bounder)
-    }
-
-    fn get_overscan_x(&self, string_bounder: &dyn StringBounder) -> f64 {
-        (**self).get_overscan_x(string_bounder)
-    }
-
-    fn is_hidden(&self) -> bool {
-        (**self).is_hidden()
-    }
-
     fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
         (**self).draw_u_in_layout(ug, layout);
     }
@@ -123,7 +87,6 @@ impl LayoutContext<'_> {
 /// diagram is drawn, and outlive no change that would alter these.
 pub(crate) struct AbstractEntityImage {
     entity: EntityId,
-    hidden: bool,
     backcolor: HColor,
     stereo: Option<Stereotype>,
     style_name: SName,
@@ -133,15 +96,10 @@ impl AbstractEntityImage {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         Self {
             entity: entity.id(),
-            hidden: entity.is_hidden(diagram),
             backcolor: diagram.skin().get_background_color(),
             stereo: entity.stereotype.clone(),
             style_name: diagram.get_style_name(),
         }
-    }
-
-    pub(crate) fn is_hidden(&self) -> bool {
-        self.hidden
     }
 
     pub(crate) fn get_entity(&self) -> EntityId {

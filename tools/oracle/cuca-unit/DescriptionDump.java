@@ -89,7 +89,6 @@ public class DescriptionDump {
 		out.println("image " + leaf.getUid() + " " + image.getClass().getSimpleName());
 		final XDimension2D dim = image.calculateDimension(BOUNDER);
 		out.println("dimension: " + dim.getWidth() + " " + dim.getHeight());
-		out.println("shape: " + image.getShapeType());
 		final UGraphicDebug ug = new UGraphicDebug(1, dim, null, null, 0, "none");
 		image.drawU(ug);
 		final ByteArrayOutputStream bytes = new ByteArrayOutputStream();

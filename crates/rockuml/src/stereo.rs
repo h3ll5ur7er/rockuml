@@ -183,6 +183,11 @@ impl Stereotype {
         }))
     }
 
+    /// `<<O-O>>`, which marks a state drawn with two linked circles in its corner.
+    pub(crate) fn is_with_oo_symbol(&self) -> bool {
+        self.label.eq_ignore_ascii_case("<<O-O>>")
+    }
+
     /// The labels as shown, in guillemets (`getLabels(Guillemet.GUILLEMET)`).
     pub(crate) fn labels(&self) -> Vec<String> {
         cut_labels(&self.label_double_comparator())

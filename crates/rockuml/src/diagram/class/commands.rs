@@ -53,7 +53,7 @@ pub(super) fn add_method() -> Box<dyn Command<ClassDiagram>> {
             let quark = cuca.quark_in_context(true, ClassDiagram::clean_id(name))?;
             let entity = get_or_create_class(cuca, location, quark);
             let field = arg.get("DATA", 0).unwrap_or_default();
-            cuca.entity_mut(entity).bodier.add_field_or_method(field);
+            cuca.entity_mut(entity).bodier.add_field_or_method(field)?;
             Ok(())
         },
     )))
@@ -309,7 +309,7 @@ pub(super) fn create_class_multilines() -> Box<dyn Command<ClassDiagram>> {
                 if lines.len() > 1 {
                     let bodier = &mut diagram.cuca().entity_mut(entity).bodier;
                     for line in lines.sub_extract(1, 1).iter() {
-                        bodier.add_field_or_method(line.text());
+                        bodier.add_field_or_method(line.text())?;
                     }
                 }
                 manage_extends(location, "EXTENDS", diagram, &header, entity)?;
@@ -456,7 +456,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                 decorate_object(cuca, entity, &header)?;
                 let bodier = &mut cuca.entity_mut(entity).bodier;
                 for line in &lines[1..lines.len() - 1] {
-                    bodier.add_field_or_method(line.text());
+                    bodier.add_field_or_method(line.text())?;
                 }
                 Ok(())
             },
@@ -1113,15 +1113,11 @@ fn execute_link_class(
         (Some(ent1), Some(ent2)) => (ent1.to_owned(), ent2.to_owned()),
     };
     let cuca = diagram.cuca();
-    let mut port1 = None;
-    let mut port2 = None;
     let link_type = get_link_type(arg);
     if ent1_string.contains("::") && cuca.first_with_name(&ent1_string).is_none() {
-        port1 = cuca.get_port_id(&ent1_string).map(str::to_owned);
         ent1_string = cuca.remove_port_id(&ent1_string).to_owned();
     }
     if ent2_string.contains("::") && cuca.first_with_name(&ent2_string).is_none() {
-        port2 = cuca.get_port_id(&ent2_string).map(str::to_owned);
         ent2_string = cuca.remove_port_id(&ent2_string).to_owned();
     }
     let quark1 = cuca
@@ -1146,7 +1142,6 @@ fn execute_link_class(
         .with_role(labels.get_first_role(), labels.get_second_role());
     let mut link = cuca.new_link(Some(location), cl1, cl2, link_type, link_arg);
     cuca.link_mut(link).url = url_of(arg);
-    cuca.set_port_members(link, port1, port2);
     if matches!(dir, Direction::Left | Direction::Up) {
         link = cuca.get_inv(link);
     }

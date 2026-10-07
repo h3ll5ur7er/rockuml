@@ -9,7 +9,7 @@ use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::style::{SName, Style};
-use crate::svek::{IEntityImage, MARGIN, ShapeType};
+use crate::svek::{IEntityImage, MARGIN};
 
 const MIN_WIDTH: f64 = 50.0;
 const MIN_HEIGHT: f64 = 40.0;
@@ -51,10 +51,7 @@ impl TextBlock for EntityImageStateEmptyDescription {
         let string_bounder = ug.string_bounder();
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_header = common.name.calculate_dimension(string_bounder);
-        let stroke = common
-            .colors
-            .get_specific_line_stroke()
-            .unwrap_or_else(|| common.style_state.stroke());
+        let stroke = common.style_state.stroke_with(&common.colors);
         let inner = common
             .apply_color(ug, &self.style_state_name)
             .with_stroke(stroke);
@@ -68,12 +65,4 @@ impl TextBlock for EntityImageStateEmptyDescription {
     }
 }
 
-impl IEntityImage for EntityImageStateEmptyDescription {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.common.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageStateEmptyDescription {}

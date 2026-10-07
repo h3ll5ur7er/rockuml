@@ -99,10 +99,8 @@ fn double_colons_separate_like_dots() {
     let quark = diagram.quark_in_context(false, "ns::sub::Klass").unwrap();
     assert_eq!(qualified(&diagram, quark), "ns::sub::Klass");
     assert_eq!(diagram.remove_port_id("A::port"), "A::port");
-    assert_eq!(diagram.get_port_id("A::port"), None);
     let dotted = self::diagram(Some("."));
     assert_eq!(dotted.remove_port_id("A::port"), "A");
-    assert_eq!(dotted.get_port_id("A::port"), Some("port"));
 }
 
 #[test]
@@ -249,7 +247,6 @@ fn inverted_links_swap_their_ends() {
         .with_quantifier(Some("1".to_owned()), Some("*".to_owned()));
     let link = diagram.new_link(None, a, b, link_type, arg);
     diagram.link_mut(link).link_arrow = LinkArrow::DirectNormal;
-    diagram.set_port_members(link, Some("p1".to_owned()), None);
     let inv = diagram.get_inv(link);
     let inv = diagram.link(inv);
     assert_eq!((inv.get_entity1(), inv.get_entity2()), (b, a));
@@ -262,10 +259,6 @@ fn inverted_links_swap_their_ends() {
     assert_eq!(inv.get_label().unwrap().lines(), ["uses"]);
     assert!(inv.is_inverted());
     assert_eq!(inv.get_link_arrow(), LinkArrow::Backward);
-    assert_eq!(
-        diagram.entity(a).get_port_short_names().collect::<Vec<_>>(),
-        ["p1"]
-    );
 }
 
 #[test]
@@ -591,15 +584,7 @@ impl TextBlock for Drawn {
     fn draw_u(&self, _: &crate::klimt::ugraphic::UGraphic) {}
 }
 
-impl IEntityImage for Drawn {
-    fn get_shape_type(&self) -> crate::svek::ShapeType {
-        crate::svek::ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        false
-    }
-}
+impl IEntityImage for Drawn {}
 
 #[test]
 fn types_mute_between_class_like_ones_only() {
@@ -671,10 +656,8 @@ fn states_on_the_border_take_their_position_from_the_stereotype() {
 fn entity_images_read_what_they_need_of_the_entity() {
     let mut diagram = diagram(None);
     let a = class(&mut diagram, "A");
-    diagram.hide_or_show2("A", false);
     diagram.titled.skin.set_param("backgroundColor", "#EEEEEE");
     let image = AbstractEntityImage::new(diagram.entity(a), &diagram);
-    assert!(image.is_hidden());
     assert_eq!(image.get_entity(), a);
     assert_eq!(
         image.get_backcolor(),

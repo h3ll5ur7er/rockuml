@@ -5,7 +5,7 @@ use std::f64::consts::PI;
 
 use smetana::{EdgeLayout, Label};
 
-use super::{BoxInfo, YMirror};
+use super::{BoxInfo, YMirror, arrow_signature};
 use crate::abel::LinkId;
 use crate::color::{ColorType, HColor};
 use crate::decoration::{LinkDecor, Rainbow};
@@ -15,7 +15,8 @@ use crate::klimt::dot_path::DotPath;
 use crate::klimt::geom::{UTranslate, XCubicCurve2D, XPoint2D};
 use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::ugraphic::UGraphic;
-use crate::style::{SName, Style, StyleSignature};
+use crate::stereo::Stereotype;
+use crate::style::Style;
 use crate::svek::{Bibliotekon, Cluster};
 
 pub(crate) struct SmetanaEdge {
@@ -248,14 +249,9 @@ impl SmetanaEdge {
 }
 
 /// The style of the diagram's arrows with the link's stereotype.
-fn get_style(diagram: &CucaDiagram, stereotype: Option<&crate::stereo::Stereotype>) -> Style {
-    StyleSignature::of(&[
-        SName::Root,
-        SName::Element,
-        diagram.get_style_name(),
-        SName::Arrow,
-    ])
-    .get_merged_style_with(&diagram.skin().current_style_builder(), stereotype)
+fn get_style(diagram: &CucaDiagram, stereotype: Option<&Stereotype>) -> Style {
+    arrow_signature(diagram.get_style_name())
+        .get_merged_style_with(&diagram.skin().current_style_builder(), stereotype)
 }
 
 fn print_extremity_at_start(

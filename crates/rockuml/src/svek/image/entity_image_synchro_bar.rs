@@ -10,10 +10,9 @@ use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::Rankdir;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 pub(crate) struct EntityImageSynchroBar {
-    base: AbstractEntityImage,
     rankdir: Rankdir,
     color: HColor,
 }
@@ -31,7 +30,6 @@ impl EntityImageSynchroBar {
             entity.stereotype.as_ref(),
         );
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             rankdir: diagram.skin().get_rankdir(),
             color: style.value(PName::BackGroundColor).as_color(),
         }
@@ -58,12 +56,4 @@ impl TextBlock for EntityImageSynchroBar {
     }
 }
 
-impl IEntityImage for EntityImageSynchroBar {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageSynchroBar {}

@@ -6,7 +6,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
-use crate::svek::{IEntityImage, Margins, ShapeType};
+use crate::svek::IEntityImage;
 
 pub(crate) struct PaddedEntityImage {
     image: Box<dyn IEntityImage>,
@@ -56,20 +56,4 @@ impl TextBlock for PaddedEntityImage {
     }
 }
 
-impl IEntityImage for PaddedEntityImage {
-    fn get_shape_type(&self) -> ShapeType {
-        self.image.get_shape_type()
-    }
-
-    fn get_shield(&self, string_bounder: &dyn StringBounder) -> Margins {
-        self.image.get_shield(string_bounder)
-    }
-
-    fn get_overscan_x(&self, string_bounder: &dyn StringBounder) -> f64 {
-        self.image.get_overscan_x(string_bounder)
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for PaddedEntityImage {}

@@ -6,7 +6,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
-use crate::svek::{IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 pub(crate) struct TextBlockToEntityImage {
     text_block: Box<dyn TextBlock>,
@@ -32,12 +32,4 @@ impl TextBlock for TextBlockToEntityImage {
     }
 }
 
-impl IEntityImage for TextBlockToEntityImage {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        false
-    }
-}
+impl IEntityImage for TextBlockToEntityImage {}
