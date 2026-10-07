@@ -44,7 +44,7 @@ use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
 use crate::svek::IEntityImage;
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 use hide_or_show::HideOrShow;
 
 /// A diagram of entities and links, which the commands class, description and state diagrams share work on
@@ -53,8 +53,8 @@ pub(crate) trait EntityDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram;
 
     /// The name an element written like `"Name"` is known by (`cleanId`).
-    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
-        CucaDiagram::clean_id(id)
+    fn clean_id(id: &str) -> &str {
+        without_quotes_or_brackets(id)
     }
 }
 
@@ -231,21 +231,6 @@ impl CucaDiagram {
 
     pub(crate) fn get_together(&self, id: TogetherId) -> &Together {
         &self.togethers[id.0]
-    }
-
-    /// A name without the quotes, parentheses, brackets or colons around it.
-    pub(crate) fn clean_id(id: &str) -> &str {
-        if id.chars().count() < 2 {
-            return id;
-        }
-        let unquoted = crate::text::unquoted(id);
-        if unquoted.len() != id.len() {
-            return unquoted;
-        }
-        [('(', ')'), ('[', ']'), (':', ':')]
-            .into_iter()
-            .find_map(|(start, end)| id.strip_prefix(start)?.strip_suffix(end))
-            .unwrap_or(id)
     }
 
     pub(crate) fn set_last_entity(&mut self, last: Option<EntityId>) {

@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
-use super::cuca::CucaDiagram;
+use super::cuca::{CucaDiagram, EntityDiagram};
 use super::cuca_commands;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
@@ -63,6 +63,12 @@ impl CommandFactory for ChenEerDiagramFactory {
 impl AbstractDiagram for ChenEerDiagram {
     fn starting_pass(&mut self, _pass: ParserPass) {
         self.cuca.starting_pass();
+    }
+}
+
+impl EntityDiagram for ChenEerDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
     }
 }
 

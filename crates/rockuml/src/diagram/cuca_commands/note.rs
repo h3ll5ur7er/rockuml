@@ -18,7 +18,7 @@ use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::plasma::QuarkId;
 use crate::stereo::{self, Stereotype};
-use crate::text::{LineLocation, unquoted};
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 static END_NOTE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*end[%s]?note$"));
 static END_NOTE_ON_ENTITY: LazyLock<Regex> =
@@ -112,7 +112,7 @@ pub(in crate::diagram) fn note<D: EntityDiagram + 'static>() -> Box<dyn Command<
         ParserPass::One,
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
             let display = Display::with_newlines(arg.get("DISPLAY", 0).unwrap_or_default());
-            create_note(diagram.cuca(), Some(location), arg, display)
+            create_note::<D>(diagram.cuca(), Some(location), arg, display)
         },
     )
 }
@@ -124,20 +124,20 @@ pub(in crate::diagram) fn note_multi_line<D: EntityDiagram + 'static>() -> Box<d
         &END_NOTE,
         ParserPass::One,
         |diagram: &mut D, location, arg, display| {
-            create_note(diagram.cuca(), location, arg, display)
+            create_note::<D>(diagram.cuca(), location, arg, display)
         },
     )
 }
 
 /// A note of its own, which links can then reach by its code (`CommandFactoryNote.executeInternal`).
-fn create_note(
+fn create_note<D: EntityDiagram>(
     cuca: &mut CucaDiagram,
     location: Option<&LineLocation>,
     arg: &RegexResult,
     display: Display,
 ) -> CommandResult {
     let id_short = arg.get("CODE", 0).unwrap_or_default();
-    let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short))?;
+    let quark = cuca.quark_in_context(false, D::clean_id(id_short))?;
     if cuca.quark(quark).get_data().is_some() {
         return Err(CommandError::new(format!(
             "Note already created: {}",
@@ -209,7 +209,7 @@ pub(in crate::diagram) fn note_on_entity<D: EntityDiagram + 'static>(
         pass,
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
             let display = Display::with_newlines(arg.get("NOTE", 0).unwrap_or_default());
-            add_note_on_entity(diagram.cuca(), Some(location), arg, None, display)
+            add_note_on_entity::<D>(diagram.cuca(), Some(location), arg, None, display)
         },
     )
 }
@@ -227,7 +227,7 @@ pub(in crate::diagram) fn note_on_entity_multi_line<D: EntityDiagram + 'static>(
         pass,
         |diagram: &mut D, location, arg, display| {
             let url = arg.get("URL", 0).and_then(Url::parse);
-            add_note_on_entity(diagram.cuca(), location, arg, url, display)
+            add_note_on_entity::<D>(diagram.cuca(), location, arg, url, display)
         },
     )
 }
@@ -252,7 +252,7 @@ fn block_end(with_bracket: bool) -> &'static Regex {
 
 /// A note leaf `GMN<n>` linked to the entity by a dashed line without decorations, on the side the note
 /// asks for (`CommandFactoryNoteOnEntity.executeInternal`).
-fn add_note_on_entity(
+fn add_note_on_entity<D: EntityDiagram>(
     cuca: &mut CucaDiagram,
     location: Option<&LineLocation>,
     arg: &RegexResult,
@@ -264,7 +264,7 @@ fn add_note_on_entity(
             .get_last_entity()
             .ok_or_else(|| CommandError::new("Nothing to note to"))?,
         Some(code) => {
-            let id_short = CucaDiagram::clean_id(code);
+            let id_short = D::clean_id(code);
             let quark = cuca.quark_in_context(true, id_short)?;
             cuca.quark(quark)
                 .get_data()
@@ -433,7 +433,7 @@ fn add_tip(
     display: Display,
 ) -> CommandResult {
     let id_short = arg.get("CODE", 0).unwrap_or_default();
-    let member = unquoted(arg.get("CODE", 1).unwrap_or_default()).to_owned();
+    let member = without_quotes_or_brackets(arg.get("CODE", 1).unwrap_or_default()).to_owned();
     let quark = cuca.quark_in_context(true, id_short)?;
     let target = cuca
         .quark(quark)
@@ -441,7 +441,7 @@ fn add_tip(
         .ok_or_else(|| CommandError::new("Nothing to note to"))?;
     let position = side(cuca, arg);
     let tmp = format!("{id_short}$$${}", position.name());
-    let ident_tip = cuca.quark_in_context(true, unquoted(&tmp))?;
+    let ident_tip = cuca.quark_in_context(true, without_quotes_or_brackets(&tmp))?;
     let tips = if let Some(tips) = cuca.quark(ident_tip).get_data() {
         tips
     } else {

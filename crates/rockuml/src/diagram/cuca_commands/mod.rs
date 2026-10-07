@@ -12,7 +12,7 @@ pub(super) use labels::Labels;
 
 use super::cuca::{CucaDiagram, EntityDiagram};
 use super::titled::TitledDiagram;
-use crate::abel::{Entity, GroupType, LeafType, LinkArg};
+use crate::abel::{Entity, EntityId, GroupType, LeafType, LinkArg};
 use crate::color::{ColorType, Colors, HColor};
 use crate::command::unported::{self, NotPortedCommands};
 use crate::command::{
@@ -26,9 +26,10 @@ use crate::java;
 use crate::json::JsonValue;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::plasma::QuarkId;
 use crate::skin::Rankdir;
 use crate::stereo::{Stereotag, Stereotype};
-use crate::text::{LineLocation, StringLocated};
+use crate::text::{LineLocation, StringLocated, without_quotes_or_brackets};
 use crate::{color, stereo};
 
 /// A stereotype, whose spot colour must exist (`Stereotype.build` with the circled character font).
@@ -195,7 +196,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 let location = first.location();
                 let cuca = diagram.cuca();
                 let name = header.get("NAME", 1).unwrap_or_default();
-                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name))?;
+                let quark = cuca.quark_in_context(true, D::clean_id(name))?;
                 if cuca.quark(quark).get_data().is_some() {
                     return Err(CommandError::new(format!("Map already exists: {name}")));
                 }
@@ -260,20 +261,17 @@ fn json_header() -> Vec<RegexTree> {
     ]
 }
 
-/// A JSON element, unless its name is taken.
+/// A JSON element for `quark`, unless it holds one already.
 fn create_json_entity(
     cuca: &mut CucaDiagram,
     location: &LineLocation,
     header: &RegexResult,
-    name: &str,
-    display: Option<&str>,
-    reuse_existing_child: bool,
-) -> Result<Option<crate::abel::EntityId>, CommandError> {
-    let quark = cuca.quark_in_context(reuse_existing_child, CucaDiagram::clean_id(name))?;
+    quark: QuarkId,
+    display: Display,
+) -> Result<Option<EntityId>, CommandError> {
     if cuca.quark(quark).get_data().is_some() {
         return Ok(None);
     }
-    let display = display_or_name(display, cuca.quark(quark).get_name());
     let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Json);
     if let Some(stereo) = header.get("STEREO", 0) {
         cuca.entity_mut(entity).stereotype = Some(stereotype(stereo)?);
@@ -342,14 +340,11 @@ pub(super) fn create_json<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                     .expect("checked when the block was recognised");
                 let code = header.get_lazzy("CODE", 0).unwrap_or_default();
                 let cuca = diagram.cuca();
-                let Some(entity) = create_json_entity(
-                    cuca,
-                    first.location(),
-                    &header,
-                    CucaDiagram::clean_id(code),
-                    header.get_lazzy("DISPLAY", 0),
-                    true,
-                )?
+                let quark = cuca.quark_in_context(true, D::clean_id(code))?;
+                let display =
+                    display_or_name(header.get_lazzy("DISPLAY", 0), cuca.quark(quark).get_name());
+                let Some(entity) =
+                    create_json_entity(cuca, first.location(), &header, quark, display)?
                 else {
                     return Err(CommandError::new(format!("JSON already exists: {code}")));
                 };
@@ -405,15 +400,10 @@ pub(super) fn create_json_single_line<D: EntityDiagram + 'static>() -> Box<dyn C
         RegexTree::concat(parts),
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
             let name = arg.get("NAME", 1).unwrap_or_default();
-            let Some(entity) = create_json_entity(
-                diagram.cuca(),
-                location,
-                arg,
-                name,
-                arg.get("NAME", 0),
-                false,
-            )?
-            else {
+            let cuca = diagram.cuca();
+            let quark = cuca.quark_in_context(false, D::clean_id(name))?;
+            let display = display_or_name(arg.get("NAME", 0), name);
+            let Some(entity) = create_json_entity(cuca, location, arg, quark, display)? else {
                 return Err(CommandError::new(format!("JSON already exists: {name}")));
             };
             let Ok(json) = crate::json::parse(arg.get_lazzy("DATA_", 0).unwrap_or_default()) else {
@@ -505,20 +495,20 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
         ]),
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
             let code_arg =
-                CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default()).to_owned();
+                without_quotes_or_brackets(arg.get_lazzy("CODE", 0).unwrap_or_default()).to_owned();
             let colors = colors(arg, ColorType::Back)?;
             let code = if code_arg.is_empty() {
                 diagram.cuca().get_unique_sequence("##")
             } else {
                 code_arg.clone()
             };
-            let code = diagram.clean_id(&code).to_owned();
+            let code = D::clean_id(&code).to_owned();
             let cuca = diagram.cuca();
             let ident = cuca.quark_in_context(false, &code)?;
             let display = if code_arg.is_empty() {
                 Display::default()
             } else {
-                let display_arg = arg.get_lazzy("DISPLAY", 0).map(CucaDiagram::clean_id);
+                let display_arg = arg.get_lazzy("DISPLAY", 0).map(without_quotes_or_brackets);
                 Display::with_newlines(display_arg.unwrap_or(cuca.quark(ident).get_name()))
             };
             let skin = cuca.skin();
@@ -581,11 +571,9 @@ pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
             RegexTree::end(),
         ]),
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
-            let code = diagram
-                .clean_id(arg.get("CODE", 0).unwrap_or_default())
-                .to_owned();
+            let code = without_quotes_or_brackets(arg.get("CODE", 0).unwrap_or_default());
             let cuca = diagram.cuca();
-            let quark = cuca.quark_in_context(true, &code)?;
+            let quark = cuca.quark_in_context(true, D::clean_id(code))?;
             let Some(entity) = cuca.quark(quark).get_data() else {
                 return Err(CommandError::new(format!(
                     "{} does not exist",
@@ -694,11 +682,9 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
             }
             let display = Display::create(texts);
             let colors = colors(&head, ColorType::Back)?;
-            let code = diagram
-                .clean_id(head.get("CODE", 0).unwrap_or_default())
-                .to_owned();
+            let code = D::clean_id(head.get("CODE", 0).unwrap_or_default());
             let cuca = diagram.cuca();
-            let quark = cuca.quark_in_context(true, &code)?;
+            let quark = cuca.quark_in_context(true, code)?;
             let entity = if let Some(existing) = cuca.quark(quark).get_data() {
                 existing
             } else {

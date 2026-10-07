@@ -6,7 +6,7 @@ use crate::color::{self, ColorType, Colors};
 use crate::command::{Command, CommandError, PatternCommand, SingleLine};
 use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::java;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
@@ -42,7 +42,7 @@ pub(super) fn create_entity() -> Box<dyn Command<ChenEerDiagram>> {
             };
             let cuca = &mut diagram.cuca;
             let id_short = arg.get("CODE", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short))?;
+            let quark = cuca.quark_in_context(true, ChenEerDiagram::clean_id(id_short))?;
             let entity = if let Some(entity) = cuca.quark(quark).get_data() {
                 if !cuca
                     .entity_mut(entity)
@@ -104,7 +104,7 @@ pub(super) fn create_attribute() -> Box<dyn Command<ChenEerDiagram>> {
             };
             let cuca = &mut diagram.cuca;
             let id_short =
-                CucaDiagram::clean_id(java::trim(arg.get("CODE", 0).unwrap_or_default()))
+                ChenEerDiagram::clean_id(java::trim(arg.get("CODE", 0).unwrap_or_default()))
                     .to_owned();
             let id = format!("{}/{id_short}", cuca.entity(owner).get_name(cuca));
             let quark = cuca.quark_in_context(true, &id)?;
@@ -272,7 +272,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
         |diagram: &mut ChenEerDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = &mut diagram.cuca;
             let superclass =
-                CucaDiagram::clean_id(arg.get("SUPERCLASS", 0).unwrap_or_default()).to_owned();
+                ChenEerDiagram::clean_id(arg.get("SUPERCLASS", 0).unwrap_or_default()).to_owned();
             let subclasses = arg.get("SUBCLASSES", 0).unwrap_or_default();
             let symbol = arg.get("SYMBOL", 0).unwrap_or_default();
             let colors = colors(arg, ColorType::Back)?;
@@ -307,7 +307,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
             );
             for subclass in java::split(subclasses, ",") {
                 let subclass_entity =
-                    existing_entity(cuca, CucaDiagram::clean_id(java::trim(&subclass)))?;
+                    existing_entity(cuca, ChenEerDiagram::clean_id(java::trim(&subclass)))?;
                 let mut subclass_link_type = LinkType::new(LinkDecor::None, LinkDecor::None);
                 if symbol != "U" {
                     subclass_link_type = subclass_link_type.with_middle_superset();
@@ -329,7 +329,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
 
 /// The entity a name written in a link means, which must exist.
 fn existing_entity(cuca: &mut CucaDiagram, name: &str) -> Result<EntityId, CommandError> {
-    let name = CucaDiagram::clean_id(name).to_owned();
+    let name = ChenEerDiagram::clean_id(name).to_owned();
     let quark = cuca.quark_in_context(true, &name)?;
     cuca.quark(quark)
         .get_data()

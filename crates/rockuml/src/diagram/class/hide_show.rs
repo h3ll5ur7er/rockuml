@@ -2,14 +2,15 @@
 //! (PlantUML's `CommandHideShowByGender` and `CommandHideShowByVisibility`). Every diagram reads these lines;
 //! class and object diagrams apply them.
 
+use super::ClassDiagram;
 use crate::abel::{EntityGender, EntityPortion, LeafType};
 use crate::command::unported::NotPortedCommands;
 use crate::command::{Command, CommandError, CommandResult, PatternCommand, SingleLine};
-use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::titled::TitledDiagram;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::skin::visibility_modifier::VisibilityModifier;
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 /// PlantUML's `CommandHideShowByGender`: `hide class circle`, `hide empty members`, `show Foo fields`...
 pub(in crate::diagram) fn hide_show_by_gender<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
@@ -75,8 +76,8 @@ fn execute_class_diagram(cuca: &mut CucaDiagram, arg: &RegexResult) -> CommandRe
             Some(leaf_type) => EntityGender::ByEntityType(leaf_type),
             None if arg1.starts_with("<<") => EntityGender::ByStereotype(arg1.to_owned()),
             None => {
-                let arg1 = CucaDiagram::clean_id(arg1);
-                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(arg1))?;
+                let arg1 = without_quotes_or_brackets(arg1);
+                let quark = cuca.quark_in_context(true, ClassDiagram::clean_id(arg1))?;
                 if portion == EntityPortion::Method {
                     EntityGender::ByClassName(arg1.to_owned())
                 } else {

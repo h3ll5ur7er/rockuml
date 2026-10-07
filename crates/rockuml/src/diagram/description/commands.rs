@@ -11,7 +11,7 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
+use crate::diagram::cuca::EntityDiagram;
 use crate::diagram::cuca_commands::labels::Labels;
 use crate::diagram::cuca_commands::{
     ALL_TYPES, add_tags, colors, exists_with_bad_type3, unknown_symbol,
@@ -22,7 +22,7 @@ use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
 use crate::skin::actor::ActorStyle;
 use crate::stereo::{self, Stereotype};
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 /// What `[x]`, `(x)`, `:x:` and `"x"` may name an element as, at either end of a link.
 const LINK_END: &str = r"([%pLN_.]+|[%g][^%g]+[%g]|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|(?!\[\*\])\[[^\[\]]+\]|\((?!\*\))[^)]+\)/?)";
@@ -94,7 +94,10 @@ fn execute_link_element(
     };
     let labels = Labels::new(arg);
     let link_colors = colors(arg, ColorType::Line)?;
-    let (ent1_clean, ent2_clean) = (diagram.clean_id(ent1), diagram.clean_id(ent2));
+    let (ent1_clean, ent2_clean) = (
+        DescriptionDiagram::clean_id(ent1),
+        DescriptionDiagram::clean_id(ent2),
+    );
     let (cl1, cl2) = match (
         diagram.cuca.is_group(ent1_clean),
         diagram.cuca.is_group(ent2_clean),
@@ -163,7 +166,7 @@ fn get_dummy(
     ident: &str,
 ) -> Result<EntityId, CommandError> {
     if ident.starts_with("()") {
-        let ident = diagram.clean_id(ident);
+        let ident = DescriptionDiagram::clean_id(ident);
         let cuca = &mut diagram.cuca;
         let quark = cuca.quark_in_context(true, ident)?;
         if let Some(existing) = cuca.quark(quark).get_data() {
@@ -185,7 +188,7 @@ fn get_dummy(
         None
     };
     let end_with_slash = ident.ends_with('/');
-    let ident = diagram.clean_id(ident);
+    let ident = DescriptionDiagram::clean_id(ident);
     let cuca = &mut diagram.cuca;
     let quark = cuca.quark_in_context(true, ident)?;
     if let Some(existing) = cuca.quark(quark).get_data() {
@@ -336,7 +339,7 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         let symbol_arg = arg.get("SYMBOL", 0);
         let business = symbol_arg.is_some_and(|symbol| symbol.ends_with('/'));
         let symbol = if let Some(interface) = code_raw.strip_prefix("()") {
-            code_raw = CucaDiagram::clean_id(java::trim(interface));
+            code_raw = without_quotes_or_brackets(java::trim(interface));
             Some("interface")
         } else if code_char == Some('(') || code_display == Some('(') {
             Some(business_variant(
@@ -380,14 +383,15 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
                 ),
             ),
         };
-        let code = diagram.clean_id(code_raw).to_owned();
+        let code = DescriptionDiagram::clean_id(code_raw).to_owned();
         let cuca = &mut diagram.cuca;
         let quark = cuca.quark_in_context(false, &code)?;
         let name = cuca.quark(quark).get_name().to_owned();
         if cuca.is_group_quark(quark) {
             return Err(already_defined(&name));
         }
-        let display = Display::with_newlines(CucaDiagram::clean_id(display_raw.unwrap_or(&name)));
+        let display =
+            Display::with_newlines(without_quotes_or_brackets(display_raw.unwrap_or(&name)));
         if cuca
             .quark(quark)
             .get_data()
@@ -496,14 +500,13 @@ pub(super) fn archimate() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::end(),
         ]),
         |diagram: &mut DescriptionDiagram, location: &LineLocation, arg: &RegexResult| {
-            let code = diagram
-                .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
+            let code = DescriptionDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
             let quark = diagram.cuca.quark_in_context(true, &code)?;
-            let display = Display::with_newlines(
-                arg.get_lazzy("DISPLAY", 0)
-                    .map_or(diagram.cuca.quark(quark).get_name(), CucaDiagram::clean_id),
-            );
+            let display = Display::with_newlines(arg.get_lazzy("DISPLAY", 0).map_or(
+                diagram.cuca.quark(quark).get_name(),
+                without_quotes_or_brackets,
+            ));
             let entity = match diagram.cuca.quark(quark).get_data() {
                 Some(existing) => existing,
                 None => create_leaf(
@@ -560,9 +563,9 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                 let head = start_pattern
                     .matcher(first.text())
                     .expect("the first line matched");
-                let code = diagram
-                    .clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
-                    .to_owned();
+                let code =
+                    DescriptionDiagram::clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
+                        .to_owned();
                 let cuca = &mut diagram.cuca;
                 let quark = cuca.quark_in_context(false, &code)?;
                 if cuca.quark(quark).get_data().is_some() {
@@ -611,14 +614,13 @@ pub(super) fn archimate_package() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::end(),
         ]),
         |diagram: &mut DescriptionDiagram, location: &LineLocation, arg: &RegexResult| {
-            let code = diagram
-                .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
+            let code = DescriptionDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = &mut diagram.cuca;
             let quark = cuca.quark_in_context(true, &code)?;
             let display = Display::with_newlines(
                 arg.get_lazzy("DISPLAY", 0)
-                    .map_or(cuca.quark(quark).get_name(), CucaDiagram::clean_id),
+                    .map_or(cuca.quark(quark).get_name(), without_quotes_or_brackets),
             );
             cuca.goto_group(Some(location), quark, display.clone(), GroupType::Package);
             let stereotype = archimate_stereotype(arg)?;
@@ -667,7 +669,7 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             } else {
                 (GroupType::Requirement, LeafType::Requirement)
             };
-            let code = diagram.clean_id(code_string).to_owned();
+            let code = DescriptionDiagram::clean_id(code_string).to_owned();
             let cuca = &mut diagram.cuca;
             let quark = cuca.quark_in_context(true, &code)?;
             if cuca.quark(quark).get_data().is_some() {

@@ -9,7 +9,7 @@ use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::titled::Titled;
 use crate::klimt::VerticalAlignment;
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 impl CucaDiagram {
     /// A package holding nothing but one package with something in it shows as one, named `outer.inner`.
@@ -298,7 +298,7 @@ impl AbstractClassOrObjectDiagram {
             Some(parent) if parent1 == parent2 => self.cuca.child(parent, &id_short),
             _ => self
                 .cuca
-                .quark_in_context(true, CucaDiagram::clean_id(&id_short))?,
+                .quark_in_context(true, without_quotes_or_brackets(&id_short))?,
         };
         let point = self.cuca.really_create_leaf(
             location,

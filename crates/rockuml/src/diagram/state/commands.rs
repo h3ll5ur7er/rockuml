@@ -9,7 +9,7 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::cuca::EntityDiagram;
 use crate::direction::Direction;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree};
@@ -160,7 +160,7 @@ fn execute_create_state(
     let id_short = arg.get_lazzy("CODE", 0).unwrap_or_default();
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
+        .quark_in_context(true, StateDiagram::clean_id(id_short))?;
     let name = diagram.cuca.quark(quark).get_name().to_owned();
     let display = arg.get_lazzy("DISPLAY", 0).unwrap_or(&name).to_owned();
     let stereogroup = Stereogroup::build(arg.get("STEREOGROUP", 0));
@@ -385,7 +385,7 @@ fn get_entity(
     if code.starts_with('=') && code.ends_with('=') {
         let quark = diagram
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(code.trim_matches('=')))?;
+            .quark_in_context(true, StateDiagram::clean_id(code.trim_matches('=')))?;
         let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
         return Ok(Some(diagram.leaf_named(
             location,
@@ -400,7 +400,7 @@ fn get_entity(
     }
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(code))?;
+        .quark_in_context(true, StateDiagram::clean_id(code))?;
     if !diagram.check_concurrent_state_ok(quark)? {
         return Ok(None);
     }
@@ -535,7 +535,7 @@ fn execute_create_package2(
     let id_short = not_null(arg, "CODE1", "CODE2").unwrap_or_default();
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
+        .quark_in_context(true, StateDiagram::clean_id(id_short))?;
     let display = not_null(arg, "DISPLAY1", "DISPLAY2")
         .unwrap_or_else(|| diagram.cuca.quark(quark).get_name());
     let display = Display::with_newlines(display);
@@ -600,7 +600,7 @@ pub(super) fn add_field() -> Box<dyn Command<StateDiagram>> {
             } else {
                 diagram
                     .cuca
-                    .quark_in_context(true, CucaDiagram::clean_id(code))?
+                    .quark_in_context(true, StateDiagram::clean_id(code))?
             };
             let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
             let entity = diagram.leaf_named(location, quark, display, LeafType::State);

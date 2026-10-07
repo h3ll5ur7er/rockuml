@@ -128,16 +128,6 @@ fn bad_names_and_leaves_used_as_packages_are_errors() {
 }
 
 #[test]
-fn names_lose_quotes_and_brackets() {
-    assert_eq!(CucaDiagram::clean_id("\"A B\""), "A B");
-    assert_eq!(CucaDiagram::clean_id("(use)"), "use");
-    assert_eq!(CucaDiagram::clean_id("[comp]"), "comp");
-    assert_eq!(CucaDiagram::clean_id(":actor:"), "actor");
-    assert_eq!(CucaDiagram::clean_id(":"), ":");
-    assert_eq!(CucaDiagram::clean_id("plain"), "plain");
-}
-
-#[test]
 fn entities_links_and_names_share_one_counter() {
     let mut diagram = diagram(Some("."));
     assert_eq!(uid(&diagram, diagram.get_root_group()), "entroot");

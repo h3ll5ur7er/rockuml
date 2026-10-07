@@ -135,7 +135,7 @@ impl StateDiagram {
         };
         let quark = self
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&id_short))?;
+            .quark_in_context(true, Self::clean_id(&id_short))?;
         Ok(self.leaf_of(location, quark, leaf_type))
     }
 
@@ -193,17 +193,13 @@ impl StateDiagram {
         prefix: &str,
         leaf_type: LeafType,
     ) -> Result<EntityId, CommandError> {
-        let quark = self
-            .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
+        let quark = self.cuca.quark_in_context(true, Self::clean_id(id_short))?;
         let display = Display::with_newlines(self.cuca.quark(quark).get_name());
         self.cuca
             .goto_group(Some(location), quark, display, GroupType::State);
         let group = self.cuca.get_current_group();
         let name = format!("{prefix}{}", self.cuca.entity(group).get_name(&self.cuca));
-        let ident = self
-            .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&name))?;
+        let ident = self.cuca.quark_in_context(true, Self::clean_id(&name))?;
         let result = self.leaf_of(location, ident, leaf_type);
         self.end_group()?;
         Ok(result)
@@ -218,9 +214,7 @@ impl StateDiagram {
             self.cuca.end_group();
         }
         let name = self.cuca.get_unique_sequence2(CONCURRENT_PREFIX);
-        let ident = self
-            .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&name))?;
+        let ident = self.cuca.quark_in_context(true, Self::clean_id(&name))?;
         self.cuca.goto_group(
             Some(location),
             ident,
