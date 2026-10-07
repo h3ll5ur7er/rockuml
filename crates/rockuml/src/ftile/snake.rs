@@ -183,6 +183,9 @@ impl Snake {
     /// Draws the arrow now, which only `UGraphicForSnake` and surfaces do: tiles draw arrows with
     /// `ug.draw(&snake)`.
     pub(crate) fn draw_internal(&self, ug: &UGraphic) {
+        if self.is_empty() {
+            return;
+        }
         match self.color.get_colors() {
             [] => {}
             [color] => {
@@ -284,6 +287,11 @@ impl Snake {
             y = f64::midpoint(pt1.y, worm.get_point(2).y) - dim.height / 2.0;
         }
         XPoint2D::new(x, y)
+    }
+
+    /// An arrow without points, on which PlantUML fails; here it is not drawn.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.worm.size() == 0
     }
 
     pub(crate) fn get_first(&self) -> XPoint2D {

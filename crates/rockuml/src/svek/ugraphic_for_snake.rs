@@ -113,7 +113,11 @@ impl UGraphicLayer for UGraphicForSnake {
 
     fn draw(&self, _this: &UGraphic, shape: AnyShape<'_>) {
         match shape {
-            AnyShape::Snake(snake) => self.add_pending_snake(snake),
+            AnyShape::Snake(snake) => {
+                if !snake.is_empty() {
+                    self.add_pending_snake(snake);
+                }
+            }
             shape => self.ug.draw(shape),
         }
     }

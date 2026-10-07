@@ -238,3 +238,15 @@ listing.
 `crates/rockuml/src/diagram/state/image_tests.rs` reads them with rockuml's factory and compares each leaf's
 dimension, shape type and drawing. Fonts other than Java's logical ones are left out, as their names depend on the
 fonts installed where Java runs.
+
+## Activity diagram unit oracles
+
+`activity-unit/` holds harnesses for activity diagrams; fixtures are in `crates/rockuml/tests/data`.
+
+```bash
+bash tools/oracle/activity-unit/arrows.sh  # activity-arrows.txt: merged worms, multi-colour offsets, FtileGeometry
+```
+
+`ArrowDump` merges generated worms after moving them, as `UGraphicForSnake` does, computes `WormMutation` offsets
+and chains `FtileGeometry` operations, writing doubles as their IEEE bits; `crates/rockuml/src/ftile/tests/arrows.rs`
+replays them and must match bit for bit.
