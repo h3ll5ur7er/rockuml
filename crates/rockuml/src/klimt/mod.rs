@@ -1,5 +1,6 @@
 //! PlantUML's drawing layer (`klimt`): fonts, shapes, and the surfaces they are drawn on.
 
+pub(crate) mod affine;
 pub(crate) mod big_frame;
 pub(crate) mod blocks;
 pub(crate) mod clip;

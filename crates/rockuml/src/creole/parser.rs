@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::atom_text::AtomText;
-use super::atoms::{AtomOpenIconic, AtomWithMargin, Bullet, HorizontalLine};
+use super::atoms::{AtomEmoji, AtomOpenIconic, AtomWithMargin, Bullet, HorizontalLine};
 use super::code::{self, AtomCode};
 use super::commands::{CreoleCommand, creole_commands};
 use super::display::Display;
@@ -12,6 +12,7 @@ use super::table::{self, AtomTable};
 use super::tree::{self, AtomTree};
 use super::{Atom, CreoleMode, Sheet, Stripe, char_hidder};
 use crate::color::HColor;
+use crate::emoji::Emoji;
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::HorizontalAlignment;
@@ -474,6 +475,26 @@ impl StripeBuilder {
                 &self.font,
             )));
         }
+    }
+
+    /// An unknown emoji is named in red. `#0`, `#000` and `#black` stand for the font colour.
+    pub(super) fn add_emoji(&mut self, name: &str, scale: f64, forced_color: Option<&str>) {
+        let Some(emoji) = Emoji::retrieve(name) else {
+            let font = self.font.with_color(HColor::RED);
+            self.atoms
+                .push(Rc::new(AtomText::legacy(&format!("\u{BF}{name}?"), font)));
+            return;
+        };
+        let color = forced_color.and_then(|forced_color| match forced_color {
+            "#0" | "#000" | "#black" => Some(self.font.color().clone()),
+            name => HColor::parse(name).ok().flatten(),
+        });
+        self.atoms.push(Rc::new(AtomEmoji::new(
+            emoji,
+            scale,
+            self.font.size_2d(),
+            color,
+        )));
     }
 
     /// Adds `text` in a changed font, then goes back to the current one.

@@ -322,6 +322,11 @@ impl FontConfiguration {
         self.position.mute(styled)
     }
 
+    /// The size before a superscript or subscript position shrinks it.
+    pub fn size_2d(&self) -> f64 {
+        self.font.size_2d()
+    }
+
     pub fn color(&self) -> &HColor {
         &self.color
     }

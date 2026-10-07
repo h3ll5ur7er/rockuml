@@ -57,6 +57,18 @@ pub(super) fn reverse(color: XColor) -> XColor {
     XColor::rgb(to_255(red), to_255(green), to_255(blue))
 }
 
+/// `ColorUtils.grayToColor`: `color` with its lightness moved towards white by `coef`.
+pub(super) fn gray_to_color(coef: f64, color: XColor) -> XColor {
+    let [hue, saturation, lightness] = rgb_to_hsluv([
+        f64::from(color.red) / 256.0,
+        f64::from(color.green) / 256.0,
+        f64::from(color.blue) / 256.0,
+    ]);
+    let lightness = lightness + (100.0 - lightness) * coef;
+    let [red, green, blue] = hsluv_to_rgb([hue, saturation, lightness]);
+    XColor::rgb(to_255(red), to_255(green), to_255(blue))
+}
+
 fn to_255(value: f64) -> u8 {
     ((255.0 * value) as i32).clamp(0, 255) as u8
 }
@@ -200,6 +212,23 @@ mod tests {
                 reverse(XColor::from_rgb(input)),
                 XColor::from_rgb(expected),
                 "{input:06X}"
+            );
+        }
+    }
+
+    #[test]
+    fn matches_plantuml_gray_to_color() {
+        let orange = XColor::from_rgb(0xFFA500);
+        let cases = [
+            (0.0, 0xFEA400),
+            (133.0 / 256.0, 0xFED4B3),
+            (184.0 / 256.0, 0xFEE6D5),
+        ];
+        for (coef, expected) in cases {
+            assert_eq!(
+                gray_to_color(coef, orange),
+                XColor::from_rgb(expected),
+                "{coef}"
             );
         }
     }

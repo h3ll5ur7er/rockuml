@@ -1,15 +1,16 @@
-//! The path data of an `OpenIconic` icon, turned into PlantUML's path segments.
+//! The path data of an `OpenIconic` icon or an emoji, turned into PlantUML's path segments.
 
+use crate::klimt::affine::XAffineTransform;
 use crate::klimt::geom::UTranslate;
 use crate::klimt::shape::USegment;
 
-pub(super) struct SvgPath {
+pub(crate) struct SvgPath {
     movements: Vec<Movement>,
     translate: UTranslate,
 }
 
 impl SvgPath {
-    pub(super) fn new(path: &str, translate: UTranslate) -> Self {
+    pub(crate) fn new(path: &str, translate: UTranslate) -> Self {
         let mut movements = Vec::new();
         let mut last = SvgPosition::ORIGIN;
         let mut last_move = SvgPosition::ORIGIN;
@@ -37,23 +38,42 @@ impl SvgPath {
         }
     }
 
-    /// The path scaled by `factor`; closing a subpath adds nothing, as in PlantUML.
-    pub(super) fn to_upath(&self, factor: f64) -> Vec<USegment> {
-        let scaled = |position: SvgPosition| (position.x * factor, position.y * factor);
-        let path = self.movements.iter().filter_map(|movement| {
+    /// The path scaled by `factor`.
+    pub(crate) fn to_upath(&self, factor: f64) -> Vec<USegment> {
+        self.build_upath(
+            |position| (position.x * factor, position.y * factor),
+            (factor, factor),
+        )
+    }
+
+    /// The path transformed by `at`. Arcs keep their rotation and only stretch along the axes.
+    pub(crate) fn to_upath_affine(&self, at: &XAffineTransform) -> Vec<USegment> {
+        self.build_upath(
+            |position| at.transform((position.x, position.y)),
+            (at.scale_x(), at.scale_y()),
+        )
+    }
+
+    /// Closing a subpath adds nothing, as in PlantUML.
+    fn build_upath(
+        &self,
+        point: impl Fn(SvgPosition) -> (f64, f64),
+        (scale_x, scale_y): (f64, f64),
+    ) -> Vec<USegment> {
+        let mut path = Vec::new();
+        for movement in &self.movements {
             let arguments = &movement.arguments;
-            let end = movement.last_position().map(scaled);
-            match (movement.letter, end) {
-                ('Z', None) => None,
-                ('M', Some((x, y))) => Some(USegment::MoveTo(x, y)),
-                ('L', Some((x, y))) => Some(USegment::LineTo(x, y)),
-                ('C', Some(end)) => Some(USegment::CubicTo {
-                    ctrl1: scaled(movement.position(0)),
-                    ctrl2: scaled(movement.position(2)),
+            match (movement.letter, movement.last_position().map(&point)) {
+                ('Z', None) => {}
+                ('M', Some((x, y))) => move_to(&mut path, x, y),
+                ('L', Some((x, y))) => path.push(USegment::LineTo(x, y)),
+                ('C', Some(end)) => path.push(USegment::CubicTo {
+                    ctrl1: point(movement.position(0)),
+                    ctrl2: point(movement.position(2)),
                     end,
                 }),
-                ('A', Some(end)) => Some(USegment::ArcTo {
-                    radius: (arguments[0] * factor, arguments[1] * factor),
+                ('A', Some(end)) => path.push(USegment::ArcTo {
+                    radius: (arguments[0] * scale_x, arguments[1] * scale_y),
                     x_axis_rotation: arguments[2],
                     large_arc: arguments[3] != 0.0,
                     sweep: arguments[4] != 0.0,
@@ -61,14 +81,28 @@ impl SvgPath {
                 }),
                 (letter, _) => unreachable!("absolute paths have no {letter}"),
             }
-        });
-        let (dx, dy) = (self.translate.dx * factor, self.translate.dy * factor);
-        // Translating by zero would turn -0 into 0, which PlantUML prints differently.
-        if dx == 0.0 && dy == 0.0 {
-            path.collect()
-        } else {
-            path.map(|segment| segment.translate(dx, dy)).collect()
         }
+        let (dx, dy) = (self.translate.dx * scale_x, self.translate.dy * scale_y);
+        // Translating by zero would turn -0 into 0, which PlantUML prints differently.
+        if dx != 0.0 || dy != 0.0 {
+            for segment in &mut path {
+                *segment = segment.translate(dx, dy);
+            }
+        }
+        path
+    }
+}
+
+/// PlantUML's `UPath.moveTo` skips a move to the first point of the previous segment, which for a curve is its
+/// first control point.
+fn move_to(path: &mut Vec<USegment>, x: f64, y: f64) {
+    let first_point = |segment: &USegment| match *segment {
+        USegment::MoveTo(x, y) | USegment::LineTo(x, y) => (x, y),
+        USegment::CubicTo { ctrl1, .. } => ctrl1,
+        USegment::ArcTo { radius, .. } => radius,
+    };
+    if path.last().map(first_point) != Some((x, y)) {
+        path.push(USegment::MoveTo(x, y));
     }
 }
 
@@ -174,7 +208,7 @@ impl Movement {
                     arguments,
                 }
             }
-            letter => unreachable!("no OpenIconic icon draws with {letter}"),
+            letter => unreachable!("no bundled icon or emoji draws with {letter}"),
         }
     }
 
@@ -204,7 +238,7 @@ fn argument_number(letter: char) -> usize {
         'c' => 6,
         's' => 4,
         'a' => 7,
-        _ => unreachable!("no OpenIconic icon draws with {letter}"),
+        _ => unreachable!("no bundled icon or emoji draws with {letter}"),
     }
 }
 
@@ -352,6 +386,34 @@ mod tests {
                 sweep: true,
                 end: (8.0, 2.0),
             }
+        );
+    }
+
+    #[test]
+    fn an_affine_transform_moves_every_point() {
+        let path = SvgPath::new("M1 1L2 1", UTranslate::default());
+        let at = XAffineTransform::new(0.0, 1.0, -1.0, 0.0, 10.0, 20.0);
+        assert_eq!(
+            path.to_upath_affine(&at),
+            [USegment::MoveTo(9.0, 21.0), USegment::LineTo(9.0, 22.0)]
+        );
+    }
+
+    #[test]
+    fn a_move_to_the_first_point_of_the_previous_segment_is_skipped() {
+        let path = SvgPath::new("M0 0C1 1 2 2 3 3M1 1L5 5M3 3", UTranslate::default());
+        assert_eq!(
+            path.to_upath(1.0),
+            [
+                USegment::MoveTo(0.0, 0.0),
+                USegment::CubicTo {
+                    ctrl1: (1.0, 1.0),
+                    ctrl2: (2.0, 2.0),
+                    end: (3.0, 3.0),
+                },
+                USegment::LineTo(5.0, 5.0),
+                USegment::MoveTo(3.0, 3.0),
+            ]
         );
     }
 }

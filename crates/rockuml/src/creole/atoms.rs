@@ -3,6 +3,7 @@
 use super::sheet_block::SheetBlock1;
 use super::{Atom, Sheet};
 use crate::color::HColor;
+use crate::emoji::Emoji;
 use crate::klimt::TextBlock;
 use crate::klimt::blocks::TextBlockMarged;
 use crate::klimt::font::{FontConfiguration, StringBounder};
@@ -175,6 +176,43 @@ impl TextBlock for AtomOpenIconic {
 }
 
 impl Atom for AtomOpenIconic {
+    fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
+        -3.0 * self.factor
+    }
+}
+
+/// An emoji (`<:smile:>`), sized to the font.
+pub(super) struct AtomEmoji {
+    emoji: Emoji,
+    factor: f64,
+    color: Option<HColor>,
+}
+
+impl AtomEmoji {
+    /// The font size at which an emoji is drawn 36 units square.
+    const MAGIC: f64 = 24.0;
+
+    pub(super) fn new(emoji: Emoji, scale: f64, size_2d: f64, color: Option<HColor>) -> Self {
+        Self {
+            emoji,
+            factor: scale * size_2d / Self::MAGIC,
+            color,
+        }
+    }
+}
+
+impl TextBlock for AtomEmoji {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        let size = 36.0 * self.factor;
+        XDimension2D::new(size, size)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.emoji.draw_u(ug, self.factor, self.color.as_ref());
+    }
+}
+
+impl Atom for AtomEmoji {
     fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
         -3.0 * self.factor
     }
