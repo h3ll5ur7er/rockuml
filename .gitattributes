@@ -1,6 +1,7 @@
 * text=auto eol=lf
 *.png binary
 *.spm binary
+*.br binary
 *.ttf binary
 
 # Corpus inputs and goldens are test data: keep their exact bytes (line endings and BOMs included).

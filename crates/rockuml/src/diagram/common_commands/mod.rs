@@ -34,6 +34,11 @@ pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comma
         sprite::multi_line(),
         sprite::single_line(),
         sprite::md5(),
+        sprite::svg(),
+        sprite::stdlib(),
+        sprite::stdlib_svg(),
+        sprite::svg_multi_line(),
+        sprite::file(),
         Box::new(
             Multiline::new(
                 &plantuml_regex(r"^\<style\>$"),

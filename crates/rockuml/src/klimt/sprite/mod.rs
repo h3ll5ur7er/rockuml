@@ -8,6 +8,7 @@ mod sprite_monochrome;
 pub(crate) use sprite_color::SpriteColorBuilder4096;
 pub(crate) use sprite_gray_level::SpriteGrayLevel;
 pub(crate) use sprite_image::SpriteImage;
+pub(crate) use sprite_monochrome::SpriteMonochrome;
 
 use std::rc::Rc;
 
@@ -29,11 +30,11 @@ pub(crate) trait SpriteContainer {
     fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>>;
 }
 
-/// For text outside any diagram that defines sprites.
+/// For text outside any diagram that defines sprites, which still finds the built-in ones.
 pub(crate) struct SpriteContainerEmpty;
 
 impl SpriteContainer for SpriteContainerEmpty {
-    fn get_sprite(&self, _name: &str) -> Option<Rc<dyn Sprite>> {
-        None
+    fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
+        SpriteImage::from_internal(name)
     }
 }

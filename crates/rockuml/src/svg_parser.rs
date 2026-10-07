@@ -1,6 +1,8 @@
 //! PlantUML's small SVG reader (`SvgNanoParser`): draws the paths, circles, ellipses and texts of an SVG picture,
 //! in its groups and transforms, as PlantUML shapes. Emoji and SVG sprites are drawn with it.
 
+use std::borrow::Cow;
+use std::ops::Range;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -8,21 +10,24 @@ use regex::Regex;
 use crate::color::HColor;
 use crate::emoji::{ColorResolver, UGraphicWithScale};
 use crate::java;
+use crate::klimt::TextBlock;
 use crate::klimt::affine::XAffineTransform;
-use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
-use crate::klimt::geom::UTranslate;
-use crate::klimt::shape::{UEllipse, USegment, UShape, UText};
+use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
+use crate::klimt::geom::{UTranslate, XDimension2D};
+use crate::klimt::shape::{UEllipse, UImageSvg, USegment, UShape, UText};
+use crate::klimt::sprite::Sprite;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::openiconic::SvgPath;
 use crate::pattern::java_regex;
 
-pub(crate) struct SvgNanoParser<'a> {
-    /// The elements PlantUML draws, and the ends of groups, in document order.
-    data: Vec<&'a str>,
+pub(crate) struct SvgNanoParser {
+    svg: Cow<'static, str>,
+    /// Where the elements PlantUML draws, and the ends of groups, are in `svg`, in document order.
+    data: Vec<Range<usize>>,
 }
 
-impl<'a> SvgNanoParser<'a> {
-    pub(crate) fn new(svg: &'a str) -> Self {
+impl SvgNanoParser {
+    pub(crate) fn new(svg: impl Into<Cow<'static, str>>) -> Self {
         static TEXT_OR_DRAW: LazyLock<Regex> = LazyLock::new(|| {
             regex(r"(<text .*?</text>)|(<(svg|path|g|circle|ellipse)[^<>]*>)|(</[^<>]*>)")
         });
@@ -35,12 +40,21 @@ impl<'a> SvgNanoParser<'a> {
             "<ellipse ",
             "<text ",
         ];
+        let svg = svg.into();
         let data = TEXT_OR_DRAW
-            .find_iter(svg)
-            .map(|element| element.as_str())
-            .filter(|element| DRAWN.iter().any(|start| element.starts_with(start)))
+            .find_iter(&svg)
+            .filter(|element| {
+                DRAWN
+                    .iter()
+                    .any(|start| element.as_str().starts_with(start))
+            })
+            .map(|element| element.range())
             .collect();
-        Self { data }
+        Self { svg, data }
+    }
+
+    fn data(&self) -> impl Iterator<Item = &str> {
+        self.data.iter().map(|range| &self.svg[range.clone()])
     }
 
     /// Draws the picture at `scale`. Shapes without a colour take the forced colour, else the font colour; a
@@ -56,7 +70,7 @@ impl<'a> SvgNanoParser<'a> {
         let mut ugs = UGraphicWithScale::new(ug, &color_resolver, scale);
         let mut stack = Vec::new();
         let mut stack_g = Vec::new();
-        for &s in &self.data {
+        for s in self.data() {
             if s.starts_with("<path ") {
                 draw_path(&ugs, s, &stack_g);
             } else if s.starts_with("</g>") {
@@ -84,8 +98,7 @@ impl<'a> SvgNanoParser<'a> {
     /// The darkest gray among the colours the picture names.
     fn min_gray_level(&self) -> i32 {
         const COLORED: [&str; 4] = ["<path ", "<g ", "<circle ", "<ellipse "];
-        self.data
-            .iter()
+        self.data()
             .filter(|s| COLORED.iter().any(|element| s.contains(element)))
             .flat_map(|s| [extract(&DATA_STROKE, s), get_fill_string(s, &[])])
             .flatten()
@@ -96,6 +109,48 @@ impl<'a> SvgNanoParser<'a> {
                 },
             )
             .fold(999, i32::min)
+    }
+}
+
+/// An SVG sprite, measured by its `viewBox` or else its size attributes.
+impl Sprite for SvgNanoParser {
+    fn as_text_block(
+        &self,
+        font_color: &HColor,
+        forced_color: Option<&HColor>,
+        scale: f64,
+    ) -> Box<dyn TextBlock + '_> {
+        let data = UImageSvg::new(self.svg.as_ref(), scale);
+        Box::new(SpriteBlock {
+            parser: self,
+            font_color: font_color.clone(),
+            forced_color: forced_color.cloned(),
+            scale,
+            dimension: XDimension2D::new(data.width(), data.height()),
+        })
+    }
+}
+
+struct SpriteBlock<'a> {
+    parser: &'a SvgNanoParser,
+    font_color: HColor,
+    forced_color: Option<HColor>,
+    scale: f64,
+    dimension: XDimension2D,
+}
+
+impl TextBlock for SpriteBlock<'_> {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.dimension
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.parser.draw_u(
+            ug,
+            self.scale,
+            Some(self.font_color.clone()),
+            self.forced_color.clone(),
+        );
     }
 }
 
@@ -421,7 +476,12 @@ mod tests {
     ) -> Vec<(UShape, UTranslate, UParam)> {
         let recorder = Rc::new(RefCell::new(Recorder::default()));
         let ug = UGraphic::new(recorder.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
-        SvgNanoParser::new(svg).draw_u(&ug, scale, None, forced_color.map(HColor::parse_or_white));
+        SvgNanoParser::new(svg.to_owned()).draw_u(
+            &ug,
+            scale,
+            None,
+            forced_color.map(HColor::parse_or_white),
+        );
         recorder.take().shapes
     }
 
@@ -511,5 +571,28 @@ mod tests {
         );
         assert_eq!(shapes[0].2.backcolor, color("#FEA400"));
         assert_eq!(shapes[1].2.backcolor, color("#FED4B3"));
+    }
+
+    #[test]
+    fn a_sprite_measures_its_view_box_rounded_up_else_its_size_attributes() {
+        let dimension = |svg: &str, scale| {
+            SvgNanoParser::new(svg.to_owned())
+                .as_text_block(&HColor::BLACK, None, scale)
+                .calculate_dimension(&StringBounderDebug)
+        };
+        assert_eq!(
+            dimension(
+                r#"<svg width="19.995mm" viewBox="0 0 19.995 19.2"></svg>"#,
+                2.0
+            ),
+            XDimension2D::new(40.0, 40.0)
+        );
+        assert_eq!(
+            dimension(
+                r#"<svg stroke-width="2" width="24" height="12"></svg>"#,
+                0.5
+            ),
+            XDimension2D::new(12.0, 6.0)
+        );
     }
 }

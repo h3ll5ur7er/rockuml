@@ -18,7 +18,7 @@ use regex::Regex;
 
 use crate::java;
 use crate::klimt::HorizontalAlignment;
-use crate::klimt::sprite::{Sprite, SpriteContainer};
+use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::pattern::java_regex;
 use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 
@@ -39,7 +39,10 @@ pub(crate) struct SkinParam {
 
 impl SpriteContainer for SkinParam {
     fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
-        self.sprites.get(name).cloned()
+        self.sprites
+            .get(name)
+            .cloned()
+            .or_else(|| SpriteImage::from_internal(name))
     }
 }
 

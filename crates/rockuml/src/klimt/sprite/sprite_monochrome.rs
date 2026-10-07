@@ -17,7 +17,7 @@ pub(crate) struct SpriteMonochrome {
 }
 
 impl SpriteMonochrome {
-    pub(super) fn new(width: usize, height: usize, gray_level: usize) -> Self {
+    pub(crate) fn new(width: usize, height: usize, gray_level: usize) -> Self {
         Self {
             width,
             height,
@@ -27,14 +27,14 @@ impl SpriteMonochrome {
     }
 
     /// Levels outside the sprite are ignored.
-    pub(super) fn set_gray(&mut self, x: usize, y: usize, level: usize) {
+    pub(crate) fn set_gray(&mut self, x: usize, y: usize, level: usize) {
         if x < self.width && y < self.height {
             self.gray[y * self.width + x] = level;
         }
     }
 
     #[cfg(test)]
-    pub(super) fn get_gray(&self, x: usize, y: usize) -> usize {
+    pub(crate) fn get_gray(&self, x: usize, y: usize) -> usize {
         self.gray[y * self.width + x]
     }
 

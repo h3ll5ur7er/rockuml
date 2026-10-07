@@ -1,0 +1,7 @@
+@startuml
+sprite $trig jar:archimate/triggering
+sprite $component jar:archimate/application-component
+Alice -> Bob : <$archimate/access> <$archimate/junction> png
+Bob -> Alice : <$trig> <$archimate/flow*2> <#red$archimate/realisation>
+Alice -> Bob : <$component> <$archimate/application-component{scale=1.5,color=blue}> svg
+@enduml
