@@ -1,0 +1,12 @@
+@startuml
+rectangle "Sales" as sales <<$archimate/business-process>> #Business
+rectangle "Shop" as shop <<$archimate/application-component>> #Application
+rectangle "Cloud" as cloud <<$archimate/technology-node>> #Technology
+archimate #Business "Online channel" as channel <<business-collaboration>> {
+  archimate #Business "Order" as order <<business-event>>
+  archimate #Business "Webshop" as web <<business-interface>>
+}
+order --> sales
+web --> shop
+shop --> cloud
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+archimate #Business "Customer" as customer <<business-actor>>
+archimate #Business "Client role" as role <<business-role>>
+archimate #Business "Handle claim" as process <<business-process>>
+archimate #Business "Claim" as object <<business-object>>
+archimate #Business "Claims service" as service <<business-service>>
+customer --> role
+role --> service
+service --> process
+process --> object
+@enduml
