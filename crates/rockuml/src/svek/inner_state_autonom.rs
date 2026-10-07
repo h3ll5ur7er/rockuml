@@ -42,7 +42,7 @@ impl InnerStateAutonom {
         let style = style_part(None);
         let style_description = style_part(Some(SName::Description));
         let name = group.display.create0(
-            style_name.font_configuration(),
+            &style_name.font_configuration(),
             style_name.horizontal_alignment().unwrap_or_default(),
             diagram.skin(),
             0.0,

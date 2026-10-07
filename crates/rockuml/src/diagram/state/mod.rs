@@ -36,7 +36,6 @@ const CONCURRENT_PREFIX: &str = "CONC";
 pub(super) struct StateDiagram {
     source: Rc<UmlSource>,
     cuca: CucaDiagram,
-    hide_empty_description: bool,
     /// Commands that run in several passes do some of their work in the first only.
     current_pass: ParserPass,
 }
@@ -57,7 +56,6 @@ impl CommandFactory for StateDiagramFactory {
         StateDiagram {
             source: source.clone(),
             cuca,
-            hide_empty_description: false,
             current_pass: ParserPass::One,
         }
     }
@@ -307,7 +305,7 @@ impl TitledDiagram for StateDiagram {
     }
 
     fn set_hide_empty_description(&mut self, hide: bool) {
-        self.hide_empty_description = hide;
+        self.cuca.set_hide_empty_description_for_state(hide);
     }
 }
 

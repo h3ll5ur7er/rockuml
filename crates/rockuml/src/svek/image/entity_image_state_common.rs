@@ -53,7 +53,7 @@ pub(crate) fn get_state_description(group: &Entity, diagram: &CucaDiagram) -> Bo
         .iter()
         .flat_map(|line| Display::with_newlines(line).lines().to_vec());
     Box::new(Display::create(lines).create0(
-        style.font_configuration(),
+        &style.font_configuration(),
         style.horizontal_alignment().unwrap_or_default(),
         diagram.skin(),
         0.0,
@@ -78,7 +78,7 @@ impl EntityImageStateCommon {
         let name_font = get_style_state(Some(SName::Name), stereotype, &builder)
             .font_configuration_with(&entity.colors);
         let name = entity.display.create0(
-            name_font,
+            &name_font,
             style_state.horizontal_alignment().unwrap_or_default(),
             diagram.skin(),
             style_state.wrap_width(),

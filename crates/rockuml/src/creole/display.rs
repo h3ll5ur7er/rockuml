@@ -191,16 +191,15 @@ impl Display {
     /// `create`, `create7` and `create8` call it).
     pub(crate) fn create0(
         &self,
-        font: FontConfiguration,
+        font: &FontConfiguration,
         alignment: HorizontalAlignment,
         sprites: &dyn SpriteContainer,
         max_width: f64,
         mode: CreoleMode,
     ) -> SheetBlock2 {
         let alignment = self.natural_alignment.unwrap_or(alignment);
-        let stereotype_font = font.clone();
-        let sheet = CreoleParser::with_mode(font, alignment, mode, sprites)
-            .create_display_sheet(self, &stereotype_font);
+        let sheet = CreoleParser::with_mode(font.clone(), alignment, mode, sprites)
+            .create_display_sheet(self, font);
         SheetBlock2::new(
             SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
         )

@@ -54,6 +54,13 @@ impl PackageStyle {
         }
     }
 
+    /// The style a stereotype written `<<name>>` names, in any case (`Stereotype.getPackageStyle`).
+    pub(crate) fn from_stereotype(label: &str) -> Option<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|style| format!("<<{}>>", style.name()).eq_ignore_ascii_case(label))
+    }
+
     /// A style by name in any case; `rect` is a rectangle.
     pub(crate) fn from_string(value: &str) -> Option<Self> {
         Self::ALL

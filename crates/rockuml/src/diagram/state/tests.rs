@@ -253,5 +253,5 @@ fn arrows_set_decorations_direction_and_colours() {
 #[test]
 fn hide_empty_description_is_remembered() {
     let diagram = parse(&["hide empty description", "[*] --> A"]).unwrap();
-    assert!(diagram.hide_empty_description);
+    assert!(diagram.cuca.is_hide_empty_description_for_state());
 }

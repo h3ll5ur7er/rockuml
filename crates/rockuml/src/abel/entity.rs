@@ -11,7 +11,7 @@ use super::{
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::cucadiagram::Bodier;
-use crate::decoration::symbol::{USymbol, USymbols};
+use crate::decoration::symbol::{PackageStyle, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
@@ -32,6 +32,7 @@ pub(crate) enum EntityType {
     Group(GroupType),
 }
 
+#[derive(Clone)]
 pub(crate) struct Entity {
     id: EntityId,
     quark: QuarkId,
@@ -191,6 +192,11 @@ impl Entity {
             Some(LeafType::Circle) => Some(USymbols::INTERFACE),
             _ => self.usymbol,
         }
+    }
+
+    /// The style a stereotype like `<<Node>>` gives a package.
+    pub(crate) fn get_package_style(&self) -> Option<PackageStyle> {
+        PackageStyle::from_stereotype(self.stereotype.as_ref()?.label_double_comparator())
     }
 
     pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {

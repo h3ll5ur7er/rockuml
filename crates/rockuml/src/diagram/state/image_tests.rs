@@ -9,8 +9,7 @@ use crate::color::HColor;
 use crate::java::double_to_string;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::ugraphic::UGraphic;
-use crate::svek::IEntityImage;
-use crate::svek::image::create_state_entity_image;
+use crate::svek::{Bibliotekon, IEntityImage, create_entity_image_block};
 
 const FIXTURE: &str = include_str!("../../../tests/data/state-images.txt");
 
@@ -99,8 +98,8 @@ fn state_images_draw_like_plantuml() {
             let entity = cuca.entity(leaf);
             let label = format!("{name} {} {}", entity.get_uid(), entity.get_name(cuca));
             assert_eq!(label, header);
-            let image =
-                create_state_entity_image(entity, cuca, diagram.hide_empty_description).unwrap();
+            let bibliotekon = Bibliotekon::new(cuca.get_root_group());
+            let image = create_entity_image_block(leaf, cuca, &bibliotekon).unwrap();
             let actual = dump(image.as_ref());
             if actual != expected {
                 failures.push(format!(

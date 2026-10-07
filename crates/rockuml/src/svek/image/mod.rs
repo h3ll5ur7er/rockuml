@@ -24,8 +24,7 @@ pub(crate) use entity_image_state_empty_description::EntityImageStateEmptyDescri
 pub(crate) use entity_image_state2::EntityImageState2;
 pub(crate) use entity_image_synchro_bar::EntityImageSynchroBar;
 
-use super::IEntityImage;
-use crate::abel::{Entity, LeafType};
+use crate::abel::Entity;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::group::{UGroup, UGroupType};
 use crate::text::LineLocation;
@@ -48,39 +47,4 @@ pub(crate) fn entity_group(
         diagram.quark(entity.get_quark()).get_qualified_name(),
     );
     group
-}
-
-/// The image of a leaf of a state diagram (the state arms of `GeneralImageBuilder.createEntityImageBlock`);
-/// `None` for leaves of other kinds.
-pub(crate) fn create_state_entity_image(
-    leaf: &Entity,
-    diagram: &CucaDiagram,
-    hide_empty_description: bool,
-) -> Option<Box<dyn IEntityImage>> {
-    let image: Box<dyn IEntityImage> = match leaf.get_leaf_type()? {
-        LeafType::State if !leaf.get_entity_position().is_normal() => {
-            Box::new(EntityImageStateBorder::new(leaf, diagram))
-        }
-        LeafType::State if hide_empty_description && leaf.bodier.get_raw_body().is_empty() => {
-            Box::new(EntityImageStateEmptyDescription::new(leaf, diagram))
-        }
-        LeafType::State
-            if leaf.stereotype.as_ref().is_some_and(|stereotype| {
-                stereotype.label_double_comparator() == "<<sdlreceive>>"
-            }) =>
-        {
-            Box::new(EntityImageState2::new(leaf, diagram))
-        }
-        LeafType::State => Box::new(EntityImageState::new(leaf, diagram)),
-        LeafType::CircleStart => Box::new(EntityImageCircleStart::new(leaf, diagram)),
-        LeafType::CircleEnd => Box::new(EntityImageCircleEnd::new(leaf, diagram)),
-        LeafType::Branch | LeafType::StateChoice => Box::new(EntityImageBranch::new(leaf, diagram)),
-        LeafType::SynchroBar | LeafType::StateForkJoin => {
-            Box::new(EntityImageSynchroBar::new(leaf, diagram))
-        }
-        LeafType::PseudoState => Box::new(EntityImagePseudoState::new(leaf, diagram)),
-        LeafType::DeepHistory => Box::new(EntityImagePseudoState::deep_history(leaf, diagram)),
-        _ => return None,
-    };
-    Some(image)
 }

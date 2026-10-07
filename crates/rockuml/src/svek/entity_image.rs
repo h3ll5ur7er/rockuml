@@ -2,19 +2,16 @@
 
 #![cfg_attr(test, allow(dead_code, reason = "drawn by the Smetana bridge"))]
 
-use super::{Margins, ShapeType};
-use crate::abel::{Entity, EntityId};
+use super::{Bibliotekon, Margins, ShapeType, SvekNode};
+use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
+use crate::klimt::ugraphic::UGraphic;
+use crate::sdot::SmetanaEdge;
 use crate::stereo::Stereotype;
 use crate::style::SName;
-
-/// Room between an entity's outline and its text.
-pub(crate) const MARGIN: i32 = 5;
-/// Room between a separator line and the text next to it.
-pub(crate) const MARGIN_LINE: i32 = 5;
 
 pub(crate) trait IEntityImage: TextBlock {
     fn get_shape_type(&self) -> ShapeType;
@@ -32,9 +29,46 @@ pub(crate) trait IEntityImage: TextBlock {
 
     fn is_hidden(&self) -> bool;
 
-    /// Images drawn on their composite state's border learn, once the layout placed both, where the
-    /// composite's centre and their node's top are.
-    fn place_on_border(&self, _cluster_center_y: f64, _node_min_y: f64) {}
+    /// `EntityImageNote.setOpaleLink`: a note whose single link goes to `other` draws that link as part of
+    /// its outline, which the layout then leaves out. The layout asks notes only.
+    fn set_opale_link(&mut self, _link: LinkId, _other: EntityId) {
+        unreachable!("only notes take their link into their outline")
+    }
+
+    /// Draws the image where the layout put it. Images that depend on the rest of the layout, like notes
+    /// drawn around their link, find it in `layout`.
+    fn draw_u_in_layout(&self, ug: &UGraphic, _layout: &LayoutContext<'_>) {
+        self.draw_u(ug);
+    }
+}
+
+/// What a laid out image can see of the rest of its layout while it is drawn.
+pub(crate) struct LayoutContext<'a> {
+    #[expect(dead_code, reason = "read by notes drawn around their link")]
+    pub diagram: &'a CucaDiagram,
+    pub bibliotekon: &'a Bibliotekon,
+    /// The edges drawn, by link, in the order of the diagram's links.
+    #[expect(dead_code, reason = "read by notes drawn around their link")]
+    pub smetana_pathes: &'a [(LinkId, SmetanaEdge)],
+}
+
+impl LayoutContext<'_> {
+    /// # Panics
+    ///
+    /// If the layout has no node for `leaf`.
+    pub(crate) fn get_node(&self, leaf: EntityId) -> &SvekNode {
+        self.bibliotekon
+            .get_node(leaf)
+            .expect("the layout has a node for every leaf it draws")
+    }
+
+    #[expect(dead_code, reason = "read by notes drawn around their link")]
+    pub(crate) fn get_smetana_edge(&self, link: LinkId) -> Option<&SmetanaEdge> {
+        self.smetana_pathes
+            .iter()
+            .find(|(known, _)| *known == link)
+            .map(|(_, edge)| edge)
+    }
 }
 
 /// What every entity's image knows of its entity, read when the image is made: images are made while the

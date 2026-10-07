@@ -33,7 +33,7 @@ impl EntityImageState2 {
         .get_merged_style(&diagram.skin().current_style_builder());
         let alignment = diagram
             .skin()
-            .default_text_alignment(HorizontalAlignment::Center);
+            .get_default_text_alignment(HorizontalAlignment::Center);
         let desc: Block = Rc::new(body(&entity.display, entity, alignment, &style, diagram));
         let empty = || -> Block { Rc::new(TextBlockEmpty::default()) };
         let as_small = USymbols::FRAME.as_small(
@@ -66,7 +66,7 @@ fn body(
         .iter()
         .map(|line| -> Box<dyn TextBlock> {
             Box::new(Display::with_newlines(line).create0(
-                font.clone(),
+                &font,
                 alignment,
                 diagram.skin(),
                 style.wrap_width(),

@@ -46,7 +46,7 @@ impl EntityImageState {
         let style_name = get_style_state(Some(SName::Name), stereotype, &builder);
         let style_description = get_style_state(Some(SName::Description), stereotype, &builder);
         let fields = Display::create(entity.bodier.get_raw_body().iter().cloned()).create0(
-            style_description.font_configuration(),
+            &style_description.font_configuration(),
             description_alignment(&style_description),
             diagram.skin(),
             common.style_state.wrap_width(),

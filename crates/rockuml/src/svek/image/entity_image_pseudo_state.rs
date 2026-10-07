@@ -46,7 +46,7 @@ impl EntityImagePseudoState {
             entity.stereotype.as_ref(),
         );
         let desc = Display::create([history_text]).create0(
-            style.font_configuration(),
+            &style.font_configuration(),
             HorizontalAlignment::Center,
             diagram.skin(),
             0.0,

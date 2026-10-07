@@ -134,7 +134,10 @@ impl UGraphicBackend for LimitFinder {
                 self.add_point(x + dimension.width, y + dimension.height);
             }
             // The circle around a centred character already bounds it.
-            UShape::HorizontalLine | UShape::SpecialText | UShape::CenteredCharacter(_) => {}
+            UShape::HorizontalLine
+            | UShape::SpecialText
+            | UShape::CenteredCharacter(_)
+            | UShape::Comment(_) => {}
         }
     }
 }

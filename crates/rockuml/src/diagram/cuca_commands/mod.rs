@@ -4,14 +4,13 @@
 pub(super) mod note;
 
 use super::titled::TitledDiagram;
+use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
-use crate::command::{BlocLines, CommandControl};
-use crate::command::{Command, CommandResult, PatternCommand, SingleLine};
+use crate::command::{BlocLines, CommandControl, PatternCommand, SingleLine};
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::skin::Rankdir;
-use crate::text::LineLocation;
-use crate::text::StringLocated;
+use crate::text::{LineLocation, StringLocated};
 use crate::{color, stereo};
 
 /// PlantUML's `CommandFootboxIgnored`.
@@ -29,7 +28,7 @@ pub(super) fn footbox_ignored<D: NotPortedCommands + 'static>() -> Box<dyn Comma
     .boxed()
 }
 
-/// `left to right direction` or `top to bottom direction` (PlantUML's `CommandRankDir`).
+/// PlantUML's `CommandRankDir`: `left to right direction` lays the diagram out sideways.
 pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -39,9 +38,9 @@ pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
             RegexTree::leaf(r"direction"),
             RegexTree::end(),
         ]),
-        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| -> CommandResult {
+        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
             let direction = arg.get("DIRECTION", 0).unwrap_or_default();
-            let rankdir = if direction.to_lowercase().starts_with("left") {
+            let rankdir = if direction.to_ascii_lowercase().starts_with("left") {
                 Rankdir::LeftToRight
             } else {
                 Rankdir::TopToBottom

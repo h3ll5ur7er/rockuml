@@ -20,7 +20,7 @@ impl QuarkId {
 }
 
 /// A named node holding at most one piece of data, `D`, set once.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub(crate) struct Quark<D> {
     parent: Option<QuarkId>,
     name: String,
@@ -60,11 +60,13 @@ impl<D: Copy> Quark<D> {
 }
 
 /// How many quarks bear a name, and the first of them.
+#[derive(Clone)]
 struct PEntry {
     first: QuarkId,
     counter: usize,
 }
 
+#[derive(Clone)]
 pub(crate) struct Plasma<D> {
     separator: String,
     /// Every quark, the root first, in creation order.

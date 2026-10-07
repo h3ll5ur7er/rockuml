@@ -596,9 +596,32 @@ fn a_group_laid_out_alone_becomes_a_leaf_without_its_inner_links() {
     let outer = class(&mut diagram, "O");
     link(&mut diagram, inner1, inner2);
     let crossing = link(&mut diagram, outer, s);
-    diagram.override_image(s, LeafType::State);
+    diagram.override_image(s, Rc::new(Drawn), LeafType::State);
     assert_eq!(diagram.get_link_ids(), [crossing]);
     assert_eq!(diagram.entity(s).get_leaf_type(), Some(LeafType::State));
+    assert!(diagram.get_svek_image(s).is_some());
+    assert!(diagram.get_svek_image(outer).is_none());
+}
+
+/// An image that draws nothing.
+struct Drawn;
+
+impl TextBlock for Drawn {
+    fn calculate_dimension(&self, _: &dyn StringBounder) -> crate::klimt::geom::XDimension2D {
+        crate::klimt::geom::XDimension2D::default()
+    }
+
+    fn draw_u(&self, _: &crate::klimt::ugraphic::UGraphic) {}
+}
+
+impl IEntityImage for Drawn {
+    fn get_shape_type(&self) -> crate::svek::ShapeType {
+        crate::svek::ShapeType::Rectangle
+    }
+
+    fn is_hidden(&self) -> bool {
+        false
+    }
 }
 
 #[test]

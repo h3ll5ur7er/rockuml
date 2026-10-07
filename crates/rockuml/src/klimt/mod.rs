@@ -5,6 +5,7 @@ pub(crate) mod big_frame;
 pub(crate) mod blocks;
 pub(crate) mod clip;
 pub(crate) mod debug;
+pub(crate) mod dot_path;
 pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
@@ -28,10 +29,6 @@ use geom::{UTranslate, XDimension2D, XPoint2D};
 use ugraphic::UGraphic;
 
 /// Something that can draw itself.
-#[cfg_attr(
-    not(test),
-    expect(dead_code, reason = "only link decorations draw this way yet")
-)]
 pub(crate) trait UDrawable {
     fn draw_u(&self, ug: &UGraphic);
 }

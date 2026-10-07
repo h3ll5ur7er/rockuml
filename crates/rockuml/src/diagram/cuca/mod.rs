@@ -25,6 +25,7 @@ pub(crate) use entity_diagram::AbstractClassOrObjectDiagram;
 
 use std::rc::Rc;
 
+use super::NotYetPorted;
 use super::titled::Titled;
 use crate::abel::{
     Bag, Entity, EntityGender, EntityId, EntityPortion, EntityType, GroupType, LeafType, Link,
@@ -32,11 +33,15 @@ use crate::abel::{
 };
 use crate::creole::Display;
 use crate::decoration::LinkType;
+use crate::klimt::TextBlock;
+use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::plasma::{Plasma, Quark, QuarkId};
+use crate::sdot::CucaDiagramFileMakerSmetana;
 use crate::skin::SkinParam;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
+use crate::svek::IEntityImage;
 use crate::text::LineLocation;
 use hide_or_show::HideOrShow;
 
@@ -48,12 +53,14 @@ pub(crate) struct Failure {
 }
 
 /// `hide` or `show` of a portion of the entities of a gender.
+#[derive(Clone)]
 struct EntityHideOrShow {
     gender: EntityGender,
     portion: EntityPortion,
     show: bool,
 }
 
+#[derive(Clone)]
 pub(crate) struct CucaDiagram {
     pub(in crate::diagram) titled: Titled,
     namespace_separator: Option<String>,
@@ -76,6 +83,11 @@ pub(crate) struct CucaDiagram {
     cpt2: i32,
     raw_layout: i32,
     last_entity: Option<EntityId>,
+    /// `hide empty description`: states without description show their name alone.
+    hide_empty_description_for_state: bool,
+    /// The images of groups laid out on their own, which their layout drew (PlantUML's `Entity.svekImage`
+    /// of the groups `overrideImage` turned into leaves).
+    svek_images: Vec<(EntityId, Rc<dyn IEntityImage>)>,
 }
 
 impl CucaDiagram {
@@ -96,6 +108,8 @@ impl CucaDiagram {
             cpt2: 0,
             raw_layout: 0,
             last_entity: None,
+            hide_empty_description_for_state: false,
+            svek_images: Vec::new(),
         };
         let root_entity = diagram.new_entity(
             None,
@@ -513,6 +527,17 @@ impl CucaDiagram {
         })
     }
 
+    /// The diagram laid out by Smetana and drawn, without its title and other chrome
+    /// (`CucaDiagram.getTextBlock`). Drawing changes the diagram, as in PlantUML, so it lays out a copy.
+    pub(crate) fn get_text_block(
+        &self,
+        string_bounder: &dyn StringBounder,
+    ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
+        let mut diagram = self.clone();
+        diagram.eventually_build_phantom_groups(None);
+        CucaDiagramFileMakerSmetana::new(diagram).get_text_block(string_bounder)
+    }
+
     /// PlantUML's odd margins, kept for compatibility.
     pub(crate) fn get_default_margins() -> ClockwiseTopRightBottomLeft {
         ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 5.0, 5.0, 0.0)
@@ -765,9 +790,31 @@ impl CucaDiagram {
         self.namespace.count_by_name(full)
     }
 
-    /// A group laid out on its own becomes a leaf of `leaf_type` drawn by its layout, which takes the links
-    /// inside it along (the model part of PlantUML's `Entity.overrideImage`).
-    pub(crate) fn override_image(&mut self, group: EntityId, leaf_type: LeafType) {
+    pub(crate) fn set_hide_empty_description_for_state(&mut self, hide: bool) {
+        self.hide_empty_description_for_state = hide;
+    }
+
+    pub(crate) fn is_hide_empty_description_for_state(&self) -> bool {
+        self.hide_empty_description_for_state
+    }
+
+    /// The image of a group laid out on its own, now a leaf.
+    pub(crate) fn get_svek_image(&self, leaf: EntityId) -> Option<Rc<dyn IEntityImage>> {
+        self.svek_images
+            .iter()
+            .find(|(known, _)| *known == leaf)
+            .map(|(_, image)| image.clone())
+    }
+
+    /// A group laid out on its own becomes a leaf of `leaf_type` drawn by `image`, which takes the links
+    /// inside it along (PlantUML's `Entity.overrideImage`).
+    pub(crate) fn override_image(
+        &mut self,
+        group: EntityId,
+        image: Rc<dyn IEntityImage>,
+        leaf_type: LeafType,
+    ) {
+        self.svek_images.push((group, image));
         let inner: Vec<LinkId> = self
             .link_order
             .iter()

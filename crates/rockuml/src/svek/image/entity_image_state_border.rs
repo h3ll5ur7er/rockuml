@@ -1,9 +1,7 @@
 //! A state on the border of its composite state, like an entry or exit point or a pin, with its name above
 //! or below (PlantUML's `EntityImageStateBorder` and `AbstractEntityImageBorder`).
 
-use std::cell::Cell;
-
-use crate::abel::{Entity, EntityPosition};
+use crate::abel::{Entity, EntityId, EntityPosition};
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, SheetBlock2};
 use crate::diagram::cuca::CucaDiagram;
@@ -13,7 +11,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::Rankdir;
 use crate::style::{PName, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
 
 use super::entity_image_state_common::get_style_state;
 
@@ -24,9 +22,8 @@ pub(crate) struct EntityImageStateBorder {
     desc: SheetBlock2,
     border_color: HColor,
     backcolor: HColor,
-    /// Whether the node sits in the upper half of its composite state, so that its name goes above it;
-    /// known once the layout placed both.
-    up_position: Cell<bool>,
+    /// The composite state whose border the state sits on.
+    parent: Option<EntityId>,
 }
 
 impl EntityImageStateBorder {
@@ -45,7 +42,7 @@ impl EntityImageStateBorder {
             &diagram.skin().current_style_builder(),
         );
         let desc = entity.display.create0(
-            style.font_configuration(),
+            &style.font_configuration(),
             HorizontalAlignment::Center,
             diagram.skin(),
             0.0,
@@ -66,7 +63,7 @@ impl EntityImageStateBorder {
             desc,
             border_color: style.value(PName::LineColor).as_color(),
             backcolor,
-            up_position: Cell::new(false),
+            parent: entity.get_parent_container(diagram),
         }
     }
 }
@@ -77,9 +74,27 @@ impl TextBlock for EntityImageStateBorder {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
+        self.draw(ug, false);
+    }
+}
+
+impl EntityImageStateBorder {
+    /// Whether the node sits in the upper half of its composite state, so that its name goes above it.
+    fn up_position(&self, layout: &LayoutContext<'_>) -> bool {
+        let Some(cluster) = self
+            .parent
+            .and_then(|parent| layout.bibliotekon.get_cluster(parent))
+        else {
+            return false;
+        };
+        let node = layout.get_node(self.base.get_entity());
+        node.get_min_y() < cluster.get_rectangle_area().get_point_center().y
+    }
+
+    fn draw(&self, ug: &UGraphic, up_position: bool) {
         let dim_desc = self.desc.calculate_dimension(ug.string_bounder());
         let x = -(dim_desc.width - 2.0 * EntityPosition::RADIUS) / 2.0;
-        let y = if self.up_position.get() {
+        let y = if up_position {
             -(2.0 * EntityPosition::RADIUS + dim_desc.height)
         } else {
             2.0 * EntityPosition::RADIUS
@@ -102,7 +117,7 @@ impl IEntityImage for EntityImageStateBorder {
         self.base.is_hidden()
     }
 
-    fn place_on_border(&self, cluster_center_y: f64, node_min_y: f64) {
-        self.up_position.set(node_min_y < cluster_center_y);
+    fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
+        self.draw(ug, self.up_position(layout));
     }
 }
