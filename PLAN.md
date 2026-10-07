@@ -323,8 +323,13 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - `<img:…>` (files through `Host`, data URIs) and `<:emoji:>` (PlantUML's SVG parser and the Twemoji set).
 - The parity harness compares embedded images by decoded pixels, as Java's PNG encoding is not worth reproducing.
 - **Exit:** sprite, image and emoji corpus cases pass L1 and L2 with pixel-compared images.
-- **Progress:** raster sprites pass all formats with exact pixels (`sprite-gray-levels`, `-compressed`,
-  `-scale-color`, `-base64`, `-color`):
+- **Status: done.** All 25 image corpus cases pass L1 (debug) and PNG size; 24 pass L2 and L3 with pixel-compared
+  images. `img-jpeg` misses them: JPEG pixels come from `zune-jpeg`, a level or two off Java's libjpeg, and porting
+  libjpeg is not worth it for how rarely diagrams embed JPEGs. Emoji (`<:smile:>`, `<#red:heart:>`) draw as vectors
+  through a port of PlantUML's `SvgNanoParser`; the 1174 Twemoji SVGs ship as one Brotli bundle (0.5 MB,
+  `tools/bundle-emoji.sh`), decompressed on first use. Details:
+- Raster sprites pass all formats with exact pixels (`sprite-gray-levels`, `-compressed`, `-scale-color`, `-base64`,
+  `-color`):
   - `sprite` definitions with 4, 8 and 16 gray levels, compressed (`z`) and 4096-colour data; `<$name>` in creole, with
     scale and colour; raster images as a `UShape` of ARGB pixels, which SVG re-encodes as PNG.
   - Scaled images go through a port of medialib's bilinear affine transform, which Java 2D's `AffineTransformOp` runs
@@ -461,5 +466,5 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 2b: sprites, `<img>` and emoji, or Phase 4: Smetana, the layout engine every CucaDiagram type needs.
+1. Phase 4: Smetana, the layout engine every CucaDiagram type needs.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

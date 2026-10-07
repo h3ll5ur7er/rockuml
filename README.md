@@ -21,6 +21,11 @@ A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`
 - Sequence diagrams (`@startuml`), laid out like PlantUML's teoz engine, the only sequence engine of 1.2026.8.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
+Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in
+archimate sprites), images (`<img:file.png>`, data URIs and URLs) and emoji (`<:smile:>`). Images named by a path are
+read relative to the diagram file; like PlantUML, rockuml refuses system paths such as `/etc/` unless
+`PLANTUML_SECURITY_PROFILE` says otherwise.
+
 For other diagram types rockuml reports that they are not ported yet and exits with status 1; the phases in
 [PLAN.md](PLAN.md) say when they come.
 
