@@ -10,13 +10,15 @@ use regex::Regex;
 
 use super::chrome::Warning;
 use super::scale::Scale;
-use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
+use super::titled::TitledDiagram;
+use crate::abel::DisplayPositioned;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
 };
 use crate::creole::Display;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::VerticalAlignment;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::style::{SName, StyleParsingError};
 use crate::text::LineLocation;
@@ -391,7 +393,7 @@ fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &
 
 /// Unlike the other one-line commands, PlantUML does not remember where a one-line legend was written.
 fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
-    let legend = Positioned {
+    let legend = DisplayPositioned {
         display: label(arg, "LEGEND"),
         alignment: HorizontalAlignment::Center,
         location: None,
@@ -438,7 +440,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
     });
     let (vertical, horizontal) = captures.unwrap_or_default();
     let legend = block_body(&lines).ok_or_else(|| CommandError::new("No legend defined"))?;
-    let legend = Positioned {
+    let legend = DisplayPositioned {
         display: legend,
         alignment: horizontal
             .as_deref()
@@ -508,7 +510,7 @@ impl Ribbon {
         }
     }
 
-    fn set<D: TitledDiagram>(self, diagram: &mut D, positioned: Positioned) {
+    fn set<D: TitledDiagram>(self, diagram: &mut D, positioned: DisplayPositioned) {
         match self {
             Self::Header => diagram.titled().set_header(positioned),
             Self::Footer => diagram.titled().set_footer(positioned),
@@ -533,7 +535,7 @@ impl Ribbon {
         arg: &RegexResult,
         location: &LineLocation,
     ) {
-        let positioned = Positioned {
+        let positioned = DisplayPositioned {
             display: label(arg, "LABEL"),
             alignment: self.alignment(diagram, arg.get("POSITION", 0)),
             location: Some(location.clone()),
@@ -552,7 +554,7 @@ impl Ribbon {
         if display.lines().is_empty() {
             return Err(CommandError::new(format!("Empty {}", self.keyword())));
         }
-        let positioned = Positioned {
+        let positioned = DisplayPositioned {
             display,
             alignment: self.alignment(diagram, given.as_deref()),
             location: Some(first.location().clone()),

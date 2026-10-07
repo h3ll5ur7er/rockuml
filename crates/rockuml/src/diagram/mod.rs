@@ -3,6 +3,7 @@
 mod chrome;
 mod common_commands;
 mod creole;
+pub(crate) mod cuca;
 mod diagram_type;
 mod error;
 mod salt;

@@ -11,9 +11,11 @@ pub(crate) const MAGIC_SEPARATOR: &str = "\u{1}";
 pub(crate) struct QuarkId(usize);
 
 impl QuarkId {
-    /// A plasma creates its root first.
+    /// Every plasma creates its root first.
+    pub(crate) const ROOT: Self = Self(0);
+
     pub(crate) fn is_root(self) -> bool {
-        self.0 == 0
+        self == Self::ROOT
     }
 }
 
@@ -122,21 +124,15 @@ impl<D: Copy> Plasma<D> {
         id
     }
 
-    pub(crate) fn root(&self) -> QuarkId {
-        QuarkId(0)
-    }
-
     pub(crate) fn quark(&self, id: QuarkId) -> &Quark<D> {
         &self.quarks[id.0]
     }
 
-    pub(crate) fn get_separator(&self) -> &str {
-        &self.separator
-    }
-
     /// `None` keeps names whole.
     pub(crate) fn set_separator(&mut self, separator: Option<&str>) {
-        self.separator = separator.unwrap_or(MAGIC_SEPARATOR).to_owned();
+        separator
+            .unwrap_or(MAGIC_SEPARATOR)
+            .clone_into(&mut self.separator);
     }
 
     pub(crate) fn has_separator(&self) -> bool {
@@ -222,7 +218,7 @@ mod tests {
     #[test]
     fn without_separator_names_stay_whole() {
         let mut plasma = Plasma::<u8>::new();
-        let root = plasma.root();
+        let root = QuarkId::ROOT;
         let quark = plasma.child(root, "a.b");
         assert_eq!(plasma.quark(quark).get_name(), "a.b");
         assert_eq!(plasma.quark(quark).get_parent(), Some(root));
@@ -233,7 +229,7 @@ mod tests {
     fn a_separator_walks_down_creating_parents() {
         let mut plasma = Plasma::<u8>::new();
         plasma.set_separator(Some("."));
-        let root = plasma.root();
+        let root = QuarkId::ROOT;
         let c = plasma.child(root, ".a.b.c.");
         assert_eq!(names(&plasma), ["", "a", "a.b", "a.b.c"]);
         let a = plasma.child_if_exists(root, "a").unwrap();
@@ -245,7 +241,7 @@ mod tests {
     fn qualified_names_use_the_separator_in_force_at_creation() {
         let mut plasma = Plasma::<u8>::new();
         plasma.set_separator(Some("::"));
-        let root = plasma.root();
+        let root = QuarkId::ROOT;
         plasma.child(root, "a::b");
         plasma.set_separator(None);
         let a = plasma.child_if_exists(root, "a").unwrap();
@@ -257,7 +253,7 @@ mod tests {
     fn names_are_counted_with_their_first_quark() {
         let mut plasma = Plasma::<u8>::new();
         plasma.set_separator(Some("."));
-        let root = plasma.root();
+        let root = QuarkId::ROOT;
         let first = plasma.child(root, "x.leaf");
         plasma.child(root, "y.leaf");
         assert_eq!(plasma.count_by_name("leaf"), 2);
@@ -270,7 +266,7 @@ mod tests {
     #[test]
     fn children_keep_their_creation_order() {
         let mut plasma = Plasma::<u8>::new();
-        let root = plasma.root();
+        let root = QuarkId::ROOT;
         let ids: Vec<QuarkId> = ["c", "a", "b"]
             .iter()
             .map(|name| plasma.child(root, name))

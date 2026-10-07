@@ -8,6 +8,7 @@ use super::{
     PARTICIPANT_CODE_OR_QUOTED, activate as activate_participant, color_named, optional_colors,
     unquoted,
 };
+use crate::abel::DisplayPositioned;
 use crate::color::ColorType;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
@@ -19,7 +20,6 @@ use crate::diagram::sequence::model::{
     ParticipantId, Reference,
 };
 use crate::diagram::sequence::{LinkAnchor, SequenceDiagram};
-use crate::diagram::titled::Positioned;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
@@ -333,7 +333,7 @@ pub(super) fn newpage() -> Box<dyn Command<SequenceDiagram>> {
                 .get("LABEL", 0)
                 .map(Display::with_newlines)
                 .unwrap_or_default();
-            diagram.newpage(Positioned {
+            diagram.newpage(DisplayPositioned {
                 display,
                 alignment: HorizontalAlignment::Center,
                 location: Some(location.clone()),

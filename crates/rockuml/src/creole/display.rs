@@ -144,6 +144,24 @@ impl Display {
         self.map_lines(|line| line.replace(from, to))
     }
 
+    /// `<<stereotypes>>` in the lines read as `«stereotypes»`.
+    #[must_use]
+    pub(crate) fn manage_guillemet(&self) -> Self {
+        self.map_lines(super::parser::manage_guillemet)
+    }
+
+    /// `appended` goes before the first line.
+    ///
+    /// # Panics
+    ///
+    /// If there is no first line.
+    #[must_use]
+    pub(crate) fn append_first_line(&self, appended: &str) -> Self {
+        let mut result = self.clone();
+        result.lines[0].insert_str(0, appended);
+        result
+    }
+
     #[must_use]
     pub(crate) fn underlined(&self) -> Self {
         self.map_lines(|line| format!("<u>{line}"))
@@ -191,6 +209,18 @@ mod tests {
             display.natural_alignment(),
             Some(HorizontalAlignment::Right)
         );
+    }
+
+    #[test]
+    fn package_names_join_on_the_first_line() {
+        let display = Display::create(["b", "second"]).append_first_line("a.");
+        assert_eq!(display.lines(), ["a.b", "second"]);
+    }
+
+    #[test]
+    fn stereotypes_in_labels_get_guillemets() {
+        let display = Display::create(["uses <<friend>>"]).manage_guillemet();
+        assert_eq!(display.lines(), ["uses \u{AB}friend\u{BB}"]);
     }
 
     #[test]

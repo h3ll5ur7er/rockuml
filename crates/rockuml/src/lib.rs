@@ -1,5 +1,6 @@
 //! PlantUML-compatible diagram engine.
 
+mod abel;
 mod assets;
 mod color;
 mod command;
