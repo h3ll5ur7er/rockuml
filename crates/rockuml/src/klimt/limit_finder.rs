@@ -37,7 +37,11 @@ impl LimitFinder {
         (ug, finder)
     }
 
+    /// What was drawn, or the origin alone when nothing was.
     pub(crate) fn min_max(&self) -> MinMax {
+        if self.min_max.min_x() == f64::MAX {
+            return MinMax::from_origin();
+        }
         self.min_max
     }
 

@@ -18,6 +18,36 @@ pub(crate) trait SingleLineCommand<D> {
     }
 }
 
+/// A single-line command made of a pattern and what to do with what it matched.
+pub(crate) struct PatternCommand<F> {
+    pattern: RegexTree,
+    apply: F,
+}
+
+impl<F> PatternCommand<F> {
+    pub(crate) fn new(pattern: RegexTree, apply: F) -> Self {
+        Self { pattern, apply }
+    }
+}
+
+impl<D, F> SingleLineCommand<D> for PatternCommand<F>
+where
+    F: Fn(&mut D, &LineLocation, &RegexResult) -> CommandResult,
+{
+    fn pattern(&self) -> &RegexTree {
+        &self.pattern
+    }
+
+    fn execute_arg(
+        &self,
+        diagram: &mut D,
+        location: &LineLocation,
+        arg: &RegexResult,
+    ) -> CommandResult {
+        (self.apply)(diagram, location, arg)
+    }
+}
+
 /// Adapts a [`SingleLineCommand`] to [`Command`].
 pub(crate) struct SingleLine<C>(pub C);
 

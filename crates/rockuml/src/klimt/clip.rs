@@ -38,12 +38,13 @@ impl UClip {
         self.is_inside(x + min_x, y + min_y) && self.is_inside(x + max_x, y + max_y)
     }
 
+    // Unlike `f64::clamp`, these never panic, whatever the clip's size.
     fn clipped_x(&self, x: f64) -> f64 {
-        x.clamp(self.x, self.x + self.width)
+        x.max(self.x).min(self.x + self.width)
     }
 
     fn clipped_y(&self, y: f64) -> f64 {
-        y.clamp(self.y, self.y + self.height)
+        y.max(self.y).min(self.y + self.height)
     }
 
     /// The part of a rectangle inside, as (x, y, width, height); the size may be negative.

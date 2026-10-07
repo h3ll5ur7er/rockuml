@@ -145,6 +145,10 @@ pub enum ImageFormat {
 }
 
 /// The image's bytes. `fonts` measure the text of formats that use fonts, and draw it in PNG.
+///
+/// # Panics
+///
+/// If `page` is not below the diagram's page count, like an index out of bounds.
 pub fn export(
     diagram: &dyn Diagram,
     page: usize,

@@ -1,0 +1,8 @@
+@startuml
+Alice -> "Smith, John" : hi
+ref over Alice, "Smith, John" : init
+ref over "Smith, John"
+  several
+  lines
+end ref
+@enduml

@@ -130,9 +130,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandParticipant {
             (None, kind) => (kind.and_then(ParticipantType::named), false),
         };
         let kind = kind.expect("the pattern only matches participant types");
-        let order = arg
-            .get("ORDER", 0)
-            .map_or(0, |order| order.parse().unwrap_or(0));
+        let order = participant_order(arg);
         let participant = diagram.create_new_participant(kind, &code, display, order);
         decorate(diagram, participant, arg)?;
         let color = arg.get("COLOR", 0).map(color_named).transpose()?;
@@ -145,6 +143,12 @@ impl SingleLineCommand<SequenceDiagram> for CommandParticipant {
         }
         Ok(())
     }
+}
+
+/// Where `order` places the participant; an unreadable number counts as 0.
+fn participant_order(arg: &RegexResult) -> i32 {
+    arg.get("ORDER", 0)
+        .map_or(0, |order| order.parse().unwrap_or(0))
 }
 
 /// The stereotype and link a declaration gives its participant.
@@ -197,9 +201,7 @@ fn multiline(diagram: &mut SequenceDiagram, lines: &BlocLines) -> CommandResult 
         return Ok(());
     }
     let body = lines.sub_extract(1, 1).without_empty_columns();
-    let order = arg
-        .get("ORDER", 0)
-        .map_or(0, |order| order.parse().unwrap_or(0));
+    let order = participant_order(&arg);
     let participant = diagram.create_new_participant(
         ParticipantType::Participant,
         &code,

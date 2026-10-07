@@ -93,6 +93,11 @@ pub(crate) enum NotePosition {
 }
 
 impl NotePosition {
+    /// Where a note can go on a message (`AbstractMessage.addNote`); others are dropped.
+    fn is_on_message(self) -> bool {
+        matches!(self, Self::Left | Self::Right | Self::Bottom | Self::Top)
+    }
+
     pub(crate) fn named(name: &str) -> Option<Self> {
         Some(match name.to_lowercase().as_str() {
             "left" => Self::Left,
@@ -160,7 +165,6 @@ pub(crate) struct MessageCommon {
     pub anchor: Option<String>,
     pub part1_anchor: Option<String>,
     pub part2_anchor: Option<String>,
-    first_is_activate: bool,
     no_activation_authorized: Vec<ParticipantId>,
 }
 
@@ -185,7 +189,6 @@ impl MessageCommon {
             anchor: None,
             part1_anchor: None,
             part2_anchor: None,
-            first_is_activate: false,
             no_activation_authorized: Vec::new(),
         }
     }
@@ -214,9 +217,6 @@ impl MessageCommon {
     fn add_life_event(&mut self, kind: LifeEventType, participant: ParticipantId) -> bool {
         if !self.life_event_types.contains(&kind) {
             self.life_event_types.push(kind);
-        }
-        if self.life_event_types.len() == 1 && self.is_activate() {
-            self.first_is_activate = true;
         }
         if kind == LifeEventType::Activate && self.no_activation_authorized.contains(&participant) {
             return false;
@@ -446,7 +446,7 @@ impl Event {
         )
     }
 
-    /// Attaches a life event; dividers and group ends take them silently.
+    /// Attaches a life event to a message; a self message takes only its own participant's.
     pub(crate) fn add_life_event(
         &mut self,
         kind: LifeEventType,
@@ -467,25 +467,13 @@ impl Event {
     pub(crate) fn add_note(&mut self, note: Note) {
         match self {
             Event::Message(message) => {
-                if matches!(
-                    note.position,
-                    NotePosition::Left
-                        | NotePosition::Right
-                        | NotePosition::Bottom
-                        | NotePosition::Top
-                ) {
+                if note.position.is_on_message() {
                     message.common.notes.push(note);
                 }
             }
             Event::MessageExo(exo) => {
                 // Notes on border messages always go to the side facing the diagram.
-                if matches!(
-                    note.position,
-                    NotePosition::Left
-                        | NotePosition::Right
-                        | NotePosition::Bottom
-                        | NotePosition::Top
-                ) {
+                if note.position.is_on_message() {
                     let position = if exo.kind.is_left_border() {
                         NotePosition::Right
                     } else {

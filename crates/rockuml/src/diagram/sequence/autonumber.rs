@@ -34,7 +34,7 @@ impl DottedNumber {
 
     fn increment_minor(&mut self, step: i64) {
         if let Some(last) = self.numbers.last_mut() {
-            *last += step;
+            *last = last.wrapping_add(step);
         }
     }
 
@@ -49,7 +49,7 @@ impl DottedNumber {
         if position >= self.numbers.len() {
             return;
         }
-        self.numbers[position] += 1;
+        self.numbers[position] = self.numbers[position].wrapping_add(1);
         for number in &mut self.numbers[position + 1..] {
             *number = 1;
         }
@@ -80,6 +80,9 @@ pub(crate) struct DecimalFormat {
     suffix: String,
     minimum_digits: usize,
     grouping: Option<usize>,
+    minimum_fraction_digits: usize,
+    /// A pattern ending in its decimal point, like `0.`, keeps the point after whole numbers.
+    decimal_separator_always_shown: bool,
 }
 
 /// An unreadable pattern, which makes PlantUML reject the command.
@@ -139,7 +142,7 @@ impl DecimalFormat {
                 }
             }
         }
-        let integer = number.split('.').next().unwrap_or_default();
+        let (integer, fraction) = number.split_once('.').unwrap_or((&number, ""));
         let grouping = integer
             .rfind(',')
             .map(|comma| integer.len() - comma - 1)
@@ -149,6 +152,8 @@ impl DecimalFormat {
             suffix,
             minimum_digits: integer.chars().filter(|&c| c == '0').count(),
             grouping,
+            minimum_fraction_digits: fraction.chars().filter(|&c| c == '0').count(),
+            decimal_separator_always_shown: number.ends_with('.'),
         })
     }
 
@@ -159,8 +164,15 @@ impl DecimalFormat {
             Some(size) => group(&padded, size),
             None => padded,
         };
+        let fraction = if self.minimum_fraction_digits > 0 {
+            format!(".{}", "0".repeat(self.minimum_fraction_digits))
+        } else if self.decimal_separator_always_shown {
+            ".".to_owned()
+        } else {
+            String::new()
+        };
         let sign = if value < 0 { "-" } else { "" };
-        format!("{}{sign}{grouped}{}", self.prefix, self.suffix)
+        format!("{}{sign}{grouped}{fraction}{}", self.prefix, self.suffix)
     }
 }
 

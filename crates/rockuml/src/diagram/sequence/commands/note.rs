@@ -233,13 +233,6 @@ fn stereotype(arg: &RegexResult) -> Option<Stereotype> {
     arg.get_lazzy("STEREO", 0).map(Stereotype::new)
 }
 
-fn note_colors(arg: &RegexResult) -> Result<Colors, CommandError> {
-    arg.get("COLOR", 0)
-        .map(|data| Colors::parse(data, ColorType::Back).map_err(|_| super::no_such_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
-}
-
 fn execute(
     kind: Kind,
     diagram: &mut SequenceDiagram,
@@ -268,7 +261,7 @@ fn execute(
             add(
                 diagram,
                 arg,
-                note(Some(participant), None, position, note_colors(arg)?),
+                note(Some(participant), None, position, super::colors(arg)?),
             );
         }
         Kind::OverSeveral => {
@@ -286,7 +279,7 @@ fn execute(
                     Some(participants[0]),
                     Some(participants[1]),
                     NotePosition::OverSeveral,
-                    note_colors(arg)?,
+                    super::colors(arg)?,
                 ),
             );
         }
@@ -300,7 +293,7 @@ fn execute(
             add(
                 diagram,
                 arg,
-                note(None, None, NotePosition::OverSeveral, note_colors(arg)?),
+                note(None, None, NotePosition::OverSeveral, super::colors(arg)?),
             );
         }
         Kind::OnArrow => {

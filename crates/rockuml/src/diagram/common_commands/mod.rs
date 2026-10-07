@@ -11,7 +11,8 @@ use super::chrome::Warning;
 use super::scale::Scale;
 use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
 use crate::command::{
-    BlocLines, Command, CommandError, CommandResult, Multiline, SingleLine, SingleLineCommand,
+    BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
+    SingleLineCommand,
 };
 use crate::creole::Display;
 use crate::klimt::HorizontalAlignment;
@@ -21,6 +22,8 @@ use crate::text::LineLocation;
 
 /// The common commands, in the order PlantUML's salt diagrams try them (`addCommonCommands2`, the scale
 /// commands, then the title commands): blank lines, skin parameters and styles, scales, then titles and the like.
+/// Sequence diagrams try the title commands first (`addCommonCommands1`), but no line matches both groups, so
+/// one order serves both.
 pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
         single(blank_line_pattern(), |_, _, _| {}),
@@ -106,33 +109,18 @@ fn blank_line_pattern() -> RegexTree {
 
 type ApplyLine<D> = fn(&mut D, &RegexResult, &LineLocation);
 
-/// A single-line command made of a pattern and what to do with what it matched.
-struct Single<D> {
-    pattern: RegexTree,
-    apply: ApplyLine<D>,
-}
-
+/// A single-line command that cannot fail.
 fn single<D: TitledDiagram + 'static>(
     pattern: RegexTree,
     apply: ApplyLine<D>,
 ) -> Box<dyn Command<D>> {
-    Box::new(SingleLine(Single { pattern, apply }))
-}
-
-impl<D: TitledDiagram> SingleLineCommand<D> for Single<D> {
-    fn pattern(&self) -> &RegexTree {
-        &self.pattern
-    }
-
-    fn execute_arg(
-        &self,
-        diagram: &mut D,
-        location: &LineLocation,
-        arg: &RegexResult,
-    ) -> CommandResult {
-        (self.apply)(diagram, arg, location);
-        Ok(())
-    }
+    Box::new(SingleLine(PatternCommand::new(
+        pattern,
+        move |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
+            apply(diagram, arg, location);
+            Ok(())
+        },
+    )))
 }
 
 /// A `scale` command and how it reads the scale.

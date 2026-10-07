@@ -288,7 +288,7 @@ impl SequenceDiagram {
         Some(&mut self.events[index])
     }
 
-    pub(crate) fn last_event_with_deactivate_scan(&self) -> Option<EventId> {
+    pub(crate) fn last_event_with_deactivate(&self) -> Option<EventId> {
         self.last_event_index(Event::takes_deactivate)
     }
 

@@ -292,7 +292,7 @@ fn arrow_configuration(
     configuration = apply_style(arg.get_lazzy("ARROW_STYLE", 0), configuration)?;
     let inclination1 = inclination(arg.get("ARROW_DRESSING1", 0));
     let inclination2 = inclination(arg.get("ARROW_DRESSING2", 0));
-    Ok(configuration.with_inclination(inclination1 + inclination2))
+    Ok(configuration.with_inclination(inclination1.wrapping_add(inclination2)))
 }
 
 impl SingleLineCommand<SequenceDiagram> for CommandArrow {

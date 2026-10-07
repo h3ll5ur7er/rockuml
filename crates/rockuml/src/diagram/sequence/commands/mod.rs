@@ -8,11 +8,11 @@ mod participant;
 
 use super::SequenceDiagram;
 use super::model::{LifeEventType, LiveColors, ParticipantId};
-use crate::color::HColor;
+use crate::color::{ColorType, Colors, HColor};
 use crate::command::{Command, CommandError, CommandResult};
 use crate::diagram::common_commands::common_commands;
 use crate::klimt::url::Url;
-use crate::pattern::RegexTree;
+use crate::pattern::{RegexResult, RegexTree};
 
 pub(super) fn commands() -> Vec<Box<dyn Command<SequenceDiagram>>> {
     let mut commands = common_commands();
@@ -80,12 +80,24 @@ fn no_such_color() -> CommandError {
     CommandError::new("No such color")
 }
 
-/// A name written in quotes loses them (`eventuallyRemoveStartingAndEndingDoubleQuote`).
+/// The colours a `COLOR` specification gives, the main one painting the background.
+fn colors(arg: &RegexResult) -> Result<Colors, CommandError> {
+    arg.get("COLOR", 0)
+        .map(|data| Colors::parse(data, ColorType::Back).map_err(|_| no_such_color()))
+        .transpose()
+        .map(Option::unwrap_or_default)
+}
+
+/// A name written between any of PlantUML's double quotes loses them
+/// (`eventuallyRemoveStartingAndEndingDoubleQuote`).
 fn unquoted(text: &str) -> &str {
-    if text.len() > 1 && text.starts_with('"') && text.ends_with('"') {
-        &text[1..text.len() - 1]
-    } else {
-        text
+    let is_double_quote = |c| matches!(c, '"' | '\u{201C}' | '\u{201D}' | '\u{AB}' | '\u{BB}');
+    let mut chars = text.chars();
+    match (chars.next(), chars.next_back()) {
+        (Some(first), Some(last)) if is_double_quote(first) && is_double_quote(last) => {
+            &text[first.len_utf8()..text.len() - last.len_utf8()]
+        }
+        _ => text,
     }
 }
 

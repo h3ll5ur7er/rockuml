@@ -51,6 +51,7 @@ debug salt/grid-all.puml
 debug salt/grid-nested.puml
 debug salt/grid-titled.puml
 debug salt/login.puml
+debug salt/mainframe-empty.puml
 debug salt/menu.puml
 debug salt/scroll.puml
 debug salt/separators.puml
@@ -71,6 +72,7 @@ debug sequence/arrow-colors.puml
 debug sequence/arrow-heads.puml
 debug sequence/arrow-to-self-activation.puml
 debug sequence/autoactivate.puml
+debug sequence/autonumber-decimal-formats.puml
 debug sequence/autonumber-dotted.puml
 debug sequence/autonumber-format.puml
 debug sequence/autonumber-stop-resume.puml
@@ -125,6 +127,7 @@ debug sequence/participant-quoted.puml
 debug sequence/participant-shapes-stack.puml
 debug sequence/participants-only.puml
 debug sequence/participants.puml
+debug sequence/ref-quoted-names.puml
 debug sequence/references.puml
 debug sequence/return-without-activation.puml
 debug sequence/return.puml
@@ -197,6 +200,7 @@ dsvg salt/grid-all.puml
 dsvg salt/grid-nested.puml
 dsvg salt/grid-titled.puml
 dsvg salt/login.puml
+dsvg salt/mainframe-empty.puml
 dsvg salt/menu.puml
 dsvg salt/scroll.puml
 dsvg salt/separators.puml
@@ -217,6 +221,7 @@ dsvg sequence/arrow-colors.puml
 dsvg sequence/arrow-heads.puml
 dsvg sequence/arrow-to-self-activation.puml
 dsvg sequence/autoactivate.puml
+dsvg sequence/autonumber-decimal-formats.puml
 dsvg sequence/autonumber-dotted.puml
 dsvg sequence/autonumber-format.puml
 dsvg sequence/autonumber-stop-resume.puml
@@ -270,6 +275,7 @@ dsvg sequence/participant-quoted.puml
 dsvg sequence/participant-shapes-stack.puml
 dsvg sequence/participants-only.puml
 dsvg sequence/participants.puml
+dsvg sequence/ref-quoted-names.puml
 dsvg sequence/references.puml
 dsvg sequence/return-without-activation.puml
 dsvg sequence/return.puml
@@ -342,6 +348,7 @@ png salt/grid-all.puml
 png salt/grid-nested.puml
 png salt/grid-titled.puml
 png salt/login.puml
+png salt/mainframe-empty.puml
 png salt/menu.puml
 png salt/scroll.puml
 png salt/separators.puml
@@ -362,6 +369,7 @@ png sequence/arrow-colors.puml
 png sequence/arrow-heads.puml
 png sequence/arrow-to-self-activation.puml
 png sequence/autoactivate.puml
+png sequence/autonumber-decimal-formats.puml
 png sequence/autonumber-dotted.puml
 png sequence/autonumber-format.puml
 png sequence/autonumber-stop-resume.puml
@@ -415,6 +423,7 @@ png sequence/participant-quoted.puml
 png sequence/participant-shapes-stack.puml
 png sequence/participants-only.puml
 png sequence/participants.puml
+png sequence/ref-quoted-names.puml
 png sequence/references.puml
 png sequence/return-without-activation.puml
 png sequence/return.puml
@@ -507,6 +516,7 @@ preproc salt/grid-all.puml
 preproc salt/grid-nested.puml
 preproc salt/grid-titled.puml
 preproc salt/login.puml
+preproc salt/mainframe-empty.puml
 preproc salt/menu.puml
 preproc salt/scroll.puml
 preproc salt/separators.puml
@@ -527,6 +537,7 @@ preproc sequence/arrow-colors.puml
 preproc sequence/arrow-heads.puml
 preproc sequence/arrow-to-self-activation.puml
 preproc sequence/autoactivate.puml
+preproc sequence/autonumber-decimal-formats.puml
 preproc sequence/autonumber-dotted.puml
 preproc sequence/autonumber-format.puml
 preproc sequence/autonumber-stop-resume.puml
@@ -581,6 +592,7 @@ preproc sequence/participant-quoted.puml
 preproc sequence/participant-shapes-stack.puml
 preproc sequence/participants-only.puml
 preproc sequence/participants.puml
+preproc sequence/ref-quoted-names.puml
 preproc sequence/references.puml
 preproc sequence/return-without-activation.puml
 preproc sequence/return.puml
@@ -653,6 +665,7 @@ svg salt/grid-all.puml
 svg salt/grid-nested.puml
 svg salt/grid-titled.puml
 svg salt/login.puml
+svg salt/mainframe-empty.puml
 svg salt/menu.puml
 svg salt/scroll.puml
 svg salt/separators.puml
@@ -673,6 +686,7 @@ svg sequence/arrow-colors.puml
 svg sequence/arrow-heads.puml
 svg sequence/arrow-to-self-activation.puml
 svg sequence/autoactivate.puml
+svg sequence/autonumber-decimal-formats.puml
 svg sequence/autonumber-dotted.puml
 svg sequence/autonumber-format.puml
 svg sequence/autonumber-stop-resume.puml
@@ -726,6 +740,7 @@ svg sequence/participant-quoted.puml
 svg sequence/participant-shapes-stack.puml
 svg sequence/participants-only.puml
 svg sequence/participants.puml
+svg sequence/ref-quoted-names.puml
 svg sequence/references.puml
 svg sequence/return-without-activation.puml
 svg sequence/return.puml
@@ -817,6 +832,7 @@ url salt/grid-all.puml
 url salt/grid-nested.puml
 url salt/grid-titled.puml
 url salt/login.puml
+url salt/mainframe-empty.puml
 url salt/menu.puml
 url salt/scroll.puml
 url salt/separators.puml
@@ -837,6 +853,7 @@ url sequence/arrow-colors.puml
 url sequence/arrow-heads.puml
 url sequence/arrow-to-self-activation.puml
 url sequence/autoactivate.puml
+url sequence/autonumber-decimal-formats.puml
 url sequence/autonumber-dotted.puml
 url sequence/autonumber-format.puml
 url sequence/autonumber-stop-resume.puml
@@ -891,6 +908,7 @@ url sequence/participant-quoted.puml
 url sequence/participant-shapes-stack.puml
 url sequence/participants-only.puml
 url sequence/participants.puml
+url sequence/ref-quoted-names.puml
 url sequence/references.puml
 url sequence/return-without-activation.puml
 url sequence/return.puml

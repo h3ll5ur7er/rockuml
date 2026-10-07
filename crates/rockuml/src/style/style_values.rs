@@ -135,7 +135,6 @@ impl Style {
             .unwrap_or_else(|| self.value(PName::LineColor).as_color());
         Fashion {
             round_corner: self.value(PName::RoundCorner).as_double(),
-            diagonal_corner: self.value(PName::DiagonalCorner).as_double(),
             ..Fashion::new(back_color, fore_color).with_stroke(self.stroke())
         }
     }

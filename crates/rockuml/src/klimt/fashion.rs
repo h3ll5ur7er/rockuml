@@ -9,7 +9,6 @@ pub(crate) struct Fashion {
     pub fore_color: HColor,
     pub stroke: UStroke,
     pub round_corner: f64,
-    pub diagonal_corner: f64,
 }
 
 impl Fashion {
@@ -19,7 +18,6 @@ impl Fashion {
             fore_color,
             stroke: UStroke::SIMPLE,
             round_corner: 0.0,
-            diagonal_corner: 0.0,
         }
     }
 

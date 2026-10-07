@@ -121,7 +121,11 @@ pub(super) fn split(
     let mut all = all.into_iter().collect::<std::collections::VecDeque<_>>();
     while let Some(current) = all.pop_front() {
         let line = lines.last_mut().expect("there is always a line");
-        if current.kind == NeutronType::ZwspSeparator && line.width > max_width {
+        // An empty line only gets this wide through its header, which no break can shorten; PlantUML fails there.
+        if current.kind == NeutronType::ZwspSeparator
+            && line.width > max_width
+            && !line.neutrons.is_empty()
+        {
             all.push_front(current);
             for neutron in line.slightly_shorten().into_iter().rev() {
                 all.push_front(neutron);
@@ -303,6 +307,11 @@ mod tests {
     fn lines_break_after_the_last_space_that_fits() {
         assert_eq!(line_widths("aa bb cc", 55.0), [50.0, 20.0]);
         assert_eq!(line_widths("aa bb cc", 45.0), [20.0, 20.0, 20.0]);
+    }
+
+    #[test]
+    fn a_header_wider_than_the_line_still_wraps() {
+        assert_eq!(line_widths("* aa bb", 5.0).len(), 2);
     }
 
     #[test]

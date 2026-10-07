@@ -8,9 +8,9 @@ use super::{
     PARTICIPANT_CODE_OR_QUOTED, activate as activate_participant, color_named, optional_colors,
     unquoted,
 };
-use crate::color::{ColorType, Colors};
+use crate::color::ColorType;
 use crate::command::{
-    BlocLines, Command, CommandError, CommandResult, Multiline, SingleLine, SingleLineCommand,
+    BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
 };
 use crate::creole::Display;
 use crate::diagram::sequence::autonumber::{DecimalFormat, DottedNumber};
@@ -29,36 +29,15 @@ use crate::text::LineLocation;
 
 type Apply = fn(&mut SequenceDiagram, &LineLocation, &RegexResult) -> CommandResult;
 
-/// A single-line command made of a pattern and what to do with what it matched.
-struct Simple {
-    pattern: RegexTree,
-    apply: Apply,
-}
-
-impl SingleLineCommand<SequenceDiagram> for Simple {
-    fn pattern(&self) -> &RegexTree {
-        &self.pattern
-    }
-
-    fn execute_arg(
-        &self,
-        diagram: &mut SequenceDiagram,
-        location: &LineLocation,
-        arg: &RegexResult,
-    ) -> CommandResult {
-        (self.apply)(diagram, location, arg)
-    }
-}
-
 /// A command whose pattern is `parts` between the start and the end of the line.
 fn simple(parts: Vec<RegexTree>, apply: Apply) -> Box<dyn Command<SequenceDiagram>> {
     let mut all = vec![RegexTree::start()];
     all.extend(parts);
     all.push(RegexTree::end());
-    Box::new(SingleLine(Simple {
-        pattern: RegexTree::concat(all),
+    Box::new(SingleLine(PatternCommand::new(
+        RegexTree::concat(all),
         apply,
-    }))
+    )))
 }
 
 fn leaf(pattern: &'static str) -> RegexTree {
@@ -198,13 +177,7 @@ pub(super) fn box_start() -> Box<dyn Command<SequenceDiagram>> {
         |diagram, _, arg| {
             let title = arg.get_lazzy("NAME", 0).unwrap_or_default();
             let stereotype = arg.get("STEREO", 0).map(Stereotype::new);
-            let colors = arg
-                .get("COLOR", 0)
-                .map(|data| {
-                    Colors::parse(data, ColorType::Back).map_err(|_| super::no_such_color())
-                })
-                .transpose()?
-                .unwrap_or_default();
+            let colors = super::colors(arg)?;
             diagram.box_start(
                 Display::with_newlines(title),
                 colors.get(ColorType::Back).cloned(),
@@ -304,7 +277,7 @@ pub(super) fn return_command() -> Box<dyn Command<SequenceDiagram>> {
         |diagram, _location, arg| {
             let (message1, deactivate) = match diagram.activating_message() {
                 Some(message) => (message, true),
-                None => match diagram.last_event_with_deactivate_scan() {
+                None => match diagram.last_event_with_deactivate() {
                     Some(last) if matches!(diagram.event(last), Event::Message(_)) => (last, false),
                     _ => return Err(CommandError::new("Nowhere to return to.")),
                 },
@@ -444,11 +417,15 @@ pub(super) fn delay() -> Box<dyn Command<SequenceDiagram>> {
 const PARTS_PATTERN: &str =
     r"(([%pLN_.@]+|[%g][^%g]+[%g])([%s]*,[%s]*([%pLN_.@]+|[%g][^%g]+[%g]))*)";
 
+/// A name of `ref over`, quoted or not; a comma inside quotes does not split it (`StringUtils.splitComma`).
+static SPLIT_COMMA: LazyLock<Regex> =
+    LazyLock::new(|| plantuml_regex(r"([%pLN_.]+|[%g][^%g]+[%g])"));
+
 /// The participants of `ref over A, B`, created if new.
 fn reference_participants(diagram: &mut SequenceDiagram, parts: &str) -> Vec<ParticipantId> {
     let mut result: Vec<ParticipantId> = Vec::new();
-    for part in parts.split(',') {
-        let code = unquoted(crate::java::trim(part)).to_owned();
+    for part in SPLIT_COMMA.find_iter(parts) {
+        let code = unquoted(part.as_str()).to_owned();
         let participant = diagram.get_or_create_participant(&code, None);
         if !result.contains(&participant) {
             result.push(participant);

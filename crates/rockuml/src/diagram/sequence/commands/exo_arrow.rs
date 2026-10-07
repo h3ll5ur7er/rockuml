@@ -181,8 +181,8 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
     ) -> CommandResult {
         let body = format!(
             "{}{}",
-            arg.get_lazzy("ARROW_BODYA", 0).unwrap_or("null"),
-            arg.get_lazzy("ARROW_BODYB", 0).unwrap_or("null")
+            arg.get_lazzy("ARROW_BODYA", 0).unwrap_or_default(),
+            arg.get_lazzy("ARROW_BODYB", 0).unwrap_or_default()
         );
         let dressing = arg.get_lazzy("ARROW_DRESSING", 0).unwrap_or_default();
         let code = unquoted(arg.get("PARTICIPANT", 0).unwrap_or_default()).to_owned();
