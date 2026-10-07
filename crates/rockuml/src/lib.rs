@@ -26,6 +26,15 @@ mod skin;
 mod stdlib;
 mod stereo;
 mod style;
+#[cfg_attr(
+    not(test),
+    expect(
+        dead_code,
+        unused_imports,
+        reason = "drawn by the Smetana bridge, which is not ported yet"
+    )
+)]
+mod svek;
 mod svg_parser;
 mod text;
 mod tim;

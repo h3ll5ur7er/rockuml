@@ -1,3 +1,5 @@
+use super::affine::XAffineTransform;
+
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct XDimension2D {
     pub width: f64,
@@ -30,6 +32,12 @@ pub(crate) struct XPoint2D {
 impl XPoint2D {
     pub(crate) const fn new(x: f64, y: f64) -> Self {
         Self { x, y }
+    }
+
+    #[must_use]
+    pub(crate) fn transform(self, transform: &XAffineTransform) -> Self {
+        let (x, y) = transform.transform((self.x, self.y));
+        Self::new(x, y)
     }
 }
 
