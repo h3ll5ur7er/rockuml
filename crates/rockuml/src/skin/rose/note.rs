@@ -72,16 +72,16 @@ fn arc(radius: f64, end: (f64, f64)) -> USegment {
 
 /// Where a note's text goes when the note is wider than its text.
 fn text_x(
-    position: Option<HorizontalAlignment>,
+    position: HorizontalAlignment,
     left_padding: f64,
     area_width: f64,
     text_width: f64,
     diff_x: f64,
 ) -> f64 {
     match position {
-        Some(HorizontalAlignment::Left) => left_padding,
-        Some(HorizontalAlignment::Right) => area_width - text_width,
-        _ => left_padding + diff_x / 2.0,
+        HorizontalAlignment::Left => left_padding,
+        HorizontalAlignment::Right => area_width - text_width,
+        HorizontalAlignment::Center => left_padding + diff_x / 2.0,
     }
 }
 
@@ -89,18 +89,14 @@ fn text_x(
 pub(crate) struct ComponentRoseNote {
     text: TextualPart,
     fashion: Fashion,
-    position: Option<HorizontalAlignment>,
+    position: HorizontalAlignment,
 }
 
 impl ComponentRoseNote {
     const PADDING_X: f64 = 5.0;
     const PADDING_Y: f64 = 5.0;
 
-    pub(crate) fn new(
-        text: TextualPart,
-        fashion: Fashion,
-        position: Option<HorizontalAlignment>,
-    ) -> Self {
+    pub(crate) fn new(text: TextualPart, fashion: Fashion, position: HorizontalAlignment) -> Self {
         Self {
             text,
             fashion,

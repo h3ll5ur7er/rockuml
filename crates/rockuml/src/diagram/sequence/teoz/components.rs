@@ -42,13 +42,7 @@ use crate::style::{PName, SName, StyleBuilder, ValueReading};
 fn participant_display(diagram: &SequenceDiagram, participant: ParticipantId) -> Display {
     let model = diagram.participant(participant);
     let display = if diagram.skin().force_sequence_participant_underlined() {
-        Display::create(
-            model
-                .display
-                .lines()
-                .iter()
-                .map(|line| format!("<u>{line}")),
-        )
+        model.display.underlined()
     } else {
         model.display.clone()
     };

@@ -19,7 +19,7 @@ use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
-    Event, EventId, Message, MessageExo, NotePosition, ParticipantId,
+    Event, EventId, Message, MessageExo, Note, NotePosition, ParticipantId,
 };
 use crate::klimt::font::StringBounder;
 use crate::klimt::ugraphic::UGraphic;
@@ -113,20 +113,16 @@ impl<'a> TileArguments<'a> {
         self.living_spaces.get(participant)
     }
 
+    fn borders(&self) -> &(Real, Real) {
+        self.borders.get().expect("borders are set before drawing")
+    }
+
     pub(super) fn border1(&self) -> f64 {
-        self.borders
-            .get()
-            .expect("borders are set before drawing")
-            .0
-            .current_value()
+        self.borders().0.current_value()
     }
 
     pub(super) fn border2(&self) -> f64 {
-        self.borders
-            .get()
-            .expect("borders are set before drawing")
-            .1
-            .current_value()
+        self.borders().1.current_value()
     }
 }
 
@@ -134,28 +130,27 @@ impl<'a> TileArguments<'a> {
 /// up to their end.
 pub(super) fn build_several<'a>(
     arguments: &Rc<TileArguments<'a>>,
-    events: &mut std::iter::Peekable<impl Iterator<Item = EventId>>,
+    events: &mut impl Iterator<Item = EventId>,
     current_y: YGauge,
 ) -> Result<Vec<Box<dyn Tile<'a> + 'a>>, NotYetPorted> {
     let mut tiles: Vec<Box<dyn Tile<'a> + 'a>> = Vec::new();
     let mut current_y = current_y;
     while let Some(event) = events.next() {
-        if let Some(tile) = build_one(arguments, events, event, &current_y)? {
-            current_y = tile.y_gauge().clone();
-            tiles.push(tile);
-        }
+        let tile = build_one(arguments, events, event, &current_y)?;
+        current_y = tile.y_gauge().clone();
+        tiles.push(tile);
     }
     Ok(tiles)
 }
 
 pub(super) fn build_one<'a>(
     arguments: &Rc<TileArguments<'a>>,
-    events: &mut std::iter::Peekable<impl Iterator<Item = EventId>>,
+    events: &mut impl Iterator<Item = EventId>,
     event: EventId,
     current_y: &YGauge,
-) -> Result<Option<Box<dyn Tile<'a> + 'a>>, NotYetPorted> {
+) -> Result<Box<dyn Tile<'a> + 'a>, NotYetPorted> {
     let diagram = arguments.diagram;
-    Ok(Some(match diagram.event(event) {
+    Ok(match diagram.event(event) {
         Event::Message(message) => message_tile(arguments, event, message, current_y)?,
         Event::MessageExo(exo) => exo_tile(arguments, event, exo, current_y),
         Event::Note(note) => Box::new(NoteTile::new(arguments.clone(), event, note, current_y)),
@@ -195,7 +190,7 @@ pub(super) fn build_one<'a>(
             reference,
             current_y,
         )),
-    }))
+    })
 }
 
 /// A message from or to the border, wrapped by a tile per note on it; PlantUML places every note where
@@ -213,10 +208,8 @@ fn exo_tile<'a>(
         current_y,
     ));
     let notes = &exo.common.notes;
-    let side = match notes.first().map(|note| note.position) {
-        Some(NotePosition::Left) => Side::Left,
-        Some(NotePosition::Right) => Side::Right,
-        _ => return result,
+    let Some(side) = notes.first().and_then(|note| side(note.position)) else {
+        return result;
     };
     for note in notes {
         result = Box::new(CommunicationTileNoteSide::new(
@@ -238,45 +231,13 @@ fn message_tile<'a>(
     message: &'a Message,
     current_y: &YGauge,
 ) -> Result<Box<dyn Tile<'a> + 'a>, NotYetPorted> {
-    let notes = &message.common.notes;
     if message.is_self_message() {
-        let tile = CommunicationTileSelf::new(arguments.clone(), event, message, current_y);
-        return match notes.as_slice() {
-            [] => Ok(Box::new(tile)),
-            [note] => Ok(match note.position {
-                NotePosition::Left => Box::new(CommunicationTileSelfNote::new(
-                    arguments.clone(),
-                    tile,
-                    note,
-                    Side::Left,
-                )),
-                NotePosition::Right => Box::new(CommunicationTileSelfNote::new(
-                    arguments.clone(),
-                    tile,
-                    note,
-                    Side::Right,
-                )),
-                NotePosition::Top => Box::new(CommunicationTileNoteLevel::new(
-                    arguments.clone(),
-                    Box::new(tile),
-                    note,
-                    Level::Top,
-                )),
-                _ => Box::new(CommunicationTileNoteLevel::new(
-                    arguments.clone(),
-                    Box::new(tile),
-                    note,
-                    Level::Bottom,
-                )),
-            }),
-            // PlantUML fails on these.
-            _ => Err(NotYetPorted("several notes on a message to self")),
-        };
+        return self_message_tile(arguments, event, message, current_y);
     }
     let tile = CommunicationTile::new(arguments.clone(), event, message, current_y);
     let reverse = tile.is_reverse();
     let mut result: Box<dyn Tile<'a> + 'a> = Box::new(tile);
-    for note in notes {
+    for note in &message.common.notes {
         result = match note.position {
             NotePosition::Left => Box::new(CommunicationTileNoteSide::new(
                 arguments.clone(),
@@ -302,19 +263,70 @@ fn message_tile<'a>(
                 },
                 message.common.is_create(),
             )),
-            NotePosition::Top => Box::new(CommunicationTileNoteLevel::new(
-                arguments.clone(),
-                result,
-                note,
-                Level::Top,
-            )),
-            _ => Box::new(CommunicationTileNoteLevel::new(
-                arguments.clone(),
-                result,
-                note,
-                Level::Bottom,
-            )),
+            _ => note_level_tile(arguments, result, note),
         };
     }
     Ok(result)
+}
+
+/// A message to self with its notes. Only the first note can go beside it: PlantUML fails on a later one.
+fn self_message_tile<'a>(
+    arguments: &Rc<TileArguments<'a>>,
+    event: EventId,
+    message: &'a Message,
+    current_y: &YGauge,
+) -> Result<Box<dyn Tile<'a> + 'a>, NotYetPorted> {
+    let tile = CommunicationTileSelf::new(arguments.clone(), event, message, current_y);
+    let notes = message.common.notes.as_slice();
+    let beside = notes
+        .first()
+        .and_then(|first| side(first.position).map(|side| (first, side)));
+    let (mut result, notes_above_or_below): (Box<dyn Tile<'a> + 'a>, _) = match beside {
+        Some((first, side)) => (
+            Box::new(CommunicationTileSelfNote::new(
+                arguments.clone(),
+                tile,
+                first,
+                side,
+            )),
+            &notes[1..],
+        ),
+        None => (Box::new(tile), notes),
+    };
+    for note in notes_above_or_below {
+        if side(note.position).is_some() {
+            return Err(NotYetPorted(
+                "a note beside a message to self after another note",
+            ));
+        }
+        result = note_level_tile(arguments, result, note);
+    }
+    Ok(result)
+}
+
+fn side(position: NotePosition) -> Option<Side> {
+    match position {
+        NotePosition::Left => Some(Side::Left),
+        NotePosition::Right => Some(Side::Right),
+        _ => None,
+    }
+}
+
+/// A note above or below a message.
+fn note_level_tile<'a>(
+    arguments: &Rc<TileArguments<'a>>,
+    tile: Box<dyn Tile<'a> + 'a>,
+    note: &'a Note,
+) -> Box<dyn Tile<'a> + 'a> {
+    let level = if note.position == NotePosition::Top {
+        Level::Top
+    } else {
+        Level::Bottom
+    };
+    Box::new(CommunicationTileNoteLevel::new(
+        arguments.clone(),
+        tile,
+        note,
+        level,
+    ))
 }

@@ -144,6 +144,11 @@ impl Display {
         self.map_lines(|line| line.replace(from, to))
     }
 
+    #[must_use]
+    pub(crate) fn underlined(&self) -> Self {
+        self.map_lines(|line| format!("<u>{line}"))
+    }
+
     fn map_lines(&self, change: impl Fn(&str) -> String) -> Self {
         Self {
             lines: self.lines.iter().map(|line| change(line)).collect(),
@@ -158,6 +163,10 @@ impl Display {
 
     pub(crate) fn natural_alignment(&self) -> Option<HorizontalAlignment> {
         self.natural_alignment
+    }
+
+    pub(crate) fn is_single_empty_line(&self) -> bool {
+        matches!(self.lines.as_slice(), [only] if only.is_empty())
     }
 
     /// No lines, or a single one of only (ASCII) whitespace.
@@ -203,6 +212,23 @@ mod tests {
             display.with_stereotype(stereotype, false).tooltip_text(),
             "Bob"
         );
+    }
+
+    #[test]
+    fn underlining_keeps_the_alignment() {
+        let display = Display::with_newlines(r"a\rb").underlined();
+        assert_eq!(display.lines(), ["<u>a", "<u>b"]);
+        assert_eq!(
+            display.natural_alignment(),
+            Some(HorizontalAlignment::Right)
+        );
+    }
+
+    #[test]
+    fn only_one_empty_line_is_a_single_empty_line() {
+        assert!(Display::create([""]).is_single_empty_line());
+        assert!(!Display::create(["", ""]).is_single_empty_line());
+        assert!(!Display::create([" "]).is_single_empty_line());
     }
 
     #[test]

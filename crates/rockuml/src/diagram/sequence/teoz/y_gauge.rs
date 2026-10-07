@@ -1,3 +1,5 @@
+use crate::real::Real;
+
 /// Where a tile sits vertically: its top and bottom, and for messages the arrow's line and the point the
 /// tile was chained from, so that parallel messages can share the arrow line (PlantUML's `YGauge`).
 ///
@@ -10,8 +12,6 @@ pub(super) struct YGauge {
     pub contact: Option<Real>,
     pub origin: Option<Real>,
 }
-
-use crate::real::Real;
 
 impl YGauge {
     pub(super) fn new(min: Real, max: Real) -> Self {
