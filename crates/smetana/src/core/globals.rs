@@ -169,6 +169,8 @@ pub struct Globals {
     pub C: i32,
     pub G_ns: Option<GraphId>,
     pub G_decomp: Option<GraphId>,
+    /// PlantUML's: the flat edge label nodes that lost a constraint in `make_LR_constraints`, without duplicates.
+    pub skippedConstraintLabelVnodes: Vec<NodeId>,
 
     // shapes.c: `poly_inside`'s cache of the last node it tested.
     pub lastn: Option<NodeId>,
@@ -345,6 +347,7 @@ impl Globals {
             C: 0,
             G_ns: None,
             G_decomp: None,
+            skippedConstraintLabelVnodes: Vec::new(),
             lastn: None,
             last: 0,
             outp: 0,
