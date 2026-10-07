@@ -2,13 +2,6 @@
 //! labels dot left unplaced) with xlabels, then moves the drawing so that its bounding box starts at the origin,
 //! rotating it for `rankdir=LR`.
 
-#![allow(non_camel_case_types, non_snake_case)]
-#![allow(clippy::similar_names, reason = "Graphviz's names")]
-#![allow(
-    clippy::manual_midpoint,
-    reason = "f64::midpoint may round differently from Java's (a + b) / 2"
-)]
-
 use crate::cgraph::AGRAPH;
 use crate::cgraph::attr::agattr;
 use crate::cgraph::edge::{agfstout, agnxtout};
@@ -17,14 +10,14 @@ use crate::cgraph::node::{agfstnode, agnxtnode};
 use crate::cgraph::obj::agroot;
 use crate::common::geom::ccwrotatepf;
 use crate::common::splines::{edgeMidpoint, getsplinepoints};
-use crate::common::{GD_flip, GD_rankdir};
+use crate::common::utils::{gv_nodesize, late_bool, updateBB};
 use crate::core::Globals;
 use crate::core::consts::{
     EDGE_LABEL, EDGE_XLABEL, ET_NONE, GRAPH_LABEL, HEAD_LABEL, INT_MAX, LABEL_AT_LEFT,
     LABEL_AT_RIGHT, LABEL_AT_TOP, LEFT_IX, NODE_XLABEL, RANKDIR_BT, RANKDIR_LR, RANKDIR_RL,
     RANKDIR_TB, RIGHT_IX, TAIL_LABEL, TOP_IX,
 };
-use crate::core::ids::{EdgeId, GraphId, NodeId, SymId, TextlabelId};
+use crate::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
 use crate::core::jmath::{INCH2PS, max, min};
 use crate::h::{boxf, pointf, pointfof};
 use crate::label::{label_params_t, object_t, placeLabels, xlabel_t};
@@ -129,7 +122,7 @@ fn translate_drawing(zz: &mut Globals, g: GraphId) {
         }
         v = agnxtnode(zz, g, vv);
     }
-    translate_bb(zz, g, GD_rankdir(zz, g));
+    translate_bb(zz, g, zz.gd(g).GD_rankdir());
 }
 
 /// `centerPt`: the centre of a placed label.
@@ -434,8 +427,8 @@ fn addXLabels(zz: &mut Globals, gp: GraphId) {
 
 /// `gv_postprocess`.
 pub fn gv_postprocess(zz: &mut Globals, g: GraphId, allowTranslation: bool) {
-    zz.Rankdir = GD_rankdir(zz, g);
-    zz.Flip = GD_flip(zz, g);
+    zz.Rankdir = zz.gd(g).GD_rankdir();
+    zz.Flip = zz.gd(g).GD_flip();
     if zz.Flip {
         place_flip_graph_label(zz, g);
     } else {
@@ -523,63 +516,4 @@ fn place_graph_label(zz: &mut Globals, g: GraphId) {
     for c in 1..=zz.gd(g).n_cluster {
         place_graph_label(zz, GD_clust(zz, g, c));
     }
-}
-
-// What follows belongs to utils.c and splines.c; postproc.c is their only caller in the phases ported so far.
-
-/// `gv_nodesize` (`utils.c`): a node's half widths and height from its size in inches.
-fn gv_nodesize(zz: &mut Globals, n: NodeId, flip: bool) {
-    let nd = zz.nd_mut(n);
-    if flip {
-        let w = INCH2PS(nd.height);
-        nd.rw = w / 2.0;
-        nd.lw = w / 2.0;
-        nd.ht = INCH2PS(nd.width);
-    } else {
-        let w = INCH2PS(nd.width);
-        nd.rw = w / 2.0;
-        nd.lw = w / 2.0;
-        nd.ht = INCH2PS(nd.height);
-    }
-}
-
-/// `updateBB` (`utils.c`): grows the graph's bounding box to contain the label.
-fn updateBB(zz: &mut Globals, g: GraphId, lp: TextlabelId) {
-    let bb = addLabelBB(zz.gd(g).bb, &zz.textlabels[lp], GD_flip(zz, g));
-    zz.gd_mut(g).bb = bb;
-}
-
-/// `addLabelBB` (`utils.c`).
-fn addLabelBB(mut bb: boxf, lp: &crate::h::textlabel_t, flipxy: bool) -> boxf {
-    let p = lp.pos;
-    let (width, height) = if flipxy {
-        (lp.dimen.y, lp.dimen.x)
-    } else {
-        (lp.dimen.x, lp.dimen.y)
-    };
-    let min = p.x - width / 2.0;
-    let max = p.x + width / 2.0;
-    if min < bb.LL.x {
-        bb.LL.x = min;
-    }
-    if max > bb.UR.x {
-        bb.UR.x = max;
-    }
-    let min = p.y - height / 2.0;
-    let max = p.y + height / 2.0;
-    if min < bb.LL.y {
-        bb.LL.y = min;
-    }
-    if max > bb.UR.y {
-        bb.UR.y = max;
-    }
-    bb
-}
-
-/// `late_bool` (`utils.c`), for attributes PlantUML never sets.
-fn late_bool(attr: Option<SymId>, def: i32) -> bool {
-    if attr.is_none() {
-        return def != 0;
-    }
-    unimplemented!("late_bool on a declared attribute")
 }

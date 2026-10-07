@@ -4,7 +4,7 @@
 use crate::cgraph::attr::agxget;
 use crate::common::geom::DIST2;
 use crate::common::splines::bezier_clip;
-use crate::common::utils_routing::late_double;
+use crate::common::utils::late_double;
 use crate::core::Globals;
 use crate::core::ids::{EdgeId, SymId};
 use crate::h::{bezier, inside_t, pointf};

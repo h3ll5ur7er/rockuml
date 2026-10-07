@@ -2,31 +2,21 @@
 //! and record shapes. (`bind_shape` and the init functions are in `shapes.rs`.)
 
 use crate::cgraph::obj::{agraphof, agroot};
-use crate::common::geom::{BETWEEN, INSIDE, ccwrotatepf, cwrotatepf};
-use crate::common::{GD_flip, GD_rankdir};
+use crate::common::geom::{BETWEEN, INSIDE, ccwrotatepf};
+use crate::common::shapes::compassPort;
+
 use crate::core::Globals;
-use crate::core::consts::{BOTTOM, LEFT, M_PI, RIGHT, TOP};
+use crate::core::consts::{BOTTOM, LEFT, RIGHT, TOP};
 use crate::core::ids::{FieldId, NodeId};
-use crate::core::jmath::{ROUND, atan2, hypot};
-use crate::h::{
-    Center, SHAPE_INFO, boxf, inside_t, point, pointf, pointfof, polygon_t, port, shape_functions,
-};
+use crate::core::jmath::{ROUND, hypot};
+use crate::h::{SHAPE_INFO, boxf, inside_t, point, pointf, polygon_t, port, shape_functions};
 
 /// A shape's `insidefn`: whether a point, relative to the node's centre, is inside the shape (or port box).
 pub type InsideFn = fn(&mut Globals, &inside_t, pointf) -> bool;
-/// A shape's `portfn`: resolves a port name and compass point.
-pub type PortFn = fn(&mut Globals, NodeId, &str, Option<&str>) -> port;
 /// A shape's `pboxfn`: the box an edge leaves through when its port demands one; returns the side mask.
 pub type PboxFn = fn(&mut Globals, NodeId, &port, i32, &mut boxf, &mut i32) -> i32;
 
 impl shape_functions {
-    pub fn portfn(self) -> PortFn {
-        match self {
-            shape_functions::poly_fns => poly_port,
-            shape_functions::record_fns => record_port,
-        }
-    }
-
     pub fn insidefn(self) -> InsideFn {
         match self {
             shape_functions::poly_fns => poly_inside,
@@ -79,7 +69,7 @@ pub fn poly_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bo
     let bp = inside_context.s_bp;
     let n = inside_context.s_n.expect("inside_context.s.n");
     let g = agraphof(zz, n);
-    let mut P = ccwrotatepf(p, 90 * GD_rankdir(zz, g));
+    let mut P = ccwrotatepf(p, 90 * zz.gd(g).GD_rankdir());
     if let Some(bbox) = bp {
         return INSIDE(P, bbox);
     }
@@ -91,7 +81,7 @@ pub fn poly_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bo
             unimplemented!("18yw1scg4sol8bhyf1vedj9kn: polyBB");
         }
         let nd = *zz.nd(n);
-        if GD_flip(zz, g) {
+        if zz.gd(g).GD_flip() {
             zz.ysize = nd.lw + nd.rw;
             zz.xsize = nd.ht;
         } else {
@@ -169,207 +159,10 @@ pub fn poly_path(
     0
 }
 
-/// `invflip_side`: a side of a node in the rank direction's coordinates, back in the graph's.
-fn invflip_side(side: i32, rankdir: i32) -> i32 {
-    match rankdir {
-        0 => side,
-        _ => unimplemented!("o4wjkq58uh9dgs94m2vxettc: invflip_side for rankdir {rankdir}"),
-    }
-}
-
-/// `invflip_angle`, likewise for an angle.
-fn invflip_angle(angle: f64, rankdir: i32) -> f64 {
-    match rankdir {
-        0 => angle,
-        _ => unimplemented!("b5wrpw5rvhjh7999v3sqqlbo3: invflip_angle for rankdir {rankdir}"),
-    }
-}
-
-/// `compassPort`: sets `pp` to the port at `compass` of the box `bp` (or of the whole node). Returns whether the
-/// compass point was not recognised. Smetana has no inside context here: ports only exist on boxes and records.
-#[allow(clippy::too_many_lines, reason = "one Graphviz function")]
-fn compassPort(
-    zz: &mut Globals,
-    n: NodeId,
-    bp: Option<boxf>,
-    pp: &mut port,
-    compass: Option<&str>,
-    sides: i32,
-) -> bool {
-    let mut b = boxf::default();
-    let mut p = pointf::default();
-    let mut rv = 0;
-    let mut theta = 0.0;
-    let mut constrain = false;
-    let mut dyna = false;
-    let mut side = 0;
-    let mut clip = true;
-    let mut defined;
-    let g = agraphof(zz, n);
-    if let Some(bp) = bp {
-        b = bp;
-        p = pointfof((b.LL.x + b.UR.x) / 2.0, (b.LL.y + b.UR.y) / 2.0);
-        defined = true;
-    } else {
-        if GD_flip(zz, g) {
-            unimplemented!("e21k9f24vr25zdbgo37m5er48: compassPort on a flipped node");
-        }
-        b.UR.y = zz.nd(n).ht / 2.0;
-        b.LL.y = -b.UR.y;
-        b.UR.x = zz.nd(n).lw;
-        b.LL.x = -b.UR.x;
-        defined = false;
-    }
-    let ctr = p;
-    if let Some(compass) = compass.filter(|c| !c.is_empty()) {
-        let mut chars = compass.chars();
-        let first = chars.next();
-        let next = chars.next();
-        match first {
-            Some('e') => {
-                if next.is_some() {
-                    unimplemented!("en0rarvkx5srsxnlqpf6ja1us: compass {compass}");
-                }
-                p.x = b.UR.x;
-                theta = 0.0;
-                constrain = true;
-                defined = true;
-                clip = false;
-                side = sides & RIGHT;
-            }
-            Some('s') => {
-                p.y = b.LL.y;
-                constrain = true;
-                clip = false;
-                if next.is_some() {
-                    unimplemented!("avfplp4wadl774qo2yrqn2btg: compass {compass}");
-                }
-                theta = -M_PI * 0.5;
-                defined = true;
-                p.x = ctr.x;
-                side = sides & BOTTOM;
-            }
-            Some('w') => {
-                if next.is_some() {
-                    rv = 1;
-                } else {
-                    p.x = b.LL.x;
-                    theta = M_PI;
-                    constrain = true;
-                    defined = true;
-                    clip = false;
-                    side = sides & LEFT;
-                }
-            }
-            Some('n') => {
-                p.y = b.UR.y;
-                constrain = true;
-                clip = false;
-                if next.is_some() {
-                    unimplemented!("bfouf47misaa32ulv25melpbm: compass {compass}");
-                }
-                defined = true;
-                theta = M_PI * 0.5;
-                p.x = ctr.x;
-                side = sides & TOP;
-            }
-            Some('_') => {
-                dyna = true;
-                side = sides;
-            }
-            Some('c') => unimplemented!("ai3czg6gaaxspsmndknpyvuiu: compass c"),
-            _ => rv = 1,
-        }
-    }
-    let rankdir = GD_rankdir(zz, g);
-    p = cwrotatepf(p, 90 * rankdir);
-    pp.side = if dyna {
-        side
-    } else {
-        invflip_side(side, rankdir)
-    };
-    pp.bp = bp;
-    pp.p = pointf {
-        x: f64::from(ROUND(p.x)),
-        y: f64::from(ROUND(p.y)),
-    };
-    pp.theta = invflip_angle(theta, rankdir);
-    if p.x == 0.0 && p.y == 0.0 {
-        pp.order = 256 / 2;
-    } else {
-        let mut angle = atan2(p.y, p.x) + 1.5 * M_PI;
-        if angle >= 2.0 * M_PI {
-            angle -= 2.0 * M_PI;
-        }
-        pp.order = ((256.0 * angle) / (2.0 * M_PI)) as i32;
-    }
-    pp.constrained = constrain;
-    pp.defined = defined;
-    pp.clip = clip;
-    pp.dyna = dyna;
-    rv != 0
-}
-
-fn IS_BOX(zz: &Globals, n: NodeId) -> bool {
-    zz.Shapes[zz.nd(n).shape.expect("node without shape")].name == "box"
-}
-
-/// `poly_port`. Smetana's `unrecognized` only prints a warning, which the engine leaves out.
-pub fn poly_port(zz: &mut Globals, n: NodeId, portname: &str, _compass: Option<&str>) -> port {
-    if portname.is_empty() {
-        return Center;
-    }
-    let mut rv = port::default();
-    let sides = BOTTOM | RIGHT | TOP | LEFT;
-    if has_html_label(zz, n) {
-        unimplemented!("dl6n43wu7irkeiaxb6wed3388: html_port");
-    }
-    if !IS_BOX(zz, n) {
-        unimplemented!("17pbmb7rfq2rdapm13ww6pefz: port on a non-box polygon");
-    }
-    compassPort(zz, n, None, &mut rv, Some(portname), sides);
-    rv
-}
-
-/// `map_rec_port`: the field of `f`'s tree named `str`.
-fn map_rec_port(zz: &Globals, f: FieldId, str: &str) -> Option<FieldId> {
-    let field = &zz.fields[f];
-    if field.id.as_deref() == Some(str) {
-        return Some(f);
-    }
-    (0..field.n_flds).find_map(|sub| {
-        let subf = zz
-            .field_lists
-            .get(field.fld.expect("field without subfields"), sub);
-        map_rec_port(zz, subf.expect("NULL subfield"), str)
-    })
-}
-
-/// `record_port`: a named field's port, or a compass point of the whole record.
-pub fn record_port(zz: &mut Globals, n: NodeId, portname: &str, compass: Option<&str>) -> port {
-    if portname.is_empty() {
-        return Center;
-    }
-    let mut rv = port::default();
-    let sides = BOTTOM | RIGHT | TOP | LEFT;
-    let compass = compass.unwrap_or("_");
-    let f = field_of(zz, n);
-    if let Some(subf) = map_rec_port(zz, f, portname) {
-        let (b, subf_sides) = (zz.fields[subf].b, zz.fields[subf].sides);
-        if compassPort(zz, n, Some(b), &mut rv, Some(compass), subf_sides) {
-            unimplemented!("cw5grwj6gbj94jcztvnp2ooyj: unrecognized compass point {compass}");
-        }
-    } else {
-        let b = zz.fields[f].b;
-        compassPort(zz, n, Some(b), &mut rv, Some(portname), sides);
-    }
-    rv
-}
-
 /// `record_inside`.
 pub fn record_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
     let n = inside_context.s_n.expect("inside_context.s.n");
-    let p = ccwrotatepf(p, 90 * GD_rankdir(zz, agraphof(zz, n)));
+    let p = ccwrotatepf(p, 90 * zz.gd(agraphof(zz, n)).GD_rankdir());
     let bbox = match inside_context.s_bp {
         Some(bp) => bp,
         None => zz.fields[field_of(zz, n)].b,
@@ -393,7 +186,7 @@ pub fn record_path(
     let info = &zz.fields[field_of(zz, n)];
     let g = agraphof(zz, n);
     for i in 0..info.n_flds {
-        if GD_flip(zz, g) {
+        if zz.gd(g).GD_flip() {
             unimplemented!("dm9w81fxfdqc5bhtaimpbisvl: record_path on a flipped node");
         }
         let fld = zz
@@ -430,7 +223,7 @@ const side_port: [&str; 4] = ["s", "e", "n", "w"];
 
 /// `closestSide`: the compass point, among the port's sides, closest to node `other`; `None` for the centre.
 fn closestSide(zz: &Globals, n: NodeId, other: NodeId, oldport: &port) -> Option<&'static str> {
-    let rkd = GD_rankdir(zz, agroot(zz, n));
+    let rkd = zz.gd(agroot(zz, n)).GD_rankdir();
     let pt = cvtPt(zz.nd(n).coord, rkd);
     let opt = cvtPt(zz.nd(other).coord, rkd);
     let sides = oldport.side;
@@ -482,6 +275,13 @@ pub fn resolvePort(zz: &mut Globals, n: NodeId, other: NodeId, oldport: &port) -
     let mut rv = port::default();
     let compass = closestSide(zz, n, other, oldport);
     rv.name = oldport.name;
-    compassPort(zz, n, oldport.bp, &mut rv, compass, oldport.side);
+    compassPort(
+        zz,
+        n,
+        oldport.bp,
+        &mut rv,
+        compass.unwrap_or(""),
+        oldport.side,
+    );
     rv
 }

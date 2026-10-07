@@ -3,12 +3,12 @@
 
 use crate::cgraph::obj::agraphof;
 use crate::cgraph::{aghead, agtail};
-use crate::common::GD_flip;
+
 use crate::common::arrows::{arrow_flags, arrowEndClip, arrowStartClip};
 use crate::common::emit::update_bb_bz;
 use crate::common::geom::APPROXEQPT;
 use crate::common::shapes_inside::{InsideFn, resolvePort};
-use crate::common::utils_routing::{Bezier, dotneato_closest};
+use crate::common::utils::{Bezier, dotneato_closest};
 use crate::core::Globals;
 use crate::core::carray::CArray;
 use crate::core::consts::{
@@ -536,7 +536,7 @@ fn selfRight(
         ];
         if let Some(label) = zz.ed(e).label {
             let dimen = zz.textlabels[label].dimen;
-            let width = if GD_flip(zz, agraphof(zz, agtail(zz, e))) {
+            let width = if zz.gd(agraphof(zz, agtail(zz, e))).GD_flip() {
                 dimen.y
             } else {
                 dimen.x
@@ -573,7 +573,7 @@ pub fn selfRightSpace(zz: &Globals, e: EdgeId) -> i32 {
     let mut sw = 18;
     if let Some(l) = zz.ed(e).label {
         let dimen = zz.textlabels[l].dimen;
-        let label_width = if GD_flip(zz, agraphof(zz, aghead(zz, e))) {
+        let label_width = if zz.gd(agraphof(zz, aghead(zz, e))).GD_flip() {
             dimen.y
         } else {
             dimen.x
@@ -634,7 +634,7 @@ pub fn edgeMidpoint(zz: &Globals, g: GraphId, e: EdgeId) -> pointf {
         unimplemented!("7i8m5mpfnv7m9uqxh015zfdaj: edgeMidpoint of a degenerate spline");
     } else if et == ET_SPLINE || et == ET_CURVED {
         let d = pointfof((q.x + p.x) / 2.0, (p.y + q.y) / 2.0);
-        dotneato_closest(zz, spl, d)
+        dotneato_closest(zz, &zz.splines[spl], d)
     } else {
         unimplemented!("6he3hi05vusuthrchn4enk7o6: polylineMidpoint")
     }

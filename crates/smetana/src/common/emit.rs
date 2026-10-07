@@ -1,7 +1,7 @@
 //! The part of `emit.c` that layout uses: growing a bounding box around a Bézier segment.
 
 use crate::common::geom::ptToLine2;
-use crate::common::utils_routing::Bezier;
+use crate::common::utils::Bezier;
 use crate::h::{boxf, pointf};
 
 /// `check_control_points`: whether the inner control points lie within 2 points of the chord.
