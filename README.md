@@ -14,6 +14,16 @@ rockuml -tpng diagram.puml              # diagram.png
 rockuml -o out -f svg-deterministic a.puml b.puml
 ```
 
+A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`, `diagram_001.svg`, and so on.
+
+### Supported diagrams
+
+- Sequence diagrams (`@startuml`), laid out like PlantUML's teoz engine, the only sequence engine of 1.2026.8.
+- Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
+
+For other diagram types rockuml reports that they are not ported yet and exits with status 1; the phases in
+[PLAN.md](PLAN.md) say when they come.
+
 ### Fonts
 
 Text is measured with embedded fonts: the Liberation fonts, which have the metrics of Arial, Times New Roman and
