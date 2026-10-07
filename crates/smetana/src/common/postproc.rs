@@ -13,7 +13,7 @@ use crate::common::splines::{edgeMidpoint, getsplinepoints};
 use crate::common::utils::{gv_nodesize, late_bool, updateBB};
 use crate::core::Globals;
 use crate::core::consts::{
-    EDGE_LABEL, EDGE_XLABEL, ET_NONE, GRAPH_LABEL, HEAD_LABEL, INT_MAX, LABEL_AT_LEFT,
+    EDGE_LABEL, EDGE_XLABEL, ET_NONE, GRAPH_LABEL, GVSPLINES, HEAD_LABEL, INT_MAX, LABEL_AT_LEFT,
     LABEL_AT_RIGHT, LABEL_AT_TOP, LEFT_IX, NODE_XLABEL, RANKDIR_BT, RANKDIR_LR, RANKDIR_RL,
     RANKDIR_TB, RIGHT_IX, TAIL_LABEL, TOP_IX,
 };
@@ -21,9 +21,6 @@ use crate::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
 use crate::core::jmath::{INCH2PS, max, min};
 use crate::h::{boxf, pointf, pointfof};
 use crate::label::{label_params_t, object_t, placeLabels, xlabel_t};
-
-/// `State` once dot has routed the edges.
-const GVSPLINES: i32 = 1;
 
 /// `map_point`: a point of the layout in the final drawing.
 fn map_point(zz: &Globals, p: pointf) -> pointf {

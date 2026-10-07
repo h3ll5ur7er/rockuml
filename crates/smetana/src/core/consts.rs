@@ -20,6 +20,9 @@ pub const SINKRANK: i32 = 5;
 pub const LEAFSET: i32 = 6;
 pub const CLUSTER: i32 = 7;
 
+/// `State` once dot has routed the edges.
+pub const GVSPLINES: i32 = 1;
+
 /// `GD_label_pos`.
 pub const LABEL_AT_BOTTOM: i32 = 0;
 pub const LABEL_AT_TOP: i32 = 1;
