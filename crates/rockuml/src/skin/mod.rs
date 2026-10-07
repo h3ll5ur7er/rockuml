@@ -7,6 +7,7 @@ pub(crate) mod component;
 pub(crate) mod component_style;
 pub(crate) mod rose;
 pub(crate) mod symbol;
+pub(crate) mod visibility_modifier;
 
 use actor::ActorStyle;
 use component_style::ComponentStyle;
@@ -24,13 +25,17 @@ use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::geom::Rankdir;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::pattern::java_regex;
+use crate::stereo::Stereotype;
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
 };
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
+/// The size of the letters in spots unless `circledCharacterFontSize` says otherwise.
+const CIRCLED_CHARACTER_FONT_SIZE: i32 = 17;
 
 #[derive(Default)]
 pub(crate) struct SkinParam {
@@ -45,6 +50,8 @@ pub(crate) struct SkinParam {
     md5_map: HashMap<String, String>,
     /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
     image_files: HashMap<String, Option<Vec<u8>>>,
+    /// `left to right direction` sets it.
+    rankdir: Rankdir,
 }
 
 impl SpriteContainer for SkinParam {
@@ -136,6 +143,57 @@ impl SkinParam {
                 .value(PName::BackGroundColor)
                 .as_color(),
         }
+    }
+
+    pub(crate) fn get_rankdir(&self) -> Rankdir {
+        self.rankdir
+    }
+
+    pub(crate) fn set_rankdir(&mut self, rankdir: Rankdir) {
+        self.rankdir = rankdir;
+    }
+
+    /// `circledCharacterRadius`, or what suits the circled characters' font size.
+    pub(crate) fn get_circled_character_radius(&self) -> i32 {
+        self.as_int("circledCharacterRadius").unwrap_or_else(|| {
+            self.as_int("circledCharacterFontSize")
+                .unwrap_or(CIRCLED_CHARACTER_FONT_SIZE)
+                / 3
+                + 6
+        })
+    }
+
+    /// `classAttributeIconSize`: the size of visibility icons, 0 to write visibilities as characters.
+    pub(crate) fn class_attribute_icon_size(&self) -> i32 {
+        self.as_int("classAttributeIconSize").unwrap_or(10)
+    }
+
+    /// The letter `spotChar<<stereotype>>` gives the stereotype's spot.
+    pub(crate) fn get_circled_character(&self, stereotype: &Stereotype) -> Option<char> {
+        self.value(&format!("spotchar{}", stereotype.label_double_comparator()))
+            .and_then(|value| value.chars().next())
+    }
+
+    /// `genericDisplay old`: generics written after the name rather than in a box.
+    pub(crate) fn display_generic_with_old_fashion(&self) -> bool {
+        self.value_is("genericDisplay", "old")
+    }
+
+    /// `defaultTextAlignment`, or `default`.
+    pub(crate) fn get_default_text_alignment(
+        &self,
+        default: HorizontalAlignment,
+    ) -> HorizontalAlignment {
+        self.value("defaulttextalignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(default)
+    }
+
+    /// `getAsInt`: the value if it is only digits.
+    fn as_int(&self, key: &str) -> Option<i32> {
+        self.value(key)
+            .filter(|value| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit()))
+            .and_then(|value| value.parse().ok())
     }
 
     pub(crate) fn strict_uml_style(&self) -> bool {

@@ -13,7 +13,7 @@ use super::xml::XmlNode;
 use crate::color::{Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
-use crate::klimt::group::UGroup;
+use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::shape::{UImageSvg, USegment};
 use crate::klimt::typeface::GlyphSegment;
 
@@ -158,6 +158,10 @@ impl SvgGraphics {
         self.stroke_width = self.length(width);
         self.stroke_dasharray = dasharray
             .map(|(visible, space)| format!("{},{}", self.length(visible), self.length(space)));
+    }
+
+    pub(super) fn add_comment(&mut self, comment: &str) {
+        self.current_group().append_comment(comment);
     }
 
     fn current_group(&mut self) -> &mut XmlNode {
@@ -538,7 +542,7 @@ impl SvgGraphics {
         for (kind, value) in group.entries() {
             if let Some(name) = kind.svg_attribute_name() {
                 element.set_attribute(name, value);
-            } else {
+            } else if kind == UGroupType::Title {
                 let mut title = XmlNode::new("title");
                 title.set_text_content(value);
                 element.append_child(title);

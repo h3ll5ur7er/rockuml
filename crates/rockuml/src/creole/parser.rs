@@ -235,7 +235,7 @@ impl ListNumbers {
 }
 
 /// `<<stereotype>>` reads as `«stereotype»`.
-pub(super) fn manage_guillemet(line: &str) -> String {
+pub(crate) fn manage_guillemet(line: &str) -> String {
     static GUILLEMET: LazyLock<Regex> =
         LazyLock::new(|| java_regex(r"\<\<\s?((?:\<&\w+\>|[^<>])+?)\s?\>\>", false));
     if !line.contains('<') {

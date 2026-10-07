@@ -10,11 +10,14 @@ use super::{
 };
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::cucadiagram::Bodier;
+use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
 use crate::klimt::url::Url;
 use crate::plasma::QuarkId;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::style::StyleBuilder;
 use crate::text::LineLocation;
@@ -55,6 +58,9 @@ pub(crate) struct Entity {
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
     port_short_names: JavaHashSet<String>,
+    bodier: Bodier,
+    pub visibility_modifier: Option<VisibilityModifier>,
+    pub usymbol: Option<USymbol>,
     /// The character a state's concurrent regions were separated with, `--` or `||`.
     pub concurrent_separator: Option<char>,
 }
@@ -92,7 +98,31 @@ impl Entity {
             colors: Colors::default(),
             tips: Vec::new(),
             port_short_names: JavaHashSet::default(),
+            bodier: match entity_type {
+                EntityType::Leaf(leaf_type) => Bodier::for_leaf(leaf_type),
+                EntityType::Group(_) => Bodier::for_group(),
+            },
+            visibility_modifier: None,
+            usymbol: None,
             concurrent_separator: None,
+        }
+    }
+
+    pub(crate) fn get_bodier(&self) -> &Bodier {
+        &self.bodier
+    }
+
+    pub(crate) fn get_bodier_mut(&mut self) -> &mut Bodier {
+        &mut self.bodier
+    }
+
+    /// `getUSymbol`: use cases and circles have theirs whatever was set.
+    pub(crate) fn get_usymbol(&self) -> Option<USymbol> {
+        match self.get_leaf_type() {
+            Some(LeafType::Usecase) => Some(USymbols::USECASE),
+            Some(LeafType::UsecaseBusiness) => Some(USymbols::USECASE_BUSINESS),
+            Some(LeafType::Circle) => Some(USymbols::INTERFACE),
+            _ => self.usymbol,
         }
     }
 
@@ -144,6 +174,7 @@ impl Entity {
     }
 
     pub(crate) fn mute_to_type(&mut self, new_type: LeafType) {
+        self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
     }
 
@@ -168,8 +199,15 @@ impl Entity {
                 return false;
             }
         }
+        self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
         true
+    }
+
+    fn mute_class_to_object(&mut self, new_type: LeafType) {
+        if self.get_leaf_type() == Some(LeafType::Class) && new_type == LeafType::Object {
+            self.bodier.mute_class_to_object();
+        }
     }
 
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {

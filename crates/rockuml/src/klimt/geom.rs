@@ -1,5 +1,13 @@
 use super::affine::XAffineTransform;
 
+/// Which way graph layouts rank their nodes (PlantUML's `Rankdir`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Rankdir {
+    LeftToRight,
+    #[default]
+    TopToBottom,
+}
+
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct XDimension2D {
     pub width: f64,

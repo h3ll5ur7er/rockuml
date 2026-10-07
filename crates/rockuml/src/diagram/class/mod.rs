@@ -2,6 +2,11 @@
 //! objects are read here too.
 
 mod commands;
+mod hide_show;
+#[cfg(test)]
+mod tests;
+
+pub(super) use hide_show::{hide_show_by_gender, hide_show_by_visibility};
 
 use std::rc::Rc;
 
@@ -10,7 +15,7 @@ use super::common_commands::{
     add_common_commands2, add_common_hides, add_common_scale_commands, add_title_commands,
 };
 use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram};
-use super::cuca_commands::{self, note};
+use super::cuca_commands::{self, EntityDiagram, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
@@ -82,7 +87,7 @@ impl CommandFactory for ClassDiagramFactory {
             commands::namespace(),
             commands::namespace2(),
             commands::namespace_empty(),
-            commands::stereotype(),
+            commands::stereotype_command(),
             commands::link_class(),
             commands::link_lollipop(),
             commands::tip_on_entity_multi_line_with_bracket(),
@@ -146,6 +151,16 @@ impl AbstractDiagram for ClassDiagram {
 impl TitledDiagram for ClassDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.diagram.cuca.titled
+    }
+
+    fn class_or_object_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        Some(&mut self.diagram.cuca)
+    }
+}
+
+impl EntityDiagram for ClassDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.diagram.cuca
     }
 }
 

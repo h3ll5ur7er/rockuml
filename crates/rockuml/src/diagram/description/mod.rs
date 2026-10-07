@@ -122,6 +122,12 @@ impl TitledDiagram for DescriptionDiagram {
     }
 }
 
+impl cuca_commands::EntityDiagram for DescriptionDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
+    }
+}
+
 impl Diagram for DescriptionDiagram {
     fn source(&self) -> &UmlSource {
         &self.source

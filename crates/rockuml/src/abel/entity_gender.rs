@@ -14,6 +14,10 @@ pub(crate) enum EntityGender {
     And(Box<EntityGender>, Box<EntityGender>),
     All,
     ByClassName(String),
+    /// Classes that show no method.
+    EmptyMethods,
+    /// Classes that show no field.
+    EmptyFields,
 }
 
 impl EntityGender {
@@ -34,6 +38,14 @@ impl EntityGender {
             }
             Self::All => true,
             Self::ByClassName(class_name) => class_name == test.get_name(diagram),
+            Self::EmptyMethods => test
+                .get_bodier()
+                .get_methods_to_display(diagram.get_hides_visibility_modifier())
+                .is_empty(),
+            Self::EmptyFields => test
+                .get_bodier()
+                .get_fields_to_display(diagram.get_hides_visibility_modifier())
+                .is_empty(),
         }
     }
 
@@ -43,7 +55,11 @@ impl EntityGender {
             Self::ByEntityType(leaf_type) => Some(leaf_type.name().to_owned()),
             Self::ByEntityAlone(entity) => Some(diagram.entity(*entity).get_uid().to_owned()),
             Self::ByStereotype(name) | Self::ByClassName(name) => Some(name.clone()),
-            Self::ByPackage(_) | Self::And(..) | Self::All => None,
+            Self::ByPackage(_)
+            | Self::And(..)
+            | Self::All
+            | Self::EmptyMethods
+            | Self::EmptyFields => None,
         }
     }
 }

@@ -132,8 +132,8 @@ pub(super) fn add_common_scale_commands<D: TitledDiagram + 'static>() -> Vec<Box
 pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
         unported::hide_empty_description(),
-        unported::hide_show_by_visibility(),
-        unported::hide_show_by_gender(),
+        super::class::hide_show_by_visibility(),
+        super::class::hide_show_by_gender(),
     ]
 }
 

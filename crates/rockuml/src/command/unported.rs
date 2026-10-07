@@ -24,7 +24,6 @@ pub(crate) struct Unported {
     pattern: RegexTree,
     passes: &'static [ParserPass],
     forbidden: Option<Regex>,
-    final_bracket: bool,
 }
 
 pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
@@ -33,7 +32,6 @@ pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
         pattern,
         passes: &[ParserPass::One],
         forbidden: None,
-        final_bracket: false,
     }
 }
 
@@ -48,14 +46,6 @@ impl Unported {
     pub(crate) fn forbidding(self, forbidden: &str) -> Self {
         Self {
             forbidden: Some(java_regex(&format!("^(?:{forbidden})$"), false)),
-            ..self
-        }
-    }
-
-    #[must_use]
-    pub(crate) fn with_final_bracket(self) -> Self {
-        Self {
-            final_bracket: true,
             ..self
         }
     }
@@ -88,10 +78,6 @@ impl<D: NotPortedCommands> SingleLineCommand<D> for Unported {
         self.forbidden
             .as_ref()
             .is_some_and(|forbidden| forbidden.is_match(line))
-    }
-
-    fn syntax_with_final_bracket(&self) -> bool {
-        self.final_bracket
     }
 
     fn is_eligible_for(&self, pass: ParserPass) -> bool {

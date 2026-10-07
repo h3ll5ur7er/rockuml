@@ -134,6 +134,12 @@ impl TitledDiagram for StateDiagram {
     }
 }
 
+impl cuca_commands::EntityDiagram for StateDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
+    }
+}
+
 impl Diagram for StateDiagram {
     fn source(&self) -> &UmlSource {
         &self.source

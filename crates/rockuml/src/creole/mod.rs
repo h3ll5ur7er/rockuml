@@ -21,7 +21,7 @@ mod tree;
 pub(crate) use commands::image_sources;
 pub(crate) use display::Display;
 use fission::Neutron;
-pub(crate) use parser::CreoleParser;
+pub(crate) use parser::{CreoleParser, manage_guillemet};
 pub(crate) use sheet_block::{SheetBlock1, SheetBlock2};
 
 use crate::klimt::font::StringBounder;
