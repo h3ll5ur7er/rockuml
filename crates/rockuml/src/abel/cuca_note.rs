@@ -29,6 +29,19 @@ impl Position {
         .map(|(_, position)| position)
     }
 
+    /// Where a tip on this side points: back towards its entity.
+    ///
+    /// # Panics
+    ///
+    /// For top and bottom, where tips never go.
+    pub(crate) fn reverse_direction(self) -> Direction {
+        match self {
+            Self::Left => Direction::Right,
+            Self::Right => Direction::Left,
+            Self::Top | Self::Bottom => panic!("tips go left or right"),
+        }
+    }
+
     /// `RIGHT`, `LEFT`, `BOTTOM` or `TOP`.
     pub(crate) fn name(self) -> &'static str {
         match self {
@@ -36,6 +49,27 @@ impl Position {
             Self::Left => "LEFT",
             Self::Bottom => "BOTTOM",
             Self::Top => "TOP",
+        }
+    }
+}
+
+/// Which way something points (PlantUML's `utils.Direction`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Direction {
+    Right,
+    Left,
+    Down,
+    Up,
+}
+
+impl Direction {
+    #[must_use]
+    pub(crate) fn get_inv(self) -> Self {
+        match self {
+            Self::Right => Self::Left,
+            Self::Left => Self::Right,
+            Self::Down => Self::Up,
+            Self::Up => Self::Down,
         }
     }
 }

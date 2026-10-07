@@ -39,6 +39,35 @@ impl XPoint2D {
         let (x, y) = transform.transform((self.x, self.y));
         Self::new(x, y)
     }
+
+    pub(crate) fn distance(self, other: Self) -> f64 {
+        let px = other.x - self.x;
+        let py = other.y - self.y;
+        (px * px + py * py).sqrt()
+    }
+}
+
+/// A rectangle by its top left corner and size.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub(crate) struct XRectangle2D {
+    pub x: f64,
+    pub y: f64,
+    pub width: f64,
+    pub height: f64,
+}
+
+impl XRectangle2D {
+    pub(crate) fn get_min_x(self) -> f64 {
+        self.x
+    }
+
+    pub(crate) fn get_max_x(self) -> f64 {
+        self.x + self.width
+    }
+
+    pub(crate) fn get_center_y(self) -> f64 {
+        self.y + self.height / 2.0
+    }
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -55,6 +84,10 @@ impl UTranslate {
     #[must_use]
     pub fn compose(self, other: UTranslate) -> Self {
         Self::new(self.dx + other.dx, self.dy + other.dy)
+    }
+
+    pub(crate) fn get_translated(self, point: XPoint2D) -> XPoint2D {
+        XPoint2D::new(point.x + self.dx, point.y + self.dy)
     }
 }
 

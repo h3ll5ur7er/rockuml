@@ -108,13 +108,7 @@ pub(crate) fn note_style(note: &Note) -> Style {
         NoteStyle::Box => sequence_signature2(SName::Note, SName::Rnote),
         NoteStyle::Normal => sequence_signature(SName::Note),
     };
-    let signature = match &note.stereotype {
-        Some(stereotype) => stereotype
-            .style_names()
-            .iter()
-            .fold(signature, |signature, name| signature.with_stereotype(name)),
-        None => signature,
-    };
+    let signature = signature.with_tobechanged(note.stereotype.as_ref());
     merged(&note.style_builder, &signature).eventually_override_colors(&note.colors)
 }
 

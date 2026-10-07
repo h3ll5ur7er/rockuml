@@ -524,3 +524,6 @@ pub(in crate::diagram) fn constraint_on_links<D: EntityDiagram + 'static>() -> B
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod image_tests;

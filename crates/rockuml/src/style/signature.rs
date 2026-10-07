@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
 use super::names::{SName, SNames};
+use crate::stereo::Stereotype;
 
 /// What a style rule applies to, or what an element is: selector names, stereotypes, a tree depth, and
 /// whether the rule reaches deeper (`*`).
@@ -52,6 +53,18 @@ impl StyleSignature {
             stereotypes,
             ..self.clone()
         }
+    }
+
+    /// With every label of the element's stereotype (`withTOBECHANGED`).
+    #[must_use]
+    pub(crate) fn with_tobechanged(&self, stereotype: Option<&Stereotype>) -> Self {
+        stereotype
+            .map(Stereotype::style_names)
+            .unwrap_or_default()
+            .iter()
+            .fold(self.clone(), |signature, name| {
+                signature.with_stereotype(name)
+            })
     }
 
     #[must_use]
