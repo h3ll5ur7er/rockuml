@@ -11,12 +11,14 @@ mod sequence;
 mod source;
 mod titled;
 
+pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
+
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::color::HColor;
-use crate::host::Host;
+use crate::host::{Host, IsolatedHost};
 use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
@@ -101,19 +103,27 @@ impl ExportSettings {
     }
 }
 
-pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorted> {
-    let (diagram_type, source) = prepare(block);
-    match diagram_type {
-        Some(DiagramType::Creole) => Ok(CreoleDiagram::create(source)),
-        Some(DiagramType::Salt) => Ok(salt::SaltDiagram::create(source)),
-        Some(DiagramType::Uml) => sequence::SequenceDiagram::create(source),
-        _ => Err(NotYetPorted("this diagram type")),
-    }
+/// The diagram of a block. `host` supplies the files and URLs its images name.
+pub fn create(
+    block: &PreprocessedBlock,
+    host: &dyn Host,
+) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    let (diagram_type, mut source) = prepare(block);
+    // Known first, so that diagrams rockuml cannot draw read no images.
+    let create: fn(UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> = match diagram_type {
+        Some(DiagramType::Creole) => |source| Ok(CreoleDiagram::create(source)),
+        Some(DiagramType::Salt) => |source| Ok(salt::SaltDiagram::create(source)),
+        Some(DiagramType::Uml) => sequence::SequenceDiagram::create,
+        _ => return Err(NotYetPorted("this diagram type")),
+    };
+    source.read_image_files(block.directory(), host);
+    create(source)
 }
 
 /// The diagram's source encoded as in a PlantUML server URL.
 pub fn encoded_url(block: &PreprocessedBlock) -> String {
-    let source = match create(block) {
+    // The URL encodes the source alone, so no image is read.
+    let source = match create(block, &IsolatedHost) {
         Ok(diagram) => diagram.source().plain_string(),
         Err(_) => prepare(block).1.plain_string(),
     };
@@ -124,11 +134,12 @@ fn prepare(block: &PreprocessedBlock) -> (Option<DiagramType>, UmlSource) {
     let lines = block.located_lines();
     let raw_lines = block.raw_lines().to_vec();
     let diagram_type = DiagramType::of_start_line(lines.first().map_or("", StringLocated::text));
-    let source = if diagram_type == Some(DiagramType::Uml) {
+    let mut source = if diagram_type == Some(DiagramType::Uml) {
         UmlSource::with_continuations_joined(lines, raw_lines)
     } else {
         UmlSource::new(lines.to_vec(), raw_lines)
     };
+    source.patch_base64();
     (diagram_type, source)
 }
 
@@ -181,7 +192,7 @@ pub fn export(
         let ug = UGraphic::new(backend, string_bounder.clone(), default_background);
         text_block.draw_u(&ug.translated(margin.left, margin.top));
     };
-    let svg = || {
+    let svg = |rasterized: bool| {
         let option = SvgOption {
             min_dim: dimension,
             backcolor: backcolor.clone(),
@@ -199,6 +210,7 @@ pub fn export(
             option,
             string_bounder.clone(),
             (format != ImageFormat::DeterministicSvg).then(|| fonts.clone()),
+            rasterized,
         )));
         draw(output.clone(), backcolor.clone());
         let metadata = crate::url_code::encode(&diagram.source().metadata());
@@ -222,11 +234,11 @@ pub fn export(
                 })
                 .into_bytes()
         }
-        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg().into_bytes(),
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg(false).into_bytes(),
         ImageFormat::Png => {
             let limit = image_size_limit(host);
             png::rasterize(
-                &svg(),
+                &svg(true),
                 (
                     ((dimension.width * scale_factor) as u32).min(limit),
                     ((dimension.height * scale_factor) as u32).min(limit),

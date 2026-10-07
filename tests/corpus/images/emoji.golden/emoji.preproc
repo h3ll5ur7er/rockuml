@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob : <:smile:> hello <:sunny:>
+Bob -> Alice : <#green:heart:> <:1f600:> <:+1:>
+note over Alice : <size:30><:rocket:></size> big
+Alice -> Bob : <:no_such_emoji:> unknown
+@enduml

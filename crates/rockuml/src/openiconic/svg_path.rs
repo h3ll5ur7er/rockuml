@@ -1,15 +1,16 @@
-//! The path data of an `OpenIconic` icon, turned into PlantUML's path segments.
+//! The path data of an `OpenIconic` icon, an emoji or an SVG sprite, turned into PlantUML's path segments.
 
+use crate::klimt::affine::XAffineTransform;
 use crate::klimt::geom::UTranslate;
 use crate::klimt::shape::USegment;
 
-pub(super) struct SvgPath {
+pub(crate) struct SvgPath {
     movements: Vec<Movement>,
     translate: UTranslate,
 }
 
 impl SvgPath {
-    pub(super) fn new(path: &str, translate: UTranslate) -> Self {
+    pub(crate) fn new(path: &str, translate: UTranslate) -> Self {
         let mut movements = Vec::new();
         let mut last = SvgPosition::ORIGIN;
         let mut last_move = SvgPosition::ORIGIN;
@@ -37,23 +38,56 @@ impl SvgPath {
         }
     }
 
-    /// The path scaled by `factor`; closing a subpath adds nothing, as in PlantUML.
-    pub(super) fn to_upath(&self, factor: f64) -> Vec<USegment> {
-        let scaled = |position: SvgPosition| (position.x * factor, position.y * factor);
-        let path = self.movements.iter().filter_map(|movement| {
+    /// The path scaled by `factor`.
+    pub(crate) fn to_upath(&self, factor: f64) -> Vec<USegment> {
+        self.build_upath(
+            |position| (position.x * factor, position.y * factor),
+            (factor, factor),
+        )
+    }
+
+    /// The path transformed by `at`. Arcs keep their rotation and only stretch along the axes.
+    pub(crate) fn to_upath_affine(&self, at: &XAffineTransform) -> Vec<USegment> {
+        self.build_upath(
+            |position| at.transform((position.x, position.y)),
+            (at.scale_x(), at.scale_y()),
+        )
+    }
+
+    /// Closing a subpath adds nothing, as in PlantUML. Quadratic curves become cubic ones with both control
+    /// points on the quadratic one.
+    fn build_upath(
+        &self,
+        point: impl Fn(SvgPosition) -> (f64, f64),
+        (scale_x, scale_y): (f64, f64),
+    ) -> Vec<USegment> {
+        let mut path = Vec::new();
+        let mut previous: Option<&Movement> = None;
+        for movement in &self.movements {
             let arguments = &movement.arguments;
-            let end = movement.last_position().map(scaled);
-            match (movement.letter, end) {
-                ('Z', None) => None,
-                ('M', Some((x, y))) => Some(USegment::MoveTo(x, y)),
-                ('L', Some((x, y))) => Some(USegment::LineTo(x, y)),
-                ('C', Some(end)) => Some(USegment::CubicTo {
-                    ctrl1: scaled(movement.position(0)),
-                    ctrl2: scaled(movement.position(2)),
+            let quadratic_to = |control, end| USegment::CubicTo {
+                ctrl1: point(control),
+                ctrl2: point(control),
+                end,
+            };
+            match (movement.letter, movement.last_position().map(&point)) {
+                ('Z', None) => {}
+                ('M', Some((x, y))) => move_to(&mut path, x, y),
+                ('L', Some((x, y))) => path.push(USegment::LineTo(x, y)),
+                ('C', Some(end)) => path.push(USegment::CubicTo {
+                    ctrl1: point(movement.position(0)),
+                    ctrl2: point(movement.position(2)),
                     end,
                 }),
-                ('A', Some(end)) => Some(USegment::ArcTo {
-                    radius: (arguments[0] * factor, arguments[1] * factor),
+                ('Q', Some(end)) => path.push(quadratic_to(movement.position(0), end)),
+                ('T', Some(end)) => {
+                    path.push(quadratic_to(
+                        smooth_quadratic_control(previous, movement),
+                        end,
+                    ));
+                }
+                ('A', Some(end)) => path.push(USegment::ArcTo {
+                    radius: (arguments[0] * scale_x, arguments[1] * scale_y),
                     x_axis_rotation: arguments[2],
                     large_arc: arguments[3] != 0.0,
                     sweep: arguments[4] != 0.0,
@@ -61,14 +95,42 @@ impl SvgPath {
                 }),
                 (letter, _) => unreachable!("absolute paths have no {letter}"),
             }
-        });
-        let (dx, dy) = (self.translate.dx * factor, self.translate.dy * factor);
-        // Translating by zero would turn -0 into 0, which PlantUML prints differently.
-        if dx == 0.0 && dy == 0.0 {
-            path.collect()
-        } else {
-            path.map(|segment| segment.translate(dx, dy)).collect()
+            previous = Some(movement);
         }
+        let (dx, dy) = (self.translate.dx * scale_x, self.translate.dy * scale_y);
+        // Translating by zero would turn -0 into 0, which PlantUML prints differently.
+        if dx != 0.0 || dy != 0.0 {
+            for segment in &mut path {
+                *segment = segment.translate(dx, dy);
+            }
+        }
+        path
+    }
+}
+
+/// The previous control point mirrored through the previous end. PlantUML takes the first point of the previous
+/// movement as its control point, which for a smooth quadratic curve is its end. Without a previous quadratic
+/// curve PlantUML fails; the control point is then the curve's own end.
+fn smooth_quadratic_control(previous: Option<&Movement>, movement: &Movement) -> SvgPosition {
+    match previous {
+        Some(previous) if matches!(previous.letter, 'Q' | 'T') => previous
+            .last_position()
+            .expect("curves have an end")
+            .mirror(previous.position(0)),
+        _ => movement.position(0),
+    }
+}
+
+/// PlantUML's `UPath.moveTo` skips a move to the first point of the previous segment, which for a curve is its
+/// first control point.
+fn move_to(path: &mut Vec<USegment>, x: f64, y: f64) {
+    let first_point = |segment: &USegment| match *segment {
+        USegment::MoveTo(x, y) | USegment::LineTo(x, y) => (x, y),
+        USegment::CubicTo { ctrl1, .. } => ctrl1,
+        USegment::ArcTo { radius, .. } => radius,
+    };
+    if path.last().map(first_point) != Some((x, y)) {
+        path.push(USegment::MoveTo(x, y));
     }
 }
 
@@ -162,8 +224,10 @@ impl Movement {
             letter if letter.is_ascii_uppercase() => self,
             'm' => Self::through('M', &[relative(0)]),
             'l' => Self::through('L', &[relative(0)]),
+            't' => Self::through('T', &[relative(0)]),
             'z' => Self::through('Z', &[]),
             'c' => Self::through('C', &[relative(0), relative(2), relative(4)]),
+            'q' => Self::through('Q', &[relative(0), relative(2)]),
             's' => Self::through('S', &[relative(0), relative(2)]),
             'a' => {
                 let end = relative(5);
@@ -174,7 +238,7 @@ impl Movement {
                     arguments,
                 }
             }
-            letter => unreachable!("no OpenIconic icon draws with {letter}"),
+            letter => unreachable!("parse_movements keeps no {letter}"),
         }
     }
 
@@ -196,15 +260,15 @@ impl Movement {
     }
 }
 
-fn argument_number(letter: char) -> usize {
+fn argument_number(letter: char) -> Option<usize> {
     match letter.to_ascii_lowercase() {
-        'm' | 'l' => 2,
-        'h' | 'v' => 1,
-        'z' => 0,
-        'c' => 6,
-        's' => 4,
-        'a' => 7,
-        _ => unreachable!("no OpenIconic icon draws with {letter}"),
+        'm' | 'l' | 't' => Some(2),
+        'h' | 'v' => Some(1),
+        'z' => Some(0),
+        'c' => Some(6),
+        'q' | 's' => Some(4),
+        'a' => Some(7),
+        _ => None,
     }
 }
 
@@ -223,6 +287,7 @@ enum SvgCommand {
     Number(f64),
 }
 
+/// PlantUML fails on a malformed path; the movements before the fault are kept.
 fn parse_movements(commands: &[SvgCommand]) -> Vec<Movement> {
     let mut movements = Vec::new();
     let mut last_letter = None;
@@ -233,22 +298,26 @@ fn parse_movements(commands: &[SvgCommand]) -> Vec<Movement> {
                 last_letter = Some(implicit(letter));
                 (letter, tail)
             }
-            SvgCommand::Number(_) => (
-                last_letter.expect("a path starts with a command letter"),
-                rest,
-            ),
+            SvgCommand::Number(_) => match last_letter {
+                Some(letter) if argument_number(letter) != Some(0) => (letter, rest),
+                _ => break,
+            },
         };
-        let (arguments, tail) = arguments.split_at(argument_number(letter));
-        movements.push(Movement {
-            letter,
-            arguments: arguments
-                .iter()
-                .map(|command| match command {
-                    SvgCommand::Number(number) => *number,
-                    SvgCommand::Letter(letter) => panic!("{letter} where a number belongs"),
-                })
-                .collect(),
-        });
+        let Some(count) = argument_number(letter).filter(|&count| count <= arguments.len()) else {
+            break;
+        };
+        let (arguments, tail) = arguments.split_at(count);
+        let Some(arguments) = arguments
+            .iter()
+            .map(|command| match *command {
+                SvgCommand::Number(number) => Some(number),
+                SvgCommand::Letter(_) => None,
+            })
+            .collect()
+        else {
+            break;
+        };
+        movements.push(Movement { letter, arguments });
         rest = tail;
     }
     movements
@@ -279,16 +348,31 @@ fn decipher(path: &str) -> Vec<SvgCommand> {
                     accepted
                 })
                 .count();
-        let number = &input[..length];
-        if !number.chars().any(|c| c.is_ascii_digit()) {
+        if !input[..length].chars().any(|c| c.is_ascii_digit()) {
             break;
         }
+        let length = length + exponent_length(&input[length..]);
         commands.push(SvgCommand::Number(
-            number.parse().expect("digits with at most one dot"),
+            input[..length]
+                .parse()
+                .expect("digits with at most one dot and an exponent"),
         ));
         input = &input[length..];
     }
     commands
+}
+
+/// The length of the scientific notation exponent `input` starts with, like `e-3`; zero when it has no digits.
+fn exponent_length(input: &str) -> usize {
+    let Some(rest) = input.strip_prefix(['e', 'E']) else {
+        return 0;
+    };
+    let sign = usize::from(rest.starts_with(['+', '-']));
+    let digits = rest[sign..]
+        .chars()
+        .take_while(char::is_ascii_digit)
+        .count();
+    if digits == 0 { 0 } else { 1 + sign + digits }
 }
 
 #[cfg(test)]
@@ -309,6 +393,18 @@ mod tests {
                 SvgCommand::Number(-1.04),
                 SvgCommand::Number(0.23),
                 SvgCommand::Letter('z'),
+            ]
+        );
+    }
+
+    #[test]
+    fn numbers_take_an_exponent_only_with_digits() {
+        assert_eq!(
+            decipher("6e-3 1E2e"),
+            [
+                SvgCommand::Number(0.006),
+                SvgCommand::Number(100.0),
+                SvgCommand::Letter('e'),
             ]
         );
     }
@@ -341,6 +437,47 @@ mod tests {
     }
 
     #[test]
+    fn quadratic_curves_are_cubic_with_the_control_point_twice() {
+        let path = SvgPath::new("M0 0q1 2 3 0t2 0T7 1", UTranslate::default());
+        let quadratic = |control, end| USegment::CubicTo {
+            ctrl1: control,
+            ctrl2: control,
+            end,
+        };
+        assert_eq!(
+            path.to_upath(1.0)[1..],
+            [
+                quadratic((1.0, 2.0), (3.0, 0.0)),
+                quadratic((5.0, -2.0), (5.0, 0.0)),
+                quadratic((5.0, 0.0), (7.0, 1.0)),
+            ],
+            "a smooth curve after another one mirrors that one's end through itself"
+        );
+    }
+
+    #[test]
+    fn a_malformed_path_keeps_the_movements_before_the_fault() {
+        let path = SvgPath::new("M0 0L1 1B2 2", UTranslate::default());
+        assert_eq!(
+            path.to_upath(1.0),
+            [USegment::MoveTo(0.0, 0.0), USegment::LineTo(1.0, 1.0)]
+        );
+        assert_eq!(
+            SvgPath::new("1 2L3", UTranslate::default()).to_upath(1.0),
+            []
+        );
+    }
+
+    #[test]
+    fn numbers_after_a_closing_end_the_path() {
+        let path = SvgPath::new("M0 0h5z 1 1", UTranslate::default());
+        assert_eq!(
+            path.to_upath(1.0),
+            [USegment::MoveTo(0.0, 0.0), USegment::LineTo(5.0, 0.0)]
+        );
+    }
+
+    #[test]
     fn arcs_keep_their_rotation_and_flags_and_move_only_their_end() {
         let path = SvgPath::new("M1 1a1 2 30 0 1 2 0z", UTranslate::new(1.0, 0.0));
         assert_eq!(
@@ -352,6 +489,34 @@ mod tests {
                 sweep: true,
                 end: (8.0, 2.0),
             }
+        );
+    }
+
+    #[test]
+    fn an_affine_transform_moves_every_point() {
+        let path = SvgPath::new("M1 1L2 1", UTranslate::default());
+        let at = XAffineTransform::new(0.0, 1.0, -1.0, 0.0, 10.0, 20.0);
+        assert_eq!(
+            path.to_upath_affine(&at),
+            [USegment::MoveTo(9.0, 21.0), USegment::LineTo(9.0, 22.0)]
+        );
+    }
+
+    #[test]
+    fn a_move_to_the_first_point_of_the_previous_segment_is_skipped() {
+        let path = SvgPath::new("M0 0C1 1 2 2 3 3M1 1L5 5M3 3", UTranslate::default());
+        assert_eq!(
+            path.to_upath(1.0),
+            [
+                USegment::MoveTo(0.0, 0.0),
+                USegment::CubicTo {
+                    ctrl1: (1.0, 1.0),
+                    ctrl2: (2.0, 2.0),
+                    end: (3.0, 3.0),
+                },
+                USegment::LineTo(5.0, 5.0),
+                USegment::MoveTo(3.0, 3.0),
+            ]
         );
     }
 }

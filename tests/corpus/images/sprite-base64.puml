@@ -1,0 +1,5 @@
+@startuml
+sprite $icon data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA0klEQVR4nK2TLwoCYRTEt3kEm9YpYrUazYIHMBgFoxcwCkaDBxDMRqtVPIHbPIJt5PfAj0VXg9+GgcebefP+7LeF7SIHH4mHWr6p64v6PmsQICYH99PgrnYUHDT2VjOvtQgQk4NDU2sAcdIwxEutPNXOE+0DxOTg0FRN0ti4I5hr45GO7unqjsoAMTk4NGhf64QB+zEiXRBS9L4rOTg0aKlJBhwJZ0al27eLw6FBS00yYCSOxb513atToEFLTXMG2StkHzH7M2Y/pEaeciM/0z94AqUXh4txV2ZZAAAAAElFTkSuQmCC
+Alice -> Bob : <$icon> raster sprite
+Bob -> Alice : <$icon*2> <#red$icon>
+@enduml

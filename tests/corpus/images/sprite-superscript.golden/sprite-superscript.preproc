@@ -1,0 +1,8 @@
+@startuml
+sprite $svg <svg viewBox="0 0 10 10"><path d="M0 0 h5 v5 z"/></svg>
+sprite $gray {
+0F0F
+F0F0
+}
+Alice -> Bob : x<sup><$svg><$gray></sup> y<sub><$gray></sub> <size:20>z<sup><$gray></sup></size>
+@enduml

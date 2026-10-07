@@ -1,0 +1,220 @@
+DPI: 96
+dimension: [ 239.8490 ; 254.0000 ]
+scaleFactor: 1.0000
+seed: 4353463821504213099
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 50.4786 ; 39.0000 ]
+  pt2: [ 58.4786 ; 215.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 53.9786 ; 39.0000 ]
+  pt2: [ 53.9786 ; 215.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 201.4965 ; 39.0000 ]
+  pt2: [ 209.4965 ; 215.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 204.9965 ; 39.0000 ]
+  pt2: [ 204.9965 ; 215.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 97.9573 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 17.0000 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 180.1440 ; 10.0000 ]
+  pt2: [ 229.8490 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 187.1440 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 215.0000 ]
+  pt2: [ 97.9573 ; 243.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 17.0000 ; 232.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 180.1440 ; 215.0000 ]
+  pt2: [ 229.8490 ; 243.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 187.1440 ; 232.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 192.9965 ; 69.0000 ]
+   - [ 202.9965 ; 73.0000 ]
+   - [ 192.9965 ; 77.0000 ]
+   - [ 196.9965 ; 73.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 53.9786 ; 73.0000 ]
+  pt2: [ 198.9965 ; 73.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImageSvg <timestamp>
+TEXT:
+  text:  styled
+  position: [ 90.9786 ; 68.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 64.9786 ; 113.0000 ]
+   - [ 54.9786 ; 117.0000 ]
+   - [ 64.9786 ; 121.0000 ]
+   - [ 60.9786 ; 117.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 58.9786 ; 117.0000 ]
+  pt2: [ 203.9965 ; 117.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImageSvg <timestamp>
+POLYGON:
+  points:
+   - [ 192.9965 ; 140.0000 ]
+   - [ 202.9965 ; 144.0000 ]
+   - [ 192.9965 ; 148.0000 ]
+   - [ 196.9965 ; 144.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 53.9786 ; 144.0000 ]
+  pt2: [ 198.9965 ; 144.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImageSvg <timestamp>
+TEXT:
+  text:  inline
+  position: [ 71.9786 ; 139.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 43.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 54.0000 ; 43.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 54.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 44.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 44.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 44.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 54.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 44.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+UGraphicDebug UImageSvg <timestamp>

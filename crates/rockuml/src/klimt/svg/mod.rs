@@ -24,6 +24,8 @@ pub(crate) struct UGraphicSvg {
     /// The fonts whose glyph outlines draw centred characters; deterministic SVG has none and writes them as
     /// text.
     glyph_fonts: Option<Arc<FontRegistry>>,
+    /// The document becomes a PNG, whose `Graphics2D` driver in PlantUML draws no SVG images.
+    rasterized: bool,
 }
 
 impl UGraphicSvg {
@@ -32,11 +34,13 @@ impl UGraphicSvg {
         option: SvgOption,
         string_bounder: Rc<dyn StringBounder>,
         glyph_fonts: Option<Arc<FontRegistry>>,
+        rasterized: bool,
     ) -> Self {
         Self {
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
             glyph_fonts,
+            rasterized,
         }
     }
 
@@ -210,9 +214,18 @@ impl UGraphicSvg {
         });
     }
 
+    /// The pixels drawn, re-encoded as PNG as PlantUML does.
     fn draw_image(&mut self, image: &UImage, at: UTranslate) {
-        self.svg()
-            .png_image(image.png, at.dx, at.dy, image.width, image.height);
+        let Some(pixels) = image.image() else {
+            return;
+        };
+        self.svg().png_image(
+            &pixels.to_png(),
+            at.dx,
+            at.dy,
+            pixels.width() as f64,
+            pixels.height() as f64,
+        );
     }
 }
 
@@ -300,8 +313,13 @@ impl UGraphicBackend for UGraphicSvg {
                 self.svg().path(at.dx, at.dy, segments);
             }
             UShape::Image(image) => {
-                if inside(at.dx, at.dy) && inside(at.dx + image.width, at.dy + image.height) {
+                if inside(at.dx, at.dy) && inside(at.dx + image.width(), at.dy + image.height()) {
                     self.draw_image(image, at);
+                }
+            }
+            UShape::ImageSvg(image) => {
+                if !self.rasterized {
+                    self.svg().svg_image(image, at.dx, at.dy);
                 }
             }
             UShape::CenteredCharacter(centered) => {

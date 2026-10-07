@@ -5,7 +5,7 @@ mod svg_path;
 use std::sync::LazyLock;
 
 use regex::Regex;
-use svg_path::SvgPath;
+pub(crate) use svg_path::SvgPath;
 
 use crate::color::HColor;
 use crate::klimt::TextBlock;

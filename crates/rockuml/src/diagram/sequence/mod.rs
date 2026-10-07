@@ -75,8 +75,8 @@ impl SequenceDiagram {
     /// diagram.
     pub(crate) fn create(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
         let mut diagram = Self {
+            titled: Titled::new(SName::SequenceDiagram, "SEQUENCE", &source),
             source,
-            titled: Titled::new(SName::SequenceDiagram, "SEQUENCE"),
             participants: Vec::new(),
             order: Vec::new(),
             englober_of: Vec::new(),

@@ -1,0 +1,127 @@
+@startuml
+
+sprite $application-collaboration-svg :archimate:archimatesprites:application-collaboration-svg
+
+sprite $application-component-svg :archimate:archimatesprites:application-component-svg
+
+sprite $application-dataobject-svg :archimate:archimatesprites:application-dataobject-svg
+
+sprite $application-event-svg :archimate:archimatesprites:application-event-svg
+
+sprite $application-function-svg :archimate:archimatesprites:application-function-svg
+
+sprite $application-interaction-svg :archimate:archimatesprites:application-interaction-svg
+
+sprite $application-interface-svg :archimate:archimatesprites:application-interface-svg
+
+sprite $application-process-svg :archimate:archimatesprites:application-process-svg
+
+sprite $application-service-svg :archimate:archimatesprites:application-service-svg
+
+sprite $business-actor-svg :archimate:archimatesprites:business-actor-svg
+
+sprite $business-collaboration-svg :archimate:archimatesprites:business-collaboration-svg
+
+sprite $business-contract-svg :archimate:archimatesprites:business-contract-svg
+
+sprite $business-event-svg :archimate:archimatesprites:business-event-svg
+
+sprite $business-function-svg :archimate:archimatesprites:business-function-svg
+
+sprite $business-interaction-svg :archimate:archimatesprites:business-interaction-svg
+
+sprite $business-interface-svg :archimate:archimatesprites:business-interface-svg
+
+sprite $business-location-svg :archimate:archimatesprites:business-location-svg
+
+sprite $business-object-svg :archimate:archimatesprites:business-object-svg
+
+sprite $business-process-svg :archimate:archimatesprites:business-process-svg
+
+sprite $business-product-svg :archimate:archimatesprites:business-product-svg
+
+sprite $business-representation-svg :archimate:archimatesprites:business-representation-svg
+
+sprite $business-role-svg :archimate:archimatesprites:business-role-svg
+
+sprite $business-service-svg :archimate:archimatesprites:business-service-svg
+
+sprite $implementation-deliverable-svg :archimate:archimatesprites:implementation-deliverable-svg
+
+sprite $implementation-event-svg :archimate:archimatesprites:implementation-event-svg
+
+sprite $implementation-gap-svg :archimate:archimatesprites:implementation-gap-svg
+
+sprite $implementation-plateau-svg :archimate:archimatesprites:implementation-plateau-svg
+
+sprite $implementation-workpackage-svg :archimate:archimatesprites:implementation-workpackage-svg
+
+sprite $motivation-assessment-svg :archimate:archimatesprites:motivation-assessment-svg
+
+sprite $motivation-constraint-svg :archimate:archimatesprites:motivation-constraint-svg
+
+sprite $motivation-driver-svg :archimate:archimatesprites:motivation-driver-svg
+
+sprite $motivation-goal-svg :archimate:archimatesprites:motivation-goal-svg
+
+sprite $motivation-meaning-svg :archimate:archimatesprites:motivation-meaning-svg
+
+sprite $motivation-outcome-svg :archimate:archimatesprites:motivation-outcome-svg
+
+sprite $motivation-principle-svg :archimate:archimatesprites:motivation-principle-svg
+
+sprite $motivation-requirement-svg :archimate:archimatesprites:motivation-requirement-svg
+
+sprite $motivation-stakeholder-svg :archimate:archimatesprites:motivation-stakeholder-svg
+
+sprite $motivation-value-svg :archimate:archimatesprites:motivation-value-svg
+
+sprite $other-grouping-svg :archimate:archimatesprites:other-grouping-svg
+
+sprite $other-location-svg :archimate:archimatesprites:other-location-svg
+
+sprite $strategy-capability-svg :archimate:archimatesprites:strategy-capability-svg
+
+sprite $strategy-courseofaction-svg :archimate:archimatesprites:strategy-courseofaction-svg
+
+sprite $strategy-resource-svg :archimate:archimatesprites:strategy-resource-svg
+
+sprite $strategy-valuestream-svg :archimate:archimatesprites:strategy-valuestream-svg
+
+sprite $technology-artifact-svg :archimate:archimatesprites:technology-artifact-svg
+
+sprite $technology-collaboration-svg :archimate:archimatesprites:technology-collaboration-svg
+
+sprite $technology-communicationnetwork-svg :archimate:archimatesprites:technology-communicationnetwork-svg
+
+sprite $technology-device-svg :archimate:archimatesprites:technology-device-svg
+
+sprite $technology-distributionnetwork-svg :archimate:archimatesprites:technology-distributionnetwork-svg
+
+sprite $technology-equipment-svg :archimate:archimatesprites:technology-equipment-svg
+
+sprite $technology-event-svg :archimate:archimatesprites:technology-event-svg
+
+sprite $technology-facility-svg :archimate:archimatesprites:technology-facility-svg
+
+sprite $technology-function-svg :archimate:archimatesprites:technology-function-svg
+
+sprite $technology-interaction-svg :archimate:archimatesprites:technology-interaction-svg
+
+sprite $technology-interface-svg :archimate:archimatesprites:technology-interface-svg
+
+sprite $technology-material-svg :archimate:archimatesprites:technology-material-svg
+
+sprite $technology-node-svg :archimate:archimatesprites:technology-node-svg
+
+sprite $technology-path-svg :archimate:archimatesprites:technology-path-svg
+
+sprite $technology-process-svg :archimate:archimatesprites:technology-process-svg
+
+sprite $technology-service-svg :archimate:archimatesprites:technology-service-svg
+
+sprite $technology-systemsoftware-svg :archimate:archimatesprites:technology-systemsoftware-svg
+
+Alice -> Bob : <$application-component-svg> component
+Bob -> Alice : <$business-actor-svg*1.5> <#orange$technology-node-svg> actor and node
+@enduml

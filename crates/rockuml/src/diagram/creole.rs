@@ -6,6 +6,7 @@ use crate::creole::{CreoleParser, SheetBlock1, SheetBlock2};
 use crate::klimt::font::StringBounder;
 use crate::klimt::font::{FontConfiguration, UFont};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::sprite::SpriteContainerEmpty;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::preproc::start_utils;
 use crate::text::StringLocated;
@@ -58,7 +59,8 @@ impl Diagram for CreoleDiagram {
         _string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let font = FontConfiguration::black_blue_true(UFont::serif(14));
-        let sheet = CreoleParser::new(font, HorizontalAlignment::Left).create_sheet(&self.lines);
+        let sheet = CreoleParser::new(font, HorizontalAlignment::Left, &SpriteContainerEmpty)
+            .create_sheet(&self.lines);
         // Unlike PlantUML, whose sheet has no stencil here and so cannot draw its separators.
         Ok(Box::new(SheetBlock2::new(SheetBlock1::new(
             sheet,

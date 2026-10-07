@@ -16,8 +16,10 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::pattern::java_regex;
 use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 
@@ -31,9 +33,44 @@ pub(crate) struct SkinParam {
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
+    sprites: HashMap<String, Rc<dyn Sprite>>,
+    /// The base64 data of the PNGs the source refers to by MD5.
+    md5_map: HashMap<String, String>,
+    /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
+    image_files: HashMap<String, Option<Vec<u8>>>,
+}
+
+impl SpriteContainer for SkinParam {
+    fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
+        self.sprites
+            .get(name)
+            .cloned()
+            .or_else(|| SpriteImage::from_internal(name))
+    }
+
+    fn get_from_md5(&self, md5: &str) -> Option<&str> {
+        self.md5_map.get(md5).map(String::as_str)
+    }
+
+    fn image_file(&self, src: &str) -> Option<&[u8]> {
+        self.image_files.get(src)?.as_deref()
+    }
 }
 
 impl SkinParam {
+    /// With the images of `source`.
+    pub(crate) fn new(source: &UmlSource) -> Self {
+        Self {
+            md5_map: source.md5_map().clone(),
+            image_files: source.image_files().clone(),
+            ..Self::default()
+        }
+    }
+
+    pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {
+        self.sprites.insert(name, sprite);
+    }
+
     fn style_builder(&self) -> &StyleBuilder {
         self.style_builder
             .get_or_init(|| Rc::new(StyleBuilder::load_skin(DEFAULT_SKIN)))

@@ -6,6 +6,8 @@ mod command;
 mod creole;
 mod deflate;
 pub mod diagram;
+mod emoji;
+mod file_policy;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.
 pub mod fonts {
     pub use crate::klimt::typeface::{FontRegistry, NotAFont};
@@ -19,10 +21,12 @@ mod openiconic;
 mod pattern;
 pub mod preproc;
 mod real;
+mod security_profile;
 mod skin;
 mod stdlib;
 mod stereo;
 mod style;
+mod svg_parser;
 mod text;
 mod tim;
 mod ubrex;

@@ -1,0 +1,317 @@
+DPI: 96
+dimension: [ 383.9417 ; 349.0000 ]
+scaleFactor: 1.0000
+seed: -3941630178627331826
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 107.3996 ; 39.0000 ]
+  pt2: [ 115.3996 ; 310.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 110.8996 ; 39.0000 ]
+  pt2: [ 110.8996 ; 310.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 345.5892 ; 39.0000 ]
+  pt2: [ 353.5892 ; 310.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 349.0892 ; 39.0000 ]
+  pt2: [ 349.0892 ; 310.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 66.9210 ; 10.0000 ]
+  pt2: [ 154.8783 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 73.9210 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 324.2367 ; 10.0000 ]
+  pt2: [ 373.9417 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 331.2367 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 66.9210 ; 310.0000 ]
+  pt2: [ 154.8783 ; 338.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 73.9210 ; 327.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 324.2367 ; 310.0000 ]
+  pt2: [ 373.9417 ; 338.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 331.2367 ; 327.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 337.0892 ; 81.0000 ]
+   - [ 347.0892 ; 85.0000 ]
+   - [ 337.0892 ; 89.0000 ]
+   - [ 341.0892 ; 85.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 110.8996 ; 85.0000 ]
+  pt2: [ 343.0892 ; 85.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  doubled
+  position: [ 149.8996 ; 80.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 121.8996 ; 108.0000 ]
+   - [ 111.8996 ; 112.0000 ]
+   - [ 121.8996 ; 116.0000 ]
+   - [ 117.8996 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 115.8996 ; 112.0000 ]
+  pt2: [ 348.0892 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  halved
+  position: [ 135.8996 ; 107.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 337.0892 ; 138.0000 ]
+   - [ 347.0892 ; 142.0000 ]
+   - [ 337.0892 ; 146.0000 ]
+   - [ 341.0892 ; 142.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 110.8996 ; 142.0000 ]
+  pt2: [ 343.0892 ; 142.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  red
+  position: [ 133.8996 ; 137.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 121.8996 ; 176.0000 ]
+   - [ 111.8996 ; 180.0000 ]
+   - [ 121.8996 ; 184.0000 ]
+   - [ 117.8996 ; 180.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 115.8996 ; 180.0000 ]
+  pt2: [ 348.0892 ; 180.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  blue
+  position: [ 151.8996 ; 175.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 337.0892 ; 222.0000 ]
+   - [ 347.0892 ; 226.0000 ]
+   - [ 337.0892 ; 230.0000 ]
+   - [ 341.0892 ; 226.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 110.8996 ; 226.0000 ]
+  pt2: [ 343.0892 ; 226.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  bigger font
+  position: [ 149.8996 ; 221.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 121.8996 ; 252.0000 ]
+   - [ 111.8996 ; 256.0000 ]
+   - [ 121.8996 ; 260.0000 ]
+   - [ 117.8996 ; 256.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 115.8996 ; 256.0000 ]
+  pt2: [ 348.0892 ; 256.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  green text
+  position: [ 143.8996 ; 251.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff008000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 26.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 191.0000 ; 26.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 191.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 181.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 181.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 181.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 191.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 181.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  on yellow
+  position: [ 37.0000 ; 287.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,12 @@
+@startuml
+title <:star2:> Title with <#red:star2:>
+participant "<:smile:> Alice" as A
+A -> A : self <:+1:> <:thumbsup:>
+note left of A
+<:bulb:> in a note
+* list <:white_check_mark:>
+end note
+legend
+<:warning:> legend
+endlegend
+@enduml

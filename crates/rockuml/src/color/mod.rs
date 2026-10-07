@@ -47,6 +47,12 @@ impl XColor {
         (u32::from(self.red) * 299 + u32::from(self.green) * 587 + u32::from(self.blue) * 114)
             / 1000
     }
+
+    /// The gray of the same brightness (`ColorUtils.getGrayScaleColor`).
+    pub fn gray_scale_color(self) -> Self {
+        let gray = self.gray_scale() as u8;
+        Self::rgb(gray, gray, gray)
+    }
 }
 
 /// A parsed colour. Only plain colours take part in arithmetic; the others pass through unchanged.
@@ -75,6 +81,7 @@ impl HColor {
     pub const BLACK: HColor = HColor::Simple(XColor::rgb(0, 0, 0));
     pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
     pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
+    pub const RED: HColor = HColor::Simple(XColor::rgb(255, 0, 0));
     /// No colour: nothing is painted.
     pub const NONE: HColor = HColor::Simple(XColor {
         red: 0,
@@ -185,6 +192,31 @@ impl HColor {
         }
     }
 
+    pub fn is_gray(&self) -> bool {
+        matches!(self, HColor::Simple(color) if color.red == color.green && color.green == color.blue)
+    }
+
+    /// The colour's gray level (`asMonochrome()`).
+    pub fn as_monochrome(&self) -> HColor {
+        match self {
+            HColor::Simple(color) => HColor::Simple(color.gray_scale_color()),
+            other => other.clone(),
+        }
+    }
+
+    /// The colour's gray level as a shade of `color_for_monochrome`: the darkest gray of the picture, `min_gray`,
+    /// gives that colour, lighter grays fade towards white (`asMonochrome(colorForMonochrome, minGray, maxGray)`).
+    pub fn as_monochrome_shade(&self, color_for_monochrome: &HColor, min_gray: i32) -> HColor {
+        match (self, color_for_monochrome) {
+            (HColor::Simple(color), HColor::Simple(color_for_monochrome)) => {
+                let gray = color.gray_scale() as i32;
+                let coef = f64::from(gray - min_gray) / 256.0;
+                HColor::Simple(hsluv::gray_to_color(coef, *color_for_monochrome))
+            }
+            (other, _) => other.clone(),
+        }
+    }
+
     pub fn is_dark(&self) -> bool {
         match self {
             HColor::Simple(color) => color.gray_scale() < 128,
@@ -209,7 +241,7 @@ impl HColor {
 
     /// Where one colour is needed, a gradient gives its first. Automagic and scheme colours are not ported to
     /// the drawing formats yet and draw black.
-    fn as_xcolor(&self) -> XColor {
+    pub(crate) fn as_xcolor(&self) -> XColor {
         match self {
             HColor::Simple(color) => *color,
             HColor::Gradient(gradient) => gradient.from,
@@ -331,6 +363,20 @@ mod tests {
         let color = HColor::parse("#1E90FF").unwrap().unwrap();
         assert_eq!(color.darken(0), color);
         assert_eq!(color.lighten(0), color);
+    }
+
+    #[test]
+    fn monochrome_shades_fade_from_the_darkest_gray_towards_white() {
+        let color = |text| HColor::parse(text).unwrap().unwrap();
+        assert_eq!(color("#FFCC4D").as_monochrome().as_string(), "#CCCCCC");
+        assert!(color("gray").is_gray());
+        assert!(!color("orange").is_gray());
+        let shades = ["#FFCC4D", "#664500", "#FFF"].map(|text| {
+            color(text)
+                .as_monochrome_shade(&color("orange"), 71)
+                .as_string()
+        });
+        assert_eq!(shades, ["#FED4B3", "#FEA400", "#FEE6D5"]);
     }
 
     #[test]

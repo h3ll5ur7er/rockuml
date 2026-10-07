@@ -54,3 +54,48 @@ impl Host for IsolatedHost {
         None
     }
 }
+
+/// A host for tests: the files and environment variables it is given, and a log of the files read.
+#[cfg(test)]
+#[derive(Default)]
+pub(crate) struct FakeHost {
+    pub(crate) files: std::collections::HashMap<PathBuf, Vec<u8>>,
+    pub(crate) environment: std::collections::HashMap<String, String>,
+    pub(crate) reads: std::cell::RefCell<Vec<PathBuf>>,
+}
+
+#[cfg(test)]
+impl Host for FakeHost {
+    fn read_file(&self, path: &Path) -> Option<Vec<u8>> {
+        self.reads.borrow_mut().push(path.to_path_buf());
+        self.files.get(path).cloned()
+    }
+
+    fn read_url(&self, _url: &str) -> Option<Vec<u8>> {
+        None
+    }
+
+    fn file_exists(&self, path: &Path) -> bool {
+        self.files.contains_key(path)
+    }
+
+    fn current_directory(&self) -> PathBuf {
+        PathBuf::new()
+    }
+
+    fn home_directory(&self) -> Option<PathBuf> {
+        None
+    }
+
+    fn getenv(&self, name: &str) -> Option<String> {
+        self.environment.get(name).cloned()
+    }
+
+    fn current_time_millis(&self) -> i64 {
+        0
+    }
+
+    fn local_time_zone(&self) -> Option<String> {
+        None
+    }
+}

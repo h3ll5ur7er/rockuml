@@ -13,6 +13,7 @@ use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::font::{FontConfiguration, FontStyle, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{URectangle, UShape};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
@@ -42,17 +43,22 @@ struct Cell {
 
 impl AtomTable {
     /// A table started by `line`, whose colour prefix may also give the colour of the grid.
-    pub(super) fn new(line: &str, font: &FontConfiguration) -> Self {
+    pub(super) fn new(line: &str, font: &FontConfiguration, sprites: &dyn SpriteContainer) -> Self {
         let line_color = leading_color(line, 1).unwrap_or_else(|| font.color().clone());
         let mut table = Self {
             lines: Vec::new(),
             line_color,
         };
-        table.add_line(line, font);
+        table.add_line(line, font, sprites);
         table
     }
 
-    pub(super) fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+    pub(super) fn add_line(
+        &mut self,
+        line: &str,
+        font: &FontConfiguration,
+        sprites: &dyn SpriteContainer,
+    ) {
         let line = line.replace("\\|", &HIDDEN_BAR.to_string());
         let back_color = leading_color(&line, 0);
         let line = if back_color.is_some() {
@@ -63,7 +69,7 @@ impl AtomTable {
         let cells = line
             .split('|')
             .filter(|token| !token.is_empty())
-            .map(|token| cell(&token.replace(HIDDEN_BAR, "|"), font))
+            .map(|token| cell(&token.replace(HIDDEN_BAR, "|"), font, sprites))
             .collect();
         self.lines.push(Line { back_color, cells });
     }
@@ -127,7 +133,7 @@ fn without_leading_color(text: &str) -> &str {
 }
 
 /// A `=` cell is a header, in bold; `\n` breaks the cell into lines.
-fn cell(token: &str, font: &FontConfiguration) -> Cell {
+fn cell(token: &str, font: &FontConfiguration, sprites: &dyn SpriteContainer) -> Cell {
     let (token, font) = match token.strip_prefix('=') {
         Some(header) => (header, font.with_style(FontStyle::Bold)),
         None => (token, font.clone()),
@@ -141,7 +147,7 @@ fn cell(token: &str, font: &FontConfiguration) -> Cell {
     let stripes = cell_lines(token)
         .iter()
         .map(|text| {
-            let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full);
+            let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full, sprites);
             stripe.analyze_and_add(text);
             stripe.build()
         })

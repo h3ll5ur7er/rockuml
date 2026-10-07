@@ -1,6 +1,7 @@
 //! The widgets of a salt mock-up and the grid that holds them.
 
 use std::cell::OnceCell;
+use std::rc::Rc;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -12,6 +13,7 @@ use crate::java::{self, JavaHashSet};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, USegment, UShape};
+use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
@@ -37,8 +39,26 @@ pub(super) fn color(name: &str) -> HColor {
     HColor::parse(name).ok().flatten().unwrap_or(HColor::WHITE)
 }
 
+/// Where salt texts find sprites: only among the salt diagram's own, which are not ported yet, so never.
+struct SaltDictionary;
+
+impl SpriteContainer for SaltDictionary {
+    fn get_sprite(&self, _name: &str) -> Option<Rc<dyn Sprite>> {
+        None
+    }
+
+    fn get_from_md5(&self, _md5: &str) -> Option<&str> {
+        None
+    }
+
+    fn image_file(&self, _src: &str) -> Option<&[u8]> {
+        None
+    }
+}
+
 pub(super) fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
-    let sheet = CreoleParser::new(font.clone(), HorizontalAlignment::Left).create_sheet(lines);
+    let sheet = CreoleParser::new(font.clone(), HorizontalAlignment::Left, &SaltDictionary)
+        .create_sheet(lines);
     SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
 }
 

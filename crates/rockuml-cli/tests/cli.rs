@@ -1,4 +1,6 @@
-use std::process::Command;
+use std::io::Read;
+use std::process::{Command, Stdio};
+use std::time::{Duration, Instant};
 
 fn rockuml() -> Command {
     Command::new(env!("CARGO_BIN_EXE_rockuml"))
@@ -72,4 +74,109 @@ fn version_flag_reports_the_plantuml_release_rockuml_is_compatible_with() {
             env!("CARGO_PKG_VERSION")
         )]
     );
+}
+
+/// Renders a diagram of `lines` in every image format, asserting that rockuml neither panics nor takes
+/// long.
+fn renders_promptly(lines: &[&str]) {
+    const TIME_LIMIT: Duration = Duration::from_secs(10);
+    let directory = tempfile::tempdir().unwrap();
+    let file = directory.path().join("case.puml");
+    let diagram = ["@startuml", &lines.join("\n"), "@enduml"].join("\n");
+    std::fs::write(&file, &diagram).unwrap();
+    for format in ["debug", "svg", "png"] {
+        let mut child = rockuml()
+            .args(["-f", format, file.to_str().unwrap()])
+            .stdout(Stdio::null())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        let start = Instant::now();
+        while child.try_wait().unwrap().is_none() {
+            if start.elapsed() > TIME_LIMIT {
+                child.kill().unwrap();
+                panic!("rendering {format} took over {TIME_LIMIT:?}:\n{diagram}");
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        let mut stderr = String::new();
+        child
+            .stderr
+            .take()
+            .unwrap()
+            .read_to_string(&mut stderr)
+            .unwrap();
+        assert!(
+            !stderr.contains("panicked"),
+            "{format}: {stderr}\n{diagram}"
+        );
+    }
+}
+
+#[test]
+fn malformed_svg_sprite_paths_draw_what_they_can() {
+    for path in [
+        r#"<path d="M0 0 h5 v5 z 1 1"/>"#,
+        r#"<path fill="red"/>"#,
+        "<path d='M0 0 h5 v5 z'/>",
+        r#"<path fill="red" d="M0 0 h5>"#,
+    ] {
+        renders_promptly(&[
+            &format!(r#"sprite $s <svg viewBox="0 0 10 10">{path}</svg>"#),
+            "Alice -> Bob : <$s>",
+        ]);
+    }
+}
+
+#[test]
+fn images_without_pixels_draw_nothing() {
+    let icon = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../tests/corpus/images/icon.png"
+    );
+    renders_promptly(&[
+        "sprite $a [4x2/8] {",
+        "zzzz",
+        "}",
+        "Alice -> Bob : <$a{scale=0.01}>",
+    ]);
+    renders_promptly(&["sprite $a {", "0F0", "}", "Alice -> Bob : <$a*0.01>"]);
+    renders_promptly(&["sprite $a [0x0/8] {", "zz", "}", "Alice -> Bob : <$a>"]);
+    renders_promptly(&[&format!("Alice -> Bob : <img:{icon}{{scale=0.01}}>")]);
+}
+
+#[test]
+fn absurd_sprite_sizes_are_refused() {
+    for size in ["100000x100000", "99999999999x99999999999", "5000x5000"] {
+        renders_promptly(&[
+            &format!("sprite $a [{size}/8] {{"),
+            "zz",
+            "}",
+            "Alice -> Bob : <$a>",
+        ]);
+    }
+}
+
+#[test]
+fn images_scaled_beyond_what_rockuml_draws_are_left_out() {
+    renders_promptly(&[
+        "sprite $a {",
+        "0F0F",
+        "F0F0",
+        "}",
+        "Alice -> Bob : <$a{scale=100000}>",
+    ]);
+    renders_promptly(&[
+        "sprite $a [40000x3/4] {",
+        "zzzz",
+        "}",
+        "Alice -> Bob : <$a{scale=1.5}>",
+    ]);
+}
+
+#[test]
+fn a_gif_takes_the_size_of_its_frame_not_of_its_screen() {
+    renders_promptly(&[
+        "Alice -> Bob : <img:data:image/png;base64,R0lGODlh/////4AAAAAAAP///ywAAAAAAQABAAACAkQBADs=>",
+    ]);
 }

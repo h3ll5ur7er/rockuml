@@ -1,13 +1,17 @@
 //! The atoms that are not text.
 
+use std::rc::Rc;
+
 use super::sheet_block::SheetBlock1;
 use super::{Atom, Sheet};
 use crate::color::HColor;
+use crate::emoji::Emoji;
 use crate::klimt::TextBlock;
 use crate::klimt::blocks::TextBlockMarged;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
+use crate::klimt::sprite::Sprite;
 use crate::klimt::stencil::UHorizontalLine;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::openiconic::{OpenIconic, OpenIconicBlock};
@@ -145,7 +149,7 @@ impl AtomOpenIconic {
     ) -> Self {
         Self {
             open_iconic,
-            factor: scale * font.font().size_2d() / 12.0,
+            factor: scale * font.size_2d() / 12.0,
             color: new_color.unwrap_or_else(|| font.color().clone()),
         }
     }
@@ -177,5 +181,99 @@ impl TextBlock for AtomOpenIconic {
 impl Atom for AtomOpenIconic {
     fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
         -3.0 * self.factor
+    }
+}
+
+/// An emoji (`<:smile:>`), sized to the font.
+pub(super) struct AtomEmoji {
+    emoji: &'static Emoji,
+    factor: f64,
+    color: Option<HColor>,
+}
+
+impl AtomEmoji {
+    /// The font size at which an emoji is drawn 36 units square.
+    const MAGIC: f64 = 24.0;
+
+    pub(super) fn new(
+        emoji: &'static Emoji,
+        scale: f64,
+        size_2d: f64,
+        color: Option<HColor>,
+    ) -> Self {
+        Self {
+            emoji,
+            factor: scale * size_2d / Self::MAGIC,
+            color,
+        }
+    }
+}
+
+impl TextBlock for AtomEmoji {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        let size = 36.0 * self.factor;
+        XDimension2D::new(size, size)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.emoji.draw_u(ug, self.factor, self.color.as_ref());
+    }
+}
+
+impl Atom for AtomEmoji {
+    fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
+        -3.0 * self.factor
+    }
+}
+
+/// A sprite (`<$name>`), in the text colour unless given one.
+pub(super) struct AtomSprite {
+    font_color: HColor,
+    forced_color: Option<HColor>,
+    scale: f64,
+    sprite: Rc<dyn Sprite>,
+    back_color: Option<HColor>,
+}
+
+impl AtomSprite {
+    pub(super) fn new(
+        font_color: HColor,
+        forced_color: Option<HColor>,
+        scale: f64,
+        sprite: Rc<dyn Sprite>,
+        back_color: Option<HColor>,
+    ) -> Self {
+        Self {
+            font_color,
+            forced_color,
+            scale,
+            sprite,
+            back_color,
+        }
+    }
+
+    fn as_text_block(&self, back_color: Option<&HColor>) -> Box<dyn TextBlock + '_> {
+        self.sprite.as_text_block(
+            &self.font_color,
+            self.forced_color.as_ref(),
+            self.scale,
+            back_color,
+        )
+    }
+}
+
+impl TextBlock for AtomSprite {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.as_text_block(None).calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.as_text_block(self.back_color.as_ref()).draw_u(ug);
+    }
+}
+
+impl Atom for AtomSprite {
+    fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
+        0.0
     }
 }

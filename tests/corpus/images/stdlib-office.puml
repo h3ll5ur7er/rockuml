@@ -1,0 +1,8 @@
+@startuml
+!include <office/Servers/database_server>
+!include <office/Users/user>
+Alice -> Bob : <$database_server> query
+Bob -> Alice : <$user{scale=0.5}> answer
+participant "<$user>\nuser" as U
+Alice -> U
+@enduml

@@ -105,8 +105,14 @@ fn clean(text: &str) -> String {
     java::trim(&START_OR_END.replace_all(&text, "")).to_owned()
 }
 
-fn inflate(data: &[u8]) -> Result<Vec<u8>, NotPlantUmlCode> {
+/// Raw deflate, without zlib header.
+pub(crate) fn inflate(data: &[u8]) -> Result<Vec<u8>, NotPlantUmlCode> {
     read_all(DeflateDecoder::new(data))
+}
+
+/// At most the first `limit` bytes `data` inflates to, so that a small input cannot expand without bound.
+pub(crate) fn inflate_prefix(data: &[u8], limit: usize) -> Result<Vec<u8>, NotPlantUmlCode> {
+    read_all(DeflateDecoder::new(data).take(limit as u64))
 }
 
 fn inflate_zlib(data: &[u8]) -> Result<Vec<u8>, NotPlantUmlCode> {
@@ -136,7 +142,7 @@ fn decode_hex(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
 
 const ALPHABET: &[u8; 64] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
 
-fn encode_6bit(data: &[u8]) -> String {
+pub(crate) fn encode_6bit(data: &[u8]) -> String {
     let mut result = String::with_capacity(data.len().div_ceil(3) * 4);
     for chunk in data.chunks(3) {
         let [b1, b2, b3] = [0, 1, 2].map(|index| chunk.get(index).copied().unwrap_or(0));
@@ -151,17 +157,22 @@ fn encode_6bit(data: &[u8]) -> String {
     result
 }
 
-/// Characters outside the alphabet count as zero, as in PlantUML; non-ASCII ones are an error.
-fn decode_6bit(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
+/// A character's 6-bit value; characters outside the alphabet count as zero, as in PlantUML.
+pub(crate) fn sextet(c: char) -> u8 {
+    ALPHABET
+        .iter()
+        .position(|&known| char::from(known) == c)
+        .map_or(0, |index| index as u8)
+}
+
+/// Every four characters give three bytes, the last ones padded with `0`; non-ASCII characters are an error.
+pub(crate) fn decode_6bit(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
     let value = |c: Option<char>| -> Result<u8, NotPlantUmlCode> {
         let c = c.unwrap_or('0');
         if !c.is_ascii() {
             return Err(NotPlantUmlCode);
         }
-        Ok(ALPHABET
-            .iter()
-            .position(|&known| char::from(known) == c)
-            .map_or(0, |index| index as u8))
+        Ok(sextet(c))
     };
     let chars: Vec<char> = text.chars().collect();
     let mut result = Vec::with_capacity(chars.len().div_ceil(4) * 3);
@@ -180,6 +191,12 @@ fn decode_6bit(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_prefix_inflates_no_further_than_its_limit() {
+        let compressed = deflate(&vec![7; 100_000]);
+        assert_eq!(inflate_prefix(&compressed, 10), Ok(vec![7; 10]));
+    }
 
     #[test]
     fn encodes_like_plantuml() {

@@ -1,0 +1,197 @@
+DPI: 96
+dimension: [ 427.1717 ; 195.4615 ]
+scaleFactor: 1.0000
+seed: 1071655672529984879
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 119.4381 ; 42.2308 ]
+  pt2: [ 127.4381 ; 153.2308 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 122.9381 ; 42.2308 ]
+  pt2: [ 122.9381 ; 153.2308 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 360.3826 ; 42.2308 ]
+  pt2: [ 368.3826 ; 153.2308 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 363.8826 ; 42.2308 ]
+  pt2: [ 363.8826 ; 153.2308 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 107.8612 ; 16.4615 ]
+  pt2: [ 138.0150 ; 41.2308 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+UGraphicDebug UImage <timestamp>
+RECTANGLE:
+  pt1: [ 310.5935 ; 10.0000 ]
+  pt2: [ 417.1717 ; 41.2308 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Ring 
+  position: [ 317.5935 ; 31.1197 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+RECTANGLE:
+  pt1: [ 107.8612 ; 153.2308 ]
+  pt2: [ 138.0150 ; 178.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+UGraphicDebug UImage <timestamp>
+RECTANGLE:
+  pt1: [ 310.5935 ; 153.2308 ]
+  pt2: [ 417.1717 ; 184.4615 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Ring 
+  position: [ 317.5935 ; 174.3504 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+POLYGON:
+  points:
+   - [ 351.8826 ; 68.2308 ]
+   - [ 361.8826 ; 72.2308 ]
+   - [ 351.8826 ; 76.2308 ]
+   - [ 355.8826 ; 72.2308 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 122.9381 ; 72.2308 ]
+  pt2: [ 357.8826 ; 72.2308 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  eight levels
+  position: [ 145.9381 ; 67.3419 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 133.9381 ; 98.2308 ]
+   - [ 123.9381 ; 102.2308 ]
+   - [ 133.9381 ; 106.2308 ]
+   - [ 129.9381 ; 102.2308 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 127.9381 ; 102.2308 ]
+  pt2: [ 362.8826 ; 102.2308 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: four levels 
+  position: [ 139.9381 ; 97.3419 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 215.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 215.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 205.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 205.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 205.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 215.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 205.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  sprite in a note
+  position: [ 36.0000 ; 130.3419 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

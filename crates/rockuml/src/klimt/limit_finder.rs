@@ -123,7 +123,11 @@ impl UGraphicBackend for LimitFinder {
             }
             UShape::Image(image) => {
                 self.add_point(x, y);
-                self.add_point(x + image.width - 1.0, y + image.height - 1.0);
+                self.add_point(x + image.width() - 1.0, y + image.height() - 1.0);
+            }
+            UShape::ImageSvg(image) => {
+                self.add_point(x, y);
+                self.add_point(x + image.width() - 1.0, y + image.height() - 1.0);
             }
             UShape::Empty(dimension) => {
                 self.add_point(x, y);

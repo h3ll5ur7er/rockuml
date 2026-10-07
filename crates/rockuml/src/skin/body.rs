@@ -6,6 +6,7 @@ use crate::creole::Display;
 use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::stencil::UHorizontalLine;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -23,6 +24,7 @@ pub(crate) fn enhanced_text(
     font: FontConfiguration,
     alignment: HorizontalAlignment,
     style: &Style,
+    sprites: &dyn SpriteContainer,
 ) -> Box<dyn TextBlock> {
     let thickness = style.value(PName::LineThickness).as_double();
     let max_width = style.wrap_width();
@@ -36,9 +38,10 @@ pub(crate) fn enhanced_text(
                 font.clone(),
                 alignment,
                 max_width,
+                sprites,
             );
             blocks.push(decorate(block, separator.take(), thickness));
-            let title = title(line, &font);
+            let title = title(line, &font, sprites);
             separator = Some((
                 line.chars().next().expect("separators are not empty"),
                 title,
@@ -47,7 +50,7 @@ pub(crate) fn enhanced_text(
             lines.push(line.clone());
         }
     }
-    let block = creole_text(&lines, font, alignment, max_width);
+    let block = creole_text(&lines, font, alignment, max_width, sprites);
     blocks.push(decorate(block, separator, thickness));
     if blocks.len() == 1 {
         return blocks.remove(0);
@@ -56,7 +59,11 @@ pub(crate) fn enhanced_text(
 }
 
 /// The title of a separator like `== Title ==`.
-fn title(line: &str, font: &FontConfiguration) -> Option<Box<dyn TextBlock>> {
+fn title(
+    line: &str,
+    font: &FontConfiguration,
+    sprites: &dyn SpriteContainer,
+) -> Option<Box<dyn TextBlock>> {
     if line.chars().count() <= 4 {
         return None;
     }
@@ -71,6 +78,7 @@ fn title(line: &str, font: &FontConfiguration) -> Option<Box<dyn TextBlock>> {
         font.clone(),
         HorizontalAlignment::Left,
         0.0,
+        sprites,
     ))
 }
 

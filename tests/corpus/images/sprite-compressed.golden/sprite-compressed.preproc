@@ -1,0 +1,6 @@
+@startuml
+sprite $z4 [16x16/4z] Oy02cA00paKHO482C2up4405m5oGEcO87y852v3CnpGFmpwG04u7OlW74m
+sprite $z8 [16x16/8z] Oy02M5Z1W0NAPOK3A1S1O8hPW02g1Sm5gME3A81mmG9ayD7DGxSFmpqe0XZ-mGG
+sprite $z16 [16x16/16z] ROz50e0m40EvBk7_twsjXmvK9lNdWhm7CTrzODUkE6WWMxy5S9OStVDEiFte2OuZ7Up_-RmVdyVtuVloUvW9
+Alice -> Bob : <$z4> <$z8> <$z16>
+@enduml

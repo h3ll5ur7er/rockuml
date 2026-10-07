@@ -10,7 +10,9 @@ use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
 use crate::klimt::blocks::{TextBlockMarged, TextBlockRaw, TextBlockVertical, WithBackcolor};
 use crate::klimt::font::{FontConfiguration, FontStyle, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::image::PortableImage;
 use crate::klimt::shape::{UImage, UShape};
+use crate::klimt::sprite::SpriteContainerEmpty;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::text::StringLocated;
@@ -177,12 +179,11 @@ impl Diagram for ErrorDiagram {
 /// The help PlantUML shows above errors in very short sources, with its logo in the top right corner.
 struct Welcome {
     text: SheetBlock1,
+    logo: PortableImage,
 }
 
 impl Welcome {
     const MARGIN: f64 = 5.0;
-    const LOGO_WIDTH: f64 = 80.0;
-    const LOGO_HEIGHT: f64 = 71.0;
     const LOGO_PADDING: f64 = 30.0;
 
     fn new() -> Self {
@@ -207,10 +208,15 @@ impl Welcome {
             font,
             HorizontalAlignment::Left,
             CreoleMode::FullButUnderscore,
+            &SpriteContainerEmpty,
         )
         .create_sheet(&lines);
         Self {
             text: SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()),
+            logo: PortableImage::from_png(
+                crate::assets::get("images/plantuml-logo.png").expect("the logo is embedded"),
+            )
+            .expect("the logo is a PNG"),
         }
     }
 }
@@ -220,7 +226,7 @@ impl TextBlock for Welcome {
         let margins = 2.0 * Self::MARGIN;
         self.text
             .calculate_dimension(string_bounder)
-            .delta(Self::LOGO_PADDING + Self::LOGO_WIDTH, 0.0)
+            .delta(Self::LOGO_PADDING + self.logo.width() as f64, 0.0)
             .delta(margins, margins)
     }
 
@@ -228,12 +234,8 @@ impl TextBlock for Welcome {
         let ug = ug.translated(Self::MARGIN, Self::MARGIN);
         let inner_width = self.calculate_dimension(ug.string_bounder()).width - 2.0 * Self::MARGIN;
         self.text.draw_u(&ug.with_color(HColor::BLACK));
-        ug.translated(inner_width - Self::LOGO_WIDTH - 1.0, 1.0)
-            .draw(&UShape::Image(UImage {
-                png: crate::assets::get("images/plantuml-logo.png").expect("the logo is embedded"),
-                width: Self::LOGO_WIDTH,
-                height: Self::LOGO_HEIGHT,
-            }));
+        ug.translated(inner_width - self.logo.width() as f64 - 1.0, 1.0)
+            .draw(&UShape::Image(UImage::new(self.logo.clone())));
     }
 
     fn backcolor(&self) -> Option<HColor> {

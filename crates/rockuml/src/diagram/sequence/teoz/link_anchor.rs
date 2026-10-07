@@ -68,6 +68,7 @@ pub(super) fn draw_anchor(
             .natural_alignment()
             .unwrap_or(HorizontalAlignment::Center),
         0.0,
+        diagram.skin(),
     );
     let dimension = title.calculate_dimension(ug.string_bounder());
     if dimension.width == 0.0 && dimension.height == 0.0 {
