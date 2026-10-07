@@ -1,0 +1,10 @@
+@startuml
+sprite $database_server #office#servers/database_server:database_server
+
+sprite $user #office#users/user:user
+
+Alice -> Bob : <$database_server> query
+Bob -> Alice : <$user{scale=0.5}> answer
+participant "<$user>\nuser" as U
+Alice -> U
+@enduml
