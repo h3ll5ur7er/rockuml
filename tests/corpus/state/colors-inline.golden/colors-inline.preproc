@@ -1,0 +1,11 @@
+@startuml
+state Red #pink
+state Green #palegreen
+state Blue #lightblue ##[dashed]blue
+state Mixed #lightgray;line:red;line.dotted;text:red
+[*] --> Red
+Red --> Green
+Green --> Blue
+Blue --> Mixed
+Mixed --> [*]
+@enduml

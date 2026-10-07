@@ -1,0 +1,12 @@
+@startuml
+title Door Lifecycle
+[*] --> Closed
+Closed --> Open : open
+Open --> Closed : close
+Closed --> Locked : lock
+Locked --> Closed : unlock
+legend left
+  Doors start closed.
+endlegend
+caption Figure 2
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+<style>
+stateDiagram {
+  BackgroundColor Peru
+  FontName Impact
+  FontColor Red
+  arrow {
+    FontSize 13
+    LineColor Blue
+  }
+}
+</style>
+[*] --> Idle
+Idle --> Running : go
+Running --> Idle : stop
+Running --> [*]
+@enduml

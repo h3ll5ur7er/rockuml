@@ -1,0 +1,17 @@
+@startuml
+state Step {
+  state in1 <<inputPin>>
+  state in2 <<inputPin>>
+  state out1 <<outputPin>>
+  in1 --> work
+  in2 --> work
+  work --> out1
+}
+state Batch {
+  state ein <<expansionInput>>
+  state eout <<expansionOutput>>
+  ein --> each
+  each --> eout
+}
+out1 --> ein
+@enduml

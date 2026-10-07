@@ -1,0 +1,13 @@
+@startuml
+state Editor {
+  [*] --> Typing
+  Typing --> Saving
+  Saving --> Typing
+  state h <<history>>
+  state dh <<history*>>
+}
+[*] --> Editor
+Editor --> Closed
+Closed --> h
+Closed --> dh
+@enduml
