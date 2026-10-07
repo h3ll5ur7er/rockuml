@@ -99,7 +99,8 @@ pub(crate) struct CucaDiagramFileMakerSmetana {
 struct SmetanaGraph {
     nodes: Vec<(EntityId, Node)>,
     core_nodes: Vec<(EntityId, Node)>,
-    edges: Vec<(LinkId, Edge)>,
+    /// With the texts measured for the layout, which drawing reuses.
+    edges: Vec<(LinkId, Edge, EdgeTexts)>,
     clusters: Vec<(EntityId, Subgraph)>,
 }
 
@@ -380,8 +381,8 @@ impl CucaDiagramFileMakerSmetana {
             if self.diagram.link(link).is_removed(&self.diagram) {
                 continue;
             }
-            if let Some(e) = self.create_edge(string_bounder, graph, &mut smetana, link) {
-                smetana.edges.push((link, e));
+            if let Some((e, texts)) = self.create_edge(string_bounder, graph, &mut smetana, link) {
+                smetana.edges.push((link, e, texts));
             }
         }
         if smetana.nodes.is_empty() && smetana.clusters.is_empty() {
@@ -519,7 +520,7 @@ impl CucaDiagramFileMakerSmetana {
         graph: &mut Graph,
         smetana: &mut SmetanaGraph,
         link_id: LinkId,
-    ) -> Option<Edge> {
+    ) -> Option<(Edge, EdgeTexts)> {
         let link = self.diagram.link(link_id);
         let mut end = |entity: EntityId| {
             if self.diagram.entity(entity).is_group() {
@@ -548,7 +549,7 @@ impl CucaDiagramFileMakerSmetana {
             let dim_label = head.calculate_dimension(string_bounder);
             graph.set_label_size(e, "headlabel", dim_label.width, dim_label.height);
         }
-        Some(e)
+        Some((e, texts))
     }
 }
 
@@ -725,6 +726,8 @@ struct Drawing {
     diagram: CucaDiagram,
     bibliotekon: Bibliotekon,
     smetana: SmetanaGraph,
+    /// The visible links' edges, in the order of the diagram's links.
+    smetana_pathes: Vec<(LinkId, SmetanaEdge)>,
     layout: smetana::Drawing,
     ymirror: YMirror,
     min_max: MinMax,
@@ -736,17 +739,28 @@ struct Drawing {
 impl Drawing {
     fn new(
         maker: CucaDiagramFileMakerSmetana,
-        smetana: SmetanaGraph,
+        mut smetana: SmetanaGraph,
         layout: smetana::Drawing,
         canvas_margin: f64,
     ) -> Self {
         let min_max = get_smetana_min_max(&smetana, &layout);
+        let ymirror = YMirror::new(min_max.max_y() + 6.0);
+        let diagram = maker.diagram;
+        let smetana_pathes = std::mem::take(&mut smetana.edges)
+            .into_iter()
+            .filter(|(link, _, _)| !diagram.link(*link).is_invis())
+            .map(|(link, edge, texts)| {
+                let edge = SmetanaEdge::new(link, layout.edge(edge).clone(), ymirror, texts);
+                (link, edge)
+            })
+            .collect();
         Self {
-            diagram: maker.diagram,
+            diagram,
             bibliotekon: maker.bibliotekon,
             smetana,
+            smetana_pathes,
             layout,
-            ymirror: YMirror::new(min_max.max_y() + 6.0),
+            ymirror,
             min_max,
             canvas_margin,
             measured_min_max: OnceCell::new(),
@@ -777,27 +791,13 @@ impl Drawing {
 
     /// Draws everything where the layout put it; the caller places `ug` at the drawing's origin.
     fn draw_content(&self, ug: &UGraphic) {
-        let smetana_pathes: Vec<(LinkId, SmetanaEdge)> = self
-            .smetana
-            .edges
-            .iter()
-            .filter(|(link, _)| !self.diagram.link(*link).is_invis())
-            .map(|(link, edge)| {
-                let texts =
-                    edge_texts(&self.diagram, ug.string_bounder(), self.diagram.link(*link));
-                (
-                    *link,
-                    SmetanaEdge::new(*link, self.layout.edge(*edge).clone(), self.ymirror, texts),
-                )
-            })
-            .collect();
         for (group, cluster) in &self.smetana.clusters {
             self.draw_group(ug, *group, *cluster);
         }
         let context = LayoutContext {
             diagram: &self.diagram,
             bibliotekon: &self.bibliotekon,
-            smetana_pathes: &smetana_pathes,
+            smetana_pathes: &self.smetana_pathes,
         };
         for (leaf, agnode) in &self.smetana.nodes {
             let corner = self.get_corner(*agnode);
@@ -807,7 +807,7 @@ impl Drawing {
             node.get_image()
                 .draw_u_in_layout(&ug.translated(corner.x, corner.y), &context);
         }
-        for (link, edge) in &smetana_pathes {
+        for (link, edge) in &self.smetana_pathes {
             if !self.diagram.link(*link).opale {
                 edge.draw_u(ug, &self.diagram, &self.bibliotekon);
             }
