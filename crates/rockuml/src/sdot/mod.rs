@@ -31,8 +31,8 @@ use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D, XPoi
 use crate::klimt::limit_finder::LimitFinder;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
-use crate::skin::{Rankdir, SkinParam};
 use crate::skin::component::TextBlockEmpty;
+use crate::skin::{Rankdir, SkinParam};
 use crate::style::{SName, Style, StyleSignature};
 use crate::svek::image::EntityImageNoteLink;
 use crate::svek::{

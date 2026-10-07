@@ -17,6 +17,7 @@ use crate::klimt::geom::{RectangleArea, UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 
 /// A cluster, by its place in its layout's [`super::Bibliotekon`]; the root cluster is the first.
@@ -412,12 +413,7 @@ impl Cluster {
                 rectangle_area.get_min_y() + name_height + margin / 2.0,
             ));
         }
-        let with_symbol = stereotype.is_some_and(|stereotype| {
-            stereotype
-                .label_double_comparator()
-                .eq_ignore_ascii_case("<<O-O>>")
-        });
-        if with_symbol {
+        if stereotype.is_some_and(Stereotype::is_with_oo_symbol) {
             EntityImageState::draw_symbol(
                 &ug.with_color(border_color),
                 rectangle_area.get_max_x(),

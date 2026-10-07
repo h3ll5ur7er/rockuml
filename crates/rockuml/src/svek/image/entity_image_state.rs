@@ -12,6 +12,7 @@ use crate::klimt::group::UGroup;
 use crate::klimt::shape::{UEllipse, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, ValueReading};
 use crate::svek::rounded_container::RoundedContainer;
 use crate::svek::{IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
@@ -37,11 +38,7 @@ impl EntityImageState {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let common = EntityImageStateCommon::new(entity, diagram);
         let stereotype = entity.stereotype.as_ref();
-        let with_symbol = stereotype.is_some_and(|stereotype| {
-            stereotype
-                .label_double_comparator()
-                .eq_ignore_ascii_case("<<O-O>>")
-        });
+        let with_symbol = stereotype.is_some_and(Stereotype::is_with_oo_symbol);
         let builder = diagram.skin().current_style_builder();
         let style_name = get_style_state(Some(SName::Name), stereotype, &builder);
         let style_description = get_style_state(Some(SName::Description), stereotype, &builder);

@@ -14,6 +14,7 @@ use crate::klimt::group::UGroup;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, ValueReading};
 
 pub(crate) struct InnerStateAutonom {
@@ -75,11 +76,10 @@ impl InnerStateAutonom {
                 .cloned()
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             url: group.url.clone(),
-            with_symbol: group.stereotype.as_ref().is_some_and(|stereotype| {
-                stereotype
-                    .label_double_comparator()
-                    .eq_ignore_ascii_case("<<O-O>>")
-            }),
+            with_symbol: group
+                .stereotype
+                .as_ref()
+                .is_some_and(Stereotype::is_with_oo_symbol),
             stroke: group
                 .colors
                 .get_specific_line_stroke()
