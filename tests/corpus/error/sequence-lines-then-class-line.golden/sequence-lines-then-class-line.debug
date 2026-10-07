@@ -1,0 +1,102 @@
+DPI: 96
+dimension: [ 763.0276 ; 147.0000 ]
+scaleFactor: 1.0000
+seed: 7679787832845866509
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 763.0276 ; 147.0000 ]
+
+EMPTY:
+  pt1: [ 5.0000 ; 5.0000 ]
+  pt2: [ 711.4921 ; 25.0000 ]
+
+TEXT:
+  text: PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]
+  position: [ 5.0000 ; 17.0000 ]
+  orientation: 0
+  font: SansSerif.bolditalic/12 [ITALIC, BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 596.8589 ; 44.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff33ff02
+  backcolor: ff33ff02
+
+EMPTY:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 596.8589 ; 44.0000 ]
+
+TEXT:
+  text: [From sequence-lines-then-class-line.puml (line 5) ]
+  position: [ 6.0000 ; 40.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 5.0000 ; 58.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: @startuml
+  position: [ 5.0000 ; 72.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: participant Alice
+  position: [ 5.0000 ; 86.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Alice -> Bob : hello
+  position: [ 5.0000 ; 100.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: note left of Alice : hi
+  position: [ 5.0000 ; 114.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: interface Foo
+  position: [ 5.0000 ; 128.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD, WAVE]
+  color: ff33ff02
+  extendedColor: ffff0000
+
+TEXT:
+  text:  Syntax Error? (Assumed diagram type: sequence)
+  position: [ 5.0000 ; 142.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ffff0000
+  extendedColor: NULL_COLOR
+

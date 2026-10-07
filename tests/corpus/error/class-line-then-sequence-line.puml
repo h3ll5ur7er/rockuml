@@ -1,0 +1,5 @@
+@startuml
+class A
+A -> B : hello
+activate B
+@enduml

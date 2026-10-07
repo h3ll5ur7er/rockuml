@@ -11,6 +11,7 @@ use super::cuca_commands;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::EntityId;
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
 use crate::klimt::TextBlock;
@@ -23,6 +24,9 @@ const NOT_PORTED: NotYetPorted = NotYetPorted("Chen diagrams");
 pub(super) struct ChenEerDiagram {
     source: Rc<UmlSource>,
     cuca: CucaDiagram,
+    /// The entities, relationships and composite attributes whose blocks are open, innermost last: they own
+    /// the attributes read next.
+    owner_stack: Vec<EntityId>,
 }
 
 /// Reads Chen diagrams (PlantUML's `ChenEerDiagramFactory`).
@@ -39,6 +43,7 @@ impl CommandFactory for ChenEerDiagramFactory {
         ChenEerDiagram {
             source: source.clone(),
             cuca: CucaDiagram::new(titled),
+            owner_stack: Vec::new(),
         }
     }
 
