@@ -84,7 +84,7 @@ fn arrow_clip(
 
 /// `bezier_clip`: clips the Bézier piece `sp` where it leaves the shape, by bisection. `left_inside` says
 /// whether `sp[0]` (or else `sp[3]`) is the end inside the shape; points are relative to the shape's centre.
-pub fn bezier_clip(
+pub(crate) fn bezier_clip(
     zz: &mut Globals,
     inside_context: &inside_t,
     inside: InsideFn,
@@ -150,7 +150,7 @@ fn shape_clip0(
 
 /// `new_spline`: appends a Bézier of `sz` points to the splines of `e`'s real edge; returns it as a one-element
 /// array.
-pub fn new_spline(zz: &mut Globals, e: EdgeId, sz: i32) -> CArray<bezier> {
+pub(crate) fn new_spline(zz: &mut Globals, e: EdgeId, sz: i32) -> CArray<bezier> {
     let e = normal_orig(zz, e);
     if zz.ed(e).spl.is_none() {
         zz.ed_mut(e).spl = Some(zz.splines.push(splines::default()));
@@ -275,7 +275,7 @@ fn conc_slope(_n: NodeId) -> f64 {
 }
 
 /// `add_box`: appends `b` to the path's boxes unless it is empty. `P.boxes` is allocated by the caller.
-pub fn add_box(P: &mut path, b: boxf) {
+pub(crate) fn add_box(P: &mut path, b: boxf) {
     if b.LL.x < b.UR.x && b.LL.y < b.UR.y {
         P.boxes[P.nbox as usize] = b;
         P.nbox += 1;
@@ -565,7 +565,7 @@ fn loops_right(zz: &Globals, e: EdgeId) -> bool {
 }
 
 /// `selfRightSpace`: the room a self loop needs right of its node.
-pub fn selfRightSpace(zz: &Globals, e: EdgeId) -> i32 {
+pub(crate) fn selfRightSpace(zz: &Globals, e: EdgeId) -> i32 {
     if !loops_right(zz, e) {
         return 0;
     }
@@ -625,7 +625,7 @@ fn endPoints(zz: &Globals, spl: SplinesId) -> (pointf, pointf) {
 }
 
 /// `edgeMidpoint`: the point of `e`'s spline halfway between its ends.
-pub fn edgeMidpoint(zz: &Globals, g: GraphId, e: EdgeId) -> pointf {
+pub(crate) fn edgeMidpoint(zz: &Globals, g: GraphId, e: EdgeId) -> pointf {
     let et = zz.gd(g).flags & (7 << 1);
     let spl = zz.ed(e).spl.expect("edge without spline");
     let (p, q) = endPoints(zz, spl);
@@ -640,7 +640,7 @@ pub fn edgeMidpoint(zz: &Globals, g: GraphId, e: EdgeId) -> pointf {
 }
 
 /// `getsplinepoints`: the splines drawn for `e`, found along `ED_to_orig` if `e` is virtual.
-pub fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<SplinesId> {
+pub(crate) fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<SplinesId> {
     let mut le = e;
     loop {
         let sp = zz.ed(le).spl;

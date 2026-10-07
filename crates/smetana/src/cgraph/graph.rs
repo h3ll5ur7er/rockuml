@@ -75,12 +75,12 @@ pub(crate) fn agopen1(zz: &mut Globals, g: GraphId) -> GraphId {
 }
 
 /// `agparent`.
-pub fn agparent(zz: &Globals, g: GraphId) -> Option<GraphId> {
+pub(crate) fn agparent(zz: &Globals, g: GraphId) -> Option<GraphId> {
     zz.graphs[g].parent
 }
 
 /// `agnextseq`: the next sequence number for graphs, nodes or edges of `g`'s root graph.
-pub fn agnextseq(zz: &mut Globals, g: GraphId, objtype: i32) -> i32 {
+pub(crate) fn agnextseq(zz: &mut Globals, g: GraphId, objtype: i32) -> i32 {
     debug_assert!(matches!(objtype, AGRAPH | AGNODE | AGEDGE));
     let clos = zz.graphs[g].clos;
     let seq = &mut zz.closes[clos].seq[objtype as usize];
@@ -106,17 +106,17 @@ pub fn agnedges(zz: &mut Globals, g: GraphId) -> i32 {
 }
 
 /// `agisdirected`.
-pub fn agisdirected(zz: &Globals, g: GraphId) -> bool {
+pub(crate) fn agisdirected(zz: &Globals, g: GraphId) -> bool {
     zz.graphs[g].desc.directed != 0
 }
 
 /// `agisundirected`.
-pub fn agisundirected(zz: &Globals, g: GraphId) -> bool {
+pub(crate) fn agisundirected(zz: &Globals, g: GraphId) -> bool {
     !agisdirected(zz, g)
 }
 
 /// `agisstrict`.
-pub fn agisstrict(zz: &Globals, g: GraphId) -> bool {
+pub(crate) fn agisstrict(zz: &Globals, g: GraphId) -> bool {
     zz.graphs[g].desc.strict != 0
 }
 

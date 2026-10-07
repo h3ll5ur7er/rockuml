@@ -2,6 +2,11 @@
 //! Graphviz `dot` 2.38 (`gen/`, `h/` and `smetana/` in the reference sources). Layouts must match Smetana's
 //! coordinates exactly, so the port keeps Graphviz's function names, evaluation order and integer semantics.
 //!
+//! # Use
+//!
+//! Build a [`Graph`] with the calls PlantUML makes, in PlantUML's order, then [`Graph::layout`] it and read the
+//! coordinates from the [`Drawing`]. Everything else is the ported code, private to the crate.
+//!
 //! # Conventions for ported code
 //!
 //! **Context.** Every Java function that takes `Globals zz` takes `zz: &mut Globals` first (`&Globals` when it
@@ -51,7 +56,9 @@
 //! [`qsort`](core::jutils::qsort), Smetana's stable bubble sort.
 //!
 //! **Unsupported paths.** Code Smetana stubs with `UNSUPPORTED` (or that throws) becomes `unimplemented!()` or a
-//! panic; PlantUML never reaches it on valid input.
+//! panic; PlantUML never reaches it on valid input. [`Graph::layout`] turns these panics into errors.
+//!
+//! **Deviations.** Where Java hangs, the port deviates to terminate, and says so where it does.
 //!
 //! **Names.** Types and functions keep their C/Java names, so `non_camel_case_types`/`non_snake_case` are allowed
 //! where they appear.
@@ -60,14 +67,141 @@
     clippy::missing_panics_doc,
     reason = "panics stand for the exceptions Smetana throws on input PlantUML never produces"
 )]
+#![allow(
+    rustdoc::private_intra_doc_links,
+    reason = "the conventions are for maintainers, who document the private items"
+)]
 
+mod api;
 mod cdt;
-pub mod cgraph;
-pub mod common;
-pub mod core;
-pub mod dotgen;
-pub mod gvc;
-pub mod h;
-pub mod label;
-pub mod pack;
-pub mod pathplan;
+mod cgraph;
+mod common;
+mod core;
+mod dotgen;
+mod gvc;
+mod h;
+mod label;
+mod pack;
+mod pathplan;
+
+pub use api::{
+    Bezier, BoundingBox, Drawing, Edge, EdgeLayout, Graph, Label, LayoutError, Node, NodeLayout,
+    Object, Point, Subgraph, SubgraphLayout,
+};
+
+/// Not part of the API: the ported functions and records that the integration tests drive one phase at a time,
+/// to compare the port's state with Java's traces. The paths mirror the crate's modules.
+#[doc(hidden)]
+pub mod internals {
+    pub mod cgraph {
+        pub use crate::cgraph::{
+            AGEDGE, AGINEDGE, AGMKOUT, AGNODE, AGOPP, AGOUTEDGE, Agobj, M_aghead, M_agtail, aghead,
+            agtail,
+        };
+        pub mod attr {
+            pub use crate::cgraph::attr::{agattr, agget, agsafeset, agxget, agxset};
+        }
+        pub mod edge {
+            pub use crate::cgraph::edge::{
+                agedge, agfindedge, agfstedge, agfstin, agfstout, agnxtedge, agnxtin, agnxtout,
+                agsubedge,
+            };
+        }
+        pub mod graph {
+            pub use crate::cgraph::graph::{agdegree, agnedges, agnnodes, agopen};
+        }
+        pub mod id {
+            pub use crate::cgraph::id::agnameof;
+        }
+        pub mod node {
+            pub use crate::cgraph::node::{agfstnode, agnode, agnxtnode};
+        }
+        pub mod obj {
+            pub use crate::cgraph::obj::agcontains;
+        }
+        pub mod rec {
+            pub use crate::cgraph::rec::{Rec, agbindrec};
+        }
+        pub mod subg {
+            pub use crate::cgraph::subg::{agfstsubg, agnxtsubg, agsubg};
+        }
+    }
+    pub mod common {
+        pub mod input {
+            pub use crate::common::input::graph_init;
+        }
+        pub mod postproc {
+            pub use crate::common::postproc::dotneato_postprocess;
+        }
+        pub mod routespl {
+            pub use crate::common::routespl::{routepolylines, routesplines, simpleSplineRoute};
+        }
+        pub mod shapes {
+            pub use crate::common::shapes::{bind_shape, portfn};
+        }
+        pub mod splines {
+            pub use crate::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
+        }
+        pub mod utils {
+            pub use crate::common::utils::setEdgeType;
+        }
+    }
+    pub mod core {
+        pub use crate::core::Globals;
+        pub mod consts {
+            pub use crate::core::consts::{ET_SPLINE, VIRTUAL};
+        }
+        pub mod ids {
+            pub use crate::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId, TextlabelId};
+        }
+    }
+    pub mod dotgen {
+        pub mod aspect {
+            pub use crate::dotgen::aspect::setAspect;
+        }
+        pub mod dotinit {
+            pub use crate::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
+        }
+        pub mod dotsplines {
+            pub use crate::dotgen::dotsplines::{dot_splines, spline_merge, swap_ends_p};
+        }
+        pub mod mincross {
+            pub use crate::dotgen::mincross::dot_mincross;
+        }
+        pub mod position {
+            pub use crate::dotgen::position::dot_position;
+        }
+        pub mod rank {
+            pub use crate::dotgen::rank::dot_rank;
+        }
+        pub mod sameport {
+            pub use crate::dotgen::sameport::dot_sameports;
+        }
+    }
+    pub mod gvc {
+        pub mod gvlayout {
+            pub use crate::gvc::gvlayout::gvLayoutJobs;
+        }
+    }
+    pub mod h {
+        pub use crate::h::{
+            SHAPE_INFO, bezier, boxf, field_t, path, pathend_t, point, pointf, polygon_t, port,
+            splineInfo, splines, textlabel_t,
+        };
+        pub mod cgraph {
+            pub use crate::h::cgraph::Agdirected;
+        }
+    }
+    pub mod label {
+        pub use crate::label::{
+            Child, RTreeInsert, RTreeOpen, RTreeSearch, Rect_t, hd_hil_s_from_xy, label_params_t,
+            object_t, placeLabels, xlabel_t,
+        };
+    }
+    pub mod pathplan {
+        pub use crate::pathplan::{
+            PathplanContext, PathplanError, Pedge_t, Ppoint_t, Ppoly_t, Ppolyline_t, Proutespline,
+            Pshortestpath, solve3,
+        };
+    }
+}

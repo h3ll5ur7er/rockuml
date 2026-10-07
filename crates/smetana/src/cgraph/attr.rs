@@ -320,16 +320,16 @@ pub fn agsafeset(
 }
 
 /// `agfindgraphattr`.
-pub fn agfindgraphattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindgraphattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), AGRAPH, name, None)
 }
 
 /// `agfindnodeattr`.
-pub fn agfindnodeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindnodeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), AGNODE, name, None)
 }
 
 /// `agfindedgeattr`.
-pub fn agfindedgeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindedgeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), super::AGEDGE, name, None)
 }

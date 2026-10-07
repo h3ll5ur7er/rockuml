@@ -8,18 +8,18 @@ mod trace;
 use std::fmt::Write as _;
 use std::path::Path;
 
-use smetana::cgraph::attr::agget;
-use smetana::cgraph::edge::{
+use smetana::internals::cgraph::attr::agget;
+use smetana::internals::cgraph::edge::{
     agfindedge, agfstedge, agfstin, agfstout, agnxtedge, agnxtin, agnxtout, agsubedge,
 };
-use smetana::cgraph::graph::{agdegree, agnedges, agnnodes};
-use smetana::cgraph::id::agnameof;
-use smetana::cgraph::node::{agfstnode, agnxtnode};
-use smetana::cgraph::obj::agcontains;
-use smetana::cgraph::subg::{agfstsubg, agnxtsubg};
-use smetana::cgraph::{AGINEDGE, Agobj, aghead, agtail};
-use smetana::core::Globals;
-use smetana::core::ids::{EdgeId, GraphId, NodeId};
+use smetana::internals::cgraph::graph::{agdegree, agnedges, agnnodes};
+use smetana::internals::cgraph::id::agnameof;
+use smetana::internals::cgraph::node::{agfstnode, agnxtnode};
+use smetana::internals::cgraph::obj::agcontains;
+use smetana::internals::cgraph::subg::{agfstsubg, agnxtsubg};
+use smetana::internals::cgraph::{AGINEDGE, Agobj, aghead, agtail};
+use smetana::internals::core::Globals;
+use smetana::internals::core::ids::{EdgeId, GraphId, NodeId};
 use trace::{Call, Object, Replay};
 
 fn name(zz: &Globals, obj: impl Into<Agobj>) -> String {

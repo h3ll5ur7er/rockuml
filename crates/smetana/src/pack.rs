@@ -8,7 +8,7 @@ use crate::core::ids::GraphId;
 
 /// `pack_mode`: Smetana supports none of the packing modes.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum EN_pack_mode {
+pub(crate) enum EN_pack_mode {
     l_undef,
 }
 
@@ -21,14 +21,14 @@ fn parsePackModeInfo(p: Option<&str>, dflt: EN_pack_mode) -> EN_pack_mode {
 }
 
 /// `getPackModeInfo`: the `packmode` attribute.
-pub fn getPackModeInfo(zz: &mut Globals, g: GraphId, dflt: EN_pack_mode) -> EN_pack_mode {
+pub(crate) fn getPackModeInfo(zz: &mut Globals, g: GraphId, dflt: EN_pack_mode) -> EN_pack_mode {
     let p = agget_text(zz, g, "packmode");
     parsePackModeInfo(p.as_deref(), dflt)
 }
 
 /// `getPack`: the `pack` attribute, `not_def` if undeclared. Any `pack` is unsupported, so the default for an
 /// empty one is not needed.
-pub fn getPack(zz: &mut Globals, g: GraphId, not_def: i32) -> i32 {
+pub(crate) fn getPack(zz: &mut Globals, g: GraphId, not_def: i32) -> i32 {
     if agget_text(zz, g, "pack").is_some() {
         unimplemented!("pack");
     }

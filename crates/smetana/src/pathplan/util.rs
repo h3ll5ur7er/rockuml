@@ -7,7 +7,7 @@ use super::Ppolyline_t;
 ///
 /// # Panics
 /// If `line` has fewer than two points.
-pub fn make_polyline(line: &Ppolyline_t, sline: &mut Ppolyline_t) {
+pub(crate) fn make_polyline(line: &Ppolyline_t, sline: &mut Ppolyline_t) {
     let (first, rest) = line.ps.split_first().expect("a polyline has points");
     let (last, inner) = rest.split_last().expect("a polyline has two ends");
     sline.ps.clear();

@@ -11,7 +11,7 @@
 
 #![allow(non_camel_case_types, non_snake_case, non_upper_case_globals)]
 
-pub mod cgraph;
+pub(crate) mod cgraph;
 
 use crate::core::Globals;
 use crate::core::carray::{CArray, CArrays};
@@ -27,12 +27,12 @@ pub struct pointf {
 }
 
 /// `pointfof`.
-pub fn pointfof(x: f64, y: f64) -> pointf {
+pub(crate) fn pointfof(x: f64, y: f64) -> pointf {
     pointf { x, y }
 }
 
 /// `add_pointf`.
-pub fn add_pointf(p: pointf, q: pointf) -> pointf {
+pub(crate) fn add_pointf(p: pointf, q: pointf) -> pointf {
     pointf {
         x: p.x + q.x,
         y: p.y + q.y,
@@ -69,7 +69,7 @@ pub struct port {
 }
 
 /// `Globals.Center`: the port at a node's center.
-pub const Center: port = port {
+pub(crate) const Center: port = port {
     p: pointf { x: 0.0, y: 0.0 },
     theta: -1.0,
     bp: None,
@@ -105,12 +105,12 @@ impl elist {
 
 /// The nodes of a node list (`ND_next` chain, like `GD_nlist(g)`) starting at `first`, read up front so that the
 /// caller can change the chain.
-pub fn node_list(zz: &Globals, first: Option<NodeId>) -> Vec<NodeId> {
+pub(crate) fn node_list(zz: &Globals, first: Option<NodeId>) -> Vec<NodeId> {
     std::iter::successors(first, |&n| zz.nd(n).next).collect()
 }
 
 /// `elist_append`: appends `item`, keeping the list NULL-terminated.
-pub fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut elist) {
+pub(crate) fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut elist) {
     let list = lists.REALLOC(L.size + 2, L.list);
     L.list = Some(list);
     lists.set(list, L.size, Some(item));
@@ -119,7 +119,7 @@ pub fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut e
 }
 
 /// `alloc_elist`: an empty list with room for `n` edges.
-pub fn alloc_elist(lists: &mut CArrays<Option<EdgeId>>, n: i32, L: &mut elist) {
+pub(crate) fn alloc_elist(lists: &mut CArrays<Option<EdgeId>>, n: i32, L: &mut elist) {
     L.size = 0;
     L.list = Some(lists.ALLOC(n + 1));
 }

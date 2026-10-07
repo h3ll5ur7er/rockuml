@@ -13,21 +13,21 @@ use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::panic::{self, AssertUnwindSafe};
 
-use smetana::cgraph::attr::{agattr, agxget, agxset};
-use smetana::cgraph::edge::agedge;
-use smetana::cgraph::graph::agopen;
-use smetana::cgraph::node::agnode;
-use smetana::cgraph::{
+use smetana::internals::cgraph::attr::{agattr, agxget, agxset};
+use smetana::internals::cgraph::edge::agedge;
+use smetana::internals::cgraph::graph::agopen;
+use smetana::internals::cgraph::node::agnode;
+use smetana::internals::cgraph::{
     AGEDGE, AGINEDGE, AGMKOUT, AGOPP, AGOUTEDGE, M_aghead, M_agtail, aghead, agtail,
 };
-use smetana::common::routespl::{routepolylines, routesplines, simpleSplineRoute};
-use smetana::common::shapes::{bind_shape, portfn};
-use smetana::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
-use smetana::core::Globals;
-use smetana::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId};
-use smetana::dotgen::dotsplines::{spline_merge, swap_ends_p};
-use smetana::h::cgraph::Agdirected;
-use smetana::h::{
+use smetana::internals::common::routespl::{routepolylines, routesplines, simpleSplineRoute};
+use smetana::internals::common::shapes::{bind_shape, portfn};
+use smetana::internals::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
+use smetana::internals::core::Globals;
+use smetana::internals::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId};
+use smetana::internals::dotgen::dotsplines::{spline_merge, swap_ends_p};
+use smetana::internals::h::cgraph::Agdirected;
+use smetana::internals::h::{
     SHAPE_INFO, bezier, boxf, field_t, path, pathend_t, pointf, polygon_t, port, splineInfo,
     splines, textlabel_t,
 };

@@ -34,7 +34,7 @@ pub const Agdirected: Agdesc_s = Agdesc_s {
 };
 
 /// `ProtoDesc`: the description of the prototype graph that `agattr(NULL, ...)` creates.
-pub const ProtoDesc: Agdesc_s = Agdesc_s {
+pub(crate) const ProtoDesc: Agdesc_s = Agdesc_s {
     directed: 1,
     strict: 0,
     no_loop: 1,
@@ -58,6 +58,7 @@ pub struct Agattr_s {
 
 /// A graph's attribute declarations (record `_AG_datadict`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(clippy::struct_field_names, reason = "cgraph's names")]
 pub struct Agdatadict_s {
     pub dict_n: DictId,
     pub dict_e: DictId,
@@ -118,7 +119,7 @@ pub struct Agedge_s {
 
 /// An edge: both halves and the records they share (C's `set_data` keeps the halves' `data` equal).
 #[derive(Clone, Debug, Default)]
-pub struct Agedgepair_s {
+pub(crate) struct Agedgepair_s {
     pub out: Agedge_s,
     pub in_: Agedge_s,
     pub(crate) recs: u8,

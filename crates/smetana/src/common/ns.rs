@@ -643,7 +643,13 @@ fn init_graph(zz: &mut Globals, g: GraphId) -> bool {
 
 /// `rank2`: network simplex on the fast graph of `g`, then balancing: 1 for ranks (`TB_balance`), 2 for x
 /// coordinates (`LR_balance`). Returns 1 if the graph is not connected.
-pub fn rank2(zz: &mut Globals, g: GraphId, balance: i32, maxiter: i32, search_size: i32) -> i32 {
+pub(crate) fn rank2(
+    zz: &mut Globals,
+    g: GraphId,
+    balance: i32,
+    maxiter: i32,
+    search_size: i32,
+) -> i32 {
     let feasible = init_graph(zz, g);
     if !feasible {
         init_rank(zz);
@@ -684,7 +690,7 @@ pub fn rank2(zz: &mut Globals, g: GraphId, balance: i32, maxiter: i32, search_si
 }
 
 /// `rank`: [`rank2`] with the graph's `searchsize`.
-pub fn rank(zz: &mut Globals, g: GraphId, balance: i32, maxiter: i32) -> i32 {
+pub(crate) fn rank(zz: &mut Globals, g: GraphId, balance: i32, maxiter: i32) -> i32 {
     let search_size = match agget(zz, g, "searchsize") {
         Some(s) => atoi(zz.agstr(s)),
         None => SEARCHSIZE,

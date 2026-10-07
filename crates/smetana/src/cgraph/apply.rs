@@ -6,7 +6,7 @@ use crate::core::Globals;
 use crate::core::ids::GraphId;
 
 /// The function applied: `fn(g, obj)` with `obj` being the graph `g` itself, the `arg` being captured.
-pub type Agobjfn<'a> = dyn FnMut(&mut Globals, GraphId) + 'a;
+pub(crate) type Agobjfn<'a> = dyn FnMut(&mut Globals, GraphId) + 'a;
 
 /// `rec_apply`: `f` on `g`, then on the subgraphs in id order, depth first (or the reverse if not `preorder`).
 fn rec_apply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
@@ -25,6 +25,6 @@ fn rec_apply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) 
 
 /// `agapply` for the graph `g` itself. Like Java, it starts from `subgraph_search(g, obj)`, which is `g`
 /// whatever `obj` is, so `obj` is left out. The success code C returns is always 0 here, so it is left out too.
-pub fn agapply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
+pub(crate) fn agapply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
     rec_apply(zz, g, f, preorder);
 }

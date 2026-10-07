@@ -7,22 +7,22 @@
 
 #![allow(non_snake_case)]
 
-pub mod apply;
-pub mod attr;
-pub mod edge;
-pub mod graph;
-pub mod id;
-pub mod node;
-pub mod obj;
-pub mod rec;
-pub mod refstr;
-pub mod subg;
+pub(crate) mod apply;
+pub(crate) mod attr;
+pub(crate) mod edge;
+pub(crate) mod graph;
+pub(crate) mod id;
+pub(crate) mod node;
+pub(crate) mod obj;
+pub(crate) mod rec;
+pub(crate) mod refstr;
+pub(crate) mod subg;
 
 use crate::core::Globals;
 use crate::core::ids::{EdgeId, GraphId, NodeId};
 use crate::h::cgraph::Agtag_s;
 
-pub const AGRAPH: i32 = 0;
+pub(crate) const AGRAPH: i32 = 0;
 pub const AGNODE: i32 = 1;
 pub const AGOUTEDGE: i32 = 2;
 pub const AGINEDGE: i32 = 3;
@@ -73,7 +73,7 @@ impl Globals {
     }
 }
 
-pub fn AGSEQ(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
+pub(crate) fn AGSEQ(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
     zz.tag(obj).seq
 }
 
@@ -98,7 +98,7 @@ pub fn AGMKOUT(zz: &Globals, e: EdgeId) -> EdgeId {
 }
 
 /// `AGMKIN`: the in-half of an edge.
-pub fn AGMKIN(zz: &Globals, e: EdgeId) -> EdgeId {
+pub(crate) fn AGMKIN(zz: &Globals, e: EdgeId) -> EdgeId {
     if zz.edge(e).tag.objtype == AGINEDGE {
         e
     } else {
@@ -130,7 +130,7 @@ pub fn M_aghead(zz: &mut Globals, e: EdgeId, v: NodeId) {
 
 /// `MAKEFWDEDGE(new, old)`: turns `new`, the out-half of a scratch pair ([`Globals::new_agedgepair`]), into a
 /// virtual copy of `old` pointing the other way. The record is copied whole, so labels and splines stay shared.
-pub fn MAKEFWDEDGE(zz: &mut Globals, new: EdgeId, old: EdgeId) {
+pub(crate) fn MAKEFWDEDGE(zz: &mut Globals, new: EdgeId, old: EdgeId) {
     *zz.ed_mut(new) = *zz.ed(old);
     *zz.edge_mut(new) = *zz.edge(old);
     let (head, tail) = (aghead(zz, old), agtail(zz, old));

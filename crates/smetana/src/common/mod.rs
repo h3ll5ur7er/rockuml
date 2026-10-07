@@ -8,15 +8,15 @@
     reason = "f64::midpoint may round differently from Java's (a + b) / 2"
 )]
 
-pub mod arrows;
-pub mod emit;
-pub mod geom;
-pub mod input;
-pub mod labels;
-pub mod ns;
-pub mod postproc;
-pub mod routespl;
-pub mod shapes;
-pub mod shapes_inside;
-pub mod splines;
-pub mod utils;
+pub(crate) mod arrows;
+pub(crate) mod emit;
+pub(crate) mod geom;
+pub(crate) mod input;
+pub(crate) mod labels;
+pub(crate) mod ns;
+pub(crate) mod postproc;
+pub(crate) mod routespl;
+pub(crate) mod shapes;
+pub(crate) mod shapes_inside;
+pub(crate) mod splines;
+pub(crate) mod utils;

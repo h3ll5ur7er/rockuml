@@ -3,17 +3,17 @@
 #![allow(non_snake_case, non_camel_case_types)]
 #![allow(clippy::similar_names, reason = "Graphviz's names")]
 
-pub mod acyclic;
-pub mod aspect;
-pub mod class1;
-pub mod class2;
-pub mod cluster;
-pub mod decomp;
-pub mod dotinit;
-pub mod dotsplines;
-pub mod fastgr;
-pub mod flat;
-pub mod mincross;
-pub mod position;
-pub mod rank;
-pub mod sameport;
+pub(crate) mod acyclic;
+pub(crate) mod aspect;
+pub(crate) mod class1;
+pub(crate) mod class2;
+pub(crate) mod cluster;
+pub(crate) mod decomp;
+pub(crate) mod dotinit;
+pub(crate) mod dotsplines;
+pub(crate) mod fastgr;
+pub(crate) mod flat;
+pub(crate) mod mincross;
+pub(crate) mod position;
+pub(crate) mod rank;
+pub(crate) mod sameport;

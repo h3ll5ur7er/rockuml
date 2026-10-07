@@ -41,7 +41,7 @@ const FUDGE: f64 = 4.0;
 
 /// `sinfo`: how dot answers the questions spline clipping asks.
 #[allow(non_upper_case_globals, reason = "Graphviz's name")]
-pub const sinfo: splineInfo = splineInfo {
+pub(crate) const sinfo: splineInfo = splineInfo {
     swapEnds: swap_ends_p,
     splineMerge: spline_merge,
     ignoreSwap: false,

@@ -72,7 +72,7 @@ fn search_component(zz: &mut Globals, n: NodeId) {
 
 /// `decompose`: the connected components of `g`'s fast graph. On pass 0 only set representatives
 /// (`UF_find`) take part; later passes go through the cluster rank leaders.
-pub fn decompose(zz: &mut Globals, g: GraphId, pass: i32) {
+pub(crate) fn decompose(zz: &mut Globals, g: GraphId, pass: i32) {
     zz.G_decomp = Some(g);
     zz.Cmark = zz.Cmark.wrapping_add(1);
     if zz.Cmark == 0 {

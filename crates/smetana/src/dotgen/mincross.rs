@@ -492,7 +492,7 @@ fn save_vlist(zz: &mut Globals, g: GraphId) {
 }
 
 /// `rec_save_vlists`: `save_vlist` for `g` and all its clusters.
-pub fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
+pub(crate) fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
     save_vlist(zz, g);
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
@@ -501,7 +501,7 @@ pub fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
 }
 
 /// `rec_reset_vlists`: points every cluster's rank arrays at its nodes in the root's ranks.
-pub fn rec_reset_vlists(zz: &mut Globals, g: GraphId) {
+pub(crate) fn rec_reset_vlists(zz: &mut Globals, g: GraphId) {
     // Fix the vlists of the sub-clusters.
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);

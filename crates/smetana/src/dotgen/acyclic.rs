@@ -6,7 +6,7 @@ use crate::core::ids::{EdgeId, GraphId, NodeId};
 use crate::dotgen::fastgr::{delete_fast_edge, find_fast_edge, merge_oneway, virtual_edge};
 
 /// `reverse_edge`: replaces `e` with an edge the other way, merged into one that exists already.
-pub fn reverse_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn reverse_edge(zz: &mut Globals, e: EdgeId) {
     delete_fast_edge(zz, e);
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     if let Some(f) = find_fast_edge(zz, head, tail) {
@@ -38,7 +38,7 @@ fn dfs(zz: &mut Globals, n: NodeId) {
 }
 
 /// `acyclic`.
-pub fn acyclic_(zz: &mut Globals, g: GraphId) {
+pub(crate) fn acyclic_(zz: &mut Globals, g: GraphId) {
     for c in 0..zz.gd(g).comp.size {
         let first = zz
             .node_lists

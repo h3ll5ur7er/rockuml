@@ -116,7 +116,7 @@ fn attach_phase_attrs(maxphase: i32) -> ! {
 }
 
 /// `dotLayout`: initialisation, then the phases: rank, mincross, position, sameports, splines.
-pub fn dotLayout(zz: &mut Globals, g: GraphId) {
+pub(crate) fn dotLayout(zz: &mut Globals, g: GraphId) {
     let phase = agfindgraphattr(zz, g, "phase");
     let maxphase = late_int(zz, g, phase, -1, 1);
 
@@ -163,7 +163,7 @@ fn doDot(zz: &mut Globals, g: GraphId) {
 }
 
 /// `dot_layout`.
-pub fn dot_layout(zz: &mut Globals, g: GraphId) {
+pub(crate) fn dot_layout(zz: &mut Globals, g: GraphId) {
     if agnnodes(zz, g) != 0 {
         doDot(zz, g);
     }
@@ -171,6 +171,6 @@ pub fn dot_layout(zz: &mut Globals, g: GraphId) {
 }
 
 /// `dot_root`: the root graph of the layout `p` belongs to.
-pub fn dot_root(zz: &Globals, p: impl Into<Agobj>) -> GraphId {
+pub(crate) fn dot_root(zz: &Globals, p: impl Into<Agobj>) -> GraphId {
     zz.gd(agroot(zz, p)).dotroot.expect("GD_dotroot")
 }

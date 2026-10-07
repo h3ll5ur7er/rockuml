@@ -57,12 +57,12 @@ fn ffe(zz: &Globals, u: NodeId, uL: elist, v: NodeId, vL: elist) -> Option<EdgeI
 }
 
 /// `find_fast_edge`.
-pub fn find_fast_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
+pub(crate) fn find_fast_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
     ffe(zz, u, zz.nd(u).out, v, zz.nd(v).in_)
 }
 
 /// `find_flat_edge`.
-pub fn find_flat_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
+pub(crate) fn find_flat_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
     ffe(zz, u, zz.nd(u).flat_out, v, zz.nd(v).flat_in)
 }
 
@@ -76,7 +76,7 @@ fn safe_list_append(zz: &mut Globals, e: EdgeId, n: NodeId, which: EdgeList) {
 }
 
 /// `fast_edge`: installs `e` in its tail's out-list and its head's in-list.
-pub fn fast_edge(zz: &mut Globals, e: EdgeId) -> EdgeId {
+pub(crate) fn fast_edge(zz: &mut Globals, e: EdgeId) -> EdgeId {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     append(zz, e, tail, EdgeList::Out);
     append(zz, e, head, EdgeList::In);
@@ -98,20 +98,20 @@ pub(crate) fn zapinlist(zz: &mut Globals, n: NodeId, which: EdgeList, e: EdgeId)
 }
 
 /// `delete_fast_edge`.
-pub fn delete_fast_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn delete_fast_edge(zz: &mut Globals, e: EdgeId) {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     zapinlist(zz, tail, EdgeList::Out, e);
     zapinlist(zz, head, EdgeList::In, e);
 }
 
 /// `other_edge`.
-pub fn other_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn other_edge(zz: &mut Globals, e: EdgeId) {
     let tail = agtail(zz, e);
     append(zz, e, tail, EdgeList::Other);
 }
 
 /// `safe_other_edge`.
-pub fn safe_other_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn safe_other_edge(zz: &mut Globals, e: EdgeId) {
     let tail = agtail(zz, e);
     safe_list_append(zz, e, tail, EdgeList::Other);
 }
@@ -127,7 +127,12 @@ pub(crate) fn new_edge_pair(zz: &mut Globals) -> EdgeId {
 }
 
 /// `new_virtual_edge`: a virtual edge from `u` to `v`, standing for `orig` if given.
-pub fn new_virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
+pub(crate) fn new_virtual_edge(
+    zz: &mut Globals,
+    u: NodeId,
+    v: NodeId,
+    orig: Option<EdgeId>,
+) -> EdgeId {
     let e = new_edge_pair(zz);
     M_agtail(zz, e, u);
     M_aghead(zz, e, v);
@@ -169,13 +174,13 @@ pub fn new_virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<Edg
 }
 
 /// `virtual_edge`: a new virtual edge, installed in the fast graph.
-pub fn virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
+pub(crate) fn virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
     let e = new_virtual_edge(zz, u, v, orig);
     fast_edge(zz, e)
 }
 
 /// `fast_node`: prepends `n` to `g`'s node list.
-pub fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
+pub(crate) fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
     let next = zz.gd(g).nlist;
     zz.nd_mut(n).next = next;
     if let Some(next) = next {
@@ -186,7 +191,7 @@ pub fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
 }
 
 /// `delete_fast_node`.
-pub fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
+pub(crate) fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
     let (prev, next) = (zz.nd(n).prev, zz.nd(n).next);
     if let Some(next) = next {
         zz.nd_mut(next).prev = prev;
@@ -198,7 +203,7 @@ pub fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
 }
 
 /// `virtual_node`: a new virtual node of `g`, in its fast graph.
-pub fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
+pub(crate) fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
     let root = agroot(zz, g);
     let n = zz.new_agnode(root);
     zz.tag_mut(n).objtype = AGNODE;
@@ -220,7 +225,7 @@ pub fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
 }
 
 /// `flat_edge`: installs a flat (same rank) edge.
-pub fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
+pub(crate) fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     append(zz, e, tail, EdgeList::FlatOut);
     append(zz, e, head, EdgeList::FlatIn);
@@ -230,7 +235,7 @@ pub fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
 }
 
 /// `delete_flat_edge`.
-pub fn delete_flat_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn delete_flat_edge(zz: &mut Globals, e: EdgeId) {
     if let Some(orig) = zz.ed(e).to_orig
         && zz.ed(orig).to_virt == Some(e)
     {
@@ -256,7 +261,7 @@ fn basic_merge(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
 }
 
 /// `merge_oneway`: makes `rep` stand for `e` too.
-pub fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
+pub(crate) fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     if Some(rep) == zz.ed(e).to_virt {
         unimplemented!("merge_oneway glitch");
     }

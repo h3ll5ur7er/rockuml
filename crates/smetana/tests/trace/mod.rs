@@ -4,15 +4,15 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
-use smetana::cgraph::attr::{agattr, agsafeset};
-use smetana::cgraph::edge::agedge;
-use smetana::cgraph::graph::agopen;
-use smetana::cgraph::node::agnode;
-use smetana::cgraph::subg::agsubg;
-use smetana::cgraph::{AGNODE, Agobj};
-use smetana::core::Globals;
-use smetana::core::ids::{EdgeId, GraphId, NodeId};
-use smetana::h::cgraph::Agdirected;
+use smetana::internals::cgraph::attr::{agattr, agsafeset};
+use smetana::internals::cgraph::edge::agedge;
+use smetana::internals::cgraph::graph::agopen;
+use smetana::internals::cgraph::node::agnode;
+use smetana::internals::cgraph::subg::agsubg;
+use smetana::internals::cgraph::{AGNODE, Agobj};
+use smetana::internals::core::Globals;
+use smetana::internals::core::ids::{EdgeId, GraphId, NodeId};
+use smetana::internals::h::cgraph::Agdirected;
 
 /// A graph, node or edge as a trace names it.
 #[derive(Clone, Debug, PartialEq, Eq)]

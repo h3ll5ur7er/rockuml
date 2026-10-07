@@ -423,7 +423,7 @@ fn addXLabels(zz: &mut Globals, gp: GraphId) {
 }
 
 /// `gv_postprocess`.
-pub fn gv_postprocess(zz: &mut Globals, g: GraphId, allowTranslation: bool) {
+pub(crate) fn gv_postprocess(zz: &mut Globals, g: GraphId, allowTranslation: bool) {
     zz.Rankdir = zz.gd(g).GD_rankdir();
     zz.Flip = zz.gd(g).GD_flip();
     if zz.Flip {

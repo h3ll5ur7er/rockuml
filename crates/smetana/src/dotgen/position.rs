@@ -115,7 +115,7 @@ fn nsiter2(zz: &mut Globals, g: GraphId) -> i32 {
 }
 
 /// `make_aux_edge`: an auxiliary edge from `u` to `v` of minimum length `len` and weight `wt`, in the fast graph.
-pub fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) -> EdgeId {
+pub(crate) fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) -> EdgeId {
     let e = new_edge_pair(zz);
     M_agtail(zz, e, u);
     M_aghead(zz, e, v);
@@ -823,7 +823,7 @@ fn make_leafslots(zz: &mut Globals, g: GraphId) {
 }
 
 /// `ports_eq`: whether two edges have the same ports (undefined ports match any).
-pub fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
+pub(crate) fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
     let (e, f) = (zz.ed(e), zz.ed(f));
     e.head_port.defined == f.head_port.defined
         && ((e.head_port.p.x == f.head_port.p.x && e.head_port.p.y == f.head_port.p.y)

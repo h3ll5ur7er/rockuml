@@ -7,7 +7,7 @@ use crate::core::Globals;
 use crate::core::ids::GraphId;
 
 /// `agroot`: the root graph an object belongs to.
-pub fn agroot(zz: &Globals, obj: impl Into<Agobj>) -> GraphId {
+pub(crate) fn agroot(zz: &Globals, obj: impl Into<Agobj>) -> GraphId {
     match obj.into() {
         Agobj::Graph(g) => zz.graphs[g].root,
         Agobj::Node(n) => zz.nodes[n].root,
@@ -16,7 +16,7 @@ pub fn agroot(zz: &Globals, obj: impl Into<Agobj>) -> GraphId {
 }
 
 /// `agraphof`: a graph itself, or the root graph of a node or edge.
-pub fn agraphof(zz: &Globals, obj: impl Into<Agobj>) -> GraphId {
+pub(crate) fn agraphof(zz: &Globals, obj: impl Into<Agobj>) -> GraphId {
     match obj.into() {
         Agobj::Graph(g) => g,
         other => agroot(zz, other),

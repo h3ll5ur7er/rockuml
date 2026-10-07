@@ -149,7 +149,7 @@ fn drawing(zz: &mut Globals, g: GraphId) -> &mut layout_t {
 }
 
 /// `do_graph_label`: the label of a graph or cluster, and the room a cluster keeps for it.
-pub fn do_graph_label(zz: &mut Globals, sg: GraphId) {
+pub(crate) fn do_graph_label(zz: &mut Globals, sg: GraphId) {
     let Some(str) = agget(zz, sg, "label").filter(|&s| !zz.agstr(s).is_empty()) else {
         return;
     };

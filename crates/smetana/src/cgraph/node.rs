@@ -83,7 +83,7 @@ fn initnode(zz: &mut Globals, g: GraphId, n: NodeId) {
 }
 
 /// `agidnode`: the node of `g` with this id. Smetana cannot create nodes by id.
-pub fn agidnode(zz: &mut Globals, g: GraphId, id: i32) -> Option<NodeId> {
+pub(crate) fn agidnode(zz: &mut Globals, g: GraphId, id: i32) -> Option<NodeId> {
     agfindnode_by_id(zz, g, id)
 }
 
@@ -114,7 +114,7 @@ pub fn agnode(zz: &mut Globals, g: GraphId, name: Option<&str>, cflag: bool) -> 
 }
 
 /// `agsubnode`: `n0` as a node of `g`, inserted into `g` (and its ancestors) when `cflag` is set.
-pub fn agsubnode(zz: &mut Globals, g: GraphId, n0: NodeId, cflag: bool) -> Option<NodeId> {
+pub(crate) fn agsubnode(zz: &mut Globals, g: GraphId, n0: NodeId, cflag: bool) -> Option<NodeId> {
     if agroot(zz, g) != zz.nodes[n0].root {
         return None;
     }

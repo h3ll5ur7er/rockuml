@@ -156,7 +156,7 @@ pub(crate) fn mergeable(zz: &Globals, e: Option<EdgeId>, f: EdgeId) -> bool {
 }
 
 /// `class2`.
-pub fn class2(zz: &mut Globals, g: GraphId) {
+pub(crate) fn class2(zz: &mut Globals, g: GraphId) {
     zz.gd_mut(g).nlist = None;
     zz.gd_mut(g).n_nodes = 0;
 

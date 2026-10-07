@@ -9,11 +9,11 @@ mod trace;
 use std::collections::HashMap;
 use std::panic::{self, AssertUnwindSafe};
 
-use smetana::cgraph::node::{agfstnode, agnxtnode};
-use smetana::common::postproc::dotneato_postprocess;
-use smetana::core::Globals;
-use smetana::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
-use smetana::h::{bezier, boxf, pointf, splines, textlabel_t};
+use smetana::internals::cgraph::node::{agfstnode, agnxtnode};
+use smetana::internals::common::postproc::dotneato_postprocess;
+use smetana::internals::core::Globals;
+use smetana::internals::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
+use smetana::internals::h::{bezier, boxf, pointf, splines, textlabel_t};
 use trace::Replay;
 
 const FIXTURE: &str = include_str!("data/postproc.txt");

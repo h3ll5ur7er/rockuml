@@ -269,7 +269,7 @@ fn label_width(zz: &Globals, g: GraphId, e: EdgeId) -> f64 {
 /// `flat_edges`: marks flat edges whose ends are adjacent, and makes label nodes for the labeled ones that are
 /// not (adding rank -1 if needed). Adjacent labeled edges keep their label width in `ED_dist` of the
 /// representative edge. Returns whether label nodes were made, so that y coordinates must be set again.
-pub fn flat_edges(zz: &mut Globals, g: GraphId) -> bool {
+pub(crate) fn flat_edges(zz: &mut Globals, g: GraphId) -> bool {
     let mut reset = false;
 
     let mut n = zz.gd(g).nlist;

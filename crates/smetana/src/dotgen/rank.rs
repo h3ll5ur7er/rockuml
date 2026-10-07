@@ -329,6 +329,6 @@ pub fn dot_rank(zz: &mut Globals, g: GraphId) {
 }
 
 /// `is_cluster`: whether a subgraph's name starts with "cluster".
-pub fn is_cluster(zz: &Globals, g: GraphId) -> bool {
+pub(crate) fn is_cluster(zz: &Globals, g: GraphId) -> bool {
     agnameof(zz, g).is_some_and(|name| name.starts_with("cluster"))
 }

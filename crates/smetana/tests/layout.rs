@@ -2,7 +2,7 @@
 //! trace: `phase rank` (each graph's and cluster's rank range, then every real node's rank), `phase mincross`
 //! (each rank's nodes left to right), `phase position` (every node's coordinates and size, each graph's
 //! bounding box), `phase splines` (every edge's splines and labels) and, for the whole layout with
-//! post-processing, `phase final`.
+//! post-processing, `phase final`, both through the ported functions and through the public API.
 
 mod trace;
 
@@ -10,23 +10,24 @@ use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
-use smetana::cgraph::id::agnameof;
-use smetana::cgraph::node::{agfstnode, agnxtnode};
-use smetana::cgraph::rec::{Rec, agbindrec};
-use smetana::common::input::graph_init;
-use smetana::common::utils::setEdgeType;
-use smetana::core::Globals;
-use smetana::core::consts::{ET_SPLINE, VIRTUAL};
-use smetana::core::ids::{GraphId, NodeId, TextlabelId};
-use smetana::dotgen::aspect::setAspect;
-use smetana::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
-use smetana::dotgen::dotsplines::dot_splines;
-use smetana::dotgen::mincross::dot_mincross;
-use smetana::dotgen::position::dot_position;
-use smetana::dotgen::rank::dot_rank;
-use smetana::dotgen::sameport::dot_sameports;
-use smetana::gvc::gvlayout::gvLayoutJobs;
-use trace::Replay;
+use smetana::internals::cgraph::id::agnameof;
+use smetana::internals::cgraph::node::{agfstnode, agnxtnode};
+use smetana::internals::cgraph::rec::{Rec, agbindrec};
+use smetana::internals::common::input::graph_init;
+use smetana::internals::common::utils::setEdgeType;
+use smetana::internals::core::Globals;
+use smetana::internals::core::consts::{ET_SPLINE, VIRTUAL};
+use smetana::internals::core::ids::{GraphId, NodeId, TextlabelId};
+use smetana::internals::dotgen::aspect::setAspect;
+use smetana::internals::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
+use smetana::internals::dotgen::dotsplines::dot_splines;
+use smetana::internals::dotgen::mincross::dot_mincross;
+use smetana::internals::dotgen::position::dot_position;
+use smetana::internals::dotgen::rank::dot_rank;
+use smetana::internals::dotgen::sameport::dot_sameports;
+use smetana::internals::gvc::gvlayout::gvLayoutJobs;
+use smetana::{Drawing, Graph, Label, Node, Object, Subgraph};
+use trace::{Call, Replay};
 
 /// `gvLayoutJobs` → `dot_layout` → `doDot` → `dotLayout`, up to `dot_rank`.
 fn layout_until_rank(r: &mut Replay) {
@@ -346,18 +347,27 @@ fn expected_label_sizes(trace: &trace::Trace) -> String {
         .collect()
 }
 
-/// Lays out every trace's graph with `run`, then compares the text it returns with `expected`'s.
+/// Replays every trace's input through the ported cgraph, lays its graph out with `run`, then compares the text
+/// it returns with `expected`'s.
 fn check_all(run: fn(&mut Replay) -> String, expected: fn(&trace::Trace) -> String) {
+    check_all_traces(
+        |t| {
+            let mut replay = trace::replay(&t.input);
+            run(&mut replay)
+        },
+        expected,
+    );
+}
+
+/// Runs `run` on every trace, then compares the text it returns with `expected`'s.
+fn check_all_traces(run: impl Fn(&trace::Trace) -> String, expected: fn(&trace::Trace) -> String) {
     let traces = trace::files(&trace::repo_tests_dir().join("smetana"), "trace");
     assert!(!traces.is_empty(), "no traces");
     let mut failures = Vec::new();
     for path in &traces {
         let trace = trace::parse(&std::fs::read_to_string(path).unwrap());
         let want = expected(&trace);
-        let got = catch_unwind(AssertUnwindSafe(|| {
-            let mut replay = trace::replay(&trace.input);
-            run(&mut replay)
-        }));
+        let got = catch_unwind(AssertUnwindSafe(|| run(&trace)));
         match got {
             Ok(got) if got == want => {}
             Ok(got) => {
@@ -541,4 +551,189 @@ fn whole_layouts_match_java() {
         },
         |t| expected_section(t, "final"),
     );
+}
+
+/// API objects with their trace names, in creation order.
+type Named<T> = Vec<(String, T)>;
+
+/// The object named `name`.
+fn find<T: Copy>(list: &[(String, T)], name: &str) -> T {
+    list.iter()
+        .find(|(n, _)| n == name)
+        .map_or_else(|| panic!("unknown {name}"), |&(_, x)| x)
+}
+
+/// Makes the calls of a trace's input section through the public API, as PlantUML made them, and lays the graph
+/// out. Returns the drawing with the trace's names for its subgraphs and nodes.
+fn layout_through_api(input: &[Call]) -> (Drawing, Named<Subgraph>, Named<Node>) {
+    let mut graph = Graph::new();
+    let Some(Call::Agopen(root)) = input.first() else {
+        panic!("a trace starts with agopen")
+    };
+    let mut subgraphs = vec![(root.clone(), graph.root())];
+    let mut nodes = Vec::new();
+    let mut edges = Vec::new();
+    for c in &input[1..] {
+        match c {
+            Call::Agopen(_) => panic!("a second agopen"),
+            Call::Agsubg { graph: g, name } => {
+                let subg = graph.subgraph(find(&subgraphs, g), name);
+                subgraphs.push((name.clone(), subg));
+            }
+            Call::Agnode { graph: g, name } => {
+                let n = graph.node(find(&subgraphs, g), name);
+                nodes.push((name.clone(), n));
+            }
+            Call::Agedge {
+                graph: g,
+                tail,
+                head,
+                name,
+            } => {
+                assert!(name.is_none(), "PlantUML's edges are anonymous");
+                let (t, h) = (find(&nodes, tail), find(&nodes, head));
+                edges.push(graph.edge(find(&subgraphs, g), t, h));
+            }
+            Call::Agsafeset {
+                object,
+                name,
+                value,
+                def,
+            } => {
+                let obj: Object = match object {
+                    trace::Object::Graph(g) => find(&subgraphs, g).into(),
+                    trace::Object::Node(n) => find(&nodes, n).into(),
+                    trace::Object::Edge(i) => edges[i - 1].into(),
+                };
+                let size = value
+                    .strip_prefix("_dim_")
+                    .and_then(|v| v.strip_suffix('_'))
+                    .and_then(|v| v.split_once('_'))
+                    .and_then(|(w, h)| Some((w.parse::<i32>().ok()?, h.parse::<i32>().ok()?)));
+                match size {
+                    Some((w, h)) if def.is_empty() => {
+                        graph.set_label_size(obj, name, f64::from(w), f64::from(h));
+                    }
+                    _ if def.is_empty() => graph.set(obj, name, value),
+                    _ => graph.set_with_default(obj, name, value, def),
+                }
+            }
+            Call::GvContext => graph.gv_context(),
+            Call::GvLayoutJobs(_) => break,
+        }
+    }
+    let drawing = graph.layout().unwrap_or_else(|e| panic!("{e}"));
+    (drawing, subgraphs, nodes)
+}
+
+/// A label as the Java tracer writes it.
+fn api_label(out: &mut String, reference: &str, kind: &str, label: Option<&Label>) {
+    if let Some(l) = label {
+        writeln!(
+            out,
+            "{reference} {kind} pos {:?} {:?} dimen {:?} {:?} set {}",
+            l.pos.x,
+            l.pos.y,
+            l.size.x,
+            l.size.y,
+            i32::from(l.placed)
+        )
+        .unwrap();
+    }
+}
+
+/// The `phase final` section from a drawing, without node widths in points (which PlantUML does not read), and
+/// with the graphs sorted: the API lists them in creation order, the tracer in dot's cluster order.
+fn dump_drawing(trace: &trace::Trace) -> String {
+    let (drawing, subgraphs, nodes) = layout_through_api(&trace.input);
+    let mut graphs = Vec::new();
+    for (name, g) in &subgraphs {
+        let reference = format!("graph {}", trace::quote(name));
+        let layout = drawing.subgraph(*g);
+        let (ll, ur) = (layout.bb.lower_left, layout.bb.upper_right);
+        let mut out = format!(
+            "{reference} bb {:?} {:?} {:?} {:?}
+",
+            ll.x, ll.y, ur.x, ur.y
+        );
+        api_label(&mut out, &reference, "label", layout.label.as_ref());
+        graphs.extend(out.lines().map(str::to_owned));
+    }
+    graphs.sort();
+    let mut out = graphs.join(
+        "
+",
+    ) + "
+";
+    for (name, n) in &nodes {
+        let layout = drawing.node(*n);
+        writeln!(
+            out,
+            "node {} coord {:?} {:?} width {:?} height {:?}",
+            trace::quote(name),
+            layout.center.x,
+            layout.center.y,
+            layout.width,
+            layout.height
+        )
+        .unwrap();
+    }
+    for (i, e) in drawing.edges().iter().enumerate() {
+        let reference = format!("edge e{}", i + 1);
+        if e.beziers.is_empty() {
+            writeln!(out, "{reference} spl none").unwrap();
+        }
+        for (j, bz) in e.beziers.iter().enumerate() {
+            write!(
+                out,
+                "{reference} bezier {j} sflag {} eflag {} sp {:?} {:?} ep {:?} {:?} points {}",
+                bz.sflag,
+                bz.eflag,
+                bz.sp.x,
+                bz.sp.y,
+                bz.ep.x,
+                bz.ep.y,
+                bz.points.len()
+            )
+            .unwrap();
+            for p in &bz.points {
+                write!(out, " {:?} {:?}", p.x, p.y).unwrap();
+            }
+            out.push('\n');
+        }
+        api_label(&mut out, &reference, "label", e.label.as_ref());
+        api_label(&mut out, &reference, "head_label", e.head_label.as_ref());
+        api_label(&mut out, &reference, "tail_label", e.tail_label.as_ref());
+    }
+    out
+}
+
+/// Java's `phase final` section in [`dump_drawing`]'s form.
+fn expected_drawing(trace: &trace::Trace) -> String {
+    let section = expected_section(trace, "final");
+    let mut graphs: Vec<&str> = section
+        .lines()
+        .filter(|l| l.starts_with("graph "))
+        .collect();
+    graphs.sort_unstable();
+    let mut out = graphs.join(
+        "
+",
+    ) + "
+";
+    for l in section.lines().filter(|l| !l.starts_with("graph ")) {
+        let l = if l.starts_with("node ") {
+            l.split_once(" lw ").map_or(l, |(head, _)| head)
+        } else {
+            l
+        };
+        out.push_str(l);
+        out.push('\n');
+    }
+    out
+}
+
+#[test]
+fn layouts_through_the_api_match_java() {
+    check_all_traces(dump_drawing, expected_drawing);
 }

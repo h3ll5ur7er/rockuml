@@ -101,7 +101,7 @@ fn make_simple_label(zz: &mut Globals, lp: TextlabelId) {
 }
 
 /// `make_label`: a new text label of `obj`. Record labels are kept verbatim for the record parser.
-pub fn make_label(
+pub(crate) fn make_label(
     zz: &mut Globals,
     obj: Agobj,
     str: &str,

@@ -47,7 +47,7 @@ fn recs_mut(zz: &mut Globals, obj: Agobj) -> &mut u8 {
 }
 
 /// `aggetrec(obj, name) != NULL`.
-pub fn aggetrec(zz: &mut Globals, obj: impl Into<Agobj>, rec: Rec) -> bool {
+pub(crate) fn aggetrec(zz: &mut Globals, obj: impl Into<Agobj>, rec: Rec) -> bool {
     let obj = obj.into();
     *recs_mut(zz, obj) & rec.bit() != 0
 }
