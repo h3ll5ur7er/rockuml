@@ -11,6 +11,7 @@ use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
+use crate::klimt::geom::XRectangle2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::sdot::SmetanaEdge;
 use crate::stereo::Stereotype;
@@ -32,6 +33,16 @@ pub(crate) trait IEntityImage: TextBlock {
 
     fn is_hidden(&self) -> bool;
 
+    /// Where the image draws the member of its entity that best matches `member`, which tips point at
+    /// (`getBestMatch`, then `getInnerPosition`); images without members have none.
+    fn get_inner_position(
+        &self,
+        _member: &str,
+        _string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        None
+    }
+
     /// `EntityImageNote.setOpaleLink`: a note whose single link goes to `other` draws that link as part of
     /// its outline, which the layout then leaves out. The layout asks notes only.
     fn set_opale_link(&mut self, _link: LinkId, _other: EntityId) {
@@ -47,11 +58,9 @@ pub(crate) trait IEntityImage: TextBlock {
 
 /// What a laid out image can see of the rest of its layout while it is drawn.
 pub(crate) struct LayoutContext<'a> {
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub diagram: &'a CucaDiagram,
     pub bibliotekon: &'a Bibliotekon,
     /// The edges drawn, by link, in the order of the diagram's links.
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub smetana_pathes: &'a [(LinkId, SmetanaEdge)],
 }
 
@@ -65,7 +74,6 @@ impl LayoutContext<'_> {
             .expect("the layout has a node for every leaf it draws")
     }
 
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_smetana_edge(&self, link: LinkId) -> Option<&SmetanaEdge> {
         self.smetana_pathes
             .iter()
