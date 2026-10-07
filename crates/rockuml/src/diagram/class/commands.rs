@@ -1,10 +1,18 @@
-//! The commands of class and object diagrams, in the order `ClassDiagramFactory` tries them. None is
-//! ported yet: they only recognise their lines.
+//! The commands of class and object diagrams. Most are not ported yet and only recognise their lines;
+//! those whose failures decide whether the lines are a class diagram at all are.
 
-use crate::command::Command;
+use std::sync::LazyLock;
+
+use regex::Regex;
+
+use super::ClassDiagram;
 use crate::command::unported::{self, NotPortedCommands};
+use crate::command::{
+    Command, CommandError, CommandResult, PatternCommand, SingleLine, SingleLineCommand,
+};
 use crate::klimt::url::Url;
-use crate::pattern::{RegexTree, plantuml_regex};
+use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
+use crate::text::LineLocation;
 use crate::{color, stereo};
 
 /// PlantUML's `CommandAddMethod`.
@@ -241,19 +249,21 @@ pub(super) fn create_entity_object<D: NotPortedCommands + 'static>() -> Box<dyn 
     .boxed()
 }
 
-/// PlantUML's `CommandAllowMixing`.
-pub(super) fn allow_mixing<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandAllowMixing",
+/// PlantUML's `CommandAllowMixing`: classes and description elements may mix.
+pub(super) fn allow_mixing() -> Box<dyn Command<ClassDiagram>> {
+    Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::leaf(r"allow"),
-            RegexTree::leaf(r"_?"),
-            RegexTree::leaf(r"mixing"),
+            RegexTree::leaf("allow"),
+            RegexTree::leaf("_?"),
+            RegexTree::leaf("mixing"),
             RegexTree::end(),
         ]),
-    )
-    .boxed()
+        |diagram: &mut ClassDiagram, _: &LineLocation, _: &RegexResult| {
+            diagram.allow_mixing = true;
+            Ok(())
+        },
+    )))
 }
 
 /// PlantUML's `CommandCreateElementParenthesis`.
@@ -390,73 +400,78 @@ pub(super) fn package_empty<D: NotPortedCommands + 'static>() -> Box<dyn Command
     .boxed()
 }
 
-/// PlantUML's `CommandCreateElementFull2`.
-pub(super) fn create_element_full2_normal_keyword<D: NotPortedCommands + 'static>()
--> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandCreateElementFull2",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::named(1, "SYMBOL", r"(state|person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::or(vec![
-                RegexTree::named(1, "CODE1", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])"),
-                RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY2", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
-                    stereo::optional_pattern("STEREOTYPE2"),
-                    RegexTree::leaf(r"as"),
-                    RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE2", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
-                ]),
-            ]),
-            RegexTree::spaces_zero_or_more(),
-            stereo::tags_pattern("TAGS1"),
-            stereo::optional_pattern("STEREOTYPE"),
-            stereo::tags_pattern("TAGS2"),
-            RegexTree::spaces_zero_or_more(),
-            Url::optional_pattern(),
-            RegexTree::spaces_zero_or_more(),
-            color::optional_pattern("COLOR"),
-            RegexTree::end(),
-        ]),
-    )
-        .forbidding(r"[\p{L}0-9_.]+")
-    .boxed()
+/// Whether description elements need the `mix_` prefix (`CommandCreateElementFull2.Mode`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(super) enum Mode {
+    NormalKeyword,
+    WithMixPrefix,
 }
 
-/// PlantUML's `CommandCreateElementFull2`.
-pub(super) fn create_element_full2_with_mix_prefix<D: NotPortedCommands + 'static>()
--> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandCreateElementFull2",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"mix_"),
-            RegexTree::named(1, "SYMBOL", r"(state|person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::or(vec![
-                RegexTree::named(1, "CODE1", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])"),
-                RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY2", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
-                    stereo::optional_pattern("STEREOTYPE2"),
-                    RegexTree::leaf(r"as"),
-                    RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE2", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
-                ]),
+/// PlantUML's `CommandCreateElementFull2`: description elements in a class diagram. Without `allowmixing`,
+/// only their `mix_` form is allowed.
+pub(super) fn create_element_full2(mode: Mode) -> Box<dyn Command<ClassDiagram>> {
+    let mut pattern = vec![RegexTree::start()];
+    if mode == Mode::WithMixPrefix {
+        pattern.push(RegexTree::leaf("mix_"));
+    }
+    pattern.extend([
+        RegexTree::named(1, "SYMBOL", r"(state|person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout)"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::or(vec![
+            RegexTree::named(1, "CODE1", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])"),
+            RegexTree::concat(vec![
+                RegexTree::named(1, "DISPLAY2", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                stereo::optional_pattern("STEREOTYPE2"),
+                RegexTree::leaf("as"),
+                RegexTree::spaces_one_or_more(),
+                RegexTree::named(1, "CODE2", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
             ]),
-            RegexTree::spaces_zero_or_more(),
-            stereo::tags_pattern("TAGS1"),
-            stereo::optional_pattern("STEREOTYPE"),
-            stereo::tags_pattern("TAGS2"),
-            RegexTree::spaces_zero_or_more(),
-            Url::optional_pattern(),
-            RegexTree::spaces_zero_or_more(),
-            color::optional_pattern("COLOR"),
-            RegexTree::end(),
         ]),
-    )
-        .forbidding(r"[\p{L}0-9_.]+")
-    .boxed()
+        RegexTree::spaces_zero_or_more(),
+        stereo::tags_pattern("TAGS1"),
+        stereo::optional_pattern("STEREOTYPE"),
+        stereo::tags_pattern("TAGS2"),
+        RegexTree::spaces_zero_or_more(),
+        Url::optional_pattern(),
+        RegexTree::spaces_zero_or_more(),
+        color::optional_pattern("COLOR"),
+        RegexTree::end(),
+    ]);
+    Box::new(SingleLine(CreateElementFull2 {
+        mode,
+        pattern: RegexTree::concat(pattern),
+    }))
+}
+
+struct CreateElementFull2 {
+    mode: Mode,
+    pattern: RegexTree,
+}
+
+impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
+    fn pattern(&self) -> &RegexTree {
+        &self.pattern
+    }
+
+    fn is_forbidden(&self, line: &str) -> bool {
+        static FORBIDDEN: LazyLock<Regex> = LazyLock::new(|| java_regex(r"^[\p{L}0-9_.]+$", false));
+        FORBIDDEN.is_match(line)
+    }
+
+    fn execute_arg(
+        &self,
+        diagram: &mut ClassDiagram,
+        _: &LineLocation,
+        _: &RegexResult,
+    ) -> CommandResult {
+        if self.mode == Mode::NormalKeyword && !diagram.allow_mixing {
+            return Err(CommandError::new(
+                "Use 'allowmixing' if you want to mix classes and other UML elements.",
+            ));
+        }
+        diagram.command_not_ported("CommandCreateElementFull2");
+        Ok(())
+    }
 }
 
 /// PlantUML's `CommandNamespace`.

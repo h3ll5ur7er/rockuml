@@ -9,21 +9,26 @@ use super::builder::CommandFactory;
 use super::common_commands::{
     add_common_commands2, add_common_hides, add_common_scale_commands, add_title_commands,
 };
+use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram};
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
-use super::titled::{Titled, TitledDiagram};
+use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::pattern::RegexTree;
 use crate::style::SName;
 
+/// Drawing class diagrams is not ported yet; it is reported as soon as the lines read as one.
+const NOT_PORTED: NotYetPorted = NotYetPorted("class diagrams");
+
 pub(super) struct ClassDiagram {
     source: Rc<UmlSource>,
-    titled: Titled,
+    diagram: AbstractClassOrObjectDiagram,
+    /// Description elements may appear among the classes.
+    allow_mixing: bool,
 }
 
 /// Reads class and object diagrams (PlantUML's `ClassDiagramFactory`).
@@ -35,9 +40,12 @@ impl CommandFactory for ClassDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Class;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ClassDiagram {
+        let mut titled = Titled::new(SName::ClassDiagram, "CLASS", source);
+        titled.not_ported(NOT_PORTED);
         ClassDiagram {
-            titled: Titled::new(SName::ClassDiagram, "CLASS", source),
             source: source.clone(),
+            diagram: AbstractClassOrObjectDiagram::new(titled),
+            allow_mixing: false,
         }
     }
 
@@ -68,8 +76,8 @@ impl CommandFactory for ClassDiagramFactory {
             commands::package_empty(),
             cuca_commands::package_with_usymbol(),
             cuca_commands::together(),
-            commands::create_element_full2_normal_keyword(),
-            commands::create_element_full2_with_mix_prefix(),
+            commands::create_element_full2(commands::Mode::NormalKeyword),
+            commands::create_element_full2(commands::Mode::WithMixPrefix),
             note::note(),
             commands::namespace(),
             commands::namespace2(),
@@ -102,11 +110,42 @@ fn code_for_class() -> RegexTree {
     RegexTree::named(1, "CODE", "([^%s{}%g<>]+|[%g][^%g]+[%g])")
 }
 
-impl AbstractDiagram for ClassDiagram {}
+impl AbstractDiagram for ClassDiagram {
+    fn starting_pass(&mut self, _pass: ParserPass) {
+        self.diagram.cuca.starting_pass();
+    }
+
+    /// Links between the same entities all get the length 1 if one of them has it.
+    fn check_final_error(&mut self) -> Option<String> {
+        let cuca = &mut self.diagram.cuca;
+        let links = cuca.get_link_ids().to_vec();
+        for &link in &links {
+            if cuca.link(link).get_length() != 1 {
+                continue;
+            }
+            for &link2 in &links {
+                if cuca.link(link2).same_connections(cuca.link(link))
+                    && cuca.link(link2).get_length() != 1
+                {
+                    cuca.link_mut(link2).set_length(1);
+                }
+            }
+        }
+        if cuca
+            .titled
+            .pragma
+            .is_false(PragmaKey::UseIntermediatePackages)
+        {
+            cuca.pack_some_package();
+        }
+        cuca.apply_single_strategy();
+        None
+    }
+}
 
 impl TitledDiagram for ClassDiagram {
     fn titled(&mut self) -> &mut Titled {
-        &mut self.titled
+        &mut self.diagram.cuca.titled
     }
 }
 
@@ -120,13 +159,13 @@ impl Diagram for ClassDiagram {
         _page: usize,
         _string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NotYetPorted("class diagrams"))
+        Err(NOT_PORTED)
     }
 
     fn export_settings(&self) -> ExportSettings {
-        self.titled.export_settings(
-            self.source.seed(),
-            ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 5.0, 5.0, 0.0),
-        )
+        self.diagram
+            .cuca
+            .titled
+            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
     }
 }

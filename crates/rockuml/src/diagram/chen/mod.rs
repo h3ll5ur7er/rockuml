@@ -6,20 +6,23 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
+use super::cuca::CucaDiagram;
 use super::cuca_commands;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
-use crate::command::Command;
 use crate::command::factory::AbstractDiagram;
+use crate::command::{Command, ParserPass};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::style::SName;
+
+/// Drawing Chen diagrams is not ported yet; it is reported as soon as the lines read as one.
+const NOT_PORTED: NotYetPorted = NotYetPorted("Chen diagrams");
 
 pub(super) struct ChenEerDiagram {
     source: Rc<UmlSource>,
-    titled: Titled,
+    cuca: CucaDiagram,
 }
 
 /// Reads Chen diagrams (PlantUML's `ChenEerDiagramFactory`).
@@ -31,9 +34,11 @@ impl CommandFactory for ChenEerDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::ChenEer;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ChenEerDiagram {
+        let mut titled = Titled::new(SName::ChenEerDiagram, "CHEN_EER", source);
+        titled.not_ported(NOT_PORTED);
         ChenEerDiagram {
-            titled: Titled::new(SName::ChenEerDiagram, "CHEN_EER", source),
             source: source.clone(),
+            cuca: CucaDiagram::new(titled),
         }
     }
 
@@ -52,11 +57,15 @@ impl CommandFactory for ChenEerDiagramFactory {
     }
 }
 
-impl AbstractDiagram for ChenEerDiagram {}
+impl AbstractDiagram for ChenEerDiagram {
+    fn starting_pass(&mut self, _pass: ParserPass) {
+        self.cuca.starting_pass();
+    }
+}
 
 impl TitledDiagram for ChenEerDiagram {
     fn titled(&mut self) -> &mut Titled {
-        &mut self.titled
+        &mut self.cuca.titled
     }
 }
 
@@ -70,13 +79,12 @@ impl Diagram for ChenEerDiagram {
         _page: usize,
         _string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NotYetPorted("Chen diagrams"))
+        Err(NOT_PORTED)
     }
 
     fn export_settings(&self) -> ExportSettings {
-        self.titled.export_settings(
-            self.source.seed(),
-            ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 5.0, 5.0, 0.0),
-        )
+        self.cuca
+            .titled
+            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
     }
 }

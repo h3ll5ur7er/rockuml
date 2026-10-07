@@ -51,6 +51,7 @@ pub(super) struct Pragma {
 pub(super) enum PragmaKey {
     SequenceMessageSpan,
     Teoz,
+    UseIntermediatePackages,
 }
 
 impl PragmaKey {
@@ -64,6 +65,7 @@ impl PragmaKey {
         match simplified.as_str() {
             "sequencemessagespan" => Some(Self::SequenceMessageSpan),
             "teoz" => Some(Self::Teoz),
+            "useintermediatepackages" => Some(Self::UseIntermediatePackages),
             _ => None,
         }
     }
@@ -72,7 +74,7 @@ impl PragmaKey {
     fn default_value(self) -> Option<&'static str> {
         match self {
             Self::Teoz => Some("true"),
-            Self::SequenceMessageSpan => None,
+            Self::SequenceMessageSpan | Self::UseIntermediatePackages => None,
         }
     }
 }
@@ -85,6 +87,16 @@ impl Pragma {
         let value = value.or(key.default_value()).map(str::to_owned);
         self.values.retain(|(known, _)| *known != key);
         self.values.push((key, value));
+    }
+
+    /// `false` or `off`.
+    pub(super) fn is_false(&self, key: PragmaKey) -> bool {
+        self.values.iter().any(|(known, value)| {
+            *known == key
+                && value.as_deref().is_some_and(|value| {
+                    value.eq_ignore_ascii_case("false") || value.eq_ignore_ascii_case("off")
+                })
+        })
     }
 
     /// `true` or `on`.

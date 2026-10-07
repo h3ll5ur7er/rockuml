@@ -6,21 +6,24 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
+use super::cuca::CucaDiagram;
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
-use super::titled::{Titled, TitledDiagram};
+use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::pattern::RegexTree;
 use crate::style::SName;
 
+/// Drawing description diagrams is not ported yet; it is reported as soon as the lines read as one.
+const NOT_PORTED: NotYetPorted = NotYetPorted("usecase, component and deployment diagrams");
+
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
-    titled: Titled,
+    cuca: CucaDiagram,
 }
 
 /// Reads usecase, component and deployment diagrams (PlantUML's `DescriptionDiagramFactory`).
@@ -32,9 +35,11 @@ impl CommandFactory for DescriptionDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Description;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> DescriptionDiagram {
+        let mut titled = Titled::new(SName::ComponentDiagram, "DESCRIPTION", source);
+        titled.not_ported(NOT_PORTED);
         DescriptionDiagram {
-            titled: Titled::new(SName::ComponentDiagram, "DESCRIPTION", source),
             source: source.clone(),
+            cuca: CucaDiagram::new(titled),
         }
     }
 
@@ -92,11 +97,28 @@ fn code_for_description() -> RegexTree {
     )
 }
 
-impl AbstractDiagram for DescriptionDiagram {}
+impl AbstractDiagram for DescriptionDiagram {
+    fn starting_pass(&mut self, _pass: ParserPass) {
+        self.cuca.starting_pass();
+    }
+
+    fn check_final_error(&mut self) -> Option<String> {
+        if self
+            .cuca
+            .titled
+            .pragma
+            .is_false(PragmaKey::UseIntermediatePackages)
+        {
+            self.cuca.pack_some_package();
+        }
+        self.cuca.apply_single_strategy();
+        None
+    }
+}
 
 impl TitledDiagram for DescriptionDiagram {
     fn titled(&mut self) -> &mut Titled {
-        &mut self.titled
+        &mut self.cuca.titled
     }
 }
 
@@ -110,13 +132,12 @@ impl Diagram for DescriptionDiagram {
         _page: usize,
         _string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NotYetPorted("usecase, component and deployment diagrams"))
+        Err(NOT_PORTED)
     }
 
     fn export_settings(&self) -> ExportSettings {
-        self.titled.export_settings(
-            self.source.seed(),
-            ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 5.0, 5.0, 0.0),
-        )
+        self.cuca
+            .titled
+            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
     }
 }
