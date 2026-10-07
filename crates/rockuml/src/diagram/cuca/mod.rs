@@ -31,6 +31,7 @@ use crate::abel::{
     Bag, Entity, EntityGender, EntityId, EntityPortion, EntityType, GroupType, LeafType, Link,
     LinkArg, LinkId, Together, TogetherId, is_pure_inner_link12,
 };
+use crate::command::CommandError;
 use crate::creole::Display;
 use crate::decoration::LinkType;
 use crate::klimt::TextBlock;
@@ -45,13 +46,6 @@ use crate::style::{SName, StyleBuilder};
 use crate::svek::IEntityImage;
 use crate::text::LineLocation;
 use hide_or_show::HideOrShow;
-
-/// A quark name a command cannot use, and how sure PlantUML is that the line was meant for that command.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Failure {
-    pub error: String,
-    pub score: i32,
-}
 
 /// A diagram of entities and links, which the commands class, description and state diagrams share work on
 /// (in PlantUML, the subclasses of `CucaDiagram`).
@@ -314,19 +308,14 @@ impl CucaDiagram {
         result
     }
 
-    pub(crate) fn quark_in_context(&mut self, reuse_existing_child: bool, full: &str) -> QuarkId {
-        self.quark_in_context_safe(reuse_existing_child, full)
-            .unwrap_or_else(|failure| panic!("{}", failure.error))
-    }
-
-    /// The quark a name written in the current group means. With a separator, `.a.b` starts from the root,
-    /// `a.b` too when `a` is a package below the root, and a plain name already used once elsewhere may
-    /// mean that one.
-    pub(crate) fn quark_in_context_safe(
+    /// The quark a name written in the current group means (`quarkInContextSafe`). With a separator, `.a.b`
+    /// starts from the root, `a.b` too when `a` is a package below the root, and a plain name already used
+    /// once elsewhere may mean that one. The score of a bad name weighs it against other diagram types.
+    pub(crate) fn quark_in_context(
         &mut self,
         reuse_existing_child: bool,
         full: &str,
-    ) -> Result<QuarkId, Failure> {
+    ) -> Result<QuarkId, CommandError> {
         let Some(sep) = self.namespace_separator.clone() else {
             if let Some(result) = self.namespace.first_with_name(full) {
                 return Ok(result);
@@ -335,10 +324,10 @@ impl CucaDiagram {
             return Ok(self.namespace.child(current, full));
         };
         if full.ends_with(&sep) || full.contains(&format!("{sep}{sep}")) {
-            return Err(Failure {
-                error: format!("Bad name since {sep} is a separator"),
-                score: 3,
-            });
+            return Err(CommandError::with_score(
+                format!("Bad name since {sep} is a separator"),
+                3,
+            ));
         }
         let current_quark = self.entity(self.get_current_group()).get_quark();
         let root = QuarkId::ROOT;
@@ -362,10 +351,7 @@ impl CucaDiagram {
                 .get_data()
                 .is_some_and(|data| !self.entity(data).is_group())
             {
-                return Err(Failure {
-                    error: format!("Not a package: {}", &full[..x]),
-                    score: 0,
-                });
+                return Err(CommandError::new(format!("Not a package: {}", &full[..x])));
             }
             return Ok(self.namespace.child(root, full));
         }

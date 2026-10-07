@@ -13,7 +13,9 @@ use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::labels::Labels;
-use crate::diagram::cuca_commands::{ALL_TYPES, add_tags, colors, exists_with_bad_type3};
+use crate::diagram::cuca_commands::{
+    ALL_TYPES, add_tags, colors, exists_with_bad_type3, unknown_symbol,
+};
 use crate::direction::Direction;
 use crate::java;
 use crate::klimt::url::Url;
@@ -102,8 +104,8 @@ fn execute_link_element(
             diagram.cuca.get_group(ent2_clean).expect("a group"),
         ),
         _ => (
-            get_dummy(location, diagram, ent1),
-            get_dummy(location, diagram, ent2),
+            get_dummy(location, diagram, ent1)?,
+            get_dummy(location, diagram, ent2)?,
         ),
     };
     let cuca = &mut diagram.cuca;
@@ -155,23 +157,27 @@ fn link_type(arg: &RegexResult, queue: &str) -> LinkType {
 /// The entity a link end names, created as its notation says if new: `()x` an interface, `(x)` a use case,
 /// `:x:` an actor, `[x]` a component, a trailing `/` the business variant; a plain name stays unknown
 /// until the diagram is complete.
-fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &str) -> EntityId {
+fn get_dummy(
+    location: &LineLocation,
+    diagram: &mut DescriptionDiagram,
+    ident: &str,
+) -> Result<EntityId, CommandError> {
     if ident.starts_with("()") {
         let ident = diagram.clean_id(ident);
         let cuca = &mut diagram.cuca;
-        let quark = cuca.quark_in_context(true, ident);
+        let quark = cuca.quark_in_context(true, ident)?;
         if let Some(existing) = cuca.quark(quark).get_data() {
-            return existing;
+            return Ok(existing);
         }
         let display = Display::with_newlines(cuca.quark(quark).get_name());
-        return create_leaf(
+        return Ok(create_leaf(
             diagram,
             location,
             quark,
             display,
             LeafType::Description,
             Some(USymbols::INTERFACE),
-        );
+        ));
     }
     let code_char = if ident.chars().count() > 2 {
         ident.chars().next()
@@ -181,9 +187,9 @@ fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &
     let end_with_slash = ident.ends_with('/');
     let ident = diagram.clean_id(ident);
     let cuca = &mut diagram.cuca;
-    let quark = cuca.quark_in_context(true, ident);
+    let quark = cuca.quark_in_context(true, ident)?;
     if let Some(existing) = cuca.quark(quark).get_data() {
-        return existing;
+        return Ok(existing);
     }
     let display = Display::with_newlines(cuca.quark(quark).get_name());
     let (leaf_type, usymbol) = match code_char {
@@ -205,7 +211,9 @@ fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &
         ),
         _ => (LeafType::StillUnknown, None),
     };
-    create_leaf(diagram, location, quark, display, leaf_type, usymbol)
+    Ok(create_leaf(
+        diagram, location, quark, display, leaf_type, usymbol,
+    ))
 }
 
 /// `reallyCreateLeaf` with a symbol.
@@ -368,13 +376,13 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
                 LeafType::Description,
                 Some(
                     USymbols::from_string_skin_param(other, skin)
-                        .unwrap_or_else(|| panic!("{other} names a symbol")),
+                        .ok_or_else(|| unknown_symbol(other))?,
                 ),
             ),
         };
         let code = diagram.clean_id(code_raw).to_owned();
         let cuca = &mut diagram.cuca;
-        let quark = cuca.quark_in_context(false, &code);
+        let quark = cuca.quark_in_context(false, &code)?;
         let name = cuca.quark(quark).get_name().to_owned();
         if cuca.is_group_quark(quark) {
             return Err(already_defined(&name));
@@ -491,7 +499,7 @@ pub(super) fn archimate() -> Box<dyn Command<DescriptionDiagram>> {
             let code = diagram
                 .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
-            let quark = diagram.cuca.quark_in_context(true, &code);
+            let quark = diagram.cuca.quark_in_context(true, &code)?;
             let display = Display::with_newlines(
                 arg.get_lazzy("DISPLAY", 0)
                     .map_or(diagram.cuca.quark(quark).get_name(), CucaDiagram::clean_id),
@@ -556,7 +564,7 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                     .clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
                     .to_owned();
                 let cuca = &mut diagram.cuca;
-                let quark = cuca.quark_in_context(false, &code);
+                let quark = cuca.quark_in_context(false, &code)?;
                 if cuca.quark(quark).get_data().is_some() {
                     return Err(CommandError::new(format!(
                         "Already exists {}",
@@ -607,7 +615,7 @@ pub(super) fn archimate_package() -> Box<dyn Command<DescriptionDiagram>> {
                 .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = &mut diagram.cuca;
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             let display = Display::with_newlines(
                 arg.get_lazzy("DISPLAY", 0)
                     .map_or(cuca.quark(quark).get_name(), CucaDiagram::clean_id),
@@ -661,7 +669,7 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             };
             let code = diagram.clean_id(code_string).to_owned();
             let cuca = &mut diagram.cuca;
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new(format!(
                     "Object already exists : {code_string}"

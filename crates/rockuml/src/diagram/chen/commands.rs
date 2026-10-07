@@ -42,7 +42,7 @@ pub(super) fn create_entity() -> Box<dyn Command<ChenEerDiagram>> {
             };
             let cuca = &mut diagram.cuca;
             let id_short = arg.get("CODE", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short));
+            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short))?;
             let entity = if let Some(entity) = cuca.quark(quark).get_data() {
                 if !cuca
                     .entity_mut(entity)
@@ -107,7 +107,7 @@ pub(super) fn create_attribute() -> Box<dyn Command<ChenEerDiagram>> {
                 CucaDiagram::clean_id(java::trim(arg.get("CODE", 0).unwrap_or_default()))
                     .to_owned();
             let id = format!("{}/{id_short}", cuca.entity(owner).get_name(cuca));
-            let quark = cuca.quark_in_context(true, &id);
+            let quark = cuca.quark_in_context(true, &id)?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new("Attribute already exists"));
             }
@@ -277,7 +277,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
             let symbol = arg.get("SYMBOL", 0).unwrap_or_default();
             let colors = colors(arg, ColorType::Back)?;
             let center_quark =
-                cuca.quark_in_context(false, &format!("{superclass}/{symbol}{subclasses}/center"));
+                cuca.quark_in_context(false, &format!("{superclass}/{symbol}{subclasses}/center"))?;
             if cuca.quark(center_quark).get_data().is_some() {
                 return Err(CommandError::new("Subclasses already exist"));
             }
@@ -330,7 +330,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
 /// The entity a name written in a link means, which must exist.
 fn existing_entity(cuca: &mut CucaDiagram, name: &str) -> Result<EntityId, CommandError> {
     let name = CucaDiagram::clean_id(name).to_owned();
-    let quark = cuca.quark_in_context(true, &name);
+    let quark = cuca.quark_in_context(true, &name)?;
     cuca.quark(quark)
         .get_data()
         .ok_or_else(|| CommandError::new(format!("No such entity: {name}")))

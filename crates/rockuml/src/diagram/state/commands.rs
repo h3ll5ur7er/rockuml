@@ -160,12 +160,12 @@ fn execute_create_state(
     let id_short = arg.get_lazzy("CODE", 0).unwrap_or_default();
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(id_short));
+        .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
     let name = diagram.cuca.quark(quark).get_name().to_owned();
     let display = arg.get_lazzy("DISPLAY", 0).unwrap_or(&name).to_owned();
     let stereogroup = Stereogroup::build(arg.get("STEREOGROUP", 0));
     let leaf_type = stereogroup.get_leaf_type().unwrap_or(LeafType::State);
-    if !diagram.check_concurrent_state_ok(quark) {
+    if !diagram.check_concurrent_state_ok(quark)? {
         return Err(CommandError::new(format!(
             "The state {name} has been created in a concurrent state : it cannot be used here."
         )));
@@ -309,15 +309,15 @@ fn execute_link(
     let cannot_be_used =
         |ent: &str| CommandError::new(format!("The state {ent} cannot be used here."));
     let cl1 = if ent1.starts_with("[*]") {
-        Some(diagram.get_start(location))
+        Some(diagram.get_start(location)?)
     } else {
-        get_entity(diagram, location, ent1)
+        get_entity(diagram, location, ent1)?
     }
     .ok_or_else(|| cannot_be_used(ent1))?;
     let cl2 = if ent2.starts_with("[*]") {
-        Some(diagram.get_end(location))
+        Some(diagram.get_end(location)?)
     } else {
-        get_entity(diagram, location, ent2)
+        get_entity(diagram, location, ent2)?
     }
     .ok_or_else(|| cannot_be_used(ent2))?;
 
@@ -361,57 +361,67 @@ fn execute_link(
 }
 
 /// The state `code` names in a transition, created if needed; `None` when it may not be used here.
-fn get_entity(diagram: &mut StateDiagram, location: &LineLocation, code: &str) -> Option<EntityId> {
+fn get_entity(
+    diagram: &mut StateDiagram,
+    location: &LineLocation,
+    code: &str,
+) -> Result<Option<EntityId>, CommandError> {
     if code.eq_ignore_ascii_case("[H]") {
-        return Some(diagram.get_historical(location));
+        return diagram.get_historical(location).map(Some);
     }
     if let Some(state) = code.strip_suffix("[H]") {
-        return Some(diagram.get_history_of(
-            location,
-            state,
-            "*historical*",
-            LeafType::PseudoState,
-        ));
+        return diagram
+            .get_history_of(location, state, "*historical*", LeafType::PseudoState)
+            .map(Some);
     }
     if code.eq_ignore_ascii_case("[H*]") {
-        return Some(diagram.get_deep_history(location));
+        return diagram.get_deep_history(location).map(Some);
     }
     if let Some(state) = code.strip_suffix("[H*]") {
-        return Some(diagram.get_history_of(
-            location,
-            state,
-            "*deephistory*",
-            LeafType::DeepHistory,
-        ));
+        return diagram
+            .get_history_of(location, state, "*deephistory*", LeafType::DeepHistory)
+            .map(Some);
     }
     if code.starts_with('=') && code.ends_with('=') {
         let quark = diagram
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(code.trim_matches('=')));
+            .quark_in_context(true, CucaDiagram::clean_id(code.trim_matches('=')))?;
         let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
-        return Some(diagram.leaf_named(location, quark, display, LeafType::SynchroBar));
+        return Ok(Some(diagram.leaf_named(
+            location,
+            quark,
+            display,
+            LeafType::SynchroBar,
+        )));
     }
     let current = diagram.cuca.get_current_group();
     if diagram.cuca.entity(current).get_name(&diagram.cuca) == code {
-        return Some(current);
+        return Ok(Some(current));
     }
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(code));
-    if !diagram.check_concurrent_state_ok(quark) {
-        return None;
+        .quark_in_context(true, CucaDiagram::clean_id(code))?;
+    if !diagram.check_concurrent_state_ok(quark)? {
+        return Ok(None);
     }
     if let Some(existing) = diagram.cuca.quark(quark).get_data() {
-        return Some(existing);
+        return Ok(Some(existing));
     }
-    let parent = diagram.cuca.quark(quark).get_parent()?;
-    diagram.cuca.quark(parent).get_data()?;
+    let has_parent_entity = diagram
+        .cuca
+        .quark(quark)
+        .get_parent()
+        .is_some_and(|parent| diagram.cuca.quark(parent).get_data().is_some());
+    if !has_parent_entity {
+        return Ok(None);
+    }
     let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
-    Some(
-        diagram
-            .cuca
-            .really_create_leaf(Some(location), quark, display, LeafType::State),
-    )
+    Ok(Some(diagram.cuca.really_create_leaf(
+        Some(location),
+        quark,
+        display,
+        LeafType::State,
+    )))
 }
 
 /// `CODE1 as "display"` or `"display" as CODE2` or `CODE2`, then what ends a group's first line.
@@ -472,7 +482,7 @@ fn execute_create_package_state(
     arg: &RegexResult,
 ) -> CommandResult {
     let id_short = not_null(arg, "CODE1", "CODE2").unwrap_or_default();
-    let quark = diagram.cuca.quark_in_context(true, id_short);
+    let quark = diagram.cuca.quark_in_context(true, id_short)?;
     let display = not_null(arg, "DISPLAY1", "DISPLAY2");
     let shown = display.unwrap_or_else(|| diagram.cuca.quark(quark).get_name());
     let shown = Display::with_newlines(shown);
@@ -525,7 +535,7 @@ fn execute_create_package2(
     let id_short = not_null(arg, "CODE1", "CODE2").unwrap_or_default();
     let quark = diagram
         .cuca
-        .quark_in_context(true, CucaDiagram::clean_id(id_short));
+        .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
     let display = not_null(arg, "DISPLAY1", "DISPLAY2")
         .unwrap_or_else(|| diagram.cuca.quark(quark).get_name());
     let display = Display::with_newlines(display);
@@ -560,7 +570,7 @@ pub(super) fn end_state() -> Box<dyn Command<StateDiagram>> {
             if diagram.cuca.entity(current).is_root() {
                 return Err(CommandError::new("No inner state defined"));
             }
-            diagram.end_group();
+            diagram.end_group()?;
             Ok(())
         },
     )
@@ -590,7 +600,7 @@ pub(super) fn add_field() -> Box<dyn Command<StateDiagram>> {
             } else {
                 diagram
                     .cuca
-                    .quark_in_context(true, CucaDiagram::clean_id(code))
+                    .quark_in_context(true, CucaDiagram::clean_id(code))?
             };
             let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
             let entity = diagram.leaf_named(location, quark, display, LeafType::State);
@@ -619,8 +629,7 @@ pub(super) fn concurrent_state() -> Box<dyn Command<StateDiagram>> {
                 .get("TYPE", 0)
                 .and_then(|kind| kind.chars().next())
                 .unwrap_or('-');
-            diagram.concurrent_state(location, direction);
-            Ok(())
+            diagram.concurrent_state(location, direction)
         },
     )
 }

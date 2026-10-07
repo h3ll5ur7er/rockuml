@@ -18,7 +18,8 @@ use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::{
-    Labels, add_tags, back_color, colors, colors_with_line, display_or_name, stereotype, url_of,
+    Labels, add_tags, back_color, colors, colors_with_line, display_or_name, stereotype,
+    unknown_symbol, url_of,
 };
 use crate::java;
 use crate::klimt::url::Url;
@@ -48,7 +49,7 @@ pub(super) fn add_method() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name));
+            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name))?;
             let entity = get_or_create_class(cuca, location, quark);
             let field = arg.get("DATA", 0).unwrap_or_default();
             cuca.entity_mut(entity).bodier.add_field_or_method(field);
@@ -135,7 +136,7 @@ fn extends_or_implements(name: &'static str, keyword: &'static str, generic: boo
 
 /// How a class declaration failed to name a new or compatible entity.
 struct Refused {
-    quark_failure: fn(String, i32) -> CommandError,
+    quark_failure: fn(CommandError) -> CommandError,
     incompatible: fn(&str) -> CommandError,
 }
 
@@ -161,8 +162,8 @@ fn create_class_entity(
         .or_else(|| header.get("GENERIC", 0));
     let cuca = diagram.cuca();
     let quark = cuca
-        .quark_in_context_safe(false, id_short)
-        .map_err(|failure| (refused.quark_failure)(failure.error, failure.score))?;
+        .quark_in_context(false, id_short)
+        .map_err(refused.quark_failure)?;
     let entity = match cuca.quark(quark).get_data() {
         None => {
             let display = display_or_name(display_string, cuca.quark(quark).get_name());
@@ -230,9 +231,9 @@ fn manage_extends(
     diagram: &mut ClassDiagram,
     arg: &RegexResult,
     entity: EntityId,
-) {
+) -> CommandResult {
     let (Some(mode), Some(codes)) = (arg.get(keyword, 0), arg.get(keyword, 1)) else {
-        return;
+        return Ok(());
     };
     let extends = mode.eq_ignore_ascii_case("extends");
     let cuca = diagram.cuca();
@@ -244,7 +245,7 @@ fn manage_extends(
     };
     for code in java::split(CucaDiagram::clean_id(codes), ",") {
         let id_short = java::trim(&code);
-        let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short));
+        let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short))?;
         let cl2 = get_or_create(cuca, location, quark, type2);
         let mut link_type = LinkType::new(LinkDecor::None, LinkDecor::Extends);
         if type2 == LeafType::Interface && entity_type != Some(LeafType::Interface) {
@@ -259,6 +260,7 @@ fn manage_extends(
         );
         cuca.add_link(link);
     }
+    Ok(())
 }
 
 /// PlantUML's `CommandCreateClassMultilines`: `class Foo {`, its members, `}`.
@@ -294,7 +296,7 @@ pub(super) fn create_class_multilines() -> Box<dyn Command<ClassDiagram>> {
                     location,
                     &header,
                     &Refused {
-                        quark_failure: |error, _| CommandError::new(error),
+                        quark_failure: |error| CommandError::new(error.message),
                         incompatible: |id| {
                             CommandError::new(format!(
                                 "Cannot create {id} because it already exists"
@@ -309,8 +311,8 @@ pub(super) fn create_class_multilines() -> Box<dyn Command<ClassDiagram>> {
                         bodier.add_field_or_method(line.text());
                     }
                 }
-                manage_extends(location, "EXTENDS", diagram, &header, entity);
-                manage_extends(location, "IMPLEMENTS", diagram, &header, entity);
+                manage_extends(location, "EXTENDS", diagram, &header, entity)?;
+                manage_extends(location, "IMPLEMENTS", diagram, &header, entity)?;
                 add_tags(
                     diagram.cuca().entity_mut(entity),
                     header.get_lazzy("TAGS", 0),
@@ -347,13 +349,13 @@ pub(super) fn create_class() -> Box<dyn Command<ClassDiagram>> {
                 location,
                 arg,
                 &Refused {
-                    quark_failure: CommandError::with_score,
+                    quark_failure: |error| error,
                     incompatible: |_| CommandError::new("Bad name"),
                 },
                 false,
             )?;
-            manage_extends(location, "EXTENDS", diagram, arg, entity);
-            manage_extends(location, "IMPLEMENTS", diagram, arg, entity);
+            manage_extends(location, "EXTENDS", diagram, arg, entity)?;
+            manage_extends(location, "IMPLEMENTS", diagram, arg, entity)?;
             add_tags(diagram.cuca().entity_mut(entity), arg.get_lazzy("TAGS", 0));
             Ok(())
         },
@@ -435,7 +437,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                 let cuca = diagram.cuca();
                 let id_short =
                     CucaDiagram::clean_id(header.get_lazzy("CODE", 0).unwrap_or_default());
-                let quark = cuca.quark_in_context(true, id_short);
+                let quark = cuca.quark_in_context(true, id_short)?;
                 let entity = if let Some(entity) = cuca.quark(quark).get_data() {
                     entity
                 } else {
@@ -471,7 +473,7 @@ pub(super) fn create_entity_object() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let id_short = CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default());
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short));
+            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short))?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new(format!(
                     "Object already exists: {}",
@@ -637,11 +639,11 @@ impl SingleLineCommand<ClassDiagram> for Package {
         let (quark, display) = match arg.get("AS", 0) {
             None if name.is_empty() => return Err(CommandError::new("Error in name")),
             None => {
-                let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name));
+                let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name))?;
                 (quark, cuca.quark(quark).get_name().to_owned())
             }
             Some(code) => (
-                cuca.quark_in_context(false, CucaDiagram::clean_id(code)),
+                cuca.quark_in_context(false, CucaDiagram::clean_id(code))?,
                 name.to_owned(),
             ),
         };
@@ -713,7 +715,7 @@ pub(super) fn package_empty() -> Box<dyn Command<ClassDiagram>> {
                 None => (display.to_owned(), Display::with_newlines(display)),
                 Some(code) => (code.to_owned(), Display::with_newlines(display)),
             };
-            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(&id_short));
+            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(&id_short))?;
             cuca.goto_group(Some(location), quark, display, GroupType::Package);
             let back = back_color(arg)?;
             let group = cuca.get_current_group();
@@ -828,13 +830,13 @@ impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
                 LeafType::Description,
                 Some(
                     USymbols::from_string_skin_param(symbol, cuca.skin())
-                        .expect("the pattern only accepts symbols"),
+                        .ok_or_else(|| unknown_symbol(symbol))?,
                 ),
             ),
         };
         let id_short = CucaDiagram::clean_id(&code_raw).to_owned();
         let display = Display::with_newlines(display_raw.unwrap_or(&id_short));
-        let quark = cuca.quark_in_context(true, &id_short);
+        let quark = cuca.quark_in_context(true, &id_short)?;
         let entity = if let Some(entity) = cuca.quark(quark).get_data() {
             entity
         } else {
@@ -918,7 +920,7 @@ pub(super) fn namespace() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name));
+            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name))?;
             let skin = cuca.skin();
             let usymbol = arg.get("STEREOTYPE", 0).and_then(|stereotype| {
                 USymbols::from_string(
@@ -954,7 +956,7 @@ pub(super) fn namespace2() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name));
+            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name))?;
             let display = Display::with_newlines(arg.get("DISPLAY", 0).unwrap_or_default());
             goto_namespace(cuca, location, quark, display, arg, None)
         },
@@ -975,7 +977,7 @@ pub(super) fn namespace_empty() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name));
+            let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(name))?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new(format!(
                     "Already exists {}",
@@ -1003,7 +1005,7 @@ pub(super) fn stereotype_command() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, _: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name));
+            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name))?;
             let Some(entity) = cuca.quark(quark).get_data() else {
                 return Err(CommandError::new(format!(
                     "No such class {}",
@@ -1140,11 +1142,11 @@ fn execute_link_class(
         ent2_string = cuca.remove_port_id(&ent2_string).to_owned();
     }
     let quark1 = cuca
-        .quark_in_context_safe(true, &ent1_string)
-        .map_err(|failure| CommandError::new(failure.error))?;
+        .quark_in_context(true, &ent1_string)
+        .map_err(|error| CommandError::new(error.message))?;
     let quark2 = cuca
-        .quark_in_context_safe(true, &ent2_string)
-        .map_err(|failure| CommandError::new(failure.error))?;
+        .quark_in_context(true, &ent2_string)
+        .map_err(|error| CommandError::new(error.message))?;
     let cl1 = get_or_create_class(cuca, location, quark1);
     let cl2 = get_or_create_class(cuca, location, quark2);
     let dir = get_direction(arg);
@@ -1217,7 +1219,7 @@ fn couple(
 ) -> Result<(EntityId, EntityId), CommandError> {
     let mut entity = |index| {
         let name = CucaDiagram::clean_id(arg.get(key, index).unwrap_or_default());
-        let quark = cuca.quark_in_context(true, name);
+        let quark = cuca.quark_in_context(true, name)?;
         cuca.quark(quark)
             .get_data()
             .ok_or_else(|| CommandError::new(format!("No class {name}")))
@@ -1242,10 +1244,10 @@ fn execute_arg_special(
     let cuca = diagram.cuca();
     let (cl_a, cl_b) = couple(cuca, arg, couple_key)?;
     let id = unquoted(arg.get(other_key, 0).unwrap_or_default());
-    let quark = cuca.quark_in_context(true, id);
+    let quark = cuca.quark_in_context(true, id)?;
     let other = get_or_create_class(cuca, location, quark);
     let label = arg.get("LABEL_LINK", 0).map(Display::with_newlines);
-    if diagram.diagram.association_class(
+    diagram.diagram.association_class(
         Some(location),
         mode,
         cl_a,
@@ -1253,11 +1255,7 @@ fn execute_arg_special(
         other,
         get_link_type(arg),
         label,
-    ) {
-        Ok(())
-    } else {
-        Err(CommandError::new("Cannot have more than 2 assocications"))
-    }
+    )
 }
 
 /// `(A, B) .. (C, D)`.
@@ -1409,7 +1407,7 @@ fn execute_link_lollipop(
         None => (ent1, ent2, arg.get("ENT_THEN_LOL", 1), false),
         Some(_) => (ent2, ent1, arg.get("LOL_THEN_ENT", 0), true),
     };
-    let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(normal));
+    let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(normal))?;
     let Some(normal_entity) = cuca.quark(quark).get_data() else {
         return Err(CommandError::new(format!(
             "No class {}",
@@ -1417,7 +1415,7 @@ fn execute_link_lollipop(
         )));
     };
     let id_new_long =
-        cuca.quark_in_context(true, &format!("{}{suffix}", CucaDiagram::clean_id(normal)));
+        cuca.quark_in_context(true, &format!("{}{suffix}", CucaDiagram::clean_id(normal)))?;
     let lollipop = cuca.really_create_leaf(
         Some(location),
         id_new_long,
@@ -1509,7 +1507,7 @@ pub(super) fn diamond_association() -> Box<dyn Command<ClassDiagram>> {
         |diagram: &mut ClassDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = diagram.cuca();
             let code = arg.get("CODE", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(code));
+            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(code))?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new(format!(
                     "Already existing : {}",

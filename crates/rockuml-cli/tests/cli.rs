@@ -114,6 +114,32 @@ fn renders_promptly(lines: &[&str]) {
     }
 }
 
+/// Asserts that rockuml reports the diagram of `lines` as erroneous, like PlantUML's exit status for errors,
+/// without panicking.
+fn reports_an_error(lines: &[&str]) {
+    let directory = tempfile::tempdir().unwrap();
+    let file = directory.path().join("case.puml");
+    let diagram = ["@startuml", &lines.join("\n"), "@enduml"].join("\n");
+    std::fs::write(&file, &diagram).unwrap();
+    let output = rockuml()
+        .args(["-f", "debug", file.to_str().unwrap()])
+        .output()
+        .unwrap();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!stderr.contains("panicked"), "{stderr}\n{diagram}");
+    assert_eq!(output.status.code(), Some(200), "{stderr}\n{diagram}");
+}
+
+#[test]
+fn entity_diagrams_plantuml_crashes_on_are_errors() {
+    reports_an_error(&["port P as \"", "hello\""]);
+    reports_an_error(&["mix_circle c"]);
+    reports_an_error(&["state A", "state A.B"]);
+    reports_an_error(&["state X {", "state A", "A.B --> C", "}"]);
+    reports_an_error(&["state X {", "state A", "state A.B", "}"]);
+    reports_an_error(&["state X {", "state A", "A.B --> C", "A.B --> D", "}"]);
+}
+
 #[test]
 fn malformed_svg_sprite_paths_draw_what_they_can() {
     for path in [

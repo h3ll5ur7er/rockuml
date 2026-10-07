@@ -14,7 +14,7 @@ fn diagram(separator: Option<&str>) -> CucaDiagram {
 
 /// Declares a leaf the way commands do: its quark resolved in the current group.
 fn leaf(diagram: &mut CucaDiagram, name: &str, leaf_type: LeafType) -> EntityId {
-    let quark = diagram.quark_in_context(false, name);
+    let quark = diagram.quark_in_context(false, name).unwrap();
     diagram.really_create_leaf(None, quark, Display::create([name]), leaf_type)
 }
 
@@ -30,7 +30,7 @@ fn link(diagram: &mut CucaDiagram, from: EntityId, to: EntityId) -> LinkId {
 }
 
 fn enter_package(diagram: &mut CucaDiagram, name: &str) -> EntityId {
-    let quark = diagram.quark_in_context(false, name);
+    let quark = diagram.quark_in_context(false, name).unwrap();
     diagram.goto_group(None, quark, Display::create([name]), GroupType::Package);
     diagram.get_current_group()
 }
@@ -53,55 +53,53 @@ fn uids(diagram: &CucaDiagram, entities: &[EntityId]) -> Vec<String> {
 #[test]
 fn without_separator_a_name_is_found_anywhere() {
     let mut diagram = diagram(None);
-    let dotted = diagram.quark_in_context_safe(true, "a.b").unwrap();
+    let dotted = diagram.quark_in_context(true, "a.b").unwrap();
     assert_eq!(diagram.quark(dotted).get_name(), "a.b");
     assert_eq!(
         diagram.quark(dotted).get_parent(),
         Some(diagram.quarks().next().unwrap())
     );
     enter_package(&mut diagram, "P");
-    let inner = diagram.quark_in_context_safe(false, "x").unwrap();
+    let inner = diagram.quark_in_context(false, "x").unwrap();
     assert_eq!(qualified(&diagram, inner), "P\u{1}x");
     diagram.end_group();
-    assert_eq!(diagram.quark_in_context_safe(false, "x"), Ok(inner));
-    assert_eq!(diagram.quark_in_context_safe(false, "a.b"), Ok(dotted));
+    assert_eq!(diagram.quark_in_context(false, "x"), Ok(inner));
+    assert_eq!(diagram.quark_in_context(false, "a.b"), Ok(dotted));
 }
 
 #[test]
 fn with_a_separator_names_resolve_from_the_current_group_or_the_root() {
     let mut diagram = diagram(Some("."));
-    let deep = diagram.quark_in_context_safe(false, "a.b.C").unwrap();
+    let deep = diagram.quark_in_context(false, "a.b.C").unwrap();
     assert_eq!(qualified(&diagram, deep), "a.b.C");
     enter_package(&mut diagram, "a");
-    let relative = diagram.quark_in_context_safe(false, "C2").unwrap();
+    let relative = diagram.quark_in_context(false, "C2").unwrap();
     assert_eq!(qualified(&diagram, relative), "a.C2");
-    let absolute = diagram.quark_in_context_safe(false, ".D").unwrap();
+    let absolute = diagram.quark_in_context(false, ".D").unwrap();
     assert_eq!(qualified(&diagram, absolute), "D");
-    let known_root_package = diagram.quark_in_context_safe(false, "a.b.E").unwrap();
+    let known_root_package = diagram.quark_in_context(false, "a.b.E").unwrap();
     assert_eq!(qualified(&diagram, known_root_package), "a.b.E");
-    let unknown_package = diagram.quark_in_context_safe(false, "z.Y").unwrap();
+    let unknown_package = diagram.quark_in_context(false, "z.Y").unwrap();
     assert_eq!(qualified(&diagram, unknown_package), "a.z.Y");
 }
 
 #[test]
 fn a_name_used_once_elsewhere_is_reused_when_asked() {
     let mut diagram = diagram(Some("."));
-    let elsewhere = diagram.quark_in_context_safe(false, "q.Target").unwrap();
+    let elsewhere = diagram.quark_in_context(false, "q.Target").unwrap();
     enter_package(&mut diagram, "p");
-    assert_eq!(diagram.quark_in_context_safe(true, "Target"), Ok(elsewhere));
-    let own = diagram.quark_in_context_safe(false, "Target").unwrap();
+    assert_eq!(diagram.quark_in_context(true, "Target"), Ok(elsewhere));
+    let own = diagram.quark_in_context(false, "Target").unwrap();
     assert_eq!(qualified(&diagram, own), "p.Target");
     // Now that two quarks bear the name, none is reused.
-    let quark = diagram.quark_in_context_safe(true, "Target").unwrap();
+    let quark = diagram.quark_in_context(true, "Target").unwrap();
     assert_eq!(quark, own);
 }
 
 #[test]
 fn double_colons_separate_like_dots() {
     let mut diagram = diagram(Some("::"));
-    let quark = diagram
-        .quark_in_context_safe(false, "ns::sub::Klass")
-        .unwrap();
+    let quark = diagram.quark_in_context(false, "ns::sub::Klass").unwrap();
     assert_eq!(qualified(&diagram, quark), "ns::sub::Klass");
     assert_eq!(diagram.remove_port_id("A::port"), "A::port");
     assert_eq!(diagram.get_port_id("A::port"), None);
@@ -113,23 +111,18 @@ fn double_colons_separate_like_dots() {
 #[test]
 fn bad_names_and_leaves_used_as_packages_are_errors() {
     let mut diagram = diagram(Some("."));
-    let bad = |error: &str, score| {
-        Err(Failure {
-            error: error.to_owned(),
-            score,
-        })
-    };
+    let bad = |error: &str, score| Err(CommandError::with_score(error, score));
     assert_eq!(
-        diagram.quark_in_context_safe(false, "a."),
+        diagram.quark_in_context(false, "a."),
         bad("Bad name since . is a separator", 3)
     );
     assert_eq!(
-        diagram.quark_in_context_safe(false, "a..b"),
+        diagram.quark_in_context(false, "a..b"),
         bad("Bad name since . is a separator", 3)
     );
     class(&mut diagram, "Foo");
     assert_eq!(
-        diagram.quark_in_context_safe(false, "Foo.bar"),
+        diagram.quark_in_context(false, "Foo.bar"),
         bad("Not a package: Foo", 0)
     );
 }
@@ -239,7 +232,7 @@ fn reentering_a_group_keeps_it_and_its_type() {
     let mut diagram = diagram(Some("."));
     let first = enter_package(&mut diagram, "s");
     diagram.end_group();
-    let quark = diagram.quark_in_context(false, "s");
+    let quark = diagram.quark_in_context(false, "s").unwrap();
     diagram.goto_group(None, quark, Display::create(["other"]), GroupType::State);
     assert_eq!(diagram.get_current_group(), first);
     assert_eq!(diagram.entity(first).get_group_type(), GroupType::State);
@@ -549,6 +542,16 @@ fn packages_holding_only_a_package_are_shown_as_one() {
 }
 
 #[test]
+fn a_package_holding_only_a_name_without_an_entity_is_not_packed() {
+    let mut diagram = diagram(Some("."));
+    let package = enter_package(&mut diagram, "P");
+    diagram.end_group();
+    diagram.quark_in_context(false, "P.unused").unwrap();
+    diagram.pack_some_package();
+    assert!(!diagram.entity(package).is_packed());
+}
+
+#[test]
 fn linked_packages_are_not_packed() {
     let mut diagram = diagram(Some("."));
     let a = enter_package(&mut diagram, "a");
@@ -557,7 +560,7 @@ fn linked_packages_are_not_packed() {
     diagram.end_group();
     diagram.end_group();
     link(&mut diagram, a, c);
-    assert!(!diagram.entity(a).can_be_packed(&diagram));
+    assert_eq!(diagram.entity(a).packable_child(&diagram), None);
 }
 
 #[test]
@@ -742,9 +745,11 @@ fn association_classes_cut_the_link_at_a_point() {
     let c = class(diagram, "C");
     let d = class(diagram, "D");
     let dotted = LinkType::new(LinkDecor::None, LinkDecor::None).go_dotted();
-    assert!(class_diagram.association_class(None, 1, a, b, c, dotted, None));
-    assert!(class_diagram.association_class(None, 1, a, b, d, dotted, None));
-    assert!(!class_diagram.association_class(None, 1, a, b, c, dotted, None));
+    let mut associate =
+        |associed| class_diagram.association_class(None, 1, a, b, associed, dotted, None);
+    assert!(associate(c).is_ok());
+    assert!(associate(d).is_ok());
+    assert!(associate(c).is_err());
     let diagram = &class_diagram.cuca;
     let points: Vec<EntityId> = diagram
         .leafs()

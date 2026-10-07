@@ -18,11 +18,11 @@ impl CucaDiagram {
         loop {
             let mut changed = false;
             for group in self.groups() {
-                if !self.entity(group).can_be_packed(self) {
+                let Some(child) = self.entity(group).packable_child(self) else {
                     continue;
-                }
-                let child = self.entity(group).groups(self)[0];
-                let appended = format!("{}{separator}", self.entity(group).display.lines()[0]);
+                };
+                let outer = self.entity(group).display.lines().first();
+                let appended = format!("{}{separator}", outer.map_or("", String::as_str));
                 let child = self.entity_mut(child);
                 child.display = child.display.append_first_line(&appended);
                 self.entity_mut(group).set_packed();
@@ -242,7 +242,7 @@ impl AbstractClassOrObjectDiagram {
 
     /// `(A, B) .. C`: links a point on the link between `entity1` and `entity2` to `associed`, from the point
     /// in `mode` 1 and to it otherwise. A second association class on the same pair gets a point of its own;
-    /// there is no third. Whether the association could be made.
+    /// there is no third.
     #[expect(clippy::too_many_arguments, reason = "PlantUML's method")]
     pub(crate) fn association_class(
         &mut self,
@@ -253,24 +253,23 @@ impl AbstractClassOrObjectDiagram {
         associed: EntityId,
         link_type: LinkType,
         label: Option<Display>,
-    ) -> bool {
+    ) -> CommandResult {
         let same = self.get_existing_associated_points(entity1, entity2);
         match same.as_slice() {
             [] => {
-                let mut association = self.new_association(location, entity1, entity2, associed);
+                let mut association = self.new_association(location, entity1, entity2, associed)?;
                 self.create_new(&mut association, location, mode, link_type, label);
                 self.associations.push(association);
-                true
             }
             [first] => {
-                let association = self.create_second_association(location, *first, associed);
+                let association = self.create_second_association(location, *first, associed)?;
                 let index = self.associations.len();
                 self.associations.push(association);
                 self.create_in_second(index, location, link_type, label);
-                true
             }
-            _ => false,
+            _ => return Err(CommandError::new("Cannot have more than 2 assocications")),
         }
+        Ok(())
     }
 
     fn get_existing_associated_points(&self, entity1: EntityId, entity2: EntityId) -> Vec<usize> {
@@ -285,7 +284,7 @@ impl AbstractClassOrObjectDiagram {
         entity1: EntityId,
         entity2: EntityId,
         associed: EntityId,
-    ) -> Association {
+    ) -> Result<Association, CommandError> {
         let id_short = self.cuca.get_unique_sequence("apoint");
         let parent1 = self
             .cuca
@@ -299,7 +298,7 @@ impl AbstractClassOrObjectDiagram {
             Some(parent) if parent1 == parent2 => self.cuca.child(parent, &id_short),
             _ => self
                 .cuca
-                .quark_in_context(true, CucaDiagram::clean_id(&id_short)),
+                .quark_in_context(true, CucaDiagram::clean_id(&id_short))?,
         };
         let point = self.cuca.really_create_leaf(
             location,
@@ -307,7 +306,7 @@ impl AbstractClassOrObjectDiagram {
             Display::with_newlines(""),
             LeafType::PointForAssociation,
         );
-        Association {
+        Ok(Association {
             entity1,
             entity2,
             associed,
@@ -317,7 +316,7 @@ impl AbstractClassOrObjectDiagram {
             point_to_entity2: None,
             point_to_associed: None,
             other: None,
-        }
+        })
     }
 
     fn create_second_association(
@@ -325,12 +324,12 @@ impl AbstractClassOrObjectDiagram {
         location: Option<&LineLocation>,
         first: usize,
         associed2: EntityId,
-    ) -> Association {
+    ) -> Result<Association, CommandError> {
         let (entity1, entity2) = (
             self.associations[first].entity1,
             self.associations[first].entity2,
         );
-        let mut result = self.new_association(location, entity1, entity2, associed2);
+        let mut result = self.new_association(location, entity1, entity2, associed2)?;
         let existing = &self.associations[first];
         result.existing_link = existing.existing_link;
         result.other = Some(first);
@@ -349,7 +348,7 @@ impl AbstractClassOrObjectDiagram {
                 }
             }
         }
-        result
+        Ok(result)
     }
 
     fn create_new(

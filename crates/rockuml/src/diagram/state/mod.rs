@@ -20,7 +20,7 @@ use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::abel::{EntityId, GroupType, LeafType};
 use crate::command::factory::AbstractDiagram;
-use crate::command::{Command, ParserPass};
+use crate::command::{Command, CommandError, CommandResult, ParserPass};
 use crate::creole::Display;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
@@ -103,20 +103,19 @@ fn code_for_state() -> RegexTree {
 impl StateDiagram {
     /// Whether a state named by `quark` may be used in the current group: a state in a concurrent region
     /// stays in it, and a concurrent region uses only its own states.
-    fn check_concurrent_state_ok(&self, quark: QuarkId) -> bool {
+    fn check_concurrent_state_ok(&self, quark: QuarkId) -> Result<bool, CommandError> {
         let cuca = &self.cuca;
         let Some(existing) = cuca.quark(quark).get_data() else {
-            return true;
+            return Ok(true);
         };
         let current = cuca.get_current_group();
         let parent = cuca.entity(existing).get_parent_container(cuca);
-        if cuca.entity(current).get_group_type() == GroupType::ConcurrentState
-            && Some(current) != parent
-        {
-            return false;
+        if is_concurrent_state(cuca, current)? && Some(current) != parent {
+            return Ok(false);
         }
-        !parent.is_some_and(|parent| {
-            cuca.entity(parent).get_group_type() == GroupType::ConcurrentState && current != parent
+        Ok(match parent {
+            Some(parent) => !is_concurrent_state(cuca, parent)? || current == parent,
+            None => true,
         })
     }
 
@@ -127,7 +126,7 @@ impl StateDiagram {
         location: &LineLocation,
         prefix: &str,
         leaf_type: LeafType,
-    ) -> EntityId {
+    ) -> Result<EntityId, CommandError> {
         let group = self.cuca.get_current_group();
         let id_short = if self.cuca.entity(group).is_root() {
             prefix.to_owned()
@@ -136,8 +135,8 @@ impl StateDiagram {
         };
         let quark = self
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&id_short));
-        self.leaf_of(location, quark, leaf_type)
+            .quark_in_context(true, CucaDiagram::clean_id(&id_short))?;
+        Ok(self.leaf_of(location, quark, leaf_type))
     }
 
     /// The entity `quark` holds, or a new leaf of `leaf_type` without a name shown.
@@ -167,22 +166,22 @@ impl StateDiagram {
     }
 
     /// `[*]` where a transition starts.
-    fn get_start(&mut self, location: &LineLocation) -> EntityId {
+    fn get_start(&mut self, location: &LineLocation) -> Result<EntityId, CommandError> {
         self.pseudo_state(location, "*start*", LeafType::CircleStart)
     }
 
     /// `[*]` where a transition ends.
-    fn get_end(&mut self, location: &LineLocation) -> EntityId {
+    fn get_end(&mut self, location: &LineLocation) -> Result<EntityId, CommandError> {
         self.pseudo_state(location, "*end*", LeafType::CircleEnd)
     }
 
     /// `[H]`: the shallow history of the current group.
-    fn get_historical(&mut self, location: &LineLocation) -> EntityId {
+    fn get_historical(&mut self, location: &LineLocation) -> Result<EntityId, CommandError> {
         self.pseudo_state(location, "*historical*", LeafType::PseudoState)
     }
 
     /// `[H*]`: the deep history of the current group.
-    fn get_deep_history(&mut self, location: &LineLocation) -> EntityId {
+    fn get_deep_history(&mut self, location: &LineLocation) -> Result<EntityId, CommandError> {
         self.pseudo_state(location, "*deephistory*", LeafType::DeepHistory)
     }
 
@@ -193,10 +192,10 @@ impl StateDiagram {
         id_short: &str,
         prefix: &str,
         leaf_type: LeafType,
-    ) -> EntityId {
+    ) -> Result<EntityId, CommandError> {
         let quark = self
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(id_short));
+            .quark_in_context(true, CucaDiagram::clean_id(id_short))?;
         let display = Display::with_newlines(self.cuca.quark(quark).get_name());
         self.cuca
             .goto_group(Some(location), quark, display, GroupType::State);
@@ -204,24 +203,24 @@ impl StateDiagram {
         let name = format!("{prefix}{}", self.cuca.entity(group).get_name(&self.cuca));
         let ident = self
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&name));
+            .quark_in_context(true, CucaDiagram::clean_id(&name))?;
         let result = self.leaf_of(location, ident, leaf_type);
-        self.end_group();
-        result
+        self.end_group()?;
+        Ok(result)
     }
 
     /// `--` or `||`: the current state's next concurrent region starts, separated by a horizontal or a
     /// vertical line.
-    fn concurrent_state(&mut self, location: &LineLocation, direction: char) {
+    fn concurrent_state(&mut self, location: &LineLocation, direction: char) -> CommandResult {
         let current = self.cuca.get_current_group();
         self.cuca.entity_mut(current).concurrent_separator = Some(direction);
-        if self.cuca.entity(current).get_group_type() == GroupType::ConcurrentState {
+        if is_concurrent_state(&self.cuca, current)? {
             self.cuca.end_group();
         }
         let name = self.cuca.get_unique_sequence2(CONCURRENT_PREFIX);
         let ident = self
             .cuca
-            .quark_in_context(true, CucaDiagram::clean_id(&name));
+            .quark_in_context(true, CucaDiagram::clean_id(&name))?;
         self.cuca.goto_group(
             Some(location),
             ident,
@@ -230,15 +229,16 @@ impl StateDiagram {
         );
         let region = self.cuca.get_current_group();
         self.cuca.entity_mut(region).concurrent_separator = Some(direction);
+        Ok(())
     }
 
-    /// Leaves the current state, and the concurrent region the commands were in.
-    fn end_group(&mut self) -> bool {
+    /// Leaves the current state, and the concurrent region the commands were in; whether there was a state.
+    fn end_group(&mut self) -> Result<bool, CommandError> {
         let current = self.cuca.get_current_group();
-        if self.cuca.entity(current).get_group_type() == GroupType::ConcurrentState {
+        if is_concurrent_state(&self.cuca, current)? {
             self.cuca.end_group();
         }
-        self.cuca.end_group()
+        Ok(self.cuca.end_group())
     }
 
     /// Every quark above `current` that holds nothing yet becomes a composite state named after it.
@@ -270,31 +270,51 @@ impl AbstractDiagram for StateDiagram {
     /// A link may not leave the concurrent region its state is in.
     fn check_final_error(&mut self) -> Option<String> {
         let cuca = &self.cuca;
-        cuca.get_links()
-            .find(|link| {
-                concurrent_region(cuca, link.get_entity1())
-                    != concurrent_region(cuca, link.get_entity2())
-            })
-            .map(|link| {
-                format!(
-                    "State within concurrent state cannot be linked out of this concurrent state (between {} and {})",
-                    cuca.entity(link.get_entity1()).get_name(cuca),
-                    cuca.entity(link.get_entity2()).get_name(cuca)
-                )
-            })
+        for link in cuca.get_links() {
+            let region1 = concurrent_region(cuca, link.get_entity1());
+            let region2 = concurrent_region(cuca, link.get_entity2());
+            match (region1, region2) {
+                (Err(error), _) | (_, Err(error)) => return Some(error.message),
+                (Ok(region1), Ok(region2)) if region1 != region2 => {
+                    return Some(format!(
+                        "State within concurrent state cannot be linked out of this concurrent state (between {} and {})",
+                        cuca.entity(link.get_entity1()).get_name(cuca),
+                        cuca.entity(link.get_entity2()).get_name(cuca)
+                    ));
+                }
+                _ => {}
+            }
+        }
+        None
     }
 }
 
 /// The innermost concurrent region around `entity` (`getGroupParentIfItIsConcurrentState`).
-fn concurrent_region(cuca: &CucaDiagram, entity: EntityId) -> Option<EntityId> {
+fn concurrent_region(
+    cuca: &CucaDiagram,
+    entity: EntityId,
+) -> Result<Option<EntityId>, CommandError> {
     let mut parent = cuca.entity(entity).get_parent_container(cuca);
     while let Some(group) = parent {
-        if cuca.entity(group).get_group_type() == GroupType::ConcurrentState {
-            return Some(group);
+        if is_concurrent_state(cuca, group)? {
+            return Ok(Some(group));
         }
         parent = cuca.entity(group).get_parent_container(cuca);
     }
-    None
+    Ok(None)
+}
+
+/// Whether `entity` is a concurrent region. A state below a simple state, which only a dotted name can put
+/// there, has no type of group to tell, and PlantUML fails on it (`Entity.checkGroup`).
+fn is_concurrent_state(cuca: &CucaDiagram, entity: EntityId) -> Result<bool, CommandError> {
+    let entity = cuca.entity(entity);
+    if !entity.is_group() {
+        return Err(CommandError::new(format!(
+            "{} is not a composite state",
+            entity.get_name(cuca)
+        )));
+    }
+    Ok(entity.get_group_type() == GroupType::ConcurrentState)
 }
 
 impl EntityDiagram for StateDiagram {

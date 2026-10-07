@@ -76,7 +76,7 @@ fn execute_class_diagram(cuca: &mut CucaDiagram, arg: &RegexResult) -> CommandRe
             None if arg1.starts_with("<<") => EntityGender::ByStereotype(arg1.to_owned()),
             None => {
                 let arg1 = CucaDiagram::clean_id(arg1);
-                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(arg1));
+                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(arg1))?;
                 if portion == EntityPortion::Method {
                     EntityGender::ByClassName(arg1.to_owned())
                 } else {

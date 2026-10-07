@@ -419,17 +419,17 @@ impl Entity {
                 .all(|leaf| diagram.entity(*leaf).get_entity_position() == EntityPosition::Normal)
     }
 
-    /// Whether the group only holds one group with something in it, and nothing links to it, so that the two
-    /// can show as one, named `outer.inner`.
-    pub(crate) fn can_be_packed(&self, diagram: &CucaDiagram) -> bool {
+    /// The one group inside, when the group holds nothing else, the child holds something and nothing links to
+    /// the group, so that the two can show as one, named `outer.inner` (`canBePacked`).
+    pub(crate) fn packable_child(&self, diagram: &CucaDiagram) -> Option<EntityId> {
         if self.packed || self.count_children(diagram) != 1 || !self.leafs(diagram).is_empty() {
-            return false;
+            return None;
         }
         if diagram.get_links().any(|link| link.contains(self.id)) {
-            return false;
+            return None;
         }
-        let child = self.groups(diagram)[0];
-        diagram.entity(child).count_children(diagram) != 0
+        let child = *self.groups(diagram).first()?;
+        (diagram.entity(child).count_children(diagram) != 0).then_some(child)
     }
 
     pub(crate) fn set_packed(&mut self) {

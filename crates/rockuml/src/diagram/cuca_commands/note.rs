@@ -137,7 +137,7 @@ fn create_note(
     display: Display,
 ) -> CommandResult {
     let id_short = arg.get("CODE", 0).unwrap_or_default();
-    let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short));
+    let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short))?;
     if cuca.quark(quark).get_data().is_some() {
         return Err(CommandError::new(format!(
             "Note already created: {}",
@@ -265,7 +265,7 @@ fn add_note_on_entity(
             .ok_or_else(|| CommandError::new("Nothing to note to"))?,
         Some(code) => {
             let id_short = CucaDiagram::clean_id(code);
-            let quark = cuca.quark_in_context(true, id_short);
+            let quark = cuca.quark_in_context(true, id_short)?;
             cuca.quark(quark)
                 .get_data()
                 .ok_or_else(|| CommandError::new(format!("Not known: {id_short}")))?
@@ -274,7 +274,7 @@ fn add_note_on_entity(
     let position = side(cuca, arg);
     let colors = colors(arg)?;
     let tmp = cuca.get_unique_sequence("GMN");
-    let quark = cuca.quark_in_context(true, &tmp);
+    let quark = cuca.quark_in_context(true, &tmp)?;
     let note = cuca.really_create_leaf(location, quark, display, LeafType::Note);
     let entity = cuca.entity_mut(note);
     if let Some(stereotype) = arg.get("STEREO", 0) {
@@ -434,14 +434,14 @@ fn add_tip(
 ) -> CommandResult {
     let id_short = arg.get("CODE", 0).unwrap_or_default();
     let member = unquoted(arg.get("CODE", 1).unwrap_or_default()).to_owned();
-    let quark = cuca.quark_in_context(true, id_short);
+    let quark = cuca.quark_in_context(true, id_short)?;
     let target = cuca
         .quark(quark)
         .get_data()
         .ok_or_else(|| CommandError::new("Nothing to note to"))?;
     let position = side(cuca, arg);
     let tmp = format!("{id_short}$$${}", position.name());
-    let ident_tip = cuca.quark_in_context(true, unquoted(&tmp));
+    let ident_tip = cuca.quark_in_context(true, unquoted(&tmp))?;
     let tips = if let Some(tips) = cuca.quark(ident_tip).get_data() {
         tips
     } else {

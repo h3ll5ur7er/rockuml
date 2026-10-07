@@ -195,7 +195,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 let location = first.location();
                 let cuca = diagram.cuca();
                 let name = header.get("NAME", 1).unwrap_or_default();
-                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name));
+                let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name))?;
                 if cuca.quark(quark).get_data().is_some() {
                     return Err(CommandError::new(format!("Map already exists: {name}")));
                 }
@@ -216,7 +216,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                         let x = entry.find(arrow).expect("the link is in the entry");
                         let key = java::trim(&entry[..x]).to_owned();
                         let dest = java::trim(&entry[x + arrow.len()..]);
-                        let ident2 = cuca.quark_in_context(true, dest);
+                        let ident2 = cuca.quark_in_context(true, dest)?;
                         let Some(entity2) = cuca.quark(ident2).get_data() else {
                             return Err(CommandError::new(format!(
                                 "No such entity {}",
@@ -269,7 +269,7 @@ fn create_json_entity(
     display: Option<&str>,
     reuse_existing_child: bool,
 ) -> Result<Option<crate::abel::EntityId>, CommandError> {
-    let quark = cuca.quark_in_context(reuse_existing_child, CucaDiagram::clean_id(name));
+    let quark = cuca.quark_in_context(reuse_existing_child, CucaDiagram::clean_id(name))?;
     if cuca.quark(quark).get_data().is_some() {
         return Ok(None);
     }
@@ -514,7 +514,7 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
             };
             let code = diagram.clean_id(&code).to_owned();
             let cuca = diagram.cuca();
-            let ident = cuca.quark_in_context(false, &code);
+            let ident = cuca.quark_in_context(false, &code)?;
             let display = if code_arg.is_empty() {
                 Display::default()
             } else {
@@ -585,7 +585,7 @@ pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 .clean_id(arg.get("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = diagram.cuca();
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             let Some(entity) = cuca.quark(quark).get_data() else {
                 return Err(CommandError::new(format!(
                     "{} does not exist",
@@ -678,7 +678,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                     skin.component_style(),
                     skin.package_style(),
                 )
-                .unwrap_or_else(|| panic!("{keyword} names a symbol"));
+                .ok_or_else(|| unknown_symbol(keyword))?;
                 (LeafType::Description, usymbol)
             };
             let mut texts: Vec<String> = lines
@@ -698,7 +698,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                 .clean_id(head.get("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = diagram.cuca();
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             let entity = if let Some(existing) = cuca.quark(quark).get_data() {
                 existing
             } else {
@@ -725,6 +725,11 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
         })
         .skipping_quote_lines(),
     )
+}
+
+/// A keyword the declaration patterns accept but no symbol answers to, on which PlantUML fails.
+pub(super) fn unknown_symbol(keyword: &str) -> CommandError {
+    CommandError::new(format!("No symbol is named {keyword}"))
 }
 
 /// Whether `other` cannot be declared again as `leaf_type` drawn as `usymbol`

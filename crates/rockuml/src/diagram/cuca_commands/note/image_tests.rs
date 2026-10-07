@@ -214,7 +214,7 @@ fn dump_tips(side: &str) -> String {
         }
     }
     let mut tips = Tips(diagram("plain"));
-    let quark = tips.0.quark_in_context(false, "Thread");
+    let quark = tips.0.quark_in_context(false, "Thread").unwrap();
     tips.0
         .really_create_leaf(None, quark, Display::create(["Thread"]), LeafType::Class);
     let command = tip_on_entity_multi_line(false);
