@@ -1,0 +1,23 @@
+@startchen
+left to right direction
+entity PROFESSOR {
+  Id <<key>>
+  Name
+}
+entity DEPARTMENT {
+  Code <<key>>
+  Title
+}
+entity COURSE {
+  Code <<key>>
+}
+relationship WORKS_IN {
+}
+relationship TEACHES {
+  Since
+}
+PROFESSOR -N- WORKS_IN
+WORKS_IN -1- DEPARTMENT
+PROFESSOR -1- TEACHES
+TEACHES -N- COURSE
+@endchen
