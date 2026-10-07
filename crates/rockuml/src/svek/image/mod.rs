@@ -5,6 +5,8 @@ mod circle_start;
 mod entity_image_branch;
 mod entity_image_circle_end;
 mod entity_image_circle_start;
+mod entity_image_note;
+mod entity_image_note_link;
 mod entity_image_pseudo_state;
 mod entity_image_state;
 mod entity_image_state2;
@@ -12,10 +14,14 @@ mod entity_image_state_border;
 mod entity_image_state_common;
 mod entity_image_state_empty_description;
 mod entity_image_synchro_bar;
+mod entity_image_tips;
+mod opale;
 
 pub(crate) use entity_image_branch::EntityImageBranch;
 pub(crate) use entity_image_circle_end::EntityImageCircleEnd;
 pub(crate) use entity_image_circle_start::EntityImageCircleStart;
+pub(crate) use entity_image_note::{EntityImageNote, OpaleLink};
+pub(crate) use entity_image_note_link::EntityImageNoteLink;
 pub(crate) use entity_image_pseudo_state::EntityImagePseudoState;
 pub(crate) use entity_image_state::EntityImageState;
 pub(crate) use entity_image_state_border::EntityImageStateBorder;
@@ -23,6 +29,8 @@ pub(crate) use entity_image_state_common::{get_state_description, get_style_stat
 pub(crate) use entity_image_state_empty_description::EntityImageStateEmptyDescription;
 pub(crate) use entity_image_state2::EntityImageState2;
 pub(crate) use entity_image_synchro_bar::EntityImageSynchroBar;
+pub(crate) use entity_image_tips::EntityImageTips;
+pub(crate) use opale::{get_corner, get_polygon_normal};
 
 use crate::abel::Entity;
 use crate::diagram::cuca::CucaDiagram;

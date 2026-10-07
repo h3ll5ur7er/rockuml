@@ -38,11 +38,6 @@ pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
 }
 
 impl Unported {
-    #[must_use]
-    pub(crate) fn in_passes(self, passes: &'static [ParserPass]) -> Self {
-        Self { passes, ..self }
-    }
-
     /// Lines matching `forbidden` as a whole are accepted, and fail as syntax errors when executed.
     #[must_use]
     pub(crate) fn forbidding(self, forbidden: &str) -> Self {

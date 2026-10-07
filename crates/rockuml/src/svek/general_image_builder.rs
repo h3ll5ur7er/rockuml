@@ -1,9 +1,9 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
 use super::image::{
-    EntityImageBranch, EntityImageCircleEnd, EntityImageCircleStart, EntityImagePseudoState,
-    EntityImageState, EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
-    EntityImageSynchroBar,
+    EntityImageBranch, EntityImageCircleEnd, EntityImageCircleStart, EntityImageNote,
+    EntityImagePseudoState, EntityImageState, EntityImageState2, EntityImageStateBorder,
+    EntityImageStateEmptyDescription, EntityImageSynchroBar, EntityImageTips,
 };
 use super::{Bibliotekon, IEntityImage};
 use crate::abel::{Entity, EntityId, LeafType};
@@ -31,7 +31,7 @@ pub(crate) fn create_entity_image_block(
         return not_ported("EntityImageClass");
     }
     match leaf_type {
-        LeafType::Note => not_ported("EntityImageNote"),
+        LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
         LeafType::Activity => not_ported("EntityImageActivity"),
         LeafType::Portin | LeafType::Portout => not_ported("EntityImagePort"),
         LeafType::State => Ok(state_image(entity, diagram)),
@@ -68,7 +68,7 @@ pub(crate) fn create_entity_image_block(
         LeafType::DeepHistory => Ok(Box::new(EntityImagePseudoState::deep_history(
             entity, diagram,
         ))),
-        LeafType::Tips => not_ported("EntityImageTips"),
+        LeafType::Tips => Ok(Box::new(EntityImageTips::new(entity, diagram))),
         LeafType::ChenEntity => not_ported("EntityImageChenEntity"),
         LeafType::ChenRelationship => not_ported("EntityImageChenRelationship"),
         LeafType::ChenAttribute => not_ported("EntityImageChenAttribute"),

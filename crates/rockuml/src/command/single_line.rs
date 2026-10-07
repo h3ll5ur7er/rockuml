@@ -36,11 +36,21 @@ pub(crate) trait SingleLineCommand<D> {
 pub(crate) struct PatternCommand<F> {
     pattern: RegexTree,
     apply: F,
+    passes: &'static [ParserPass],
 }
 
 impl<F> PatternCommand<F> {
     pub(crate) fn new(pattern: RegexTree, apply: F) -> Self {
-        Self { pattern, apply }
+        Self {
+            pattern,
+            apply,
+            passes: &[ParserPass::One],
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn in_passes(self, passes: &'static [ParserPass]) -> Self {
+        Self { passes, ..self }
     }
 }
 
@@ -59,6 +69,10 @@ where
         arg: &RegexResult,
     ) -> CommandResult {
         (self.apply)(diagram, location, arg)
+    }
+
+    fn is_eligible_for(&self, pass: ParserPass) -> bool {
+        self.passes.contains(&pass)
     }
 }
 
