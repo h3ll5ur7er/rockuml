@@ -94,6 +94,19 @@ impl elist {
     pub fn get(&self, lists: &CArrays<Option<EdgeId>>, i: i32) -> Option<EdgeId> {
         lists.get(self.list.expect("elist without list"), i)
     }
+
+    /// The edges up to the NULL terminator, read up front so that the caller can change the list. Like
+    /// [`get`](Self::get), the list must be allocated: Java's `for (i = 0; (e = L.list.get_(i)) != null; i++)`
+    /// throws otherwise, and the loops it guards with `if (L.list != null)` check [`elist::list`] first.
+    pub fn edges(&self, lists: &CArrays<Option<EdgeId>>) -> Vec<EdgeId> {
+        (0..).map_while(|i| self.get(lists, i)).collect()
+    }
+}
+
+/// The nodes of a node list (`ND_next` chain, like `GD_nlist(g)`) starting at `first`, read up front so that the
+/// caller can change the chain.
+pub fn node_list(zz: &Globals, first: Option<NodeId>) -> Vec<NodeId> {
+    std::iter::successors(first, |&n| zz.nd(n).next).collect()
 }
 
 /// `elist_append`: appends `item`, keeping the list NULL-terminated.

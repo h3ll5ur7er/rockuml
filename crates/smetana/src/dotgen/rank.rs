@@ -24,7 +24,7 @@ use crate::dotgen::acyclic::acyclic_;
 use crate::dotgen::class1::class1_;
 use crate::dotgen::decomp::decompose;
 use crate::dotgen::dotinit::dot_root;
-use crate::h::{elist, point};
+use crate::h::{elist, node_list, point};
 
 /// `renewlist`: empties an edge list.
 fn renewlist(zz: &mut Globals, L: &mut elist) {
@@ -33,11 +33,6 @@ fn renewlist(zz: &mut Globals, L: &mut elist) {
         zz.edge_lists.set(list, i, None);
     }
     L.size = 0;
-}
-
-/// The nodes of a node list (`ND_next` chain) starting at `first`.
-fn node_list(zz: &Globals, first: Option<NodeId>) -> Vec<NodeId> {
-    std::iter::successors(first, |&n| zz.nd(n).next).collect()
 }
 
 /// The `c`-th component of `g`.

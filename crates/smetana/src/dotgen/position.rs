@@ -28,24 +28,11 @@ use crate::dotgen::fastgr::{fast_edge, find_fast_edge, new_edge_pair, virtual_no
 use crate::dotgen::flat::flat_edges;
 use crate::dotgen::mincross::{rank_node, rank_v};
 use crate::dotgen::rank::cluster;
-use crate::h::{alloc_elist, elist, pointf};
+use crate::h::{alloc_elist, elist, node_list, pointf};
 
 /// `largeMinlen`: Smetana cannot lay out edges longer than 65535 points.
 fn largeMinlen(l: f64) -> f64 {
     unimplemented!("largeMinlen({l})")
-}
-
-/// The edges of a NULL-terminated list, read before the caller changes anything.
-fn edges_of(zz: &Globals, l: elist) -> Vec<EdgeId> {
-    if l.list.is_none() {
-        return Vec::new();
-    }
-    (0..).map_while(|i| l.get(&zz.edge_lists, i)).collect()
-}
-
-/// The nodes of `g`'s fast graph (`GD_nlist`), read before the caller changes anything.
-fn nlist(zz: &Globals, g: GraphId) -> Vec<NodeId> {
-    std::iter::successors(zz.gd(g).nlist, |&n| zz.nd(n).next).collect()
 }
 
 /// `GD_margin` of cluster `g`, with default `def`.
@@ -65,9 +52,9 @@ fn connectGraph(zz: &mut Globals, g: GraphId) {
             tp = Some(t);
             let lower =
                 |e: &EdgeId| zz.nd(aghead(zz, *e)).rank > r || zz.nd(agtail(zz, *e)).rank > r;
-            if edges_of(zz, zz.nd(t).save_out).iter().any(lower)
-                || edges_of(zz, zz.nd(t).save_in).iter().any(lower)
-            {
+            let any_lower =
+                |l: elist| l.list.is_some() && l.edges(&zz.edge_lists).iter().any(lower);
+            if any_lower(zz.nd(t).save_out) || any_lower(zz.nd(t).save_in) {
                 found = true;
                 break;
             }
@@ -144,11 +131,11 @@ pub fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) 
 
 /// `allocate_aux_edges`: saves the fast graph's edge lists and starts empty ones for the auxiliary edges.
 fn allocate_aux_edges(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let (in_, out) = (zz.nd(n).in_, zz.nd(n).out);
         zz.nd_mut(n).save_in = in_;
         zz.nd_mut(n).save_out = out;
-        let n_in = edges_of(zz, out).len() + edges_of(zz, in_).len();
+        let n_in = out.edges(&zz.edge_lists).len() + in_.edges(&zz.edge_lists).len();
         let n_in = i32::try_from(n_in).expect("edge count");
         let mut in_ = in_;
         let mut out = out;
@@ -185,7 +172,7 @@ fn make_LR_constraints(zz: &mut Globals, g: GraphId) {
             if zz.nd(u).other.size > 0 {
                 // Compute self size. Dot assumes all self loops go to the right.
                 let mut sw = 0;
-                for e in edges_of(zz, zz.nd(u).other) {
+                for e in zz.nd(u).other.edges(&zz.edge_lists) {
                     if agtail(zz, e) == aghead(zz, e) {
                         sw += selfRightSpace(zz, e);
                     }
@@ -271,7 +258,7 @@ fn canReachInAuxGraph(zz: &Globals, from: NodeId, to: NodeId) -> bool {
     let mut visited = HashSet::from([from]);
     let mut stack = vec![from];
     while let Some(cur) = stack.pop() {
-        for e in edges_of(zz, zz.nd(cur).out) {
+        for e in zz.nd(cur).out.edges(&zz.edge_lists) {
             let head = aghead(zz, e);
             if head == to {
                 return true;
@@ -286,8 +273,12 @@ fn canReachInAuxGraph(zz: &Globals, from: NodeId, to: NodeId) -> bool {
 
 /// `make_edge_pairs`: for every edge, a slack node with edges to both ends, which pulls them together.
 fn make_edge_pairs(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
-        for e in edges_of(zz, zz.nd(n).save_out) {
+    for n in node_list(zz, zz.gd(g).nlist) {
+        let save_out = zz.nd(n).save_out;
+        if save_out.list.is_none() {
+            continue;
+        }
+        for e in save_out.edges(&zz.edge_lists) {
             let sn = virtual_node(zz, g);
             zz.nd_mut(sn).node_type = SLACKNODE;
             let mut m0 = (zz.ed(e).head_port.p.x - zz.ed(e).tail_port.p.x) as i32;
@@ -467,7 +458,7 @@ fn create_aux_edges(zz: &mut Globals, g: GraphId) {
 
 /// `remove_aux_edges`: restores the fast graph's edge lists and drops the slack nodes.
 fn remove_aux_edges(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let info = zz.nd_mut(n);
         info.out = info.save_out;
         info.in_ = info.save_in;
@@ -667,11 +658,14 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
             let mut ht2 = zz.nd(n).ht / 2.0;
 
             // Have to look for high self-edge labels, too.
-            for e in edges_of(zz, zz.nd(n).other) {
-                if agtail(zz, e) == aghead(zz, e)
-                    && let Some(l) = zz.ed(e).label
-                {
-                    ht2 = jmath::max(ht2, zz.textlabels[l].dimen.y / 2.0);
+            let other = zz.nd(n).other;
+            if other.list.is_some() {
+                for e in other.edges(&zz.edge_lists) {
+                    if agtail(zz, e) == aghead(zz, e)
+                        && let Some(l) = zz.ed(e).label
+                    {
+                        ht2 = jmath::max(ht2, zz.textlabels[l].dimen.y / 2.0);
+                    }
                 }
             }
 
@@ -736,7 +730,7 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
     }
 
     // Copy the y coordinate from the leftmost nodes to the others.
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let y = zz.nd(rank_node(zz, g, zz.nd(n).rank, 0)).coord.y;
         zz.nd_mut(n).coord.y = y;
     }
@@ -839,7 +833,7 @@ pub fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
 /// `ND_other` edges to restore, so it never restores any.
 fn expand_leaves(zz: &mut Globals, g: GraphId) {
     make_leafslots(zz, g);
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         if zz.nd(n).inleaf.is_some() || zz.nd(n).outleaf.is_some() {
             unimplemented!("do_leaves");
         }

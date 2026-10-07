@@ -49,13 +49,6 @@ pub(crate) fn rankleader(zz: &Globals, g: GraphId, r: i32) -> Option<NodeId> {
         .get(zz.gd(g).rankleader.expect("rank leaders"), r)
 }
 
-/// The edges of a NULL-terminated list, read before the caller changes anything.
-fn edges_of(zz: &Globals, l: elist) -> Vec<EdgeId> {
-    (0..)
-        .map_while(|i| l.get(&zz.edge_lists, i))
-        .collect::<Vec<_>>()
-}
-
 /// `dot_mincross`.
 pub fn dot_mincross(zz: &mut Globals, g: GraphId) {
     init_mincross(zz, g);
@@ -161,11 +154,11 @@ fn left2right(zz: &Globals, g: GraphId, v: NodeId, w: NodeId) -> bool {
 /// `in_cross`: the crossings between the in-edges of `v` and `w` if `v` is left of `w`.
 fn in_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
     let mut cross = 0i32;
-    for e2 in edges_of(zz, zz.nd(w).in_) {
+    for e2 in zz.nd(w).in_.edges(&zz.edge_lists) {
         let cnt = zz.ed(e2).xpenalty;
         let inv = zz.nd(agtail(zz, e2)).order;
         let e2px = zz.ed(e2).tail_port.p.x;
-        for e1 in edges_of(zz, zz.nd(v).in_) {
+        for e1 in zz.nd(v).in_.edges(&zz.edge_lists) {
             let t = zz.nd(agtail(zz, e1)).order - inv;
             if t > 0 || (t == 0 && zz.ed(e1).tail_port.p.x > e2px) {
                 cross = cross.wrapping_add(zz.ed(e1).xpenalty.wrapping_mul(cnt));
@@ -178,11 +171,11 @@ fn in_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
 /// `out_cross`: the crossings between the out-edges of `v` and `w` if `v` is left of `w`.
 fn out_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
     let mut cross = 0i32;
-    for e2 in edges_of(zz, zz.nd(w).out) {
+    for e2 in zz.nd(w).out.edges(&zz.edge_lists) {
         let cnt = zz.ed(e2).xpenalty;
         let inv = zz.nd(aghead(zz, e2)).order;
         let e2px = zz.ed(e2).head_port.p.x;
-        for e1 in edges_of(zz, zz.nd(v).out) {
+        for e1 in zz.nd(v).out.edges(&zz.edge_lists) {
             let t = zz.nd(aghead(zz, e1)).order - inv;
             if t > 0 || (t == 0 && zz.ed(e1).head_port.p.x > e2px) {
                 cross = cross.wrapping_add(zz.ed(e1).xpenalty.wrapping_mul(cnt));
@@ -557,7 +550,8 @@ fn flat_rev(zz: &mut Globals, g: GraphId, e: EdgeId) {
     let rev = if flat_out.list.is_none() {
         None
     } else {
-        edges_of(zz, flat_out)
+        flat_out
+            .edges(&zz.edge_lists)
             .into_iter()
             .find(|&rev| aghead(zz, rev) == tail)
     };
@@ -1025,7 +1019,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
 /// throws where Graphviz would count a crossing.
 fn local_cross(zz: &Globals, l: elist, dir: i32) {
     let is_out = dir > 0;
-    let edges = edges_of(zz, l);
+    let edges = l.edges(&zz.edge_lists);
     for (i, &e) in edges.iter().enumerate() {
         if is_out {
             for &f in &edges[i + 1..] {
@@ -1061,7 +1055,7 @@ fn rcross(zz: &mut Globals, g: GraphId, r: i32) -> i32 {
     let slot = |k: i32| usize::try_from(k).expect("order");
     for top in 0..zz.rank(g, r).n {
         let v = zz.node_lists.get(rtop, top).expect("node");
-        let outlist = edges_of(zz, zz.nd(v).out);
+        let outlist = zz.nd(v).out.edges(&zz.edge_lists);
         if max > 0 {
             for &e in &outlist {
                 for k in zz.nd(aghead(zz, e)).order + 1..=max {
@@ -1119,7 +1113,7 @@ fn ordercmpf(i0: i32, i1: i32) -> i32 {
 /// it has none.
 fn flat_mval(zz: &mut Globals, n: NodeId) -> bool {
     if zz.nd(n).flat_in.size > 0 {
-        let fl = edges_of(zz, zz.nd(n).flat_in);
+        let fl = zz.nd(n).flat_in.edges(&zz.edge_lists);
         let mut nn = agtail(zz, fl[0]);
         for &e in &fl[1..] {
             if zz.nd(agtail(zz, e)).order > zz.nd(nn).order {
@@ -1131,7 +1125,7 @@ fn flat_mval(zz: &mut Globals, n: NodeId) -> bool {
             return false;
         }
     } else if zz.nd(n).flat_out.size > 0 {
-        let fl = edges_of(zz, zz.nd(n).flat_out);
+        let fl = zz.nd(n).flat_out.edges(&zz.edge_lists);
         let mut nn = aghead(zz, fl[0]);
         for &e in &fl[1..] {
             if zz.nd(aghead(zz, e)).order < zz.nd(nn).order {
@@ -1156,14 +1150,14 @@ fn medians(zz: &mut Globals, g: GraphId, r0: i32, r1: i32) -> bool {
         let n = zz.node_lists.get(v, i).expect("node");
         let mut j = 0;
         if r1 > r0 {
-            for e in edges_of(zz, zz.nd(n).out) {
+            for e in zz.nd(n).out.edges(&zz.edge_lists) {
                 if zz.ed(e).xpenalty > 0 {
                     list[j] = 256 * zz.nd(aghead(zz, e)).order + zz.ed(e).head_port.order;
                     j += 1;
                 }
             }
         } else {
-            for e in edges_of(zz, zz.nd(n).in_) {
+            for e in zz.nd(n).in_.edges(&zz.edge_lists) {
                 if zz.ed(e).xpenalty > 0 {
                     list[j] = 256 * zz.nd(agtail(zz, e)).order + zz.ed(e).tail_port.order;
                     j += 1;
