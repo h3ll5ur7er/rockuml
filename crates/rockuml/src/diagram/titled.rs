@@ -1,6 +1,7 @@
 //! What every diagram with a skin shares: skinparams and styles, and the title drawn around it
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
+use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::chrome::{MainFrame, Warning, WithWarnings};
@@ -11,6 +12,7 @@ use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, T
 
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
+use crate::klimt::sprite::SpriteContainer;
 
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -113,9 +115,14 @@ pub(super) trait TitledDiagram {
 }
 
 impl Titled {
-    pub(super) fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
+    /// `md5_map` gives back the PNGs the source refers to by MD5.
+    pub(super) fn new(
+        diagram_style: SName,
+        diagram_type: &'static str,
+        md5_map: HashMap<String, String>,
+    ) -> Self {
         Self {
-            skin: SkinParam::default(),
+            skin: SkinParam::with_md5_map(md5_map),
             pragma: Pragma::default(),
             diagram_style,
             diagram_type,
@@ -215,6 +222,7 @@ impl Titled {
                 label,
                 &style,
                 string_bounder.clone(),
+                &self.skin,
             ));
         }
         if let Some((legend, vertical)) = &self.legend {
@@ -224,7 +232,7 @@ impl Titled {
                 self.diagram_style,
                 SName::Legend,
             ]);
-            let decoration = Some(legend.decoration("legend", &style));
+            let decoration = Some(legend.decoration("legend", &style, &self.skin));
             result = match vertical {
                 VerticalAlignment::Top => {
                     Box::new(DecorateEntityImage::new(result, decoration, None))
@@ -238,7 +246,7 @@ impl Titled {
             let style = self.document_style(Some(SName::Title));
             result = Box::new(DecorateEntityImage::new(
                 result,
-                Some(title.decoration("title", &style)),
+                Some(title.decoration("title", &style, &self.skin)),
                 None,
             ));
         }
@@ -247,13 +255,13 @@ impl Titled {
             result = Box::new(DecorateEntityImage::new(
                 result,
                 None,
-                Some(caption.decoration("caption", &style)),
+                Some(caption.decoration("caption", &style, &self.skin)),
             ));
         }
         let ribbon = |part: &Option<Positioned>, name, class| {
             part.as_ref()
                 .filter(|part| !part.display.lines().is_empty())
-                .map(|part| part.decoration(class, &self.document_style(Some(name))))
+                .map(|part| part.decoration(class, &self.document_style(Some(name)), &self.skin))
         };
         let header = ribbon(&self.header, SName::Header, "header");
         let footer = ribbon(&self.footer, SName::Footer, "footer");
@@ -306,11 +314,16 @@ impl Positioned {
         }
     }
 
-    fn decoration<'a>(&self, class: &str, style: &Style) -> Decoration<'a> {
+    fn decoration<'a>(
+        &self,
+        class: &str,
+        style: &Style,
+        sprites: &dyn SpriteContainer,
+    ) -> Decoration<'a> {
         let mut group = UGroup::at(self.location.as_ref());
         group.put(UGroupType::Class, class);
         Decoration {
-            block: bordered_text(&self.display, style),
+            block: bordered_text(&self.display, style, sprites),
             alignment: self.alignment,
             group,
         }
@@ -318,15 +331,19 @@ impl Positioned {
 }
 
 /// `Style.createTextBlockBordered`: the text in the style's font, padded, bordered, then given margins.
-fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a> {
+fn bordered_text<'a>(
+    display: &Display,
+    style: &Style,
+    sprites: &dyn SpriteContainer,
+) -> Box<dyn TextBlock + 'a> {
     let alignment = display.natural_alignment().unwrap_or_else(|| {
         style
             .value(PName::HorizontalAlignment)
             .as_horizontal_alignment()
             .unwrap_or_default()
     });
-    let sheet =
-        CreoleParser::new(style.font_configuration(), alignment).create_sheet(display.lines());
+    let sheet = CreoleParser::new(style.font_configuration(), alignment, sprites)
+        .create_sheet(display.lines());
     let text = SheetBlock2::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()));
     let bordered = TextBlockBordered::new(
         text,

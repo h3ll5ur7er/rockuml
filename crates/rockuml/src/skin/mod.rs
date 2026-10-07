@@ -18,6 +18,7 @@ use regex::Regex;
 
 use crate::java;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::pattern::java_regex;
 use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 
@@ -31,9 +32,33 @@ pub(crate) struct SkinParam {
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
+    sprites: HashMap<String, Rc<dyn Sprite>>,
+    /// The base64 data of the PNGs the source refers to by MD5.
+    md5_map: HashMap<String, String>,
+}
+
+impl SpriteContainer for SkinParam {
+    fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
+        self.sprites.get(name).cloned()
+    }
 }
 
 impl SkinParam {
+    pub(crate) fn with_md5_map(md5_map: HashMap<String, String>) -> Self {
+        Self {
+            md5_map,
+            ..Self::default()
+        }
+    }
+
+    pub(crate) fn get_from_md5(&self, md5: &str) -> Option<&str> {
+        self.md5_map.get(md5).map(String::as_str)
+    }
+
+    pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {
+        self.sprites.insert(name, sprite);
+    }
+
     fn style_builder(&self) -> &StyleBuilder {
         self.style_builder
             .get_or_init(|| Rc::new(StyleBuilder::load_skin(DEFAULT_SKIN)))

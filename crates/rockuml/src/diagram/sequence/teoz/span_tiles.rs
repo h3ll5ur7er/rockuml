@@ -29,7 +29,7 @@ impl<'a> DividerTile<'a> {
         divider: &'a Labelled,
         current_y: &YGauge,
     ) -> Self {
-        let component = components::divider(divider);
+        let component = components::divider(divider, arguments.diagram.skin());
         let height = component.preferred_height(arguments.string_bounder());
         Self {
             y_gauge: YGauge::create(&current_y.max, height),
@@ -100,7 +100,7 @@ impl<'a> DelayTile<'a> {
         delay: &'a Labelled,
         current_y: &YGauge,
     ) -> Self {
-        let component = components::delay_text(delay);
+        let component = components::delay_text(delay, arguments.diagram.skin());
         let height = component.preferred_height(arguments.string_bounder());
         Self {
             y_gauge: YGauge::create(&current_y.max, height),
@@ -233,7 +233,7 @@ impl<'a> ReferenceTile<'a> {
         reference: &'a Reference,
         current_y: &YGauge,
     ) -> Self {
-        let component = components::reference(reference);
+        let component = components::reference(reference, arguments.diagram.skin());
         let height = component.preferred_height(arguments.string_bounder());
         let mut note_left = None;
         let mut note_right = None;

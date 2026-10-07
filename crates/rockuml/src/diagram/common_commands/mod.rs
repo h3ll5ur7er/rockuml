@@ -1,6 +1,7 @@
 //! Commands every diagram with a skin understands (PlantUML's `CommonCommands`).
 
 mod skin_block;
+mod sprite;
 
 use std::marker::PhantomData;
 use std::sync::LazyLock;
@@ -30,6 +31,9 @@ pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comma
         single(pragma_pattern(), define_pragma),
         single(skinparam_pattern(), set_skinparam),
         Box::new(skin_block::SkinParamBlock),
+        sprite::multi_line(),
+        sprite::single_line(),
+        sprite::md5(),
         Box::new(
             Multiline::new(
                 &plantuml_regex(r"^\<style\>$"),

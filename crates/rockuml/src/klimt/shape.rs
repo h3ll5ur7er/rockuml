@@ -1,5 +1,9 @@
+use std::rc::Rc;
+
 use super::font::{FontConfiguration, UFont};
 use super::geom::XDimension2D;
+use super::image::PortableImage;
+use crate::color::XColor;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum UShape {
@@ -130,12 +134,85 @@ impl UEllipse {
     }
 }
 
-/// A bitmap, kept as PNG data.
-#[derive(Clone, Copy, Debug, PartialEq)]
+/// A bitmap: the image as given and the scale it is drawn at (PlantUML's `UImage` over a `PixelImage`).
+#[derive(Clone, Debug, PartialEq)]
 pub struct UImage {
-    pub png: &'static [u8],
-    pub width: f64,
-    pub height: f64,
+    image_scale1: Rc<PortableImage>,
+    scale: f64,
+    /// The pixels drawn, scaled from `image_scale1`.
+    image: Rc<PortableImage>,
+}
+
+impl UImage {
+    pub(crate) fn new(image: PortableImage) -> Self {
+        let image = Rc::new(image);
+        Self {
+            image_scale1: image.clone(),
+            scale: 1.0,
+            image,
+        }
+    }
+
+    /// Scaled from the image as given, so that scaling twice resamples once.
+    #[must_use]
+    pub(crate) fn scale(&self, scale: f64) -> Self {
+        let scale = self.scale * scale;
+        Self {
+            image_scale1: self.image_scale1.clone(),
+            scale,
+            image: Rc::new(self.image_scale1.scale(scale)),
+        }
+    }
+
+    /// The image with its darkest opaque colour replaced by `new_color` (`PixelImage.muteColor`).
+    #[must_use]
+    pub(crate) fn mute_color(&self, new_color: XColor) -> Self {
+        let original = &self.image_scale1;
+        let opaque = (0..original.width())
+            .flat_map(|x| (0..original.height()).map(move |y| original.get_rgb(x, y)))
+            .filter(|argb| argb >> 24 == 0xFF);
+        let mut darker_rgb = None;
+        for argb in opaque {
+            let rgb = argb & 0x00FF_FFFF;
+            if darker_rgb.is_none_or(|darker| gray_scale(rgb) < gray_scale(darker)) {
+                darker_rgb = Some(rgb);
+            }
+        }
+        let mut copy = PortableImage::clone(original);
+        for x in 0..original.width() {
+            for y in 0..original.height() {
+                let argb = original.get_rgb(x, y);
+                let alpha = argb & 0xFF00_0000;
+                if alpha != 0 && Some(argb & 0x00FF_FFFF) == darker_rgb {
+                    // Java adds the alpha to an opaque colour, which carries into the alpha byte.
+                    copy.set_rgb(x, y, new_color.argb().wrapping_add(alpha));
+                }
+            }
+        }
+        Self {
+            image: Rc::new(copy.scale(self.scale)),
+            image_scale1: Rc::new(copy),
+            scale: self.scale,
+        }
+    }
+
+    /// The pixels drawn.
+    pub(crate) fn image(&self) -> &PortableImage {
+        &self.image
+    }
+
+    /// One less than the pixels drawn across, as PlantUML measures images.
+    pub(crate) fn width(&self) -> f64 {
+        self.image.width() as f64 - 1.0
+    }
+
+    pub(crate) fn height(&self) -> f64 {
+        self.image.height() as f64 - 1.0
+    }
+}
+
+fn gray_scale(rgb: u32) -> u32 {
+    XColor::from_rgb(rgb).gray_scale()
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

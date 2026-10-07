@@ -279,6 +279,7 @@ mod tests {
     use crate::creole::CreoleParser;
     use crate::klimt::HorizontalAlignment;
     use crate::klimt::font::{FontConfiguration, UFont};
+    use crate::klimt::sprite::SpriteContainerEmpty;
 
     struct TenPerChar;
 
@@ -290,7 +291,8 @@ mod tests {
 
     fn line_widths(text: &str, max_width: f64) -> Vec<f64> {
         let font = FontConfiguration::black_blue_true(UFont::serif(10));
-        let sheet = CreoleParser::new(font, HorizontalAlignment::Left).create_sheet(&[text]);
+        let sheet = CreoleParser::new(font, HorizontalAlignment::Left, &SpriteContainerEmpty)
+            .create_sheet(&[text]);
         split(&sheet.stripes[0], max_width, &TenPerChar)
             .iter()
             .map(|stripe| {

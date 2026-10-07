@@ -1,0 +1,12 @@
+@startuml
+sprite $flag [6x4/color] {
+GGGGzz..zzGG
+z.z.z.~~@@^^
+Wz*z+z-z:z;z
+=z?zxy_z,zab
+}
+participant "<$flag> flag" as A
+A -> B : <$flag> colours
+B -> A : <$flag*2> <#red$flag{scale=0.5}>
+note over B : <back:yellow><$flag></back>
+@enduml

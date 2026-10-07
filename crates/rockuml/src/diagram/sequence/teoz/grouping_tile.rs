@@ -188,7 +188,7 @@ impl<'a> GroupingTile<'a> {
                 if self.is_partition() {
                     Box::new(PartitionHeader::new(self.arguments.clone(), self.start))
                 } else {
-                    components::grouping_header(self.start)
+                    components::grouping_header(self.start, self.arguments.diagram.skin())
                 }
             })
             .as_ref()
@@ -592,6 +592,7 @@ impl<'a> PartitionHeader<'a> {
             header.font_configuration(),
             HorizontalAlignment::Left,
             0.0,
+            arguments.diagram.skin(),
         );
         Self {
             arguments,

@@ -6,6 +6,7 @@ use crate::creole::{CreoleParser, Display, Sheet, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{CircledCharacter, TextBlockMarged, TextBlockSprited};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::stereo::{Spot, Stereotype};
@@ -158,8 +159,9 @@ pub(crate) fn component_text(
     font: FontConfiguration,
     style: &Style,
     max_width: f64,
+    sprites: &dyn SpriteContainer,
 ) -> Box<dyn TextBlock> {
-    stereotyped_component_text(display, font, style, style, max_width)
+    stereotyped_component_text(display, font, style, style, max_width, sprites)
 }
 
 /// `component_text` for a display that may show a stereotype: its labels in the font and colour of the
@@ -170,6 +172,7 @@ pub(crate) fn stereotyped_component_text(
     style: &Style,
     stereo: &Style,
     max_width: f64,
+    sprites: &dyn SpriteContainer,
 ) -> Box<dyn TextBlock> {
     if display.stereotype().is_none() && display.is_single_empty_line() {
         return Box::new(TextBlockEmpty::default());
@@ -181,7 +184,8 @@ pub(crate) fn stereotyped_component_text(
     let stereotype_font =
         font.force_font(stereo.ufont(), stereo.value(PName::FontColor).as_color());
     let font_color = font.color().clone();
-    let sheet = CreoleParser::new(font, alignment).create_display_sheet(display, &stereotype_font);
+    let sheet =
+        CreoleParser::new(font, alignment, sprites).create_display_sheet(display, &stereotype_font);
     let text = sheet_block(sheet, max_width);
     match display.stereotype().and_then(Stereotype::spot) {
         Some(spot) => Box::new(TextBlockSprited::new(spot_block(spot, font_color), text)),
@@ -207,9 +211,10 @@ pub(crate) fn creole_text(
     font: FontConfiguration,
     alignment: HorizontalAlignment,
     max_width: f64,
+    sprites: &dyn SpriteContainer,
 ) -> Box<dyn TextBlock> {
     Box::new(sheet_block(
-        CreoleParser::new(font, alignment).create_sheet(lines),
+        CreoleParser::new(font, alignment, sprites).create_sheet(lines),
         max_width,
     ))
 }

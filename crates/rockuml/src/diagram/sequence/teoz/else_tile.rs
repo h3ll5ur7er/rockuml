@@ -27,7 +27,7 @@ impl<'a> ElseTile<'a> {
         parent: Rc<GroupingFrame>,
         current_y: &YGauge,
     ) -> Self {
-        let component = components::grouping_else(leaf);
+        let component = components::grouping_else(leaf, arguments.diagram.skin());
         let height = component
             .preferred_dimension(arguments.string_bounder())
             .height;

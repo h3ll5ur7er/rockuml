@@ -12,6 +12,7 @@ use crate::java::{self, JavaHashSet};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, USegment, UShape};
+use crate::klimt::sprite::SpriteContainerEmpty;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
@@ -38,7 +39,12 @@ pub(super) fn color(name: &str) -> HColor {
 }
 
 pub(super) fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {
-    let sheet = CreoleParser::new(font.clone(), HorizontalAlignment::Left).create_sheet(lines);
+    let sheet = CreoleParser::new(
+        font.clone(),
+        HorizontalAlignment::Left,
+        &SpriteContainerEmpty,
+    )
+    .create_sheet(lines);
     SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
 }
 

@@ -10,6 +10,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{URectangle, UShape};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::ugraphic::UGraphic;
 
 /// How far each level is indented, and what the connector of each item spans.
@@ -26,19 +27,24 @@ pub(super) struct AtomTree {
 }
 
 impl AtomTree {
-    pub(super) fn new(line: &str, font: &FontConfiguration) -> Self {
+    pub(super) fn new(line: &str, font: &FontConfiguration, sprites: &dyn SpriteContainer) -> Self {
         let mut tree = Self {
             line_color: font.color().clone(),
             items: Vec::new(),
         };
-        tree.add_line(line, font);
+        tree.add_line(line, font, sprites);
         tree
     }
 
-    pub(super) fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+    pub(super) fn add_line(
+        &mut self,
+        line: &str,
+        font: &FontConfiguration,
+        sprites: &dyn SpriteContainer,
+    ) {
         for text in cell_lines(line) {
             let level = level_of(&text);
-            let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full);
+            let mut stripe = StripeBuilder::plain(font.clone(), CreoleMode::Full, sprites);
             stripe.analyze_and_add(without_marker(&text));
             let sheet = Sheet {
                 stripes: vec![stripe.build()],
