@@ -4,6 +4,7 @@ mod graphics;
 mod xml;
 
 use std::rc::Rc;
+use std::sync::Arc;
 
 pub(crate) use graphics::SvgOption;
 use graphics::{SvgGraphics, SvgText};
@@ -11,7 +12,8 @@ use graphics::{SvgGraphics, SvgText};
 use super::font::{FontStyle, StringBounder};
 use super::geom::UTranslate;
 use super::group::UGroup;
-use super::shape::{UImage, UShape, UText};
+use super::shape::{UCenteredCharacter, UImage, UShape, UText};
+use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
 use crate::color::HColor;
@@ -19,13 +21,22 @@ use crate::color::HColor;
 pub(crate) struct UGraphicSvg {
     graphics: Option<SvgGraphics>,
     string_bounder: Rc<dyn StringBounder>,
+    /// The fonts whose glyph outlines draw centred characters; deterministic SVG has none and writes them as
+    /// text.
+    glyph_fonts: Option<Arc<FontRegistry>>,
 }
 
 impl UGraphicSvg {
-    pub(crate) fn new(seed: i64, option: SvgOption, string_bounder: Rc<dyn StringBounder>) -> Self {
+    pub(crate) fn new(
+        seed: i64,
+        option: SvgOption,
+        string_bounder: Rc<dyn StringBounder>,
+        glyph_fonts: Option<Arc<FontRegistry>>,
+    ) -> Self {
         Self {
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
+            glyph_fonts,
         }
     }
 
@@ -161,6 +172,44 @@ impl UGraphicSvg {
         }
     }
 
+    /// The glyph's outline, centred on its pixels. Deterministic SVG writes the character as text in a fixed
+    /// font instead, since outlines depend on the font.
+    fn draw_centered_character(
+        &mut self,
+        centered: &UCenteredCharacter,
+        at: UTranslate,
+        param: &UParam,
+    ) {
+        let color = param.color.to_svg();
+        if let Some(fonts) = &self.glyph_fonts {
+            if let Some(outline) = fonts.glyph_outline(&centered.font, centered.character) {
+                let (center_x, center_y) = outline.center();
+                let svg = self.svg();
+                svg.set_fill_color(Some(&color));
+                svg.glyph_path(
+                    at.dx - center_x - 0.5,
+                    at.dy - center_y - 0.5,
+                    &outline.segments,
+                );
+            }
+            return;
+        }
+        let svg = self.svg();
+        svg.set_fill_color(Some(&color));
+        svg.text(&SvgText {
+            text: &centered.character.to_string(),
+            x: at.dx - 5.0,
+            y: at.dy + 5.0,
+            font_family: "monospace",
+            font_size: 14,
+            font_weight: None,
+            font_style: None,
+            text_decoration: None,
+            text_length: 0.0,
+            back_color: None,
+        });
+    }
+
     fn draw_image(&mut self, image: &UImage, at: UTranslate) {
         self.svg()
             .png_image(image.png, at.dx, at.dy, image.width, image.height);
@@ -254,6 +303,9 @@ impl UGraphicBackend for UGraphicSvg {
                 if inside(at.dx, at.dy) && inside(at.dx + image.width, at.dy + image.height) {
                     self.draw_image(image, at);
                 }
+            }
+            UShape::CenteredCharacter(centered) => {
+                self.draw_centered_character(centered, at, param);
             }
             UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
         }

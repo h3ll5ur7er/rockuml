@@ -3,14 +3,16 @@
 //! run on Windows on every machine. Any other font can be registered, and diagrams name it as usual.
 
 mod bounder;
+mod glyph;
 
 use std::fmt;
 use std::sync::Arc;
 
 pub(crate) use bounder::StringBounderFonts;
+pub(crate) use glyph::{GlyphOutline, GlyphSegment};
 use ttf_parser::{Face, name_id};
 
-use super::font::UFontFace;
+use super::font::{UFont, UFontFace};
 
 /// The fonts available to diagrams, by family name.
 #[derive(Clone)]
@@ -173,6 +175,26 @@ impl FontRegistry {
             .into_iter()
             .next()
             .unwrap_or_default()
+    }
+
+    /// PlantUML's `FontStack`: of a comma-separated list of families, the first that can display the text.
+    fn font_for(&self, font: &UFont, text: &str) -> ResolvedFont<'_> {
+        let mut candidates = font
+            .families()
+            .map(|family| self.resolve(family, font.face()));
+        let first = candidates.next().expect("split yields at least one family");
+        if first.can_display(text) {
+            return first;
+        }
+        candidates
+            .find(|candidate| candidate.can_display(text))
+            .unwrap_or(first)
+    }
+
+    /// The outline of a character in a font (`TextLayout.getOutline`); `None` when the font has no glyph for it.
+    pub(crate) fn glyph_outline(&self, font: &UFont, c: char) -> Option<GlyphOutline> {
+        let resolved = self.font_for(font, &c.to_string());
+        GlyphOutline::of(resolved.face(), c, font.size_2d())
     }
 
     /// The font Java uses for a family name: a logical font, or a font of that name, or else `Dialog`.

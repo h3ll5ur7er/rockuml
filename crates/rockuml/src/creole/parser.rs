@@ -19,6 +19,7 @@ use crate::klimt::font::{FontConfiguration, FontStyle};
 use crate::klimt::url::Url;
 use crate::openiconic::OpenIconic;
 use crate::pattern::{java_regex, plantuml_regex};
+use crate::stereo::Stereotype;
 
 /// Turns the lines of a label into a [`Sheet`] (PlantUML's legacy `CreoleParser`).
 pub(crate) struct CreoleParser {
@@ -45,31 +46,65 @@ impl CreoleParser {
     }
 
     pub(crate) fn create_sheet(&self, lines: &[impl AsRef<str>]) -> Sheet {
+        self.create_sheet_of(
+            lines
+                .iter()
+                .map(|line| (manage_guillemet(line.as_ref()), &self.font)),
+        )
+    }
+
+    /// The sheet of a display: its lines, and its stereotype's labels in `stereotype_font`.
+    pub(crate) fn create_display_sheet(
+        &self,
+        display: &Display,
+        stereotype_font: &FontConfiguration,
+    ) -> Sheet {
+        let lines = display
+            .lines()
+            .iter()
+            .map(|line| (manage_guillemet(line), &self.font));
+        let labels = display
+            .stereotype()
+            .map(Stereotype::labels)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|label| (label, stereotype_font));
+        if display.is_stereotype_first() {
+            self.create_sheet_of(labels.chain(lines))
+        } else {
+            self.create_sheet_of(lines.chain(labels))
+        }
+    }
+
+    /// Each line comes in the font it is written in.
+    fn create_sheet_of<'a>(
+        &self,
+        lines: impl Iterator<Item = (String, &'a FontConfiguration)>,
+    ) -> Sheet {
         let mut list_numbers = ListNumbers::default();
         let mut stripes: Vec<Stripe> = Vec::new();
         let mut open_block: Option<MultilineBlock> = None;
-        for line in lines {
-            let line = manage_guillemet(line.as_ref());
+        for (line, font) in lines {
             if let Some(block) = &mut open_block
                 && block.continues_with(&line)
             {
-                block.add_line(&line, &self.font);
+                block.add_line(&line, font);
                 continue;
             }
             if let Some(block) = open_block.take() {
                 stripes.push(block.into_stripe(self.horizontal_alignment));
             }
             if table::is_table_line(&line) {
-                open_block = Some(MultilineBlock::Table(AtomTable::new(&line, &self.font)));
+                open_block = Some(MultilineBlock::Table(AtomTable::new(&line, font)));
             } else if tree::is_tree_start(&line) {
-                open_block = Some(MultilineBlock::Tree(AtomTree::new(&line, &self.font)));
+                open_block = Some(MultilineBlock::Tree(AtomTree::new(&line, font)));
             } else if code::is_code_start(&line) {
-                open_block = Some(MultilineBlock::Code(AtomCode::new(&self.font)));
+                open_block = Some(MultilineBlock::Code(AtomCode::new(font)));
             } else {
                 let alignment = stripes
                     .last()
                     .map_or(self.horizontal_alignment, |stripe| stripe.cell_alignment);
-                stripes.extend(self.create_stripes(&line, alignment, &mut list_numbers));
+                stripes.extend(self.create_stripes(&line, font, alignment, &mut list_numbers));
             }
         }
         stripes.extend(open_block.map(|block| block.into_stripe(self.horizontal_alignment)));
@@ -79,6 +114,7 @@ impl CreoleParser {
     fn create_stripes(
         &self,
         line: &str,
+        font: &FontConfiguration,
         alignment: HorizontalAlignment,
         list_numbers: &mut ListNumbers,
     ) -> Vec<Stripe> {
@@ -86,31 +122,33 @@ impl CreoleParser {
         java::split(&text, &BLOCK_E1_NEWLINE.to_string())
             .iter()
             .map(|single_line| {
-                let header = self.header(style, list_numbers);
+                let header = header(font, style, list_numbers);
                 let mut stripe =
-                    StripeBuilder::new(self.font.clone(), style, alignment, header, self.mode);
+                    StripeBuilder::new(font.clone(), style, alignment, header, self.mode);
                 stripe.analyze_and_add(single_line);
                 stripe.build()
             })
             .collect()
     }
+}
 
-    /// What a list item starts with.
-    fn header(&self, style: StripeStyle, list_numbers: &mut ListNumbers) -> Option<Rc<dyn Atom>> {
-        match style.kind {
-            StripeStyleType::ListWithoutNumber => {
-                Some(Rc::new(Bullet::new(self.font.clone(), style.order)))
-            }
-            StripeStyleType::ListWithNumber => {
-                let number = list_numbers.next(style.order);
-                Some(Rc::new(AtomText::list_number(
-                    self.font.clone(),
-                    style.order,
-                    number,
-                )))
-            }
-            _ => None,
+/// What a list item starts with.
+fn header(
+    font: &FontConfiguration,
+    style: StripeStyle,
+    list_numbers: &mut ListNumbers,
+) -> Option<Rc<dyn Atom>> {
+    match style.kind {
+        StripeStyleType::ListWithoutNumber => Some(Rc::new(Bullet::new(font.clone(), style.order))),
+        StripeStyleType::ListWithNumber => {
+            let number = list_numbers.next(style.order);
+            Some(Rc::new(AtomText::list_number(
+                font.clone(),
+                style.order,
+                number,
+            )))
         }
+        _ => None,
     }
 }
 

@@ -95,6 +95,16 @@ impl Stereotype {
     }
 }
 
+/// As PlantUML writes it out, in tooltips for instance: the spot's letter, then the labels as written.
+impl std::fmt::Display for Stereotype {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.spot {
+            Some(spot) => write!(f, "{} {}", spot.character, self.label),
+            None => f.write_str(&self.label),
+        }
+    }
+}
+
 /// `StringUtils.isEmpty`: only spaces and tabs.
 fn is_blank(text: &str) -> bool {
     text.chars().all(|c| matches!(c, ' ' | '\t'))
@@ -154,5 +164,14 @@ mod tests {
         assert_eq!(stereotype.labels(), ["\u{AB}Testable\u{BB}"]);
         let only_spot = Stereotype::with_spot("<< (D,orchid) >>").unwrap();
         assert!(only_spot.labels().is_empty());
+        assert_eq!(only_spot.to_string(), "D ");
+    }
+
+    #[test]
+    fn written_out_with_the_spot_letter_first() {
+        let stereotype = Stereotype::with_spot("<< (C,#ADD1B2) Testable >>").unwrap();
+        assert_eq!(stereotype.to_string(), "C << Testable >>");
+        let plain = Stereotype::new("<< Generated >>");
+        assert_eq!(plain.to_string(), "<< Generated >>");
     }
 }

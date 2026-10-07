@@ -1,9 +1,9 @@
-//! Text blocks that frame, pad or stack other text blocks.
+//! Text blocks that frame, pad, stack or mark other text blocks.
 
-use super::font::{FontConfiguration, StringBounder};
+use super::font::{FontConfiguration, StringBounder, UFont};
 use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use super::group::UGroup;
-use super::shape::{URectangle, UShape, UText};
+use super::shape::{UCenteredCharacter, UEllipse, URectangle, UShape, UText};
 use super::ugraphic::{UGraphic, UStroke};
 use super::{HorizontalAlignment, TextBlock, layout_tabulated};
 use crate::color::HColor;
@@ -79,6 +79,97 @@ impl<T: TextBlock> TextBlock for TextBlockBordered<T> {
             self.padding.left,
             self.padding.right,
         );
+    }
+}
+
+/// A letter in a filled circle, like a stereotype's spot.
+pub(crate) struct CircledCharacter {
+    character: char,
+    radius: f64,
+    font: UFont,
+    spot_back_color: Option<HColor>,
+    font_color: HColor,
+}
+
+impl CircledCharacter {
+    pub(crate) fn new(
+        character: char,
+        radius: f64,
+        font: UFont,
+        spot_back_color: Option<HColor>,
+        font_color: HColor,
+    ) -> Self {
+        Self {
+            character,
+            radius,
+            font,
+            spot_back_color,
+            font_color,
+        }
+    }
+}
+
+impl TextBlock for CircledCharacter {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        XDimension2D::new(2.0 * self.radius, 2.0 * self.radius)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        let circle = match &self.spot_back_color {
+            Some(color) => ug.with_backcolor(color.clone()),
+            None => ug.clone(),
+        };
+        circle.draw(&UShape::Ellipse(UEllipse::new(
+            2.0 * self.radius,
+            2.0 * self.radius,
+        )));
+        circle
+            .with_color(self.font_color.clone())
+            .translated(self.radius, self.radius)
+            .draw(&UShape::CenteredCharacter(UCenteredCharacter {
+                character: self.character,
+                font: self.font.clone(),
+            }));
+    }
+}
+
+/// A block with a sprite, like a stereotype's spot, before it.
+pub(crate) struct TextBlockSprited<S, T> {
+    sprite: S,
+    parent: T,
+}
+
+impl<S: TextBlock, T: TextBlock> TextBlockSprited<S, T> {
+    const MARGIN: f64 = 6.0;
+
+    pub(crate) fn new(sprite: S, parent: T) -> Self {
+        Self { sprite, parent }
+    }
+
+    fn sprite_width_and_margin(&self, string_bounder: &dyn StringBounder) -> f64 {
+        self.sprite.calculate_dimension(string_bounder).width + Self::MARGIN
+    }
+}
+
+impl<S: TextBlock, T: TextBlock> TextBlock for TextBlockSprited<S, T> {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        let sprite_height = self.sprite.calculate_dimension(string_bounder).height;
+        let dimension = self.parent.calculate_dimension(string_bounder);
+        XDimension2D::new(
+            dimension.width + self.sprite_width_and_margin(string_bounder),
+            sprite_height.max(dimension.height),
+        )
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.draw_in_padding(ug, 0.0, 0.0);
+    }
+
+    fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
+        self.sprite.draw_u(ug);
+        let dx = self.sprite_width_and_margin(ug.string_bounder());
+        self.parent
+            .draw_in_padding(&ug.translated(dx, 0.0), left, right);
     }
 }
 

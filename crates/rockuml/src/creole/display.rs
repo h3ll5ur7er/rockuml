@@ -3,22 +3,59 @@ use crate::jaws::{
     BLOCK_E1_NEWLINE_RIGHT_ALIGN, BLOCK_E1_REAL_BACKSLASH,
 };
 use crate::klimt::HorizontalAlignment;
+use crate::stereo::Stereotype;
 
 /// Marks a quote PlantUML keeps out of the text.
 const BLOCK_E1_INVISIBLE_QUOTE: char = '\u{E121}';
 
-/// The lines of a label, with the alignment its line breaks asked for.
+/// The lines of a label, with the alignment its line breaks asked for, and the stereotype shown with them.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Display {
     lines: Vec<String>,
     natural_alignment: Option<HorizontalAlignment>,
+    stereotype: Option<DisplayedStereotype>,
+}
+
+/// PlantUML keeps a shown stereotype as the first or the last line of the display.
+#[derive(Clone, Debug, PartialEq)]
+struct DisplayedStereotype {
+    stereotype: Stereotype,
+    first: bool,
 }
 
 impl Display {
     pub(crate) fn create(lines: impl IntoIterator<Item = impl Into<String>>) -> Self {
         Self {
             lines: lines.into_iter().map(Into::into).collect(),
-            natural_alignment: None,
+            ..Self::default()
+        }
+    }
+
+    /// The display with a stereotype before (`first`) or after its lines (`addFirst` and `add`).
+    #[must_use]
+    pub(crate) fn with_stereotype(&self, stereotype: Stereotype, first: bool) -> Self {
+        Self {
+            stereotype: Some(DisplayedStereotype { stereotype, first }),
+            ..self.clone()
+        }
+    }
+
+    pub(crate) fn stereotype(&self) -> Option<&Stereotype> {
+        self.stereotype.as_ref().map(|shown| &shown.stereotype)
+    }
+
+    /// Whether the stereotype comes before the lines.
+    pub(crate) fn is_stereotype_first(&self) -> bool {
+        self.stereotype.as_ref().is_some_and(|shown| shown.first)
+    }
+
+    /// The first line, as a tooltip shows it.
+    pub(crate) fn tooltip_text(&self) -> String {
+        match (self.lines.first(), &self.stereotype) {
+            (Some(_), Some(shown)) if shown.first => shown.stereotype.to_string(),
+            (Some(line), _) => line.clone(),
+            (None, Some(shown)) => shown.stereotype.to_string(),
+            (None, None) => String::new(),
         }
     }
 
@@ -91,32 +128,27 @@ impl Display {
         Self {
             lines,
             natural_alignment,
+            stereotype: None,
         }
     }
 
     /// Written `\t` becomes a tabulation.
     #[must_use]
     pub(crate) fn replace_backslash_t(&self) -> Self {
-        Self {
-            lines: self
-                .lines
-                .iter()
-                .map(|line| line.replace("\\t", "\t"))
-                .collect(),
-            natural_alignment: self.natural_alignment,
-        }
+        self.map_lines(|line| line.replace("\\t", "\t"))
     }
 
     /// Every `from` in every line becomes `to`.
     #[must_use]
     pub(crate) fn replace(&self, from: &str, to: &str) -> Self {
+        self.map_lines(|line| line.replace(from, to))
+    }
+
+    fn map_lines(&self, change: impl Fn(&str) -> String) -> Self {
         Self {
-            lines: self
-                .lines
-                .iter()
-                .map(|line| line.replace(from, to))
-                .collect(),
+            lines: self.lines.iter().map(|line| change(line)).collect(),
             natural_alignment: self.natural_alignment,
+            stereotype: self.stereotype.clone(),
         }
     }
 
@@ -157,6 +189,19 @@ mod tests {
         assert_eq!(
             Display::with_newlines(r"[[a\nb]]\nc").lines(),
             [r"[[a\nb]]", "c"]
+        );
+    }
+
+    #[test]
+    fn tooltips_show_the_first_line_which_may_be_the_stereotype() {
+        let display = Display::create(["Bob"]);
+        let stereotype = Stereotype::with_spot("<< (C,red) Testable >>").unwrap();
+        assert_eq!(display.tooltip_text(), "Bob");
+        let first = display.with_stereotype(stereotype.clone(), true);
+        assert_eq!(first.tooltip_text(), "C << Testable >>");
+        assert_eq!(
+            display.with_stereotype(stereotype, false).tooltip_text(),
+            "Bob"
         );
     }
 

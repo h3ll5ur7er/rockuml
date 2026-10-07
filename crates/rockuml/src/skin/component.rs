@@ -1,13 +1,15 @@
 //! The drawable parts of a sequence diagram (PlantUML's `Component`, `AbstractComponent` and
 //! `AbstractTextualComponent`).
 
-use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
-use crate::klimt::blocks::TextBlockMarged;
-use crate::klimt::font::{FontConfiguration, StringBounder};
+use crate::color::HColor;
+use crate::creole::{CreoleParser, Display, Sheet, SheetBlock1, SheetBlock2};
+use crate::klimt::blocks::{CircledCharacter, TextBlockMarged, TextBlockSprited};
+use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
-use crate::style::Style;
+use crate::stereo::{Spot, Stereotype};
+use crate::style::{PName, Style, ValueReading};
 
 /// Where a component is drawn and how much room it gets.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -157,14 +159,47 @@ pub(crate) fn component_text(
     style: &Style,
     max_width: f64,
 ) -> Box<dyn TextBlock> {
-    if display.lines().len() == 1 && display.lines()[0].is_empty() {
+    stereotyped_component_text(display, font, style, style, max_width)
+}
+
+/// `component_text` for a display that may show a stereotype: its labels in the font and colour of the
+/// `stereo` style, its spot before the whole text.
+pub(crate) fn stereotyped_component_text(
+    display: &Display,
+    font: FontConfiguration,
+    style: &Style,
+    stereo: &Style,
+    max_width: f64,
+) -> Box<dyn TextBlock> {
+    if display.stereotype().is_none() && display.lines().len() == 1 && display.lines()[0].is_empty()
+    {
         return Box::new(TextBlockEmpty::default());
     }
     let alignment = display
         .natural_alignment()
         .or_else(|| style.horizontal_alignment())
         .unwrap_or_default();
-    creole_text(display.lines(), font, alignment, max_width)
+    let stereotype_font =
+        font.force_font(stereo.ufont(), stereo.value(PName::FontColor).as_color());
+    let font_color = font.color().clone();
+    let sheet = CreoleParser::new(font, alignment).create_display_sheet(display, &stereotype_font);
+    let text = sheet_block(sheet, max_width);
+    match display.stereotype().and_then(Stereotype::spot) {
+        Some(spot) => Box::new(TextBlockSprited::new(spot_block(spot, font_color), text)),
+        None => Box::new(text),
+    }
+}
+
+/// A stereotype's spot, in the font PlantUML gives circled characters unless a skin parameter changes it.
+fn spot_block(spot: &Spot, font_color: HColor) -> CircledCharacter {
+    const FONT_SIZE: i32 = 17;
+    CircledCharacter::new(
+        spot.character,
+        f64::from(FONT_SIZE / 3 + 6),
+        UFont::new("Monospaced", UFontFace::BOLD, FONT_SIZE),
+        spot.color.clone(),
+        font_color,
+    )
 }
 
 /// Creole text whose lines wrap beyond `max_width`, unless it is 0.
@@ -174,10 +209,16 @@ pub(crate) fn creole_text(
     alignment: HorizontalAlignment,
     max_width: f64,
 ) -> Box<dyn TextBlock> {
-    let sheet = CreoleParser::new(font, alignment).create_sheet(lines);
-    Box::new(SheetBlock2::new(
-        SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
+    Box::new(sheet_block(
+        CreoleParser::new(font, alignment).create_sheet(lines),
+        max_width,
     ))
+}
+
+fn sheet_block(sheet: Sheet, max_width: f64) -> SheetBlock2 {
+    SheetBlock2::new(
+        SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
+    )
 }
 
 /// Takes room but draws nothing (`TextBlockEmpty`).
