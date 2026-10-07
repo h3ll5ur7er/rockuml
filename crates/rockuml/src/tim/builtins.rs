@@ -17,6 +17,7 @@ use crate::color::HColor;
 use crate::java;
 use crate::jaws;
 use crate::json::{self, JsonObject, JsonValue};
+use crate::security_profile::SecurityProfile;
 use crate::text::StringLocated;
 
 type Body = fn(&mut Call) -> TimResult<TValue>;
@@ -720,11 +721,7 @@ fn get_stdlib(call: &mut Call) -> TimResult<TValue> {
 fn getenv(call: &mut Call) -> TimResult<TValue> {
     let name = call.text(0)?;
     let lowercase = name.to_lowercase();
-    let insecure = call
-        .context
-        .host
-        .getenv("PLANTUML_SECURITY_PROFILE")
-        .is_some_and(|profile| matches!(profile.to_uppercase().as_str(), "INSECURE" | "UNSECURE"));
+    let insecure = SecurityProfile::init(call.context.host) == SecurityProfile::Insecure;
     let value = match lowercase.as_str() {
         "path.separator" => Some(if cfg!(windows) { ";" } else { ":" }.to_owned()),
         "line.separator" => Some(if cfg!(windows) { "\r\n" } else { "\n" }.to_owned()),

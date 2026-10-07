@@ -18,8 +18,8 @@ pub struct UmlSource {
     raw_lines: Vec<String>,
     /// The base64 data of the PNGs `patch_base64` took out, by their MD5.
     md5_map: HashMap<String, String>,
-    /// What `read_image_files` read, by the name the source gives it.
-    image_files: HashMap<String, Vec<u8>>,
+    /// What `read_image_files` read, by the name the source gives it; `None` for what it could not read.
+    image_files: HashMap<String, Option<Vec<u8>>>,
 }
 
 impl UmlSource {
@@ -151,16 +151,19 @@ impl UmlSource {
                         host.read_url(src)
                     }
                 } else {
-                    host.read_file(&directory.join(src))
+                    let path = directory.join(src);
+                    if crate::file_policy::is_forbidden(&path, host) {
+                        None
+                    } else {
+                        host.read_file(&path)
+                    }
                 };
-                if let Some(content) = content {
-                    self.image_files.insert(src.to_owned(), content);
-                }
+                self.image_files.insert(src.to_owned(), content);
             }
         }
     }
 
-    pub(crate) fn image_files(&self) -> &HashMap<String, Vec<u8>> {
+    pub(crate) fn image_files(&self) -> &HashMap<String, Option<Vec<u8>>> {
         &self.image_files
     }
 }
@@ -199,6 +202,7 @@ fn is_noise(line: &str) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::host::FakeHost;
     use crate::text::LineLocation;
 
     fn source(lines: &[&str]) -> UmlSource {
@@ -240,6 +244,28 @@ mod tests {
             )]
         );
         assert_eq!(patched.md5_map()[abc], "QUJD+/=");
+    }
+
+    #[test]
+    fn each_image_file_is_read_once_even_when_it_cannot_be() {
+        let mut images = source(&["<img:missing.png> <img:missing.png>", "<img:missing.png>"]);
+        let host = FakeHost::default();
+        images.read_image_files(Path::new("diagrams"), &host);
+        assert_eq!(
+            *host.reads.borrow(),
+            [Path::new("diagrams").join("missing.png")]
+        );
+        assert_eq!(images.image_files()["missing.png"], None);
+    }
+
+    #[test]
+    fn image_files_the_security_profile_refuses_are_not_read() {
+        let mut images = source(&["<img:/etc/logo.png>"]);
+        let mut host = FakeHost::default();
+        host.files.insert("/etc/logo.png".into(), vec![1]);
+        images.read_image_files(Path::new(""), &host);
+        assert!(host.reads.borrow().is_empty());
+        assert_eq!(images.image_files()["/etc/logo.png"], None);
     }
 
     #[test]

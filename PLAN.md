@@ -362,6 +362,10 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     `<svg>`. So that no input exhausts memory, declared sprite sizes beyond 32767 pixels a side or 2^24 pixels (a
     4096 x 4096 image, PlantUML's default `PLANTUML_LIMIT_SIZE`) are a command error, scaled images beyond that draw
     nothing, and compressed sprites inflate no more bytes than they have pixels.
+  - Files (`<img>`, `!include`) obey `SFile.isFileOk`: the default LEGACY profile refuses paths under `/etc/`,
+    `/dev/`, `/boot/`, `/proc/` and `/sys/` and those starting with `//`; SANDBOX and the allowlist profiles refuse
+    every file, as their allowlists are not read; INSECURE allows all. A refused file is missing. Like PlantUML, `..`
+    is not resolved first.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.

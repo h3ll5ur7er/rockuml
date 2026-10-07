@@ -2,6 +2,7 @@
 
 use std::path::{Component, Path, PathBuf};
 
+use crate::file_policy;
 use crate::host::Host;
 use crate::java::RuntimeException;
 use crate::stdlib::Stdlib;
@@ -114,8 +115,10 @@ impl PathSystem {
     }
 }
 
+/// A file the security profile refuses does not exist for the diagram.
 fn existing(host: &dyn Host, path: PathBuf) -> Option<InputFile> {
-    host.file_exists(&path).then_some(InputFile::Local(path))
+    (!file_policy::is_forbidden(&path, host) && host.file_exists(&path))
+        .then_some(InputFile::Local(path))
 }
 
 fn normalize(path: &Path) -> PathBuf {
@@ -149,7 +152,7 @@ fn normalize_slashes(path: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::host::IsolatedHost;
+    use crate::host::{FakeHost, IsolatedHost};
 
     #[test]
     fn stdlib_names_resolve_case_insensitively() {
@@ -174,6 +177,17 @@ mod tests {
             paths.input_file("https://example.com/x.puml", &IsolatedHost),
             Err(RuntimeException)
         );
+    }
+
+    #[test]
+    fn files_the_security_profile_refuses_do_not_exist() {
+        let mut host = FakeHost::default();
+        for path in ["/etc/lib.puml", "/usr/lib.puml"] {
+            host.files.insert(PathBuf::from(path), Vec::new());
+        }
+        let paths = PathSystem::new(Folder::Regular(PathBuf::new()));
+        assert_eq!(paths.input_file("/etc/lib.puml", &host), Ok(None));
+        assert!(paths.input_file("/usr/lib.puml", &host).unwrap().is_some());
     }
 
     #[test]

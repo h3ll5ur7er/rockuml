@@ -109,13 +109,15 @@ pub fn create(
     host: &dyn Host,
 ) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let (diagram_type, mut source) = prepare(block);
+    // Known first, so that diagrams rockuml cannot draw read no images.
+    let create: fn(UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> = match diagram_type {
+        Some(DiagramType::Creole) => |source| Ok(CreoleDiagram::create(source)),
+        Some(DiagramType::Salt) => |source| Ok(salt::SaltDiagram::create(source)),
+        Some(DiagramType::Uml) => sequence::SequenceDiagram::create,
+        _ => return Err(NotYetPorted("this diagram type")),
+    };
     source.read_image_files(block.directory(), host);
-    match diagram_type {
-        Some(DiagramType::Creole) => Ok(CreoleDiagram::create(source)),
-        Some(DiagramType::Salt) => Ok(salt::SaltDiagram::create(source)),
-        Some(DiagramType::Uml) => sequence::SequenceDiagram::create(source),
-        _ => Err(NotYetPorted("this diagram type")),
-    }
+    create(source)
 }
 
 /// The diagram's source encoded as in a PlantUML server URL.

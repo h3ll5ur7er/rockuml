@@ -36,8 +36,8 @@ pub(crate) struct SkinParam {
     sprites: HashMap<String, Rc<dyn Sprite>>,
     /// The base64 data of the PNGs the source refers to by MD5.
     md5_map: HashMap<String, String>,
-    /// The files and URLs the source's `<img>`s name, by name.
-    image_files: HashMap<String, Vec<u8>>,
+    /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
+    image_files: HashMap<String, Option<Vec<u8>>>,
 }
 
 impl SpriteContainer for SkinParam {
@@ -53,7 +53,7 @@ impl SpriteContainer for SkinParam {
     }
 
     fn image_file(&self, src: &str) -> Option<&[u8]> {
-        self.image_files.get(src).map(Vec::as_slice)
+        self.image_files.get(src)?.as_deref()
     }
 }
 
