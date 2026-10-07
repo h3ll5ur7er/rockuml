@@ -1,6 +1,7 @@
 //! Lays out every Smetana trace's graph phase by phase and compares the state after each phase with Java's
-//! trace: `phase rank` (each graph's and cluster's rank range, then every real node's rank) and `phase mincross`
-//! (each rank's nodes left to right).
+//! trace: `phase rank` (each graph's and cluster's rank range, then every real node's rank), `phase mincross`
+//! (each rank's nodes left to right) and `phase position` (every node's coordinates and size, each graph's
+//! bounding box).
 
 mod trace;
 
@@ -15,10 +16,11 @@ use smetana::common::input::graph_init;
 use smetana::common::utils::setEdgeType;
 use smetana::core::Globals;
 use smetana::core::consts::{ET_SPLINE, VIRTUAL};
-use smetana::core::ids::{GraphId, NodeId};
+use smetana::core::ids::{GraphId, NodeId, TextlabelId};
 use smetana::dotgen::aspect::{aspect_t, setAspect};
 use smetana::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
 use smetana::dotgen::mincross::dot_mincross;
+use smetana::dotgen::position::dot_position;
 use smetana::dotgen::rank::dot_rank;
 use trace::Replay;
 
@@ -90,32 +92,147 @@ fn expected_ranks(trace: &trace::Trace) -> String {
         })
 }
 
-/// The `phase mincross` section as the Java tracer writes it: virtual nodes are `v1`, `v2`... in the order the
-/// dump first meets them.
-fn dump_orders(r: &mut Replay) -> String {
-    let zz = &r.zz;
-    let mut names: HashMap<NodeId, String> = HashMap::new();
-    let mut virtuals = 0;
+/// Node names as the Java tracer writes them: real nodes by quoted name, virtual nodes as `v1`, `v2`... in the
+/// order the trace first meets them, keeping their names for the rest of the trace.
+#[derive(Default)]
+struct Names {
+    names: HashMap<NodeId, String>,
+    virtuals: usize,
+}
+
+impl Names {
+    fn of(&mut self, zz: &Globals, n: NodeId) -> &str {
+        self.names.entry(n).or_insert_with(|| {
+            if zz.nd(n).node_type == VIRTUAL {
+                self.virtuals += 1;
+                format!("v{}", self.virtuals)
+            } else {
+                trace::quote(&agnameof(zz, n).expect("node name"))
+            }
+        })
+    }
+}
+
+/// The nodes of `GD_rank(g)[r]`, left to right.
+fn rank_nodes(zz: &Globals, g: GraphId, r: i32) -> Vec<NodeId> {
+    let rank = zz.rank(g, r);
+    let v = rank.v.expect("rank");
+    (0..rank.n)
+        .map(|i| zz.node_lists.get(v, i).expect("node in rank"))
+        .collect()
+}
+
+/// The `phase mincross` section as the Java tracer writes it.
+fn dump_orders(zz: &Globals, root: GraphId, names: &mut Names) -> String {
     let mut out = String::new();
-    let info = zz.gd(r.root);
+    let info = zz.gd(root);
     for rank in info.minrank..=info.maxrank {
         write!(out, "rank {rank}").unwrap();
-        let v = zz.rank(r.root, rank).v.expect("rank");
-        for i in 0..zz.rank(r.root, rank).n {
-            let n = zz.node_lists.get(v, i).expect("node in rank");
-            let name = names.entry(n).or_insert_with(|| {
-                if zz.nd(n).node_type == VIRTUAL {
-                    virtuals += 1;
-                    format!("v{virtuals}")
-                } else {
-                    trace::quote(&agnameof(zz, n).expect("node name"))
-                }
-            });
-            write!(out, " {name}").unwrap();
+        for n in rank_nodes(zz, root, rank) {
+            write!(out, " {}", names.of(zz, n)).unwrap();
         }
         out.push('\n');
     }
     out
+}
+
+/// A graph's or edge's label as the Java tracer writes it.
+fn dump_label(
+    zz: &Globals,
+    out: &mut String,
+    reference: &str,
+    kind: &str,
+    label: Option<TextlabelId>,
+) {
+    if let Some(l) = label {
+        let l = &zz.textlabels[l];
+        writeln!(
+            out,
+            "{reference} {kind} pos {:?} {:?} dimen {:?} {:?} set {}",
+            l.pos.x, l.pos.y, l.dimen.x, l.dimen.y, l.set
+        )
+        .unwrap();
+    }
+}
+
+/// Each graph's bounding box and label, the root first, then the clusters depth-first.
+fn dump_graph_boxes(zz: &Globals, g: GraphId, out: &mut String) {
+    let info = zz.gd(g);
+    let reference = format!(
+        "graph {}",
+        trace::quote(&agnameof(zz, g).expect("graph name"))
+    );
+    let bb = info.bb;
+    writeln!(
+        out,
+        "{reference} bb {:?} {:?} {:?} {:?}",
+        bb.LL.x, bb.LL.y, bb.UR.x, bb.UR.y
+    )
+    .unwrap();
+    dump_label(zz, out, &reference, "label", info.label);
+    for c in 1..=info.n_cluster {
+        let clust = zz
+            .graph_lists
+            .get(info.clust.expect("clusters"), c)
+            .expect("cluster");
+        dump_graph_boxes(zz, clust, out);
+    }
+}
+
+/// The `phase position` section as the Java tracer writes it.
+fn dump_positions(zz: &Globals, root: GraphId, names: &mut Names) -> String {
+    let mut out = String::new();
+    let info = zz.gd(root);
+    for rank in info.minrank..=info.maxrank {
+        for n in rank_nodes(zz, root, rank) {
+            let i = zz.nd(n);
+            writeln!(
+                out,
+                "node {} rank {rank} coord {:?} {:?} lw {:?} rw {:?} ht {:?}",
+                names.of(zz, n),
+                i.coord.x,
+                i.coord.y,
+                i.lw,
+                i.rw,
+                i.ht
+            )
+            .unwrap();
+        }
+    }
+    dump_graph_boxes(zz, root, &mut out);
+    out
+}
+
+/// Java's `phase position` section, with its doubles written as Rust writes them (Java's `Double.toString`
+/// differs in form, not in value).
+fn expected_positions(trace: &trace::Trace) -> String {
+    let (_, lines) = trace
+        .phases
+        .iter()
+        .find(|(phase, _)| phase == "position")
+        .expect("phase position");
+    lines
+        .iter()
+        .filter(|l| l.starts_with("node ") || l.starts_with("graph "))
+        .fold(String::new(), |mut out, l| {
+            let mut tokens = l.split(' ');
+            let head: Vec<&str> = tokens.by_ref().take(2).collect();
+            out.push_str(&head.join(" "));
+            let mut previous = "";
+            for t in tokens {
+                out.push(' ');
+                // Ranks and the label's `set` are integers.
+                match t.parse::<f64>() {
+                    Ok(x) if previous != "rank" && previous != "set" => {
+                        write!(out, "{x:?}").unwrap();
+                    }
+                    _ => out.push_str(t),
+                }
+                previous = t;
+            }
+            out.push('\n');
+            out
+        })
 }
 
 /// Java's `phase mincross` section.
@@ -227,12 +344,8 @@ fn expected_label_sizes(trace: &trace::Trace) -> String {
         .collect()
 }
 
-/// Lays out every trace's graph with `layout`, then compares `dump`'s text with `expected`'s.
-fn check_all(
-    layout: fn(&mut Replay),
-    dump: fn(&mut Replay) -> String,
-    expected: fn(&trace::Trace) -> String,
-) {
+/// Lays out every trace's graph with `run`, then compares the text it returns with `expected`'s.
+fn check_all(run: fn(&mut Replay) -> String, expected: fn(&trace::Trace) -> String) {
     let traces = trace::files(&trace::repo_tests_dir().join("smetana"), "trace");
     assert!(!traces.is_empty(), "no traces");
     let mut failures = Vec::new();
@@ -241,8 +354,7 @@ fn check_all(
         let want = expected(&trace);
         let got = catch_unwind(AssertUnwindSafe(|| {
             let mut replay = trace::replay(&trace.input);
-            layout(&mut replay);
-            dump(&mut replay)
+            run(&mut replay)
         }));
         match got {
             Ok(got) if got == want => {}
@@ -271,20 +383,59 @@ fn check_all(
 
 #[test]
 fn ranks_match_java() {
-    check_all(layout_until_rank, dump_ranks, expected_ranks);
+    check_all(
+        |r| {
+            layout_until_rank(r);
+            dump_ranks(r)
+        },
+        expected_ranks,
+    );
 }
 
 #[test]
 fn mincross_orders_match_java() {
-    check_all(layout_until_mincross, dump_orders, expected_orders);
+    check_all(
+        |r| {
+            layout_until_mincross(r);
+            dump_orders(&r.zz, r.root, &mut Names::default())
+        },
+        expected_orders,
+    );
+}
+
+#[test]
+fn positions_match_java() {
+    check_all(
+        |r| {
+            layout_until_mincross(r);
+            // Virtual nodes are named in the mincross dump first.
+            let mut names = Names::default();
+            dump_orders(&r.zz, r.root, &mut names);
+            dot_position(&mut r.zz, r.root, None);
+            dump_positions(&r.zz, r.root, &mut names)
+        },
+        expected_positions,
+    );
 }
 
 #[test]
 fn node_sizes_match_java() {
-    check_all(layout_until_rank, dump_sizes, expected_sizes);
+    check_all(
+        |r| {
+            layout_until_rank(r);
+            dump_sizes(r)
+        },
+        expected_sizes,
+    );
 }
 
 #[test]
 fn label_sizes_match_java() {
-    check_all(layout_until_rank, dump_label_sizes, expected_label_sizes);
+    check_all(
+        |r| {
+            layout_until_rank(r);
+            dump_label_sizes(r)
+        },
+        expected_label_sizes,
+    );
 }
