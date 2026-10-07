@@ -188,7 +188,7 @@ fn dump_model(diagram: &DescriptionDiagram) -> String {
             group.get_uid(),
             quoted(Some(qualified(group))),
             screaming(group.get_group_type()),
-            symbol(group.get_u_symbol()),
+            symbol(group.get_usymbol()),
             describe(group)
         )
         .unwrap();
@@ -204,7 +204,7 @@ fn dump_model(diagram: &DescriptionDiagram) -> String {
             leaf.get_uid(),
             quoted(Some(qualified(leaf))),
             leaf_type.name(),
-            symbol(leaf.get_u_symbol()),
+            symbol(leaf.get_usymbol()),
             describe(leaf)
         )
         .unwrap();

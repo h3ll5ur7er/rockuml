@@ -247,6 +247,7 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
+            UShape::Comment(comment) => self.lines.push(format!("COMMENT: {comment}")),
             UShape::Empty(dimension) => self.lines.extend([
                 "EMPTY:".to_owned(),
                 format!("  pt1: {}", point(at.dx, at.dy)),
@@ -256,7 +257,6 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
-            UShape::Comment(comment) => self.lines.push(format!("COMMENT: {comment}")),
             UShape::HorizontalLine
             | UShape::Image(_)
             | UShape::ImageSvg(_)

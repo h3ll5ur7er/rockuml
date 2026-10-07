@@ -23,7 +23,7 @@ impl StyleSignature {
         self.merged_for_labels(builder, stereotype, None)
     }
 
-    /// The style of an element's stereotype (`forStereotypeItself(stereotype).getMergedStyle(builder)`).
+    /// The style of the stereotype's own text (`forStereotypeItself(stereotype).getMergedStyle(builder)`).
     pub(crate) fn get_merged_style_for_stereotype_itself(
         &self,
         builder: &StyleBuilder,

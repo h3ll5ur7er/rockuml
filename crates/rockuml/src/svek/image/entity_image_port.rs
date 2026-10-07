@@ -1,9 +1,7 @@
 //! A port on the border of its component: a small square with its name inside the component (PlantUML's
 //! `EntityImagePort` and `AbstractEntityImageBorder`).
 
-use std::cell::Cell;
-
-use crate::abel::{Entity, EntityPosition};
+use crate::abel::{Entity, EntityId, EntityPosition};
 use crate::color::{ColorType, HColor};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::font::StringBounder;
@@ -14,7 +12,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::creole_text;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
 
 use super::entity_group;
 
@@ -22,12 +20,11 @@ const SIDE: f64 = EntityPosition::RADIUS * 2.0;
 
 pub(crate) struct EntityImagePort {
     base: AbstractEntityImage,
+    /// The component the port is on.
+    parent: Option<EntityId>,
     desc: Box<dyn TextBlock>,
     border_color: HColor,
     backcolor: HColor,
-    /// Whether the port sits in the upper half of its component, so that its name goes above it; known once
-    /// the layout placed both.
-    up_position: Cell<bool>,
     group: UGroup,
 }
 
@@ -50,6 +47,7 @@ impl EntityImagePort {
         );
         Self {
             base: AbstractEntityImage::new(entity, diagram),
+            parent: entity.get_parent_container(diagram),
             desc,
             border_color: entity
                 .colors
@@ -61,21 +59,15 @@ impl EntityImagePort {
                 .get(ColorType::Back)
                 .cloned()
                 .unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
-            up_position: Cell::new(false),
             group: entity_group(entity, diagram, "entity", entity.get_location()),
         }
     }
-}
 
-impl TextBlock for EntityImagePort {
-    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
-        XDimension2D::new(SIDE, SIDE)
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
+    /// The square, with the name above it when `up_position`, else below.
+    fn draw_at(&self, ug: &UGraphic, up_position: bool) {
         let dim_desc = self.desc.calculate_dimension(ug.string_bounder());
         let x = -(dim_desc.width - SIDE) / 2.0;
-        let y = if self.up_position.get() {
+        let y = if up_position {
             -(SIDE + dim_desc.height)
         } else {
             SIDE
@@ -90,6 +82,16 @@ impl TextBlock for EntityImagePort {
     }
 }
 
+impl TextBlock for EntityImagePort {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        XDimension2D::new(SIDE, SIDE)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.draw_at(ug, false);
+    }
+}
+
 impl IEntityImage for EntityImagePort {
     fn get_shape_type(&self) -> ShapeType {
         ShapeType::RectanglePort
@@ -99,7 +101,15 @@ impl IEntityImage for EntityImagePort {
         self.base.is_hidden()
     }
 
-    fn place_on_border(&self, cluster_center_y: f64, node_min_y: f64) {
-        self.up_position.set(node_min_y < cluster_center_y);
+    /// A port in the upper half of its component has its name above it.
+    fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
+        let up_position = self
+            .parent
+            .and_then(|parent| layout.bibliotekon.get_cluster(parent))
+            .is_some_and(|parent| {
+                let center = parent.get_rectangle_area().get_point_center();
+                layout.get_node(self.base.get_entity()).get_min_y() < center.y
+            });
+        self.draw_at(ug, up_position);
     }
 }

@@ -25,6 +25,7 @@ mod pattern;
 mod plasma;
 pub mod preproc;
 mod real;
+mod sdot;
 mod security_profile;
 mod skin;
 mod stdlib;

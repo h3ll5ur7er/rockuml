@@ -349,7 +349,7 @@ impl UGraphicBackend for UGraphicSvg {
             UShape::CenteredCharacter(centered) => {
                 self.draw_centered_character(centered, at, param);
             }
-            UShape::Comment(comment) => self.svg().comment(comment),
+            UShape::Comment(comment) => self.svg().add_comment(comment),
             UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
         }
     }

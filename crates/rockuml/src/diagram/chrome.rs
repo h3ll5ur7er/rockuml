@@ -17,7 +17,7 @@ use crate::skin::component::creole_text;
 use crate::style::Style;
 
 /// Something the diagram's author should change, shown above the diagram (PlantUML's `Warning`).
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct Warning(pub String);
 
 const LINE_SPACING: f64 = 10.0;

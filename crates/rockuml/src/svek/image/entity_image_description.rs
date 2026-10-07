@@ -44,7 +44,7 @@ impl EntityImageDescription {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let skin = diagram.skin();
         let symbol = entity
-            .get_u_symbol()
+            .get_usymbol()
             .unwrap_or_else(|| skin.component_style().to_u_symbol());
         let shape_type = match symbol {
             USymbols::FOLDER | USymbols::PACKAGE => ShapeType::Folder,
@@ -145,7 +145,7 @@ impl EntityImageDescription {
         let name_block: Block = Rc::new(name_block(
             &code_display,
             entity,
-            skin.default_text_alignment(HorizontalAlignment::Center),
+            skin.get_default_text_alignment(HorizontalAlignment::Center),
             style_title.font_configuration_with(colors),
             &style_title,
             skin,

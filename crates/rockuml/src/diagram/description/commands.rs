@@ -218,7 +218,7 @@ fn create_leaf(
     let entity = diagram
         .cuca
         .really_create_leaf(Some(location), quark, display, leaf_type);
-    diagram.cuca.entity_mut(entity).set_u_symbol(usymbol);
+    diagram.cuca.entity_mut(entity).usymbol = usymbol;
     entity
 }
 
@@ -614,7 +614,7 @@ pub(super) fn archimate_package() -> Box<dyn Command<DescriptionDiagram>> {
             let colors = colors(arg, ColorType::Back)?;
             let group = cuca.get_current_group();
             let entity = cuca.entity_mut(group);
-            entity.set_u_symbol(Some(USymbols::ARCHIMATE));
+            entity.usymbol = Some(USymbols::ARCHIMATE);
             entity.display = display;
             if stereotype.is_some() {
                 entity.stereotype = stereotype;

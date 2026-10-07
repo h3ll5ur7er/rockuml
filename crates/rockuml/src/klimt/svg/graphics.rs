@@ -228,10 +228,6 @@ impl SvgGraphics {
         self.ensure_visible(x2, y2);
     }
 
-    pub(super) fn comment(&mut self, comment: &str) {
-        self.current_group().append_comment(comment);
-    }
-
     pub(super) fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
         let mut element = XmlNode::new("ellipse");
         element.set_attribute("cx", self.length(x));
@@ -536,16 +532,20 @@ impl SvgGraphics {
         Some(scaled)
     }
 
+    pub(super) fn add_comment(&mut self, comment: &str) {
+        self.current_group().append_comment(comment);
+    }
+
     pub(super) fn start_group(&mut self, group: &UGroup) {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
-            if kind == UGroupType::Title {
+            if let Some(name) = kind.svg_attribute_name() {
+                element.set_attribute(name, value);
+            } else if kind == UGroupType::Title {
                 let mut title = XmlNode::new("title");
                 title.set_text_content(value);
                 element.append_child(title);
-            } else if let Some(name) = kind.svg_attribute_name() {
-                element.set_attribute(name, value);
             }
         }
         self.open_elements.push(element);

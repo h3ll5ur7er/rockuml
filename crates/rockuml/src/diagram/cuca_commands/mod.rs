@@ -6,7 +6,7 @@ pub(super) mod note;
 
 use regex::Regex;
 
-use super::cuca::{EntityDiagram, CucaDiagram};
+use super::cuca::{CucaDiagram, EntityDiagram};
 use super::titled::TitledDiagram;
 use crate::abel::{Entity, GroupType, LeafType};
 use crate::color::{ColorType, Colors};
@@ -15,9 +15,9 @@ use crate::command::{BlocLines, CommandControl, CommandError, Multiline};
 use crate::command::{Command, PatternCommand, SingleLine};
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
-use crate::skin::Rankdir;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::skin::Rankdir;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated};
 use crate::{color, stereo};
@@ -36,7 +36,7 @@ pub(super) fn footbox_ignored<D: 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
-/// PlantUML's `CommandRankDir`: `left to right direction`.
+/// PlantUML's `CommandRankDir`: `left to right direction` lays the diagram out sideways.
 pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -307,7 +307,7 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
             let group = cuca.get_current_group();
             let entity = cuca.entity_mut(group);
             if usymbol.is_some() {
-                entity.set_u_symbol(usymbol);
+                entity.usymbol = usymbol;
             }
             if let Some(stereotype) = arg.get_lazzy("STEREOTYPE", 0) {
                 entity.stereotype = Some(Stereotype::new(stereotype));
@@ -481,7 +481,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                 None => {
                     let created =
                         cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type);
-                    cuca.entity_mut(created).set_u_symbol(Some(usymbol));
+                    cuca.entity_mut(created).usymbol = Some(usymbol);
                     created
                 }
             };
@@ -514,7 +514,7 @@ pub(super) fn exists_with_bad_type3(
     usymbol: Option<USymbol>,
 ) -> bool {
     other.get_leaf_type() != Some(leaf_type)
-        || usymbol.is_some_and(|usymbol| other.get_u_symbol() != Some(usymbol))
+        || usymbol.is_some_and(|usymbol| other.get_usymbol() != Some(usymbol))
 }
 
 /// `$tag1 $tag2`, which `hide $tag1` selects (`CommandCreateClassMultilines.addTags`).

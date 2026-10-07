@@ -23,8 +23,6 @@ use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
 
-/// Drawing description diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("usecase, component and deployment diagrams");
 
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
@@ -40,8 +38,7 @@ impl CommandFactory for DescriptionDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Description;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> DescriptionDiagram {
-        let mut titled = Titled::new(SName::ComponentDiagram, "DESCRIPTION", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::ComponentDiagram, "DESCRIPTION", source);
         DescriptionDiagram {
             source: source.clone(),
             cuca: CucaDiagram::new(titled),
@@ -127,7 +124,7 @@ impl DescriptionDiagram {
         let actor = self.cuca.skin().actor_style().to_u_symbol();
         self.cuca.leafs().into_iter().any(|leaf| {
             let leaf = self.cuca.entity(leaf);
-            leaf.get_leaf_type() == Some(LeafType::Usecase) || leaf.get_u_symbol() == Some(actor)
+            leaf.get_leaf_type() == Some(LeafType::Usecase) || leaf.get_usymbol() == Some(actor)
         })
     }
 }
@@ -148,7 +145,7 @@ impl AbstractDiagram for DescriptionDiagram {
             let leaf = self.cuca.entity_mut(leaf);
             if leaf.get_leaf_type() == Some(LeafType::StillUnknown) {
                 leaf.mute_to_type(LeafType::Description);
-                leaf.set_u_symbol(Some(default_symbol));
+                leaf.usymbol = Some(default_symbol);
             }
         }
     }
@@ -181,9 +178,10 @@ impl Diagram for DescriptionDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

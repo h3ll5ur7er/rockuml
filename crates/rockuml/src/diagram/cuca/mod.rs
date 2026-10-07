@@ -25,6 +25,7 @@ pub(crate) use entity_diagram::AbstractClassOrObjectDiagram;
 
 use std::rc::Rc;
 
+use super::NotYetPorted;
 use super::titled::Titled;
 use crate::abel::{
     Bag, Entity, EntityGender, EntityId, EntityPortion, EntityType, GroupType, LeafType, Link,
@@ -32,8 +33,11 @@ use crate::abel::{
 };
 use crate::creole::Display;
 use crate::decoration::LinkType;
+use crate::klimt::TextBlock;
+use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::plasma::{Plasma, Quark, QuarkId};
+use crate::sdot::CucaDiagramFileMakerSmetana;
 use crate::skin::SkinParam;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
@@ -59,12 +63,14 @@ pub(crate) trait EntityDiagram {
 }
 
 /// `hide` or `show` of a portion of the entities of a gender.
+#[derive(Clone)]
 struct EntityHideOrShow {
     gender: EntityGender,
     portion: EntityPortion,
     show: bool,
 }
 
+#[derive(Clone)]
 pub(crate) struct CucaDiagram {
     pub(in crate::diagram) titled: Titled,
     namespace_separator: Option<String>,
@@ -527,6 +533,17 @@ impl CucaDiagram {
             let link = self.link(*link);
             !is_note(link.get_entity1()) && !is_note(link.get_entity2())
         })
+    }
+
+    /// The diagram laid out by Smetana and drawn, without its title and other chrome
+    /// (`CucaDiagram.getTextBlock`). Drawing changes the diagram, as in PlantUML, so it lays out a copy.
+    pub(crate) fn get_text_block(
+        &self,
+        string_bounder: &dyn StringBounder,
+    ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
+        let mut diagram = self.clone();
+        diagram.eventually_build_phantom_groups(None);
+        CucaDiagramFileMakerSmetana::new(diagram).get_text_block(string_bounder)
     }
 
     /// PlantUML's odd margins, kept for compatibility.

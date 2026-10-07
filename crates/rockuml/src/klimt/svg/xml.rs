@@ -12,8 +12,8 @@ pub(super) struct XmlNode {
 enum XmlContent {
     Element(XmlNode),
     Text(String),
-    Comment(String),
     ProcessingInstruction { target: String, data: String },
+    Comment(String),
 }
 
 impl XmlNode {
@@ -41,15 +41,15 @@ impl XmlNode {
         self.children = vec![XmlContent::Text(text.to_owned())];
     }
 
-    pub(super) fn append_comment(&mut self, comment: &str) {
-        self.children.push(XmlContent::Comment(comment.to_owned()));
-    }
-
     pub(super) fn append_processing_instruction(&mut self, target: &str, data: &str) {
         self.children.push(XmlContent::ProcessingInstruction {
             target: target.to_owned(),
             data: data.to_owned(),
         });
+    }
+
+    pub(super) fn append_comment(&mut self, comment: &str) {
+        self.children.push(XmlContent::Comment(comment.to_owned()));
     }
 
     pub(super) fn has_children(&self) -> bool {
@@ -88,16 +88,6 @@ impl XmlNode {
             match child {
                 XmlContent::Element(element) => element.write_to(out),
                 XmlContent::Text(text) => escape_into(out, text, false),
-                XmlContent::Comment(comment) => {
-                    // A comment cannot hold `--` nor end with `-`.
-                    let mut safe = comment.replace("--", "- -");
-                    if safe.ends_with('-') {
-                        safe.push(' ');
-                    }
-                    out.push_str("<!--");
-                    out.push_str(&safe);
-                    out.push_str("-->");
-                }
                 XmlContent::ProcessingInstruction { target, data } => {
                     out.push_str("<?");
                     out.push_str(target);
@@ -106,6 +96,11 @@ impl XmlNode {
                         out.push_str(data);
                     }
                     out.push_str("?>");
+                }
+                XmlContent::Comment(comment) => {
+                    out.push_str("<!--");
+                    out.push_str(comment);
+                    out.push_str("-->");
                 }
             }
         }
