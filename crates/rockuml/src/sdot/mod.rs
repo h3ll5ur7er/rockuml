@@ -31,7 +31,7 @@ use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D, XPoi
 use crate::klimt::limit_finder::LimitFinder;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
-use crate::skin::Rankdir;
+use crate::skin::{Rankdir, SkinParam};
 use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
 use crate::svek::image::EntityImageNoteLink;
@@ -595,9 +595,9 @@ fn get_label(
             get_message_text_alignment(diagram),
             skin,
             wrap_width,
-            CreoleMode::FullButUnderscore,
+            CreoleMode::SimpleLine,
         );
-        Box::new(with_margin(block, 1.0)) as Box<dyn TextBlock>
+        add_visibility_modifier(Box::new(block), link, skin)
     });
     let Some(note) = &link.note else {
         return match label_only {
@@ -636,6 +636,32 @@ fn get_label(
             HorizontalAlignment::Center,
         )),
     }
+}
+
+/// The label after the icon of the visibility starting it, if any.
+fn add_visibility_modifier(
+    block: Box<dyn TextBlock>,
+    link: &Link,
+    skin: &SkinParam,
+) -> Box<dyn TextBlock> {
+    let Some(modifier) = link.get_link_arg().get_visibility_modifier() else {
+        return Box::new(with_margin(block, 1.0));
+    };
+    let visibility = modifier.get_u_block(
+        skin.class_attribute_icon_size(),
+        modifier.get_foreground().get(skin),
+        None,
+        false,
+    );
+    let visibility = TextBlockMarged::new(
+        visibility,
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(2.0, 1.0, 0.0, 0.0),
+    );
+    let block = TextBlockHorizontal {
+        left: Box::new(visibility),
+        right: block,
+    };
+    Box::new(with_margin(block, 1.0))
 }
 
 /// The style of the link's arrow, with its stereotype, as the link was declared.
