@@ -76,6 +76,10 @@ impl TitledDiagram for ChenEerDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.cuca.titled
     }
+
+    fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        Some(&mut self.cuca)
+    }
 }
 
 impl Diagram for ChenEerDiagram {

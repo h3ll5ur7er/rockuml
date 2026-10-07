@@ -257,6 +257,15 @@ fn hide_empty_description_is_remembered() {
 }
 
 #[test]
+fn set_separator_none_keeps_dotted_names_whole() {
+    let diagram = parse(&["set separator none", "state A.B", "[*] --> A.B"]).unwrap();
+    assert_eq!(
+        entities(&diagram),
+        ["ent0001 A.B STATE", "ent0002 *start* CIRCLE_START"]
+    );
+}
+
+#[test]
 fn transition_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
     let label = |icon_size: &str| {
         let diagram = parse(&[

@@ -322,6 +322,10 @@ impl TitledDiagram for StateDiagram {
         &mut self.cuca.titled
     }
 
+    fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        Some(&mut self.cuca)
+    }
+
     fn set_hide_empty_description(&mut self, hide: bool) {
         self.cuca.set_hide_empty_description_for_state(hide);
     }

@@ -13,7 +13,6 @@ use super::chrome::Warning;
 use super::scale::Scale;
 use super::titled::TitledDiagram;
 use crate::abel::DisplayPositioned;
-use crate::command::unported::NotPortedCommands;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
@@ -164,7 +163,7 @@ pub(super) fn add_common_commands1<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
 }
 
 /// PlantUML's `CommandNamespaceSeparator`: `set separator ::`, or `none` to keep names whole. Only diagrams of
-/// entities have namespaces.
+/// entities have namespaces; the others ignore it.
 fn namespace_separator<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -188,9 +187,8 @@ fn namespace_separator<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
             let separator = (!separator.eq_ignore_ascii_case("none")
                 && !separator.eq_ignore_ascii_case("null"))
             .then_some(separator);
-            match diagram.entity_diagram() {
-                Some(cuca) => cuca.set_namespace_separator(separator),
-                None => diagram.command_not_ported("CommandNamespaceSeparator"),
+            if let Some(cuca) = diagram.entity_diagram() {
+                cuca.set_namespace_separator(separator);
             }
             Ok(())
         },
