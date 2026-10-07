@@ -17,7 +17,7 @@ const MARGIN: Margin = Margin::new(10.0 + 5.0, 20.0 + 5.0, 15.0 + 5.0, 5.0 + 5.0
 
 /// The empty square past the bottom left corner makes room for the box's depth.
 fn draw_node(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::Polygon(vec![
+    ug.draw(&UShape::polygon(vec![
         (0.0, 10.0),
         (10.0, 0.0),
         (width, 0.0),

@@ -79,7 +79,7 @@ pub(super) fn draw_anchor(
 }
 
 fn as_to_up() -> UShape {
-    UShape::Polygon(vec![
+    UShape::polygon(vec![
         (-DELTA2, DELTA1),
         (0.0, 0.0),
         (DELTA2, DELTA1),
@@ -88,7 +88,7 @@ fn as_to_up() -> UShape {
 }
 
 fn as_to_down() -> UShape {
-    UShape::Polygon(vec![
+    UShape::polygon(vec![
         (-DELTA2, -DELTA1),
         (0.0, 0.0),
         (DELTA2, -DELTA1),

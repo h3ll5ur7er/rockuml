@@ -226,13 +226,13 @@ fn draw_diamond(ug: &UGraphic, size: f64) {
         (size / 2.0, size),
         (0.0, size / 2.0),
     ];
-    ug.translated(1.0, 0.0).draw(&UShape::Polygon(points));
+    ug.translated(1.0, 0.0).draw(&UShape::polygon(points));
 }
 
 fn draw_triangle(ug: &UGraphic, size: f64) {
     let size = size - 2.0;
     let points = vec![(size / 2.0, 1.0), (0.0, size - 1.0), (size, size - 1.0)];
-    ug.translated(1.0, 0.0).draw(&UShape::Polygon(points));
+    ug.translated(1.0, 0.0).draw(&UShape::polygon(points));
 }
 
 /// The icon of a visibility (`VisibilityModifier.getUBlock`).

@@ -231,7 +231,7 @@ impl Component for ComponentRoseNoteHexagonal {
             (CORNER_SIZE, 0.0),
         ];
         let ug = self.fashion.apply(ug);
-        ug.draw(&UShape::Polygon(polygon));
+        ug.draw(&UShape::polygon(polygon));
         let padding = self.text.padding();
         self.text.text_block().draw_u(
             &ug.with_stroke(UStroke::SIMPLE)

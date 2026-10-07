@@ -76,8 +76,10 @@ impl TextBlock for BigFrame<'_> {
         let dim = self.calculate_dimension(string_bounder);
         let ug = self.symbol_context.apply(ug);
         let dim_title = self.title.calculate_dimension(string_bounder);
-        let rectangle =
-            URectangle::new(dim.width, dim.height).rounded(self.symbol_context.round_corner);
+        let rectangle = URectangle::new(dim.width, dim.height)
+            .rounded(self.symbol_context.round_corner)
+            .ignore_for_compression_on_x()
+            .ignore_for_compression_on_y();
         ug.draw(&UShape::Rectangle(rectangle));
 
         let (text_width, corner_size) = if dim_title.width == 0.0 {

@@ -264,7 +264,9 @@ impl<'a> DecorateEntityImage<'a> {
     ) -> Self {
         match vertical {
             VerticalAlignment::Top => Self::new(original, Some(decoration), None),
-            VerticalAlignment::Bottom => Self::new(original, None, Some(decoration)),
+            VerticalAlignment::Center | VerticalAlignment::Bottom => {
+                Self::new(original, None, Some(decoration))
+            }
         }
     }
 }

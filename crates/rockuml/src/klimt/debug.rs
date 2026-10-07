@@ -225,11 +225,12 @@ impl UGraphicBackend for UGraphicDebug {
                     String::new(),
                 ]);
             }
-            UShape::Polygon(points) => {
+            UShape::Polygon(polygon) => {
                 self.lines
                     .extend(["POLYGON:".to_owned(), "  points:".to_owned()]);
                 self.lines.extend(
-                    points
+                    polygon
+                        .points()
                         .iter()
                         .map(|(x, y)| format!("   - {}", point(at.dx + x, at.dy + y))),
                 );
@@ -260,7 +261,8 @@ impl UGraphicBackend for UGraphicDebug {
             UShape::HorizontalLine
             | UShape::Image(_)
             | UShape::ImageSvg(_)
-            | UShape::SpecialText => {
+            | UShape::SpecialText
+            | UShape::CenteredText(_) => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",
                     shape.java_class_name(),

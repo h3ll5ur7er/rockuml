@@ -238,6 +238,21 @@ impl UTranslate {
         Self::new(p.x, p.y)
     }
 
+    #[must_use]
+    pub(crate) fn reverse(self) -> Self {
+        Self::new(-self.dx, -self.dy)
+    }
+
+    #[must_use]
+    pub(crate) fn multiply_by(self, v: f64) -> Self {
+        Self::new(self.dx * v, self.dy * v)
+    }
+
+    /// PlantUML's test: the same along either axis (`isAlmostSame`).
+    pub(crate) fn is_almost_same(self, other: Self) -> bool {
+        self.dx == other.dx || self.dy == other.dy
+    }
+
     /// The vector turned by `angle` radians.
     #[must_use]
     pub(crate) fn rotate(self, angle: f64) -> Self {

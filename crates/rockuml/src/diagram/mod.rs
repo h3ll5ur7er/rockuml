@@ -1,5 +1,11 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+#[allow(
+    dead_code,
+    unused_imports,
+    reason = "Phase 6 scaffolding: the model and the tiles land in stages before the diagram draws"
+)]
+pub(crate) mod activity3;
 mod builder;
 mod chen;
 mod chrome;
