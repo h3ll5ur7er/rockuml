@@ -1,9 +1,13 @@
 use std::rc::Rc;
+use std::sync::LazyLock;
+
+use regex::Regex;
 
 use super::font::{FontConfiguration, UFont};
 use super::geom::XDimension2D;
 use super::image::PortableImage;
 use crate::color::XColor;
+use crate::pattern::java_regex;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum UShape {
@@ -213,6 +217,52 @@ impl UImage {
 
 fn gray_scale(rgb: u32) -> u32 {
     XColor::from_rgb(rgb).gray_scale()
+}
+
+/// An SVG picture and the scale it is drawn at (PlantUML's `UImageSvg`).
+pub(crate) struct UImageSvg {
+    svg: String,
+    scale: f64,
+}
+
+impl UImageSvg {
+    pub(crate) fn new(svg: impl Into<String>, scale: f64) -> Self {
+        Self {
+            svg: svg.into(),
+            scale,
+        }
+    }
+
+    pub(crate) fn width(&self) -> f64 {
+        f64::from(self.get_data("width")) * self.scale
+    }
+
+    pub(crate) fn height(&self) -> f64 {
+        f64::from(self.get_data("height")) * self.scale
+    }
+
+    /// The `viewBox` size rounded up, else the `<svg>` element's own attribute. PlantUML fails on pictures
+    /// with neither; they measure zero here.
+    fn get_data(&self, name: &str) -> i32 {
+        static VIEWBOX: LazyLock<Regex> = LazyLock::new(|| {
+            java_regex(
+                r#"viewBox[= "']+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)"#,
+                false,
+            )
+        });
+        if let Some(view_box) = VIEWBOX.captures(&self.svg) {
+            let size = if name == "width" {
+                &view_box[3]
+            } else {
+                &view_box[4]
+            };
+            return size.parse::<f64>().map_or(0, |size| size.ceil() as i32);
+        }
+        java_regex(&format!(r"<svg[^>]+{name}\W+(\d+)"), true)
+            .captures(&self.svg)
+            .and_then(|attribute| attribute[1].parse().ok())
+            .unwrap_or_default()
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]

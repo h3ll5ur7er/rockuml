@@ -1,0 +1,15 @@
+@startuml
+sprite $badge <svg viewBox="0 0 40 30">
+  <g transform="translate(2,3) scale(1.5)" fill="#3366CC">
+    <path d="M0 0q5 8 10 0t10 0L20 10H0z"/>
+    <circle cx="10" cy="12" r="3" fill="#FFCC4D"/>
+    <ellipse cx="4" cy="14" rx="3" ry="1.5"/>
+  </g>
+  <path d="M1e1 2.5e1l5 0v-4.5e0z" stroke="#AA0000" stroke-width="1" fill="none"/>
+</svg>
+sprite plain <svg width="24" height="12"><path d="M0 0H24V12H0z" fill="#808080"/></svg>
+Alice -> Bob : <$badge> plain
+Bob -> Alice : <$badge*1.5> scaled
+Alice -> Bob : <#green$badge{scale=0.7}> coloured
+Bob -> Alice : <$plain> <$plain{scale=2,color=red}> sized by attributes
+@enduml

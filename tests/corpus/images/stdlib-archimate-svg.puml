@@ -1,0 +1,5 @@
+@startuml
+!include <archimate/ArchimateSprites>
+Alice -> Bob : <$application-component-svg> component
+Bob -> Alice : <$business-actor-svg*1.5> <#orange$technology-node-svg> actor and node
+@enduml

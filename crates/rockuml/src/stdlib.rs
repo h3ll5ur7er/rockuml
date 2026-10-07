@@ -10,12 +10,16 @@ use std::rc::Rc;
 
 use crate::assets;
 use crate::java::RuntimeException;
+use crate::klimt::sprite::{Sprite, SpriteMonochrome};
+use crate::svg_parser::SvgNanoParser;
 
 pub(crate) struct Stdlib {
     name: String,
     info: HashMap<String, String>,
     puml: RefCell<Option<HashMap<String, Vec<u8>>>>,
     json: RefCell<Option<HashMap<String, Vec<u8>>>>,
+    sprites: RefCell<Option<HashMap<String, StdlibSprite>>>,
+    svgs: RefCell<Option<HashMap<String, Rc<SvgNanoParser>>>>,
 }
 
 thread_local! {
@@ -50,6 +54,8 @@ impl Stdlib {
             info,
             puml: RefCell::default(),
             json: RefCell::default(),
+            sprites: RefCell::default(),
+            svgs: RefCell::default(),
         }))
     }
 
@@ -92,20 +98,68 @@ impl Stdlib {
         entries.get(file).cloned()
     }
 
+    /// A gray-level sprite of the `sprite` channel, by its exported name.
+    pub(crate) fn read_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
+        let mut sprites = self.sprites.borrow_mut();
+        let entries = sprites.get_or_insert_with(|| {
+            self.read_records("sprite", |input| {
+                let name = input.read_utf()?;
+                let width = usize::try_from(input.read_int()?).ok()?;
+                let height = usize::try_from(input.read_int()?).ok()?;
+                let data = input.read_bytes(width * height.div_ceil(2))?.to_vec();
+                Some((
+                    name,
+                    StdlibSprite {
+                        width,
+                        height,
+                        data,
+                    },
+                ))
+            })
+            .unwrap_or_default()
+        });
+        entries
+            .get(name)
+            .map(|sprite| Rc::new(sprite.decode()) as Rc<dyn Sprite>)
+    }
+
+    /// An SVG sprite of the `svg` channel, by its exported name.
+    pub(crate) fn read_svg_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
+        let mut svgs = self.svgs.borrow_mut();
+        let entries = svgs.get_or_insert_with(|| {
+            self.read_records("svg", |input| {
+                let name = input.read_utf()?;
+                Some((name, Rc::new(SvgNanoParser::new(input.read_utf()?))))
+            })
+            .unwrap_or_default()
+        });
+        entries
+            .get(name)
+            .map(|sprite| sprite.clone() as Rc<dyn Sprite>)
+    }
+
+    /// Files by lowercase name.
     fn read_channel(&self, channel: &str) -> Option<HashMap<String, Vec<u8>>> {
+        self.read_records(channel, |input| {
+            let name = input.read_utf()?.to_lowercase();
+            let length = usize::try_from(input.read_int()?).ok()?;
+            Some((name, input.read_bytes(length)?.to_vec()))
+        })
+    }
+
+    /// A channel: a count, then that many records.
+    fn read_records<T>(
+        &self,
+        channel: &str,
+        mut read_record: impl FnMut(&mut DataInput) -> Option<(String, T)>,
+    ) -> Option<HashMap<String, T>> {
         let data = decompress(assets::get(&format!("stdlib/{}/{channel}.spm", self.name))?)?;
         let mut input = DataInput {
             data: &data,
             position: 0,
         };
         let count = input.read_int()?;
-        let mut entries = HashMap::new();
-        for _ in 0..count {
-            let name = input.read_utf()?.to_lowercase();
-            let length = usize::try_from(input.read_int()?).ok()?;
-            entries.insert(name, input.read_bytes(length)?.to_vec());
-        }
-        Some(entries)
+        (0..count).map(|_| read_record(&mut input)).collect()
     }
 }
 
@@ -148,6 +202,27 @@ pub(crate) fn json_resource(full_name: &str) -> Result<Option<Vec<u8>>, RuntimeE
         .json_resource(file)
         .map(Some)
         .ok_or(RuntimeException)
+}
+
+/// A sprite of 16 gray levels as the `sprite` channel stores it: two pixels a byte, the upper one in the high
+/// nibble.
+struct StdlibSprite {
+    width: usize,
+    height: usize,
+    data: Vec<u8>,
+}
+
+impl StdlibSprite {
+    fn decode(&self) -> SpriteMonochrome {
+        let mut sprite = SpriteMonochrome::new(self.width, self.height, 16);
+        for (pair, row) in self.data.chunks(self.width.max(1)).enumerate() {
+            for (x, &levels) in row.iter().enumerate() {
+                sprite.set_gray(x, pair * 2, usize::from(levels >> 4));
+                sprite.set_gray(x, pair * 2 + 1, usize::from(levels & 0x0F));
+            }
+        }
+        sprite
+    }
 }
 
 fn decompress(compressed: &[u8]) -> Option<Vec<u8>> {
@@ -228,5 +303,36 @@ mod tests {
             position: 0,
         };
         assert_eq!(input.read_utf().as_deref(), Some("\0😀"));
+    }
+
+    #[test]
+    fn stdlib_sprites_hold_two_rows_a_byte() {
+        let sprite = StdlibSprite {
+            width: 2,
+            height: 3,
+            data: vec![0x12, 0x34, 0x56, 0x78],
+        }
+        .decode();
+        let rows: Vec<Vec<usize>> = (0..3)
+            .map(|y| (0..2).map(|x| sprite.get_gray(x, y)).collect())
+            .collect();
+        assert_eq!(rows, [[1, 3], [2, 4], [5, 7]]);
+    }
+
+    #[test]
+    fn sprites_are_found_by_their_exported_name() {
+        let office = Stdlib::retrieve("office").expect("the office library is bundled");
+        assert!(
+            office
+                .read_sprite("servers/database_server:database_server")
+                .is_some()
+        );
+        assert!(office.read_sprite("servers/no_such_server").is_none());
+        let archimate = Stdlib::retrieve("archimate").expect("the archimate library is bundled");
+        assert!(
+            archimate
+                .read_svg_sprite("archimatesprites:application-component-svg")
+                .is_some()
+        );
     }
 }

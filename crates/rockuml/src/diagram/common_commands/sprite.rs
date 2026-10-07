@@ -1,4 +1,4 @@
-//! `sprite` definitions (PlantUML's `CommandFactorySprite` and `CommandSpriteMd5`).
+//! `sprite` definitions (PlantUML's `CommandFactorySprite` and `CommandSprite*`).
 
 use std::rc::Rc;
 use std::sync::LazyLock;
@@ -14,6 +14,8 @@ use crate::diagram::titled::TitledDiagram;
 use crate::klimt::image::PortableImage;
 use crate::klimt::sprite::{Sprite, SpriteColorBuilder4096, SpriteGrayLevel, SpriteImage};
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::stdlib::Stdlib;
+use crate::svg_parser::SvgNanoParser;
 use crate::text::{LineLocation, StringLocated};
 
 /// `sprite $name [16x16/8] {` ... `}`, the size optional for 16 gray levels.
@@ -99,6 +101,139 @@ pub(super) fn md5<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
             Ok(())
         },
     )))
+}
+
+/// `sprite $name <svg ...>...</svg>` on one line (PlantUML's `CommandSpriteSvg`).
+pub(super) fn svg<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    single_line_named(
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "SVG", r"(\<svg\b.*\</svg\>)"),
+        |diagram: &mut D, arg: &RegexResult| {
+            let svg = arg.get("SVG", 0).unwrap_or_default().to_owned();
+            add_sprite(diagram, arg, Rc::new(SvgNanoParser::new(svg)));
+            Ok(())
+        },
+    )
+}
+
+/// `sprite $name #library#exported`, a gray-level sprite of the standard library, which its `!include`s
+/// declare (PlantUML's `CommandSpriteStdlib`).
+pub(super) fn stdlib<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    let pattern = RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("sprite"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::leaf(r"\$"),
+        RegexTree::named(1, "NAME", "([-%pLN_]+)"),
+        RegexTree::spaces_zero_or_more(),
+        RegexTree::named(2, "STDLIB", "#([^#]+)#([^%s]+)"),
+        RegexTree::end(),
+    ]);
+    Box::new(SingleLine(PatternCommand::new(
+        pattern,
+        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
+            add_stdlib_sprite(diagram, arg, Stdlib::read_sprite)
+        },
+    )))
+}
+
+/// `sprite $name :library:exported`, an SVG sprite of the standard library (PlantUML's
+/// `CommandSpriteStdlibSvg`).
+pub(super) fn stdlib_svg<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    single_line_named(
+        RegexTree::spaces_zero_or_more(),
+        RegexTree::named(2, "STDLIB", ":([^:]+):([^%s]+)"),
+        |diagram: &mut D, arg: &RegexResult| {
+            add_stdlib_sprite(diagram, arg, Stdlib::read_svg_sprite)
+        },
+    )
+}
+
+/// `sprite $name <svg ...>` up to a line ending in `</svg>` (PlantUML's `CommandSpriteSvgMultiline`). The lines
+/// join without separators, the first trimmed and the others as written.
+pub(super) fn svg_multi_line<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    static START: LazyLock<RegexTree> = LazyLock::new(|| {
+        sprite_named(
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(1, "SVGSTART", r"(\<svg\b.*)"),
+        )
+    });
+    static END: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"(.*\</svg\>)$"));
+    Box::new(Multiline::starting_with(
+        &START,
+        &END,
+        |diagram: &mut D, lines: &BlocLines| {
+            let first = lines.first().expect("a block has lines").trimmed();
+            let arg = START
+                .matcher(first.text())
+                .expect("checked when the block was recognised");
+            let mut svg = arg.get("SVGSTART", 0).unwrap_or_default().to_owned();
+            for line in lines.sub_extract(1, 0).iter() {
+                svg.push_str(line.text());
+            }
+            add_sprite(diagram, &arg, Rc::new(SvgNanoParser::new(svg)));
+            Ok(())
+        },
+    ))
+}
+
+/// `sprite $name jar:archimate/actor`, one of PlantUML's built-in sprites (PlantUML's `CommandSpriteFile`).
+/// Image files and zip entries, the command's other sources, are not ported yet.
+pub(super) fn file<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    single_line_named(
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "FILE", "([^<>%g#]*)"),
+        |diagram: &mut D, arg: &RegexResult| {
+            let src = arg.get("FILE", 0).unwrap_or_default();
+            let Some(name) = src.strip_prefix("jar:") else {
+                return Err(CommandError::new(format!("Cannot read: {src}")));
+            };
+            let sprite = SpriteImage::from_internal(name)
+                .ok_or_else(|| CommandError::new(format!("No such internal sprite: {name}")))?;
+            add_sprite(diagram, arg, sprite);
+            Ok(())
+        },
+    )
+}
+
+/// `sprite $?name`, `separator` and `source`.
+fn sprite_named(separator: RegexTree, source: RegexTree) -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("sprite"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::leaf(r"\$?"),
+        RegexTree::named(1, "NAME", "([-%pLN_]+)"),
+        separator,
+        source,
+        RegexTree::end(),
+    ])
+}
+
+fn single_line_named<D: TitledDiagram + 'static>(
+    separator: RegexTree,
+    source: RegexTree,
+    apply: fn(&mut D, &RegexResult) -> CommandResult,
+) -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
+        sprite_named(separator, source),
+        move |diagram: &mut D, _: &LineLocation, arg: &RegexResult| apply(diagram, arg),
+    )))
+}
+
+/// PlantUML fails on an unknown library, and draws nothing for an unknown sprite.
+fn add_stdlib_sprite<D: TitledDiagram>(
+    diagram: &mut D,
+    arg: &RegexResult,
+    read: fn(&Stdlib, &str) -> Option<Rc<dyn Sprite>>,
+) -> CommandResult {
+    let library = arg.get("STDLIB", 0).unwrap_or_default();
+    let library = Stdlib::retrieve(library)
+        .ok_or_else(|| CommandError::new(format!("Cannot read sprite: no library {library}")))?;
+    if let Some(sprite) = read(&library, arg.get("STDLIB", 1).unwrap_or_default()) {
+        add_sprite(diagram, arg, sprite);
+    }
+    Ok(())
 }
 
 /// `sprite $name`, an optional size and encoding, then `ending`.

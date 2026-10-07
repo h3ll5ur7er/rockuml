@@ -335,6 +335,13 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
   - Muting a raster sprite to the text colour adds the alpha to an opaque colour, which carries into the alpha byte
     (opaque pixels become alpha 254); rockuml keeps that, as text mutes every raster sprite.
   - Salt diagrams look sprites up in their own dictionary, which is not ported: `<$name>` draws nothing there yet.
+  - SVG sprites (`sprite $name <svg ...>`, on one line or several) draw through the nano parser, sized by their
+    `viewBox` rounded up or else their `width`/`height`; its path reader now takes quadratic curves and exponents.
+    `!pragma svgParser sax` is not ported. Built-in sprites (`<$archimate/actor>`, `sprite $n jar:archimate/actor`)
+    are bundled Brotli-compressed (`tools/bundle-sprites.sh`, 211 KB of SVG and PNG in 22 KB); `CommandSpriteFile`'s
+    file and zip sources need host I/O and answer "Cannot read" for now. Standard library sprites come from the
+    `sprite` (16 gray levels) and `svg` channels (`stdlib-office`, `stdlib-archimate-svg`).
+  - On a malformed SVG path PlantUML fails; rockuml draws the movements before the fault.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.

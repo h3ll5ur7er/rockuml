@@ -1,3 +1,8 @@
+use std::collections::HashMap;
+use std::io::Read;
+use std::rc::Rc;
+use std::sync::LazyLock;
+
 use super::Sprite;
 use crate::color::HColor;
 use crate::klimt::TextBlock;
@@ -6,6 +11,41 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::image::PortableImage;
 use crate::klimt::shape::{UImage, UShape};
 use crate::klimt::ugraphic::UGraphic;
+use crate::svg_parser::SvgNanoParser;
+
+/// The bundle `tools/bundle-sprites.sh` builds: per file, its path, a newline, its length, a newline, its bytes.
+static INTERNAL_SPRITES: LazyLock<Vec<u8>> = LazyLock::new(|| {
+    let compressed = crate::assets::get("sprites/sprites.br").expect("the sprites are bundled");
+    let mut bundle = Vec::new();
+    brotli_decompressor::Decompressor::new(compressed, 4096)
+        .read_to_end(&mut bundle)
+        .expect("the bundle is valid Brotli");
+    bundle
+});
+
+/// The built-in sprites by path, such as `archimate/actor.svg`.
+static INTERNAL_SPRITE_FILES: LazyLock<HashMap<&'static str, &'static [u8]>> =
+    LazyLock::new(|| {
+        let mut files = HashMap::new();
+        let mut rest = INTERNAL_SPRITES.as_slice();
+        while !rest.is_empty() {
+            let mut line = || {
+                let end = rest
+                    .iter()
+                    .position(|&byte| byte == b'\n')
+                    .expect("a header line");
+                let line = std::str::from_utf8(&rest[..end]).expect("a UTF-8 header");
+                rest = &rest[end + 1..];
+                line
+            };
+            let path = line();
+            let length: usize = line().parse().expect("a length");
+            let (file, tail) = rest.split_at(length);
+            files.insert(path, file);
+            rest = tail;
+        }
+        files
+    });
 
 /// A sprite from a raster image, such as a PNG.
 pub(crate) struct SpriteImage {
@@ -17,6 +57,17 @@ impl SpriteImage {
         Self {
             img: UImage::new(image),
         }
+    }
+
+    /// One of PlantUML's built-in sprites, such as `archimate/actor`: an SVG one if there is, else a PNG.
+    pub(crate) fn from_internal(name: &str) -> Option<Rc<dyn Sprite>> {
+        if let Some(svg) = INTERNAL_SPRITE_FILES.get(format!("{name}.svg").as_str()) {
+            let svg = std::str::from_utf8(svg).expect("the bundled SVG sprites are UTF-8");
+            return Some(Rc::new(SvgNanoParser::new(svg)));
+        }
+        let png = INTERNAL_SPRITE_FILES.get(format!("{name}.png").as_str())?;
+        let image = PortableImage::from_png(png).expect("the bundled PNG sprites decode");
+        Some(Rc::new(SpriteImage::new(image)))
     }
 }
 
@@ -56,5 +107,35 @@ impl TextBlock for ImageBlock<'_> {
             .mute_color(self.used_color.as_xcolor())
             .scale(self.scale);
         ug.draw(&UShape::Image(image));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::klimt::debug::StringBounderDebug;
+
+    fn dimension(name: &str) -> Option<XDimension2D> {
+        SpriteImage::from_internal(name).map(|sprite| {
+            sprite
+                .as_text_block(&HColor::BLACK, None, 1.0)
+                .calculate_dimension(&StringBounderDebug)
+        })
+    }
+
+    #[test]
+    fn built_in_sprites_are_svg_first_then_png() {
+        assert_eq!(INTERNAL_SPRITE_FILES.len(), 139);
+        assert_eq!(
+            dimension("archimate/actor"),
+            Some(XDimension2D::new(20.0, 20.0))
+        );
+        assert_eq!(
+            dimension("archimate/access"),
+            Some(XDimension2D::new(15.0, 15.0)),
+            "PlantUML measures the 16-pixel image one pixel short"
+        );
+        assert!(dimension("archimate/no-such-sprite").is_none());
+        assert!(dimension("archimate/actor.svg").is_none());
     }
 }
