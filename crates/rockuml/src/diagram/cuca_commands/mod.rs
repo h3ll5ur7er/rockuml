@@ -363,3 +363,25 @@ fn json_is_complete(lines: &BlocLines) -> CommandControl {
         CommandControl::OkPartial
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn json_blocks_last_until_their_data_parses() {
+        let complete = |lines: &[&str]| json_is_complete(&BlocLines::from_texts(lines));
+        assert_eq!(
+            complete(&["json J {", r#""a": 1"#, "}"]),
+            CommandControl::Ok
+        );
+        assert_eq!(
+            complete(&["json J {", r#""a": ["#, "}"]),
+            CommandControl::OkPartial
+        );
+        assert_eq!(
+            complete(&["json J {", r#""a": [1,"#, "2]", "}"]),
+            CommandControl::Ok
+        );
+    }
+}

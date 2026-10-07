@@ -2,6 +2,9 @@
 //! first the lines make, or else the error that got furthest (PlantUML's `PSystemBuilder` and
 //! `PSystemErrorUtils`).
 
+use std::any::{Any, TypeId};
+use std::cell::RefCell;
+use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::LazyLock;
 
@@ -54,7 +57,7 @@ pub(super) enum Outcome {
 }
 
 /// A diagram type built by commands (PlantUML's `PSystemCommandFactory`).
-pub(super) trait CommandFactory {
+pub(super) trait CommandFactory: 'static {
     type Diagram: AbstractDiagram + TitledDiagram + Diagram + 'static;
 
     const DIAGRAM_TYPE: DiagramType;
@@ -67,7 +70,7 @@ pub(super) trait CommandFactory {
 
 /// The diagram the factory `F` makes of the source.
 pub(super) fn create_system<F: CommandFactory>(source: &Rc<UmlSource>) -> Outcome {
-    let commands = F::init_commands_list();
+    let commands = commands::<F>();
     match factory::create_system(source, || F::create_empty_diagram(source), &commands) {
         Created::Diagram(mut diagram) => {
             Outcome::Diagram(match diagram.titled().not_ported_part() {
@@ -82,6 +85,23 @@ pub(super) fn create_system<F: CommandFactory>(source: &Rc<UmlSource>) -> Outcom
         }),
         Created::Nothing => Outcome::Nothing,
     }
+}
+
+/// The factory's commands, made once per thread like PlantUML's factories make theirs once: commands compile
+/// their patterns when first used, and every diagram tries the patterns of several factories.
+fn commands<F: CommandFactory>() -> Rc<Vec<Box<dyn Command<F::Diagram>>>> {
+    thread_local! {
+        static COMMANDS: RefCell<HashMap<TypeId, Rc<dyn Any>>> = RefCell::default();
+    }
+    COMMANDS.with(|commands| {
+        let made = commands
+            .borrow_mut()
+            .entry(TypeId::of::<F>())
+            .or_insert_with(|| Rc::new(F::init_commands_list()))
+            .clone();
+        made.downcast()
+            .unwrap_or_else(|_| unreachable!("commands are kept by their factory's type"))
+    })
 }
 
 type Factory = fn(&Rc<UmlSource>) -> Outcome;
@@ -130,23 +150,28 @@ pub(super) fn create_chen(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetP
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.
 fn select(source: &Rc<UmlSource>, factories: &[Factory]) -> Result<Box<dyn Diagram>, NotYetPorted> {
-    let mut best: Option<PSystemError> = None;
+    let mut errors = Vec::new();
     for factory in factories {
         match factory(source) {
             Outcome::Diagram(diagram) => return diagram,
-            Outcome::Error(error) => {
-                if best
-                    .as_ref()
-                    .is_none_or(|best| best.failure.score() < error.failure.score())
-                {
-                    best = Some(error);
-                }
-            }
+            Outcome::Error(error) => errors.push(error),
             Outcome::Nothing => {}
         }
     }
-    best.map(PSystemError::into_diagram)
+    merge(errors)
+        .map(PSystemError::into_diagram)
         .ok_or(NotYetPorted("diagrams that no diagram type reads"))
+}
+
+/// The error that got furthest, the earliest on a tie (`PSystemErrorUtils.merge`).
+fn merge(errors: Vec<PSystemError>) -> Option<PSystemError> {
+    errors.into_iter().reduce(|best, error| {
+        if best.failure.score() < error.failure.score() {
+            error
+        } else {
+            best
+        }
+    })
 }
 
 /// The help PlantUML gives for sources meant for other start lines (`PSystemErrorUtils.checkBasicError`).
@@ -322,4 +347,131 @@ fn list_archimate_sprites(source: &Rc<UmlSource>) -> Outcome {
         |line| line.to_lowercase().starts_with("listsprite"),
         "the Archimate sprite list",
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::text::LineLocation;
+
+    fn lines(texts: &[&str]) -> Vec<StringLocated> {
+        let location = LineLocation::new("test", None);
+        texts
+            .iter()
+            .map(|text| StringLocated::new(*text, location.clone()))
+            .collect()
+    }
+
+    fn create(texts: &[&str]) -> Result<Box<dyn Diagram>, NotYetPorted> {
+        let lines = lines(texts);
+        create_uml(UmlSource::new(lines.clone(), Vec::new()), &lines)
+    }
+
+    /// What the lines read as: the part not ported, or `"error"`.
+    fn read_as(texts: &[&str]) -> &'static str {
+        match create(texts) {
+            Ok(diagram) if diagram.is_error() => "error",
+            Ok(_) => "a drawable diagram",
+            Err(NotYetPorted(what)) => what,
+        }
+    }
+
+    #[test]
+    fn each_diagram_type_reads_its_own_lines() {
+        assert_eq!(read_as(&["@startuml", "@enduml"]), "the welcome screen");
+        assert_eq!(
+            read_as(&["@startuml", "Alice -> Bob", "@enduml"]),
+            "a drawable diagram"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "class A", "A <|-- B", "@enduml"]),
+            "class diagrams"
+        );
+        assert_eq!(
+            read_as(&[
+                "@startuml",
+                "(*) --> \"First\"",
+                "\"First\" --> (*)",
+                "@enduml"
+            ]),
+            "legacy activity diagrams"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "actor User", "User --> (Login)", "@enduml"]),
+            "usecase, component and deployment diagrams"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "[*] --> Idle", "@enduml"]),
+            "state diagrams"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "start", ":Hello;", "stop", "@enduml"]),
+            "activity diagrams"
+        );
+        assert_eq!(
+            read_as(&[
+                "@startuml",
+                "concise \"Web\" as W",
+                "@0",
+                "W is Idle",
+                "@enduml"
+            ]),
+            "timing diagrams"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "license", "@enduml"]),
+            "the license diagram"
+        );
+    }
+
+    #[test]
+    fn lines_no_type_reads_fail_with_the_error_that_got_furthest() {
+        assert_eq!(
+            read_as(&["@startuml", "class A", "activate A", "@enduml"]),
+            "error"
+        );
+        assert_eq!(
+            read_as(&["@startuml", "digraph G {", "}", "@enduml"]),
+            "error"
+        );
+    }
+
+    fn error(trace_length: usize, score: i32, diagram_type: DiagramType) -> PSystemError {
+        PSystemError {
+            source: Rc::new(UmlSource::new(Vec::new(), Vec::new())),
+            failure: ParseFailure {
+                error: CommandError::with_score("Syntax Error?", score),
+                trace: lines(&vec!["line"; trace_length]),
+            },
+            diagram_type,
+        }
+    }
+
+    #[test]
+    fn the_best_score_wins_and_the_earlier_error_a_tie() {
+        let best = |errors| merge(errors).map(|error| error.diagram_type);
+        assert_eq!(
+            best(vec![
+                error(2, 0, DiagramType::Sequence),
+                error(3, 0, DiagramType::Class),
+                error(3, 0, DiagramType::State),
+            ]),
+            Some(DiagramType::Class)
+        );
+        assert_eq!(
+            best(vec![
+                error(3, 0, DiagramType::Sequence),
+                error(2, 10, DiagramType::Class),
+            ]),
+            Some(DiagramType::Sequence)
+        );
+        assert_eq!(
+            best(vec![
+                error(2, 10, DiagramType::Sequence),
+                error(2, 11, DiagramType::Class),
+            ]),
+            Some(DiagramType::Class)
+        );
+        assert_eq!(best(Vec::new()), None);
+    }
 }

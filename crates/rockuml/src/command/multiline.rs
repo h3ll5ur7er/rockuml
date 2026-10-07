@@ -212,3 +212,42 @@ impl<D> Command<D> for Multiline<D> {
         self.passes.contains(&pass)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::pattern::plantuml_regex;
+
+    fn class_block() -> Multiline<()> {
+        let start = RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::leaf("class"),
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(1, "NAME", r"(\w+)"),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::leaf(r"\{"),
+            RegexTree::end(),
+        ]);
+        Multiline::starting_with_owned(start, &plantuml_regex(r"^\}$"), |(), _| Ok(()))
+            .skipping_quote_lines()
+            .with_final_bracket()
+    }
+
+    fn validity(lines: &[&str]) -> CommandControl {
+        class_block().is_valid(&BlocLines::from_texts(lines))
+    }
+
+    #[test]
+    fn a_block_may_open_with_its_bracket_on_the_second_line() {
+        assert_eq!(validity(&["class A {"]), CommandControl::OkPartial);
+        assert_eq!(validity(&["class A"]), CommandControl::OkPartial);
+        assert_eq!(validity(&["class A", "{"]), CommandControl::OkPartial);
+        assert_eq!(
+            validity(&["class A", "{", "' note", "}"]),
+            CommandControl::Ok
+        );
+        assert_eq!(validity(&["class A {", "}"]), CommandControl::Ok);
+        assert_eq!(validity(&["class A", "x"]), CommandControl::NotOk);
+        assert_eq!(validity(&["interface A"]), CommandControl::NotOk);
+    }
+}

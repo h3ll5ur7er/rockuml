@@ -209,4 +209,71 @@ mod tests {
             .unwrap();
         assert_eq!(titles, ["Hello", "World"]);
     }
+
+    /// `package name {`, whose bracket may stand alone on the next line.
+    struct Package(RegexTree);
+
+    impl SingleLineCommand<Vec<String>> for Package {
+        fn pattern(&self) -> &RegexTree {
+            &self.0
+        }
+
+        fn execute_arg(
+            &self,
+            names: &mut Vec<String>,
+            _: &LineLocation,
+            arg: &RegexResult,
+        ) -> CommandResult {
+            names.push(arg.get("NAME", 0).unwrap_or_default().to_owned());
+            Ok(())
+        }
+
+        fn is_forbidden(&self, line: &str) -> bool {
+            line.contains("forbidden")
+        }
+
+        fn syntax_with_final_bracket(&self) -> bool {
+            true
+        }
+    }
+
+    fn package() -> SingleLine<Package> {
+        SingleLine(Package(RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::leaf("package"),
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(1, "NAME", r"(\w+)"),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::leaf(r"\{"),
+            RegexTree::end(),
+        ])))
+    }
+
+    #[test]
+    fn a_final_bracket_may_come_on_the_next_line() {
+        let validity = |lines: &[&str]| {
+            Command::<Vec<String>>::is_valid(&package(), &BlocLines::from_texts(lines))
+        };
+        assert_eq!(validity(&["package a {"]), CommandControl::Ok);
+        assert_eq!(validity(&["package a"]), CommandControl::OkPartial);
+        assert_eq!(validity(&["package a", " { "]), CommandControl::Ok);
+        assert_eq!(validity(&["package a", "class B"]), CommandControl::NotOk);
+        assert_eq!(validity(&["package"]), CommandControl::NotOk);
+        let mut names = Vec::new();
+        package()
+            .execute(&mut names, BlocLines::from_texts(&["package a", "{"]))
+            .unwrap();
+        assert_eq!(names, ["a"]);
+    }
+
+    #[test]
+    fn forbidden_lines_are_accepted_and_fail_when_executed() {
+        let lines = BlocLines::from_texts(&["package forbidden {"]);
+        assert_eq!(
+            Command::<Vec<String>>::is_valid(&package(), &lines),
+            CommandControl::Ok
+        );
+        let error = package().execute(&mut Vec::new(), lines).unwrap_err();
+        assert_eq!(error.message, "Syntax error: package forbidden {");
+    }
 }
