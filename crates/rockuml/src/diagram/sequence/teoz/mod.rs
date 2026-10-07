@@ -2,7 +2,9 @@
 //! constraints that the `real` solver resolves.
 
 mod communication;
+mod communication_exo;
 mod components;
+mod dolls;
 mod key;
 mod life_event;
 mod living_space;
@@ -15,6 +17,7 @@ mod y_gauge;
 use std::cell::OnceCell;
 use std::rc::Rc;
 
+use dolls::Dolls;
 use living_space::{LivingSpace, LivingSpaces};
 use playing_space::{PlayingSpace, PlayingSpaceWithParticipants};
 use tile::TileArguments;
@@ -26,11 +29,16 @@ use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::real::Real;
+use crate::skin::component::Context2D;
 
 /// One page of a sequence diagram (PlantUML's `SequenceDiagramFileMakerTeoz`).
 pub(super) struct SequenceDiagramFileMakerTeoz<'a> {
     body: PlayingSpaceWithParticipants<'a>,
     min1: Real,
+    dolls: Dolls<'a>,
+    /// Room above the participants for the box titles, and below them for the boxes' bottoms.
+    height_englober1: f64,
+    height_englober2: f64,
 }
 
 impl<'a> SequenceDiagramFileMakerTeoz<'a> {
@@ -58,13 +66,6 @@ impl<'a> SequenceDiagramFileMakerTeoz<'a> {
                 .add_at_least(0.0);
             living_spaces.push(living_space);
         }
-        if diagram
-            .participants()
-            .iter()
-            .any(|&p| diagram.englober_of(p).is_some())
-        {
-            return Err(NotYetPorted("boxes around participants"));
-        }
         let arguments = Rc::new(TileArguments {
             diagram,
             string_bounder: string_bounder.clone(),
@@ -73,7 +74,11 @@ impl<'a> SequenceDiagramFileMakerTeoz<'a> {
             y_origin: y_origin.clone(),
             borders: OnceCell::new(),
         });
-        let main_tile = PlayingSpace::new(arguments.clone(), None, diagram.is_show_footbox())?;
+        let dolls = Dolls::new(&arguments);
+        // Before the playing space, which freezes the margins the box titles need.
+        dolls.add_constraints();
+        let main_tile =
+            PlayingSpace::new(arguments.clone(), dolls.extent(), diagram.is_show_footbox())?;
         arguments
             .living_spaces
             .add_constraints(string_bounder.as_ref());
@@ -85,17 +90,35 @@ impl<'a> SequenceDiagramFileMakerTeoz<'a> {
             .set((main_tile.min().clone(), main_tile.max().clone()));
         let body = PlayingSpaceWithParticipants::new(main_tile);
         let min1 = body.min_x().clone();
-        Ok(Self { body, min1 })
+        let height_englober1 = dolls.offset_for_englobers();
+        let height_englober2 = if height_englober1 == 0.0 { 0.0 } else { 10.0 };
+        Ok(Self {
+            body,
+            min1,
+            dolls,
+            height_englober1,
+            height_englober2,
+        })
     }
 }
 
 impl TextBlock for SequenceDiagramFileMakerTeoz<'_> {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
-        self.body.calculate_dimension().delta(10.0, 10.0)
+        let dimension = self.body.calculate_dimension();
+        let height = dimension.height + self.height_englober1 + self.height_englober2;
+        XDimension2D::new(dimension.width + 10.0, height + 10.0)
     }
 
     fn draw_u(&self, ug: &UGraphic) {
         let ug = ug.translated(5.0 - self.min1.current_value(), 5.0);
-        self.body.draw_u(&ug);
+        let body_height = self.body.calculate_dimension().height;
+        self.dolls.draw_englobers(
+            &ug,
+            body_height + self.height_englober1 + self.height_englober2 / 2.0,
+            Context2D {
+                is_background: true,
+            },
+        );
+        self.body.draw_u(&ug.translated(0.0, self.height_englober1));
     }
 }

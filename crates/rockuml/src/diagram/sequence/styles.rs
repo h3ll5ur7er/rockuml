@@ -5,7 +5,8 @@ use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature};
 
 use super::model::{
-    GroupingStart, GroupingType, MessageCommon, Note, NoteStyle, Participant, ParticipantType,
+    GroupingStart, GroupingType, MessageCommon, Note, NoteStyle, Participant, ParticipantEnglober,
+    ParticipantType,
 };
 
 /// `root, element, sequenceDiagram`: what every sequence element inherits.
@@ -115,6 +116,16 @@ pub(crate) fn note_style(note: &Note) -> Style {
         None => signature,
     };
     merged(&note.style_builder, &signature).eventually_override_colors(&note.colors)
+}
+
+/// A box around participants, in its own colour if it has one (`Doll.getUsedStyles`).
+pub(crate) fn englober_style(builder: &StyleBuilder, englober: &ParticipantEnglober) -> Style {
+    merged_with_stereotype(
+        builder,
+        &sequence_signature(SName::Box),
+        englober.stereotype.as_ref(),
+    )
+    .eventually_override(PName::BackGroundColor, englober.box_color.as_ref())
 }
 
 /// A group's frame style and its header's.

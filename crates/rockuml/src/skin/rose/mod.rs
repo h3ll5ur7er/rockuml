@@ -2,6 +2,7 @@
 
 pub(crate) mod actor;
 pub(crate) mod arrow;
+pub(crate) mod englober;
 pub(crate) mod life;
 pub(crate) mod line;
 pub(crate) mod note;

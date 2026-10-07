@@ -8,7 +8,7 @@ use crate::diagram::sequence::model::{
     LiveColors, MessageCommon, Note, NoteStyle, ParticipantId, ParticipantType,
 };
 use crate::diagram::sequence::styles::{
-    merged, merged_with_stereotype, message_style, note_style, participant_styles,
+    englober_style, merged, merged_with_stereotype, message_style, note_style, participant_styles,
     sequence_signature, sequence_signature2,
 };
 use crate::klimt::TextBlock;
@@ -18,6 +18,7 @@ use crate::skin::component::{
     ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text,
 };
 use crate::skin::rose::actor::ComponentRoseActor;
+use crate::skin::rose::englober::ComponentRoseEnglober;
 use crate::skin::rose::life::{
     ComponentRoseActiveLine, ComponentRoseDelayLine, ComponentRoseDestroy,
 };
@@ -170,6 +171,21 @@ pub(super) fn destroy(diagram: &SequenceDiagram) -> Box<dyn Component> {
         style.value(PName::LineColor).as_color(),
         style.stroke(),
     ))
+}
+
+/// The box around the participants of an englober, with its title.
+pub(super) fn englober(diagram: &SequenceDiagram, englober: usize) -> ComponentRoseEnglober {
+    let model = diagram.englober(englober);
+    let style = englober_style(&diagram.style_builder(), model);
+    let text = TextualPart::new(
+        component_text(&model.title, style.font_configuration(), &style),
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 3.0, 1.0, 3.0),
+    );
+    ComponentRoseEnglober::new(
+        text,
+        style.symbol_context(&Colors::default()),
+        f64::from(style.value(PName::RoundCorner).as_int()),
+    )
 }
 
 /// A message's arrow, with its number before the label.
