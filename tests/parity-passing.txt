@@ -12,6 +12,7 @@ debug blocks/pause-append.puml
 debug blocks/yaml-header.puml
 debug chen/attributes.puml
 debug chen/entities-relationship.puml
+debug chen/hide-ignored.puml
 debug chen/relationship-attributes.puml
 debug chen/university.puml
 debug chen/weak-entity.puml
@@ -41,6 +42,7 @@ debug class/layout-multi-edges.puml
 debug class/layout-nested-packages.puml
 debug class/layout-self-loops.puml
 debug class/left-to-right-packages.puml
+debug class/legend-in-package.puml
 debug class/link-label-visibility.puml
 debug class/lollipop.puml
 debug class/member-links.puml
@@ -103,7 +105,9 @@ debug component/link-label-visibility.puml
 debug component/link-labels.puml
 debug component/links-arrows.puml
 debug component/lollipop-links.puml
+debug component/namespace-separator.puml
 debug component/nested-containers.puml
+debug component/note-on-interface.puml
 debug component/notes-floating.puml
 debug component/notes.puml
 debug component/packages.puml
@@ -193,6 +197,7 @@ debug object/cardinality-labels.puml
 debug object/diamond-association.puml
 debug object/fields-braces.puml
 debug object/fields-outside.puml
+debug object/json-dotted-name.puml
 debug object/json-object.puml
 debug object/left-to-right.puml
 debug object/map-basic.puml
@@ -266,6 +271,7 @@ debug sequence/groups-colors.puml
 debug sequence/groups-keywords.puml
 debug sequence/groups.puml
 debug sequence/hide-footbox.puml
+debug sequence/hide-stereotype.puml
 debug sequence/hide-unlinked.puml
 debug sequence/ignore-newpage.puml
 debug sequence/incoming-outgoing.puml
@@ -338,11 +344,13 @@ debug state/end-state.puml
 debug state/entry-exit-points.puml
 debug state/fork-join.puml
 debug state/hide-empty-description.puml
+debug state/hide-stereotype.puml
 debug state/history-states.puml
 debug state/history.puml
 debug state/left-to-right.puml
 debug state/link-label-visibility.puml
 debug state/long-names.puml
+debug state/namespace-separator.puml
 debug state/notes-composite.puml
 debug state/notes-floating.puml
 debug state/notes-on-link.puml
@@ -351,6 +359,7 @@ debug state/pins-expansion.puml
 debug state/self-transitions.puml
 debug state/simple.puml
 debug state/skinparam.puml
+debug state/stereotype-inline-style.puml
 debug state/stereotypes.puml
 debug state/style.puml
 debug state/title-legend.puml
@@ -364,7 +373,9 @@ debug usecase/colors-inline.puml
 debug usecase/directions.puml
 debug usecase/extends-includes.puml
 debug usecase/generalization.puml
+debug usecase/hide-stereotype.puml
 debug usecase/left-to-right.puml
+debug usecase/link-label-visibility.puml
 debug usecase/links.puml
 debug usecase/multiline-usecase.puml
 debug usecase/notes.puml
@@ -387,6 +398,7 @@ dsvg blocks/pause-append.puml
 dsvg blocks/yaml-header.puml
 dsvg chen/attributes.puml
 dsvg chen/entities-relationship.puml
+dsvg chen/hide-ignored.puml
 dsvg chen/relationship-attributes.puml
 dsvg chen/university.puml
 dsvg chen/weak-entity.puml
@@ -416,6 +428,7 @@ dsvg class/layout-multi-edges.puml
 dsvg class/layout-nested-packages.puml
 dsvg class/layout-self-loops.puml
 dsvg class/left-to-right-packages.puml
+dsvg class/legend-in-package.puml
 dsvg class/link-label-visibility.puml
 dsvg class/lollipop.puml
 dsvg class/member-links.puml
@@ -478,7 +491,9 @@ dsvg component/link-label-visibility.puml
 dsvg component/link-labels.puml
 dsvg component/links-arrows.puml
 dsvg component/lollipop-links.puml
+dsvg component/namespace-separator.puml
 dsvg component/nested-containers.puml
+dsvg component/note-on-interface.puml
 dsvg component/notes-floating.puml
 dsvg component/notes.puml
 dsvg component/packages.puml
@@ -567,6 +582,7 @@ dsvg object/cardinality-labels.puml
 dsvg object/diamond-association.puml
 dsvg object/fields-braces.puml
 dsvg object/fields-outside.puml
+dsvg object/json-dotted-name.puml
 dsvg object/json-object.puml
 dsvg object/left-to-right.puml
 dsvg object/map-basic.puml
@@ -639,6 +655,7 @@ dsvg sequence/groups-colors.puml
 dsvg sequence/groups-keywords.puml
 dsvg sequence/groups.puml
 dsvg sequence/hide-footbox.puml
+dsvg sequence/hide-stereotype.puml
 dsvg sequence/hide-unlinked.puml
 dsvg sequence/ignore-newpage.puml
 dsvg sequence/incoming-outgoing.puml
@@ -710,11 +727,13 @@ dsvg state/end-state.puml
 dsvg state/entry-exit-points.puml
 dsvg state/fork-join.puml
 dsvg state/hide-empty-description.puml
+dsvg state/hide-stereotype.puml
 dsvg state/history-states.puml
 dsvg state/history.puml
 dsvg state/left-to-right.puml
 dsvg state/link-label-visibility.puml
 dsvg state/long-names.puml
+dsvg state/namespace-separator.puml
 dsvg state/notes-composite.puml
 dsvg state/notes-floating.puml
 dsvg state/notes-on-link.puml
@@ -723,6 +742,7 @@ dsvg state/pins-expansion.puml
 dsvg state/self-transitions.puml
 dsvg state/simple.puml
 dsvg state/skinparam.puml
+dsvg state/stereotype-inline-style.puml
 dsvg state/stereotypes.puml
 dsvg state/style.puml
 dsvg state/title-legend.puml
@@ -736,7 +756,9 @@ dsvg usecase/colors-inline.puml
 dsvg usecase/directions.puml
 dsvg usecase/extends-includes.puml
 dsvg usecase/generalization.puml
+dsvg usecase/hide-stereotype.puml
 dsvg usecase/left-to-right.puml
+dsvg usecase/link-label-visibility.puml
 dsvg usecase/links.puml
 dsvg usecase/multiline-usecase.puml
 dsvg usecase/notes.puml
@@ -759,6 +781,7 @@ png blocks/pause-append.puml
 png blocks/yaml-header.puml
 png chen/attributes.puml
 png chen/entities-relationship.puml
+png chen/hide-ignored.puml
 png chen/relationship-attributes.puml
 png chen/university.puml
 png chen/weak-entity.puml
@@ -788,6 +811,7 @@ png class/layout-multi-edges.puml
 png class/layout-nested-packages.puml
 png class/layout-self-loops.puml
 png class/left-to-right-packages.puml
+png class/legend-in-package.puml
 png class/link-label-visibility.puml
 png class/lollipop.puml
 png class/member-links.puml
@@ -850,7 +874,9 @@ png component/link-label-visibility.puml
 png component/link-labels.puml
 png component/links-arrows.puml
 png component/lollipop-links.puml
+png component/namespace-separator.puml
 png component/nested-containers.puml
+png component/note-on-interface.puml
 png component/notes-floating.puml
 png component/notes.puml
 png component/packages.puml
@@ -940,6 +966,7 @@ png object/cardinality-labels.puml
 png object/diamond-association.puml
 png object/fields-braces.puml
 png object/fields-outside.puml
+png object/json-dotted-name.puml
 png object/json-object.puml
 png object/left-to-right.puml
 png object/map-basic.puml
@@ -1013,6 +1040,7 @@ png sequence/groups-colors.puml
 png sequence/groups-keywords.puml
 png sequence/groups.puml
 png sequence/hide-footbox.puml
+png sequence/hide-stereotype.puml
 png sequence/hide-unlinked.puml
 png sequence/ignore-newpage.puml
 png sequence/incoming-outgoing.puml
@@ -1084,11 +1112,13 @@ png state/end-state.puml
 png state/entry-exit-points.puml
 png state/fork-join.puml
 png state/hide-empty-description.puml
+png state/hide-stereotype.puml
 png state/history-states.puml
 png state/history.puml
 png state/left-to-right.puml
 png state/link-label-visibility.puml
 png state/long-names.puml
+png state/namespace-separator.puml
 png state/notes-composite.puml
 png state/notes-floating.puml
 png state/notes-on-link.puml
@@ -1097,6 +1127,7 @@ png state/pins-expansion.puml
 png state/self-transitions.puml
 png state/simple.puml
 png state/skinparam.puml
+png state/stereotype-inline-style.puml
 png state/stereotypes.puml
 png state/style.puml
 png state/title-legend.puml
@@ -1110,7 +1141,9 @@ png usecase/colors-inline.puml
 png usecase/directions.puml
 png usecase/extends-includes.puml
 png usecase/generalization.puml
+png usecase/hide-stereotype.puml
 png usecase/left-to-right.puml
+png usecase/link-label-visibility.puml
 png usecase/links.puml
 png usecase/multiline-usecase.puml
 png usecase/notes.puml
@@ -1136,6 +1169,7 @@ preproc blocks/pause-append.puml
 preproc blocks/yaml-header.puml
 preproc chen/attributes.puml
 preproc chen/entities-relationship.puml
+preproc chen/hide-ignored.puml
 preproc chen/relationship-attributes.puml
 preproc chen/university.puml
 preproc chen/weak-entity.puml
@@ -1165,6 +1199,7 @@ preproc class/layout-multi-edges.puml
 preproc class/layout-nested-packages.puml
 preproc class/layout-self-loops.puml
 preproc class/left-to-right-packages.puml
+preproc class/legend-in-package.puml
 preproc class/link-label-visibility.puml
 preproc class/lollipop.puml
 preproc class/member-links.puml
@@ -1227,7 +1262,9 @@ preproc component/link-label-visibility.puml
 preproc component/link-labels.puml
 preproc component/links-arrows.puml
 preproc component/lollipop-links.puml
+preproc component/namespace-separator.puml
 preproc component/nested-containers.puml
+preproc component/note-on-interface.puml
 preproc component/notes-floating.puml
 preproc component/notes.puml
 preproc component/packages.puml
@@ -1320,6 +1357,7 @@ preproc object/cardinality-labels.puml
 preproc object/diamond-association.puml
 preproc object/fields-braces.puml
 preproc object/fields-outside.puml
+preproc object/json-dotted-name.puml
 preproc object/json-object.puml
 preproc object/left-to-right.puml
 preproc object/map-basic.puml
@@ -1398,6 +1436,7 @@ preproc sequence/groups-colors.puml
 preproc sequence/groups-keywords.puml
 preproc sequence/groups.puml
 preproc sequence/hide-footbox.puml
+preproc sequence/hide-stereotype.puml
 preproc sequence/hide-unlinked.puml
 preproc sequence/ignore-newpage.puml
 preproc sequence/incoming-outgoing.puml
@@ -1470,11 +1509,13 @@ preproc state/end-state.puml
 preproc state/entry-exit-points.puml
 preproc state/fork-join.puml
 preproc state/hide-empty-description.puml
+preproc state/hide-stereotype.puml
 preproc state/history-states.puml
 preproc state/history.puml
 preproc state/left-to-right.puml
 preproc state/link-label-visibility.puml
 preproc state/long-names.puml
+preproc state/namespace-separator.puml
 preproc state/notes-composite.puml
 preproc state/notes-floating.puml
 preproc state/notes-on-link.puml
@@ -1483,6 +1524,7 @@ preproc state/pins-expansion.puml
 preproc state/self-transitions.puml
 preproc state/simple.puml
 preproc state/skinparam.puml
+preproc state/stereotype-inline-style.puml
 preproc state/stereotypes.puml
 preproc state/style.puml
 preproc state/title-legend.puml
@@ -1496,7 +1538,9 @@ preproc usecase/colors-inline.puml
 preproc usecase/directions.puml
 preproc usecase/extends-includes.puml
 preproc usecase/generalization.puml
+preproc usecase/hide-stereotype.puml
 preproc usecase/left-to-right.puml
+preproc usecase/link-label-visibility.puml
 preproc usecase/links.puml
 preproc usecase/multiline-usecase.puml
 preproc usecase/notes.puml
@@ -1520,6 +1564,7 @@ svg blocks/pause-append.puml
 svg blocks/yaml-header.puml
 svg chen/attributes.puml
 svg chen/entities-relationship.puml
+svg chen/hide-ignored.puml
 svg chen/relationship-attributes.puml
 svg chen/university.puml
 svg chen/weak-entity.puml
@@ -1550,7 +1595,9 @@ svg component/link-label-visibility.puml
 svg component/link-labels.puml
 svg component/links-arrows.puml
 svg component/lollipop-links.puml
+svg component/namespace-separator.puml
 svg component/nested-containers.puml
+svg component/note-on-interface.puml
 svg component/notes-floating.puml
 svg component/notes.puml
 svg component/packages.puml
@@ -1638,6 +1685,7 @@ svg object/cardinality-labels.puml
 svg object/diamond-association.puml
 svg object/fields-braces.puml
 svg object/fields-outside.puml
+svg object/json-dotted-name.puml
 svg object/json-object.puml
 svg object/left-to-right.puml
 svg object/map-basic.puml
@@ -1709,6 +1757,7 @@ svg sequence/groups-colors.puml
 svg sequence/groups-keywords.puml
 svg sequence/groups.puml
 svg sequence/hide-footbox.puml
+svg sequence/hide-stereotype.puml
 svg sequence/hide-unlinked.puml
 svg sequence/ignore-newpage.puml
 svg sequence/incoming-outgoing.puml
@@ -1779,11 +1828,13 @@ svg state/end-state.puml
 svg state/entry-exit-points.puml
 svg state/fork-join.puml
 svg state/hide-empty-description.puml
+svg state/hide-stereotype.puml
 svg state/history-states.puml
 svg state/history.puml
 svg state/left-to-right.puml
 svg state/link-label-visibility.puml
 svg state/long-names.puml
+svg state/namespace-separator.puml
 svg state/notes-composite.puml
 svg state/notes-floating.puml
 svg state/notes-on-link.puml
@@ -1792,6 +1843,7 @@ svg state/pins-expansion.puml
 svg state/self-transitions.puml
 svg state/simple.puml
 svg state/skinparam.puml
+svg state/stereotype-inline-style.puml
 svg state/stereotypes.puml
 svg state/style.puml
 svg state/title-legend.puml
@@ -1805,7 +1857,9 @@ svg usecase/colors-inline.puml
 svg usecase/directions.puml
 svg usecase/extends-includes.puml
 svg usecase/generalization.puml
+svg usecase/hide-stereotype.puml
 svg usecase/left-to-right.puml
+svg usecase/link-label-visibility.puml
 svg usecase/links.puml
 svg usecase/multiline-usecase.puml
 svg usecase/notes.puml
@@ -1831,6 +1885,7 @@ url blocks/pause-append.puml
 url blocks/yaml-header.puml
 url chen/attributes.puml
 url chen/entities-relationship.puml
+url chen/hide-ignored.puml
 url chen/relationship-attributes.puml
 url chen/university.puml
 url chen/weak-entity.puml
@@ -1860,6 +1915,7 @@ url class/layout-multi-edges.puml
 url class/layout-nested-packages.puml
 url class/layout-self-loops.puml
 url class/left-to-right-packages.puml
+url class/legend-in-package.puml
 url class/link-label-visibility.puml
 url class/lollipop.puml
 url class/member-links.puml
@@ -1922,7 +1978,9 @@ url component/link-label-visibility.puml
 url component/link-labels.puml
 url component/links-arrows.puml
 url component/lollipop-links.puml
+url component/namespace-separator.puml
 url component/nested-containers.puml
+url component/note-on-interface.puml
 url component/notes-floating.puml
 url component/notes.puml
 url component/packages.puml
@@ -2015,6 +2073,7 @@ url object/cardinality-labels.puml
 url object/diamond-association.puml
 url object/fields-braces.puml
 url object/fields-outside.puml
+url object/json-dotted-name.puml
 url object/json-object.puml
 url object/left-to-right.puml
 url object/map-basic.puml
@@ -2093,6 +2152,7 @@ url sequence/groups-colors.puml
 url sequence/groups-keywords.puml
 url sequence/groups.puml
 url sequence/hide-footbox.puml
+url sequence/hide-stereotype.puml
 url sequence/hide-unlinked.puml
 url sequence/ignore-newpage.puml
 url sequence/incoming-outgoing.puml
@@ -2165,11 +2225,13 @@ url state/end-state.puml
 url state/entry-exit-points.puml
 url state/fork-join.puml
 url state/hide-empty-description.puml
+url state/hide-stereotype.puml
 url state/history-states.puml
 url state/history.puml
 url state/left-to-right.puml
 url state/link-label-visibility.puml
 url state/long-names.puml
+url state/namespace-separator.puml
 url state/notes-composite.puml
 url state/notes-floating.puml
 url state/notes-on-link.puml
@@ -2178,6 +2240,7 @@ url state/pins-expansion.puml
 url state/self-transitions.puml
 url state/simple.puml
 url state/skinparam.puml
+url state/stereotype-inline-style.puml
 url state/stereotypes.puml
 url state/style.puml
 url state/title-legend.puml
@@ -2191,7 +2254,9 @@ url usecase/colors-inline.puml
 url usecase/directions.puml
 url usecase/extends-includes.puml
 url usecase/generalization.puml
+url usecase/hide-stereotype.puml
 url usecase/left-to-right.puml
+url usecase/link-label-visibility.puml
 url usecase/links.puml
 url usecase/multiline-usecase.puml
 url usecase/notes.puml
