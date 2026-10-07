@@ -2,6 +2,8 @@
 //! states declared further down, and notes may name states links created.
 
 mod commands;
+#[cfg(test)]
+mod tests;
 
 use std::rc::Rc;
 
@@ -12,20 +14,29 @@ use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
-use crate::abel::{EntityId, GroupType};
+use crate::abel::{EntityId, GroupType, LeafType};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
+use crate::creole::Display;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
+use crate::plasma::QuarkId;
 use crate::style::SName;
+use crate::text::LineLocation;
 
 /// Drawing state diagrams is not ported yet; it is reported as soon as the lines read as one.
 const NOT_PORTED: NotYetPorted = NotYetPorted("state diagrams");
 
+/// Names the groups of concurrent regions, numbered afresh on each pass.
+const CONCURRENT_PREFIX: &str = "CONC";
+
 pub(super) struct StateDiagram {
     source: Rc<UmlSource>,
     cuca: CucaDiagram,
+    hide_empty_description: bool,
+    /// Commands that run in several passes do some of their work in the first only.
+    current_pass: ParserPass,
 }
 
 /// Reads state diagrams (PlantUML's `StateDiagramFactory`).
@@ -44,6 +55,8 @@ impl CommandFactory for StateDiagramFactory {
         StateDiagram {
             source: source.clone(),
             cuca,
+            hide_empty_description: false,
+            current_pass: ParserPass::One,
         }
     }
 
@@ -89,12 +102,162 @@ fn code_for_state() -> RegexTree {
     )
 }
 
+impl StateDiagram {
+    /// Whether a state named by `quark` may be used in the current group: a state in a concurrent region
+    /// stays in it, and a concurrent region uses only its own states.
+    fn check_concurrent_state_ok(&self, quark: QuarkId) -> bool {
+        let cuca = &self.cuca;
+        let Some(existing) = cuca.quark(quark).get_data() else {
+            return true;
+        };
+        let current = cuca.get_current_group();
+        let parent = cuca.entity(existing).get_parent_container(cuca);
+        if cuca.entity(current).get_group_type() == GroupType::ConcurrentState
+            && Some(current) != parent
+        {
+            return false;
+        }
+        !parent.is_some_and(|parent| {
+            cuca.entity(parent).get_group_type() == GroupType::ConcurrentState && current != parent
+        })
+    }
+
+    /// The pseudo-state `prefix` names in the current group, like `*start*` at the root or
+    /// `*start*Active` in the state `Active`, created as a leaf of `leaf_type` if needed.
+    fn pseudo_state(
+        &mut self,
+        location: &LineLocation,
+        prefix: &str,
+        leaf_type: LeafType,
+    ) -> EntityId {
+        let group = self.cuca.get_current_group();
+        let id_short = if self.cuca.entity(group).is_root() {
+            prefix.to_owned()
+        } else {
+            format!("{prefix}{}", self.cuca.entity(group).get_name(&self.cuca))
+        };
+        let quark = self
+            .cuca
+            .quark_in_context(true, CucaDiagram::clean_id(&id_short));
+        self.leaf_of(location, quark, leaf_type)
+    }
+
+    /// The entity `quark` holds, or a new leaf of `leaf_type` without a name shown.
+    fn leaf_of(
+        &mut self,
+        location: &LineLocation,
+        quark: QuarkId,
+        leaf_type: LeafType,
+    ) -> EntityId {
+        match self.cuca.quark(quark).get_data() {
+            Some(existing) => existing,
+            None => self.cuca.really_create_leaf(
+                Some(location),
+                quark,
+                Display::with_newlines(""),
+                leaf_type,
+            ),
+        }
+    }
+
+    /// `[*]` where a transition starts.
+    fn get_start(&mut self, location: &LineLocation) -> EntityId {
+        self.pseudo_state(location, "*start*", LeafType::CircleStart)
+    }
+
+    /// `[*]` where a transition ends.
+    fn get_end(&mut self, location: &LineLocation) -> EntityId {
+        self.pseudo_state(location, "*end*", LeafType::CircleEnd)
+    }
+
+    /// `[H]`: the shallow history of the current group.
+    fn get_historical(&mut self, location: &LineLocation) -> EntityId {
+        self.pseudo_state(location, "*historical*", LeafType::PseudoState)
+    }
+
+    /// `[H*]`: the deep history of the current group.
+    fn get_deep_history(&mut self, location: &LineLocation) -> EntityId {
+        self.pseudo_state(location, "*deephistory*", LeafType::DeepHistory)
+    }
+
+    /// `State[H]` and `State[H*]`: the history of `id_short`, which becomes a composite state.
+    fn get_history_of(
+        &mut self,
+        location: &LineLocation,
+        id_short: &str,
+        prefix: &str,
+        leaf_type: LeafType,
+    ) -> EntityId {
+        let quark = self
+            .cuca
+            .quark_in_context(true, CucaDiagram::clean_id(id_short));
+        let display = Display::with_newlines(self.cuca.quark(quark).get_name());
+        self.cuca
+            .goto_group(Some(location), quark, display, GroupType::State);
+        let group = self.cuca.get_current_group();
+        let name = format!("{prefix}{}", self.cuca.entity(group).get_name(&self.cuca));
+        let ident = self
+            .cuca
+            .quark_in_context(true, CucaDiagram::clean_id(&name));
+        let result = self.leaf_of(location, ident, leaf_type);
+        self.end_group();
+        result
+    }
+
+    /// `--` or `||`: the current state's next concurrent region starts, separated by a horizontal or a
+    /// vertical line.
+    fn concurrent_state(&mut self, location: &LineLocation, direction: char) {
+        let current = self.cuca.get_current_group();
+        self.cuca.entity_mut(current).concurrent_separator = Some(direction);
+        if self.cuca.entity(current).get_group_type() == GroupType::ConcurrentState {
+            self.cuca.end_group();
+        }
+        let name = self.cuca.get_unique_sequence2(CONCURRENT_PREFIX);
+        let ident = self
+            .cuca
+            .quark_in_context(true, CucaDiagram::clean_id(&name));
+        self.cuca.goto_group(
+            Some(location),
+            ident,
+            Display::create([""]),
+            GroupType::ConcurrentState,
+        );
+        let region = self.cuca.get_current_group();
+        self.cuca.entity_mut(region).concurrent_separator = Some(direction);
+    }
+
+    /// Leaves the current state, and the concurrent region the commands were in.
+    fn end_group(&mut self) -> bool {
+        let current = self.cuca.get_current_group();
+        if self.cuca.entity(current).get_group_type() == GroupType::ConcurrentState {
+            self.cuca.end_group();
+        }
+        self.cuca.end_group()
+    }
+
+    /// Every quark above `current` that holds nothing yet becomes a composite state named after it.
+    fn ensure_parent_state(&mut self, location: &LineLocation, mut current: QuarkId) {
+        while let Some(parent) = self.cuca.quark(current).get_parent() {
+            if self.cuca.quark(parent).get_data().is_some() {
+                return;
+            }
+            let display = Display::with_newlines(self.cuca.quark(parent).get_name());
+            let group = self
+                .cuca
+                .create_group(Some(location), parent, GroupType::State);
+            self.cuca.entity_mut(group).display = display;
+            current = parent;
+        }
+    }
+}
+
 impl AbstractDiagram for StateDiagram {
     fn required_pass(&self) -> &'static [ParserPass] {
         &[ParserPass::One, ParserPass::Two, ParserPass::Three]
     }
 
-    fn starting_pass(&mut self, _pass: ParserPass) {
+    fn starting_pass(&mut self, pass: ParserPass) {
+        self.current_pass = pass;
         self.cuca.starting_pass();
     }
 
@@ -131,6 +294,10 @@ fn concurrent_region(cuca: &CucaDiagram, entity: EntityId) -> Option<EntityId> {
 impl TitledDiagram for StateDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.cuca.titled
+    }
+
+    fn set_hide_empty_description(&mut self, hide: bool) {
+        self.hide_empty_description = hide;
     }
 }
 
