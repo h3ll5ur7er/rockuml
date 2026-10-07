@@ -113,7 +113,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandParticipant {
     fn execute_arg(
         &self,
         diagram: &mut SequenceDiagram,
-        location: &LineLocation,
+        _location: &LineLocation,
         arg: &RegexResult,
     ) -> CommandResult {
         let code = arg.get("CODE", 0).unwrap_or_default().to_owned();
@@ -133,7 +133,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandParticipant {
         let order = arg
             .get("ORDER", 0)
             .map_or(0, |order| order.parse().unwrap_or(0));
-        let participant = diagram.create_new_participant(location, kind, &code, display, order);
+        let participant = diagram.create_new_participant(kind, &code, display, order);
         decorate(diagram, participant, arg)?;
         let color = arg.get("COLOR", 0).map(color_named).transpose()?;
         if let Some(color) = color {
@@ -197,14 +197,10 @@ fn multiline(diagram: &mut SequenceDiagram, lines: &BlocLines) -> CommandResult 
         return Ok(());
     }
     let body = lines.sub_extract(1, 1).without_empty_columns();
-    let location = body
-        .first()
-        .map_or_else(|| first.location().clone(), |line| line.location().clone());
     let order = arg
         .get("ORDER", 0)
         .map_or(0, |order| order.parse().unwrap_or(0));
     let participant = diagram.create_new_participant(
-        &location,
         ParticipantType::Participant,
         &code,
         Some(body.to_display()),

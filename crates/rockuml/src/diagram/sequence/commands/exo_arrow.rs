@@ -176,7 +176,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
     fn execute_arg(
         &self,
         diagram: &mut SequenceDiagram,
-        location: &LineLocation,
+        _location: &LineLocation,
         arg: &RegexResult,
     ) -> CommandResult {
         let body = format!(
@@ -186,7 +186,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
         );
         let dressing = arg.get_lazzy("ARROW_DRESSING", 0).unwrap_or_default();
         let code = unquoted(arg.get("PARTICIPANT", 0).unwrap_or_default()).to_owned();
-        let participant = diagram.get_or_create_participant(location, &code, None);
+        let participant = diagram.get_or_create_participant(&code, None);
         let labels = match arg.get("LABEL", 0) {
             None => Display::create([""]),
             Some(label) => Display::with_newlines(label),
@@ -235,7 +235,6 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
             configuration.clone(),
             message_number,
             diagram.style_builder(),
-            location.clone(),
         );
         common.url = arg.get("URL", 0).and_then(Url::parse);
         common.parallel = arg.get("PARALLEL", 0).is_some();

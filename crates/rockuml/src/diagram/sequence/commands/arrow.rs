@@ -140,7 +140,6 @@ fn contains_any(text: &str, candidates: &[&str]) -> bool {
 /// The participant written in one of the four forms, created if new.
 fn get_or_create(
     diagram: &mut SequenceDiagram,
-    location: &LineLocation,
     arg: &RegexResult,
     names: &[&str; 5],
 ) -> ParticipantId {
@@ -161,7 +160,7 @@ fn get_or_create(
         )
     };
     let code = code.to_owned();
-    diagram.get_or_create_participant(location, &code, Some(display))
+    diagram.get_or_create_participant(&code, Some(display))
 }
 
 /// The arrow's `[...]` style: colours, `dashed`, `dotted` and `hidden`; `bold` changes nothing here.
@@ -201,7 +200,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
     fn execute_arg(
         &self,
         diagram: &mut SequenceDiagram,
-        location: &LineLocation,
+        _location: &LineLocation,
         arg: &RegexResult,
     ) -> CommandResult {
         let dressing1 = dressing(arg, "ARROW_DRESSING1");
@@ -226,8 +225,8 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
         let async_marks2 = [">>", "\\\\", "//"];
         let (participant1, participant2, circle_at_start, circle_at_end, sync1, sync2) =
             if reverse_define {
-                let p2 = get_or_create(diagram, location, arg, &PART1);
-                let p1 = get_or_create(diagram, location, arg, &PART2);
+                let p2 = get_or_create(diagram, arg, &PART1);
+                let p1 = get_or_create(diagram, arg, &PART2);
                 (
                     p1,
                     p2,
@@ -237,8 +236,8 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
                     contains_any(&dressing1, &async_marks),
                 )
             } else {
-                let p1 = get_or_create(diagram, location, arg, &PART1);
-                let p2 = get_or_create(diagram, location, arg, &PART2);
+                let p1 = get_or_create(diagram, arg, &PART1);
+                let p2 = get_or_create(diagram, arg, &PART2);
                 (
                     p1,
                     p2,
@@ -307,9 +306,8 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
             configuration.clone(),
             message_number,
             diagram.style_builder(),
-            location.clone(),
         );
-        let multicast = multicasts(diagram, location, arg.get("MULTICAST", 0));
+        let multicast = multicasts(diagram, arg.get("MULTICAST", 0));
         common.url = arg.get("URL", 0).and_then(Url::parse);
         common.stereotype = arg.get("STEREOTYPE", 0).map(Stereotype::new);
         common.parallel = arg.get("PARALLEL", 0).is_some();
@@ -376,16 +374,12 @@ fn manage_activations(
 }
 
 /// `Alice -> Bob & Carol`: the other receivers.
-fn multicasts(
-    diagram: &mut SequenceDiagram,
-    location: &LineLocation,
-    multicast: Option<&str>,
-) -> Vec<ParticipantId> {
+fn multicasts(diagram: &mut SequenceDiagram, multicast: Option<&str>) -> Vec<ParticipantId> {
     multicast
         .unwrap_or_default()
         .split('&')
         .map(crate::java::trim)
         .filter(|code| !code.is_empty())
-        .map(|code| diagram.get_or_create_participant(location, code, None))
+        .map(|code| diagram.get_or_create_participant(code, None))
         .collect()
 }

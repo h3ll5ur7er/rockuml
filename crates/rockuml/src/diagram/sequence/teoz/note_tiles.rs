@@ -410,7 +410,6 @@ pub(super) enum Side {
 pub(super) struct CommunicationTileNoteSide<'a> {
     arguments: Rc<TileArguments<'a>>,
     tile: Box<dyn Tile<'a> + 'a>,
-    note: &'a Note,
     side: Side,
     participant: ParticipantId,
     /// The message creates the participant the note is beside.
@@ -433,7 +432,6 @@ impl<'a> CommunicationTileNoteSide<'a> {
             y_gauge: tile.y_gauge().clone(),
             arguments,
             tile,
-            note,
             side,
             participant,
             create,

@@ -9,7 +9,6 @@ use crate::klimt::url::Url;
 use crate::skin::arrow::ArrowConfiguration;
 use crate::stereo::Stereotype;
 use crate::style::StyleBuilder;
-use crate::text::LineLocation;
 
 /// A participant, by its place in the diagram's list of participants ever declared.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -65,7 +64,6 @@ pub(crate) struct Participant {
     pub url: Option<Url>,
     pub order: i32,
     pub style_builder: Rc<StyleBuilder>,
-    pub location: LineLocation,
 }
 
 /// A box drawn around several participants (`box ... end box`).
@@ -136,7 +134,6 @@ pub(crate) struct Note {
     pub position: NotePosition,
     pub style: NoteStyle,
     pub colors: Colors,
-    pub url: Option<Url>,
     pub stereotype: Option<Stereotype>,
     pub parallel: bool,
     pub style_builder: Rc<StyleBuilder>,
@@ -163,7 +160,6 @@ pub(crate) struct MessageCommon {
     pub anchor: Option<String>,
     pub part1_anchor: Option<String>,
     pub part2_anchor: Option<String>,
-    pub location: LineLocation,
     first_is_activate: bool,
     no_activation_authorized: Vec<ParticipantId>,
 }
@@ -174,7 +170,6 @@ impl MessageCommon {
         arrow_configuration: ArrowConfiguration,
         message_number: Option<String>,
         style_builder: Rc<StyleBuilder>,
-        location: LineLocation,
     ) -> Self {
         Self {
             label,
@@ -190,7 +185,6 @@ impl MessageCommon {
             anchor: None,
             part1_anchor: None,
             part2_anchor: None,
-            location,
             first_is_activate: false,
             no_activation_authorized: Vec::new(),
         }
@@ -319,7 +313,6 @@ pub(crate) struct GroupingStart {
     pub kind: GroupingType,
     pub back_color_general: Option<HColor>,
     pub back_color_element: Option<HColor>,
-    pub parent: Option<EventId>,
     pub parallel: bool,
     pub style_builder: Rc<StyleBuilder>,
 }
@@ -336,11 +329,9 @@ impl GroupingStart {
 
 /// An `else` or `end` of a group.
 pub(crate) struct GroupingLeaf {
-    pub title: String,
     pub comment: Option<String>,
     pub kind: GroupingType,
     pub back_color_general: Option<HColor>,
-    pub back_color_element: Option<HColor>,
     pub start: EventId,
     pub notes: Vec<Note>,
     pub style_builder: Rc<StyleBuilder>,
@@ -374,7 +365,6 @@ impl LifeEvent {
 
 pub(crate) struct Reference {
     pub participants: Vec<ParticipantId>,
-    pub url: Option<Url>,
     pub display: Display,
     pub back_color_element: Option<HColor>,
     pub notes: Vec<Note>,

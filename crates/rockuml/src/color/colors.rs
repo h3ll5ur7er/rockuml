@@ -2,7 +2,6 @@
 //! (PlantUML's `Colors` and `ColorParser`).
 
 use super::HColor;
-use crate::klimt::ugraphic::UStroke;
 
 /// Which part of an element a colour paints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -40,7 +39,6 @@ pub(crate) const COLORS_REGEXP: &str = concat!(
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Colors {
     colors: Vec<(ColorType, HColor)>,
-    line_style: Option<UStroke>,
 }
 
 impl Colors {
@@ -69,23 +67,6 @@ impl Colors {
                 }
             }
         }
-        result.line_style = if data.contains("line.dashed") {
-            Some(UStroke {
-                dash_visible: 7.0,
-                dash_space: 7.0,
-                thickness: 1.0,
-            })
-        } else if data.contains("line.dotted") {
-            Some(UStroke {
-                dash_visible: 1.0,
-                dash_space: 3.0,
-                thickness: 1.0,
-            })
-        } else if data.contains("line.bold") {
-            Some(UStroke::with_thickness(2.0))
-        } else {
-            None
-        };
         Ok(result)
     }
 
@@ -115,11 +96,6 @@ impl Colors {
             .find(|(existing, _)| *existing == kind)
             .map(|(_, color)| color)
     }
-
-    /// The stroke `line.dashed`, `line.dotted` or `line.bold` asks for.
-    pub(crate) fn specific_line_stroke(&self) -> Option<UStroke> {
-        self.line_style
-    }
 }
 
 #[cfg(test)]
@@ -138,16 +114,12 @@ mod tests {
     }
 
     #[test]
-    fn named_parts_and_line_styles_are_read() {
+    fn named_parts_are_read_and_line_styles_skipped() {
         let colors =
             Colors::parse("#pink;line:red;line.dashed;text:green", ColorType::Back).unwrap();
         assert_eq!(colors.get(ColorType::Back), Some(&color("pink")));
         assert_eq!(colors.get(ColorType::Line), Some(&color("red")));
         assert_eq!(colors.get(ColorType::Text), Some(&color("green")));
-        assert_eq!(
-            colors.specific_line_stroke().map(|s| s.dash_visible),
-            Some(7.0)
-        );
     }
 
     #[test]

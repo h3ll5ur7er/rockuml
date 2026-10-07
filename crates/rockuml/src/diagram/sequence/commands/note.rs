@@ -13,7 +13,6 @@ use crate::command::{
 use crate::creole::Display;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{Note, NotePosition, NoteStyle, ParticipantId};
-use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{self, Stereotype};
 use crate::text::LineLocation;
@@ -156,12 +155,12 @@ impl SingleLineCommand<SequenceDiagram> for SingleLineNote {
     fn execute_arg(
         &self,
         diagram: &mut SequenceDiagram,
-        location: &LineLocation,
+        _location: &LineLocation,
         arg: &RegexResult,
     ) -> CommandResult {
         let display = Display::with_newlines(arg.get("NOTE", 0).unwrap_or_default());
         let display = diagram.manage_variable(display);
-        execute(self.kind, diagram, location, arg, display)
+        execute(self.kind, diagram, arg, display)
     }
 }
 
@@ -226,11 +225,8 @@ fn multi(kind: Kind, diagram: &mut SequenceDiagram, lines: &BlocLines) -> Comman
         .matcher(first.text())
         .expect("the start pattern matched");
     let body = lines.sub_extract(1, 1).without_empty_columns();
-    let location = body
-        .first()
-        .map_or_else(|| first.location().clone(), |line| line.location().clone());
     let display = diagram.manage_variable(body.to_display());
-    execute(kind, diagram, &location, &arg, display)
+    execute(kind, diagram, &arg, display)
 }
 
 fn stereotype(arg: &RegexResult) -> Option<Stereotype> {
@@ -247,12 +243,10 @@ fn note_colors(arg: &RegexResult) -> Result<Colors, CommandError> {
 fn execute(
     kind: Kind,
     diagram: &mut SequenceDiagram,
-    location: &LineLocation,
     arg: &RegexResult,
     display: Display,
 ) -> CommandResult {
     let style = NoteStyle::named(arg.get("STYLE", 0).unwrap_or_default());
-    let url = arg.get("URL", 0).and_then(Url::parse);
     let style_builder = diagram.style_builder();
     let note = |participant, participant2, position, colors| Note {
         participant,
@@ -261,7 +255,6 @@ fn execute(
         position,
         style,
         colors,
-        url: url.clone(),
         stereotype: stereotype(arg),
         parallel: arg.get("PARALLEL", 0).is_some(),
         style_builder: style_builder.clone(),
@@ -269,7 +262,7 @@ fn execute(
     match kind {
         Kind::OnParticipant => {
             let code = unquoted(arg.get("PARTICIPANT", 0).unwrap_or_default()).to_owned();
-            let participant = diagram.get_or_create_participant(location, &code, None);
+            let participant = diagram.get_or_create_participant(&code, None);
             let position = NotePosition::named(arg.get("POSITION", 0).unwrap_or_default())
                 .expect("the pattern only matches positions");
             add(
@@ -283,7 +276,7 @@ fn execute(
                 .iter()
                 .map(|name| {
                     let code = unquoted(arg.get(name, 0).unwrap_or_default()).to_owned();
-                    diagram.get_or_create_participant(location, &code, None)
+                    diagram.get_or_create_participant(&code, None)
                 })
                 .collect();
             add(

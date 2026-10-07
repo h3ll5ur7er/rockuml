@@ -20,7 +20,6 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::stereo::Stereotype;
 use crate::style::SName;
-use crate::text::LineLocation;
 use autonumber::AutoNumber;
 use model::{
     Event, EventId, GroupingLeaf, GroupingStart, GroupingType, LifeEvent, LifeEventType,
@@ -142,7 +141,6 @@ impl SequenceDiagram {
     /// `getOrCreateParticipant`, with the name as display unless given.
     pub(crate) fn get_or_create_participant(
         &mut self,
-        location: &LineLocation,
         code: &str,
         display: Option<Display>,
     ) -> ParticipantId {
@@ -150,24 +148,22 @@ impl SequenceDiagram {
             return existing;
         }
         let display = display.unwrap_or_else(|| Display::with_newlines(code));
-        self.add_participant(location, ParticipantType::Participant, code, display, 0)
+        self.add_participant(ParticipantType::Participant, code, display, 0)
     }
 
     pub(crate) fn create_new_participant(
         &mut self,
-        location: &LineLocation,
         kind: ParticipantType,
         code: &str,
         display: Option<Display>,
         order: i32,
     ) -> ParticipantId {
         let display = display.unwrap_or_else(|| Display::with_newlines(code));
-        self.add_participant(location, kind, code, display, order)
+        self.add_participant(kind, code, display, order)
     }
 
     fn add_participant(
         &mut self,
-        location: &LineLocation,
         kind: ParticipantType,
         code: &str,
         display: Display,
@@ -184,7 +180,6 @@ impl SequenceDiagram {
             url: None,
             order,
             style_builder: self.titled.skin.current_style_builder(),
-            location: location.clone(),
         });
         self.englober_of.push(self.current_englober);
         self.add_with_order(id);
@@ -422,18 +417,15 @@ impl SequenceDiagram {
                 kind,
                 back_color_general,
                 back_color_element,
-                parent: top,
                 parallel,
                 style_builder,
             }));
             self.open_groupings.push(id);
         } else {
             self.events.push(Event::GroupingLeaf(GroupingLeaf {
-                title: title.to_owned(),
                 comment: comment.map(str::to_owned),
                 kind,
                 back_color_general,
-                back_color_element,
                 start: top.expect("checked above"),
                 notes: Vec::new(),
                 style_builder,

@@ -114,7 +114,7 @@ pub(super) fn activate() -> Box<dyn Command<SequenceDiagram>> {
                 named(1, "LINE", r"(#\w+)"),
             ])),
         ],
-        |diagram, location, arg| {
+        |diagram, _location, arg| {
             let kind = match arg
                 .get("TYPE", 0)
                 .unwrap_or_default()
@@ -127,7 +127,7 @@ pub(super) fn activate() -> Box<dyn Command<SequenceDiagram>> {
                 _ => LifeEventType::Create,
             };
             let code = unquoted(arg.get("WHO", 0).unwrap_or_default()).to_owned();
-            let participant = diagram.get_or_create_participant(location, &code, None);
+            let participant = diagram.get_or_create_participant(&code, None);
             let colors = LiveColors {
                 back: optional_color(arg, "BACK")?,
                 line: optional_color(arg, "LINE")?,
@@ -170,14 +170,14 @@ pub(super) fn activate_shortcut() -> Box<dyn Command<SequenceDiagram>> {
             spaces(),
             named(1, "COLOR", r"(#\w+)?"),
         ],
-        |diagram, location, arg| {
+        |diagram, _location, arg| {
             let kind = if arg.get("TYPE", 0) == Some("++") {
                 LifeEventType::Activate
             } else {
                 LifeEventType::Deactivate
             };
             let code = arg.get("NAME", 0).unwrap_or_default().to_owned();
-            let participant = diagram.get_or_create_participant(location, &code, None);
+            let participant = diagram.get_or_create_participant(&code, None);
             let color = optional_color(arg, "COLOR")?;
             activate_participant(diagram, participant, kind, color)
         },
@@ -301,7 +301,7 @@ pub(super) fn return_command() -> Box<dyn Command<SequenceDiagram>> {
             ])),
             named(1, "MESSAGE", "(.*)"),
         ],
-        |diagram, location, arg| {
+        |diagram, _location, arg| {
             let (message1, deactivate) = match diagram.activating_message() {
                 Some(message) => (message, true),
                 None => match diagram.last_event_with_deactivate_scan() {
@@ -316,13 +316,7 @@ pub(super) fn return_command() -> Box<dyn Command<SequenceDiagram>> {
             }
             let display = Display::with_newlines(arg.get("MESSAGE", 0).unwrap_or_default());
             let number = diagram.next_message_number();
-            let mut reply = MessageCommon::new(
-                display,
-                arrow,
-                number,
-                diagram.style_builder(),
-                location.clone(),
-            );
+            let mut reply = MessageCommon::new(display, arrow, number, diagram.style_builder());
             let event = match diagram.event(message1) {
                 Event::MessageExo(exo) => Event::MessageExo(MessageExo {
                     common: reply,
@@ -451,15 +445,11 @@ const PARTS_PATTERN: &str =
     r"(([%pLN_.@]+|[%g][^%g]+[%g])([%s]*,[%s]*([%pLN_.@]+|[%g][^%g]+[%g]))*)";
 
 /// The participants of `ref over A, B`, created if new.
-fn reference_participants(
-    diagram: &mut SequenceDiagram,
-    location: &LineLocation,
-    parts: &str,
-) -> Vec<ParticipantId> {
+fn reference_participants(diagram: &mut SequenceDiagram, parts: &str) -> Vec<ParticipantId> {
     let mut result: Vec<ParticipantId> = Vec::new();
     for part in parts.split(',') {
         let code = unquoted(crate::java::trim(part)).to_owned();
-        let participant = diagram.get_or_create_participant(location, &code, None);
+        let participant = diagram.get_or_create_participant(&code, None);
         if !result.contains(&participant) {
             result.push(participant);
         }
@@ -470,14 +460,12 @@ fn reference_participants(
 fn add_reference(
     diagram: &mut SequenceDiagram,
     participants: Vec<ParticipantId>,
-    url: Option<&str>,
     display: Display,
     back_color_element: Option<crate::color::HColor>,
 ) {
     let style_builder = diagram.style_builder();
     diagram.add_event(Event::Reference(Reference {
         participants,
-        url: url.and_then(Url::parse),
         display,
         back_color_element,
         notes: Vec::new(),
@@ -501,15 +489,14 @@ pub(super) fn reference_over_several() -> Box<dyn Command<SequenceDiagram>> {
             spaces(),
             named(1, "TEXT", "(.*)"),
         ],
-        |diagram, location, arg| {
+        |diagram, _location, arg| {
             let back_color_element = optional_color(arg, "REF")?;
             let participants =
-                reference_participants(diagram, location, arg.get("PARTS", 0).unwrap_or_default());
+                reference_participants(diagram, arg.get("PARTS", 0).unwrap_or_default());
             let text = crate::java::trim(arg.get("TEXT", 0).unwrap_or_default());
             add_reference(
                 diagram,
                 participants,
-                arg.get("URL", 0),
                 Display::with_newlines(text),
                 back_color_element,
             );
@@ -556,18 +543,8 @@ fn reference_block(diagram: &mut SequenceDiagram, lines: &BlocLines) -> CommandR
         .ok_or_else(|| CommandError::new(format!("Cannot parse line {}", first.text())))?;
     let back_color_element = optional_color(&arg, "REF")?;
     let body = lines.sub_extract(1, 1).without_empty_columns();
-    let location = body
-        .first()
-        .map_or_else(|| first.location().clone(), |line| line.location().clone());
-    let participants =
-        reference_participants(diagram, &location, arg.get("PARTS", 0).unwrap_or_default());
-    add_reference(
-        diagram,
-        participants,
-        arg.get("URL", 0),
-        body.to_display(),
-        back_color_element,
-    );
+    let participants = reference_participants(diagram, arg.get("PARTS", 0).unwrap_or_default());
+    add_reference(diagram, participants, body.to_display(), back_color_element);
     Ok(())
 }
 
@@ -731,9 +708,9 @@ pub(super) fn url() -> Box<dyn Command<SequenceDiagram>> {
             spaces(),
             RegexTree::named(12, "URL", Url::command_pattern()),
         ],
-        |diagram, location, arg| {
+        |diagram, _location, arg| {
             let code = arg.get("CODE", 0).unwrap_or_default().to_owned();
-            let participant = diagram.get_or_create_participant(location, &code, None);
+            let participant = diagram.get_or_create_participant(&code, None);
             diagram.participant_mut(participant).url = arg.get("URL", 0).and_then(Url::parse);
             Ok(())
         },

@@ -22,13 +22,13 @@ impl XDimension2D {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub struct XPoint2D {
+pub(crate) struct XPoint2D {
     pub x: f64,
     pub y: f64,
 }
 
 impl XPoint2D {
-    pub const fn new(x: f64, y: f64) -> Self {
+    pub(crate) const fn new(x: f64, y: f64) -> Self {
         Self { x, y }
     }
 }
