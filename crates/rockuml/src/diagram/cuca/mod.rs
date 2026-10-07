@@ -359,6 +359,8 @@ impl CucaDiagram {
 
     /// Leaves the innermost group or `together` block; whether there was one. The root is never left.
     pub(crate) fn end_group(&mut self) -> bool {
+        // PlantUML pops the root too, after which any command needing the current group crashes; a stray
+        // `}` is an error here instead.
         if self.stacks.len() > 1 {
             self.stacks.pop();
             true

@@ -153,8 +153,9 @@ impl Entity {
         self.leaf_or_group = EntityType::Leaf(new_type);
     }
 
-    /// Changes the type when both are class-like (or the old one is still unknown); an object can replace a
-    /// class. Whether the type is now `new_type` (PlantUML's `muteToType(LeafType, USymbol)`).
+    /// Changes the type when both are class-like (or the old one is still unknown), dropping the symbol; an
+    /// object can replace a class. Whether the type is now `new_type` (PlantUML's `muteToType(LeafType,
+    /// USymbol)`, which every caller gives no symbol).
     pub(crate) fn mute_to_type_if_compatible(&mut self, new_type: LeafType) -> bool {
         use LeafType::{
             AbstractClass, Annotation, Class, Dataclass, Enum, Interface, Object, Record,
@@ -176,6 +177,7 @@ impl Entity {
         }
         self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
+        self.usymbol = None;
         true
     }
 
