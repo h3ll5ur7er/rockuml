@@ -28,6 +28,12 @@ impl XAffineTransform {
         Self::new(sx, 0.0, 0.0, sy, 0.0, 0.0)
     }
 
+    pub(crate) fn rotate_instance(theta: f64) -> Self {
+        let cos = theta.cos();
+        let sin = theta.sin();
+        Self::new(cos, sin, -sin, cos, 0.0, 0.0)
+    }
+
     pub(crate) fn scale_x(&self) -> f64 {
         self.m00
     }

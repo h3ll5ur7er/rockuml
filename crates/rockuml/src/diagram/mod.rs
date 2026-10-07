@@ -6,6 +6,7 @@ mod chrome;
 mod class;
 mod common_commands;
 mod creole;
+pub(crate) mod cuca;
 mod cuca_commands;
 mod description;
 mod diagram_type;

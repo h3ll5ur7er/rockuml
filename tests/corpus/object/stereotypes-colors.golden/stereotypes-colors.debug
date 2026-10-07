@@ -1,0 +1,203 @@
+DPI: 96
+dimension: [ 403.0000 ; 167.0000 ]
+scaleFactor: 1.0000
+seed: -793057633344955026
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 145.5000 ; 12.0000 ]
+  pt2: [ 272.0282 ; 64.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd8e6
+
+TEXT:
+  text: «entity»
+  position: [ 150.5000 ; 21.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 166.6573 ; 24.0000 ]
+  pt2: [ 250.8708 ; 42.0000 ]
+
+TEXT:
+  text: order
+  position: [ 168.6573 ; 36.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 146.5000 ; 42.0000 ]
+  pt2: [ 271.0282 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 145.5000 ; 42.0000 ]
+  pt2: [ 239.4297 ; 64.0000 ]
+
+TEXT:
+  text: id = 42
+  position: [ 151.5000 ; 56.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 100.0000 ]
+  pt2: [ 212.4360 ; 152.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffe0
+
+TEXT:
+  text: «value»
+  position: [ 72.9902 ; 109.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 72.8666 ; 112.0000 ]
+  pt2: [ 145.5694 ; 130.0000 ]
+
+TEXT:
+  text: item1
+  position: [ 74.8666 ; 124.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 130.0000 ]
+  pt2: [ 211.4360 ; 130.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 130.0000 ]
+  pt2: [ 212.4360 ; 152.0000 ]
+
+TEXT:
+  text: sku = "A-1"
+  position: [ 12.0000 ; 144.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 230.0000 ; 100.0000 ]
+  pt2: [ 387.6691 ; 152.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffe0
+
+TEXT:
+  text: «value»
+  position: [ 272.6067 ; 109.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 272.4784 ; 112.0000 ]
+  pt2: [ 345.1906 ; 130.0000 ]
+
+TEXT:
+  text: item2
+  position: [ 274.4784 ; 124.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 231.0000 ; 130.0000 ]
+  pt2: [ 386.6691 ; 130.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 230.0000 ; 130.0000 ]
+  pt2: [ 387.6691 ; 152.0000 ]
+
+TEXT:
+  text: sku = "B-7"
+  position: [ 236.0000 ; 144.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 179.8070 ; 64.1059 ]
+   - [ 172.6498 ; 64.9854 ]
+   - [ 170.7088 ; 71.9304 ]
+   - [ 177.8661 ; 71.0509 ]
+   - [ 179.8070 ; 64.1059 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 164.7088 ; 65.9304 ]
+   - type: SEG_CUBICTO
+     pt1: [ 151.6801 ; 77.1351 ]
+     pt2: [ 145.4555 ; 82.4883 ]
+     pt3: [ 132.4024 ; 93.7140 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 238.1930 ; 64.1059 ]
+   - [ 240.1339 ; 71.0509 ]
+   - [ 247.2912 ; 71.9304 ]
+   - [ 245.3502 ; 64.9854 ]
+   - [ 238.1930 ; 64.1059 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 241.2912 ; 65.9304 ]
+   - type: SEG_CUBICTO
+     pt1: [ 254.3199 ; 77.1351 ]
+     pt2: [ 260.5445 ; 82.4883 ]
+     pt3: [ 273.5976 ; 93.7140 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

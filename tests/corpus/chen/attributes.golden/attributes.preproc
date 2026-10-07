@@ -1,0 +1,11 @@
+@startchen
+entity PERSON {
+  Id <<key>>
+  Name {
+    First
+    Last
+  }
+  Phone <<multi>>
+  Age <<derived>>
+}
+@endchen

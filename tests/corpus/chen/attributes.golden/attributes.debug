@@ -1,0 +1,216 @@
+DPI: 96
+dimension: [ 398.5000 ; 188.0000 ]
+scaleFactor: 1.0000
+seed: -4103642838461219510
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 141.5000 ; 139.0000 ]
+  pt2: [ 231.9807 ; 173.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: PERSON
+  position: [ 151.5000 ; 159.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 12.0000 ; 76.0000 ]
+  pt2: [ 55.1734 ; 101.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Id
+  position: [ 20.4439 ; 92.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 73.5000 ; 76.0000 ]
+  pt2: [ 173.9750 ; 101.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Name
+  position: [ 90.3355 ; 92.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 115.0658 ; 38.6132 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: First
+  position: [ 22.7091 ; 28.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 133.5000 ; 12.5000 ]
+  pt2: [ 239.7607 ; 38.5521 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Last
+  position: [ 150.7409 ; 29.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 192.0000 ; 75.0000 ]
+  pt2: [ 307.4883 ; 102.8977 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+ELLIPSE:
+  pt1: [ 195.0000 ; 78.0000 ]
+  pt2: [ 304.4883 ; 99.8977 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Phone
+  position: [ 207.6499 ; 91.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 325.5000 ; 76.0000 ]
+  pt2: [ 383.8515 ; 101.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 10.0-10.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Age
+  position: [ 336.1667 ; 92.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 49.0967 ; 93.1751 ]
+   - type: SEG_CUBICTO
+     pt1: [ 73.3964 ; 103.4985 ]
+     pt2: [ 113.3170 ; 120.4582 ]
+     pt3: [ 142.7910 ; 132.9798 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 129.3498 ; 96.2260 ]
+   - type: SEG_CUBICTO
+     pt1: [ 139.3300 ; 106.5231 ]
+     pt2: [ 153.6920 ; 121.3410 ]
+     pt3: [ 164.6584 ; 132.6555 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 67.5536 ; 33.2428 ]
+   - type: SEG_CUBICTO
+     pt1: [ 78.5102 ; 43.9385 ]
+     pt2: [ 94.0639 ; 59.1219 ]
+     pt3: [ 104.8930 ; 69.6931 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 168.0532 ; 32.6504 ]
+   - type: SEG_CUBICTO
+     pt1: [ 157.0085 ; 43.4322 ]
+     pt2: [ 140.9579 ; 59.1007 ]
+     pt3: [ 129.9209 ; 69.8748 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 230.7510 ; 97.1537 ]
+   - type: SEG_CUBICTO
+     pt1: [ 220.8275 ; 107.3922 ]
+     pt2: [ 207.0004 ; 121.6583 ]
+     pt3: [ 196.3620 ; 132.6345 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 319.2366 ; 95.3221 ]
+   - type: SEG_CUBICTO
+     pt1: [ 292.3498 ; 105.7248 ]
+     pt2: [ 252.2110 ; 121.2547 ]
+     pt3: [ 222.0146 ; 132.9378 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

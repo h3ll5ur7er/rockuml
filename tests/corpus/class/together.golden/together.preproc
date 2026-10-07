@@ -1,0 +1,12 @@
+@startuml
+class Main
+together {
+  class Alpha
+  class Beta
+  class Gamma
+}
+class Delta
+Main --> Alpha
+Main --> Delta
+Delta --> Gamma
+@enduml

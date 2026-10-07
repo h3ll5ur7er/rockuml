@@ -1,0 +1,13 @@
+@startuml
+class Foo
+class Bar
+class Baz
+class Qux
+class Quux
+Foo -[bold]-> Bar
+Foo -[dashed]-> Baz
+Foo -[dotted]-> Qux
+Bar -[#red]-> Quux
+Baz -[#blue,bold]-> Quux
+Qux -[hidden]-> Quux
+@enduml

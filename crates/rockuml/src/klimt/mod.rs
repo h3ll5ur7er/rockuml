@@ -27,6 +27,15 @@ use font::StringBounder;
 use geom::XDimension2D;
 use ugraphic::UGraphic;
 
+/// Something that can draw itself.
+#[cfg_attr(
+    not(test),
+    expect(dead_code, reason = "only link decorations draw this way yet")
+)]
+pub(crate) trait UDrawable {
+    fn draw_u(&self, ug: &UGraphic);
+}
+
 /// Something that knows its size and can draw itself.
 pub trait TextBlock {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D;
@@ -133,6 +142,13 @@ impl HorizontalAlignment {
             _ => None,
         }
     }
+}
+
+/// Where a legend goes: above or below what it explains.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum VerticalAlignment {
+    Top,
+    Bottom,
 }
 
 #[cfg(test)]

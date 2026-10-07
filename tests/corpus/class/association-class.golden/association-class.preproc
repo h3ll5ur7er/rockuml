@@ -1,0 +1,14 @@
+@startuml
+class Student {
+  name : String
+}
+class Course {
+  title : String
+}
+class Enrollment {
+  grade : String
+  date : Date
+}
+Student "0..*" -- "1..*" Course
+(Student, Course) .. Enrollment
+@enduml

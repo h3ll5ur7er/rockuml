@@ -1,0 +1,9 @@
+@startuml
+actor/ "Business Actor" as BA
+actor Plain
+usecase/ "Business Usecase" as BU
+usecase "Plain Usecase" as PU
+BA --> BU
+Plain --> PU
+BA --> PU
+@enduml

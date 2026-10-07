@@ -1,0 +1,9 @@
+@startuml
+component A
+component B
+component Lonely
+interface I
+A --> B
+A - I
+remove @unlinked
+@enduml

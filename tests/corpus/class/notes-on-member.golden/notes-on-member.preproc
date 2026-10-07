@@ -1,0 +1,13 @@
+@startuml
+class Thread {
+  priority : int
+  start()
+  run()
+}
+note right of Thread::start
+  spawns the OS thread
+end note
+note left of Thread::priority
+  1 to 10
+end note
+@enduml

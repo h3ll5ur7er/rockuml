@@ -1,0 +1,51 @@
+cgraph-dump 1
+graph "g" nodes 6 edges 5
+graph ids "g"
+node ids "sh0006" "sh0007" "sh0008" "sh0009" "sh0010" "sh0011"
+in "g" node "sh0006" out e4> in e1< edges e4> e1< degree 1 1
+in "g" node "sh0007" out e1> in edges e1> degree 0 1
+in "g" node "sh0008" out in e2< e3< e5< edges e2< e3< e5< degree 3 0
+in "g" node "sh0009" out e2> in edges e2> degree 0 1
+in "g" node "sh0010" out e3> in edges e3> degree 0 1
+in "g" node "sh0011" out e5> in e4< edges e5> e4< degree 1 1
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+attr "g" "margin" "16"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.8451955599523506"
+attr "sh0006" "height" "0.4722222222222222"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.7828695386197992"
+attr "sh0007" "height" "0.4232405743906265"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "1.2312114215302767"
+attr "sh0008" "height" "0.4722222222222222"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "1.6557204720416079"
+attr "sh0009" "height" "0.3978107610749883"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.311909776348734"
+attr "sh0010" "height" "0.3583193037947685"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "2.240394930725324"
+attr "sh0011" "height" "1.120197465362662"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "2"
+attr e4> "label" "_dim_14_15_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "2"
+attr e5> "label" "_dim_14_15_"

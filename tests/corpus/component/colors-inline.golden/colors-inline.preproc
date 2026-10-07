@@ -1,0 +1,7 @@
+@startuml
+component [Red] #pink
+component [Green] #palegreen;line:green;line.dashed
+component [Blue] #lightblue;line:blue;line.bold
+[Red] --> [Green]
+[Green] -[#blue,dashed]-> [Blue]
+@enduml

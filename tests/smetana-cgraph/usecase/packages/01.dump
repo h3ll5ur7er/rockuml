@@ -1,0 +1,53 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 3
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011"
+subgraph "cluster12" parent "g" seq 2 nodes "sh0016"
+graph ids "g" "cluster6" "cluster12"
+node ids "sh0017" "sh0018" "sh0010" "sh0011" "sh0016"
+in "g" node "sh0017" out e1> e2> in edges e1> e2> degree 0 2
+in "g" node "sh0018" out e3> in edges e3> degree 0 1
+in "g" node "sh0010" out in e1< edges e1< degree 1 0
+in "g" node "sh0011" out in e2< edges e2< degree 1 0
+in "g" node "sh0016" out in e3< edges e3< degree 1 0
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+in "cluster12" node "sh0016" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+induce "cluster6"
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+induce "cluster12"
+in "cluster12" node "sh0016" out in edges degree 0 0
+contains "cluster6" 0 0 1 1 0 0 0 0
+contains "cluster12" 0 0 0 0 1 0 0 0
+attr "g" "margin" "16"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "0.805807767240011"
+attr "sh0017" "height" "1.0277777777777777"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "1.0041942447897165"
+attr "sh0018" "height" "1.0277777777777777"
+attr "cluster6" "label" "_dim_142_17_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "2.5910723037289873"
+attr "sh0010" "height" "0.5848811274124642"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.8287851608289745"
+attr "sh0011" "height" "0.43242369883246157"
+attr "cluster12" "label" "_dim_173_17_"
+attr "cluster12" "margin" "16"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "2.6533370373303153"
+attr "sh0016" "height" "0.5973340741327298"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"

@@ -1,0 +1,14 @@
+@startchen
+entity STUDENT {
+  Id <<key>>
+}
+entity COURSE {
+  Code <<key>>
+}
+relationship ENROLLS {
+  Grade
+  Semester
+}
+STUDENT -M- ENROLLS
+ENROLLS -N- COURSE
+@endchen

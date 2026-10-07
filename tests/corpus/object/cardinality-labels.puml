@@ -1,0 +1,9 @@
+@startuml
+object library
+object book1
+object book2
+object member
+library "1" o-- "many" book1 : holds
+library "1" o-- "many" book2 : holds
+member "0..1" --> "0..5" book1 : borrows >
+@enduml

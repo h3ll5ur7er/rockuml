@@ -1,0 +1,16 @@
+@startuml
+title Inventory Model
+header draft
+footer page 1
+caption Figure 1. Inventory classes
+legend right
+  Solid: ownership
+  Dashed: dependency
+endlegend
+class Warehouse
+class Shelf
+class Item
+Warehouse *-- Shelf
+Shelf o-- Item
+Item ..> Warehouse
+@enduml

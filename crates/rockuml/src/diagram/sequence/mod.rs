@@ -11,8 +11,9 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::diagram_type::DiagramType;
-use super::titled::{Positioned, Titled, TitledDiagram};
+use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::DisplayPositioned;
 use crate::color::{Colors, HColor};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, CommandError, CommandResult};
@@ -42,7 +43,7 @@ pub(crate) struct SequenceDiagram {
     englobers: Vec<ParticipantEnglober>,
     events: Vec<Event>,
     /// The titles of the pages after the first.
-    page_titles: Vec<Positioned>,
+    page_titles: Vec<DisplayPositioned>,
     last_event_with_deactivate: Option<EventId>,
     last_delay: Option<EventId>,
     pending_create: Option<EventId>,
@@ -304,7 +305,7 @@ impl SequenceDiagram {
         &self.events[id]
     }
 
-    pub(crate) fn newpage(&mut self, title: Positioned) {
+    pub(crate) fn newpage(&mut self, title: DisplayPositioned) {
         if self.ignore_newpage {
             return;
         }

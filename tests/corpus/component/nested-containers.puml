@@ -1,0 +1,19 @@
+@startuml
+cloud "Cloud" {
+  node "Cluster" {
+    frame "Pod A" {
+      [Service A]
+    }
+    frame "Pod B" {
+      [Service B]
+    }
+  }
+}
+database "Store" {
+  folder "Tables" {
+    [Users]
+  }
+}
+[Service A] --> [Service B]
+[Service B] --> [Users]
+@enduml

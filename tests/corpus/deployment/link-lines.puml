@@ -1,0 +1,11 @@
+@startuml
+node n1
+node n2
+node n3
+node n4
+node n5
+n1 -- n2
+n2 .. n3
+n3 ~~ n4
+n4 == n5
+@enduml

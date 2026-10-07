@@ -1,0 +1,11 @@
+@startuml
+left to right direction
+object a
+object b
+object c
+object d
+a --> b
+b --> c
+c --> d
+a --> d
+@enduml

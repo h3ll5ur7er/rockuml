@@ -1,0 +1,253 @@
+DPI: 96
+dimension: [ 726.5000 ; 283.0000 ]
+scaleFactor: 1.0000
+seed: 2102849084007225268
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 226.8397 ; 0.0000 ]
+  pt2: [ 494.6603 ; 35.0000 ]
+
+TEXT:
+  text: Library Use Cases
+  position: [ 236.8397 ; 20.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Reader
+ELLIPSE:
+  pt1: [ 200.1035 ; 47.5000 ]
+  pt2: [ 216.1035 ; 63.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Reader
+  position: [ 167.0000 ; 117.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Librarian
+ELLIPSE:
+  pt1: [ 560.0260 ; 47.5000 ]
+  pt2: [ 576.0260 ; 63.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Librarian
+  position: [ 495.0000 ; 117.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity B
+ELLIPSE:
+  pt1: [ 6.0000 ; 166.0000 ]
+  pt2: [ 202.3067 ; 210.0613 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Borrow book
+  position: [ 15.6708 ; 191.5307 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity R
+ELLIPSE:
+  pt1: [ 220.0000 ; 167.0000 ]
+  pt2: [ 406.2929 ; 209.0586 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Return book
+  position: [ 230.0719 ; 191.5293 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity G
+ELLIPSE:
+  pt1: [ 424.5000 ; 157.0000 ]
+  pt2: [ 711.2876 ; 219.1575 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Register reader
+  position: [ 431.9327 ; 191.5788 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 125.7029 ; 165.7145 ]
+   - [ 134.9292 ; 162.2684 ]
+   - [ 129.2726 ; 162.2134 ]
+   - [ 129.3275 ; 156.5568 ]
+   - [ 125.7029 ; 165.7145 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 165.0407 ; 80.2486 ]
+   - type: SEG_CUBICTO
+     pt1: [ 149.8608 ; 95.1365 ]
+     pt2: [ 136.3797 ; 108.3584 ]
+     pt3: [ 123.2726 ; 121.2134 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 292.2985 ; 166.8899 ]
+   - [ 288.6301 ; 157.7498 ]
+   - [ 288.7121 ; 163.4060 ]
+   - [ 283.0558 ; 163.4880 ]
+   - [ 292.2985 ; 166.8899 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 239.3147 ; 80.2486 ]
+   - type: SEG_CUBICTO
+     pt1: [ 255.1121 ; 95.5946 ]
+     pt2: [ 269.3300 ; 109.4063 ]
+     pt3: [ 282.7121 ; 122.4060 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 568.0000 ; 156.9268 ]
+   - [ 572.0000 ; 147.9268 ]
+   - [ 568.0000 ; 151.9268 ]
+   - [ 564.0000 ; 147.9268 ]
+   - [ 568.0000 ; 156.9268 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 562.0000 ; 80.2486 ]
+   - type: SEG_CUBICTO
+     pt1: [ 562.0000 ; 91.9299 ]
+     pt2: [ 562.0000 ; 99.7408 ]
+     pt3: [ 562.0000 ; 110.9268 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 207.9803 ; 229.0000 ]
+  pt2: [ 513.5197 ; 278.0000 ]
+
+RECTANGLE:
+  pt1: [ 219.9803 ; 241.0000 ]
+  pt2: [ 500.5197 ; 265.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Readers need a card.
+  position: [ 224.9803 ; 256.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,12 @@
+@startuml
+entity Customer
+protocol Comparable
+struct Point
+exception NotFoundError
+metaclass Type
+stereotype Persistent
+Customer ..|> Comparable
+Point --> Type
+NotFoundError --> Customer
+Persistent .. Customer
+@enduml

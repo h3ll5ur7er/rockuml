@@ -1,0 +1,14 @@
+@startchen
+entity CUSTOMER {
+  Number <<key>>
+  Name
+}
+entity ORDER {
+  Id <<key>>
+  Date
+}
+relationship PLACES {
+}
+CUSTOMER -1- PLACES
+PLACES -N- ORDER
+@endchen

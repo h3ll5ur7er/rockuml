@@ -1,0 +1,18 @@
+@startuml
+class List<E> {
+  add(e : E) : boolean
+  get(i : int) : E
+}
+class Map<K, V> {
+  put(k : K, v : V)
+  get(k : K) : V
+}
+class Box<T extends Comparable>
+interface Supplier<T> {
+  get() : T
+}
+class StringList
+List <|-- StringList
+Supplier <|.. Box
+Map --> List
+@enduml

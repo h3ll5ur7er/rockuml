@@ -1,0 +1,122 @@
+DPI: 96
+dimension: [ 312.0000 ; 157.0000 ]
+scaleFactor: 1.0000
+seed: -2021429907417363770
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 54.0000 ; 12.0000 ]
+  pt2: [ 248.5054 ; 66.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 118.8434 ; 12.0000 ]
+  pt2: [ 183.6620 ; 30.0000 ]
+
+TEXT:
+  text: user
+  position: [ 120.8434 ; 24.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 55.0000 ; 30.0000 ]
+  pt2: [ 247.5054 ; 30.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 54.0000 ; 30.0000 ]
+  pt2: [ 248.5054 ; 66.0000 ]
+
+TEXT:
+  text: name = "Dummy"
+  position: [ 60.0000 ; 44.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: id = 123
+  position: [ 60.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 102.0000 ]
+  pt2: [ 296.9428 ; 142.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 116.0361 ; 102.0000 ]
+  pt2: [ 186.9068 ; 120.0000 ]
+
+TEXT:
+  text: group
+  position: [ 118.0361 ; 114.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 120.0000 ]
+  pt2: [ 295.9428 ; 120.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 120.0000 ]
+  pt2: [ 296.9428 ; 142.0000 ]
+
+TEXT:
+  text: title = "admins"
+  position: [ 12.0000 ; 134.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 151.5000 ; 101.9099 ]
+   - [ 155.5000 ; 92.9099 ]
+   - [ 151.5000 ; 96.9099 ]
+   - [ 147.5000 ; 92.9099 ]
+   - [ 151.5000 ; 101.9099 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 145.5000 ; 60.0748 ]
+   - type: SEG_CUBICTO
+     pt1: [ 145.5000 ; 71.7292 ]
+     pt2: [ 145.5000 ; 80.2169 ]
+     pt3: [ 145.5000 ; 90.9099 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

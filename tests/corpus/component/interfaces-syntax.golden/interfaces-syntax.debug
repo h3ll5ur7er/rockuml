@@ -1,0 +1,153 @@
+DPI: 96
+dimension: [ 566.4328 ; 142.0000 ]
+scaleFactor: 1.0000
+seed: -4839825485519607977
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity First Interface
+ELLIPSE:
+  pt1: [ 237.3789 ; 13.0000 ]
+  pt2: [ 253.3789 ; 29.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: First Interface
+  position: [ 146.0610 ; 48.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Interf2
+ELLIPSE:
+  pt1: [ 273.3789 ; 13.0000 ]
+  pt2: [ 289.3789 ; 29.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Another interface
+  position: [ 165.2085 ; 48.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Interf3
+ELLIPSE:
+  pt1: [ 309.3789 ; 13.0000 ]
+  pt2: [ 325.3789 ; 29.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Interf3
+  position: [ 256.4773 ; 48.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Interf4
+ELLIPSE:
+  pt1: [ 237.3789 ; 83.0000 ]
+  pt2: [ 253.3789 ; 99.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Last interface
+  position: [ 123.0539 ; 118.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity component
+RECTANGLE:
+  pt1: [ 272.3789 ; 72.0000 ]
+  pt2: [ 428.2710 ; 116.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 408.2710 ; 77.0000 ]
+  pt2: [ 423.2710 ; 87.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 406.2710 ; 79.0000 ]
+  pt2: [ 410.2710 ; 81.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 406.2710 ; 83.0000 ]
+  pt2: [ 410.2710 ; 85.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: component
+  position: [ 287.3789 ; 102.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 0.0000 ; 126.0000 ]
+  pt2: [ 561.4328 ; 137.0000 ]
+
+TEXT:
+  text: Adding "component" to force diagram to be a 
+  position: [ 0.0000 ; 133.7778 ]
+  orientation: 0
+  font: SansSerif.italic/10 [ITALIC]
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: component diagram
+  position: [ 370.5695 ; 133.7778 ]
+  orientation: 0
+  font: SansSerif.bolditalic/10 [ITALIC, BOLD]
+  color: ff888888
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,15 @@
+@startuml
+object request {
+  method = GET
+  path = "/users"
+}
+object response {
+  status = 200
+}
+request --> response
+note right of request : incoming
+note bottom of response
+  cached for
+  60 seconds
+end note
+@enduml

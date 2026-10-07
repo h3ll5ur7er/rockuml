@@ -1,0 +1,222 @@
+DPI: 96
+dimension: [ 363.0000 ; 320.0000 ]
+scaleFactor: 1.0000
+seed: 6903100869453912928
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Admin
+ELLIPSE:
+  pt1: [ 92.1210 ; 122.5000 ]
+  pt2: [ 108.1210 ; 138.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Main Admin
+  position: [ 13.0000 ; 192.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Use
+ELLIPSE:
+  pt1: [ 6.0000 ; 232.0000 ]
+  pt2: [ 348.3522 ; 305.2704 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Use the application
+  position: [ 12.6823 ; 272.1352 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity User
+ELLIPSE:
+  pt1: [ 168.9839 ; 12.5000 ]
+  pt2: [ 184.9839 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: User
+  position: [ 153.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Start
+ELLIPSE:
+  pt1: [ 205.0000 ; 146.0000 ]
+  pt2: [ 305.0260 ; 171.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Start
+  position: [ 221.7698 ; 162.3995 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 152.8480 ; 83.8756 ]
+   - [ 137.5131 ; 95.0488 ]
+   - [ 147.2840 ; 102.0151 ]
+   - [ 152.8480 ; 83.8756 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 136.3985 ; 92.5319 ]
+   - type: SEG_CUBICTO
+     pt1: [ 127.8422 ; 104.5330 ]
+     pt2: [ 128.6321 ; 103.4251 ]
+     pt3: [ 119.9337 ; 115.6255 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 246.0524 ; 172.3316 ]
+   - [ 230.6251 ; 183.3769 ]
+   - [ 240.3378 ; 190.4242 ]
+   - [ 246.0524 ; 172.3316 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 229.4814 ; 180.9006 ]
+   - type: SEG_CUBICTO
+     pt1: [ 218.9973 ; 195.3499 ]
+     pt2: [ 211.7322 ; 205.3627 ]
+     pt3: [ 196.8138 ; 225.9233 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 246.1668 ; 145.7694 ]
+   - [ 244.1401 ; 136.1314 ]
+   - [ 243.2394 ; 141.7160 ]
+   - [ 237.6547 ; 140.8153 ]
+   - [ 246.1668 ; 145.7694 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 195.0390 ; 77.2848 ]
+   - type: SEG_CUBICTO
+     pt1: [ 210.3477 ; 98.4814 ]
+     pt2: [ 226.3539 ; 120.6439 ]
+     pt3: [ 237.2394 ; 135.7160 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 151.3451 ; 231.6830 ]
+   - [ 149.3561 ; 222.0371 ]
+   - [ 148.4335 ; 227.6182 ]
+   - [ 142.8524 ; 226.6956 ]
+   - [ 151.3451 ; 231.6830 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 119.8541 ; 190.0950 ]
+   - type: SEG_CUBICTO
+     pt1: [ 128.0678 ; 201.5622 ]
+     pt2: [ 134.2339 ; 210.1707 ]
+     pt3: [ 142.4335 ; 221.6182 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

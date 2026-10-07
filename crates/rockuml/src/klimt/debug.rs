@@ -101,8 +101,8 @@ impl UGraphicDebug {
                 "  pt2: {}",
                 point(at.dx + ellipse.width, at.dy + ellipse.height)
             ),
-            "  start: 0.0".to_owned(),
-            "  extend: 0.0".to_owned(),
+            format!("  start: {}", java::double_to_string(ellipse.start)),
+            format!("  extend: {}", java::double_to_string(ellipse.extend)),
         ]);
         self.out_style(param);
     }

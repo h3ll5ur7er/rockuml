@@ -1,0 +1,11 @@
+@startuml
+actor actor
+actor/ "actor/"
+agent agent
+boundary boundary
+control control
+entity entity
+person person
+usecase usecase
+usecase/ "usecase/"
+@enduml

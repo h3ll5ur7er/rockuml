@@ -1,0 +1,7 @@
+@startuml
+[*] --> Polling
+Polling --> Polling : tick
+Polling --> Handling : event
+Handling --> Handling : retry
+Handling --> Polling : done
+@enduml

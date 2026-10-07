@@ -1,0 +1,19 @@
+@startuml
+<style>
+classDiagram {
+  class {
+    BackgroundColor #FFF8DC
+    LineColor #8B4513
+    FontColor #333333
+  }
+  arrow {
+    LineColor #8B4513
+  }
+}
+</style>
+class Bread
+class Flour
+class Water
+Bread *-- Flour
+Bread *-- Water
+@enduml

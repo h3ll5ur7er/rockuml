@@ -1,0 +1,12 @@
+@startuml
+class Config << (S,#FF7700) Singleton >>
+class Event << (E,orchid) >>
+class Handler << (H,lightblue) Listener >>
+class Queue << (Q,#90EE90) >> {
+  push()
+  pop()
+}
+Handler --> Event
+Queue o-- Event
+Config --> Queue
+@enduml

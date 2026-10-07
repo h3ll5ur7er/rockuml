@@ -1,0 +1,283 @@
+DPI: 96
+dimension: [ 781.0000 ; 152.3889 ]
+scaleFactor: 1.0000
+seed: 7076249784939218480
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity DA
+ELLIPSE:
+  pt1: [ 133.0000 ; 23.0000 ]
+  pt2: [ 149.0000 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Data Access
+  position: [ 72.2292 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity First Component
+RECTANGLE:
+  pt1: [ 168.0000 ; 12.0000 ]
+  pt2: [ 478.1945 ; 56.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 458.1945 ; 17.0000 ]
+  pt2: [ 473.1945 ; 27.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 456.1945 ; 19.0000 ]
+  pt2: [ 460.1945 ; 21.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 456.1945 ; 23.0000 ]
+  pt2: [ 460.1945 ; 25.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: First Component
+  position: [ 183.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity HTTP
+ELLIPSE:
+  pt1: [ 315.0000 ; 110.0000 ]
+  pt2: [ 331.0000 ; 126.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: HTTP
+  position: [ 299.7279 ; 145.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 290.0824 ; 23.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 290.0824 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 290.0824 ; 18.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 307.7617 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 290.0824 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 290.0824 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 280.0824 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 280.0824 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 280.0824 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 290.0824 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 280.0824 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: Web Service only
+  position: [ 12.0000 ; 124.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 14.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -17.7969 ; 18.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 22.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 36.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.8944 ; 36.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 269.8944 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.8944 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 259.8944 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 259.8944 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 259.8944 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 269.8944 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 259.8944 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: A note can also
+  position: [ 502.0000 ; 31.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: be on several lines
+  position: [ 502.0000 ; 44.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 144.2422 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 150.0908 ; 28.0000 ]
+     pt2: [ 155.9393 ; 28.0000 ]
+     pt3: [ 161.7879 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 323.0000 ; 108.8468 ]
+   - [ 327.0000 ; 99.8468 ]
+   - [ 323.0000 ; 103.8468 ]
+   - [ 319.0000 ; 99.8468 ]
+   - [ 323.0000 ; 108.8468 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 317.0000 ; 50.0112 ]
+   - type: SEG_CUBICTO
+     pt1: [ 317.0000 ; 66.7263 ]
+     pt2: [ 317.0000 ; 84.4594 ]
+     pt3: [ 317.0000 ; 97.8468 ]
+  stroke: 7.0-7.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 323.0000 ; 74.0000 ]
+  pt2: [ 366.7310 ; 91.0000 ]
+
+EMPTY:
+  pt1: [ 324.0000 ; 75.0000 ]
+  pt2: [ 365.7310 ; 90.0000 ]
+
+TEXT:
+  text: use
+  position: [ 325.0000 ; 86.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

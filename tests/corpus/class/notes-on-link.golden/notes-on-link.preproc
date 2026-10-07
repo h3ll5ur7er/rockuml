@@ -1,0 +1,12 @@
+@startuml
+class Order
+class Customer
+class Product
+Customer --> Order : places
+note on link : one or more
+Order --> Product
+note right on link #lightyellow
+  ordered
+  quantity
+end note
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+[First component]
+[Another component] as Comp2
+component Comp3
+component [Last component] as Comp4
+component "Quoted component" as Comp5
+@enduml

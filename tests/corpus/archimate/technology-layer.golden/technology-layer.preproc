@@ -1,0 +1,11 @@
+@startuml
+archimate #Technology "Server" as server <<technology-device>>
+archimate #Technology "Linux" as os <<technology-system-software>>
+archimate #Technology "LAN" as net <<technology-communication-network>>
+archimate #Technology "Hosting" as host <<technology-service>>
+archimate #Technology "Archive" as art <<technology-artifact>>
+server --> os
+server --> net
+os --> host
+host --> art
+@enduml

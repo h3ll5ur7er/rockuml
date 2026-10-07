@@ -1,0 +1,8 @@
+@startuml
+hide empty description
+[*] --> Idle
+Idle --> Busy
+Busy --> Idle
+state Busy : working
+Busy --> [*]
+@enduml

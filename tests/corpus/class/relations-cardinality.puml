@@ -1,0 +1,9 @@
+@startuml
+class Author
+class Book
+class Publisher
+class Chapter
+Author "1..*" -- "0..*" Book : writes
+Publisher "1" o-- "*" Book : publishes
+Book "1" *-- "1..n" Chapter : contains
+@enduml

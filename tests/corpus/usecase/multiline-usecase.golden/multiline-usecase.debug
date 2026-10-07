@@ -1,0 +1,191 @@
+DPI: 96
+dimension: [ 683.0000 ; 300.0000 ]
+scaleFactor: 1.0000
+seed: -3625711093054569455
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity UC1
+ELLIPSE:
+  pt1: [ 6.0000 ; 122.0000 ]
+  pt2: [ 668.2163 ; 284.9342 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: You can use
+  position: [ 261.2818 ; 147.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: several lines to define your usecase.
+  position: [ 94.4147 ; 161.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: You can also use separators.
+  position: [ 102.6663 ; 175.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 23.2316 ; 178.2727 ]
+  pt2: [ 650.9846 ; 178.2727 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 93.2090 ; 178.2727 ]
+  pt2: [ 572.9801 ; 200.2727 ]
+
+TEXT:
+  text: Several separators are possible.
+  position: [ 93.2090 ; 193.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.2546 ; 200.2727 ]
+  pt2: [ 666.9616 ; 200.2727 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 7.0356 ; 202.2727 ]
+  pt2: [ 667.1807 ; 202.2727 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 147.9355 ; 200.2727 ]
+  pt2: [ 518.2537 ; 222.2727 ]
+
+TEXT:
+  text: And you can add titles:
+  position: [ 147.9355 ; 215.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 86.3876 ; 222.2727 ]
+  pt2: [ 579.8015 ; 254.2727 ]
+
+EMPTY:
+  pt1: [ 86.3876 ; 229.2727 ]
+  pt2: [ 579.8015 ; 254.2727 ]
+
+TEXT:
+  text: This allows large description.
+  position: [ 86.3876 ; 247.1615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 24.0502 ; 229.2727 ]
+  pt2: [ 252.2409 ; 229.2727 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Conclusion
+  position: [ 252.2409 ; 232.6615 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 421.9754 ; 229.2727 ]
+  pt2: [ 650.1661 ; 229.2727 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+
+COMMENT: entity Writer
+ELLIPSE:
+  pt1: [ 328.8593 ; 12.5000 ]
+  pt2: [ 344.8593 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Writer
+  position: [ 285.5000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 337.0000 ; 121.8211 ]
+   - [ 341.0000 ; 112.8211 ]
+   - [ 337.0000 ; 116.8211 ]
+   - [ 333.0000 ; 112.8211 ]
+   - [ 337.0000 ; 121.8211 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 331.0000 ; 80.1404 ]
+   - type: SEG_CUBICTO
+     pt1: [ 331.0000 ; 90.9741 ]
+     pt2: [ 331.0000 ; 98.3179 ]
+     pt3: [ 331.0000 ; 110.8211 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

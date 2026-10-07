@@ -1,0 +1,8 @@
+@startuml
+[*] --> A
+A -[#blue]-> B
+B -[dotted]-> C
+C -[#red,bold]-> D
+D -[dashed]-> [*]
+A -[#green,dashed]-> D : shortcut
+@enduml

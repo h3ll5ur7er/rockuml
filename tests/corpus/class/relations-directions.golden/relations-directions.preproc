@@ -1,0 +1,13 @@
+@startuml
+class Center
+class North
+class South
+class East
+class West
+Center -up-> North
+Center -down-> South
+Center -left-> West
+Center -right-> East
+North -r- East
+South -l- West
+@enduml

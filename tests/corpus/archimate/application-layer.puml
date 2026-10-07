@@ -1,0 +1,11 @@
+@startuml
+archimate #Application "CRM" as crm <<application-component>>
+archimate #Application "Customer API" as api <<application-interface>>
+archimate #Application "Lookup" as fn <<application-function>>
+archimate #Application "Customer data" as data <<data-object>>
+archimate #Application "Query service" as svc <<application-service>>
+api --> crm
+crm --> fn
+fn --> data
+fn --> svc
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+package Node1 <<Node>> {
+  class A1
+}
+package Rect <<Rectangle>> {
+  class A2
+}
+package Fold <<Folder>> {
+  class A3
+}
+package Fram <<Frame>> {
+  class A4
+}
+package Clou <<Cloud>> {
+  class A5
+}
+package Data <<Database>> {
+  class A6
+}
+A1 --> A2
+A3 --> A4
+A5 --> A6
+@enduml

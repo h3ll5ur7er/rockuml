@@ -1,0 +1,13 @@
+@startchen
+entity BUILDING {
+  Address <<key>>
+}
+entity ROOM <<weak>> {
+  Number <<key>>
+  Size
+}
+relationship CONTAINS <<identifying>> {
+}
+BUILDING -1- CONTAINS
+CONTAINS =N= ROOM
+@endchen

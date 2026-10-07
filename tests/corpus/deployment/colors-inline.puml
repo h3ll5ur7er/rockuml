@@ -1,0 +1,7 @@
+@startuml
+node "Prod" #pink
+node "Stage" #lightgreen;line:green;line.dashed
+cloud "Edge" #lightblue
+Edge --> Prod
+Edge --> Stage
+@enduml

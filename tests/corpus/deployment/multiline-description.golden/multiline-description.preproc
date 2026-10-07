@@ -1,0 +1,15 @@
+@startuml
+node node1 [
+This is a node
+----
+with a separator
+====
+and a double one
+]
+artifact art [
+build output
+....
+signed
+]
+node1 --> art
+@enduml

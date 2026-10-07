@@ -1,9 +1,11 @@
 //! PlantUML-compatible diagram engine.
 
+mod abel;
 mod assets;
 mod color;
 mod command;
 mod creole;
+mod decoration;
 mod deflate;
 pub mod diagram;
 mod emoji;
@@ -19,6 +21,7 @@ pub mod json;
 mod klimt;
 mod openiconic;
 mod pattern;
+mod plasma;
 pub mod preproc;
 mod real;
 mod security_profile;
@@ -26,6 +29,15 @@ mod skin;
 mod stdlib;
 mod stereo;
 mod style;
+#[cfg_attr(
+    not(test),
+    expect(
+        dead_code,
+        unused_imports,
+        reason = "drawn by the Smetana bridge, which is not ported yet"
+    )
+)]
+mod svek;
 mod svg_parser;
 mod text;
 mod tim;

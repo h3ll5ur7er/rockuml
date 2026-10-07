@@ -1,0 +1,13 @@
+@startuml
+node "Router" as R
+node "Switch A" as SA
+node "Switch B" as SB
+node "Host 1" as H1
+node "Host 2" as H2
+node "Host 3" as H3
+R -- SA
+R -- SB
+SA -- H1
+SA -- H2
+SB -- H3
+@enduml

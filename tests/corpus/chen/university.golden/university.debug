@@ -1,0 +1,400 @@
+DPI: 96
+dimension: [ 974.0000 ; 250.0000 ]
+scaleFactor: 1.0000
+seed: 1412077501607763913
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 143.0000 ; 116.0000 ]
+  pt2: [ 294.9845 ; 150.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: PROFESSOR
+  position: [ 153.0000 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 34.5000 ; 98.0000 ]
+  pt2: [ 77.6734 ; 123.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Id
+  position: [ 42.9439 ; 114.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 6.0000 ; 142.0000 ]
+  pt2: [ 106.4750 ; 167.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Name
+  position: [ 22.8355 ; 158.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 823.0000 ; 56.0000 ]
+  pt2: [ 958.6157 ; 90.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: DEPARTMENT
+  position: [ 833.0000 ; 76.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 684.0000 ; 109.0000 ]
+  pt2: [ 773.1043 ; 134.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Code
+  position: [ 699.1703 ; 125.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 671.0000 ; 12.0000 ]
+  pt2: [ 786.1062 ; 39.8212 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Title
+  position: [ 686.7077 ; 28.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 832.5000 ; 172.0000 ]
+  pt2: [ 949.5014 ; 206.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: COURSE
+  position: [ 842.5000 ; 192.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 684.0000 ; 153.0000 ]
+  pt2: [ 773.1043 ; 178.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Code
+  position: [ 699.1703 ; 169.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 484.0000 ; 77.9391 ]
+   - [ 558.8783 ; 40.5000 ]
+   - [ 633.7566 ; 77.9391 ]
+   - [ 558.8783 ; 115.3783 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: WORKS_IN
+  position: [ 509.1803 ; 81.8280 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 493.0000 ; 201.9393 ]
+   - [ 558.8786 ; 169.0000 ]
+   - [ 624.7572 ; 201.9393 ]
+   - [ 558.8786 ; 234.8786 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: TEACHES
+  position: [ 518.1803 ; 205.8282 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 332.0000 ; 141.0000 ]
+  pt2: [ 447.3340 ; 168.8668 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Since
+  position: [ 347.6732 ; 157.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 71.7183 ; 107.8311 ]
+   - type: SEG_CUBICTO
+     pt1: [ 88.3644 ; 110.1057 ]
+     pt2: [ 112.8234 ; 113.4479 ]
+     pt3: [ 136.6742 ; 116.7070 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 100.1801 ; 142.2797 ]
+   - type: SEG_CUBICTO
+     pt1: [ 111.7395 ; 140.7002 ]
+     pt2: [ 124.3196 ; 138.9812 ]
+     pt3: [ 136.7331 ; 137.2849 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 766.0897 ; 102.9975 ]
+   - type: SEG_CUBICTO
+     pt1: [ 785.1278 ; 97.1853 ]
+     pt2: [ 807.8231 ; 90.2565 ]
+     pt3: [ 828.1949 ; 84.0371 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 771.6553 ; 34.1015 ]
+   - type: SEG_CUBICTO
+     pt1: [ 788.6452 ; 39.0768 ]
+     pt2: [ 807.9330 ; 44.7249 ]
+     pt3: [ 825.6728 ; 49.9198 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 767.3573 ; 166.2849 ]
+   - type: SEG_CUBICTO
+     pt1: [ 785.5490 ; 168.8918 ]
+     pt2: [ 806.9061 ; 171.9523 ]
+     pt3: [ 826.3392 ; 174.7371 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 434.7555 ; 163.1015 ]
+   - type: SEG_CUBICTO
+     pt1: [ 451.1373 ; 167.6982 ]
+     pt2: [ 469.5662 ; 172.8693 ]
+     pt3: [ 486.8767 ; 177.7266 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 289.0132 ; 114.7937 ]
+   - type: SEG_CUBICTO
+     pt1: [ 345.2200 ; 105.6476 ]
+     pt2: [ 421.7641 ; 93.1922 ]
+     pt3: [ 477.7787 ; 84.0774 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 382.5000 ; 81.0000 ]
+  pt2: [ 397.0088 ; 96.0000 ]
+
+EMPTY:
+  pt1: [ 383.5000 ; 82.0000 ]
+  pt2: [ 396.0088 ; 95.0000 ]
+
+TEXT:
+  text: N
+  position: [ 384.5000 ; 91.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 628.0584 ; 70.8779 ]
+   - type: SEG_CUBICTO
+     pt1: [ 684.6872 ; 70.0199 ]
+     pt2: [ 762.0994 ; 68.8470 ]
+     pt3: [ 816.9182 ; 68.0164 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 721.5000 ; 59.0000 ]
+  pt2: [ 735.8969 ; 74.0000 ]
+
+EMPTY:
+  pt1: [ 722.5000 ; 60.0000 ]
+  pt2: [ 734.8969 ; 73.0000 ]
+
+TEXT:
+  text: 1
+  position: [ 723.5000 ; 69.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 237.9876 ; 144.0171 ]
+   - type: SEG_CUBICTO
+     pt1: [ 259.7899 ; 158.4343 ]
+     pt2: [ 293.4352 ; 178.1343 ]
+     pt3: [ 326.0000 ; 187.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 378.6646 ; 201.3378 ]
+     pt2: [ 440.7669 ; 202.7590 ]
+     pt3: [ 486.5319 ; 201.0632 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 382.5000 ; 178.0000 ]
+  pt2: [ 396.8969 ; 193.0000 ]
+
+EMPTY:
+  pt1: [ 383.5000 ; 179.0000 ]
+  pt2: [ 395.8969 ; 192.0000 ]
+
+TEXT:
+  text: 1
+  position: [ 384.5000 ; 188.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 619.3496 ; 198.7489 ]
+   - type: SEG_CUBICTO
+     pt1: [ 664.5225 ; 200.0466 ]
+     pt2: [ 725.9748 ; 200.6200 ]
+     pt3: [ 780.0000 ; 197.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 795.0875 ; 195.9891 ]
+     pt2: [ 811.3239 ; 194.1620 ]
+     pt3: [ 826.3783 ; 192.1543 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 721.5000 ; 188.0000 ]
+  pt2: [ 736.0088 ; 203.0000 ]
+
+EMPTY:
+  pt1: [ 722.5000 ; 189.0000 ]
+  pt2: [ 735.0088 ; 202.0000 ]
+
+TEXT:
+  text: N
+  position: [ 723.5000 ; 198.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

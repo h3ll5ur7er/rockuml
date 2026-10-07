@@ -1,0 +1,4 @@
+@startuml
+[Order] "1" --> "*" [Line] : has
+[Line] "*" --> "1" [Product] : refers to
+@enduml
