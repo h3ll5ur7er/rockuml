@@ -305,11 +305,22 @@ impl<'a> StyleParser<'a> {
         if lines.is_empty() {
             return Ok(Vec::new());
         }
-        self.parse_tokens(&tokenize(CharInspector::new(lines)))
+        let (styles, _) = self.parse_tokens(&tokenize(CharInspector::new(lines)))?;
+        Ok(styles)
     }
 
-    /// The rules in the order their blocks close.
-    fn parse_tokens(&mut self, tokens: &[Token]) -> Result<Vec<Style>, StyleParsingError> {
+    /// The properties a line like `BackGroundColor:pink;LineColor:red` declares, outside of any rule
+    /// (`parseSingleLine`).
+    pub(super) fn parse_single_line(&mut self, line: &str) -> Result<Style, StyleParsingError> {
+        let (_, context) = self.parse_tokens(&tokenize(CharInspector::new(&[line])))?;
+        Ok(Style::new(StyleSignature::empty(), context.properties))
+    }
+
+    /// The rules in the order their blocks close, and the selectors still open at the end.
+    fn parse_tokens(
+        &mut self,
+        tokens: &[Token],
+    ) -> Result<(Vec<Style>, Context), StyleParsingError> {
         let mut styles = Vec::new();
         let mut context = Context::root();
         let mut index = 0;
@@ -391,7 +402,7 @@ impl<'a> StyleParser<'a> {
                 _ => return Err(StyleParsingError::Unexpected),
             }
         }
-        Ok(styles)
+        Ok((styles, context))
     }
 
     fn declare(&mut self, text: &str) -> Value {
