@@ -4,6 +4,7 @@
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::klimt::geom::XDimension2D;
+use crate::skin::Rankdir;
 use crate::stereo::Stereotype;
 
 /// The side of its target a note goes on.
@@ -27,6 +28,20 @@ impl Position {
         .into_iter()
         .find(|(name, _)| s.to_uppercase() == *name)
         .map(|(_, position)| position)
+    }
+
+    /// The side in a diagram flowing `rankdir`: left to right turns sides a quarter.
+    #[must_use]
+    pub(crate) fn with_rankdir(self, rankdir: Rankdir) -> Self {
+        if rankdir == Rankdir::TopToBottom {
+            return self;
+        }
+        match self {
+            Self::Right => Self::Bottom,
+            Self::Left => Self::Top,
+            Self::Bottom => Self::Right,
+            Self::Top => Self::Left,
+        }
     }
 
     /// Where a tip on this side points: back towards its entity.

@@ -149,6 +149,37 @@ fn a_note_on_an_entity_is_a_numbered_leaf_with_a_dashed_link() {
 }
 
 #[test]
+fn left_to_right_diagrams_turn_note_sides_a_quarter() {
+    let mut diagram = diagram();
+    diagram
+        .cuca()
+        .titled
+        .skin
+        .set_rankdir(crate::skin::Rankdir::LeftToRight);
+    let a = class(&mut diagram, "A");
+    run(
+        note_on_entity(code, ParserPass::One).as_ref(),
+        &mut diagram,
+        &["note right of A : below"],
+    )
+    .unwrap();
+    run(
+        tip_on_entity_multi_line(false).as_ref(),
+        &mut diagram,
+        &["note left of A::m", "above", "end note"],
+    )
+    .unwrap();
+    let cuca = diagram.cuca();
+    let links: Vec<&crate::abel::Link> = cuca.get_links().collect();
+    assert_eq!(links[0].get_entity1(), a);
+    assert_eq!(links[0].get_length(), 2);
+    assert_eq!(
+        cuca.entity(links[1].get_entity1()).get_name(cuca),
+        "A$$$TOP"
+    );
+}
+
+#[test]
 fn a_note_without_target_goes_on_the_latest_entity() {
     let mut diagram = diagram();
     let command = note_on_entity(code, ParserPass::One);

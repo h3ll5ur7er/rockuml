@@ -71,6 +71,13 @@ fn colors(arg: &RegexResult) -> Result<Colors, CommandError> {
         .map(Option::unwrap_or_default)
 }
 
+/// The side `POSITION` names, as the diagram's direction turns it.
+fn side(cuca: &CucaDiagram, arg: &RegexResult) -> Position {
+    Position::from_string(arg.get("POSITION", 0).unwrap_or_default())
+        .expect("the pattern only matches positions")
+        .with_rankdir(cuca.skin().get_rankdir())
+}
+
 /// `$tag1 $tag2` on an entity (`CommandCreateClassMultilines.addTags`).
 fn add_tags(cuca: &mut CucaDiagram, entity: EntityId, tags: Option<&str>) {
     for tag in tags.into_iter().flat_map(|tags| tags.split(' ')) {
@@ -275,8 +282,7 @@ fn add_note_on_entity(
                 .ok_or_else(|| CommandError::new(format!("Not known: {id_short}")))?
         }
     };
-    let position = Position::from_string(arg.get("POSITION", 0).unwrap_or_default())
-        .expect("the pattern only matches positions");
+    let position = side(cuca, arg);
     let colors = colors(arg)?;
     let tmp = cuca.get_unique_sequence("GMN");
     let quark = cuca.quark_in_context(true, &tmp);
@@ -444,8 +450,7 @@ fn add_tip(
         .quark(quark)
         .get_data()
         .ok_or_else(|| CommandError::new("Nothing to note to"))?;
-    let position = Position::from_string(arg.get("POSITION", 0).unwrap_or_default())
-        .expect("the pattern only matches positions");
+    let position = side(cuca, arg);
     let tmp = format!("{id_short}$$${}", position.name());
     let ident_tip = cuca.quark_in_context(true, unquoted(&tmp));
     let tips = if let Some(tips) = cuca.quark(ident_tip).get_data() {
