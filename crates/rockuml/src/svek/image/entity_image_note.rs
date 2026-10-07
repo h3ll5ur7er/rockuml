@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+use super::entity_group;
 use super::opale::{self, MARGIN_X1, MARGIN_X2, MARGIN_Y, Opale};
 use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::{ColorType, HColor};
@@ -9,7 +10,7 @@ use crate::diagram::cuca::CucaDiagram;
 use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
-use crate::klimt::group::{UGroup, UGroupType};
+use crate::klimt::group::UGroup;
 use crate::klimt::shape::UShape;
 use crate::klimt::stencil::RectangleStencil;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
@@ -74,18 +75,8 @@ impl EntityImageNote {
                 skin,
             )
         };
-        let name = entity.get_name(diagram);
-        let mut group = UGroup::at(entity.get_location());
-        group.put(UGroupType::Class, "entity");
-        group.put(UGroupType::Id, &format!("entity_{name}"));
-        group.put(UGroupType::DataEntity, name);
-        group.put(UGroupType::DataUid, entity.get_uid());
-        group.put(
-            UGroupType::DataQualifiedName,
-            diagram.quark(entity.get_quark()).get_qualified_name(),
-        );
         Self {
-            group,
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             url: entity.url.clone(),
             note_background_color,
             border_color: style.value(PName::LineColor).as_color(),
