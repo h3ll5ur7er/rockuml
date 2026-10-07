@@ -6,6 +6,7 @@
 pub mod acyclic;
 pub mod aspect;
 pub mod class1;
+pub mod class2;
 pub mod cluster;
 pub mod decomp;
 pub mod dotinit;

@@ -1,8 +1,10 @@
-//! Lays out every Smetana trace's graph up to and including `dot_rank` and compares the ranks with Java's
-//! (`phase rank`: each graph's and cluster's rank range, then every real node's rank).
+//! Lays out every Smetana trace's graph phase by phase and compares the state after each phase with Java's
+//! trace: `phase rank` (each graph's and cluster's rank range, then every real node's rank) and `phase mincross`
+//! (each rank's nodes left to right).
 
 mod trace;
 
+use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::panic::{AssertUnwindSafe, catch_unwind};
 
@@ -12,10 +14,11 @@ use smetana::cgraph::rec::{Rec, agbindrec};
 use smetana::common::input::graph_init;
 use smetana::common::utils::setEdgeType;
 use smetana::core::Globals;
-use smetana::core::consts::ET_SPLINE;
-use smetana::core::ids::GraphId;
+use smetana::core::consts::{ET_SPLINE, VIRTUAL};
+use smetana::core::ids::{GraphId, NodeId};
 use smetana::dotgen::aspect::{aspect_t, setAspect};
 use smetana::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
+use smetana::dotgen::mincross::dot_mincross;
 use smetana::dotgen::rank::dot_rank;
 use trace::Replay;
 
@@ -30,6 +33,13 @@ fn layout_until_rank(r: &mut Replay) {
     dot_init_subg(zz, g, g);
     dot_init_node_edge(zz, g);
     dot_rank(zz, g, asp.as_ref());
+}
+
+/// `dotLayout` up to `dot_mincross`.
+fn layout_until_mincross(r: &mut Replay) {
+    layout_until_rank(r);
+    // PlantUML sets no aspect ratio, so `dotLayout` never asks for balancing.
+    dot_mincross(&mut r.zz, r.root, false);
 }
 
 fn graph_ranks(zz: &Globals, g: GraphId, out: &mut String) {
@@ -73,6 +83,51 @@ fn expected_ranks(trace: &trace::Trace) -> String {
     lines
         .iter()
         .filter(|l| l.starts_with("graph ") || l.starts_with("node "))
+        .fold(String::new(), |mut out, l| {
+            out.push_str(l);
+            out.push('\n');
+            out
+        })
+}
+
+/// The `phase mincross` section as the Java tracer writes it: virtual nodes are `v1`, `v2`... in the order the
+/// dump first meets them.
+fn dump_orders(r: &mut Replay) -> String {
+    let zz = &r.zz;
+    let mut names: HashMap<NodeId, String> = HashMap::new();
+    let mut virtuals = 0;
+    let mut out = String::new();
+    let info = zz.gd(r.root);
+    for rank in info.minrank..=info.maxrank {
+        write!(out, "rank {rank}").unwrap();
+        let v = zz.rank(r.root, rank).v.expect("rank");
+        for i in 0..zz.rank(r.root, rank).n {
+            let n = zz.node_lists.get(v, i).expect("node in rank");
+            let name = names.entry(n).or_insert_with(|| {
+                if zz.nd(n).node_type == VIRTUAL {
+                    virtuals += 1;
+                    format!("v{virtuals}")
+                } else {
+                    trace::quote(&agnameof(zz, n).expect("node name"))
+                }
+            });
+            write!(out, " {name}").unwrap();
+        }
+        out.push('\n');
+    }
+    out
+}
+
+/// Java's `phase mincross` section.
+fn expected_orders(trace: &trace::Trace) -> String {
+    let (_, lines) = trace
+        .phases
+        .iter()
+        .find(|(phase, _)| phase == "mincross")
+        .expect("phase mincross");
+    lines
+        .iter()
+        .filter(|l| l.starts_with("rank "))
         .fold(String::new(), |mut out, l| {
             out.push_str(l);
             out.push('\n');
@@ -217,6 +272,11 @@ fn check_all(
 #[test]
 fn ranks_match_java() {
     check_all(layout_until_rank, dump_ranks, expected_ranks);
+}
+
+#[test]
+fn mincross_orders_match_java() {
+    check_all(layout_until_mincross, dump_orders, expected_orders);
 }
 
 #[test]

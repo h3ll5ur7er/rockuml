@@ -47,7 +47,7 @@ fn component(zz: &Globals, g: GraphId, c: i32) -> Option<NodeId> {
 }
 
 /// The `c`-th cluster of `g`, counting from 1.
-fn cluster(zz: &Globals, g: GraphId, c: i32) -> GraphId {
+pub(crate) fn cluster(zz: &Globals, g: GraphId, c: i32) -> GraphId {
     zz.graph_lists
         .get(zz.gd(g).clust.expect("clusters"), c)
         .expect("cluster")

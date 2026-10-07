@@ -29,6 +29,16 @@ pub fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) 
     e
 }
 
+/// `ports_eq`: whether two edges have the same ports (undefined ports match any).
+pub fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
+    let (e, f) = (zz.ed(e), zz.ed(f));
+    e.head_port.defined == f.head_port.defined
+        && ((e.head_port.p.x == f.head_port.p.x && e.head_port.p.y == f.head_port.p.y)
+            || !e.head_port.defined)
+        && ((e.tail_port.p.x == f.tail_port.p.x && e.tail_port.p.y == f.tail_port.p.y)
+            || !e.tail_port.defined)
+}
+
 /// `dot_position`.
 pub fn dot_position(_zz: &mut Globals, _g: GraphId, _asp: Option<&aspect_t>) {
     unimplemented!("dot_position")
