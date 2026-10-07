@@ -51,7 +51,7 @@ pub(super) fn add_method() -> Box<dyn Command<ClassDiagram>> {
             let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name));
             let entity = get_or_create_class(cuca, location, quark);
             let field = arg.get("DATA", 0).unwrap_or_default();
-            cuca.entity_mut(entity).bodier.add_field_or_method(field);
+            cuca.entity_mut(entity).bodier.add_field_or_method(field)?;
             Ok(())
         },
     )))
@@ -306,7 +306,7 @@ pub(super) fn create_class_multilines() -> Box<dyn Command<ClassDiagram>> {
                 if lines.len() > 1 {
                     let bodier = &mut diagram.cuca().entity_mut(entity).bodier;
                     for line in lines.sub_extract(1, 1).iter() {
-                        bodier.add_field_or_method(line.text());
+                        bodier.add_field_or_method(line.text())?;
                     }
                 }
                 manage_extends(location, "EXTENDS", diagram, &header, entity);
@@ -453,7 +453,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                 decorate_object(cuca, entity, &header)?;
                 let bodier = &mut cuca.entity_mut(entity).bodier;
                 for line in &lines[1..lines.len() - 1] {
-                    bodier.add_field_or_method(line.text());
+                    bodier.add_field_or_method(line.text())?;
                 }
                 Ok(())
             },

@@ -207,7 +207,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 cuca.entity_mut(entity).colors = colors_with_line(&header)?;
                 for entry in lines.sub_extract(1, 1).iter() {
                     let entry = entry.text();
-                    if !cuca.entity_mut(entity).bodier.add_field_or_method(entry) {
+                    if !cuca.entity_mut(entity).bodier.add_field_or_method(entry)? {
                         return Err(CommandError::new(
                             "Map definition should contains key => value",
                         ));
