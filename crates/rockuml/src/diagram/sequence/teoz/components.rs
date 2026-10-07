@@ -5,11 +5,13 @@ use crate::color::Colors;
 use crate::creole::Display;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
-    Labelled, LiveColors, MessageCommon, Note, NoteStyle, ParticipantId, ParticipantType, Reference,
+    GroupingLeaf, GroupingStart, Labelled, LiveColors, MessageCommon, Note, NoteStyle,
+    ParticipantId, ParticipantType, Reference,
 };
 use crate::diagram::sequence::styles::{
-    englober_style, merged, merged_with_stereotype, message_style, note_style, participant_styles,
-    reference_styles, sequence_signature, sequence_signature2,
+    englober_style, grouping_start_styles, grouping_styles, merged, merged_with_stereotype,
+    message_style, note_style, participant_styles, reference_styles, sequence_signature,
+    sequence_signature2,
 };
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -19,6 +21,7 @@ use crate::skin::component::{
 };
 use crate::skin::rose::actor::ComponentRoseActor;
 use crate::skin::rose::englober::ComponentRoseEnglober;
+use crate::skin::rose::grouping::{ComponentRoseGroupingElse, ComponentRoseGroupingHeader};
 use crate::skin::rose::life::{
     ComponentRoseActiveLine, ComponentRoseDelayLine, ComponentRoseDestroy,
 };
@@ -289,5 +292,60 @@ pub(super) fn reference(reference: &Reference) -> Box<dyn Component> {
         style.symbol_context(&Colors::default()),
         header_style.symbol_context(&Colors::default()),
         style.horizontal_alignment(),
+    ))
+}
+
+/// A group's frame with its title tab (`GROUPING_HEADER_TEOZ`): a plain `group` shows only its comment.
+pub(super) fn grouping_header(start: &GroupingStart) -> Box<dyn Component> {
+    let (style, header) = grouping_start_styles(start);
+    let (title, comment) = if start.title == "group" {
+        (start.comment.as_deref(), None)
+    } else {
+        (Some(start.title.as_str()), start.comment.as_deref())
+    };
+    let title = Display::with_newlines(title.unwrap_or_default());
+    let text = TextualPart::new(
+        component_text(&title, header.font_configuration(), &header),
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 30.0, 1.0, 15.0),
+    );
+    let comment = comment.map(|comment| {
+        let display = Display::with_newlines(&format!("[{comment}]"));
+        creole_text(
+            display.lines(),
+            style.font_configuration(),
+            display
+                .natural_alignment()
+                .unwrap_or(HorizontalAlignment::Left),
+        )
+    });
+    Box::new(ComponentRoseGroupingHeader::new(
+        text,
+        comment,
+        style.symbol_context(&Colors::default()),
+        header.symbol_context(&Colors::default()),
+        f64::from(style.value(PName::RoundCorner).as_int()),
+    ))
+}
+
+/// The dashed line where an `else` starts (`GROUPING_ELSE_TEOZ`).
+pub(super) fn grouping_else(leaf: &GroupingLeaf) -> Box<dyn Component> {
+    // Only the line and the text are drawn, so the background colours the leaf overrides do not matter.
+    let (style, _) = grouping_styles(&leaf.style_builder, leaf.kind, None, None);
+    let label = leaf
+        .comment
+        .as_ref()
+        .map(|comment| format!("[{comment}]"))
+        .unwrap_or_default();
+    let text = TextualPart::new(
+        component_text(
+            &Display::with_newlines(&label),
+            style.font_configuration(),
+            &style,
+        ),
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 5.0, 1.0, 5.0),
+    );
+    Box::new(ComponentRoseGroupingElse::new(
+        text,
+        style.value(PName::LineColor).as_color(),
     ))
 }

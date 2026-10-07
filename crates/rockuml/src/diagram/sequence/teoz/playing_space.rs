@@ -5,9 +5,11 @@ use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::living_space::VerticalAlignment;
+use super::span_tiles::NewpageTile;
 use super::tile::{Tile, TileArguments, build_several};
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
+use crate::diagram::sequence::model::{Event, ParticipantId};
 use crate::klimt::clip::UClip;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::limit_finder::LimitFinder;
@@ -63,6 +65,57 @@ impl<'a> PlayingSpace<'a> {
         for tile in &self.tiles {
             tile.add_constraints();
         }
+        self.add_parallel_sibling_disjoint_constraints();
+    }
+
+    /// Tiles drawn beside each other with `&` must not overlap, which nothing else ensures. A `&` tile joins
+    /// the run of tiles before it.
+    fn add_parallel_sibling_disjoint_constraints(&self) {
+        let diagram = self.arguments.diagram;
+        let mut cluster: Vec<&dyn Tile<'a>> = Vec::new();
+        for tile in &self.tiles {
+            if diagram.is_parallel(tile.event()) {
+                for other in &cluster {
+                    self.ensure_disjoint(*other, tile.as_ref());
+                }
+            } else {
+                cluster.clear();
+            }
+            cluster.push(tile.as_ref());
+        }
+    }
+
+    /// Pushes whichever tile starts further right clear of the other. Which one that is comes from their
+    /// participants: a group's own bounds would keep the value they had when first read.
+    fn ensure_disjoint(&self, a: &dyn Tile<'a>, b: &dyn Tile<'a>) {
+        let (Some(a_anchor), Some(b_anchor)) = (self.anchor_of(a), self.anchor_of(b)) else {
+            return;
+        };
+        // Tiles on the same participant cannot be pushed apart: their bounds derive from the same point.
+        if a_anchor == b_anchor {
+            return;
+        }
+        let living_spaces = &self.arguments.living_spaces;
+        if living_spaces.get(a_anchor).pos_b().current_value()
+            <= living_spaces.get(b_anchor).pos_b().current_value()
+        {
+            b.min_x().ensure_bigger_than(&a.max_x());
+        } else {
+            a.min_x().ensure_bigger_than(&b.max_x());
+        }
+    }
+
+    /// Some participant the tile, or a tile in it, draws on (`findAnchorLivingSpace`).
+    fn anchor_of(&self, tile: &dyn Tile<'a>) -> Option<ParticipantId> {
+        match self.arguments.diagram.event(tile.event()) {
+            Event::Message(message) => return Some(message.participant1),
+            Event::MessageExo(exo) => return Some(exo.participant),
+            _ => {}
+        }
+        tile.as_grouping()?
+            .tiles()
+            .iter()
+            .find_map(|child| self.anchor_of(child.as_ref()))
     }
 
     pub(super) fn min(&self) -> &Real {
@@ -105,11 +158,12 @@ impl<'a> PlayingSpace<'a> {
     }
 
     /// The height of everything drawn, found by drawing it.
-    /// Where each page break starts.
+    /// Where each page break starts, and its height; page breaks inside groups count too.
     fn newpage_tops(&self) -> Vec<(f64, f64)> {
-        self.tiles
+        let mut newpages = Vec::new();
+        add_newpage_tiles(&self.tiles, &mut newpages);
+        newpages
             .iter()
-            .filter_map(|tile| tile.as_newpage())
             .map(|newpage| {
                 (
                     newpage.y_gauge().min.current_value(),
@@ -133,6 +187,20 @@ impl<'a> PlayingSpace<'a> {
 }
 
 /// The diagram's body: heads, lifelines, tiles and tails (PlantUML's `PlayingSpaceWithParticipants`).
+fn add_newpage_tiles<'t, 'a>(
+    tiles: &'t [Box<dyn Tile<'a> + 'a>],
+    newpages: &mut Vec<&'t NewpageTile<'a>>,
+) {
+    for tile in tiles {
+        if let Some(grouping) = tile.as_grouping() {
+            add_newpage_tiles(grouping.tiles(), newpages);
+        }
+        if let Some(newpage) = tile.as_newpage() {
+            newpages.push(newpage);
+        }
+    }
+}
+
 pub(super) struct PlayingSpaceWithParticipants<'a> {
     playing_space: PlayingSpace<'a>,
     page: usize,
