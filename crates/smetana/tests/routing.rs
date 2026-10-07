@@ -13,21 +13,21 @@ use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::panic::{self, AssertUnwindSafe};
 
-use smetana::cgraph::attr::{agattr, agxget, agxset};
-use smetana::cgraph::edge::agedge;
-use smetana::cgraph::graph::agopen;
-use smetana::cgraph::node::agnode;
-use smetana::cgraph::{
+use smetana::internals::cgraph::attr::{agattr, agxget, agxset};
+use smetana::internals::cgraph::edge::agedge;
+use smetana::internals::cgraph::graph::agopen;
+use smetana::internals::cgraph::node::agnode;
+use smetana::internals::cgraph::{
     AGEDGE, AGINEDGE, AGMKOUT, AGOPP, AGOUTEDGE, M_aghead, M_agtail, aghead, agtail,
 };
-use smetana::common::routespl::{routepolylines, routesplines, simpleSplineRoute};
-use smetana::common::shapes::{bind_shape, portfn};
-use smetana::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
-use smetana::core::Globals;
-use smetana::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId};
-use smetana::dotgen::dotsplines::{spline_merge, swap_ends_p};
-use smetana::h::cgraph::Agdirected;
-use smetana::h::{
+use smetana::internals::common::routespl::{routepolylines, routesplines, simpleSplineRoute};
+use smetana::internals::common::shapes::{bind_shape, portfn};
+use smetana::internals::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
+use smetana::internals::core::Globals;
+use smetana::internals::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId};
+use smetana::internals::dotgen::dotsplines::{spline_merge, swap_ends_p};
+use smetana::internals::h::cgraph::Agdirected;
+use smetana::internals::h::{
     SHAPE_INFO, bezier, boxf, field_t, path, pathend_t, pointf, polygon_t, port, splineInfo,
     splines, textlabel_t,
 };
@@ -231,11 +231,12 @@ fn port_text(p: &port) -> String {
     )
 }
 
+/// The end's boxes as Java writes them, with a placeholder for the node point `np`, which the port drops because
+/// nothing reads it.
 fn endp_text(endp: &pathend_t) -> String {
     format!(
-        "{} {} {} {} {}",
+        "{} _ _ {} {} {}",
         bx(endp.nb),
-        pt(endp.np),
         endp.sidemask,
         endp.boxn,
         bx(endp.boxes[0])
@@ -645,9 +646,10 @@ fn call(layout: &mut Layout, line: &str) -> Vec<(String, Vec<usize>)> {
             let et = t.after("et").parse().expect("et");
             let merge = t.after("merge") == "1";
             t.expect("endp");
+            let nb = t.bx();
+            t.pt();
             let mut endp = pathend_t {
-                nb: t.bx(),
-                np: t.pt(),
+                nb,
                 sidemask: t.i(),
                 boxn: t.i(),
                 ..pathend_t::default()
@@ -662,7 +664,8 @@ fn call(layout: &mut Layout, line: &str) -> Vec<(String, Vec<usize>)> {
             }
             let p = if begin { &P.start } else { &P.end };
             // Java reuses P: an unconstrained end keeps an old theta, and endpath leaves nbox alone.
-            let mut skip = vec![];
+            // Tokens 13 and 14 are `np`.
+            let mut skip = vec![13, 14];
             if !p.constrained {
                 skip.push(4);
             }

@@ -237,13 +237,6 @@ fn checkFlatAdjacent(zz: &mut Globals, e: EdgeId) {
     }
 }
 
-/// The edges of `n`'s `ND_flat_out` list, if it has one.
-fn flat_out_edges(zz: &Globals, n: NodeId) -> Option<Vec<EdgeId>> {
-    let l = zz.nd(n).flat_out;
-    l.list?;
-    Some((0..).map_while(|i| l.get(&zz.edge_lists, i)).collect())
-}
-
 /// Whether `n` has an edge in `ND_flat_in` or `ND_other` that needs a label node on the rank above (PlantUML's
 /// patch: Graphviz overlooks the labeled flat edges in `ND_other`, then adds their label nodes to a rank that
 /// does not exist; self loops get no label node).
@@ -276,13 +269,14 @@ fn label_width(zz: &Globals, g: GraphId, e: EdgeId) -> f64 {
 /// `flat_edges`: marks flat edges whose ends are adjacent, and makes label nodes for the labeled ones that are
 /// not (adding rank -1 if needed). Adjacent labeled edges keep their label width in `ED_dist` of the
 /// representative edge. Returns whether label nodes were made, so that y coordinates must be set again.
-pub fn flat_edges(zz: &mut Globals, g: GraphId) -> bool {
+pub(crate) fn flat_edges(zz: &mut Globals, g: GraphId) -> bool {
     let mut reset = false;
 
     let mut n = zz.gd(g).nlist;
     while let Some(nn) = n {
-        if let Some(edges) = flat_out_edges(zz, nn) {
-            for e in edges {
+        let flat_out = zz.nd(nn).flat_out;
+        if flat_out.list.is_some() {
+            for e in flat_out.edges(&zz.edge_lists) {
                 checkFlatAdjacent(zz, e);
             }
         }
@@ -313,8 +307,9 @@ pub fn flat_edges(zz: &mut Globals, g: GraphId) -> bool {
     let mut n = zz.gd(g).nlist;
     while let Some(nn) = n {
         // If n is the tail of any flat edge, one is in flat_out.
-        if let Some(edges) = flat_out_edges(zz, nn) {
-            for e in edges {
+        let flat_out = zz.nd(nn).flat_out;
+        if flat_out.list.is_some() {
+            for e in flat_out.edges(&zz.edge_lists) {
                 if zz.ed(e).label.is_none() {
                     continue;
                 }

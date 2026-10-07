@@ -11,7 +11,7 @@
 
 #![allow(non_camel_case_types, non_snake_case, non_upper_case_globals)]
 
-pub mod cgraph;
+pub(crate) mod cgraph;
 
 use crate::core::Globals;
 use crate::core::carray::{CArray, CArrays};
@@ -27,12 +27,12 @@ pub struct pointf {
 }
 
 /// `pointfof`.
-pub fn pointfof(x: f64, y: f64) -> pointf {
+pub(crate) fn pointfof(x: f64, y: f64) -> pointf {
     pointf { x, y }
 }
 
 /// `add_pointf`.
-pub fn add_pointf(p: pointf, q: pointf) -> pointf {
+pub(crate) fn add_pointf(p: pointf, q: pointf) -> pointf {
     pointf {
         x: p.x + q.x,
         y: p.y + q.y,
@@ -69,7 +69,7 @@ pub struct port {
 }
 
 /// `Globals.Center`: the port at a node's center.
-pub const Center: port = port {
+pub(crate) const Center: port = port {
     p: pointf { x: 0.0, y: 0.0 },
     theta: -1.0,
     bp: None,
@@ -94,10 +94,23 @@ impl elist {
     pub fn get(&self, lists: &CArrays<Option<EdgeId>>, i: i32) -> Option<EdgeId> {
         lists.get(self.list.expect("elist without list"), i)
     }
+
+    /// The edges up to the NULL terminator, read up front so that the caller can change the list. Like
+    /// [`get`](Self::get), the list must be allocated: Java's `for (i = 0; (e = L.list.get_(i)) != null; i++)`
+    /// throws otherwise, and the loops it guards with `if (L.list != null)` check [`elist::list`] first.
+    pub fn edges(&self, lists: &CArrays<Option<EdgeId>>) -> Vec<EdgeId> {
+        (0..).map_while(|i| self.get(lists, i)).collect()
+    }
+}
+
+/// The nodes of a node list (`ND_next` chain, like `GD_nlist(g)`) starting at `first`, read up front so that the
+/// caller can change the chain.
+pub(crate) fn node_list(zz: &Globals, first: Option<NodeId>) -> Vec<NodeId> {
+    std::iter::successors(first, |&n| zz.nd(n).next).collect()
 }
 
 /// `elist_append`: appends `item`, keeping the list NULL-terminated.
-pub fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut elist) {
+pub(crate) fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut elist) {
     let list = lists.REALLOC(L.size + 2, L.list);
     L.list = Some(list);
     lists.set(list, L.size, Some(item));
@@ -106,7 +119,7 @@ pub fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut e
 }
 
 /// `alloc_elist`: an empty list with room for `n` edges.
-pub fn alloc_elist(lists: &mut CArrays<Option<EdgeId>>, n: i32, L: &mut elist) {
+pub(crate) fn alloc_elist(lists: &mut CArrays<Option<EdgeId>>, n: i32, L: &mut elist) {
     L.size = 0;
     L.list = Some(lists.ALLOC(n + 1));
 }
@@ -135,8 +148,6 @@ pub struct rank_t {
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct adjmatrix_t {
-    pub nrows: i32,
-    pub ncols: i32,
     pub data: Vec<Vec<i32>>,
 }
 
@@ -160,7 +171,6 @@ pub struct splines {
 pub struct textspan_t {
     pub str: String,
     pub size: pointf,
-    pub just: i32,
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -175,35 +185,15 @@ pub struct textlabel_t {
     pub pos: pointf,
     pub span: Option<CArray<textspan_t>>,
     pub nspans: i32,
-    pub valign: i32,
     pub set: i32,
     pub html: bool,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum EN_ratio_t {
-    #[default]
-    R_NONE,
-    R_VALUE,
-    R_FILL,
-    R_COMPRESS,
-    R_AUTO,
-    R_EXPAND,
-}
-
+/// `layout_t`: of the drawing parameters, only `quantum` affects a layout Smetana can make; `graph_init` rejects
+/// `ratio` and `size`, and the others only matter to renderers.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct layout_t {
     pub quantum: f64,
-    pub scale: f64,
-    pub ratio: f64,
-    pub dpi: f64,
-    pub margin: pointf,
-    pub page: pointf,
-    pub size: pointf,
-    pub filled: bool,
-    pub landscape: bool,
-    pub centered: bool,
-    pub ratio_kind: EN_ratio_t,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -280,8 +270,6 @@ pub struct Agraphinfo_t {
     pub minrank: i32,
     pub maxrank: i32,
     pub has_flat_edges: i32,
-    pub showboxes: i32,
-    pub fontnames: i32,
     pub nodesep: i32,
     pub ranksep: i32,
     pub ln: Option<NodeId>,
@@ -290,7 +278,6 @@ pub struct Agraphinfo_t {
     pub rankleader: Option<CArray<Option<NodeId>>>,
     pub expanded: bool,
     pub installed: i32,
-    pub set_type: i32,
     pub label_pos: i32,
     pub exact_ranksep: i32,
 }
@@ -327,9 +314,6 @@ pub struct Agnodeinfo_t {
     pub xlabel: Option<TextlabelId>,
     pub alg: Option<EdgeId>,
     pub id: i32,
-    pub heapindex: i32,
-    pub hops: i32,
-    pub showboxes: i32,
     pub has_port: bool,
     pub node_type: i32,
     pub mark: i32,
@@ -376,7 +360,6 @@ pub struct Agedgeinfo_t {
     pub label_ontop: bool,
     pub to_orig: Option<EdgeId>,
     pub dist: f64,
-    pub showboxes: i32,
     pub conc_opp_flag: bool,
     pub xpenalty: i32,
     pub weight: i32,
@@ -401,7 +384,6 @@ pub struct path {
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct pathend_t {
     pub nb: boxf,
-    pub np: pointf,
     pub sidemask: i32,
     pub boxn: i32,
     pub boxes: [boxf; 20],

@@ -13,7 +13,7 @@ use crate::dotgen::fastgr::{find_fast_edge, merge_oneway, virtual_edge, virtual_
 use crate::dotgen::position::make_aux_edge;
 
 /// `nonconstraint_edge`: whether an edge has `constraint=false`.
-pub fn nonconstraint_edge(zz: &mut Globals, e: EdgeId) -> bool {
+pub(crate) fn nonconstraint_edge(zz: &mut Globals, e: EdgeId) -> bool {
     zz.E_constr
         .and_then(|constr| agxget_text(zz, e, constr))
         .is_some_and(|constr| !constr.is_empty() && !mapbool(Some(&constr)))
@@ -47,7 +47,7 @@ fn interclust1(zz: &mut Globals, g: GraphId, t: NodeId, h: NodeId, e: EdgeId) {
 }
 
 /// `class1`.
-pub fn class1_(zz: &mut Globals, g: GraphId) {
+pub(crate) fn class1_(zz: &mut Globals, g: GraphId) {
     mark_clusters(zz, g);
     let mut n = agfstnode(zz, g);
     while let Some(nn) = n {

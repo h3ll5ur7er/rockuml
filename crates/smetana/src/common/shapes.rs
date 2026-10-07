@@ -20,14 +20,14 @@ const SQRT2: f64 = std::f64::consts::SQRT_2;
 
 /// `EN_shape_kind`.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum EN_shape_kind {
+pub(crate) enum EN_shape_kind {
     SH_UNSET,
     SH_POLY,
     SH_RECORD,
 }
 
 /// `shapeOf`: which shape code a node uses.
-pub fn shapeOf(zz: &Globals, n: NodeId) -> EN_shape_kind {
+pub(crate) fn shapeOf(zz: &Globals, n: NodeId) -> EN_shape_kind {
     match zz.nd(n).shape {
         None => EN_shape_kind::SH_UNSET,
         Some(sh) => match zz.Shapes[sh].fns {
@@ -46,7 +46,7 @@ pub fn bind_shape(zz: &Globals, name: &str) -> ShapeDescId {
 }
 
 /// `ND_shape(n)->fns->initfn(n)`.
-pub fn initfn(zz: &mut Globals, n: NodeId) {
+pub(crate) fn initfn(zz: &mut Globals, n: NodeId) {
     match zz.Shapes[zz.nd(n).shape.expect("node without shape")].fns {
         shape_functions::poly_fns => poly_init(zz, n),
         shape_functions::record_fns => record_init(zz, n),
@@ -77,7 +77,7 @@ fn RADIANS(deg: f64) -> f64 {
 
 /// `poly_init`: sizes a polygon (or ellipse) node around its label and computes its vertices.
 #[allow(clippy::too_many_lines, reason = "one Graphviz function")]
-pub fn poly_init(zz: &mut Globals, n: NodeId) {
+pub(crate) fn poly_init(zz: &mut Globals, n: NodeId) {
     let shape = zz.nd(n).shape.expect("node without shape");
     let polygon = zz.Shapes[shape].polygon.expect("polygon shape");
     let regular = polygon.regular;
@@ -139,7 +139,6 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
         Some(c @ ('t' | 'b')) => c as i32,
         _ => 'c' as i32,
     };
-    zz.textlabels[label].valign = valign;
 
     let isBox = sides == 4 && (ROUND(orientation) % 90) == 0 && distortion == 0.0 && skew == 0.0;
     if isBox {
@@ -208,7 +207,7 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
     let outp = if peripheries < 1 { 1 } else { peripheries };
     let vertices;
     if sides < 3 {
-        // Ellipses.
+        // An ellipse is stored as two opposite corners of its box.
         sides = 2;
         vertices = zz.pointfs.ALLOC(outp * sides);
         let P = pointf {
@@ -240,13 +239,11 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
             R.x += sidelength * cos(angle);
             R.y += sidelength * sin(angle);
 
-            // Distort and skew.
             let mut P = pointf {
                 x: R.x * (skewdist + R.y * gdistortion) + R.y * gskew,
                 y: R.y,
             };
 
-            // Orient P.
             let alpha = RADIANS(orientation) + atan2(P.y, P.x);
             let (sinx, cosx) = (sin(alpha), cos(alpha));
             P.x = hypot(P.x, P.y);
@@ -254,11 +251,9 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
             P.x *= cosx;
             P.y *= sinx;
 
-            // Scale for the label.
             P.x *= bb.x;
             P.y *= bb.y;
 
-            // The bounding box.
             xmax = max(P.x.abs(), xmax);
             ymax = max(P.y.abs(), ymax);
 
@@ -798,7 +793,7 @@ fn pos_reclbl(zz: &mut Globals, f: FieldId, mut ul: pointf, sides: i32) {
 }
 
 /// `record_init`: parses a record node's label into fields and sizes the node around them.
-pub fn record_init(zz: &mut Globals, n: NodeId) {
+pub(crate) fn record_init(zz: &mut Globals, n: NodeId) {
     let sides = BOTTOM | RIGHT | TOP | LEFT;
     // Always use rankdir to determine how records are laid out.
     let root = agraphof(zz, n);

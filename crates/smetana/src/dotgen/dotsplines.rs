@@ -41,7 +41,7 @@ const FUDGE: f64 = 4.0;
 
 /// `sinfo`: how dot answers the questions spline clipping asks.
 #[allow(non_upper_case_globals, reason = "Graphviz's name")]
-pub const sinfo: splineInfo = splineInfo {
+pub(crate) const sinfo: splineInfo = splineInfo {
     swapEnds: swap_ends_p,
     splineMerge: spline_merge,
     ignoreSwap: false,
@@ -584,7 +584,7 @@ fn makeSimpleFlatLabels(
     let rightend = hp.x - zz.nd(hn).lw;
     let ctrx = (leftend + rightend) / 2.0;
 
-    // Do first edge.
+    // The edge with the largest label runs straight, its label just above it.
     let e = earray[0];
     let mut points = [pointf::default(); 8];
     points[0] = tp;
@@ -615,7 +615,6 @@ fn makeSimpleFlatLabels(
         let dimen = zz.textlabels[label].dimen;
         let ctry;
         if i % 2 != 0 {
-            // Down.
             if i == 1 {
                 lminx = ctrx - dimen.x / 2.0;
                 lmaxx = ctrx + dimen.x / 2.0;
@@ -624,7 +623,6 @@ fn makeSimpleFlatLabels(
             points = below(tp, hp, miny, lminx, lmaxx);
             ctry = miny + dimen.y / 2.0;
         } else {
-            // Up.
             points = above(tp, hp, maxy, uminx, umaxx);
             ctry = maxy + dimen.y / 2.0 + 6.0;
             maxy += dimen.y + 6.0;
@@ -644,11 +642,10 @@ fn makeSimpleFlatLabels(
         i += 1;
     }
 
-    // Edges with no labels.
+    // The unlabeled edges sort last, so they go around the labeled ones.
     while i < cnt {
         let e = earray[i as usize];
         if i % 2 != 0 {
-            // Down.
             if i == 1 {
                 lminx = (2.0 * leftend + rightend) / 3.0;
                 lmaxx = (leftend + 2.0 * rightend) / 3.0;
@@ -656,7 +653,6 @@ fn makeSimpleFlatLabels(
             miny -= 6.0;
             points = below(tp, hp, miny, lminx, lmaxx);
         } else {
-            // Up.
             points = above(tp, hp, maxy, uminx, umaxx);
             maxy += 6.0;
         }
@@ -1020,7 +1016,6 @@ fn make_regular_edge(
     }
     let fe = e;
 
-    // Compute the spline points for the edge.
     if et == ET_LINE {
         unimplemented!("makeLineEdge");
     }
@@ -1335,8 +1330,8 @@ fn recover_slack(zz: &mut Globals, e: EdgeId, p: &path) {
 fn resize_vn(zz: &mut Globals, vn: NodeId, lx: i32, cx: i32, rx: i32) {
     let nd = zz.nd_mut(vn);
     nd.coord.x = f64::from(cx);
-    nd.lw = f64::from(cx - lx);
-    nd.rw = f64::from(rx - cx);
+    nd.lw = f64::from(cx.wrapping_sub(lx));
+    nd.rw = f64::from(rx.wrapping_sub(cx));
 }
 
 /// `top_bound`: the nearest out-edge of `e`'s tail on `side` of `e` that already has a spline.

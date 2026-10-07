@@ -31,7 +31,7 @@ fn parse_double(s: &str) -> f64 {
 }
 
 /// `storeline`: adds a line to a label and grows the label by its size.
-fn storeline(zz: &mut Globals, lp: TextlabelId, line: String, terminator: char) {
+fn storeline(zz: &mut Globals, lp: TextlabelId, line: String) {
     let label = &zz.textlabels[lp];
     let oldsz = label.nspans + 1;
     let (old, nspans, fontsize) = (label.span, label.nspans, label.fontsize);
@@ -43,7 +43,6 @@ fn storeline(zz: &mut Globals, lp: TextlabelId, line: String, terminator: char) 
     hackInitDimensionFromLabel(&mut size, &line);
     let s = &mut zz.textspans[span.at(nspans)];
     s.str = line;
-    s.just = terminator as i32;
     s.size.y = f64::from(size.y as i32);
     let label = &mut zz.textlabels[lp];
     label.span = Some(span);
@@ -72,8 +71,8 @@ fn make_simple_label(zz: &mut Globals, lp: TextlabelId) {
         p += 1;
         if c == '\\' {
             match str.get(p) {
-                Some(&t @ ('n' | 'l' | 'r')) => {
-                    storeline(zz, lp, std::mem::take(&mut line), t);
+                Some('n' | 'l' | 'r') => {
+                    storeline(zz, lp, std::mem::take(&mut line));
                     pending = false;
                 }
                 Some(&t) => {
@@ -87,7 +86,7 @@ fn make_simple_label(zz: &mut Globals, lp: TextlabelId) {
             }
         } else if c == '\n' {
             // tcldot can enter real line ends.
-            storeline(zz, lp, std::mem::take(&mut line), 'n');
+            storeline(zz, lp, std::mem::take(&mut line));
             pending = false;
         } else {
             line.push(c);
@@ -95,14 +94,14 @@ fn make_simple_label(zz: &mut Globals, lp: TextlabelId) {
         }
     }
     if pending {
-        storeline(zz, lp, line, 'n');
+        storeline(zz, lp, line);
     }
     let label = &mut zz.textlabels[lp];
     label.space = label.dimen;
 }
 
 /// `make_label`: a new text label of `obj`. Record labels are kept verbatim for the record parser.
-pub fn make_label(
+pub(crate) fn make_label(
     zz: &mut Globals,
     obj: Agobj,
     str: &str,

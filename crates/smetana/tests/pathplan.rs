@@ -3,7 +3,7 @@
 
 use std::panic::{self, AssertUnwindSafe};
 
-use smetana::pathplan::{
+use smetana::internals::pathplan::{
     PathplanContext, PathplanError, Pedge_t, Ppoint_t, Ppoly_t, Ppolyline_t, Proutespline,
     Pshortestpath, solve3,
 };

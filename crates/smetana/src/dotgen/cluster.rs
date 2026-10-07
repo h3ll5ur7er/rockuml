@@ -284,7 +284,7 @@ fn remove_rankleaders(zz: &mut Globals, g: GraphId) {
 }
 
 /// `expand_cluster`: replaces the skeleton of `subg` by its nodes and sub-cluster skeletons, in a first order.
-pub fn expand_cluster(zz: &mut Globals, subg: GraphId) {
+pub(crate) fn expand_cluster(zz: &mut Globals, subg: GraphId) {
     // Build the internal structure of the cluster.
     class2(zz, subg);
     zz.gd_mut(subg).comp.size = 1;
@@ -302,7 +302,7 @@ pub fn expand_cluster(zz: &mut Globals, subg: GraphId) {
 
 /// `mark_clusters`: marks every node of `g` with its top-level cluster under `g` (`ND_clust`), merges it into
 /// the cluster's leader, and marks the virtual nodes of the cluster's edges too.
-pub fn mark_clusters(zz: &mut Globals, g: GraphId) {
+pub(crate) fn mark_clusters(zz: &mut Globals, g: GraphId) {
     // Remove the sub-clusters below this level.
     let mut n = agfstnode(zz, g);
     while let Some(nn) = n {
@@ -338,7 +338,7 @@ pub fn mark_clusters(zz: &mut Globals, g: GraphId) {
 }
 
 /// `build_skeleton`: a chain of virtual rank leaders standing for `subg` in `g`, one per rank.
-pub fn build_skeleton(zz: &mut Globals, g: GraphId, subg: GraphId) {
+pub(crate) fn build_skeleton(zz: &mut Globals, g: GraphId, subg: GraphId) {
     let mut prev: Option<NodeId> = None;
     let leaders = zz.node_lists.ALLOC(zz.gd(subg).maxrank + 2);
     zz.gd_mut(subg).rankleader = Some(leaders);
@@ -351,7 +351,7 @@ pub fn build_skeleton(zz: &mut Globals, g: GraphId, subg: GraphId) {
         info.clust = Some(subg);
         if let Some(prev) = prev {
             let e = virtual_edge(zz, prev, v, None);
-            zz.ed_mut(e).xpenalty *= CL_CROSS;
+            zz.ed_mut(e).xpenalty = zz.ed(e).xpenalty.wrapping_mul(CL_CROSS);
         }
         prev = Some(v);
     }
@@ -422,7 +422,7 @@ fn mark_chain(zz: &mut Globals, orig: EdgeId, clust: Option<GraphId>, only_unset
 }
 
 /// `mark_lowclusters`: marks every node, and the virtual nodes of every edge, with its lowest cluster.
-pub fn mark_lowclusters(zz: &mut Globals, root: GraphId) {
+pub(crate) fn mark_lowclusters(zz: &mut Globals, root: GraphId) {
     // First, zap any previous cluster labelings.
     let mut n = agfstnode(zz, root);
     while let Some(nn) = n {
@@ -435,7 +435,6 @@ pub fn mark_lowclusters(zz: &mut Globals, root: GraphId) {
         n = agnxtnode(zz, root, nn);
     }
 
-    // Do the recursion.
     mark_lowcluster_basic(zz, root);
 }
 

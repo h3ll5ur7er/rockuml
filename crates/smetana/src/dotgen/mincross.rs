@@ -21,7 +21,7 @@ use crate::dotgen::cluster::{expand_cluster, install_cluster, mark_lowclusters};
 use crate::dotgen::decomp::decompose;
 use crate::dotgen::dotinit::dot_root;
 use crate::dotgen::fastgr::{
-    EdgeList, append, delete_flat_edge, flat_edge, merge_oneway, new_virtual_edge,
+    EdgeList, append, chain_reaches, delete_flat_edge, flat_edge, merge_oneway, new_virtual_edge,
 };
 use crate::dotgen::rank::cluster;
 use crate::h::{adjmatrix_t, elist, rank_t};
@@ -49,21 +49,14 @@ pub(crate) fn rankleader(zz: &Globals, g: GraphId, r: i32) -> Option<NodeId> {
         .get(zz.gd(g).rankleader.expect("rank leaders"), r)
 }
 
-/// The edges of a NULL-terminated list, read before the caller changes anything.
-fn edges_of(zz: &Globals, l: elist) -> Vec<EdgeId> {
-    (0..)
-        .map_while(|i| l.get(&zz.edge_lists, i))
-        .collect::<Vec<_>>()
-}
-
 /// `dot_mincross`.
-pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
+pub fn dot_mincross(zz: &mut Globals, g: GraphId) {
     init_mincross(zz, g);
 
     let mut c = 0;
     while c < zz.gd(g).comp.size {
         init_mccomp(zz, g, c);
-        mincross_(zz, g, 0, 2, doBalance);
+        mincross_(zz, g, 0, 2);
         c += 1;
     }
 
@@ -72,13 +65,13 @@ pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
     // Run mincross on the contents of each cluster.
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
-        mincross_clust(zz, clust, doBalance);
+        mincross_clust(zz, clust);
     }
 
     if zz.gd(g).n_cluster > 0 && agget_text(zz, g, "remincross").is_none_or(|s| mapbool(Some(&s))) {
         mark_lowclusters(zz, g);
         zz.ReMincross = true;
-        mincross_(zz, g, 2, 2, doBalance);
+        mincross_(zz, g, 2, 2);
     }
     cleanup2(zz, g);
 }
@@ -87,8 +80,6 @@ pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
 fn new_matrix(zz: &mut Globals, i: i32, j: i32) -> AdjmatrixId {
     let size = usize::try_from(i.max(j) + 8).expect("matrix size");
     zz.adjmatrices.push(adjmatrix_t {
-        nrows: i,
-        ncols: j,
         data: vec![vec![0; size]; size],
     })
 }
@@ -118,16 +109,16 @@ fn ordered_edges(zz: &Globals) {
 }
 
 /// `mincross_clust`: expands cluster `g` and orders its contents, then its sub-clusters'.
-fn mincross_clust(zz: &mut Globals, g: GraphId, doBalance: bool) {
+fn mincross_clust(zz: &mut Globals, g: GraphId) {
     expand_cluster(zz, g);
     ordered_edges(zz);
     flat_breakcycles(zz, g);
     flat_reorder(zz, g);
-    mincross_(zz, g, 2, 2, doBalance);
+    mincross_(zz, g, 2, 2);
 
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
-        mincross_clust(zz, clust, doBalance);
+        mincross_clust(zz, clust);
     }
 
     save_vlist(zz, g);
@@ -163,11 +154,11 @@ fn left2right(zz: &Globals, g: GraphId, v: NodeId, w: NodeId) -> bool {
 /// `in_cross`: the crossings between the in-edges of `v` and `w` if `v` is left of `w`.
 fn in_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
     let mut cross = 0i32;
-    for e2 in edges_of(zz, zz.nd(w).in_) {
+    for e2 in zz.nd(w).in_.edges(&zz.edge_lists) {
         let cnt = zz.ed(e2).xpenalty;
         let inv = zz.nd(agtail(zz, e2)).order;
         let e2px = zz.ed(e2).tail_port.p.x;
-        for e1 in edges_of(zz, zz.nd(v).in_) {
+        for e1 in zz.nd(v).in_.edges(&zz.edge_lists) {
             let t = zz.nd(agtail(zz, e1)).order - inv;
             if t > 0 || (t == 0 && zz.ed(e1).tail_port.p.x > e2px) {
                 cross = cross.wrapping_add(zz.ed(e1).xpenalty.wrapping_mul(cnt));
@@ -180,11 +171,11 @@ fn in_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
 /// `out_cross`: the crossings between the out-edges of `v` and `w` if `v` is left of `w`.
 fn out_cross(zz: &Globals, v: NodeId, w: NodeId) -> i32 {
     let mut cross = 0i32;
-    for e2 in edges_of(zz, zz.nd(w).out) {
+    for e2 in zz.nd(w).out.edges(&zz.edge_lists) {
         let cnt = zz.ed(e2).xpenalty;
         let inv = zz.nd(aghead(zz, e2)).order;
         let e2px = zz.ed(e2).head_port.p.x;
-        for e1 in edges_of(zz, zz.nd(v).out) {
+        for e1 in zz.nd(v).out.edges(&zz.edge_lists) {
             let t = zz.nd(aghead(zz, e1)).order - inv;
             if t > 0 || (t == 0 && zz.ed(e1).head_port.p.x > e2px) {
                 cross = cross.wrapping_add(zz.ed(e1).xpenalty.wrapping_mul(cnt));
@@ -205,11 +196,6 @@ fn exchange(zz: &mut Globals, v: NodeId, w: NodeId) {
     zz.node_lists.set(vlist, wi, Some(v));
     zz.nd_mut(w).order = vi;
     zz.node_lists.set(vlist, vi, Some(w));
-}
-
-/// `balance`: only with an aspect ratio, which PlantUML never sets.
-fn balance() {
-    unimplemented!("balance");
 }
 
 /// `transpose_step`: exchanges the neighbours of rank `r` whose exchange reduces crossings.
@@ -272,9 +258,8 @@ fn transpose(zz: &mut Globals, g: GraphId, reverse: bool) {
 }
 
 /// `mincross`: the passes of the ordering heuristic on `g`, from `startpass` to `endpass`, keeping the best
-/// order found.
-fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalance: bool) {
-    let mut maxthispass = 0;
+/// order found. Its final `balance` pass only runs with an aspect ratio, which `setAspect` rejects.
+fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32) {
     let (mut cur_cross, mut best_cross);
 
     if startpass > 1 {
@@ -286,6 +271,7 @@ fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalan
         best_cross = INT_MAX;
     }
     for pass in startpass..=endpass {
+        let maxthispass;
         if pass <= 1 {
             maxthispass = 4.min(zz.MaxIter);
             if g == dot_root(zz, g) {
@@ -336,11 +322,6 @@ fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalan
         transpose(zz, g, false);
         // C recounts best_cross here; nothing reads it any more, but the count refreshes the ranks' caches.
         ncross(zz);
-    }
-    if doBalance {
-        for _ in 0..maxthispass {
-            balance();
-        }
     }
 }
 
@@ -511,7 +492,7 @@ fn save_vlist(zz: &mut Globals, g: GraphId) {
 }
 
 /// `rec_save_vlists`: `save_vlist` for `g` and all its clusters.
-pub fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
+pub(crate) fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
     save_vlist(zz, g);
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
@@ -520,7 +501,7 @@ pub fn rec_save_vlists(zz: &mut Globals, g: GraphId) {
 }
 
 /// `rec_reset_vlists`: points every cluster's rank arrays at its nodes in the root's ranks.
-pub fn rec_reset_vlists(zz: &mut Globals, g: GraphId) {
+pub(crate) fn rec_reset_vlists(zz: &mut Globals, g: GraphId) {
     // Fix the vlists of the sub-clusters.
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
@@ -569,13 +550,15 @@ fn flat_rev(zz: &mut Globals, g: GraphId, e: EdgeId) {
     let rev = if flat_out.list.is_none() {
         None
     } else {
-        edges_of(zz, flat_out)
+        flat_out
+            .edges(&zz.edge_lists)
             .into_iter()
             .find(|&rev| aghead(zz, rev) == tail)
     };
     if let Some(rev) = rev {
         merge_oneway(zz, e, rev);
-        if zz.ed(e).to_virt.is_none() {
+        // Deviation, as in merge_oneway: pointing e at rev would close the cycle that merge_oneway refused.
+        if zz.ed(e).to_virt.is_none() && !chain_reaches(zz, rev, e) {
             zz.ed_mut(e).to_virt = Some(rev);
         }
         if zz.ed(rev).edge_type == FLATORDER && zz.ed(rev).to_orig.is_none() {
@@ -595,47 +578,73 @@ fn flat_rev(zz: &mut Globals, g: GraphId, e: EdgeId) {
 }
 
 /// `flat_search`: depth-first search of the flat edges from `v`, recording their left-to-right constraints in
-/// the rank's matrix and reversing the edges that close cycles.
+/// the rank's matrix and reversing the edges that close cycles. A stack replaces the recursion, which goes as
+/// deep as the chains of flat edges.
 fn flat_search(zz: &mut Globals, g: GraphId, v: NodeId) {
-    let M = zz
-        .rank(g, zz.nd(v).rank)
-        .flat
-        .expect("flat adjacency matrix");
-    zz.nd_mut(v).mark = 1;
-    zz.nd_mut(v).onstack = 1;
+    /// A node being searched: its rank's matrix, whether it had flat out-edges when reached, and the position
+    /// in them.
+    struct Search {
+        v: NodeId,
+        M: AdjmatrixId,
+        has_flat_out: bool,
+        i: i32,
+    }
+    let enter = |zz: &mut Globals, v: NodeId| {
+        let M = zz
+            .rank(g, zz.nd(v).rank)
+            .flat
+            .expect("flat adjacency matrix");
+        zz.nd_mut(v).mark = 1;
+        zz.nd_mut(v).onstack = 1;
+        Search {
+            v,
+            M,
+            has_flat_out: zz.nd(v).flat_out.list.is_some(),
+            i: 0,
+        }
+    };
     let root = dot_root(zz, g);
     let hascl = zz.gd(root).n_cluster > 0;
-    if zz.nd(v).flat_out.list.is_some() {
-        let mut i = 0;
-        while let Some(e) = zz.nd(v).flat_out.get(&zz.edge_lists, i) {
-            i += 1;
-            let (tail, head) = (agtail(zz, e), aghead(zz, e));
-            if hascl && !(agcontains(zz, g, tail) && agcontains(zz, g, head)) {
+    let low = |zz: &Globals, n: NodeId| usize::try_from(zz.nd(n).low).expect("flat index");
+    let mut stack = vec![enter(zz, v)];
+    while let Some(top) = stack.last_mut() {
+        let (v, M) = (top.v, top.M);
+        let next = if top.has_flat_out {
+            zz.nd(v).flat_out.get(&zz.edge_lists, top.i)
+        } else {
+            None
+        };
+        let Some(e) = next else {
+            zz.nd_mut(v).onstack = 0;
+            stack.pop();
+            continue;
+        };
+        top.i += 1;
+        let (tail, head) = (agtail(zz, e), aghead(zz, e));
+        if hascl && !(agcontains(zz, g, tail) && agcontains(zz, g, head)) {
+            continue;
+        }
+        if zz.ed(e).weight == 0 {
+            continue;
+        }
+        if zz.nd(head).onstack != 0 {
+            let (h, t) = (low(zz, head), low(zz, tail));
+            zz.adjmatrices[M].data[h][t] = 1;
+            delete_flat_edge(zz, e);
+            top.i -= 1;
+            if zz.ed(e).edge_type == FLATORDER {
                 continue;
             }
-            if zz.ed(e).weight == 0 {
-                continue;
-            }
-            let low = |zz: &Globals, n: NodeId| usize::try_from(zz.nd(n).low).expect("flat index");
-            if zz.nd(head).onstack != 0 {
-                let (h, t) = (low(zz, head), low(zz, tail));
-                zz.adjmatrices[M].data[h][t] = 1;
-                delete_flat_edge(zz, e);
-                i -= 1;
-                if zz.ed(e).edge_type == FLATORDER {
-                    continue;
-                }
-                flat_rev(zz, g, e);
-            } else {
-                let (t, h) = (low(zz, tail), low(zz, head));
-                zz.adjmatrices[M].data[t][h] = 1;
-                if zz.nd(head).mark == 0 {
-                    flat_search(zz, g, head);
-                }
+            flat_rev(zz, g, e);
+        } else {
+            let (t, h) = (low(zz, tail), low(zz, head));
+            zz.adjmatrices[M].data[t][h] = 1;
+            if zz.nd(head).mark == 0 {
+                let child = enter(zz, head);
+                stack.push(child);
             }
         }
     }
-    zz.nd_mut(v).onstack = 0;
 }
 
 /// `flat_breakcycles`: numbers each rank's nodes (`flatindex`) and breaks the cycles of its flat edges.
@@ -821,25 +830,56 @@ fn constraining_flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) -> bool {
 }
 
 /// `postorder`: writes the nodes reachable from `v` by constraining flat edges to `list`, in postorder, and
-/// returns their number.
+/// returns their number. A stack replaces the recursion, which goes as deep as the chains of flat edges.
 fn postorder(zz: &mut Globals, g: GraphId, v: NodeId, list: CArray<Option<NodeId>>) -> i32 {
-    let mut cnt = 0;
-    zz.nd_mut(v).mark = 1;
-    if zz.nd(v).flat_out.size > 0 {
-        let mut i = 0;
-        while let Some(e) = zz.nd(v).flat_out.get(&zz.edge_lists, i) {
-            i += 1;
+    /// A node being ordered: where its subtree goes, how many nodes it has so far, whether it had flat
+    /// out-edges when reached, and the position in them.
+    struct Order {
+        v: NodeId,
+        list: CArray<Option<NodeId>>,
+        cnt: i32,
+        has_flat_out: bool,
+        i: i32,
+    }
+    let enter = |zz: &mut Globals, v: NodeId, list: CArray<Option<NodeId>>| {
+        zz.nd_mut(v).mark = 1;
+        Order {
+            v,
+            list,
+            cnt: 0,
+            has_flat_out: zz.nd(v).flat_out.size > 0,
+            i: 0,
+        }
+    };
+    let mut stack = vec![enter(zz, v, list)];
+    loop {
+        let top = stack.last_mut().expect("a node being ordered");
+        let next = if top.has_flat_out {
+            zz.nd(top.v).flat_out.get(&zz.edge_lists, top.i)
+        } else {
+            None
+        };
+        if let Some(e) = next {
+            top.i += 1;
             if !constraining_flat_edge(zz, g, e) {
                 continue;
             }
             let head = aghead(zz, e);
             if zz.nd(head).mark == 0 {
-                cnt += postorder(zz, g, head, list.plus_(cnt));
+                let rest = top.list.plus_(top.cnt);
+                let child = enter(zz, head, rest);
+                stack.push(child);
             }
+            continue;
+        }
+        let done = stack.pop().expect("a node being ordered");
+        zz.node_lists.set(done.list, done.cnt, Some(done.v));
+        let cnt = done.cnt + 1;
+        match stack.last_mut() {
+            Some(parent) => parent.cnt += cnt,
+            None => return cnt,
         }
     }
-    zz.node_lists.set(list, cnt, Some(v));
-    cnt + 1
 }
 
 /// `flat_reorder`: orders each rank so that its constraining flat edges point left to right, and reverses the
@@ -1006,7 +1046,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
     let (minrank, maxrank) = (zz.gd(g).minrank, zz.gd(g).maxrank);
 
     let (first, last, dir) = if pass % 2 == 0 {
-        // Down pass.
+        // Downwards, each rank follows the one above, which the root's top rank does not have.
         let first = if minrank > zz.gd(root).minrank {
             minrank
         } else {
@@ -1014,7 +1054,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
         };
         (first, maxrank, 1)
     } else {
-        // Up pass.
+        // Upwards, each rank follows the one below, which the root's bottom rank does not have.
         let first = if maxrank < zz.gd(root).maxrank {
             maxrank
         } else {
@@ -1037,7 +1077,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
 /// throws where Graphviz would count a crossing.
 fn local_cross(zz: &Globals, l: elist, dir: i32) {
     let is_out = dir > 0;
-    let edges = edges_of(zz, l);
+    let edges = l.edges(&zz.edge_lists);
     for (i, &e) in edges.iter().enumerate() {
         if is_out {
             for &f in &edges[i + 1..] {
@@ -1073,7 +1113,7 @@ fn rcross(zz: &mut Globals, g: GraphId, r: i32) -> i32 {
     let slot = |k: i32| usize::try_from(k).expect("order");
     for top in 0..zz.rank(g, r).n {
         let v = zz.node_lists.get(rtop, top).expect("node");
-        let outlist = edges_of(zz, zz.nd(v).out);
+        let outlist = zz.nd(v).out.edges(&zz.edge_lists);
         if max > 0 {
             for &e in &outlist {
                 for k in zz.nd(aghead(zz, e)).order + 1..=max {
@@ -1131,7 +1171,7 @@ fn ordercmpf(i0: i32, i1: i32) -> i32 {
 /// it has none.
 fn flat_mval(zz: &mut Globals, n: NodeId) -> bool {
     if zz.nd(n).flat_in.size > 0 {
-        let fl = edges_of(zz, zz.nd(n).flat_in);
+        let fl = zz.nd(n).flat_in.edges(&zz.edge_lists);
         let mut nn = agtail(zz, fl[0]);
         for &e in &fl[1..] {
             if zz.nd(agtail(zz, e)).order > zz.nd(nn).order {
@@ -1143,7 +1183,7 @@ fn flat_mval(zz: &mut Globals, n: NodeId) -> bool {
             return false;
         }
     } else if zz.nd(n).flat_out.size > 0 {
-        let fl = edges_of(zz, zz.nd(n).flat_out);
+        let fl = zz.nd(n).flat_out.edges(&zz.edge_lists);
         let mut nn = aghead(zz, fl[0]);
         for &e in &fl[1..] {
             if zz.nd(aghead(zz, e)).order < zz.nd(nn).order {
@@ -1168,14 +1208,14 @@ fn medians(zz: &mut Globals, g: GraphId, r0: i32, r1: i32) -> bool {
         let n = zz.node_lists.get(v, i).expect("node");
         let mut j = 0;
         if r1 > r0 {
-            for e in edges_of(zz, zz.nd(n).out) {
+            for e in zz.nd(n).out.edges(&zz.edge_lists) {
                 if zz.ed(e).xpenalty > 0 {
                     list[j] = 256 * zz.nd(aghead(zz, e)).order + zz.ed(e).head_port.order;
                     j += 1;
                 }
             }
         } else {
-            for e in edges_of(zz, zz.nd(n).in_) {
+            for e in zz.nd(n).in_.edges(&zz.edge_lists) {
                 if zz.ed(e).xpenalty > 0 {
                     list[j] = 256 * zz.nd(agtail(zz, e)).order + zz.ed(e).tail_port.order;
                     j += 1;
@@ -1243,12 +1283,11 @@ fn endpoint_class(zz: &Globals, n: NodeId) -> usize {
 /// `virtual_weight`: weighs a virtual edge by the classes of its ends, to straighten long edges.
 pub(crate) fn virtual_weight(zz: &mut Globals, e: EdgeId) {
     let t = table[endpoint_class(zz, agtail(zz, e))][endpoint_class(zz, aghead(zz, e))];
-    zz.ed_mut(e).weight *= t;
+    zz.ed_mut(e).weight = zz.ed(e).weight.wrapping_mul(t);
 }
 
 /// `mincross_options`.
 fn mincross_options(zz: &mut Globals, g: GraphId) {
-    // Set the default values.
     zz.MinQuit = 8;
     zz.MaxIter = 24;
     zz.Convergence = 0.995;

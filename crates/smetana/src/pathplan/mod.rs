@@ -17,7 +17,7 @@ mod util;
 pub use route::Proutespline;
 pub use shortest::{PathplanError, Pshortestpath};
 pub use solvers::solve3;
-pub use util::make_polyline;
+pub(crate) use util::make_polyline;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct Pxy_t {
@@ -26,7 +26,7 @@ pub struct Pxy_t {
 }
 
 pub type Ppoint_t = Pxy_t;
-pub type Pvector_t = Pxy_t;
+pub(crate) type Pvector_t = Pxy_t;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Ppoly_t {

@@ -9,15 +9,15 @@ use crate::core::Globals;
 use crate::core::ids::{EdgeId, SymId};
 use crate::h::{bezier, inside_t, pointf};
 
-pub const ARR_TYPE_NONE: i32 = 0;
-pub const ARR_TYPE_NORM: i32 = 1;
-pub const ARR_TYPE_CROW: i32 = 2;
-pub const ARR_TYPE_TEE: i32 = 3;
-pub const ARR_TYPE_BOX: i32 = 4;
-pub const ARR_TYPE_DIAMOND: i32 = 5;
-pub const ARR_TYPE_DOT: i32 = 6;
-pub const ARR_TYPE_CURVE: i32 = 7;
-pub const ARR_TYPE_GAP: i32 = 8;
+pub(crate) const ARR_TYPE_NONE: i32 = 0;
+pub(crate) const ARR_TYPE_NORM: i32 = 1;
+pub(crate) const ARR_TYPE_CROW: i32 = 2;
+pub(crate) const ARR_TYPE_TEE: i32 = 3;
+pub(crate) const ARR_TYPE_BOX: i32 = 4;
+pub(crate) const ARR_TYPE_DIAMOND: i32 = 5;
+pub(crate) const ARR_TYPE_DOT: i32 = 6;
+pub(crate) const ARR_TYPE_CURVE: i32 = 7;
+pub(crate) const ARR_TYPE_GAP: i32 = 8;
 
 const BITS_PER_ARROW: i32 = 8;
 const BITS_PER_ARROW_TYPE: i32 = 4;
@@ -143,7 +143,7 @@ fn attribute(zz: &mut Globals, e: EdgeId, sym: Option<SymId>) -> Option<String> 
 
 /// `arrow_flags`: the arrowheads at the start and end of `e`. Smetana ignores `dir` and `agisdirected`: both ends
 /// start as `normal`.
-pub fn arrow_flags(zz: &mut Globals, e: EdgeId, sflag: &mut i32, eflag: &mut i32) {
+pub(crate) fn arrow_flags(zz: &mut Globals, e: EdgeId, sflag: &mut i32, eflag: &mut i32) {
     *sflag = ARR_TYPE_NORM;
     *eflag = ARR_TYPE_NORM;
     if attribute(zz, e, zz.E_dir).is_some() {
@@ -165,7 +165,7 @@ pub fn arrow_flags(zz: &mut Globals, e: EdgeId, sflag: &mut i32, eflag: &mut i32
 }
 
 /// `arrow_length`: the length of the arrows in `flag`, scaled by `arrowsize`.
-pub fn arrow_length(zz: &mut Globals, e: EdgeId, flag: i32) -> f64 {
+pub(crate) fn arrow_length(zz: &mut Globals, e: EdgeId, flag: i32) -> f64 {
     let mut lenfact = 0.0;
     for i in 0..NUMB_OF_ARROW_HEADS {
         let f = (flag >> (i * BITS_PER_ARROW)) & ((1 << BITS_PER_ARROW_TYPE) - 1);
@@ -183,7 +183,7 @@ fn inside(_zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
 
 /// `arrowEndClip`: shortens the spline's last Bézier piece by the arrowhead, which `spl.ep` records; returns the
 /// index of the piece that now ends the spline.
-pub fn arrowEndClip(
+pub(crate) fn arrowEndClip(
     zz: &mut Globals,
     e: EdgeId,
     ps: &mut [pointf],
@@ -215,7 +215,7 @@ pub fn arrowEndClip(
 }
 
 /// `arrowStartClip`: the same at the start, recorded in `spl.sp`; returns the index of the first piece.
-pub fn arrowStartClip(
+pub(crate) fn arrowStartClip(
     zz: &mut Globals,
     e: EdgeId,
     ps: &mut [pointf],

@@ -23,7 +23,7 @@
 #![allow(non_snake_case)]
 
 /// `Macro.ROUND`: rounds half away from zero through `int`, which is not `f64::round` for values beyond `i32`.
-pub fn ROUND(f: f64) -> i32 {
+pub(crate) fn ROUND(f: f64) -> i32 {
     if f >= 0.0 {
         (f + 0.5) as i32
     } else {
@@ -31,23 +31,23 @@ pub fn ROUND(f: f64) -> i32 {
     }
 }
 
-pub const POINTS_PER_INCH: i32 = 72;
+pub(crate) const POINTS_PER_INCH: i32 = 72;
 
 /// `Macro.POINTS`: inches to whole points.
-pub fn POINTS(a_inches: f64) -> i32 {
+pub(crate) fn POINTS(a_inches: f64) -> i32 {
     ROUND(a_inches * f64::from(POINTS_PER_INCH))
 }
 
-pub fn INCH2PS(a_inches: f64) -> f64 {
+pub(crate) fn INCH2PS(a_inches: f64) -> f64 {
     a_inches * f64::from(POINTS_PER_INCH)
 }
 
-pub fn PS2INCH(a_points: f64) -> f64 {
+pub(crate) fn PS2INCH(a_points: f64) -> f64 {
     a_points / f64::from(POINTS_PER_INCH)
 }
 
 /// `Macro.hypot`, Graphviz's own formula. It is not `Math.hypot` and rounds differently from `f64::hypot`.
-pub fn hypot(x: f64, y: f64) -> f64 {
+pub(crate) fn hypot(x: f64, y: f64) -> f64 {
     let x = x.abs();
     let y = y.abs();
     let t = min(x, y);
@@ -57,7 +57,7 @@ pub fn hypot(x: f64, y: f64) -> f64 {
 }
 
 /// `Math.min`: NaN wins, and -0.0 is smaller than 0.0 (`f64::min` returns the non-NaN operand).
-pub fn min(a: f64, b: f64) -> f64 {
+pub(crate) fn min(a: f64, b: f64) -> f64 {
     if a.is_nan() {
         return a;
     }
@@ -68,7 +68,7 @@ pub fn min(a: f64, b: f64) -> f64 {
 }
 
 /// `Math.max`: NaN wins, and 0.0 is greater than -0.0.
-pub fn max(a: f64, b: f64) -> f64 {
+pub(crate) fn max(a: f64, b: f64) -> f64 {
     if a.is_nan() {
         return a;
     }
@@ -79,7 +79,7 @@ pub fn max(a: f64, b: f64) -> f64 {
 }
 
 /// `Math.sin`, correctly rounded for finite `|x| < 2^30`.
-pub fn sin(x: f64) -> f64 {
+pub(crate) fn sin(x: f64) -> f64 {
     if x == 0.0 || !x.is_finite() || x.abs() >= dd::MAX_REDUCIBLE {
         return libm::sin(x);
     }
@@ -93,7 +93,7 @@ pub fn sin(x: f64) -> f64 {
 }
 
 /// `Math.cos`, correctly rounded for finite `|x| < 2^30`.
-pub fn cos(x: f64) -> f64 {
+pub(crate) fn cos(x: f64) -> f64 {
     if !x.is_finite() || x.abs() >= dd::MAX_REDUCIBLE {
         return libm::cos(x);
     }
@@ -107,12 +107,12 @@ pub fn cos(x: f64) -> f64 {
 }
 
 /// `Math.atan2`, which is fdlibm's in Java too.
-pub fn atan2(y: f64, x: f64) -> f64 {
+pub(crate) fn atan2(y: f64, x: f64) -> f64 {
     libm::atan2(y, x)
 }
 
 /// `Math.pow`, correctly rounded (`exp(y·ln x)` in double-double) for positive normal `x`.
-pub fn pow(x: f64, y: f64) -> f64 {
+pub(crate) fn pow(x: f64, y: f64) -> f64 {
     if !(x > 0.0 && x.is_finite() && y.is_finite()) || x.is_subnormal() {
         return libm::pow(x, y);
     }

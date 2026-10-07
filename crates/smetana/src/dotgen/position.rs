@@ -21,31 +21,18 @@ use crate::core::consts::{
 use crate::core::ids::{EdgeId, GraphId, NodeId};
 use crate::core::jmath::{self, ROUND};
 use crate::core::jutils::atof;
-use crate::dotgen::aspect::aspect_t;
+
 use crate::dotgen::cluster::mark_lowclusters;
 use crate::dotgen::dotinit::dot_root;
 use crate::dotgen::fastgr::{fast_edge, find_fast_edge, new_edge_pair, virtual_node};
 use crate::dotgen::flat::flat_edges;
 use crate::dotgen::mincross::{rank_node, rank_v};
 use crate::dotgen::rank::cluster;
-use crate::h::{EN_ratio_t, alloc_elist, elist, pointf};
+use crate::h::{alloc_elist, elist, node_list, pointf};
 
 /// `largeMinlen`: Smetana cannot lay out edges longer than 65535 points.
 fn largeMinlen(l: f64) -> f64 {
     unimplemented!("largeMinlen({l})")
-}
-
-/// The edges of a NULL-terminated list, read before the caller changes anything.
-fn edges_of(zz: &Globals, l: elist) -> Vec<EdgeId> {
-    if l.list.is_none() {
-        return Vec::new();
-    }
-    (0..).map_while(|i| l.get(&zz.edge_lists, i)).collect()
-}
-
-/// The nodes of `g`'s fast graph (`GD_nlist`), read before the caller changes anything.
-fn nlist(zz: &Globals, g: GraphId) -> Vec<NodeId> {
-    std::iter::successors(zz.gd(g).nlist, |&n| zz.nd(n).next).collect()
 }
 
 /// `GD_margin` of cluster `g`, with default `def`.
@@ -65,9 +52,9 @@ fn connectGraph(zz: &mut Globals, g: GraphId) {
             tp = Some(t);
             let lower =
                 |e: &EdgeId| zz.nd(aghead(zz, *e)).rank > r || zz.nd(agtail(zz, *e)).rank > r;
-            if edges_of(zz, zz.nd(t).save_out).iter().any(lower)
-                || edges_of(zz, zz.nd(t).save_in).iter().any(lower)
-            {
+            let any_lower =
+                |l: elist| l.list.is_some() && l.edges(&zz.edge_lists).iter().any(lower);
+            if any_lower(zz.nd(t).save_out) || any_lower(zz.nd(t).save_in) {
                 found = true;
                 break;
             }
@@ -90,11 +77,11 @@ fn connectGraph(zz: &mut Globals, g: GraphId) {
 }
 
 /// `dot_position`: the coordinates of all nodes, and the bounding boxes of the graph and its clusters.
-pub fn dot_position(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+pub fn dot_position(zz: &mut Globals, g: GraphId) {
     if zz.gd(g).nlist.is_none() {
-        return; // ignore empty graph
+        return;
     }
-    mark_lowclusters(zz, g); // we could remove from splines.c now
+    mark_lowclusters(zz, g);
     set_ycoords(zz, g);
     if zz.Concentrate {
         unimplemented!("dot_concentrate");
@@ -105,13 +92,14 @@ pub fn dot_position(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
     }
     create_aux_edges(zz, g);
     let maxiter = nsiter2(zz, g);
+    // Balance mode 2 is LR_balance, the one for x coordinates. A non-zero result means network simplex found the
+    // auxiliary graph disconnected.
     if rank(zz, g, 2, maxiter) != 0 {
-        // LR balance == 2
         connectGraph(zz, g);
     }
     set_xcoords(zz, g);
     clampSkippedLabelVnodes(zz);
-    set_aspect(zz, g, asp);
+    set_aspect(zz, g);
     remove_aux_edges(zz, g); // must come after set_aspect since we now use GD_ln and GD_rn for bbox width.
 }
 
@@ -127,7 +115,7 @@ fn nsiter2(zz: &mut Globals, g: GraphId) -> i32 {
 }
 
 /// `make_aux_edge`: an auxiliary edge from `u` to `v` of minimum length `len` and weight `wt`, in the fast graph.
-pub fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) -> EdgeId {
+pub(crate) fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) -> EdgeId {
     let e = new_edge_pair(zz);
     M_agtail(zz, e, u);
     M_aghead(zz, e, v);
@@ -144,11 +132,11 @@ pub fn make_aux_edge(zz: &mut Globals, u: NodeId, v: NodeId, len: f64, wt: i32) 
 
 /// `allocate_aux_edges`: saves the fast graph's edge lists and starts empty ones for the auxiliary edges.
 fn allocate_aux_edges(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let (in_, out) = (zz.nd(n).in_, zz.nd(n).out);
         zz.nd_mut(n).save_in = in_;
         zz.nd_mut(n).save_out = out;
-        let n_in = edges_of(zz, out).len() + edges_of(zz, in_).len();
+        let n_in = out.edges(&zz.edge_lists).len() + in_.edges(&zz.edge_lists).len();
         let n_in = i32::try_from(n_in).expect("edge count");
         let mut in_ = in_;
         let mut out = out;
@@ -181,16 +169,17 @@ fn make_LR_constraints(zz: &mut Globals, g: GraphId) {
         let v_list = rank_v(zz, g, i);
         for j in 0..zz.rank(g, i).n {
             let u = zz.node_lists.get(v_list, j).expect("node in rank");
-            zz.nd_mut(u).mval = zz.nd(u).rw; // keep it somewhere safe
+            // The width without self loops, which dot_splines restores.
+            zz.nd_mut(u).mval = zz.nd(u).rw;
             if zz.nd(u).other.size > 0 {
                 // Compute self size. Dot assumes all self loops go to the right.
                 let mut sw = 0;
-                for e in edges_of(zz, zz.nd(u).other) {
+                for e in zz.nd(u).other.edges(&zz.edge_lists) {
                     if agtail(zz, e) == aghead(zz, e) {
                         sw += selfRightSpace(zz, e);
                     }
                 }
-                zz.nd_mut(u).rw += f64::from(sw); // increment to include self edges
+                zz.nd_mut(u).rw += f64::from(sw);
             }
             if let Some(v) = zz.node_lists.get(v_list, j + 1) {
                 let width = zz.nd(u).rw + zz.nd(v).lw + f64::from(nodesep);
@@ -271,7 +260,7 @@ fn canReachInAuxGraph(zz: &Globals, from: NodeId, to: NodeId) -> bool {
     let mut visited = HashSet::from([from]);
     let mut stack = vec![from];
     while let Some(cur) = stack.pop() {
-        for e in edges_of(zz, zz.nd(cur).out) {
+        for e in zz.nd(cur).out.edges(&zz.edge_lists) {
             let head = aghead(zz, e);
             if head == to {
                 return true;
@@ -286,8 +275,12 @@ fn canReachInAuxGraph(zz: &Globals, from: NodeId, to: NodeId) -> bool {
 
 /// `make_edge_pairs`: for every edge, a slack node with edges to both ends, which pulls them together.
 fn make_edge_pairs(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
-        for e in edges_of(zz, zz.nd(n).save_out) {
+    for n in node_list(zz, zz.gd(g).nlist) {
+        let save_out = zz.nd(n).save_out;
+        if save_out.list.is_none() {
+            continue;
+        }
+        for e in save_out.edges(&zz.edge_lists) {
             let sn = virtual_node(zz, g);
             zz.nd_mut(sn).node_type = SLACKNODE;
             let mut m0 = (zz.ed(e).head_port.p.x - zz.ed(e).tail_port.p.x) as i32;
@@ -312,8 +305,8 @@ fn contain_clustnodes(zz: &mut Globals, g: GraphId) {
         contain_nodes(zz, g);
         let (ln, rn) = boundary_nodes(zz, g);
         match find_fast_edge(zz, ln, rn) {
-            // maybe from lrvn()?
-            Some(e) => zz.ed_mut(e).weight += 128,
+            // make_lrvn already joins the boundary nodes of a labeled cluster: strengthen that edge instead.
+            Some(e) => zz.ed_mut(e).weight = zz.ed(e).weight.wrapping_add(128),
             None => {
                 make_aux_edge(zz, ln, rn, 1.0, 128); // clust compaction edge
             }
@@ -456,25 +449,18 @@ fn pos_clusters(zz: &mut Globals, g: GraphId) {
     }
 }
 
-/// `compress_graph`: only for `ratio=compress`, which PlantUML never sets.
-fn compress_graph(zz: &Globals, g: GraphId) {
-    if zz.gd(g).drawing.expect("GD_drawing").ratio_kind == EN_ratio_t::R_COMPRESS {
-        unimplemented!("ratio=compress");
-    }
-}
-
 /// `create_aux_edges`: the auxiliary graph.
 fn create_aux_edges(zz: &mut Globals, g: GraphId) {
     allocate_aux_edges(zz, g);
     make_LR_constraints(zz, g);
     make_edge_pairs(zz, g);
     pos_clusters(zz, g);
-    compress_graph(zz, g);
+    // compress_graph only acts on ratio=compress, which graph_init rejects.
 }
 
 /// `remove_aux_edges`: restores the fast graph's edge lists and drops the slack nodes.
 fn remove_aux_edges(zz: &mut Globals, g: GraphId) {
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let info = zz.nd_mut(n);
         info.out = info.save_out;
         info.in_ = info.save_in;
@@ -512,6 +498,8 @@ fn set_xcoords(zz: &mut Globals, g: GraphId) {
 /// `clampSkippedLabelVnodes` (PlantUML's): moves a label node that lost a constraint in `make_LR_constraints`
 /// back between the ends of its edge, so that the edge can be routed.
 fn clampSkippedLabelVnodes(zz: &mut Globals) {
+    // Java iterates an IdentityHashMap, whose order differs from run to run. Any order gives the same result:
+    // each clamp reads only the ends of its own label node's edges, which are not label nodes.
     for lu in zz.skippedConstraintLabelVnodes.clone() {
         let save_out = zz.nd(lu).save_out;
         let (Some(e0), Some(e1)) = (
@@ -607,7 +595,7 @@ fn adjustRanks(zz: &mut Globals, g: GraphId, margin_total: i32) {
         }
     }
 
-    // Update the global ranks.
+    // The root's ranks must hold the cluster's top and bottom margins too.
     if g != root {
         let (minr, maxr) = (zz.gd(g).minrank, zz.gd(g).maxrank);
         let (ht1, ht2) = (zz.gd(g).ht1, zz.gd(g).ht2);
@@ -654,7 +642,7 @@ fn clust_ht(zz: &mut Globals, g: GraphId) -> bool {
     zz.gd_mut(g).ht1 = ht1;
     zz.gd_mut(g).ht2 = ht2;
 
-    // Update the global ranks.
+    // The root's ranks must hold the cluster's top and bottom margins too.
     if g != root {
         let (minr, maxr) = (zz.gd(g).minrank, zz.gd(g).maxrank);
         zz.rank_mut(root, minr).ht2 = jmath::max(zz.rank(root, minr).ht2, ht2);
@@ -665,7 +653,6 @@ fn clust_ht(zz: &mut Globals, g: GraphId) -> bool {
 
 /// `set_ycoords`: the y coordinate of every rank, from the heights of its nodes, self loop labels and clusters.
 fn set_ycoords(zz: &mut Globals, g: GraphId) {
-    // Scan ranks for tallest nodes.
     for r in zz.gd(g).minrank..=zz.gd(g).maxrank {
         for i in 0..zz.rank(g, r).n {
             let n = rank_node(zz, g, r, i);
@@ -674,11 +661,14 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
             let mut ht2 = zz.nd(n).ht / 2.0;
 
             // Have to look for high self-edge labels, too.
-            for e in edges_of(zz, zz.nd(n).other) {
-                if agtail(zz, e) == aghead(zz, e)
-                    && let Some(l) = zz.ed(e).label
-                {
-                    ht2 = jmath::max(ht2, zz.textlabels[l].dimen.y / 2.0);
+            let other = zz.nd(n).other;
+            if other.list.is_some() {
+                for e in other.edges(&zz.edge_lists) {
+                    if agtail(zz, e) == aghead(zz, e)
+                        && let Some(l) = zz.ed(e).label
+                    {
+                        ht2 = jmath::max(ht2, zz.textlabels[l].dimen.y / 2.0);
+                    }
                 }
             }
 
@@ -724,8 +714,8 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
         let d0 = below.pht2 + here.pht1 + f64::from(zz.gd(g).ranksep); // prim node sep
         let d1 = below.ht2 + here.ht1 + f64::from(CL_OFFSET); // cluster sep
         let delta = jmath::max(d0, d1);
+        // Graphviz suspects that an empty rank reflects a problem elsewhere, and leaves it without a coordinate.
         if here.n > 0 {
-            // this may reflect some problem
             let y = zz.nd(rank_node(zz, g, r + 1, 0)).coord.y + delta;
             let n = rank_node(zz, g, r, 0);
             zz.nd_mut(n).coord.y = y;
@@ -743,7 +733,7 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
     }
 
     // Copy the y coordinate from the leftmost nodes to the others.
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         let y = zz.nd(rank_node(zz, g, zz.nd(n).rank, 0)).coord.y;
         zz.nd_mut(n).coord.y = y;
     }
@@ -812,17 +802,10 @@ fn rec_bb(zz: &mut Globals, g: GraphId, root: GraphId) {
     dot_compute_bb(zz, g, root);
 }
 
-/// `set_aspect`: the bounding boxes. Scaling to a `ratio` and aspect-driven layout are not supported.
-fn set_aspect(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+/// `set_aspect`: the bounding boxes. Its scaling to a `ratio` and aspect-driven layout never happen: `graph_init`
+/// rejects `ratio` and `setAspect` rejects `aspect`.
+fn set_aspect(zz: &mut Globals, g: GraphId) {
     rec_bb(zz, g, g);
-    if zz.gd(g).maxrank > 0
-        && zz.gd(g).drawing.expect("GD_drawing").ratio_kind != EN_ratio_t::R_NONE
-    {
-        unimplemented!("ratio");
-    }
-    if asp.is_some() {
-        unimplemented!("adjustAspectRatio");
-    }
 }
 
 /// `make_leafslots`: makes room for the leaf nodes of each rank. Leaf sets are not supported, so this only
@@ -840,7 +823,7 @@ fn make_leafslots(zz: &mut Globals, g: GraphId) {
 }
 
 /// `ports_eq`: whether two edges have the same ports (undefined ports match any).
-pub fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
+pub(crate) fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
     let (e, f) = (zz.ed(e), zz.ed(f));
     e.head_port.defined == f.head_port.defined
         && ((e.head_port.p.x == f.head_port.p.x && e.head_port.p.y == f.head_port.p.y)
@@ -853,7 +836,7 @@ pub fn ports_eq(zz: &Globals, e: EdgeId, f: EdgeId) -> bool {
 /// `ND_other` edges to restore, so it never restores any.
 fn expand_leaves(zz: &mut Globals, g: GraphId) {
     make_leafslots(zz, g);
-    for n in nlist(zz, g) {
+    for n in node_list(zz, zz.gd(g).nlist) {
         if zz.nd(n).inleaf.is_some() || zz.nd(n).outleaf.is_some() {
             unimplemented!("do_leaves");
         }

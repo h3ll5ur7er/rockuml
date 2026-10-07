@@ -144,7 +144,10 @@ pub fn hd_hil_s_from_xy(p: point, n: i32) -> i32 {
     for i in (0..n).rev() {
         let xi = (x >> i) & 1;
         let yi = (y >> i) & 1;
-        s = s.wrapping_mul(4).wrapping_add(2 * xi).wrapping_add(xi ^ yi);
+        s = s
+            .wrapping_mul(4)
+            .wrapping_add(xi.wrapping_mul(2))
+            .wrapping_add(xi ^ yi);
         x ^= y;
         y ^= x & (yi - 1);
         x ^= y;

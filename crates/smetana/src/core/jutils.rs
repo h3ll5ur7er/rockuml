@@ -2,7 +2,7 @@
 
 /// `JUtils.qsort` / `qsortInt`: not libc's quicksort but a stable bubble sort, which decides the order of equal
 /// elements. Like Java, it fails if the comparator is inconsistent (the array is not sorted afterwards).
-pub fn qsort<T: Copy>(array: &mut [T], mut compare: impl FnMut(T, T) -> i32) {
+pub(crate) fn qsort<T: Copy>(array: &mut [T], mut compare: impl FnMut(T, T) -> i32) {
     let nb = array.len();
     for _pass in 0..nb.saturating_sub(1) {
         let mut change = false;
@@ -25,7 +25,7 @@ pub fn qsort<T: Copy>(array: &mut [T], mut compare: impl FnMut(T, T) -> i32) {
 }
 
 /// `CString.strcmp`: compares UTF-16 code units up to the terminating NUL and returns their difference.
-pub fn strcmp(s1: &str, s2: &str) -> i32 {
+pub(crate) fn strcmp(s1: &str, s2: &str) -> i32 {
     let mut a = s1.encode_utf16().chain(std::iter::once(0));
     let mut b = s2.encode_utf16().chain(std::iter::once(0));
     loop {
@@ -39,7 +39,7 @@ pub fn strcmp(s1: &str, s2: &str) -> i32 {
 
 /// `atof`, which Smetana implements with `Double.parseDouble`: surrounding whitespace and control characters are
 /// ignored and a `d`/`f` type suffix is accepted. Java throws on anything else; so does this.
-pub fn atof(s: &str) -> f64 {
+pub(crate) fn atof(s: &str) -> f64 {
     let t = s.trim_matches(|c: char| c <= ' ');
     let digits = t.strip_suffix(['d', 'D', 'f', 'F']).unwrap_or(t);
     let finite = digits.trim_start_matches(['+', '-']);
@@ -56,7 +56,7 @@ pub fn atof(s: &str) -> f64 {
 }
 
 /// `atoi`, which Smetana implements with `Integer.parseInt`: an optional sign and decimal digits, nothing else.
-pub fn atoi(s: &str) -> i32 {
+pub(crate) fn atoi(s: &str) -> i32 {
     s.parse::<i32>()
         .unwrap_or_else(|_| panic!("NumberFormatException: {s:?}"))
 }

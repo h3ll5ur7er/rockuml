@@ -2,8 +2,8 @@
 //! tools/oracle/smetana-unit/xlabels.sh): Hilbert keys, R-tree searches and whole `placeLabels` runs, requiring
 //! bit-identical results.
 
-use smetana::h::{boxf, point, pointf};
-use smetana::label::{
+use smetana::internals::h::{boxf, point, pointf};
+use smetana::internals::label::{
     Child, RTreeInsert, RTreeOpen, RTreeSearch, Rect_t, hd_hil_s_from_xy, label_params_t, object_t,
     placeLabels, xlabel_t,
 };

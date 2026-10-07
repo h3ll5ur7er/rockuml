@@ -179,6 +179,12 @@ B -- X
 @enduml
 ```
 
+rockuml must not hang, so the port skips a merge that would close such a cycle (`fastgr.rs`, `merge_oneway`).
+`tests/smetana-hangs/<seed>.trace` holds the traces of seeds 623, 2602 and 4612 as far as Java got: the input
+section and `phase rank`. They were taken from a JVM running `RandomGraphs` on the seed, by reading the tracer's
+unwritten trace through reflection once the layout had hung. The layout tests check that their ranks match and
+that the port lays them out.
+
 ## cgraph dumps
 
 ```bash

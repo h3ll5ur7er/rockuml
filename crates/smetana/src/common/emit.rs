@@ -12,7 +12,7 @@ fn check_control_points(cp: &[pointf; 4]) -> bool {
 }
 
 /// `update_bb_bz`: grows `bb` to hold the Bézier segment `cp`, splitting the segment until it is nearly straight.
-pub fn update_bb_bz(bb: &mut boxf, cp: &[pointf; 4]) {
+pub(crate) fn update_bb_bz(bb: &mut boxf, cp: &[pointf; 4]) {
     let outside = cp
         .iter()
         .any(|p| p.x > bb.UR.x || p.x < bb.LL.x || p.y > bb.UR.y || p.y < bb.LL.y);

@@ -108,7 +108,6 @@ fn interclrep(zz: &mut Globals, g: GraphId, e: EdgeId) {
         }
         make_chain(zz, g, t, h, e);
 
-        // Mark as cluster edge.
         let mut ve = zz.ed(e).to_virt;
         while let Some(v) = ve
             && zz.nd(aghead(zz, v)).rank <= zz.nd(h).rank
@@ -133,10 +132,10 @@ pub(crate) fn merge_chain(zz: &mut Globals, g: GraphId, e: EdgeId, f: EdgeId, fl
     while let Some(r) = rep {
         // Inter-cluster multi-edges are not counted now.
         if flag {
-            zz.ed_mut(r).count += zz.ed(e).count;
+            zz.ed_mut(r).count = zz.ed(r).count.wrapping_add(zz.ed(e).count);
         }
-        zz.ed_mut(r).xpenalty += zz.ed(e).xpenalty;
-        zz.ed_mut(r).weight += zz.ed(e).weight;
+        zz.ed_mut(r).xpenalty = zz.ed(r).xpenalty.wrapping_add(zz.ed(e).xpenalty);
+        zz.ed_mut(r).weight = zz.ed(r).weight.wrapping_add(zz.ed(e).weight);
         let head = aghead(zz, r);
         if zz.nd(head).rank == lastrank {
             break;
@@ -157,7 +156,7 @@ pub(crate) fn mergeable(zz: &Globals, e: Option<EdgeId>, f: EdgeId) -> bool {
 }
 
 /// `class2`.
-pub fn class2(zz: &mut Globals, g: GraphId) {
+pub(crate) fn class2(zz: &mut Globals, g: GraphId) {
     zz.gd_mut(g).nlist = None;
     zz.gd_mut(g).n_nodes = 0;
 

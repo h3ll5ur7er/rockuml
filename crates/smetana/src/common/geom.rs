@@ -3,23 +3,23 @@
 use crate::h::{boxf, pointf};
 
 /// `BETWEEN(a, b, c)`: `a <= b <= c`.
-pub fn BETWEEN(a: f64, b: f64, c: f64) -> bool {
+pub(crate) fn BETWEEN(a: f64, b: f64, c: f64) -> bool {
     a <= b && b <= c
 }
 
 /// `INSIDE(p, b)`: whether `p` lies in `b`, borders included.
-pub fn INSIDE(p: pointf, b: boxf) -> bool {
+pub(crate) fn INSIDE(p: pointf, b: boxf) -> bool {
     BETWEEN(b.LL.x, p.x, b.UR.x) && BETWEEN(b.LL.y, p.y, b.UR.y)
 }
 
 /// `DIST2(p, q)`: the squared distance.
-pub fn DIST2(p: pointf, q: pointf) -> f64 {
+pub(crate) fn DIST2(p: pointf, q: pointf) -> f64 {
     let (dx, dy) = (p.x - q.x, p.y - q.y);
     dx * dx + dy * dy
 }
 
 /// `APPROXEQPT(p, q, tol)`.
-pub fn APPROXEQPT(p: pointf, q: pointf, tol: f64) -> bool {
+pub(crate) fn APPROXEQPT(p: pointf, q: pointf, tol: f64) -> bool {
     DIST2(p, q) < tol * tol
 }
 
@@ -29,7 +29,7 @@ fn rotatepf(_p: pointf, _cwrot: i32) -> pointf {
 }
 
 /// `cwrotatepf`: `p` rotated clockwise by `cwrot` degrees.
-pub fn cwrotatepf(p: pointf, cwrot: i32) -> pointf {
+pub(crate) fn cwrotatepf(p: pointf, cwrot: i32) -> pointf {
     let (x, y) = (p.x, p.y);
     match cwrot {
         0 => p,
@@ -43,7 +43,7 @@ pub fn cwrotatepf(p: pointf, cwrot: i32) -> pointf {
 }
 
 /// `ccwrotatepf`: `p` rotated counter-clockwise by `ccwrot` degrees.
-pub fn ccwrotatepf(p: pointf, ccwrot: i32) -> pointf {
+pub(crate) fn ccwrotatepf(p: pointf, ccwrot: i32) -> pointf {
     let (x, y) = (p.x, p.y);
     match ccwrot {
         0 => p,
@@ -57,7 +57,7 @@ pub fn ccwrotatepf(p: pointf, ccwrot: i32) -> pointf {
 }
 
 /// `ptToLine2`: the squared distance from `p` to the line through `a` and `b`.
-pub fn ptToLine2(a: pointf, b: pointf, p: pointf) -> f64 {
+pub(crate) fn ptToLine2(a: pointf, b: pointf, p: pointf) -> f64 {
     let dx = b.x - a.x;
     let dy = b.y - a.y;
     let mut a2 = (p.y - a.y) * dx - (p.x - a.x) * dy;

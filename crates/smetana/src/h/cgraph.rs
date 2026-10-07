@@ -13,8 +13,6 @@ use crate::h::{Agedgeinfo_t, Agnodeinfo_t, Agraphinfo_t};
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Agtag_s {
     pub objtype: i32,
-    pub mtflock: i32,
-    pub attrwf: i32,
     pub seq: i32,
     pub id: i32,
 }
@@ -24,11 +22,7 @@ pub struct Agdesc_s {
     pub directed: i32,
     pub strict: i32,
     pub no_loop: i32,
-    pub maingraph: i32,
-    pub flatlock: i32,
-    pub no_write: i32,
     pub has_attrs: i32,
-    pub has_cmpnd: i32,
 }
 
 /// `Agdirected`: the description of the graphs PlantUML lays out.
@@ -36,23 +30,15 @@ pub const Agdirected: Agdesc_s = Agdesc_s {
     directed: 1,
     strict: 0,
     no_loop: 0,
-    maingraph: 1,
-    flatlock: 0,
-    no_write: 0,
     has_attrs: 0,
-    has_cmpnd: 0,
 };
 
 /// `ProtoDesc`: the description of the prototype graph that `agattr(NULL, ...)` creates.
-pub const ProtoDesc: Agdesc_s = Agdesc_s {
+pub(crate) const ProtoDesc: Agdesc_s = Agdesc_s {
     directed: 1,
     strict: 0,
     no_loop: 1,
-    maingraph: 0,
-    flatlock: 1,
-    no_write: 1,
     has_attrs: 0,
-    has_cmpnd: 0,
 };
 
 /// An attribute declaration.
@@ -61,9 +47,6 @@ pub struct Agsym_s {
     pub name: StrId,
     pub defval: StrId,
     pub id: i32,
-    pub kind: i32,
-    pub fixed: i32,
-    pub print: i32,
 }
 
 /// An object's attribute values (record `_AG_strdata`), indexed by `Agsym_s.id`.
@@ -75,6 +58,7 @@ pub struct Agattr_s {
 
 /// A graph's attribute declarations (record `_AG_datadict`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[allow(clippy::struct_field_names, reason = "cgraph's names")]
 pub struct Agdatadict_s {
     pub dict_n: DictId,
     pub dict_e: DictId,
@@ -135,7 +119,7 @@ pub struct Agedge_s {
 
 /// An edge: both halves and the records they share (C's `set_data` keeps the halves' `data` equal).
 #[derive(Clone, Debug, Default)]
-pub struct Agedgepair_s {
+pub(crate) struct Agedgepair_s {
     pub out: Agedge_s,
     pub in_: Agedge_s,
     pub(crate) recs: u8,

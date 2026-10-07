@@ -12,9 +12,9 @@ use crate::core::jmath::{ROUND, hypot};
 use crate::h::{SHAPE_INFO, boxf, inside_t, point, pointf, polygon_t, port, shape_functions};
 
 /// A shape's `insidefn`: whether a point, relative to the node's centre, is inside the shape (or port box).
-pub type InsideFn = fn(&mut Globals, &inside_t, pointf) -> bool;
+pub(crate) type InsideFn = fn(&mut Globals, &inside_t, pointf) -> bool;
 /// A shape's `pboxfn`: the box an edge leaves through when its port demands one; returns the side mask.
-pub type PboxFn = fn(&mut Globals, NodeId, &port, i32, &mut boxf, &mut i32) -> i32;
+pub(crate) type PboxFn = fn(&mut Globals, NodeId, &port, i32, &mut boxf, &mut i32) -> i32;
 
 impl shape_functions {
     pub fn insidefn(self) -> InsideFn {
@@ -65,7 +65,7 @@ fn has_html_label(zz: &Globals, n: NodeId) -> bool {
 
 /// `poly_inside`. It caches what it derives from the node's polygon until it is asked about another node, and
 /// starts testing at the side it last stopped at.
-pub fn poly_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
+pub(crate) fn poly_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
     let bp = inside_context.s_bp;
     let n = inside_context.s_n.expect("inside_context.s.n");
     let g = agraphof(zz, n);
@@ -145,7 +145,7 @@ pub fn poly_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bo
 }
 
 /// `poly_path`: polygons constrain no edge, unless they have HTML ports.
-pub fn poly_path(
+pub(crate) fn poly_path(
     zz: &mut Globals,
     n: NodeId,
     _p: &port,
@@ -160,7 +160,7 @@ pub fn poly_path(
 }
 
 /// `record_inside`.
-pub fn record_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
+pub(crate) fn record_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> bool {
     let n = inside_context.s_n.expect("inside_context.s.n");
     let p = ccwrotatepf(p, 90 * zz.gd(agraphof(zz, n)).GD_rankdir());
     let bbox = match inside_context.s_bp {
@@ -171,7 +171,7 @@ pub fn record_inside(zz: &mut Globals, inside_context: &inside_t, p: pointf) -> 
 }
 
 /// `record_path`: for a port on a top-level field, the column of that field across the whole node height.
-pub fn record_path(
+pub(crate) fn record_path(
     zz: &mut Globals,
     n: NodeId,
     prt: &port,
@@ -257,10 +257,11 @@ fn closestSide(zz: &Globals, n: NodeId, other: NodeId, oldport: &port) -> Option
                 y: (b.LL.y + b.UR.y) as i32 / 2,
             },
         };
-        p.x += pt.x;
-        p.y += pt.y;
-        let dx = f64::from(p.x - opt.x);
-        let dy = f64::from(p.y - opt.y);
+        // Java's int arithmetic, which DIST2 only widens after subtracting.
+        p.x = p.x.wrapping_add(pt.x);
+        p.y = p.y.wrapping_add(pt.y);
+        let dx = f64::from(p.x.wrapping_sub(opt.x));
+        let dy = f64::from(p.y.wrapping_sub(opt.y));
         let d = (dx * dx + dy * dy) as i32;
         if rv.is_none() || d < mind {
             mind = d;
@@ -271,7 +272,7 @@ fn closestSide(zz: &Globals, n: NodeId, other: NodeId, oldport: &port) -> Option
 }
 
 /// `resolvePort`: a dynamic port (`compass` `_`) fixed to the side closest to `other`.
-pub fn resolvePort(zz: &mut Globals, n: NodeId, other: NodeId, oldport: &port) -> port {
+pub(crate) fn resolvePort(zz: &mut Globals, n: NodeId, other: NodeId, oldport: &port) -> port {
     let mut rv = port::default();
     let compass = closestSide(zz, n, other, oldport);
     rv.name = oldport.name;

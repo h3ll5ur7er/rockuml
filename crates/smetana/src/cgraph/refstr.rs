@@ -23,13 +23,13 @@ fn refsymbind(zz: &mut Globals, clos: ClosId, s: &str) -> Option<StrId> {
 }
 
 /// `agstrbind`: the interned copy of `s`, if there is one.
-pub fn agstrbind(zz: &mut Globals, g: GraphId, s: &str) -> Option<StrId> {
+pub(crate) fn agstrbind(zz: &mut Globals, g: GraphId, s: &str) -> Option<StrId> {
     let clos = refdict(zz, g);
     refsymbind(zz, clos, s)
 }
 
 /// `agstrdup`: interns `s`, or counts one more reference to its interned copy.
-pub fn agstrdup(zz: &mut Globals, g: GraphId, s: &str) -> StrId {
+pub(crate) fn agstrdup(zz: &mut Globals, g: GraphId, s: &str) -> StrId {
     let clos = refdict(zz, g);
     if let Some(r) = refsymbind(zz, clos, s) {
         zz.refstrs[r].refcnt += 1;
@@ -46,7 +46,7 @@ pub fn agstrdup(zz: &mut Globals, g: GraphId, s: &str) -> StrId {
 }
 
 /// `agstrfree`: drops a reference; the last one removes the string, so interning it again makes a new copy.
-pub fn agstrfree(zz: &mut Globals, g: GraphId, s: Option<StrId>) -> i32 {
+pub(crate) fn agstrfree(zz: &mut Globals, g: GraphId, s: Option<StrId>) -> i32 {
     let Some(s) = s else { return -1 };
     let clos = refdict(zz, g);
     let text = zz.refstrs[s].s.clone();
@@ -62,6 +62,6 @@ pub fn agstrfree(zz: &mut Globals, g: GraphId, s: Option<StrId>) -> i32 {
 }
 
 /// `aghtmlstr`: whether `s` was interned as an HTML string.
-pub fn aghtmlstr(zz: &Globals, s: StrId) -> i32 {
+pub(crate) fn aghtmlstr(zz: &Globals, s: StrId) -> i32 {
     zz.refstrs[s].refcnt & HTML_BIT
 }

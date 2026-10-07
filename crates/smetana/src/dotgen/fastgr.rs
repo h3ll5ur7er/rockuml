@@ -57,12 +57,12 @@ fn ffe(zz: &Globals, u: NodeId, uL: elist, v: NodeId, vL: elist) -> Option<EdgeI
 }
 
 /// `find_fast_edge`.
-pub fn find_fast_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
+pub(crate) fn find_fast_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
     ffe(zz, u, zz.nd(u).out, v, zz.nd(v).in_)
 }
 
 /// `find_flat_edge`.
-pub fn find_flat_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
+pub(crate) fn find_flat_edge(zz: &Globals, u: NodeId, v: NodeId) -> Option<EdgeId> {
     ffe(zz, u, zz.nd(u).flat_out, v, zz.nd(v).flat_in)
 }
 
@@ -76,18 +76,19 @@ fn safe_list_append(zz: &mut Globals, e: EdgeId, n: NodeId, which: EdgeList) {
 }
 
 /// `fast_edge`: installs `e` in its tail's out-list and its head's in-list.
-pub fn fast_edge(zz: &mut Globals, e: EdgeId) -> EdgeId {
+pub(crate) fn fast_edge(zz: &mut Globals, e: EdgeId) -> EdgeId {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     append(zz, e, tail, EdgeList::Out);
     append(zz, e, head, EdgeList::In);
     e
 }
 
-/// `zapinlist`: removes `e` from a list, moving the last edge into its slot.
+/// `zapinlist`: removes `e` from a list, moving the last edge into its slot. Like Java, it only reads the list
+/// while searching it, so an empty list may be unallocated.
 pub(crate) fn zapinlist(zz: &mut Globals, n: NodeId, which: EdgeList, e: EdgeId) {
     let l = *edge_list(zz, n, which);
-    let list = l.list.expect("edge list");
-    if let Some(i) = (0..l.size).find(|&i| zz.edge_lists.get(list, i) == Some(e)) {
+    if let Some(i) = (0..l.size).find(|&i| l.get(&zz.edge_lists, i) == Some(e)) {
+        let list = l.list.expect("edge list");
         let size = l.size - 1;
         edge_list(zz, n, which).size = size;
         let last = zz.edge_lists.get(list, size);
@@ -97,20 +98,20 @@ pub(crate) fn zapinlist(zz: &mut Globals, n: NodeId, which: EdgeList, e: EdgeId)
 }
 
 /// `delete_fast_edge`.
-pub fn delete_fast_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn delete_fast_edge(zz: &mut Globals, e: EdgeId) {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     zapinlist(zz, tail, EdgeList::Out, e);
     zapinlist(zz, head, EdgeList::In, e);
 }
 
 /// `other_edge`.
-pub fn other_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn other_edge(zz: &mut Globals, e: EdgeId) {
     let tail = agtail(zz, e);
     append(zz, e, tail, EdgeList::Other);
 }
 
 /// `safe_other_edge`.
-pub fn safe_other_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn safe_other_edge(zz: &mut Globals, e: EdgeId) {
     let tail = agtail(zz, e);
     safe_list_append(zz, e, tail, EdgeList::Other);
 }
@@ -126,7 +127,12 @@ pub(crate) fn new_edge_pair(zz: &mut Globals) -> EdgeId {
 }
 
 /// `new_virtual_edge`: a virtual edge from `u` to `v`, standing for `orig` if given.
-pub fn new_virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
+pub(crate) fn new_virtual_edge(
+    zz: &mut Globals,
+    u: NodeId,
+    v: NodeId,
+    orig: Option<EdgeId>,
+) -> EdgeId {
     let e = new_edge_pair(zz);
     M_agtail(zz, e, u);
     M_aghead(zz, e, v);
@@ -168,13 +174,13 @@ pub fn new_virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<Edg
 }
 
 /// `virtual_edge`: a new virtual edge, installed in the fast graph.
-pub fn virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
+pub(crate) fn virtual_edge(zz: &mut Globals, u: NodeId, v: NodeId, orig: Option<EdgeId>) -> EdgeId {
     let e = new_virtual_edge(zz, u, v, orig);
     fast_edge(zz, e)
 }
 
 /// `fast_node`: prepends `n` to `g`'s node list.
-pub fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
+pub(crate) fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
     let next = zz.gd(g).nlist;
     zz.nd_mut(n).next = next;
     if let Some(next) = next {
@@ -185,7 +191,7 @@ pub fn fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
 }
 
 /// `delete_fast_node`.
-pub fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
+pub(crate) fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
     let (prev, next) = (zz.nd(n).prev, zz.nd(n).next);
     if let Some(next) = next {
         zz.nd_mut(next).prev = prev;
@@ -197,7 +203,7 @@ pub fn delete_fast_node(zz: &mut Globals, g: GraphId, n: NodeId) {
 }
 
 /// `virtual_node`: a new virtual node of `g`, in its fast graph.
-pub fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
+pub(crate) fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
     let root = agroot(zz, g);
     let n = zz.new_agnode(root);
     zz.tag_mut(n).objtype = AGNODE;
@@ -219,7 +225,7 @@ pub fn virtual_node(zz: &mut Globals, g: GraphId) -> NodeId {
 }
 
 /// `flat_edge`: installs a flat (same rank) edge.
-pub fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
+pub(crate) fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
     let (tail, head) = (agtail(zz, e), aghead(zz, e));
     append(zz, e, tail, EdgeList::FlatOut);
     append(zz, e, head, EdgeList::FlatIn);
@@ -229,7 +235,7 @@ pub fn flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) {
 }
 
 /// `delete_flat_edge`.
-pub fn delete_flat_edge(zz: &mut Globals, e: EdgeId) {
+pub(crate) fn delete_flat_edge(zz: &mut Globals, e: EdgeId) {
     if let Some(orig) = zz.ed(e).to_orig
         && zz.ed(orig).to_virt == Some(e)
     {
@@ -247,18 +253,68 @@ fn basic_merge(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     }
     let mut rep = Some(rep);
     while let Some(r) = rep {
-        zz.ed_mut(r).count += zz.ed(e).count;
-        zz.ed_mut(r).xpenalty += zz.ed(e).xpenalty;
-        zz.ed_mut(r).weight += zz.ed(e).weight;
+        zz.ed_mut(r).count = zz.ed(r).count.wrapping_add(zz.ed(e).count);
+        zz.ed_mut(r).xpenalty = zz.ed(r).xpenalty.wrapping_add(zz.ed(e).xpenalty);
+        zz.ed_mut(r).weight = zz.ed(r).weight.wrapping_add(zz.ed(e).weight);
         rep = zz.ed(r).to_virt;
     }
 }
 
 /// `merge_oneway`: makes `rep` stand for `e` too.
-pub fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
+///
+/// Deviation from Smetana: a merge that would close an `ED_to_virt` cycle is skipped (and `flat_rev` does not
+/// close it either). Java makes it when `flat_reorder` reverses two opposite flat edges between clusters one after
+/// the other, merging each into the other; `basic_merge` then follows the cycle forever, and PlantUML hangs
+/// (`tests/smetana-hangs`). Later Graphviz skips the merge when `e == ED_to_virt(rep)`, as a `merge_oneway
+/// glitch`; the port checks `rep`'s whole chain, so no longer cycle can form either. Where Smetana throws on the
+/// glitch it knows, the port still fails.
+pub(crate) fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     if Some(rep) == zz.ed(e).to_virt {
         unimplemented!("merge_oneway glitch");
     }
+    if chain_reaches(zz, rep, e) {
+        return;
+    }
     zz.ed_mut(e).to_virt = Some(rep);
     basic_merge(zz, e, rep);
+}
+
+/// Whether the `ED_to_virt` chain starting at `from` reaches `target`.
+pub(crate) fn chain_reaches(zz: &Globals, from: EdgeId, target: EdgeId) -> bool {
+    std::iter::successors(Some(from), |&x| zz.ed(x).to_virt).any(|x| x == target)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cgraph::graph::agopen;
+    use crate::h::cgraph::Agdirected;
+
+    #[test]
+    fn zapinlist_leaves_an_unallocated_empty_list_alone() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let n = zz.new_agnode(g);
+        let e = zz.new_agedgepair();
+        assert_eq!(zz.nd(n).out.list, None);
+        zapinlist(&mut zz, n, EdgeList::Out, e);
+        assert_eq!(zz.nd(n).out, elist::default());
+    }
+
+    #[test]
+    fn zapinlist_moves_the_last_edge_into_the_gap() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let n = zz.new_agnode(g);
+        let edges = [
+            zz.new_agedgepair(),
+            zz.new_agedgepair(),
+            zz.new_agedgepair(),
+        ];
+        for e in edges {
+            append(&mut zz, e, n, EdgeList::Out);
+        }
+        zapinlist(&mut zz, n, EdgeList::Out, edges[0]);
+        assert_eq!(zz.nd(n).out.edges(&zz.edge_lists), [edges[2], edges[1]]);
+    }
 }

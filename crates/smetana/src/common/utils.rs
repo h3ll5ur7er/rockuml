@@ -74,7 +74,7 @@ pub(crate) fn agget_text(zz: &mut Globals, obj: impl Into<Agobj>, name: &str) ->
 }
 
 /// `late_int`: the integer value of `attr` on `obj`, `def` if unset or empty, at least `low`.
-pub fn late_int(
+pub(crate) fn late_int(
     zz: &mut Globals,
     obj: impl Into<Agobj>,
     attr: Option<SymId>,
@@ -90,7 +90,7 @@ pub fn late_int(
 }
 
 /// `late_double`: the floating-point value of `attr` on `obj`, `def` if unset or empty, at least `low`.
-pub fn late_double(
+pub(crate) fn late_double(
     zz: &mut Globals,
     obj: impl Into<Agobj>,
     attr: Option<SymId>,
@@ -106,7 +106,7 @@ pub fn late_double(
 }
 
 /// `late_string`: the value of `attr` on `obj`, `def` if the attribute is not declared.
-pub fn late_string(
+pub(crate) fn late_string(
     zz: &mut Globals,
     obj: impl Into<Agobj>,
     attr: Option<SymId>,
@@ -119,7 +119,7 @@ pub fn late_string(
 }
 
 /// `late_nnstring`: like [`late_string`], with `def` also replacing an empty value.
-pub fn late_nnstring(
+pub(crate) fn late_nnstring(
     zz: &mut Globals,
     obj: impl Into<Agobj>,
     attr: Option<SymId>,
@@ -131,7 +131,7 @@ pub fn late_nnstring(
 }
 
 /// `UF_find`: the representative of `n`'s set, halving the path on the way.
-pub fn UF_find(zz: &mut Globals, mut n: NodeId) -> NodeId {
+pub(crate) fn UF_find(zz: &mut Globals, mut n: NodeId) -> NodeId {
     while let Some(parent) = zz.nd(n).UF_parent
         && parent != n
     {
@@ -144,7 +144,7 @@ pub fn UF_find(zz: &mut Globals, mut n: NodeId) -> NodeId {
 }
 
 /// `UF_union`: merges the sets of `u` and `v` and returns the new representative.
-pub fn UF_union(zz: &mut Globals, u: NodeId, mut v: NodeId) -> NodeId {
+pub(crate) fn UF_union(zz: &mut Globals, u: NodeId, mut v: NodeId) -> NodeId {
     if u == v {
         return u;
     }
@@ -169,7 +169,7 @@ pub fn UF_union(zz: &mut Globals, u: NodeId, mut v: NodeId) -> NodeId {
 }
 
 /// `UF_singleton`.
-pub fn UF_singleton(zz: &mut Globals, u: NodeId) {
+pub(crate) fn UF_singleton(zz: &mut Globals, u: NodeId) {
     let info = zz.nd_mut(u);
     info.UF_size = 1;
     info.UF_parent = None;
@@ -177,13 +177,13 @@ pub fn UF_singleton(zz: &mut Globals, u: NodeId) {
 }
 
 /// `UF_setname`: makes `v` the parent of the representative `u`.
-pub fn UF_setname(zz: &mut Globals, u: NodeId, v: NodeId) {
+pub(crate) fn UF_setname(zz: &mut Globals, u: NodeId, v: NodeId) {
     zz.nd_mut(u).UF_parent = Some(v);
     zz.nd_mut(v).UF_size += zz.nd(u).UF_size;
 }
 
 /// `maptoken`: the value of the first name equal to `p`, or the last value (one past the names) otherwise.
-pub fn maptoken(p: Option<&str>, name: &[&str], val: &[i32]) -> i32 {
+pub(crate) fn maptoken(p: Option<&str>, name: &[&str], val: &[i32]) -> i32 {
     let i = name
         .iter()
         .position(|q| p.is_some_and(|p| strcmp(p, q) == 0))
@@ -202,7 +202,7 @@ fn strcaseeq(a: &str, b: &str) -> bool {
 }
 
 /// `mapBool`.
-pub fn mapBool(p: Option<&str>, dflt: bool) -> bool {
+pub(crate) fn mapBool(p: Option<&str>, dflt: bool) -> bool {
     let Some(p) = p.filter(|p| !p.is_empty()) else {
         return dflt;
     };
@@ -218,12 +218,12 @@ pub fn mapBool(p: Option<&str>, dflt: bool) -> bool {
 }
 
 /// `mapbool`.
-pub fn mapbool(p: Option<&str>) -> bool {
+pub(crate) fn mapbool(p: Option<&str>) -> bool {
     mapBool(p, false)
 }
 
 /// `common_init_node`: size, shape and label of a node, then the shape's own initialisation.
-pub fn common_init_node(zz: &mut Globals, n: NodeId) {
+pub(crate) fn common_init_node(zz: &mut Globals, n: NodeId) {
     let width = late_double(zz, n, zz.N_width, DEFAULT_NODEWIDTH, MIN_NODEWIDTH);
     zz.nd_mut(n).width = width;
     let height = late_double(zz, n, zz.N_height, DEFAULT_NODEHEIGHT, MIN_NODEHEIGHT);
@@ -253,8 +253,7 @@ pub fn common_init_node(zz: &mut Globals, n: NodeId) {
     {
         unimplemented!("node xlabel");
     }
-    let showboxes = late_int(zz, n, zz.N_showboxes, 0, 0);
-    zz.nd_mut(n).showboxes = showboxes;
+
     initfn(zz, n);
 }
 
@@ -311,7 +310,7 @@ fn edge_label_text(zz: &mut Globals, e: EdgeId, sym: Option<SymId>) -> Option<St
 }
 
 /// `common_init_edge`: an edge's labels and ports. Returns whether it has a label.
-pub fn common_init_edge(zz: &mut Globals, e: EdgeId) -> i32 {
+pub(crate) fn common_init_edge(zz: &mut Globals, e: EdgeId) -> i32 {
     let mut r = 0;
     let mut fi = fontinfo::default();
     let mut lfi = fontinfo::default();
@@ -422,7 +421,7 @@ pub fn setEdgeType(zz: &mut Globals, g: GraphId, dflt: i32) {
 }
 
 /// `gv_nodesize`: a node's half widths and height in points, from its size in inches.
-pub fn gv_nodesize(zz: &mut Globals, n: NodeId, flip: bool) {
+pub(crate) fn gv_nodesize(zz: &mut Globals, n: NodeId, flip: bool) {
     let info = zz.nd_mut(n);
     if flip {
         let w = INCH2PS(info.height);
@@ -480,7 +479,7 @@ pub(crate) fn late_bool(attr: Option<SymId>, def: i32) -> bool {
 
 /// `dotneato_closest` (`utils.c`): the point of the bezier segment nearest to `pt`, found by bisection. Smetana
 /// only implements the first step, so it throws unless that step already decides.
-pub fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> pointf {
+pub(crate) fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> pointf {
     let list = spl.list.expect("spline list");
     let mut besti = -1;
     let mut bestj = -1;
@@ -519,7 +518,7 @@ const W_DEGREE: usize = 5;
 
 /// `Bezier`: the point at `t` of the Bézier curve with control points `V[0..=degree]`, filling in the control
 /// points of the two halves split there if `Left` or `Right` is given.
-pub fn Bezier(
+pub(crate) fn Bezier(
     V: &[pointf],
     degree: usize,
     t: f64,

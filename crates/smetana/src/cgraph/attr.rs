@@ -35,17 +35,10 @@ fn agdictof(zz: &Globals, g: GraphId, kind: i32) -> Option<DictId> {
 }
 
 /// `agnewsym`.
-fn agnewsym(zz: &mut Globals, g: GraphId, name: &str, value: &str, id: i32, kind: i32) -> SymId {
+fn agnewsym(zz: &mut Globals, g: GraphId, name: &str, value: &str, id: i32) -> SymId {
     let name = agstrdup(zz, g, name);
     let defval = agstrdup(zz, g, value);
-    zz.syms.push(Agsym_s {
-        name,
-        defval,
-        id,
-        kind,
-        fixed: 0,
-        print: 0,
-    })
+    zz.syms.push(Agsym_s { name, defval, id })
 }
 
 fn sym_key(zz: &Globals, sym: SymId) -> JStr {
@@ -176,24 +169,18 @@ fn setattr(zz: &mut Globals, g: GraphId, kind: i32, name: &str, value: &str) -> 
     } else if let Some(psym) = agdictsym(zz, ldict, name) {
         // A new local definition.
         let id = zz.syms[psym].id;
-        let lsym = agnewsym(zz, g, name, value, id, kind);
+        let lsym = agnewsym(zz, g, name, value, id);
         zz.attr_dicts.dtinsert(ldict, lsym, JStr(name.to_owned()));
         lsym
     } else {
         // A new global definition.
         let rdict = agdictof(zz, root, kind).expect("root declarations");
         let id = zz.attr_dicts.dt(rdict).dtsize_();
-        let rsym = agnewsym(zz, g, name, value, id, kind);
+        let rsym = agnewsym(zz, g, name, value, id);
         zz.attr_dicts.dtinsert(rdict, rsym, JStr(name.to_owned()));
         match kind {
             AGRAPH => {
-                agapply(
-                    zz,
-                    root,
-                    root,
-                    &mut |zz, g, obj| addattr(zz, g, obj.into(), rsym),
-                    true,
-                );
+                agapply(zz, root, &mut |zz, g| addattr(zz, g, g.into(), rsym), true);
             }
             AGNODE => {
                 let mut n = agfstnode(zz, root);
@@ -307,7 +294,7 @@ pub fn agxset(zz: &mut Globals, obj: impl Into<Agobj>, sym: SymId, value: &str) 
             agstrfree(zz, g, Some(old));
             zz.syms[lsym].defval = agstrdup(zz, g, value);
         } else {
-            let lsym = agnewsym(zz, g, &name, value, id, objtype);
+            let lsym = agnewsym(zz, g, &name, value, id);
             zz.attr_dicts
                 .searchf(dict, Some(DtArg::object(lsym, JStr(name))), DT_INSERT);
         }
@@ -333,16 +320,16 @@ pub fn agsafeset(
 }
 
 /// `agfindgraphattr`.
-pub fn agfindgraphattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindgraphattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), AGRAPH, name, None)
 }
 
 /// `agfindnodeattr`.
-pub fn agfindnodeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindnodeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), AGNODE, name, None)
 }
 
 /// `agfindedgeattr`.
-pub fn agfindedgeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
+pub(crate) fn agfindedgeattr(zz: &mut Globals, g: GraphId, name: &str) -> Option<SymId> {
     agattr(zz, Some(g), super::AGEDGE, name, None)
 }

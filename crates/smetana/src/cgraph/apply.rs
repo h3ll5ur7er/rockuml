@@ -5,33 +5,26 @@ use super::subg::{agfstsubg, agnxtsubg};
 use crate::core::Globals;
 use crate::core::ids::GraphId;
 
-/// The function applied: `fn(g, obj)`, the `arg` being captured.
-pub type Agobjfn<'a> = dyn FnMut(&mut Globals, GraphId, GraphId) + 'a;
+/// The function applied: `fn(g, obj)` with `obj` being the graph `g` itself, the `arg` being captured.
+pub(crate) type Agobjfn<'a> = dyn FnMut(&mut Globals, GraphId) + 'a;
 
 /// `rec_apply`: `f` on `g`, then on the subgraphs in id order, depth first (or the reverse if not `preorder`).
-fn rec_apply(zz: &mut Globals, g: GraphId, obj: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
+fn rec_apply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
     if preorder {
-        f(zz, g, obj);
+        f(zz, g);
     }
     let mut sub = agfstsubg(zz, g);
     while let Some(s) = sub {
-        rec_apply(zz, s, s, f, preorder);
+        rec_apply(zz, s, f, preorder);
         sub = agnxtsubg(zz, s);
     }
     if !preorder {
-        f(zz, g, obj);
+        f(zz, g);
     }
 }
 
-/// `agapply` for a graph object. Like Java, it starts from `subgraph_search(g, obj)`, which is `g` whatever
-/// `obj` is.
-pub fn agapply(
-    zz: &mut Globals,
-    g: GraphId,
-    _obj: GraphId,
-    f: &mut Agobjfn<'_>,
-    preorder: bool,
-) -> i32 {
-    rec_apply(zz, g, g, f, preorder);
-    0
+/// `agapply` for the graph `g` itself. Like Java, it starts from `subgraph_search(g, obj)`, which is `g`
+/// whatever `obj` is, so `obj` is left out. The success code C returns is always 0 here, so it is left out too.
+pub(crate) fn agapply(zz: &mut Globals, g: GraphId, f: &mut Agobjfn<'_>, preorder: bool) {
+    rec_apply(zz, g, f, preorder);
 }

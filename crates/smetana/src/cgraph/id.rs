@@ -28,7 +28,7 @@ fn idmap(zz: &mut Globals, g: GraphId, str: Option<&str>, createflag: bool) -> i
 
 /// `agmapnametoid`: the id of the object called `str`, or `None` where C returns 0 (no name and no creation).
 /// Like Smetana, it does not support cgraph's internal `%<id>` names.
-pub fn agmapnametoid(
+pub(crate) fn agmapnametoid(
     zz: &mut Globals,
     g: GraphId,
     str: Option<&str>,

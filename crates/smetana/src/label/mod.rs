@@ -105,4 +105,4 @@ pub struct RTree {
 }
 
 /// `LeafList_t`: the leaf branches a search found, in the order of C's linked list.
-pub type LeafList_t = Vec<Branch_t>;
+pub(crate) type LeafList_t = Vec<Branch_t>;
