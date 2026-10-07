@@ -16,6 +16,7 @@ debug chen/relationship-attributes.puml
 debug chen/university.puml
 debug chen/weak-entity.puml
 debug class/abstract-italic.puml
+debug class/allowmixing.puml
 debug class/association-class.puml
 debug class/association-diamond.puml
 debug class/basic.puml
@@ -28,6 +29,7 @@ debug class/hide-show.puml
 debug class/hide-stereotype.puml
 debug class/kinds-basic.puml
 debug class/kinds-extra.puml
+debug class/kinds-records.puml
 debug class/layout-cycles.puml
 debug class/layout-edge-labels.puml
 debug class/layout-hidden-links.puml
@@ -84,9 +86,11 @@ debug common/skinparam.puml
 debug common/style.puml
 debug component/basic.puml
 debug component/colors-inline.puml
+debug component/component-description.puml
 debug component/components-syntax.puml
 debug component/containers.puml
 debug component/directions.puml
+debug component/hide-unlinked.puml
 debug component/interfaces-syntax.puml
 debug component/left-to-right.puml
 debug component/link-cardinality.puml
@@ -133,6 +137,7 @@ debug deployment/link-lines.puml
 debug deployment/links-labels.puml
 debug deployment/links-styles.puml
 debug deployment/long-names.puml
+debug deployment/multiline-description.puml
 debug deployment/nesting-deep.puml
 debug deployment/nesting.puml
 debug deployment/notes.puml
@@ -379,6 +384,7 @@ dsvg chen/relationship-attributes.puml
 dsvg chen/university.puml
 dsvg chen/weak-entity.puml
 dsvg class/abstract-italic.puml
+dsvg class/allowmixing.puml
 dsvg class/association-class.puml
 dsvg class/association-diamond.puml
 dsvg class/basic.puml
@@ -391,6 +397,7 @@ dsvg class/hide-show.puml
 dsvg class/hide-stereotype.puml
 dsvg class/kinds-basic.puml
 dsvg class/kinds-extra.puml
+dsvg class/kinds-records.puml
 dsvg class/layout-cycles.puml
 dsvg class/layout-edge-labels.puml
 dsvg class/layout-hidden-links.puml
@@ -447,9 +454,11 @@ dsvg common/skinparam.puml
 dsvg common/style.puml
 dsvg component/basic.puml
 dsvg component/colors-inline.puml
+dsvg component/component-description.puml
 dsvg component/components-syntax.puml
 dsvg component/containers.puml
 dsvg component/directions.puml
+dsvg component/hide-unlinked.puml
 dsvg component/interfaces-syntax.puml
 dsvg component/left-to-right.puml
 dsvg component/link-cardinality.puml
@@ -496,6 +505,7 @@ dsvg deployment/link-lines.puml
 dsvg deployment/links-labels.puml
 dsvg deployment/links-styles.puml
 dsvg deployment/long-names.puml
+dsvg deployment/multiline-description.puml
 dsvg deployment/nesting-deep.puml
 dsvg deployment/nesting.puml
 dsvg deployment/notes.puml
@@ -739,6 +749,7 @@ png chen/relationship-attributes.puml
 png chen/university.puml
 png chen/weak-entity.puml
 png class/abstract-italic.puml
+png class/allowmixing.puml
 png class/association-class.puml
 png class/association-diamond.puml
 png class/basic.puml
@@ -751,6 +762,7 @@ png class/hide-show.puml
 png class/hide-stereotype.puml
 png class/kinds-basic.puml
 png class/kinds-extra.puml
+png class/kinds-records.puml
 png class/layout-cycles.puml
 png class/layout-edge-labels.puml
 png class/layout-hidden-links.puml
@@ -807,9 +819,11 @@ png common/skinparam.puml
 png common/style.puml
 png component/basic.puml
 png component/colors-inline.puml
+png component/component-description.puml
 png component/components-syntax.puml
 png component/containers.puml
 png component/directions.puml
+png component/hide-unlinked.puml
 png component/interfaces-syntax.puml
 png component/left-to-right.puml
 png component/link-cardinality.puml
@@ -856,6 +870,7 @@ png deployment/link-lines.puml
 png deployment/links-labels.puml
 png deployment/links-styles.puml
 png deployment/long-names.puml
+png deployment/multiline-description.puml
 png deployment/nesting-deep.puml
 png deployment/nesting.puml
 png deployment/notes.puml
@@ -1494,9 +1509,11 @@ svg common/skinparam.puml
 svg common/style.puml
 svg component/basic.puml
 svg component/colors-inline.puml
+svg component/component-description.puml
 svg component/components-syntax.puml
 svg component/containers.puml
 svg component/directions.puml
+svg component/hide-unlinked.puml
 svg component/interfaces-syntax.puml
 svg component/left-to-right.puml
 svg component/link-cardinality.puml
@@ -1542,6 +1559,7 @@ svg deployment/link-lines.puml
 svg deployment/links-labels.puml
 svg deployment/links-styles.puml
 svg deployment/long-names.puml
+svg deployment/multiline-description.puml
 svg deployment/nesting-deep.puml
 svg deployment/nesting.puml
 svg deployment/notes.puml
