@@ -177,8 +177,8 @@ impl TextBlock for EntityImageClass {
 }
 
 impl IEntityImage for EntityImageClass {}
+
 /// `root element classDiagram class`, then `more`, with the entity's `<<<style>>>` names.
-/// `root element classDiagram class`, then `more`.
 fn class_signature(entity: &Entity, more: &[SName]) -> StyleSignature {
     let mut names = vec![
         SName::Root,

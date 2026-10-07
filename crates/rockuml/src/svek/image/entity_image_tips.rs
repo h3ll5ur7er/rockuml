@@ -5,7 +5,7 @@ use std::rc::Rc;
 use super::entity_image_note::note_style;
 use super::opale::Opale;
 use crate::abel::{Entity, Position};
-use crate::color::ColorType;
+use crate::color::{ColorType, HColor};
 use crate::diagram::cuca::CucaDiagram;
 use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
@@ -51,6 +51,7 @@ impl EntityImageTips {
                     &tip.display,
                     style.font_configuration(),
                     HorizontalAlignment::Left,
+                    style.wrap_width(),
                     &style,
                     skin,
                 );
@@ -135,7 +136,7 @@ impl TextBlock for EntityImageTips {
     /// Tips are only drawn in a layout, next to their entity's members.
     fn draw_u(&self, _ug: &UGraphic) {}
 
-    fn backcolor(&self) -> Option<crate::color::HColor> {
+    fn backcolor(&self) -> Option<HColor> {
         Some(self.base.get_backcolor())
     }
 }

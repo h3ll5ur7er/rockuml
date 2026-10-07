@@ -71,6 +71,7 @@ impl EntityImageNote {
                 style
                     .horizontal_alignment()
                     .unwrap_or(HorizontalAlignment::Left),
+                style.wrap_width(),
                 &style,
                 skin,
             )
@@ -96,8 +97,14 @@ impl EntityImageNote {
         self.text_block.calculate_dimension(string_bounder).height + 2.0 * MARGIN_Y
     }
 
+    /// The note as a callout along `link`, which the layout draws only for a laid out link.
+    #[cfg(test)]
+    pub(crate) fn draw_as_callout(&self, ug: &UGraphic, link: OpaleLink) {
+        self.draw_with(ug, Some(link));
+    }
+
     /// Draws the note, as a callout along `opale_link` if it has one.
-    pub(crate) fn draw_with(&self, ug: &UGraphic, opale_link: Option<OpaleLink>) {
+    fn draw_with(&self, ug: &UGraphic, opale_link: Option<OpaleLink>) {
         ug.start_group(&self.group);
         if let Some(url) = &self.url {
             ug.start_url(url);

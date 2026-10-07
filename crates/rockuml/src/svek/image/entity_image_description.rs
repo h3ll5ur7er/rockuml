@@ -105,6 +105,7 @@ impl EntityImageDescription {
                 display,
                 desc_style.font_configuration(),
                 style_title.horizontal_alignment().unwrap_or_default(),
+                style.wrap_width(),
                 desc_style,
                 skin,
             ))

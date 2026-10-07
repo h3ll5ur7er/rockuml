@@ -4,7 +4,7 @@
 
 use super::super::{AbstractEntityImage, IEntityImage, MARGIN, MARGIN_LINE};
 use crate::abel::Entity;
-use crate::color::ColorType;
+use crate::color::{ColorType, Colors};
 use crate::creole::{CreoleMode, SheetBlock2};
 use crate::decoration::symbol::TextBlockInEllipse;
 use crate::diagram::cuca::CucaDiagram;
@@ -24,7 +24,7 @@ struct ChenImage {
     /// The quark's qualified name, which PlantUML names the image's group after.
     name: String,
     url: Option<crate::klimt::url::Url>,
-    colors: crate::color::Colors,
+    colors: Colors,
 }
 
 impl ChenImage {
