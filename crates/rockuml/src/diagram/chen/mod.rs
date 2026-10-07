@@ -18,9 +18,6 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::style::SName;
 
-/// Drawing Chen diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("Chen diagrams");
-
 pub(super) struct ChenEerDiagram {
     source: Rc<UmlSource>,
     cuca: CucaDiagram,
@@ -38,11 +35,9 @@ impl CommandFactory for ChenEerDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::ChenEer;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ChenEerDiagram {
-        let mut titled = Titled::new(SName::ChenEerDiagram, "CHEN_EER", source);
-        titled.not_ported(NOT_PORTED);
         ChenEerDiagram {
             source: source.clone(),
-            cuca: CucaDiagram::new(titled),
+            cuca: CucaDiagram::new(Titled::new(SName::ChenEerDiagram, "CHEN_EER", source)),
             owner_stack: Vec::new(),
         }
     }
@@ -82,9 +77,10 @@ impl Diagram for ChenEerDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

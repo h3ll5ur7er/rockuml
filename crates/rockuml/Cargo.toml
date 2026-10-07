@@ -16,10 +16,12 @@ fancy-regex = "0.19.2"
 flate2 = "1.1.10"
 gif = "0.14.2"
 jiff = "0.2.37"
+libm = "0.2.16"
 md5 = "0.8.1"
 png = "0.18.1"
 regex = "1.13.1"
 resvg = { version = "0.48.1", default-features = false, features = ["text", "raster-images"] }
+smetana = { path = "../smetana" }
 ttf-parser = "0.25.1"
 unicode-general-category = "1.1.0"
 zune-jpeg = "0.5.15"

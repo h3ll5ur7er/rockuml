@@ -11,6 +11,7 @@ pub(crate) mod symbol;
 use actor::ActorStyle;
 use component_style::ComponentStyle;
 
+use crate::decoration::LinkStyle;
 use crate::decoration::symbol::PackageStyle;
 
 use std::cell::{OnceCell, RefCell};
@@ -25,6 +26,7 @@ use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
+use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
@@ -32,7 +34,7 @@ use crate::style::{
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct SkinParam {
     /// Loaded from the default skin when first needed. Diagram elements keep the builder in force when they
     /// were declared, so a change makes a new builder rather than changing the shared one.
@@ -45,6 +47,15 @@ pub(crate) struct SkinParam {
     md5_map: HashMap<String, String>,
     /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
     image_files: HashMap<String, Option<Vec<u8>>>,
+    rankdir: Rankdir,
+}
+
+/// Which way entity diagrams flow (PlantUML's `Rankdir`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Rankdir {
+    #[default]
+    TopToBottom,
+    LeftToRight,
 }
 
 impl SpriteContainer for SkinParam {
@@ -165,17 +176,62 @@ impl SkinParam {
         }
     }
 
-    #[cfg_attr(
-        not(test),
-        allow(
-            dead_code,
-            reason = "read by the package commands, which are ported next"
-        )
-    )]
     pub(crate) fn package_style(&self) -> PackageStyle {
         self.value("packageStyle")
             .and_then(|value| PackageStyle::from_string(&value))
             .unwrap_or(PackageStyle::Folder)
+    }
+
+    /// `stereotypeAlignment`, centred by default.
+    pub(crate) fn stereotype_alignment(&self) -> HorizontalAlignment {
+        self.value("stereotypealignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Center)
+    }
+
+    /// `packageTitleAlignment`, centred by default.
+    pub(crate) fn package_title_alignment(&self) -> HorizontalAlignment {
+        self.value("packageTitleAlignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Center)
+    }
+
+    /// The stroke `<param>Thickness` or a `<param>Style` other than plain sets, like `arrowThickness`
+    /// (`getThickness(LineParam, null)`).
+    pub(crate) fn get_thickness(&self, param: &str) -> Option<UStroke> {
+        let thickness = self
+            .value(&format!("{param}thickness"))
+            .filter(|value| value.chars().all(|c| c.is_ascii_digit() || c == '.'));
+        if let Some(thickness) = thickness {
+            return Some(
+                LinkStyle::NORMAL
+                    .go_thickness(thickness.parse().unwrap_or_default())
+                    .get_stroke3(),
+            );
+        }
+        self.value(&format!("{param}style"))
+            .and_then(|value| LinkStyle::from_string2(&value))
+            .filter(|style| !style.is_normal())
+            .map(LinkStyle::get_stroke3)
+    }
+
+    /// `defaultTextAlignment`, or `default`.
+    pub(crate) fn get_default_text_alignment(
+        &self,
+        default: HorizontalAlignment,
+    ) -> HorizontalAlignment {
+        self.value("defaulttextalignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(default)
+    }
+
+    /// The direction `left to right direction` and `top to bottom direction` set.
+    pub(crate) fn get_rankdir(&self) -> Rankdir {
+        self.rankdir
+    }
+
+    pub(crate) fn set_rankdir(&mut self, rankdir: Rankdir) {
+        self.rankdir = rankdir;
     }
 
     /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.
