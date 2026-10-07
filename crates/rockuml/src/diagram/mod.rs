@@ -20,6 +20,7 @@ mod titled;
 mod unported;
 
 pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
+pub(crate) use titled::entity_image_legend;
 
 use std::cell::RefCell;
 use std::rc::Rc;

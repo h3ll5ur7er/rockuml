@@ -6,7 +6,7 @@ use super::group::UGroup;
 use super::shape::{UCenteredCharacter, UEllipse, URectangle, UShape, UText};
 use super::stencil::UHorizontalLine;
 use super::ugraphic::{UGraphic, UStroke};
-use super::{HorizontalAlignment, TextBlock, layout_tabulated};
+use super::{HorizontalAlignment, TextBlock, VerticalAlignment, layout_tabulated};
 use crate::color::HColor;
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
 
@@ -236,11 +236,11 @@ pub(crate) struct DecorateEntityImage<'a> {
     bottom: Option<Decoration<'a>>,
 }
 
-/// A block placed above or below another, drawn in its own group.
+/// A block placed above or below another, drawn in its own group if it has one.
 pub(crate) struct Decoration<'a> {
     pub block: Box<dyn TextBlock + 'a>,
     pub alignment: HorizontalAlignment,
-    pub group: UGroup,
+    pub group: Option<UGroup>,
 }
 
 impl<'a> DecorateEntityImage<'a> {
@@ -253,6 +253,18 @@ impl<'a> DecorateEntityImage<'a> {
             original,
             top,
             bottom,
+        }
+    }
+
+    /// `decoration` above or below `original`.
+    pub(crate) fn add(
+        original: Box<dyn TextBlock + 'a>,
+        decoration: Decoration<'a>,
+        vertical: VerticalAlignment,
+    ) -> Self {
+        match vertical {
+            VerticalAlignment::Top => Self::new(original, Some(decoration), None),
+            VerticalAlignment::Bottom => Self::new(original, None, Some(decoration)),
         }
     }
 }
@@ -282,9 +294,13 @@ impl TextBlock for DecorateEntityImage<'_> {
         let draw_decoration = |decoration: &Decoration, y: f64| {
             let width = decoration.block.calculate_dimension(string_bounder).width;
             let x = decoration.alignment.offset(total.width, width);
-            ug.start_group(&decoration.group);
+            if let Some(group) = &decoration.group {
+                ug.start_group(group);
+            }
             decoration.block.draw_u(&ug.translated(x, y));
-            ug.close_group();
+            if decoration.group.is_some() {
+                ug.close_group();
+            }
         };
         if let Some(top) = &self.top {
             draw_decoration(top, 0.0);

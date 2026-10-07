@@ -483,9 +483,7 @@ fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLoca
         alignment: HorizontalAlignment::Center,
         location: None,
     };
-    diagram
-        .titled()
-        .set_legend(legend, VerticalAlignment::Bottom);
+    diagram.set_legend(legend, VerticalAlignment::Bottom);
 }
 
 /// The lines between a block's first and last line, without their common indentation.
@@ -537,7 +535,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
         Some(top) if top.eq_ignore_ascii_case("top") => VerticalAlignment::Top,
         _ => VerticalAlignment::Bottom,
     };
-    diagram.titled().set_legend(legend, vertical);
+    diagram.set_legend(legend, vertical);
     Ok(())
 }
 

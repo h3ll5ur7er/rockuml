@@ -252,5 +252,5 @@ fn the_smetana_graph_is_the_one_plantuml_lays_out() {
             checked += 1;
         }
     }
-    assert_eq!(checked, 74, "every case with a trace is checked");
+    assert_eq!(checked, 75, "every case with a trace is checked");
 }
