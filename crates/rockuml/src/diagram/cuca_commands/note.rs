@@ -6,8 +6,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use crate::abel::{CucaNote, EntityId, LeafType, LinkArg, Position};
-use crate::color;
-use crate::color::{ColorType, Colors, HColor};
+use crate::color::{self, ColorType, Colors, HColor};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, ParserPass, PatternCommand,
     SingleLine,
@@ -29,7 +28,7 @@ static END_WITH_BRACKET: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"^(\
 pub(in crate::diagram) static END_NOTE_ON_LINK: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
 
-/// The pattern of a single-line command made of one in `pass`.
+/// A single-line command that runs in `pass`.
 fn single_line<D: 'static>(
     pattern: RegexTree,
     pass: ParserPass,
