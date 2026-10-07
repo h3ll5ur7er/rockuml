@@ -34,6 +34,8 @@ pub(crate) enum CreoleMode {
     Full,
     /// Full creole except `__underline__` and lists.
     FullButUnderscore,
+    /// What class members are read with; it reads like [`CreoleMode::FullButUnderscore`].
+    SimpleLine,
 }
 
 /// The smallest piece of a creole line: a run of text, an image, a bullet...

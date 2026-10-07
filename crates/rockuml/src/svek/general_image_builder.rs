@@ -1,5 +1,9 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
+use super::image::{
+    EntityImageAssociation, EntityImageAssociationPoint, EntityImageClass, EntityImageJson,
+    EntityImageLollipopInterface, EntityImageMap, EntityImageObject,
+};
 use super::{Bibliotekon, IEntityImage};
 use crate::abel::{EntityId, LeafType};
 use crate::diagram::NotYetPorted;
@@ -23,7 +27,7 @@ pub(crate) fn create_entity_image_block(
         return not_ported("EntityImageGroup");
     };
     if leaf_type.is_like_class() {
-        return not_ported("EntityImageClass");
+        return Ok(Box::new(EntityImageClass::new(entity, diagram)));
     }
     match leaf_type {
         LeafType::Note => not_ported("EntityImageNote"),
@@ -33,19 +37,22 @@ pub(crate) fn create_entity_image_block(
         LeafType::CircleStart => not_ported("EntityImageCircleStart"),
         LeafType::CircleEnd => not_ported("EntityImageCircleEnd"),
         LeafType::Branch | LeafType::StateChoice => not_ported("EntityImageBranch"),
-        LeafType::LollipopFull | LeafType::LollipopHalf => {
-            not_ported("EntityImageLollipopInterface")
+        LeafType::LollipopFull | LeafType::LollipopHalf => Ok(Box::new(
+            EntityImageLollipopInterface::new(entity, diagram),
+        )),
+        LeafType::Object => Ok(Box::new(EntityImageObject::new(entity, diagram))),
+        LeafType::Map => Ok(Box::new(EntityImageMap::new(entity, diagram))),
+        LeafType::Json => Ok(Box::new(EntityImageJson::new(entity, diagram))),
+        LeafType::PointForAssociation => {
+            Ok(Box::new(EntityImageAssociationPoint::new(entity, diagram)))
         }
+        LeafType::Association => Ok(Box::new(EntityImageAssociation::new(entity, diagram))),
         LeafType::Circle
         | LeafType::Description
         | LeafType::Usecase
         | LeafType::UsecaseBusiness => not_ported("EntityImageDescription"),
-        LeafType::Object => not_ported("EntityImageObject"),
-        LeafType::Map => not_ported("EntityImageMap"),
-        LeafType::Json => not_ported("EntityImageJson"),
         LeafType::SynchroBar | LeafType::StateForkJoin => not_ported("EntityImageSynchroBar"),
         LeafType::ArcCircle => not_ported("EntityImageArcCircle"),
-        LeafType::PointForAssociation => not_ported("EntityImageAssociationPoint"),
         LeafType::EmptyPackage => {
             if entity.get_usymbol().is_some() {
                 not_ported("EntityImageDescription")
@@ -53,7 +60,6 @@ pub(crate) fn create_entity_image_block(
                 not_ported("EntityImageEmptyPackage")
             }
         }
-        LeafType::Association => not_ported("EntityImageAssociation"),
         LeafType::PseudoState => not_ported("EntityImagePseudoState"),
         LeafType::StateTransitionLabel => not_ported("EntityImageTransitionLabel"),
         LeafType::DeepHistory => not_ported("EntityImageDeepHistory"),

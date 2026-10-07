@@ -3,12 +3,10 @@
 
 use super::component::creole_text;
 use crate::creole::Display;
-use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
-use crate::klimt::font::{FontConfiguration, StringBounder};
-use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged, TextBlockVertical, TitledSeparator};
+use crate::klimt::font::FontConfiguration;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::SpriteContainer;
-use crate::klimt::stencil::UHorizontalLine;
-use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::style::{PName, Style, ValueReading};
 
@@ -106,87 +104,7 @@ fn decorate(
             style,
             title,
             thickness,
+            margin_x: 0.0,
         }),
-    }
-}
-
-/// A block under a separator with a title, which leaves room for half the title above and below the line.
-struct TitledSeparator {
-    block: Box<dyn TextBlock>,
-    style: char,
-    title: Box<dyn TextBlock>,
-    thickness: f64,
-}
-
-impl TitledSeparator {
-    fn layout(&self, string_bounder: &dyn StringBounder) -> impl TextBlock + '_ {
-        let half_title = self.title.calculate_dimension(string_bounder).height / 2.0;
-        let margin = ClockwiseTopRightBottomLeft::top_right_bottom_left;
-        let raw = TextBlockLineBefore {
-            block: Box::new(TextBlockMarged::new(
-                &*self.block,
-                margin(half_title, 6.0, 4.0, 0.0),
-            )),
-            style: self.style,
-            title: Some(Box::new(&*self.title)),
-            thickness: self.thickness,
-        };
-        TextBlockMarged::new(raw, margin(half_title, 0.0, 0.0, 0.0))
-    }
-}
-
-impl TextBlock for TitledSeparator {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        self.layout(string_bounder)
-            .calculate_dimension(string_bounder)
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        self.layout(ug.string_bounder()).draw_u(ug);
-    }
-}
-
-/// A block with a separator line across its top.
-struct TextBlockLineBefore<'a> {
-    block: Box<dyn TextBlock + 'a>,
-    style: char,
-    title: Option<Box<dyn TextBlock + 'a>>,
-    thickness: f64,
-}
-
-impl TextBlockLineBefore<'_> {
-    fn line(&self) -> UHorizontalLine<'_> {
-        UHorizontalLine {
-            style: self.style,
-            title: self.title.as_deref(),
-            default_thickness: self.thickness,
-            skip: 1.0,
-        }
-    }
-}
-
-impl TextBlock for TextBlockLineBefore<'_> {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let dimension = self.block.calculate_dimension(string_bounder);
-        match &self.title {
-            None => dimension,
-            Some(title) => {
-                let title = title.calculate_dimension(string_bounder);
-                XDimension2D::new(
-                    dimension.width.max(title.width + 8.0),
-                    dimension.height.max(title.height),
-                )
-            }
-        }
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        if self.title.is_none() {
-            ug.draw_horizontal_line(&self.line());
-        }
-        self.block.draw_u(ug);
-        if self.title.is_some() {
-            ug.draw_horizontal_line(&self.line());
-        }
     }
 }

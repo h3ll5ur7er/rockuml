@@ -5,12 +5,14 @@ pub(crate) mod arrow;
 pub(crate) mod body;
 pub(crate) mod component;
 pub(crate) mod component_style;
+pub(crate) mod font_param;
 pub(crate) mod rose;
 pub(crate) mod symbol;
 pub(crate) mod visibility_modifier;
 
 use actor::ActorStyle;
 use component_style::ComponentStyle;
+use font_param::FontParam;
 
 use crate::decoration::LinkStyle;
 use crate::decoration::symbol::PackageStyle;
@@ -35,8 +37,6 @@ use crate::style::{
 };
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
-/// The size of the letters in spots unless `circledCharacterFontSize` says otherwise.
-const CIRCLED_CHARACTER_FONT_SIZE: i32 = 17;
 
 #[derive(Clone, Default)]
 pub(crate) struct SkinParam {
@@ -155,12 +155,8 @@ impl SkinParam {
 
     /// `circledCharacterRadius`, or what suits the circled characters' font size.
     pub(crate) fn get_circled_character_radius(&self) -> i32 {
-        self.as_int("circledCharacterRadius").unwrap_or_else(|| {
-            self.as_int("circledCharacterFontSize")
-                .unwrap_or(CIRCLED_CHARACTER_FONT_SIZE)
-                / 3
-                + 6
-        })
+        self.as_int("circledCharacterRadius")
+            .unwrap_or_else(|| self.get_font(FontParam::CircledCharacter, None).size() / 3 + 6)
     }
 
     /// `classAttributeIconSize`: the size of visibility icons, 0 to write visibilities as characters.

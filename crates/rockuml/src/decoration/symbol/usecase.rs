@@ -101,7 +101,7 @@ impl HorizontalLineDrawer for EllipseLines {
             ellipse: self.ellipse,
             dy: y,
         };
-        line.draw_line_internal(&ug.translated(0.0, y), &stencil, 0.0);
+        line.draw_line_internal(&ug.translated(0.0, y), &stencil, 0.0, None);
     }
 }
 

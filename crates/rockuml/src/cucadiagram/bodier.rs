@@ -5,7 +5,13 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use super::Member;
+use super::body_enhanced::{body_enhanced1, is_block_separator};
+use super::methods_or_fields_area::{BodyLine, MethodsOrFieldsArea};
+use super::{BodyContext, Member};
+use crate::klimt::blocks::TextBlockVertical;
+use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::skin::component::TextBlockEmpty;
+use crate::style::{PName, ValueReading};
 use crate::abel::LeafType;
 use crate::creole::Display;
 use crate::java;
@@ -153,6 +159,92 @@ impl Bodier {
             })
             .filter(|member| !is_hidden(member, hidden))
             .collect()
+    }
+
+    /// What a class or object draws under its header, or a group or other element under its name; `None`
+    /// for a class whose blocks are all hidden (`Bodier.getBody`).
+    ///
+    /// # Panics
+    ///
+    /// For maps and JSON, which draw their bodies themselves.
+    pub(crate) fn get_body(
+        &self,
+        context: &BodyContext<'_>,
+        show_methods: bool,
+        show_fields: bool,
+    ) -> Option<Box<dyn TextBlock>> {
+        let align = context
+            .skin
+            .get_default_text_alignment(HorizontalAlignment::Left);
+        let enhanced = |lines: Vec<BodyLine>| {
+            body_enhanced1(
+                align,
+                &lines,
+                context.skin,
+                context.style_builder,
+                context.style,
+                context.colors,
+            )
+        };
+        let without_hidden = || {
+            self.raw_body_without_hidden(context.hidden)
+                .into_iter()
+                .map(BodyLine::Member)
+                .collect()
+        };
+        match self {
+            Self::LikeClassOrObject { leaf_type, .. }
+                if leaf_type.is_like_class() && self.is_body_enhanced() =>
+            {
+                (show_methods || show_fields).then(|| enhanced(without_hidden()))
+            }
+            Self::LikeClassOrObject {
+                leaf_type: LeafType::Object,
+                ..
+            } => Some(if show_fields {
+                enhanced(without_hidden())
+            } else {
+                Box::new(TextBlockEmpty::default())
+            }),
+            Self::LikeClassOrObject { .. } => {
+                let area = |members: Vec<Member>| {
+                    let lines: Vec<BodyLine> = members.into_iter().map(BodyLine::Member).collect();
+                    MethodsOrFieldsArea::new(
+                        &lines,
+                        context.skin,
+                        context.style_builder,
+                        context.style,
+                        context.colors,
+                        HorizontalAlignment::Left,
+                    )
+                    .as_block_member_impl(context.style.value(PName::LineThickness).as_double())
+                };
+                let fields = || area(self.get_fields_to_display(context.hidden));
+                let methods = || area(self.get_methods_to_display(context.hidden));
+                Some(match (show_fields, show_methods) {
+                    (true, false) => fields(),
+                    (false, true) => methods(),
+                    (false, false) => Box::new(TextBlockEmpty::default()),
+                    (true, true) => Box::new(TextBlockVertical::new(
+                        vec![fields(), methods()],
+                        HorizontalAlignment::Left,
+                    )),
+                })
+            }
+            Self::Simple { raw_body } => Some(enhanced(
+                raw_body.iter().cloned().map(BodyLine::Text).collect(),
+            )),
+            Self::Map { .. } | Self::Json { .. } => {
+                panic!("maps and JSON elements draw their bodies themselves")
+            }
+        }
+    }
+
+    /// Whether the body has separators, which split it into blocks.
+    fn is_body_enhanced(&self) -> bool {
+        self.get_raw_body()
+            .iter()
+            .any(|line| is_block_separator(line))
     }
 
     /// The line `candidate` most likely names: the earliest match after the fewest letters, followed by the

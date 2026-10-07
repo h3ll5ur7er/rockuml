@@ -26,9 +26,6 @@ use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
 
-/// Drawing class diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("class diagrams");
-
 pub(super) struct ClassDiagram {
     source: Rc<UmlSource>,
     diagram: AbstractClassOrObjectDiagram,
@@ -45,8 +42,7 @@ impl CommandFactory for ClassDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Class;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ClassDiagram {
-        let mut titled = Titled::new(SName::ClassDiagram, "CLASS", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::ClassDiagram, "CLASS", source);
         ClassDiagram {
             source: source.clone(),
             diagram: AbstractClassOrObjectDiagram::new(titled),
@@ -172,9 +168,10 @@ impl Diagram for ClassDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.diagram.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.diagram.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

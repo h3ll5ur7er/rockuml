@@ -10,6 +10,7 @@ mod cluster_manager;
 mod color_sequence;
 mod entity_image;
 mod general_image_builder;
+mod image;
 mod margins;
 mod shape_type;
 mod svek_node;

@@ -14,6 +14,8 @@ use crate::skin::visibility_modifier::VisibilityModifier;
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Member {
     display: String,
+    /// The line as written.
+    raw: String,
     static_modifier: bool,
     abstract_modifier: bool,
     url: Option<Url>,
@@ -59,6 +61,7 @@ impl Member {
         };
         Self {
             display,
+            raw: raw.to_owned(),
             static_modifier: lower.contains("{static}") || lower.contains("{classifier}"),
             abstract_modifier: lower.contains("{abstract}"),
             url,
@@ -82,6 +85,11 @@ impl Member {
             None => "",
         };
         format!("{prefix}{}", self.display)
+    }
+
+    /// The line as written.
+    pub(crate) fn raw(&self) -> &str {
+        &self.raw
     }
 
     pub(crate) fn is_static(&self) -> bool {
