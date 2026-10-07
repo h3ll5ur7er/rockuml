@@ -4,6 +4,7 @@
 use std::cell::OnceCell;
 use std::rc::Rc;
 
+use super::link_anchor;
 use super::living_space::VerticalAlignment;
 use super::span_tiles::NewpageTile;
 use super::tile::{Tile, TileArguments, build_several};
@@ -134,9 +135,36 @@ impl<'a> PlayingSpace<'a> {
         for tile in &self.tiles {
             tile.draw_u(ug, context);
         }
+        let mut full = Vec::new();
+        add_full_tiles(&self.tiles, &mut full);
+        let diagram = self.arguments.diagram;
+        for link_anchor in diagram.link_anchors() {
+            if let (Some(tile1), Some(tile2)) = (
+                self.get_from_anchor(&full, &link_anchor.anchor1),
+                self.get_from_anchor(&full, &link_anchor.anchor2),
+            ) {
+                link_anchor::draw_anchor(link_anchor, ug, tile1, tile2, diagram);
+            }
+        }
         self.tiles
             .last()
             .map_or(STARTING_Y, |tile| tile.y_gauge().max.current_value())
+    }
+
+    /// The first tile, in drawing order, of a message carrying `anchor` (`getFromAnchor`).
+    fn get_from_anchor<'t>(
+        &self,
+        tiles: &[&'t dyn Tile<'a>],
+        anchor: &str,
+    ) -> Option<&'t dyn Tile<'a>> {
+        tiles.iter().copied().find(|tile| {
+            let common = match self.arguments.diagram.event(tile.event()) {
+                Event::Message(message) => &message.common,
+                Event::MessageExo(exo) => &exo.common,
+                _ => return false,
+            };
+            common.anchor.as_deref() == Some(anchor)
+        })
     }
 
     pub(super) fn draw_background(&self, ug: &UGraphic) {
@@ -157,7 +185,6 @@ impl<'a> PlayingSpace<'a> {
         );
     }
 
-    /// The height of everything drawn, found by drawing it.
     /// Where each page break starts, and its height; page breaks inside groups count too.
     fn newpage_tops(&self) -> Vec<(f64, f64)> {
         let mut newpages = Vec::new();
@@ -173,6 +200,7 @@ impl<'a> PlayingSpace<'a> {
             .collect()
     }
 
+    /// The height of everything drawn, found by drawing it.
     pub(super) fn preferred_height(&self) -> f64 {
         let (ug, finder) = LimitFinder::surface(self.arguments.string_bounder.clone());
         let final_y = self.draw_internal(
@@ -186,7 +214,16 @@ impl<'a> PlayingSpace<'a> {
     }
 }
 
-/// The diagram's body: heads, lifelines, tiles and tails (PlantUML's `PlayingSpaceWithParticipants`).
+/// Every tile, each group followed by the tiles in it (the `full` list of `fillPositionelTiles`).
+fn add_full_tiles<'t, 'a>(tiles: &'t [Box<dyn Tile<'a> + 'a>], full: &mut Vec<&'t dyn Tile<'a>>) {
+    for tile in tiles {
+        full.push(tile.as_ref());
+        if let Some(grouping) = tile.as_grouping() {
+            add_full_tiles(grouping.tiles(), full);
+        }
+    }
+}
+
 fn add_newpage_tiles<'t, 'a>(
     tiles: &'t [Box<dyn Tile<'a> + 'a>],
     newpages: &mut Vec<&'t NewpageTile<'a>>,
@@ -201,6 +238,7 @@ fn add_newpage_tiles<'t, 'a>(
     }
 }
 
+/// The diagram's body: heads, lifelines, tiles and tails (PlantUML's `PlayingSpaceWithParticipants`).
 pub(super) struct PlayingSpaceWithParticipants<'a> {
     playing_space: PlayingSpace<'a>,
     page: usize,

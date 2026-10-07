@@ -525,6 +525,10 @@ impl SequenceDiagram {
         self.link_anchors.push(anchor);
     }
 
+    pub(crate) fn link_anchors(&self) -> &[LinkAnchor] {
+        &self.link_anchors
+    }
+
     pub(crate) fn style_builder(&self) -> Rc<crate::style::StyleBuilder> {
         self.titled.skin.current_style_builder()
     }

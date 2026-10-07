@@ -67,11 +67,6 @@ pub(super) trait Tile<'a> {
 
     fn draw_u(&self, ug: &UGraphic, context: Context2D);
 
-    fn match_anchor(&self, anchor: &str) -> bool {
-        let _ = anchor;
-        false
-    }
-
     /// Positions a group's frame must clear on the left, for the tiles that are drawn there.
     fn stable_min_x(&self) -> Vec<Real> {
         Vec::new()
