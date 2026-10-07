@@ -48,22 +48,22 @@ impl InnerStateAutonom {
             0.0,
             CreoleMode::Full,
         );
+        let back = |part| {
+            style_part(Some(part))
+                .value(PName::BackGroundColor)
+                .as_color()
+        };
         let (north_backcolor, center_backcolor, south_backcolor) =
-            match group.colors.get(ColorType::Back) {
-                Some(back) => (back.clone(), back.clone(), back.clone()),
-                None => {
-                    let back = |part| {
-                        style_part(Some(part))
-                            .value(PName::BackGroundColor)
-                            .as_color()
-                    };
+            group.colors.get(ColorType::Back).map_or_else(
+                || {
                     (
                         back(SName::Name),
                         back(SName::Description),
                         back(SName::Body),
                     )
-                }
-            };
+                },
+                |own| (own.clone(), own.clone(), own.clone()),
+            );
         Self {
             im,
             group: entity_group(group, diagram, "entity", group.get_location()),
