@@ -287,6 +287,30 @@ impl TextBlock for DecorateEntityImage<'_> {
     }
 }
 
+/// Two blocks side by side, centred vertically (`TextBlockUtils.mergeLR`).
+pub(crate) struct TextBlockHorizontal {
+    pub left: Box<dyn TextBlock>,
+    pub right: Box<dyn TextBlock>,
+}
+
+impl TextBlock for TextBlockHorizontal {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        let left = self.left.calculate_dimension(string_bounder);
+        let right = self.right.calculate_dimension(string_bounder);
+        XDimension2D::new(left.width + right.width, left.height.max(right.height))
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        let total = self.calculate_dimension(ug.string_bounder());
+        let mut x = 0.0;
+        for block in [&self.left, &self.right] {
+            let dimension = block.calculate_dimension(ug.string_bounder());
+            block.draw_u(&ug.translated(x, (total.height - dimension.height) / 2.0));
+            x += dimension.width;
+        }
+    }
+}
+
 /// Blocks stacked top to bottom, each on the full width in its own background colour if it has one.
 pub(crate) struct TextBlockVertical<'a> {
     blocks: Vec<Box<dyn TextBlock + 'a>>,
@@ -481,29 +505,6 @@ impl TextBlock for TextBlockLineBefore<'_> {
     }
 }
 
-/// Two blocks side by side, centred vertically (`TextBlockUtils.mergeLR`).
-pub(crate) struct TextBlockHorizontal {
-    pub left: Box<dyn TextBlock>,
-    pub right: Box<dyn TextBlock>,
-}
-
-impl TextBlock for TextBlockHorizontal {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let left = self.left.calculate_dimension(string_bounder);
-        let right = self.right.calculate_dimension(string_bounder);
-        XDimension2D::new(left.width + right.width, left.height.max(right.height))
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        let total = self.calculate_dimension(ug.string_bounder());
-        let mut x = 0.0;
-        for block in [&self.left, &self.right] {
-            let dimension = block.calculate_dimension(ug.string_bounder());
-            block.draw_u(&ug.translated(x, (total.height - dimension.height) / 2.0));
-            x += dimension.width;
-        }
-    }
-}
 
 /// A block under a separator with a title, which leaves room for half the title above and below the line.
 pub(crate) struct TitledSeparator {

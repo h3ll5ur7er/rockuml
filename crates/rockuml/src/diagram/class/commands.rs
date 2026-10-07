@@ -16,9 +16,9 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::{
-    EntityDiagram, Labels, add_tags, back_color, colors, colors_with_line, display_or_name,
+    Labels, add_tags, back_color, colors, colors_with_line, display_or_name,
     stereotype, url_of,
 };
 use crate::java;
@@ -1501,94 +1501,6 @@ fn lollipop_labels(arg: &RegexResult) -> (Option<String>, Option<String>, Option
         Some(CucaDiagram::clean_id(&label_link).to_owned()),
         second_label,
     )
-}
-
-/// `note right of A::member {` ... `}` (`CommandFactoryTipOnEntity.createMultiLine(true)`).
-pub(super) fn tip_on_entity_multi_line_with_bracket<D: NotPortedCommands + 'static>()
--> Box<dyn Command<D>> {
-    Box::new(unported::multi_line(
-        "CommandFactoryTipOnEntity",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"note"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "POSITION", r"(right|left)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::leaf(r"of"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(
-                2,
-                "CODE",
-                r"([^%s{}%g<>:]+|[%g][^%g]+[%g])::([%g][^%g]+[%g]|[^%s]+)",
-            ),
-            RegexTree::spaces_zero_or_more(),
-            stereo::tags_pattern("TAGS1"),
-            stereo::optional_pattern("STEREO"),
-            stereo::tags_pattern("TAGS2"),
-            RegexTree::spaces_zero_or_more(),
-            color::optional_pattern("COLOR"),
-            RegexTree::spaces_zero_or_more(),
-            Url::optional_pattern(),
-            RegexTree::spaces_zero_or_more(),
-            RegexTree::leaf(r"\{"),
-            RegexTree::end(),
-        ]),
-        &plantuml_regex(r"^(\})$"),
-    ))
-}
-
-/// `note right of A::member` ... `end note` (`CommandFactoryTipOnEntity.createMultiLine(false)`).
-pub(super) fn tip_on_entity_multi_line<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    Box::new(unported::multi_line(
-        "CommandFactoryTipOnEntity",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"note"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "POSITION", r"(right|left)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::leaf(r"of"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(
-                2,
-                "CODE",
-                r"([^%s{}%g<>:]+|[%g][^%g]+[%g])::([%g][^%g]+[%g]|[^%s]+)",
-            ),
-            RegexTree::spaces_zero_or_more(),
-            stereo::tags_pattern("TAGS1"),
-            stereo::optional_pattern("STEREO"),
-            stereo::tags_pattern("TAGS2"),
-            RegexTree::spaces_zero_or_more(),
-            color::optional_pattern("COLOR"),
-            RegexTree::spaces_zero_or_more(),
-            Url::optional_pattern(),
-            RegexTree::end(),
-        ]),
-        &plantuml_regex(r"^[%s]*(end[%s]?note)$"),
-    ))
-}
-
-/// PlantUML's `CommandConstraintOnLinks`.
-pub(super) fn constraint_on_links<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandConstraintOnLinks",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"constraint"),
-            RegexTree::spaces_zero_or_more(),
-            RegexTree::leaf(r"on"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::leaf(r"links"),
-            RegexTree::spaces_zero_or_more(),
-            color::optional_pattern("COLOR"),
-            RegexTree::spaces_zero_or_more(),
-            RegexTree::leaf(r":"),
-            RegexTree::spaces_zero_or_more(),
-            RegexTree::named(1, "NOTE", r"(.*)"),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
 }
 
 /// PlantUML's `CommandDiamondAssociation`: `<> name`.

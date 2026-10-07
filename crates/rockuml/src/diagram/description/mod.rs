@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
-use super::cuca::CucaDiagram;
+use super::cuca::{CucaDiagram, EntityDiagram};
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
@@ -60,14 +60,14 @@ impl CommandFactory for DescriptionDiagramFactory {
             note::note_multi_line(),
             note::note_on_link(ParserPass::One),
             note::note_on_link_multi_line(ParserPass::One),
-            note::note_on_entity(code_for_description(), ParserPass::One),
+            note::note_on_entity(code_for_description, ParserPass::One),
             note::note(),
             cuca_commands::url(),
             commands::create_element_full(),
             cuca_commands::create_element_multilines_type0(),
             cuca_commands::create_element_multilines_type1(),
-            note::note_on_entity_multi_line(code_for_description(), ParserPass::One, true),
-            note::note_on_entity_multi_line(code_for_description(), ParserPass::One, false),
+            note::note_on_entity_multi_line(code_for_description, ParserPass::One, true),
+            note::note_on_entity_multi_line(code_for_description, ParserPass::One, false),
             note::note_multi_line(),
             cuca_commands::create_map(),
             cuca_commands::create_json(),
@@ -116,15 +116,15 @@ impl AbstractDiagram for DescriptionDiagram {
     }
 }
 
-impl TitledDiagram for DescriptionDiagram {
-    fn titled(&mut self) -> &mut Titled {
-        &mut self.cuca.titled
+impl EntityDiagram for DescriptionDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
     }
 }
 
-impl cuca_commands::EntityDiagram for DescriptionDiagram {
-    fn cuca(&mut self) -> &mut CucaDiagram {
-        &mut self.cuca
+impl TitledDiagram for DescriptionDiagram {
+    fn titled(&mut self) -> &mut Titled {
+        &mut self.cuca.titled
     }
 }
 

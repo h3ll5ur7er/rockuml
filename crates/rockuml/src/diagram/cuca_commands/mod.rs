@@ -10,7 +10,7 @@ use regex::Regex;
 
 pub(super) use labels::Labels;
 
-use super::cuca::CucaDiagram;
+use super::cuca::{CucaDiagram, EntityDiagram};
 use super::titled::TitledDiagram;
 use crate::abel::{Entity, GroupType, LeafType, LinkArg};
 use crate::color::{ColorType, Colors, HColor};
@@ -31,10 +31,6 @@ use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated};
 use crate::{color, stereo};
 
-/// A diagram of entities, which the shared commands change (PlantUML's `CucaDiagram`).
-pub(super) trait EntityDiagram: TitledDiagram {
-    fn cuca(&mut self) -> &mut CucaDiagram;
-}
 
 /// A stereotype, whose spot colour must exist (`Stereotype.build` with the circled character font).
 pub(super) fn stereotype(stereo: &str) -> Result<Stereotype, CommandError> {

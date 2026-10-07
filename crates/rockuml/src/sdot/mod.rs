@@ -14,12 +14,12 @@ use smetana_edge::EdgeTexts;
 pub(crate) use smetana_edge::SmetanaEdge;
 use y_mirror::YMirror;
 
-use crate::abel::{EntityId, GroupType, LeafType, Link, LinkId, is_pure_inner_link12};
+use crate::abel::{EntityId, GroupType, LeafType, Link, LinkId, Position, is_pure_inner_link12};
 use crate::creole::{CreoleMode, Display};
 use crate::diagram::NotYetPorted;
 use crate::diagram::cuca::CucaDiagram;
 use crate::java;
-use crate::klimt::blocks::TextBlockMarged;
+use crate::klimt::blocks::{TextBlockHorizontal, TextBlockMarged, TextBlockVertical};
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D, XPoint2D};
 use crate::klimt::limit_finder::LimitFinder;
@@ -28,6 +28,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::Rankdir;
 use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
+use crate::svek::image::EntityImageNoteLink;
 use crate::svek::{
     Bibliotekon, ClusterHeader, ClusterManager, LayoutContext, create_entity_image_block,
 };
@@ -494,33 +495,59 @@ fn get_label(
     link: &Link,
 ) -> Box<dyn TextBlock> {
     let skin = diagram.skin();
-    let label_only: Box<dyn TextBlock> = match link.get_label() {
-        None => Box::new(TextBlockEmpty::default()),
-        Some(label) => {
-            let arrow_style = get_arrow_style(diagram, link);
-            let style_width = arrow_style.wrap_width();
-            let wrap_width = if style_width > 0.0 {
-                style_width
-            } else {
-                skin.max_message_size()
-            };
-            let block = label.create0(
-                &arrow_style.font_configuration(),
-                get_message_text_alignment(diagram),
-                skin,
-                wrap_width,
-                CreoleMode::FullButUnderscore,
-            );
-            Box::new(with_margin(block, 1.0))
-        }
+    let label_only: Option<Box<dyn TextBlock>> = link.get_label().map(|label| {
+        let arrow_style = get_arrow_style(diagram, link);
+        let style_width = arrow_style.wrap_width();
+        let wrap_width = if style_width > 0.0 {
+            style_width
+        } else {
+            skin.max_message_size()
+        };
+        let block = label.create0(
+            &arrow_style.font_configuration(),
+            get_message_text_alignment(diagram),
+            skin,
+            wrap_width,
+            CreoleMode::FullButUnderscore,
+        );
+        Box::new(with_margin(block, 1.0)) as Box<dyn TextBlock>
+    });
+    let Some(note) = &link.note else {
+        return match label_only {
+            Some(label_only) if !is_empty(label_only.as_ref(), string_bounder) => {
+                Box::new(with_margin(label_only, 1.0))
+            }
+            Some(label_only) => label_only,
+            None => Box::new(TextBlockEmpty::default()),
+        };
     };
-    if link.note.is_some() {
-        unimplemented!("notes on links are drawn once notes are ported")
-    }
-    if is_empty(label_only.as_ref(), string_bounder) {
-        label_only
-    } else {
-        Box::new(with_margin(label_only, 1.0))
+    let note_only: Box<dyn TextBlock> = Box::new(EntityImageNoteLink::new(
+        &note.display,
+        &note.colors,
+        skin,
+        link.get_style_builder(),
+    ));
+    // A link without label shows its note alone.
+    let Some(label_only) = label_only else {
+        return note_only;
+    };
+    match note.position {
+        Position::Left => Box::new(TextBlockHorizontal {
+            left: note_only,
+            right: label_only,
+        }),
+        Position::Right => Box::new(TextBlockHorizontal {
+            left: label_only,
+            right: note_only,
+        }),
+        Position::Top => Box::new(TextBlockVertical::new(
+            vec![note_only, label_only],
+            HorizontalAlignment::Center,
+        )),
+        Position::Bottom => Box::new(TextBlockVertical::new(
+            vec![label_only, note_only],
+            HorizontalAlignment::Center,
+        )),
     }
 }
 

@@ -2,17 +2,25 @@
 
 mod association;
 mod class;
+mod entity_image_note;
+mod entity_image_note_link;
+mod entity_image_tips;
 mod json;
 mod lollipop;
 mod map;
 mod object;
+mod opale;
 
 pub(crate) use association::{EntityImageAssociation, EntityImageAssociationPoint};
 pub(crate) use class::EntityImageClass;
+pub(crate) use entity_image_note::{EntityImageNote, OpaleLink};
+pub(crate) use entity_image_note_link::EntityImageNoteLink;
+pub(crate) use entity_image_tips::EntityImageTips;
 pub(crate) use json::EntityImageJson;
 pub(crate) use lollipop::EntityImageLollipopInterface;
 pub(crate) use map::EntityImageMap;
 pub(crate) use object::EntityImageObject;
+pub(crate) use opale::{get_corner, get_polygon_normal};
 
 use crate::abel::Entity;
 use crate::diagram::cuca::CucaDiagram;

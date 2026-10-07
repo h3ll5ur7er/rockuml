@@ -209,14 +209,12 @@ impl SmetanaEdge {
     }
 
     /// Where the route starts, in drawing coordinates.
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_start_point(&self) -> Option<XPoint2D> {
         let dot_path = self.get_dot_path_internal()?;
         Some(self.ymirror.get_mirrored(dot_path.get_start_point()))
     }
 
     /// Where the route ends, in drawing coordinates.
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_end_point(&self) -> Option<XPoint2D> {
         let dot_path = self.get_dot_path_internal()?;
         Some(self.ymirror.get_mirrored(dot_path.get_end_point()))

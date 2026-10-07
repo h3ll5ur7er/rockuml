@@ -211,7 +211,13 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
     if matches!(leaf_type, LeafType::AbstractClass | LeafType::Interface) {
         font = font.with_style(FontStyle::Italic);
     }
-    let display = entity.display.create0(
+    let old_fashion = skin.display_generic_with_old_fashion();
+    let generic = entity.generic.as_deref().filter(|_| !old_fashion);
+    let mut display = entity.display.clone();
+    if old_fashion && let Some(generic) = &entity.generic {
+        display = display.add_generic(generic);
+    }
+    let display = display.create0(
         &font,
         HorizontalAlignment::Center,
         skin,
@@ -247,7 +253,7 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             );
             Box::new(TextBlockMarged::new(block, margin(0.0, 1.0, 0.0, 1.0)))
         });
-    let generic = entity.generic.as_deref().map(|generic| -> Box<dyn TextBlock> {
+    let generic = generic.map(|generic| -> Box<dyn TextBlock> {
         let style_generic = class_signature(&[SName::Generic])
             .get_merged_style_with(&skin.current_style_builder(), stereotype);
         let block = Display::with_newlines(generic).create0(
