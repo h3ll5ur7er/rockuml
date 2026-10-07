@@ -169,9 +169,14 @@ impl IEntityImage for EntityImageTips {
             XPoint2D::new(node_me.get_min_x(), node_me.get_min_y()),
             XPoint2D::new(node_other.get_min_x(), node_other.get_min_y()),
             &|member| {
+                let best_match = layout
+                    .diagram
+                    .entity(other)
+                    .get_bodier()
+                    .get_best_match(member)?;
                 node_other
                     .get_image()
-                    .get_inner_position(member, string_bounder)
+                    .get_inner_position(best_match, string_bounder)
             },
         );
     }

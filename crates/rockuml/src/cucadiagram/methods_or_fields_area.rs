@@ -6,7 +6,7 @@ use crate::color::Colors;
 use crate::creole::{CreoleMode, Display};
 use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged};
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D, XRectangle2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -34,6 +34,8 @@ impl BodyLine {
 struct Row {
     icon: Box<dyn TextBlock>,
     text: Box<dyn TextBlock>,
+    /// The member as written, which notes on members name it by.
+    raw: Option<String>,
 }
 
 pub(crate) struct MethodsOrFieldsArea {
@@ -67,6 +69,10 @@ impl MethodsOrFieldsArea {
                     _ => Box::new(NoIcon),
                 },
                 text: create_text_block(line, skin, style, colors, align),
+                raw: match line {
+                    BodyLine::Member(member) => Some(member.raw().to_owned()),
+                    BodyLine::Text(_) => None,
+                },
             })
             .collect();
         Self {
@@ -104,30 +110,66 @@ impl TextBlock for MethodsOrFieldsArea {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let string_bounder = ug.string_bounder();
+        for (row, (icon, text)) in self.rows.iter().zip(self.layout(ug.string_bounder())) {
+            if let Some(icon) = icon {
+                row.icon.draw_u(&ug.translated(icon.x, icon.y));
+            }
+            row.text.draw_u(&ug.translated(text.x, text.y));
+        }
+    }
+
+    /// The member's text, with its icon when there are icons.
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        let small_icon = self.small_icon.unwrap_or(0.0);
+        self.rows
+            .iter()
+            .zip(self.layout(string_bounder))
+            .find(|(row, _)| row.raw.as_deref() == Some(member))
+            .map(|(row, (_, text))| {
+                let dimension = row.text.calculate_dimension(string_bounder);
+                XRectangle2D {
+                    x: text.x - small_icon,
+                    y: text.y,
+                    width: dimension.width + small_icon,
+                    height: dimension.height,
+                }
+            })
+    }
+}
+
+impl MethodsOrFieldsArea {
+    /// Where each row's icon, if drawn, and text go: icons in a column before the texts
+    /// (`PlacementStrategyVisibility`), or else texts filling the height (`PlacementStrategyY1Y2`).
+    fn layout(&self, string_bounder: &dyn StringBounder) -> Vec<(Option<XPoint2D>, XPoint2D)> {
         let width = self.calculate_dimension(string_bounder).width;
         let mut y = 0.0;
+        let mut result = Vec::with_capacity(self.rows.len());
         for row in &self.rows {
             let text = row.text.calculate_dimension(string_bounder);
             match self.small_icon {
-                // `PlacementStrategyVisibility`.
                 Some(column) => {
                     let icon = row.icon.calculate_dimension(string_bounder);
                     let height = icon.height.max(text.height);
-                    row.icon
-                        .draw_u(&ug.translated(0.0, 2.0 + y + (height - icon.height) / 2.0));
-                    row.text
-                        .draw_u(&ug.translated(column, y + (height - text.height) / 2.0));
+                    result.push((
+                        Some(XPoint2D::new(0.0, 2.0 + y + (height - icon.height) / 2.0)),
+                        XPoint2D::new(column, y + (height - text.height) / 2.0),
+                    ));
                     y += height;
                 }
-                // `PlacementStrategyY1Y2`: the rows fill the height exactly.
                 None => {
-                    let x = self.align.offset(width, text.width);
-                    row.text.draw_u(&ug.translated(x, y));
+                    result.push((
+                        None,
+                        XPoint2D::new(self.align.offset(width, text.width), y),
+                    ));
                     y += text.height;
                 }
             }
         }
+        result
     }
 }
 

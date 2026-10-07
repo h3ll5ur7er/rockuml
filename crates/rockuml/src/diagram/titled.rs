@@ -120,6 +120,11 @@ pub(super) trait TitledDiagram {
     fn class_or_object_diagram(&mut self) -> Option<&mut CucaDiagram> {
         None
     }
+
+    /// The entities of a diagram that has them, whose names `set separator` splits.
+    fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        self.class_or_object_diagram()
+    }
 }
 
 impl<D: TitledDiagram> NotPortedCommands for D {

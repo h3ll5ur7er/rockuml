@@ -42,7 +42,7 @@ impl XPoint2D {
 
 /// A rectangle by its top left corner and size.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
-pub(crate) struct XRectangle2D {
+pub struct XRectangle2D {
     pub x: f64,
     pub y: f64,
     pub width: f64,
@@ -50,6 +50,16 @@ pub(crate) struct XRectangle2D {
 }
 
 impl XRectangle2D {
+    /// The rectangle moved by `dx` and `dy` (`UTranslate.apply`).
+    #[must_use]
+    pub(crate) fn translated(self, dx: f64, dy: f64) -> Self {
+        Self {
+            x: self.x + dx,
+            y: self.y + dy,
+            ..self
+        }
+    }
+
     pub(crate) fn get_min_x(self) -> f64 {
         self.x
     }

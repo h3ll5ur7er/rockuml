@@ -4,30 +4,6 @@ use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
 use crate::pattern::RegexTree;
 
-/// PlantUML's `CommandNamespaceSeparator`.
-pub(super) fn namespace_separator<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandNamespaceSeparator",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"set"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::or(vec![
-                RegexTree::leaf(r"separator"),
-                RegexTree::leaf(r"namespaceseparator"),
-            ]),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(
-                1,
-                "SEPARATOR",
-                r"((?:none|null)|[\\]{2}|::|[^%pLN%s_$#\\{}<>%g])",
-            ),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
-}
-
 /// PlantUML's `CommandAssumeTransparent`.
 pub(super) fn assume_transparent<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
     unported::single_line(

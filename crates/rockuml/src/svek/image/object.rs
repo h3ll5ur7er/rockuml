@@ -11,7 +11,7 @@ use crate::cucadiagram::BodyContext;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged};
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::XDimension2D;
+use crate::klimt::geom::{XDimension2D, XRectangle2D};
 use crate::klimt::group::UGroup;
 use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::stencil::RectangleStencil;
@@ -229,6 +229,17 @@ impl TextBlock for EntityImageObject {
 
     fn backcolor(&self) -> Option<HColor> {
         Some(self.image.get_backcolor())
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        let title_height = self.get_title_dimension(string_bounder).height;
+        self.fields
+            .get_inner_position(member, string_bounder)
+            .map(|position| position.translated(0.0, title_height))
     }
 }
 

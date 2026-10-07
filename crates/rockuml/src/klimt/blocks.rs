@@ -1,7 +1,7 @@
 //! Text blocks that frame, pad, stack or mark other text blocks.
 
 use super::font::{FontConfiguration, StringBounder, UFont};
-use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XRectangle2D};
 use super::group::UGroup;
 use super::shape::{UCenteredCharacter, UEllipse, URectangle, UShape, UText};
 use super::stencil::UHorizontalLine;
@@ -201,6 +201,16 @@ impl<T: TextBlock> TextBlockMarged<T> {
 }
 
 impl<T: TextBlock> TextBlock for TextBlockMarged<T> {
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.inner
+            .get_inner_position(member, string_bounder)
+            .map(|parent| parent.translated(self.margin.left, self.margin.top))
+    }
+
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         let margin = self.margin;
         self.inner
@@ -327,6 +337,22 @@ impl<'a> TextBlockVertical<'a> {
 }
 
 impl TextBlock for TextBlockVertical<'_> {
+    /// PlantUML leaves the blocks' alignment out.
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        let mut y = 0.0;
+        for block in &self.blocks {
+            if let Some(result) = block.get_inner_position(member, string_bounder) {
+                return Some(result.translated(0.0, y));
+            }
+            y += block.calculate_dimension(string_bounder).height;
+        }
+        None
+    }
+
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         self.blocks
             .iter()
@@ -480,6 +506,14 @@ impl TextBlockLineBefore<'_> {
 }
 
 impl TextBlock for TextBlockLineBefore<'_> {
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.block.get_inner_position(member, string_bounder)
+    }
+
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         let dimension = self.block.calculate_dimension(string_bounder);
         match &self.title {
@@ -541,5 +575,14 @@ impl TextBlock for TitledSeparator {
 
     fn draw_u(&self, ug: &UGraphic) {
         self.layout(ug.string_bounder()).draw_u(ug);
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.layout(string_bounder)
+            .get_inner_position(member, string_bounder)
     }
 }

@@ -11,7 +11,6 @@ use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::XRectangle2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::sdot::SmetanaEdge;
 use crate::stereo::Stereotype;
@@ -32,16 +31,6 @@ pub(crate) trait IEntityImage: TextBlock {
     }
 
     fn is_hidden(&self) -> bool;
-
-    /// Where the image draws the member of its entity that best matches `member`, which tips point at
-    /// (`getBestMatch`, then `getInnerPosition`); images without members have none.
-    fn get_inner_position(
-        &self,
-        _member: &str,
-        _string_bounder: &dyn StringBounder,
-    ) -> Option<XRectangle2D> {
-        None
-    }
 
     /// `EntityImageNote.setOpaleLink`: a note whose single link goes to `other` draws that link as part of
     /// its outline, which the layout then leaves out. The layout asks notes only.
