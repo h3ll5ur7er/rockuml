@@ -209,7 +209,7 @@ impl HColor {
 
     /// Where one colour is needed, a gradient gives its first. Automagic and scheme colours are not ported to
     /// the drawing formats yet and draw black.
-    fn as_xcolor(&self) -> XColor {
+    pub(crate) fn as_xcolor(&self) -> XColor {
         match self {
             HColor::Simple(color) => *color,
             HColor::Gradient(gradient) => gradient.from,

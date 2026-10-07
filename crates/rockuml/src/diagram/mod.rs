@@ -124,11 +124,12 @@ fn prepare(block: &PreprocessedBlock) -> (Option<DiagramType>, UmlSource) {
     let lines = block.located_lines();
     let raw_lines = block.raw_lines().to_vec();
     let diagram_type = DiagramType::of_start_line(lines.first().map_or("", StringLocated::text));
-    let source = if diagram_type == Some(DiagramType::Uml) {
+    let mut source = if diagram_type == Some(DiagramType::Uml) {
         UmlSource::with_continuations_joined(lines, raw_lines)
     } else {
         UmlSource::new(lines.to_vec(), raw_lines)
     };
+    source.patch_base64();
     (diagram_type, source)
 }
 

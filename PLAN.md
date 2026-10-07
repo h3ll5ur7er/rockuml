@@ -323,6 +323,18 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - `<img:…>` (files through `Host`, data URIs) and `<:emoji:>` (PlantUML's SVG parser and the Twemoji set).
 - The parity harness compares embedded images by decoded pixels, as Java's PNG encoding is not worth reproducing.
 - **Exit:** sprite, image and emoji corpus cases pass L1 and L2 with pixel-compared images.
+- **Progress:** raster sprites pass all formats with exact pixels (`sprite-gray-levels`, `-compressed`,
+  `-scale-color`, `-base64`, `-color`):
+  - `sprite` definitions with 4, 8 and 16 gray levels, compressed (`z`) and 4096-colour data; `<$name>` in creole, with
+    scale and colour; raster images as a `UShape` of ARGB pixels, which SVG re-encodes as PNG.
+  - Scaled images go through a port of medialib's bilinear affine transform, which Java 2D's `AffineTransformOp` runs
+    natively; it matched Java on every pixel of 593 random images and scales, so the harness needs no tolerance.
+  - PlantUML replaces every `data:image/png;base64,` payload in the source by its MD5 before parsing
+    (`UmlSource.patchBase64`), and the seed hashes the shortened lines. rockuml does the same, so base64 sprites
+    reach `CommandSpriteMd5`; `CommandSpriteBase64` can never match and is not ported.
+  - Muting a raster sprite to the text colour adds the alpha to an opaque colour, which carries into the alpha byte
+    (opaque pixels become alpha 254); rockuml keeps that, as text mutes every raster sprite.
+  - Salt diagrams look sprites up in their own dictionary, which is not ported: `<$name>` draws nothing there yet.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.

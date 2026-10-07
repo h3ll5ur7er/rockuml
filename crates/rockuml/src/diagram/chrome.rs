@@ -10,6 +10,7 @@ use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::limit_finder::LimitFinder;
 use crate::klimt::shape::{URectangle, UShape, UText};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::creole_text;
@@ -125,12 +126,19 @@ impl<'a> MainFrame<'a> {
         label: &Display,
         style: &Style,
         string_bounder: Rc<dyn StringBounder>,
+        sprites: &dyn SpriteContainer,
     ) -> Self {
         let alignment = label
             .natural_alignment()
             .unwrap_or(HorizontalAlignment::Center);
         Self {
-            title: creole_text(label.lines(), style.font_configuration(), alignment, 0.0),
+            title: creole_text(
+                label.lines(),
+                style.font_configuration(),
+                alignment,
+                0.0,
+                sprites,
+            ),
             original,
             padding: style.padding(),
             margin: style.margin(),

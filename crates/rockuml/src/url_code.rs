@@ -105,7 +105,8 @@ fn clean(text: &str) -> String {
     java::trim(&START_OR_END.replace_all(&text, "")).to_owned()
 }
 
-fn inflate(data: &[u8]) -> Result<Vec<u8>, NotPlantUmlCode> {
+/// Raw deflate, without zlib header.
+pub(crate) fn inflate(data: &[u8]) -> Result<Vec<u8>, NotPlantUmlCode> {
     read_all(DeflateDecoder::new(data))
 }
 
@@ -151,17 +152,22 @@ fn encode_6bit(data: &[u8]) -> String {
     result
 }
 
-/// Characters outside the alphabet count as zero, as in PlantUML; non-ASCII ones are an error.
-fn decode_6bit(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
+/// A character's 6-bit value; characters outside the alphabet count as zero, as in PlantUML.
+pub(crate) fn sextet(c: char) -> u8 {
+    ALPHABET
+        .iter()
+        .position(|&known| char::from(known) == c)
+        .map_or(0, |index| index as u8)
+}
+
+/// Every four characters give three bytes, the last ones padded with `0`; non-ASCII characters are an error.
+pub(crate) fn decode_6bit(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
     let value = |c: Option<char>| -> Result<u8, NotPlantUmlCode> {
         let c = c.unwrap_or('0');
         if !c.is_ascii() {
             return Err(NotPlantUmlCode);
         }
-        Ok(ALPHABET
-            .iter()
-            .position(|&known| char::from(known) == c)
-            .map_or(0, |index| index as u8))
+        Ok(sextet(c))
     };
     let chars: Vec<char> = text.chars().collect();
     let mut result = Vec::with_capacity(chars.len().div_ceil(4) * 3);

@@ -1,5 +1,7 @@
 //! The atoms that are not text.
 
+use std::rc::Rc;
+
 use super::sheet_block::SheetBlock1;
 use super::{Atom, Sheet};
 use crate::color::HColor;
@@ -8,6 +10,7 @@ use crate::klimt::blocks::TextBlockMarged;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
+use crate::klimt::sprite::Sprite;
 use crate::klimt::stencil::UHorizontalLine;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::openiconic::{OpenIconic, OpenIconicBlock};
@@ -177,5 +180,50 @@ impl TextBlock for AtomOpenIconic {
 impl Atom for AtomOpenIconic {
     fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
         -3.0 * self.factor
+    }
+}
+
+/// A sprite (`<$name>`), in the text colour unless given one.
+pub(super) struct AtomSprite {
+    font_color: HColor,
+    forced_color: Option<HColor>,
+    scale: f64,
+    sprite: Rc<dyn Sprite>,
+}
+
+impl AtomSprite {
+    pub(super) fn new(
+        font_color: HColor,
+        forced_color: Option<HColor>,
+        scale: f64,
+        sprite: Rc<dyn Sprite>,
+    ) -> Self {
+        Self {
+            font_color,
+            forced_color,
+            scale,
+            sprite,
+        }
+    }
+
+    fn as_text_block(&self) -> Box<dyn TextBlock + '_> {
+        self.sprite
+            .as_text_block(&self.font_color, self.forced_color.as_ref(), self.scale)
+    }
+}
+
+impl TextBlock for AtomSprite {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.as_text_block().calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.as_text_block().draw_u(ug);
+    }
+}
+
+impl Atom for AtomSprite {
+    fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
+        0.0
     }
 }

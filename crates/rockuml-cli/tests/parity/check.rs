@@ -1,9 +1,12 @@
 use std::collections::BTreeMap;
 use std::fs;
+use std::io::Cursor;
 use std::path::Path;
 use std::process::{Command, Output};
 use std::sync::LazyLock;
 
+use base64::Engine;
+use base64::prelude::BASE64_STANDARD;
 use regex::Regex;
 
 use crate::corpus::{Case, GoldenKind, file_name};
@@ -117,19 +120,79 @@ fn first_difference(expected: &str, produced: &str) -> Option<String> {
     unreachable!()
 }
 
-/// PNGs are compared by size only: Java and resvg antialias differently.
+/// PNGs are compared by size only: Java and resvg antialias differently. Images embedded in SVG compare by
+/// their pixels, as Java's PNG encoder is not worth reproducing.
 fn read_normalised(path: &Path, kind: GoldenKind) -> String {
     let bytes = fs::read(path).unwrap();
-    if kind == GoldenKind::Png {
-        return png_size(&bytes);
+    match kind {
+        GoldenKind::Png => png_size(&bytes),
+        GoldenKind::Svg | GoldenKind::DeterministicSvg => {
+            embedded_pngs_as_pixels(&normalise(&String::from_utf8_lossy(&bytes)))
+        }
+        _ => normalise(&String::from_utf8_lossy(&bytes)),
     }
-    normalise(&String::from_utf8_lossy(&bytes))
 }
 
 /// Width and height from the PNG header.
 fn png_size(png: &[u8]) -> String {
     let dimension = |at: usize| u32::from_be_bytes(png[at..at + 4].try_into().unwrap());
     format!("{} x {}", dimension(16), dimension(20))
+}
+
+/// Replaces each `data:image/png;base64,` payload by the image's size and a hash of its pixels. Fully
+/// transparent pixels count as equal whatever colour they carry.
+fn embedded_pngs_as_pixels(text: &str) -> String {
+    static PNG_DATA: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"data:image/png;base64,([A-Za-z0-9+/=]+)").unwrap());
+    PNG_DATA
+        .replace_all(text, |captures: &regex::Captures| {
+            BASE64_STANDARD
+                .decode(&captures[1])
+                .ok()
+                .and_then(|png| pixels_description(&png))
+                .unwrap_or_else(|| captures[0].to_owned())
+        })
+        .into_owned()
+}
+
+fn pixels_description(png: &[u8]) -> Option<String> {
+    let mut decoder = png::Decoder::new(Cursor::new(png));
+    decoder.set_transformations(png::Transformations::normalize_to_color8());
+    let mut reader = decoder.read_info().ok()?;
+    let mut buffer = vec![0; reader.output_buffer_size()?];
+    let frame = reader.next_frame(&mut buffer).ok()?;
+    let mut hash = Fnv1a::default();
+    for sample in buffer[..frame.buffer_size()].chunks_exact(frame.color_type.samples()) {
+        let rgba = match *sample {
+            [gray] => [gray, gray, gray, 255],
+            [gray, alpha] => [gray, gray, gray, alpha],
+            [red, green, blue] => [red, green, blue, 255],
+            [red, green, blue, alpha] => [red, green, blue, alpha],
+            _ => return None,
+        };
+        hash.write(if rgba[3] == 0 { [0; 4] } else { rgba });
+    }
+    Some(format!(
+        "data:image/png;pixels={}x{}:{:016x}",
+        frame.width, frame.height, hash.0
+    ))
+}
+
+/// A hash that stays the same across runs and platforms.
+struct Fnv1a(u64);
+
+impl Default for Fnv1a {
+    fn default() -> Self {
+        Self(0xcbf2_9ce4_8422_2325)
+    }
+}
+
+impl Fnv1a {
+    fn write(&mut self, bytes: [u8; 4]) {
+        for byte in bytes {
+            self.0 = (self.0 ^ u64::from(byte)).wrapping_mul(0x0100_0000_01b3);
+        }
+    }
 }
 
 /// Line endings depend on how git checked out the goldens, and PlantUML's debug output stamps the
@@ -170,6 +233,37 @@ mod tests {
         header.extend(300_u32.to_be_bytes());
         header.extend(20_u32.to_be_bytes());
         assert_eq!(png_size(&header), "300 x 20");
+    }
+
+    fn png_data_uri(rgba: &[u8], compression: png::Compression) -> String {
+        let mut png = Vec::new();
+        let mut encoder = png::Encoder::new(&mut png, 2, 1);
+        encoder.set_color(png::ColorType::Rgba);
+        encoder.set_compression(compression);
+        let mut writer = encoder.write_header().unwrap();
+        writer.write_image_data(rgba).unwrap();
+        writer.finish().unwrap();
+        format!(
+            r#"<image xlink:href="data:image/png;base64,{}"/>"#,
+            BASE64_STANDARD.encode(png)
+        )
+    }
+
+    #[test]
+    fn embedded_pngs_compare_by_pixels() {
+        let red_then_clear = [255, 0, 0, 255, 0, 0, 0, 0];
+        let red_then_clear_blue = [255, 0, 0, 255, 0, 0, 255, 0];
+        let red_then_blue = [255, 0, 0, 255, 0, 0, 255, 255];
+        let fast =
+            embedded_pngs_as_pixels(&png_data_uri(&red_then_clear, png::Compression::Fastest));
+        let best =
+            embedded_pngs_as_pixels(&png_data_uri(&red_then_clear_blue, png::Compression::High));
+        assert_eq!(fast, best);
+        assert!(fast.starts_with(r#"<image xlink:href="data:image/png;pixels=2x1:"#));
+        assert_ne!(
+            fast,
+            embedded_pngs_as_pixels(&png_data_uri(&red_then_blue, png::Compression::Fastest))
+        );
     }
 
     #[test]

@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::java;
 use crate::preproc::start_utils;
 use crate::text::{StringLocated, ends_with_backslash};
@@ -7,11 +9,17 @@ pub struct UmlSource {
     lines: Vec<StringLocated>,
     /// The diagram as written, before preprocessing.
     raw_lines: Vec<String>,
+    /// The base64 data of the PNGs `patch_base64` took out, by their MD5.
+    md5_map: HashMap<String, String>,
 }
 
 impl UmlSource {
     pub fn new(lines: Vec<StringLocated>, raw_lines: Vec<String>) -> Self {
-        Self { lines, raw_lines }
+        Self {
+            lines,
+            raw_lines,
+            md5_map: HashMap::new(),
+        }
     }
 
     /// For `@startuml` diagrams, a line ending with a single backslash continues on the next line.
@@ -30,6 +38,7 @@ impl UmlSource {
         Self {
             lines: joined,
             raw_lines,
+            md5_map: HashMap::new(),
         }
     }
 
@@ -99,6 +108,47 @@ impl UmlSource {
         lines.drain(1..=noise);
         Self { lines, ..self }
     }
+
+    /// Replaces each `data:image/png;base64,` payload by `data:image/png;md5,` and the MD5 of the data, which
+    /// [`Self::md5_map`] then gives back. PlantUML does so to keep lines short for its regular expressions;
+    /// the seed is computed on the shortened lines.
+    pub(crate) fn patch_base64(&mut self) {
+        for line in &mut self.lines {
+            if let Some(patched) = patch_base64_line(line.text(), &mut self.md5_map) {
+                *line = line.with_text(patched);
+            }
+        }
+    }
+
+    pub(crate) fn md5_map(&self) -> &HashMap<String, String> {
+        &self.md5_map
+    }
+}
+
+fn patch_base64_line(line: &str, md5_map: &mut HashMap<String, String>) -> Option<String> {
+    const BASE64_TAG_START: &str = "data:image/png;base64,";
+    const BASE64_TAG_REPLACEMENT: &str = "data:image/png;md5,";
+    let is_base64_char = |c: char| c.is_ascii_alphanumeric() || matches!(c, '+' | '/' | '=');
+    if !line.contains(BASE64_TAG_START) {
+        return None;
+    }
+    let mut patched = String::new();
+    let mut rest = line;
+    while let Some(start) = rest.find(BASE64_TAG_START) {
+        let data_start = &rest[start + BASE64_TAG_START.len()..];
+        let data_length = data_start
+            .find(|c: char| !is_base64_char(c))
+            .unwrap_or(data_start.len());
+        let data = &data_start[..data_length];
+        let md5 = format!("{:x}", md5::compute(data));
+        patched.push_str(&rest[..start]);
+        patched.push_str(BASE64_TAG_REPLACEMENT);
+        patched.push_str(&md5);
+        md5_map.insert(md5, data.to_owned());
+        rest = &data_start[data_length..];
+    }
+    patched.push_str(rest);
+    Some(patched)
 }
 
 fn is_noise(line: &str) -> bool {
@@ -138,6 +188,20 @@ mod tests {
             "@endcreole",
         ]);
         assert_eq!(plain.seed(), 2_574_378_694_402_089_019);
+    }
+
+    #[test]
+    fn base64_pngs_are_replaced_by_their_md5() {
+        let mut patched = source(&["a data:image/png;base64,QUJD+/= b data:image/png;base64,"]);
+        patched.patch_base64();
+        let abc = "72b852f66ac03ece4c8c26b9f893ecce";
+        assert_eq!(
+            texts(&patched),
+            [format!(
+                "a data:image/png;md5,{abc} b data:image/png;md5,d41d8cd98f00b204e9800998ecf8427e"
+            )]
+        );
+        assert_eq!(patched.md5_map()[abc], "QUJD+/=");
     }
 
     #[test]

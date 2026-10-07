@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::atom_text::AtomText;
-use super::atoms::{AtomOpenIconic, AtomWithMargin, Bullet, HorizontalLine};
+use super::atoms::{AtomOpenIconic, AtomSprite, AtomWithMargin, Bullet, HorizontalLine};
 use super::code::{self, AtomCode};
 use super::commands::{CreoleCommand, creole_commands};
 use super::display::Display;
@@ -16,32 +16,41 @@ use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::{FontConfiguration, FontStyle};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::url::Url;
 use crate::openiconic::OpenIconic;
 use crate::pattern::{java_regex, plantuml_regex};
 use crate::stereo::Stereotype;
 
 /// Turns the lines of a label into a [`Sheet`] (PlantUML's legacy `CreoleParser`).
-pub(crate) struct CreoleParser {
+pub(crate) struct CreoleParser<'a> {
     font: FontConfiguration,
     horizontal_alignment: HorizontalAlignment,
     mode: CreoleMode,
+    sprites: &'a dyn SpriteContainer,
 }
 
-impl CreoleParser {
-    pub(crate) fn new(font: FontConfiguration, horizontal_alignment: HorizontalAlignment) -> Self {
-        Self::with_mode(font, horizontal_alignment, CreoleMode::Full)
+impl<'a> CreoleParser<'a> {
+    /// `<$name>` draws the sprite of that name in `sprites`.
+    pub(crate) fn new(
+        font: FontConfiguration,
+        horizontal_alignment: HorizontalAlignment,
+        sprites: &'a dyn SpriteContainer,
+    ) -> Self {
+        Self::with_mode(font, horizontal_alignment, CreoleMode::Full, sprites)
     }
 
     pub(crate) fn with_mode(
         font: FontConfiguration,
         horizontal_alignment: HorizontalAlignment,
         mode: CreoleMode,
+        sprites: &'a dyn SpriteContainer,
     ) -> Self {
         Self {
             font,
             horizontal_alignment,
             mode,
+            sprites,
         }
     }
 
@@ -77,9 +86,9 @@ impl CreoleParser {
     }
 
     /// Each line comes in the font it is written in.
-    fn create_sheet_of<'a>(
+    fn create_sheet_of<'l>(
         &self,
-        lines: impl Iterator<Item = (String, &'a FontConfiguration)>,
+        lines: impl Iterator<Item = (String, &'l FontConfiguration)>,
     ) -> Sheet {
         let mut list_numbers = ListNumbers::default();
         let mut stripes: Vec<Stripe> = Vec::new();
@@ -88,16 +97,24 @@ impl CreoleParser {
             if let Some(block) = &mut open_block
                 && block.continues_with(&line)
             {
-                block.add_line(&line, font);
+                block.add_line(&line, font, self.sprites);
                 continue;
             }
             if let Some(block) = open_block.take() {
                 stripes.push(block.into_stripe(self.horizontal_alignment));
             }
             if table::is_table_line(&line) {
-                open_block = Some(MultilineBlock::Table(AtomTable::new(&line, font)));
+                open_block = Some(MultilineBlock::Table(AtomTable::new(
+                    &line,
+                    font,
+                    self.sprites,
+                )));
             } else if tree::is_tree_start(&line) {
-                open_block = Some(MultilineBlock::Tree(AtomTree::new(&line, font)));
+                open_block = Some(MultilineBlock::Tree(AtomTree::new(
+                    &line,
+                    font,
+                    self.sprites,
+                )));
             } else if code::is_code_start(&line) {
                 open_block = Some(MultilineBlock::Code(AtomCode::new(font)));
             } else {
@@ -123,8 +140,14 @@ impl CreoleParser {
             .iter()
             .map(|single_line| {
                 let header = header(font, style, list_numbers);
-                let mut stripe =
-                    StripeBuilder::new(font.clone(), style, alignment, header, self.mode);
+                let mut stripe = StripeBuilder::new(
+                    font.clone(),
+                    style,
+                    alignment,
+                    header,
+                    self.mode,
+                    self.sprites,
+                );
                 stripe.analyze_and_add(single_line);
                 stripe.build()
             })
@@ -171,10 +194,10 @@ impl MultilineBlock {
         }
     }
 
-    fn add_line(&mut self, line: &str, font: &FontConfiguration) {
+    fn add_line(&mut self, line: &str, font: &FontConfiguration, sprites: &dyn SpriteContainer) {
         match self {
-            Self::Table(table) => table.add_line(line, font),
-            Self::Tree(tree) => tree.add_line(line, font),
+            Self::Table(table) => table.add_line(line, font, sprites),
+            Self::Tree(tree) => tree.add_line(line, font, sprites),
             Self::Code(code) => code.add_line(line),
         }
     }
@@ -358,22 +381,24 @@ fn command_at(rest: &str, mode: CreoleMode) -> Option<&'static dyn CreoleCommand
 }
 
 /// Collects the atoms of one stripe (PlantUML's `StripeSimple`).
-pub(super) struct StripeBuilder {
+pub(super) struct StripeBuilder<'a> {
     font: FontConfiguration,
     style: StripeStyle,
     alignment: HorizontalAlignment,
     header: Option<Rc<dyn Atom>>,
     atoms: Vec<Rc<dyn Atom>>,
     mode: CreoleMode,
+    sprites: &'a dyn SpriteContainer,
 }
 
-impl StripeBuilder {
+impl<'a> StripeBuilder<'a> {
     fn new(
         font: FontConfiguration,
         style: StripeStyle,
         alignment: HorizontalAlignment,
         header: Option<Rc<dyn Atom>>,
         mode: CreoleMode,
+        sprites: &'a dyn SpriteContainer,
     ) -> Self {
         Self {
             font,
@@ -382,17 +407,23 @@ impl StripeBuilder {
             atoms: header.iter().cloned().collect(),
             header,
             mode,
+            sprites,
         }
     }
 
     /// A stripe of plain text, as in table cells and tree items.
-    pub(super) fn plain(font: FontConfiguration, mode: CreoleMode) -> Self {
+    pub(super) fn plain(
+        font: FontConfiguration,
+        mode: CreoleMode,
+        sprites: &'a dyn SpriteContainer,
+    ) -> Self {
         Self::new(
             font,
             StripeStyle::NORMAL,
             HorizontalAlignment::Left,
             None,
             mode,
+            sprites,
         )
     }
 
@@ -406,7 +437,7 @@ impl StripeBuilder {
             }
             StripeStyleType::HorizontalLine(style) => {
                 let title = (!line.is_empty()).then(|| {
-                    CreoleParser::new(self.font.clone(), HorizontalAlignment::Left)
+                    CreoleParser::new(self.font.clone(), HorizontalAlignment::Left, self.sprites)
                         .create_sheet(Display::with_newlines(&line).lines())
                 });
                 self.atoms.push(Rc::new(HorizontalLine::new(style, title)));
@@ -416,7 +447,7 @@ impl StripeBuilder {
     }
 
     /// A leading `<left>`, `<center>` or `<right>` (or `<l>`, `<c>`, `<r>`) aligns the line.
-    fn manage_cell_alignment<'a>(&mut self, line: &'a str) -> &'a str {
+    fn manage_cell_alignment<'l>(&mut self, line: &'l str) -> &'l str {
         const MARKERS: [(&str, HorizontalAlignment); 6] = [
             ("<l>", HorizontalAlignment::Left),
             ("<left>", HorizontalAlignment::Left),
@@ -472,6 +503,22 @@ impl StripeBuilder {
                 scale,
                 open_iconic,
                 &self.font,
+            )));
+        }
+    }
+
+    pub(super) fn font_size(&self) -> f64 {
+        self.font.font().size_2d()
+    }
+
+    /// An unknown sprite is left out.
+    pub(super) fn add_sprite(&mut self, name: &str, scale: f64, forced_color: Option<HColor>) {
+        if let Some(sprite) = self.sprites.get_sprite(name) {
+            self.atoms.push(Rc::new(AtomSprite::new(
+                self.font.color().clone(),
+                forced_color,
+                scale,
+                sprite,
             )));
         }
     }

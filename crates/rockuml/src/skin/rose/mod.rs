@@ -39,10 +39,15 @@ pub(crate) struct MessageLabel<'a> {
 }
 
 /// `Display.create0` for a message label: a number goes left of the text, both centred vertically.
-fn message_text(label: &MessageLabel<'_>, style: &Style, max_width: f64) -> Box<dyn TextBlock> {
+fn message_text(
+    label: &MessageLabel<'_>,
+    style: &Style,
+    max_width: f64,
+    skin: &SkinParam,
+) -> Box<dyn TextBlock> {
     let font = style.font_configuration();
     let Some(number) = label.number else {
-        return component_text(label.display, font, style, max_width);
+        return component_text(label.display, font, style, max_width, skin);
     };
     // Only a whole label of one empty line takes no room; the text after a number is always creole.
     let alignment = label
@@ -50,13 +55,19 @@ fn message_text(label: &MessageLabel<'_>, style: &Style, max_width: f64) -> Box<
         .natural_alignment()
         .or_else(|| style.horizontal_alignment())
         .unwrap_or_default();
-    let number = creole_text(&[number.to_owned()], font.clone(), alignment, max_width);
+    let number = creole_text(
+        &[number.to_owned()],
+        font.clone(),
+        alignment,
+        max_width,
+        skin,
+    );
     Box::new(TextBlockHorizontal {
         left: with_margin(
             number,
             ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 4.0, 0.0, 0.0),
         ),
-        right: creole_text(label.display.lines(), font, alignment, max_width),
+        right: creole_text(label.display.lines(), font, alignment, max_width, skin),
     })
 }
 
@@ -96,7 +107,7 @@ fn arrow_parts(
         style_width => style_width,
     };
     let text = TextualPart::new(
-        message_text(label, style, max_width),
+        message_text(label, style, max_width, skin),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 7.0, 1.0, 7.0),
     );
     ArrowParts::new(text, style.clone(), configuration)
@@ -223,7 +234,7 @@ pub(crate) fn create_component_note(
             let text = if display.is_single_empty_line() {
                 Box::new(TextBlockEmpty::default()) as Box<dyn TextBlock>
             } else {
-                enhanced_text(display, font, alignment, style)
+                enhanced_text(display, font, alignment, style, skin)
             };
             Box::new(ComponentRoseNote::new(
                 TextualPart::new(text, text_padding),
@@ -233,14 +244,14 @@ pub(crate) fn create_component_note(
         }
         NoteShape::Hexagonal => Box::new(ComponentRoseNoteHexagonal::new(
             TextualPart::new(
-                component_text(display, font, style, style.wrap_width()),
+                component_text(display, font, style, style.wrap_width(), skin),
                 padding(4.0, 12.0, 4.0, 12.0),
             ),
             fashion,
         )),
         NoteShape::Box => Box::new(ComponentRoseNoteBox::new(
             TextualPart::new(
-                component_text(display, font, style, style.wrap_width()),
+                component_text(display, font, style, style.wrap_width(), skin),
                 padding(4.0, 4.0, 4.0, 4.0),
             ),
             fashion,

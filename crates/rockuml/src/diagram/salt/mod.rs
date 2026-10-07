@@ -61,8 +61,12 @@ impl SaltDiagram {
             ));
         }
         let mut diagram = Self {
+            titled: Titled::new(
+                crate::style::SName::SaltDiagram,
+                "SALT",
+                source.md5_map().clone(),
+            ),
             source,
-            titled: Titled::new(crate::style::SName::SaltDiagram, "SALT"),
             lines: Vec::new(),
         };
         let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = common_commands();
