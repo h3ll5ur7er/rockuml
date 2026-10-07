@@ -3,6 +3,8 @@
 
 mod commands;
 #[cfg(test)]
+mod image_tests;
+#[cfg(test)]
 mod tests;
 
 use std::rc::Rc;
@@ -149,14 +151,22 @@ impl StateDiagram {
         quark: QuarkId,
         leaf_type: LeafType,
     ) -> EntityId {
+        self.leaf_named(location, quark, Display::with_newlines(""), leaf_type)
+    }
+
+    /// The entity `quark` holds, or a new leaf of `leaf_type` showing `display`.
+    fn leaf_named(
+        &mut self,
+        location: &LineLocation,
+        quark: QuarkId,
+        display: Display,
+        leaf_type: LeafType,
+    ) -> EntityId {
         match self.cuca.quark(quark).get_data() {
             Some(existing) => existing,
-            None => self.cuca.really_create_leaf(
-                Some(location),
-                quark,
-                Display::with_newlines(""),
-                leaf_type,
-            ),
+            None => self
+                .cuca
+                .really_create_leaf(Some(location), quark, display, leaf_type),
         }
     }
 

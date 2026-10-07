@@ -388,15 +388,7 @@ fn get_entity(diagram: &mut StateDiagram, location: &LineLocation, code: &str) -
             .cuca
             .quark_in_context(true, CucaDiagram::clean_id(code.trim_matches('=')));
         let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
-        return Some(match diagram.cuca.quark(quark).get_data() {
-            Some(existing) => existing,
-            None => diagram.cuca.really_create_leaf(
-                Some(location),
-                quark,
-                display,
-                LeafType::SynchroBar,
-            ),
-        });
+        return Some(diagram.leaf_named(location, quark, display, LeafType::SynchroBar));
     }
     let current = diagram.cuca.get_current_group();
     if diagram.cuca.entity(current).get_name(&diagram.cuca) == code {
@@ -599,15 +591,8 @@ pub(super) fn add_field() -> Box<dyn Command<StateDiagram>> {
                     .cuca
                     .quark_in_context(true, CucaDiagram::clean_id(code))
             };
-            let entity = match diagram.cuca.quark(quark).get_data() {
-                Some(existing) => existing,
-                None => {
-                    let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
-                    diagram
-                        .cuca
-                        .really_create_leaf(Some(location), quark, display, LeafType::State)
-                }
-            };
+            let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
+            let entity = diagram.leaf_named(location, quark, display, LeafType::State);
             let field = arg.get("FIELD", 0).unwrap_or_default();
             diagram
                 .cuca

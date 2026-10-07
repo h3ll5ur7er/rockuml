@@ -16,6 +16,12 @@ impl XDimension2D {
         Self::new(self.width + dx, self.height + dy)
     }
 
+    /// At least `min_width` wide and `min_height` high.
+    #[must_use]
+    pub fn at_least(self, min_width: f64, min_height: f64) -> Self {
+        Self::new(self.width.max(min_width), self.height.max(min_height))
+    }
+
     /// The space for `self` with `below` stacked under it.
     #[must_use]
     pub fn merge_top_bottom(self, below: Self) -> Self {

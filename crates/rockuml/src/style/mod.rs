@@ -2,6 +2,7 @@
 //! merge by specificity and declaration order.
 
 mod from_skinparam;
+mod merged;
 mod names;
 mod parser;
 mod signature;

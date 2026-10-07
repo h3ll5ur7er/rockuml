@@ -285,6 +285,11 @@ fn color_to_string(color: Option<&HColor>, render_date: &str) -> String {
         None => "NULL_COLOR".to_owned(),
         Some(color) if color.is_transparent() => "NULL_COLOR".to_owned(),
         Some(HColor::Simple(color)) => format!("{:x}", color.argb()),
+        // PlantUML names the first colour twice.
+        Some(HColor::Middle(color1, _)) => {
+            let color1 = color_to_string(Some(&HColor::Simple(*color1)), render_date);
+            format!("middle({color1} & {color1} )")
+        }
         Some(other) => format!("{} {render_date}", other.java_class_name()),
     }
 }

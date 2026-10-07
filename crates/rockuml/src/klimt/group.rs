@@ -5,18 +5,26 @@ use crate::text::LineLocation;
 /// In Java's declaration order, which is the order the attributes are written in.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum UGroupType {
+    Id,
     Class,
     /// A tooltip, which SVG writes as a `<title>` child rather than an attribute.
     Title,
+    DataEntity,
+    DataQualifiedName,
+    DataUid,
     DataSourceLine,
 }
 
 impl UGroupType {
+    /// The attribute SVG writes the entry as; `None` for the title and for entries SVG leaves out.
     pub fn svg_attribute_name(self) -> Option<&'static str> {
         match self {
             Self::Class => Some("class"),
-            Self::Title => None,
+            Self::DataQualifiedName => Some("data-qualified-name"),
+            // PlantUML writes the uid as the element's id, and leaves its own id out.
+            Self::DataUid => Some("id"),
             Self::DataSourceLine => Some("data-source-line"),
+            Self::Id | Self::Title | Self::DataEntity => None,
         }
     }
 }

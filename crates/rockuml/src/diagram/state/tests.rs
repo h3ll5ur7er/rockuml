@@ -7,11 +7,20 @@ use crate::decoration::LinkDecor;
 use crate::text::StringLocated;
 
 fn parse(body: &[&str]) -> Result<StateDiagram, String> {
-    let location = LineLocation::new("test", None);
-    let lines: Vec<StringLocated> = ["@startuml"]
+    let lines: Vec<&str> = ["@startuml"]
         .iter()
         .chain(body)
         .chain(&["@enduml"])
+        .copied()
+        .collect();
+    parse_source(&lines)
+}
+
+/// The diagram the lines from `@startuml` to `@enduml` make.
+pub(super) fn parse_source(source: &[&str]) -> Result<StateDiagram, String> {
+    let location = LineLocation::new("test", None);
+    let lines: Vec<StringLocated> = source
+        .iter()
         .map(|text| StringLocated::new(*text, location.clone()))
         .collect();
     let source = Rc::new(UmlSource::new(lines, Vec::new()));

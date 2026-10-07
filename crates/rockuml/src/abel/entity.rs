@@ -11,7 +11,7 @@ use super::{
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::cucadiagram::Bodier;
-use crate::decoration::symbol::USymbol;
+use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
@@ -44,7 +44,6 @@ pub(crate) struct Entity {
     pub display: Display,
     pub stereotype: Option<Stereotype>,
     pub bodier: Bodier,
-    pub usymbol: Option<USymbol>,
     pub url: Option<Url>,
     pub generic: Option<String>,
     /// A legend drawn inside a group.
@@ -56,6 +55,8 @@ pub(crate) struct Entity {
     packed: bool,
     pub is_static: bool,
     pub colors: Colors,
+    /// The symbol a description element or a group is drawn as; see [`Entity::get_usymbol`].
+    pub usymbol: Option<USymbol>,
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
     port_short_names: JavaHashSet<String>,
@@ -85,7 +86,6 @@ impl Entity {
             display: Display::default(),
             stereotype: None,
             bodier: Bodier::default(),
-            usymbol: None,
             url: None,
             generic: None,
             legend: None,
@@ -96,6 +96,7 @@ impl Entity {
             packed: false,
             is_static: false,
             colors: Colors::default(),
+            usymbol: None,
             tips: Vec::new(),
             port_short_names: JavaHashSet::default(),
             concurrent_separator: None,
@@ -180,6 +181,16 @@ impl Entity {
 
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {
         self.leaf_or_group = EntityType::Group(new_type);
+    }
+
+    /// Use cases and circles are always drawn as their symbol.
+    pub(crate) fn get_usymbol(&self) -> Option<USymbol> {
+        match self.get_leaf_type() {
+            Some(LeafType::Usecase) => Some(USymbols::USECASE),
+            Some(LeafType::UsecaseBusiness) => Some(USymbols::USECASE_BUSINESS),
+            Some(LeafType::Circle) => Some(USymbols::INTERFACE),
+            _ => self.usymbol,
+        }
     }
 
     pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {

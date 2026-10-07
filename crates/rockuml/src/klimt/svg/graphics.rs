@@ -13,7 +13,7 @@ use super::xml::XmlNode;
 use crate::color::{Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
-use crate::klimt::group::UGroup;
+use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::shape::{UImageSvg, USegment};
 use crate::klimt::typeface::GlyphSegment;
 
@@ -536,12 +536,12 @@ impl SvgGraphics {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
-            if let Some(name) = kind.svg_attribute_name() {
-                element.set_attribute(name, value);
-            } else {
+            if kind == UGroupType::Title {
                 let mut title = XmlNode::new("title");
                 title.set_text_content(value);
                 element.append_child(title);
+            } else if let Some(name) = kind.svg_attribute_name() {
+                element.set_attribute(name, value);
             }
         }
         self.open_elements.push(element);

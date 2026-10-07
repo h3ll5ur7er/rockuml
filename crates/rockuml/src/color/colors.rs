@@ -5,6 +5,7 @@ use super::HColor;
 use crate::decoration::LinkStyle;
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::RegexTree;
+use crate::style::{PName, Style, ValueReading};
 
 /// Which part of an element a colour paints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -132,6 +133,16 @@ impl Colors {
     /// The stroke the colours' line style asks for, if any.
     pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
         self.line_style.map(LinkStyle::get_stroke3)
+    }
+
+    /// The background or line colour set here, or else the style's (`getColor(Style, PName, HColorSet)`).
+    pub(crate) fn get_color_of(&self, style: &Style, name: PName) -> HColor {
+        let own = match name {
+            PName::BackGroundColor => self.get(ColorType::Back),
+            PName::LineColor => self.get(ColorType::Line),
+            _ => None,
+        };
+        own.cloned().unwrap_or_else(|| style.value(name).as_color())
     }
 
     pub(crate) fn get(&self, kind: ColorType) -> Option<&HColor> {
