@@ -173,11 +173,8 @@ impl USymbol {
         }
     }
 
-    /// The symbol as a frame `width` by `height` with `title` and `stereotype` at its top.
-    ///
-    /// # Panics
-    ///
-    /// For actors, robustness symbols, interfaces, persons and use cases, which PlantUML never draws big.
+    /// The symbol as a frame `width` by `height` with `title` and `stereotype` at its top; `None` for actors,
+    /// robustness symbols, interfaces, persons and use cases, which have no big form.
     #[allow(clippy::too_many_arguments, reason = "PlantUML's asBig")]
     pub(crate) fn as_big(
         self,
@@ -188,7 +185,7 @@ impl USymbol {
         height: f64,
         fashion: Fashion,
         stereo_alignment: HorizontalAlignment,
-    ) -> Box<dyn TextBlock> {
+    ) -> Option<Box<dyn TextBlock>> {
         let content = BigContent {
             title,
             label_alignment,
@@ -198,7 +195,7 @@ impl USymbol {
             fashion,
             stereo_alignment,
         };
-        match self {
+        Some(match self {
             Self::Action(_) => Big::boxed(action::USymbolAction, content),
             Self::Artifact => Big::boxed(artifact::USymbolArtifact, content),
             Self::Card => Big::boxed(card::USymbolCard, content),
@@ -227,8 +224,8 @@ impl USymbol {
             | Self::EntityDomain
             | Self::Interface
             | Self::Person
-            | Self::Usecase { .. } => panic!("{self:?} has no big form"),
-        }
+            | Self::Usecase { .. } => return None,
+        })
     }
 
     /// The room a cluster's title leaves below it for the symbol's shape.

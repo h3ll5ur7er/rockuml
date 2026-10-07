@@ -214,7 +214,7 @@ fn block(header: &str) -> Option<Box<dyn TextBlock>> {
             label_alignment,
             stereo_alignment,
             fashion_name,
-        ] => Some(symbol.as_big(
+        ] => symbol.as_big(
             big_title(case),
             alignment(label_alignment),
             big_stereo(case),
@@ -222,7 +222,7 @@ fn block(header: &str) -> Option<Box<dyn TextBlock>> {
             height.parse().unwrap(),
             fashion(fashion_name),
             alignment(stereo_alignment),
-        )),
+        ),
         _ => None,
     }
 }
@@ -257,6 +257,31 @@ fn symbols_draw_like_plantuml() {
         cases.len(),
         failures[0]
     );
+}
+
+#[test]
+fn figures_have_no_big_form() {
+    for symbol in [
+        USymbols::ACTOR_STICKMAN,
+        USymbols::ACTOR_STICKMAN_BUSINESS,
+        USymbols::BOUNDARY,
+        USymbols::CONTROL,
+        USymbols::ENTITY_DOMAIN,
+        USymbols::INTERFACE,
+        USymbols::PERSON,
+        USymbols::USECASE,
+    ] {
+        let big = symbol.as_big(
+            big_title("plain"),
+            HorizontalAlignment::Center,
+            big_stereo("plain"),
+            100.0,
+            50.0,
+            fashion("plain"),
+            HorizontalAlignment::Center,
+        );
+        assert!(big.is_none(), "{symbol:?}");
+    }
 }
 
 #[test]
