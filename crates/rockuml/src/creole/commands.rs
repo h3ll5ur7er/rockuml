@@ -85,6 +85,12 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
             open_icon,
         ),
         RegexCommand::boxed(
+            &["<#", "<:"],
+            &format!(r"^(\<(#\w+)?:([0-9a-z][0-9_a-z]*):{SCALE_OR_COLOR}\>)"),
+            1,
+            emoji,
+        ),
+        RegexCommand::boxed(
             &["<f"],
             &format!(r"^({FAMILY}(.*?)\</font\>)"),
             1,
@@ -364,6 +370,13 @@ fn open_icon(captures: &Captures, stripe: &mut StripeBuilder) {
         .or_else(|| get_color(scale_or_color))
         .map(HColor::parse_or_white);
     stripe.add_open_icon(&captures[3], get_scale(scale_or_color, 1.0), color);
+}
+
+/// `<:smile:>`, `<#red:heart:>`, `<:smile:*2>` or `<:heart:{scale=2,color=red}>`.
+fn emoji(captures: &Captures, stripe: &mut StripeBuilder) {
+    let scale_or_color = group(captures, 4);
+    let color_name = group(captures, 2).or_else(|| get_color(scale_or_color));
+    stripe.add_emoji(&captures[3], get_scale(scale_or_color, 1.0), color_name);
 }
 
 fn get_scale(scale_or_color: Option<&str>, default: f64) -> f64 {
