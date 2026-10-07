@@ -1,6 +1,8 @@
 //! Usecase, component, deployment and archimate diagrams (PlantUML's `descdiagram` package).
 
 mod commands;
+#[cfg(test)]
+mod tests;
 
 use std::rc::Rc;
 
@@ -11,15 +13,15 @@ use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::LeafType;
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
+use crate::decoration::symbol::USymbols;
+use crate::java;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
-
-/// Drawing description diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("usecase, component and deployment diagrams");
 
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
@@ -35,8 +37,7 @@ impl CommandFactory for DescriptionDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Description;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> DescriptionDiagram {
-        let mut titled = Titled::new(SName::ComponentDiagram, "DESCRIPTION", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::ComponentDiagram, "DESCRIPTION", source);
         DescriptionDiagram {
             source: source.clone(),
             cuca: CucaDiagram::new(titled),
@@ -97,9 +98,58 @@ fn code_for_description() -> RegexTree {
     )
 }
 
+impl EntityDiagram for DescriptionDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
+    }
+
+    /// Also `()x`, `:x:/` and `(x)/`, the notations of interfaces and business actors and use cases.
+    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
+        let id = id.strip_prefix("()").map_or(id, java::trim);
+        if let Some(name) = id
+            .strip_prefix(':')
+            .and_then(|rest| rest.strip_suffix(":/"))
+            .or_else(|| {
+                id.strip_prefix('(')
+                    .and_then(|rest| rest.strip_suffix(")/"))
+            })
+        {
+            return name;
+        }
+        CucaDiagram::clean_id(id)
+    }
+}
+
+impl DescriptionDiagram {
+    /// Whether some leaf is a use case or an actor of the diagram's actor style.
+    fn is_usecase(&self) -> bool {
+        let actor = self.cuca.skin().actor_style().to_u_symbol();
+        self.cuca.leafs().into_iter().any(|leaf| {
+            let leaf = self.cuca.entity(leaf);
+            leaf.get_leaf_type() == Some(LeafType::Usecase) || leaf.get_usymbol() == Some(actor)
+        })
+    }
+}
+
 impl AbstractDiagram for DescriptionDiagram {
     fn starting_pass(&mut self, _pass: ParserPass) {
         self.cuca.starting_pass();
+    }
+
+    /// Names only links mention are actors in use case diagrams, and interfaces elsewhere.
+    fn make_diagram_ready(&mut self) {
+        let default_symbol = if self.is_usecase() {
+            self.cuca.skin().actor_style().to_u_symbol()
+        } else {
+            USymbols::INTERFACE
+        };
+        for leaf in self.cuca.leafs() {
+            let leaf = self.cuca.entity_mut(leaf);
+            if leaf.get_leaf_type() == Some(LeafType::StillUnknown) {
+                leaf.mute_to_type(LeafType::Description);
+                leaf.usymbol = Some(default_symbol);
+            }
+        }
     }
 
     fn check_final_error(&mut self) -> Option<String> {
@@ -113,12 +163,6 @@ impl AbstractDiagram for DescriptionDiagram {
         }
         self.cuca.apply_single_strategy();
         None
-    }
-}
-
-impl EntityDiagram for DescriptionDiagram {
-    fn cuca(&mut self) -> &mut CucaDiagram {
-        &mut self.cuca
     }
 }
 
@@ -136,9 +180,10 @@ impl Diagram for DescriptionDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

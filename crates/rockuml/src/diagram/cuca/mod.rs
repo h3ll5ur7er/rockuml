@@ -56,6 +56,11 @@ pub(crate) struct Failure {
 /// (in PlantUML, the subclasses of `CucaDiagram`).
 pub(crate) trait EntityDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram;
+
+    /// The name an element written like `"Name"` is known by (`cleanId`).
+    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
+        CucaDiagram::clean_id(id)
+    }
 }
 
 /// `hide` or `show` of a portion of the entities of a gender.
@@ -410,9 +415,14 @@ impl CucaDiagram {
         self.stacks.push(Bag::Group(group));
     }
 
-    /// Leaves the innermost group or `together` block; whether there was one.
+    /// Leaves the innermost group or `together` block; whether there was one. The root is never left.
     pub(crate) fn end_group(&mut self) -> bool {
-        self.stacks.pop().is_some()
+        if self.stacks.len() > 1 {
+            self.stacks.pop();
+            true
+        } else {
+            false
+        }
     }
 
     /// The entity of the first quark named `code`.

@@ -3,9 +3,10 @@
 use std::rc::Rc;
 
 use super::opale::{self, MARGIN_X1, MARGIN_X2, MARGIN_Y, Opale};
-use crate::abel::{Direction, Entity, EntityId, LinkId};
+use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::{ColorType, HColor};
 use crate::diagram::cuca::CucaDiagram;
+use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::group::{UGroup, UGroupType};

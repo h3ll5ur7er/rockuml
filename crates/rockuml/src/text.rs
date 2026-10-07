@@ -140,46 +140,6 @@ pub(crate) fn unquoted(text: &str) -> &str {
     }
 }
 
-/// Where an arrow points on the page.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Direction {
-    Right,
-    Left,
-    Down,
-    Up,
-}
-
-impl Direction {
-    /// The direction an arrow's body asks for, like `left`, `ri` or `u`; by default down, or right for a
-    /// one-character body (`StringUtils.getQueueDirection`).
-    pub(crate) fn of_queue(queue: &str) -> Self {
-        let queue = queue.to_lowercase();
-        let named = [
-            ("left", Self::Left),
-            ("right", Self::Right),
-            ("up", Self::Up),
-            ("down", Self::Down),
-            ("l", Self::Left),
-            ("r", Self::Right),
-            ("u", Self::Up),
-            ("d", Self::Down),
-        ];
-        named
-            .into_iter()
-            .find(|(name, _)| queue.contains(name))
-            .map_or_else(
-                || {
-                    if queue.chars().count() == 1 {
-                        Self::Right
-                    } else {
-                        Self::Down
-                    }
-                },
-                |(_, direction)| direction,
-            )
-    }
-}
-
 pub(crate) fn ends_with_backslash(s: &str) -> bool {
     s.ends_with('\\') && !s.ends_with("\\\\")
 }

@@ -4,9 +4,10 @@ use std::rc::Rc;
 
 use super::entity_image_note::note_style;
 use super::opale::Opale;
-use crate::abel::{Direction, Entity, Position};
+use crate::abel::{Entity, Position};
 use crate::color::ColorType;
 use crate::diagram::cuca::CucaDiagram;
+use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{XDimension2D, XPoint2D, XRectangle2D};
 use crate::klimt::stencil::RectangleStencil;

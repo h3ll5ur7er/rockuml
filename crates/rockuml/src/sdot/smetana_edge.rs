@@ -170,11 +170,13 @@ impl SmetanaEdge {
             .clone();
         let ug = ug.with_backcolor(HColor::NONE).with_color(color.clone());
         let link_type = link.get_type();
-        let stroke = if link_type.get_style().is_normal() {
-            link_type.get_stroke3(Some(style_line.stroke()))
-        } else {
-            link_type.get_stroke3(diagram.skin().get_thickness("arrow"))
-        };
+        let stroke = colors.get_specific_line_stroke().unwrap_or_else(|| {
+            if link_type.get_style().is_normal() {
+                link_type.get_stroke3(Some(style_line.stroke()))
+            } else {
+                link_type.get_stroke3(diagram.skin().get_thickness("arrow"))
+            }
+        });
         if let Some(url) = &link.url {
             ug.start_url(url);
         }

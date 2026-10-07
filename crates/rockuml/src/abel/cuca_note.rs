@@ -3,6 +3,7 @@
 
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::direction::Direction;
 use crate::klimt::geom::XDimension2D;
 use crate::skin::Rankdir;
 use crate::stereo::Stereotype;
@@ -64,27 +65,6 @@ impl Position {
             Self::Left => "LEFT",
             Self::Bottom => "BOTTOM",
             Self::Top => "TOP",
-        }
-    }
-}
-
-/// Which way something points (PlantUML's `utils.Direction`).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Direction {
-    Right,
-    Left,
-    Down,
-    Up,
-}
-
-impl Direction {
-    #[must_use]
-    pub(crate) fn get_inv(self) -> Self {
-        match self {
-            Self::Right => Self::Left,
-            Self::Left => Self::Right,
-            Self::Down => Self::Up,
-            Self::Up => Self::Down,
         }
     }
 }

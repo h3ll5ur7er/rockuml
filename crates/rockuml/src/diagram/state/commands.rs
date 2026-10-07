@@ -10,10 +10,11 @@ use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::CucaDiagram;
+use crate::direction::Direction;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::stereo::{self, Stereogroup, Stereotag, Stereotype};
-use crate::text::{Direction, LineLocation};
+use crate::text::LineLocation;
 
 const ALL_PASSES: &[ParserPass] = &[ParserPass::One, ParserPass::Two, ParserPass::Three];
 

@@ -401,7 +401,7 @@ mod tests {
         );
         assert_eq!(
             read_as(&["@startuml", "actor User", "User --> (Login)", "@enduml"]),
-            "usecase, component and deployment diagrams"
+            "DESCRIPTION"
         );
         assert_eq!(read_as(&["@startuml", "[*] --> Idle", "@enduml"]), "STATE");
         assert_eq!(

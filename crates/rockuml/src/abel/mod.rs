@@ -3,11 +3,7 @@
 
 #![cfg_attr(
     not(test),
-    expect(
-        dead_code,
-        unused_imports,
-        reason = "used by the Phase 5 family commands"
-    )
+    expect(dead_code, reason = "used by the Phase 5 family commands")
 )]
 #![cfg_attr(
     test,
@@ -26,7 +22,7 @@ mod entity_utils;
 mod leaf_type;
 mod link;
 
-pub(crate) use cuca_note::{CucaNote, Direction, NoteLinkStrategy, Position, Tip};
+pub(crate) use cuca_note::{CucaNote, NoteLinkStrategy, Position, Tip};
 pub(crate) use entity::{Entity, EntityId, EntityType};
 pub(crate) use entity_gender::EntityGender;
 pub(crate) use entity_position::{EntityPortion, EntityPosition};
