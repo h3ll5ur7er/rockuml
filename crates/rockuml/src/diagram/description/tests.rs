@@ -330,7 +330,7 @@ fn the_images_draw_like_plantumls() {
 #[test]
 fn the_commands_build_plantumls_model() {
     let cases = fixture_cases();
-    assert_eq!(cases.len(), 68);
+    assert_eq!(cases.len(), 70);
     let mut failures = Vec::new();
     for (case, (expected, _)) in &cases {
         let actual = dump_model(&read(case));

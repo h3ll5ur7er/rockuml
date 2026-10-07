@@ -4546,6 +4546,66 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== component/empty-packages.puml
+group ent0001 "foo" PACKAGE PACKAGE display="foo"
+group ent0002 "bar" PACKAGE NODE display="bar"
+group ent0003 "box" PACKAGE RECTANGLE display="box"
+leaf ent0004 "web" DESCRIPTION COMPONENT2 display="web"
+link lnk5 ent0004 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk6 ent0004 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk7 ent0004 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0004 EntityImageDescription
+dimension: 77.39579540044159 44.0
+COMMENT: entity web
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 77.3958 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 57.3958 ; 5.0000 ]
+  pt2: [ 72.3958 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.3958 ; 7.0000 ]
+  pt2: [ 59.3958 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.3958 ; 11.0000 ]
+  pt2: [ 59.3958 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: web
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === component/hide-unlinked.puml
 leaf ent0001 "A" DESCRIPTION COMPONENT2 display="A"
 leaf ent0002 "B" DESCRIPTION COMPONENT2 display="B"
@@ -5255,6 +5315,223 @@ RECTANGLE:
 TEXT:
   text: Product
   position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== component/link-label-visibility.puml
+leaf ent0001 "Web" DESCRIPTION COMPONENT2 display="Web"
+leaf ent0002 "Api" DESCRIPTION COMPONENT2 display="Api"
+leaf ent0003 "Store" DESCRIPTION DATABASE display="Store"
+leaf ent0004 "User" DESCRIPTION ACTOR_STICKMAN display="User"
+link lnk5 ent0004 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="browses" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk6 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="calls" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk7 ent0002 ent0003 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="reads" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk8 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="reports" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0001 EntityImageDescription
+dimension: 79.95213220672306 44.0
+COMMENT: entity Web
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 79.9521 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 59.9521 ; 5.0000 ]
+  pt2: [ 74.9521 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 57.9521 ; 7.0000 ]
+  pt2: [ 61.9521 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 57.9521 ; 11.0000 ]
+  pt2: [ 61.9521 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Web
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0002 EntityImageDescription
+dimension: 77.44139404811017 44.0
+COMMENT: entity Api
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 77.4414 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 57.4414 ; 5.0000 ]
+  pt2: [ 72.4414 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.4414 ; 7.0000 ]
+  pt2: [ 59.4414 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.4414 ; 11.0000 ]
+  pt2: [ 59.4414 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Api
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0003 EntityImageDescription
+dimension: 80.42455216851313 43.0
+COMMENT: entity Store
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 0.0000 ]
+     pt2: [ 40.2123 ; 0.0000 ]
+     pt3: [ 40.2123 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 0.0000 ]
+     pt2: [ 80.4246 ; 0.0000 ]
+     pt3: [ 80.4246 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 80.4246 ; 33.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 80.4246 ; 43.0000 ]
+     pt2: [ 40.2123 ; 43.0000 ]
+     pt3: [ 40.2123 ; 43.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 43.0000 ]
+     pt2: [ 0.0000 ; 43.0000 ]
+     pt3: [ 0.0000 ; 33.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 20.0000 ]
+     pt2: [ 40.2123 ; 20.0000 ]
+     pt3: [ 40.2123 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 20.0000 ]
+     pt2: [ 80.4246 ; 20.0000 ]
+     pt3: [ 80.4246 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 80.4246 ; 43.0000 ]
+  pt2: [ 90.4246 ; 53.0000 ]
+
+TEXT:
+  text: Store
+  position: [ 10.0000 ; 34.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0004 EntityImageDescription
+dimension: 47.96778518689069 74.0
+COMMENT: entity User
+ELLIPSE:
+  pt1: [ 15.9839 ; 0.5000 ]
+  pt2: [ 31.9839 ; 16.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: User
+  position: [ 0.0000 ; 70.8889 ]
   orientation: 0
   font: SansSerif.plain/14 []
   color: ff000000
