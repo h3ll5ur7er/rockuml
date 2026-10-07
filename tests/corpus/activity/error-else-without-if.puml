@@ -1,0 +1,7 @@
+@startuml
+start
+:Check the input;
+else (no)
+:Reject;
+stop
+@enduml

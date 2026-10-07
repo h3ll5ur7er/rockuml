@@ -238,3 +238,15 @@ listing.
 `crates/rockuml/src/diagram/state/image_tests.rs` reads them with rockuml's factory and compares each leaf's
 dimension, shape type and drawing. Fonts other than Java's logical ones are left out, as their names depend on the
 fonts installed where Java runs.
+
+## Activity diagram unit oracles
+
+`activity-unit/ModelDump.java` reads each activity corpus case with PlantUML's own factory and writes the
+instruction tree its commands build: every instruction with its labels, colours, box style, notes and links, each
+branch with its links, and the swimlanes each instruction says it starts in, ends in and spans.
+`crates/rockuml/src/diagram/activity3/tests.rs` reads the same cases with rockuml's commands and compares the
+listing.
+
+```bash
+bash tools/oracle/activity-unit/model.sh   # activity-model.txt: the instruction tree of each activity case
+```

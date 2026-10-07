@@ -1,5 +1,6 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+mod activity3;
 mod builder;
 mod chen;
 mod chrome;

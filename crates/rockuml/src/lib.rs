@@ -12,6 +12,7 @@ pub mod diagram;
 mod direction;
 mod emoji;
 mod file_policy;
+mod ftile;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.
 pub mod fonts {
     pub use crate::klimt::typeface::{FontRegistry, NotAFont};

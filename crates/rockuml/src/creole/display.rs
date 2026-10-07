@@ -1,3 +1,5 @@
+use regex::Regex;
+
 use super::{CreoleMode, CreoleParser, SheetBlock1, SheetBlock2};
 use crate::java;
 use crate::jaws::{
@@ -185,6 +187,39 @@ impl Display {
         match result.lines.last_mut() {
             Some(last) => last.push_str(&generic),
             None => result.lines.push(generic),
+        }
+        result
+    }
+
+    /// `line` after the last line.
+    #[must_use]
+    pub(crate) fn add(&self, line: &str) -> Self {
+        let mut result = self.clone();
+        result.lines.push(line.to_owned());
+        result
+    }
+
+    /// The display cut where `separator` first matches in each line: the text before the match ends one
+    /// display, the text after it starts the next.
+    pub(crate) fn split_multiline(&self, separator: &Regex) -> Vec<Self> {
+        let empty = || Self {
+            lines: Vec::new(),
+            ..self.clone()
+        };
+        let mut result = vec![empty()];
+        for line in &self.lines {
+            let pending = result
+                .last_mut()
+                .expect("there is always a pending display");
+            match separator.find(line) {
+                Some(found) => {
+                    pending.lines.push(line[..found.start()].to_owned());
+                    let mut next = empty();
+                    next.lines.push(line[found.end()..].to_owned());
+                    result.push(next);
+                }
+                None => pending.lines.push(line.clone()),
+            }
         }
         result
     }

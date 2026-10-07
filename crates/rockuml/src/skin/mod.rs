@@ -183,6 +183,11 @@ impl SkinParam {
             .and_then(|value| value.parse().ok())
     }
 
+    /// The space between the lines of an arrow drawn in several colours.
+    pub(crate) fn color_arrow_separation_space(&self) -> i32 {
+        self.as_int("colorarrowseparationspace").unwrap_or(0)
+    }
+
     pub(crate) fn strict_uml_style(&self) -> bool {
         self.value_is("style", "strictuml")
     }

@@ -1,12 +1,14 @@
 //! Diagram commands: each recognises some source lines and applies them to the diagram being built.
 
 mod bloc_lines;
+mod decorator_multine;
 pub(crate) mod factory;
 mod multiline;
 mod single_line;
 pub(crate) mod unported;
 
 pub(crate) use bloc_lines::BlocLines;
+pub(crate) use decorator_multine::DecoratorMultine;
 pub(crate) use multiline::Multiline;
 pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
 
