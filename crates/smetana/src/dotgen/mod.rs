@@ -12,6 +12,7 @@ pub mod decomp;
 pub mod dotinit;
 pub mod dotsplines;
 pub mod fastgr;
+pub mod flat;
 pub mod mincross;
 pub mod position;
 pub mod rank;
