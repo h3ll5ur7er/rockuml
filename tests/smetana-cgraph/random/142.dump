@@ -1,0 +1,57 @@
+cgraph-dump 1
+graph "g" nodes 6 edges 5
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4" "N5"
+in "g" node "N0" out e1> e4> e5> in edges e1> e4> e5> degree 0 3
+in "g" node "N1" out in e1< edges e1< degree 1 0
+in "g" node "N2" out e2> e3> in e4< edges e2> e3> e4< degree 1 2
+in "g" node "N3" out in e2< edges e2< degree 1 0
+in "g" node "N4" out in e3< edges e3< degree 1 0
+in "g" node "N5" out in e5< edges e5< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "0.8791105669598024"
+attr "N0" "width" "2.0"
+attr "N0" "label" "<P0>_dim_18.0_55.29596082110577_|<P1>_dim_36.0_55.29596082110577_|<P2>_dim_36.0_55.29596082110577_|<P3>_dim_18.0_55.29596082110577_|<P4>_dim_18.0_55.29596082110577_|<P5>_dim_18.0_55.29596082110577_"
+attr "N1" "shape" "record"
+attr "N1" "height" "0.0"
+attr "N1" "width" "0.20833333333333334"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P1"
+attr "N2" "shape" "record"
+attr "N2" "height" "1.732937273981294"
+attr "N2" "width" "0.5"
+attr "N2" "label" "{_dim_36.0_80.11613173746437_|{<P0>_dim_18.0_28.6553519891888_|<P1>_dim_18.0_28.6553519891888_}}"
+attr "N3" "shape" "record"
+attr "N3" "height" "2.7022733808381267"
+attr "N3" "width" "0.25"
+attr "N3" "label" "{_dim_18.0_96.10106049080655_|{<P0>_dim_18.0_82.46262292953855_}}"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P0"
+attr "N4" "shape" "record"
+attr "N4" "height" "0.0"
+attr "N4" "width" "0.20833333333333334"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P1"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P3"
+attr "N5" "shape" "record"
+attr "N5" "height" "1.3681254246022911"
+attr "N5" "width" "0.5"
+attr "N5" "label" "{_dim_36.0_62.95313118603315_|{<P0>_dim_36.0_19.551899385331808_}}"
+attr e5> "arrowsize" ".75"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "normal"
+attr e5> "tailport" "P5"

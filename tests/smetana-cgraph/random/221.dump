@@ -1,0 +1,338 @@
+cgraph-dump 1
+graph "g" nodes 37 edges 46
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007" "sh0008" "sh0009" "sh0010" "sh0011" "sh0012" "sh0013" "sh0014" "sh0015" "sh0016" "sh0017" "sh0018" "sh0019" "sh0020" "sh0021" "sh0022" "sh0023" "sh0024" "sh0025" "sh0026" "sh0027" "sh0028" "sh0029" "sh0030" "sh0031" "sh0032" "sh0033" "sh0034" "sh0035" "sh0036" "sh0037" "sh0038"
+in "g" node "sh0002" out e1> e3> e18> e24> e46> e25> in edges e1> e3> e18> e24> e46> e25> degree 0 6
+in "g" node "sh0003" out e2> e4> e6> in e1< edges e2> e4> e6> e1< degree 1 3
+in "g" node "sh0004" out e5> in e2< e42< edges e5> e2< e42< degree 2 1
+in "g" node "sh0005" out e35> e7> e30> in edges e35> e7> e30> degree 0 3
+in "g" node "sh0006" out e12> e34> e37> in e3< edges e12> e34> e37> e3< degree 1 3
+in "g" node "sh0007" out e11> e38> e40> in e4< e35< edges e11> e38> e40> e4< e35< degree 2 3
+in "g" node "sh0008" out e8> e32> in e5< edges e8> e32> e5< degree 1 2
+in "g" node "sh0009" out in e6< edges e6< degree 1 0
+in "g" node "sh0010" out e20> in e7< edges e20> e7< degree 1 1
+in "g" node "sh0011" out e9> in e8< edges e9> e8< degree 1 1
+in "g" node "sh0012" out e10> e26> e28> in e9< edges e10> e26> e28> e9< degree 1 3
+in "g" node "sh0013" out e41> in e10< edges e41> e10< degree 1 1
+in "g" node "sh0014" out e15> e29> e39> in e11< edges e15> e29> e39> e11< degree 1 3
+in "g" node "sh0015" out e13> e14> e21> in e12< edges e13> e14> e21> e12< degree 1 3
+in "g" node "sh0016" out e16> e19> in e13< edges e16> e19> e13< degree 1 2
+in "g" node "sh0017" out e17> in e14< edges e17> e14< degree 1 1
+in "g" node "sh0018" out e31> in e41< e15< edges e31> e41< e15< degree 2 1
+in "g" node "sh0019" out e33> in e38< e16< edges e33> e38< e16< degree 2 1
+in "g" node "sh0020" out in e17< edges e17< degree 1 0
+in "g" node "sh0021" out in edges degree 0 0
+in "g" node "sh0022" out in edges degree 0 0
+in "g" node "sh0023" out e23> in e18< edges e23> e18< degree 1 1
+in "g" node "sh0024" out e44> e45> e27> in e34< e19< e44< e45< edges e44> e45> e27> e34< e19< degree 4 3
+in "g" node "sh0025" out in e37< e20< edges e37< e20< degree 2 0
+in "g" node "sh0026" out e22> in edges e22> degree 0 1
+in "g" node "sh0027" out e36> in e21< edges e36> e21< degree 1 1
+in "g" node "sh0028" out in e22< edges e22< degree 1 0
+in "g" node "sh0029" out in e23< edges e23< degree 1 0
+in "g" node "sh0030" out in e24< e46< edges e24< e46< degree 2 0
+in "g" node "sh0031" out in e25< edges e25< degree 1 0
+in "g" node "sh0032" out in e26< edges e26< degree 1 0
+in "g" node "sh0033" out e42> e43> in e33< e27< e36< e43< edges e42> e43> e33< e27< e36< degree 4 2
+in "g" node "sh0034" out in e28< edges e28< degree 1 0
+in "g" node "sh0035" out in e29< edges e29< degree 1 0
+in "g" node "sh0036" out in e30< e39< edges e30< e39< degree 2 0
+in "g" node "sh0037" out in e40< e31< edges e40< e31< degree 2 0
+in "g" node "sh0038" out in e32< edges e32< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+find e12> forward e12< backward none
+find e13> forward e13< backward none
+find e14> forward e14< backward none
+find e15> forward e15< backward none
+find e16> forward e16< backward none
+find e17> forward e17< backward none
+find e18> forward e18< backward none
+find e19> forward e19< backward none
+find e20> forward e20< backward none
+find e21> forward e21< backward none
+find e22> forward e22< backward none
+find e23> forward e23< backward none
+find e24> forward e46< backward none
+find e25> forward e25< backward none
+find e26> forward e26< backward none
+find e27> forward e27< backward none
+find e28> forward e28< backward none
+find e29> forward e29< backward none
+find e30> forward e30< backward none
+find e31> forward e31< backward none
+find e32> forward e32< backward none
+find e33> forward e33< backward none
+find e34> forward e34< backward none
+find e35> forward e35< backward none
+find e36> forward e36< backward none
+find e37> forward e37< backward none
+find e38> forward e38< backward none
+find e39> forward e39< backward none
+find e40> forward e40< backward none
+find e41> forward e41< backward none
+find e42> forward e42< backward none
+find e43> forward e43< backward e43<
+find e44> forward e44< backward e44<
+find e45> forward e44< backward e44<
+find e46> forward e46< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "1.4204655048074035"
+attr "sh0002" "height" "1.0330662578145613"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "2.1356055818187545"
+attr "sh0003" "height" "1.2785095835199352"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.3197724088326297"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.3635929871312554"
+attr "sh0005" "height" "0.6666666666666666"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "0.7224957914837972"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.2439583561255443"
+attr "sh0007" "height" "0.6666666666666666"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.981790510545935"
+attr "sh0008" "height" "0.6666666666666666"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "0.6839357356890603"
+attr "sh0009" "height" "0.6666666666666666"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.5131109426046638"
+attr "sh0010" "height" "1.1377094945169335"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "0.6536830552116425"
+attr "sh0011" "height" "1.1383999295982588"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "0.8644328750142499"
+attr "sh0012" "height" "0.6666666666666666"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "0.5817013251833019"
+attr "sh0013" "height" "0.6666666666666666"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "0.5182861504221854"
+attr "sh0014" "height" "0.6666666666666666"
+attr "sh0015" "shape" "box"
+attr "sh0015" "width" "1.394529109380259"
+attr "sh0015" "height" "1.6470602969014052"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "1.960172464057163"
+attr "sh0016" "height" "0.6666666666666666"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "1.56746997694196"
+attr "sh0017" "height" "0.6666666666666666"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "0.5943214845539132"
+attr "sh0018" "height" "0.8789358741368648"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "0.4925036398196025"
+attr "sh0019" "height" "0.6966162961422506"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "0.8606058375706018"
+attr "sh0020" "height" "1.4543053408395015"
+attr "sh0021" "shape" "box"
+attr "sh0021" "width" "0.2936619821493916"
+attr "sh0021" "height" "0.6666666666666666"
+attr "sh0022" "shape" "box"
+attr "sh0022" "width" "2.1460161293586713"
+attr "sh0022" "height" "0.6666666666666666"
+attr "sh0023" "shape" "box"
+attr "sh0023" "width" "1.729087734014871"
+attr "sh0023" "height" "0.7267438794386006"
+attr "sh0024" "shape" "box"
+attr "sh0024" "width" "0.28317320883406416"
+attr "sh0024" "height" "1.2227300015665181"
+attr "sh0025" "shape" "box"
+attr "sh0025" "width" "1.7386498449914614"
+attr "sh0025" "height" "1.3924040716854107"
+attr "sh0026" "shape" "box"
+attr "sh0026" "width" "2.0389627209818073"
+attr "sh0026" "height" "0.6666666666666666"
+attr "sh0027" "shape" "box"
+attr "sh0027" "width" "1.4995456936750644"
+attr "sh0027" "height" "0.7216101331005395"
+attr "sh0028" "shape" "box"
+attr "sh0028" "width" "1.0237517843590553"
+attr "sh0028" "height" "0.6666666666666666"
+attr "sh0029" "shape" "box"
+attr "sh0029" "width" "1.9740073848187296"
+attr "sh0029" "height" "0.6666666666666666"
+attr "sh0030" "shape" "box"
+attr "sh0030" "width" "1.0680389757142938"
+attr "sh0030" "height" "0.7869438103619115"
+attr "sh0031" "shape" "box"
+attr "sh0031" "width" "2.1734640196442374"
+attr "sh0031" "height" "1.034587173015269"
+attr "sh0032" "shape" "box"
+attr "sh0032" "width" "0.8205083884742633"
+attr "sh0032" "height" "0.5298671258170149"
+attr "sh0033" "shape" "box"
+attr "sh0033" "width" "1.1681930019237228"
+attr "sh0033" "height" "0.9043098411406173"
+attr "sh0034" "shape" "box"
+attr "sh0034" "width" "1.8953001994058012"
+attr "sh0034" "height" "1.1599660204305875"
+attr "sh0035" "shape" "box"
+attr "sh0035" "width" "0.9257586374717306"
+attr "sh0035" "height" "0.6666666666666666"
+attr "sh0036" "shape" "box"
+attr "sh0036" "width" "2.1730540265832747"
+attr "sh0036" "height" "0.6666666666666666"
+attr "sh0037" "shape" "box"
+attr "sh0037" "width" "0.48404342974446496"
+attr "sh0037" "height" "0.6666666666666666"
+attr "sh0038" "shape" "box"
+attr "sh0038" "width" "0.2871097657358127"
+attr "sh0038" "height" "0.7900772314110949"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "1"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "none"
+attr e10> "minlen" "1"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "none"
+attr e11> "minlen" "1"
+attr e12> "arrowtail" "none"
+attr e12> "arrowhead" "none"
+attr e12> "minlen" "1"
+attr e13> "arrowtail" "none"
+attr e13> "arrowhead" "none"
+attr e13> "minlen" "1"
+attr e14> "arrowtail" "none"
+attr e14> "arrowhead" "none"
+attr e14> "minlen" "1"
+attr e15> "arrowtail" "none"
+attr e15> "arrowhead" "none"
+attr e15> "minlen" "1"
+attr e16> "arrowtail" "none"
+attr e16> "arrowhead" "none"
+attr e16> "minlen" "1"
+attr e17> "arrowtail" "none"
+attr e17> "arrowhead" "none"
+attr e17> "minlen" "1"
+attr e18> "arrowtail" "none"
+attr e18> "arrowhead" "none"
+attr e18> "minlen" "1"
+attr e19> "arrowtail" "none"
+attr e19> "arrowhead" "none"
+attr e19> "minlen" "1"
+attr e20> "arrowtail" "none"
+attr e20> "arrowhead" "none"
+attr e20> "minlen" "1"
+attr e21> "arrowtail" "none"
+attr e21> "arrowhead" "none"
+attr e21> "minlen" "1"
+attr e22> "arrowtail" "none"
+attr e22> "arrowhead" "none"
+attr e22> "minlen" "1"
+attr e23> "arrowtail" "none"
+attr e23> "arrowhead" "none"
+attr e23> "minlen" "1"
+attr e24> "arrowtail" "none"
+attr e24> "arrowhead" "none"
+attr e24> "minlen" "1"
+attr e25> "arrowtail" "none"
+attr e25> "arrowhead" "none"
+attr e25> "minlen" "1"
+attr e26> "arrowtail" "none"
+attr e26> "arrowhead" "none"
+attr e26> "minlen" "1"
+attr e27> "arrowtail" "none"
+attr e27> "arrowhead" "none"
+attr e27> "minlen" "1"
+attr e28> "arrowtail" "none"
+attr e28> "arrowhead" "none"
+attr e28> "minlen" "1"
+attr e29> "arrowtail" "none"
+attr e29> "arrowhead" "none"
+attr e29> "minlen" "1"
+attr e30> "arrowtail" "none"
+attr e30> "arrowhead" "none"
+attr e30> "minlen" "1"
+attr e31> "arrowtail" "none"
+attr e31> "arrowhead" "none"
+attr e31> "minlen" "1"
+attr e32> "arrowtail" "none"
+attr e32> "arrowhead" "none"
+attr e32> "minlen" "1"
+attr e33> "arrowtail" "none"
+attr e33> "arrowhead" "none"
+attr e33> "minlen" "1"
+attr e34> "arrowtail" "none"
+attr e34> "arrowhead" "none"
+attr e34> "minlen" "1"
+attr e35> "arrowtail" "none"
+attr e35> "arrowhead" "none"
+attr e35> "minlen" "1"
+attr e36> "arrowtail" "none"
+attr e36> "arrowhead" "none"
+attr e36> "minlen" "1"
+attr e37> "arrowtail" "none"
+attr e37> "arrowhead" "none"
+attr e37> "minlen" "1"
+attr e38> "arrowtail" "none"
+attr e38> "arrowhead" "none"
+attr e38> "minlen" "1"
+attr e39> "arrowtail" "none"
+attr e39> "arrowhead" "none"
+attr e39> "minlen" "1"
+attr e40> "arrowtail" "none"
+attr e40> "arrowhead" "none"
+attr e40> "minlen" "1"
+attr e41> "arrowtail" "none"
+attr e41> "arrowhead" "none"
+attr e41> "minlen" "1"
+attr e42> "arrowtail" "none"
+attr e42> "arrowhead" "none"
+attr e42> "minlen" "1"
+attr e43> "arrowtail" "none"
+attr e43> "arrowhead" "none"
+attr e43> "minlen" "1"
+attr e44> "arrowtail" "none"
+attr e44> "arrowhead" "none"
+attr e44> "minlen" "1"
+attr e45> "arrowtail" "none"
+attr e45> "arrowhead" "none"
+attr e45> "minlen" "1"
+attr e46> "arrowtail" "none"
+attr e46> "arrowhead" "none"
+attr e46> "minlen" "1"
+attr "g" "rankdir" "LR"

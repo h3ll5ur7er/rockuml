@@ -1,0 +1,42 @@
+cgraph-dump 1
+graph "g" nodes 4 edges 2
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0004" "sh0005" "zent0002"
+graph ids "g" "cluster2"
+node ids "sh0003" "sh0004" "sh0005" "zent0002"
+in "g" node "sh0003" out in edges degree 0 0
+in "g" node "sh0004" out e2> e1> in edges e2> e1> degree 0 2
+in "g" node "sh0005" out in e2< edges e2< degree 1 0
+in "g" node "zent0002" out in e1< edges e1< degree 1 0
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0004" out in edges degree 0 0
+in "cluster2" node "sh0005" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+induce "cluster2" e2> e1>
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0004" out e2> e1> in edges e2> e1> degree 0 2
+in "cluster2" node "sh0005" out in e2< edges e2< degree 1 0
+in "cluster2" node "zent0002" out in e1< edges e1< degree 1 0
+contains "cluster2" 1 1 1 1 1 1
+attr "g" "margin" "16"
+attr "cluster2" "margin" "20"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.9796385523967825"
+attr "sh0003" "height" "1.5124858927282412"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "2.1323215043123676"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.9745271801080256"
+attr "sh0005" "height" "0.6666666666666666"
+attr "zent0002" "shape" "box"
+attr "zent0002" "width" "0.1"
+attr "zent0002" "height" "0.1"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "2"
+attr "g" "rankdir" "LR"

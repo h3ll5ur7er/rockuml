@@ -1,0 +1,109 @@
+cgraph-dump 1
+graph "g" nodes 11 edges 10
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4" "N5" "N6" "N7" "N8" "N9" "N10"
+in "g" node "N0" out e10> in edges e10> degree 0 1
+in "g" node "N1" out e9> in e10< edges e9> e10< degree 1 1
+in "g" node "N2" out e8> in e9< edges e8> e9< degree 1 1
+in "g" node "N3" out e7> in e8< edges e7> e8< degree 1 1
+in "g" node "N4" out e6> in e7< edges e6> e7< degree 1 1
+in "g" node "N5" out e5> in e6< edges e5> e6< degree 1 1
+in "g" node "N6" out e4> in e5< edges e4> e5< degree 1 1
+in "g" node "N7" out e3> in e4< edges e3> e4< degree 1 1
+in "g" node "N8" out e2> in e3< edges e2> e3< degree 1 1
+in "g" node "N9" out e1> in e2< edges e1> e2< degree 1 1
+in "g" node "N10" out in e1< edges e1< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "1.5042926828771257"
+attr "N0" "width" "1.75"
+attr "N0" "label" "{_dim_126.0_66.17990329020228_|{<P0>_dim_18.0_26.12916987695077_|<P1>_dim_18.0_26.12916987695077_|<P2>_dim_18.0_26.12916987695077_|<P3>_dim_18.0_26.12916987695077_|<P4>_dim_18.0_26.12916987695077_|<P5>_dim_18.0_26.12916987695077_|<P6>_dim_18.0_26.12916987695077_}}"
+attr "N1" "shape" "record"
+attr "N1" "height" "2.273289061725098"
+attr "N1" "width" "0.5"
+attr "N1" "label" "{_dim_36.0_65.77815359789001_|{<P0>_dim_18.0_81.89865884631705_|<P1>_dim_18.0_81.89865884631705_}}"
+attr "N2" "shape" "record"
+attr "N2" "height" "0.8129883460361991"
+attr "N2" "width" "1.0"
+attr "N2" "label" "<P0>_dim_18.0_50.53516091460634_|<P1>_dim_36.0_50.53516091460634_|<P2>_dim_18.0_50.53516091460634_"
+attr "N3" "shape" "record"
+attr "N3" "height" "1.9263075882865144"
+attr "N3" "width" "1.0"
+attr "N3" "label" "{_dim_72.0_46.34590695299179_|{<P0>_dim_18.0_76.34823940363724_|<P1>_dim_18.0_76.34823940363724_|<P2>_dim_18.0_76.34823940363724_|<P3>_dim_18.0_76.34823940363724_}}"
+attr "N4" "shape" "record"
+attr "N4" "height" "0.992580915913689"
+attr "N4" "width" "1.25"
+attr "N4" "label" "<P0>_dim_18.0_63.46582594578561_|<P1>_dim_18.0_63.46582594578561_|<P2>_dim_36.0_63.46582594578561_|<P3>_dim_18.0_63.46582594578561_"
+attr "N5" "shape" "record"
+attr "N5" "height" "1.5679891560425836"
+attr "N5" "width" "2.0"
+attr "N5" "label" "<P0>_dim_18.0_104.89521923506602_|<P1>_dim_18.0_104.89521923506602_|<P2>_dim_18.0_104.89521923506602_|<P3>_dim_18.0_104.89521923506602_|<P4>_dim_18.0_104.89521923506602_|<P5>_dim_18.0_104.89521923506602_|<P6>_dim_36.0_104.89521923506602_"
+attr "N6" "shape" "record"
+attr "N6" "height" "0.6225680693835707"
+attr "N6" "width" "0.25"
+attr "N6" "label" "<P0>_dim_18.0_36.82490099561709_"
+attr "N7" "shape" "record"
+attr "N7" "height" "2.714884189115315"
+attr "N7" "width" "1.75"
+attr "N7" "label" "{_dim_126.0_67.99416613128392_|{<P0>_dim_18.0_111.47749548501878_|<P1>_dim_18.0_111.47749548501878_|<P2>_dim_36.0_111.47749548501878_|<P3>_dim_18.0_111.47749548501878_|<P4>_dim_18.0_111.47749548501878_|<P5>_dim_18.0_111.47749548501878_}}"
+attr "N8" "shape" "record"
+attr "N8" "height" "1.8336275434467721"
+attr "N8" "width" "0.5"
+attr "N8" "label" "{_dim_36.0_59.27194856184401_|{<P0>_dim_18.0_56.749234566323565_|<P1>_dim_18.0_56.749234566323565_}}"
+attr "N9" "shape" "record"
+attr "N9" "height" "1.9780464899999908"
+attr "N9" "width" "0.5"
+attr "N9" "label" "{_dim_36.0_37.72114553466622_|{<P0>_dim_18.0_88.6982017453331_|<P1>_dim_18.0_88.6982017453331_}}"
+attr "N10" "shape" "record"
+attr "N10" "height" "1.6017409939723197"
+attr "N10" "width" "1.0"
+attr "N10" "label" "{_dim_72.0_57.06262193551056_|{<P0>_dim_18.0_42.262729630496445_|<P1>_dim_18.0_42.262729630496445_|<P2>_dim_18.0_42.262729630496445_|<P3>_dim_18.0_42.262729630496445_}}"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P0"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P1"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P0"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P0"
+attr e5> "arrowsize" ".75"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "normal"
+attr e5> "tailport" "P1"
+attr e6> "arrowsize" ".75"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "normal"
+attr e6> "tailport" "P0"
+attr e7> "arrowsize" ".75"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "normal"
+attr e7> "tailport" "P0"
+attr e8> "arrowsize" ".75"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "normal"
+attr e8> "tailport" "P0"
+attr e9> "arrowsize" ".75"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "normal"
+attr e9> "tailport" "P0"
+attr e10> "arrowsize" ".75"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "normal"
+attr e10> "tailport" "P3"

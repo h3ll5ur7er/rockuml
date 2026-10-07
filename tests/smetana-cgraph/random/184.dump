@@ -1,0 +1,72 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 8
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0006" "zent0002"
+graph ids "g" "cluster2"
+node ids "sh0004" "sh0005" "sh0003" "sh0006" "zent0002"
+in "g" node "sh0004" out e3> e4> in e1< edges e3> e4> e1< degree 1 2
+in "g" node "sh0005" out e2> in e3< edges e2> e3< degree 1 1
+in "g" node "sh0003" out e1> e6> e7> e8> in e4< e6< e7< e8< edges e1> e6> e7> e8> e4< degree 4 4
+in "g" node "sh0006" out e5> in e2< edges e5> e2< degree 1 1
+in "g" node "zent0002" out in e5< edges e5< degree 1 0
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+find e1> forward e1< backward e4<
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward e1<
+find e5> forward e5< backward none
+find e6> forward e7< backward e7<
+find e7> forward e7< backward e7<
+find e8> forward e7< backward e7<
+induce "cluster2" e6> e7> e8> e5>
+in "cluster2" node "sh0003" out e6> e7> e8> in e6< e7< e8< edges e6> e7> e8> degree 3 3
+in "cluster2" node "sh0006" out e5> in edges e5> degree 0 1
+in "cluster2" node "zent0002" out in e5< edges e5< degree 1 0
+contains "cluster2" 0 0 1 1 1 0 0 0 0 1 1 1 1
+attr "g" "margin" "16"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.8731500744333403"
+attr "sh0004" "height" "0.4215220572797837"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.7472639217545528"
+attr "sh0005" "height" "0.9212221173977903"
+attr "cluster2" "label" "_dim_104_17_"
+attr "cluster2" "margin" "16"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.7801270163577607"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.8344792587864498"
+attr "sh0006" "height" "1.3350692081830988"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "label" "_dim_118_17_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "0"
+attr e3> "label" "_dim_70_17_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e4> "label" "_dim_61_17_"
+attr "zent0002" "shape" "box"
+attr "zent0002" "width" "0.1"
+attr "zent0002" "height" "0.1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "0"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "3"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr "g" "rankdir" "LR"

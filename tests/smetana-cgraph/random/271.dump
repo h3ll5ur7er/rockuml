@@ -1,0 +1,315 @@
+cgraph-dump 1
+graph "g" nodes 28 edges 34
+subgraph "cluster2" parent "g" seq 1 nodes "sh0004" "sh0006" "sh0007" "sh0011" "sh0019" "sh0021" "sh0023" "sh0025" "zent0002"
+subgraph "cluster3" parent "g" seq 2 nodes "sh0005" "sh0008" "sh0009" "sh0015" "sh0017" "sh0022" "sh0026" "zent0003"
+graph ids "g" "cluster2" "cluster3"
+node ids "sh0010" "sh0012" "sh0013" "sh0014" "sh0016" "sh0018" "sh0020" "sh0024" "sh0027" "sh0028" "sh0029" "sh0004" "sh0006" "sh0007" "sh0011" "sh0019" "sh0021" "sh0023" "sh0025" "sh0005" "sh0008" "sh0009" "sh0015" "sh0017" "sh0022" "sh0026" "zent0003" "zent0002"
+in "g" node "sh0010" out e10> e27> e7> e31> in e6< edges e10> e27> e7> e31> e6< degree 1 4
+in "g" node "sh0012" out e30> e24> in e8< edges e30> e24> e8< degree 1 2
+in "g" node "sh0013" out e12> in e9< edges e12> e9< degree 1 1
+in "g" node "sh0014" out e17> e26> in e10< edges e17> e26> e10< degree 1 2
+in "g" node "sh0016" out e29> in edges e29> degree 0 1
+in "g" node "sh0018" out e15> e28> in edges e15> e28> degree 0 2
+in "g" node "sh0020" out in e29< e15< edges e29< e15< degree 2 0
+in "g" node "sh0024" out e23> in e27< e19< edges e23> e27< e19< degree 2 1
+in "g" node "sh0027" out in e22< edges e22< degree 1 0
+in "g" node "sh0028" out in e30< edges e30< degree 1 0
+in "g" node "sh0029" out in e24< edges e24< degree 1 0
+in "g" node "sh0004" out e6> e2> e3> e14> in edges e6> e2> e3> e14> degree 0 4
+in "g" node "sh0006" out e9> e4> in e2< edges e9> e4> e2< degree 1 2
+in "g" node "sh0007" out e18> e11> e21> in e3< edges e18> e11> e21> e3< degree 1 3
+in "g" node "sh0011" out e34> in e7< edges e34> e7< degree 1 1
+in "g" node "sh0019" out in edges degree 0 0
+in "g" node "sh0021" out e22> in e16< edges e22> e16< degree 1 1
+in "g" node "sh0023" out in e18< edges e18< degree 1 0
+in "g" node "sh0025" out e33> in e33< e20< edges e33> e20< degree 2 1
+in "g" node "sh0005" out e8> e32> in e1< edges e8> e32> e1< degree 1 2
+in "g" node "sh0008" out e20> e25> in e4< edges e20> e25> e4< degree 1 2
+in "g" node "sh0009" out in e5< edges e5< degree 1 0
+in "g" node "sh0015" out e13> in e11< edges e13> e11< degree 1 1
+in "g" node "sh0017" out in e31< e12< edges e31< e12< degree 2 0
+in "g" node "sh0022" out in e17< edges e17< degree 1 0
+in "g" node "sh0026" out in e26< e21< edges e26< e21< degree 2 0
+in "g" node "zent0003" out e19> e1> e5> in e23< e34< e13< edges e19> e1> e5> e23< e34< e13< degree 3 3
+in "g" node "zent0002" out e16> in e28< e14< e32< e25< edges e16> e28< e14< e32< e25< degree 4 1
+in "cluster2" node "sh0004" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0007" out in edges degree 0 0
+in "cluster2" node "sh0011" out in edges degree 0 0
+in "cluster2" node "sh0019" out in edges degree 0 0
+in "cluster2" node "sh0021" out in edges degree 0 0
+in "cluster2" node "sh0023" out in edges degree 0 0
+in "cluster2" node "sh0025" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+in "cluster3" node "sh0005" out in edges degree 0 0
+in "cluster3" node "sh0008" out in edges degree 0 0
+in "cluster3" node "sh0009" out in edges degree 0 0
+in "cluster3" node "sh0015" out in edges degree 0 0
+in "cluster3" node "sh0017" out in edges degree 0 0
+in "cluster3" node "sh0022" out in edges degree 0 0
+in "cluster3" node "sh0026" out in edges degree 0 0
+in "cluster3" node "zent0003" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+find e12> forward e12< backward none
+find e13> forward e13< backward none
+find e14> forward e14< backward none
+find e15> forward e15< backward none
+find e16> forward e16< backward none
+find e17> forward e17< backward none
+find e18> forward e18< backward none
+find e19> forward e19< backward e23<
+find e20> forward e20< backward none
+find e21> forward e21< backward none
+find e22> forward e22< backward none
+find e23> forward e23< backward e19<
+find e24> forward e24< backward none
+find e25> forward e25< backward none
+find e26> forward e26< backward none
+find e27> forward e27< backward none
+find e28> forward e28< backward none
+find e29> forward e29< backward none
+find e30> forward e30< backward none
+find e31> forward e31< backward none
+find e32> forward e32< backward none
+find e33> forward e33< backward e33<
+find e34> forward e34< backward none
+induce "cluster2" e2> e3> e14> e18> e33> e16>
+in "cluster2" node "sh0004" out e2> e3> e14> in edges e2> e3> e14> degree 0 3
+in "cluster2" node "sh0006" out in e2< edges e2< degree 1 0
+in "cluster2" node "sh0007" out e18> in e3< edges e18> e3< degree 1 1
+in "cluster2" node "sh0011" out in edges degree 0 0
+in "cluster2" node "sh0019" out in edges degree 0 0
+in "cluster2" node "sh0021" out in e16< edges e16< degree 1 0
+in "cluster2" node "sh0023" out in e18< edges e18< degree 1 0
+in "cluster2" node "sh0025" out e33> in e33< edges e33> degree 1 1
+in "cluster2" node "zent0002" out e16> in e14< edges e16> e14< degree 1 1
+induce "cluster3" e13> e1> e5>
+in "cluster3" node "sh0005" out in e1< edges e1< degree 1 0
+in "cluster3" node "sh0008" out in edges degree 0 0
+in "cluster3" node "sh0009" out in e5< edges e5< degree 1 0
+in "cluster3" node "sh0015" out e13> in edges e13> degree 0 1
+in "cluster3" node "sh0017" out in edges degree 0 0
+in "cluster3" node "sh0022" out in edges degree 0 0
+in "cluster3" node "sh0026" out in edges degree 0 0
+in "cluster3" node "zent0003" out e1> e5> in e13< edges e1> e5> e13< degree 1 2
+contains "cluster2" 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 1 0 1 1 0 0 0 0 0 0 0 0 0 0 1 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
+contains "cluster3" 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+attr "g" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "2.0098131031057824"
+attr "sh0010" "height" "0.7964172120213883"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "0.4512039709435245"
+attr "sh0012" "height" "0.6666666666666666"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "1.5753219328800698"
+attr "sh0013" "height" "0.8525391697134479"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "0.31494574896789956"
+attr "sh0014" "height" "0.6666666666666666"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "1.3434437547541769"
+attr "sh0016" "height" "0.6666666666666666"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "1.6268599558839545"
+attr "sh0018" "height" "0.45292349242482555"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "0.3965994146644356"
+attr "sh0020" "height" "0.6666666666666666"
+attr "sh0024" "shape" "box"
+attr "sh0024" "width" "0.4944987206342863"
+attr "sh0024" "height" "0.6666666666666666"
+attr "sh0027" "shape" "box"
+attr "sh0027" "width" "0.6755913984382436"
+attr "sh0027" "height" "0.6666666666666666"
+attr "sh0028" "shape" "box"
+attr "sh0028" "width" "2.120544991556269"
+attr "sh0028" "height" "0.6666666666666666"
+attr "sh0029" "shape" "box"
+attr "sh0029" "width" "0.6677240137390649"
+attr "sh0029" "height" "0.6666666666666666"
+attr "cluster2" "margin" "16"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "2.132556791590128"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.2159235938866344"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.8309792011841897"
+attr "sh0007" "height" "0.33624350187130486"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.6508960650963702"
+attr "sh0011" "height" "1.10915635393162"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "0.7489031226905738"
+attr "sh0019" "height" "0.9553835392613491"
+attr "sh0021" "shape" "box"
+attr "sh0021" "width" "1.3879369235526533"
+attr "sh0021" "height" "0.652601519058833"
+attr "sh0023" "shape" "box"
+attr "sh0023" "width" "0.34677016973787733"
+attr "sh0023" "height" "1.420835124179718"
+attr "sh0025" "shape" "box"
+attr "sh0025" "width" "0.8858216338448324"
+attr "sh0025" "height" "0.6666666666666666"
+attr "cluster3" "label" "_dim_60_17_"
+attr "cluster3" "margin" "16"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.2185914613316093"
+attr "sh0005" "height" "0.6666666666666666"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.641956757493731"
+attr "sh0008" "height" "1.0952837869172742"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "1.5123280920811137"
+attr "sh0009" "height" "0.6666666666666666"
+attr "sh0015" "shape" "box"
+attr "sh0015" "width" "1.7592653186099494"
+attr "sh0015" "height" "0.34115347896957565"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "1.3394692043387746"
+attr "sh0017" "height" "0.9815600470117469"
+attr "sh0022" "shape" "box"
+attr "sh0022" "width" "1.8773868625515557"
+attr "sh0022" "height" "0.6666666666666666"
+attr "sh0026" "shape" "box"
+attr "sh0026" "width" "2.0577492255346614"
+attr "sh0026" "height" "0.4485706093300645"
+attr "zent0003" "shape" "box"
+attr "zent0003" "width" "0.1"
+attr "zent0003" "height" "0.1"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "label" "_dim_73_17_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "2"
+attr e2> "label" "_dim_27_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "label" "_dim_119_32_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e7> "label" "_dim_34_17_"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "1"
+attr e9> "label" "_dim_101_32_"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "none"
+attr e10> "minlen" "2"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "none"
+attr e11> "minlen" "1"
+attr e12> "arrowtail" "none"
+attr e12> "arrowhead" "none"
+attr e12> "minlen" "2"
+attr e13> "arrowtail" "none"
+attr e13> "arrowhead" "none"
+attr e13> "minlen" "1"
+attr e13> "label" "_dim_72_32_"
+attr "zent0002" "shape" "box"
+attr "zent0002" "width" "0.1"
+attr "zent0002" "height" "0.1"
+attr e14> "arrowtail" "none"
+attr e14> "arrowhead" "none"
+attr e14> "minlen" "1"
+attr e14> "label" "_dim_33_32_"
+attr e15> "arrowtail" "none"
+attr e15> "arrowhead" "none"
+attr e15> "minlen" "1"
+attr e16> "arrowtail" "none"
+attr e16> "arrowhead" "none"
+attr e16> "minlen" "1"
+attr e16> "label" "_dim_29_17_"
+attr e17> "arrowtail" "none"
+attr e17> "arrowhead" "none"
+attr e17> "minlen" "1"
+attr e18> "arrowtail" "none"
+attr e18> "arrowhead" "none"
+attr e18> "minlen" "1"
+attr e19> "arrowtail" "none"
+attr e19> "arrowhead" "none"
+attr e19> "minlen" "3"
+attr e20> "arrowtail" "none"
+attr e20> "arrowhead" "none"
+attr e20> "minlen" "3"
+attr e20> "label" "_dim_36_17_"
+attr e21> "arrowtail" "none"
+attr e21> "arrowhead" "none"
+attr e21> "minlen" "1"
+attr e21> "label" "_dim_77_17_"
+attr e22> "arrowtail" "none"
+attr e22> "arrowhead" "none"
+attr e22> "minlen" "1"
+attr e22> "label" "_dim_85_17_"
+attr e23> "arrowtail" "none"
+attr e23> "arrowhead" "none"
+attr e23> "minlen" "1"
+attr e24> "arrowtail" "none"
+attr e24> "arrowhead" "none"
+attr e24> "minlen" "2"
+attr e24> "label" "_dim_127_17_"
+attr e25> "arrowtail" "none"
+attr e25> "arrowhead" "none"
+attr e25> "minlen" "1"
+attr e26> "arrowtail" "none"
+attr e26> "arrowhead" "none"
+attr e26> "minlen" "1"
+attr e26> "label" "_dim_95_17_"
+attr e27> "arrowtail" "none"
+attr e27> "arrowhead" "none"
+attr e27> "minlen" "2"
+attr e27> "label" "_dim_53_17_"
+attr e28> "arrowtail" "none"
+attr e28> "arrowhead" "none"
+attr e28> "minlen" "1"
+attr e28> "label" "_dim_15_17_"
+attr e29> "arrowtail" "none"
+attr e29> "arrowhead" "none"
+attr e29> "minlen" "1"
+attr e29> "label" "_dim_40_17_"
+attr e30> "arrowtail" "none"
+attr e30> "arrowhead" "none"
+attr e30> "minlen" "1"
+attr e30> "label" "_dim_103_17_"
+attr e31> "arrowtail" "none"
+attr e31> "arrowhead" "none"
+attr e31> "minlen" "2"
+attr e31> "label" "_dim_25_32_"
+attr e32> "arrowtail" "none"
+attr e32> "arrowhead" "none"
+attr e32> "minlen" "1"
+attr e33> "arrowtail" "none"
+attr e33> "arrowhead" "none"
+attr e33> "minlen" "1"
+attr e34> "arrowtail" "none"
+attr e34> "arrowhead" "none"
+attr e34> "minlen" "1"
+attr "g" "rankdir" "LR"

@@ -1,0 +1,29 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 2
+graph ids "g"
+node ids "N0" "N1" "N2"
+in "g" node "N0" out e2> in edges e2> degree 0 1
+in "g" node "N1" out e1> in e2< edges e1> e2< degree 1 1
+in "g" node "N2" out in e1< edges e1< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "0.9540464065538438"
+attr "N0" "width" "0.25"
+attr "N0" "label" "<P0>_dim_18.0_60.69134127187675_"
+attr "N1" "shape" "record"
+attr "N1" "height" "1.710108584525633"
+attr "N1" "width" "1.5"
+attr "N1" "label" "{_dim_108.0_53.21577417710088_|{<P0>_dim_18.0_53.9120439087447_|<P1>_dim_18.0_53.9120439087447_|<P2>_dim_18.0_53.9120439087447_|<P3>_dim_36.0_53.9120439087447_|<P4>_dim_18.0_53.9120439087447_}}"
+attr "N2" "shape" "record"
+attr "N2" "height" "2.5156877822851116"
+attr "N2" "width" "0.25"
+attr "N2" "label" "{_dim_18.0_99.8047174249334_|{<P0>_dim_18.0_65.32480289959464_}}"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P0"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P0"

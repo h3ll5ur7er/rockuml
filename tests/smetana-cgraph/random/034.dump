@@ -1,0 +1,61 @@
+cgraph-dump 1
+graph "g" nodes 7 edges 6
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007" "sh0008"
+in "g" node "sh0002" out e1> e3> in edges e1> e3> degree 0 2
+in "g" node "sh0003" out e2> e4> e5> in e1< edges e2> e4> e5> e1< degree 1 3
+in "g" node "sh0004" out in e2< edges e2< degree 1 0
+in "g" node "sh0005" out in e3< edges e3< degree 1 0
+in "g" node "sh0006" out e6> in e4< edges e6> e4< degree 1 1
+in "g" node "sh0007" out in e5< edges e5< degree 1 0
+in "g" node "sh0008" out in e6< edges e6< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "0.5200458654590248"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.5566089775879925"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "0.2958702728520687"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.559440922876474"
+attr "sh0005" "height" "0.6666666666666666"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "0.9461670154195152"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.4833503946836641"
+attr "sh0007" "height" "1.5470253655504722"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.6182006471929438"
+attr "sh0008" "height" "1.078669278482025"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "taillabel" "_dim_30_15_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "taillabel" "_dim_42_15_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e6> "taillabel" "_dim_22_15_"
+attr e6> "headlabel" "_dim_64_15_"

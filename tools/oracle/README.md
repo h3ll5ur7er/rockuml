@@ -149,3 +149,16 @@ such as a record graph without any label (Smetana cannot parse the default `\N` 
 
 One JVM lays out a batch of seeds (`BATCH`, default 50). The traces do not depend on the batch size: runs with one
 JVM per seed and with one JVM for all seeds are byte-identical.
+
+## cgraph dumps
+
+```bash
+bash tools/oracle/cgraph-dumps.sh
+```
+
+`cgraph-dump/CgraphDump.java` replays a trace's input section through Java's cgraph and dumps what the port's
+cgraph must reproduce: counts, the iteration orders of nodes, edges and subgraphs, the order of object ids, wildcard
+edge lookups (`agfindedge`) and attribute values. Each `tests/smetana/**/NN.trace` gives
+`tests/smetana-cgraph/**/NN.dump`; the hand-written inputs in `tests/smetana-cgraph/synthetic/*.trace` (same format)
+get their dump next to them. `crates/smetana/tests/cgraph_replay.rs` makes the same calls and compares. Rerun the
+script after regenerating the traces.

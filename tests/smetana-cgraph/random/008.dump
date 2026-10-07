@@ -1,0 +1,31 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 1
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0004"
+graph ids "g" "cluster2"
+node ids "sh0005" "sh0003" "sh0004"
+in "g" node "sh0005" out in edges degree 0 0
+in "g" node "sh0003" out e1> in edges e1> degree 0 1
+in "g" node "sh0004" out in e1< edges e1< degree 1 0
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0004" out in edges degree 0 0
+find e1> forward e1< backward none
+induce "cluster2" e1>
+in "cluster2" node "sh0003" out e1> in edges e1> degree 0 1
+in "cluster2" node "sh0004" out in e1< edges e1< degree 1 0
+contains "cluster2" 0 1 1 1
+attr "g" "margin" "16"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.47330806547785426"
+attr "sh0005" "height" "0.6666666666666666"
+attr "cluster2" "label" "_dim_124_17_"
+attr "cluster2" "margin" "16"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "2.1937830637528943"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "0.7691716934577388"
+attr "sh0004" "height" "0.7683262629468671"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr "g" "rankdir" "LR"

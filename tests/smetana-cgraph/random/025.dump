@@ -1,0 +1,66 @@
+cgraph-dump 1
+graph "g" nodes 7 edges 8
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007" "sh0008"
+in "g" node "sh0002" out e1> e2> e7> e3> e8> e6> in edges e1> e2> e7> e3> e8> e6> degree 0 6
+in "g" node "sh0003" out e4> in e1< edges e4> e1< degree 1 1
+in "g" node "sh0004" out in e2< e7< edges e2< e7< degree 2 0
+in "g" node "sh0005" out e5> in e3< e8< edges e5> e3< e8< degree 2 1
+in "g" node "sh0006" out in e4< edges e4< degree 1 0
+in "g" node "sh0007" out in e5< edges e5< degree 1 0
+in "g" node "sh0008" out in e6< edges e6< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e7< backward none
+find e3> forward e8< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "0.7031383304187704"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "0.8165826497826655"
+attr "sh0003" "height" "1.3829862137570885"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "2.191208240148385"
+attr "sh0004" "height" "1.6642703894657176"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.4833982354644951"
+attr "sh0005" "height" "0.4111735351983641"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "2.14415760063065"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.0946787997945135"
+attr "sh0007" "height" "1.6073539383998583"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "1.739239434505157"
+attr "sh0008" "height" "0.8057964297387659"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "2"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr "g" "rankdir" "LR"

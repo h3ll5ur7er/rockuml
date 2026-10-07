@@ -1,0 +1,214 @@
+cgraph-dump 1
+graph "g" nodes 25 edges 27
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007" "sh0008" "sh0009" "sh0010" "sh0011" "sh0012" "sh0013" "sh0014" "sh0015" "sh0016" "sh0017" "sh0018" "sh0019" "sh0020" "sh0021" "sh0022" "sh0023" "sh0024" "sh0025" "sh0026"
+in "g" node "sh0002" out e1> e4> e27> in edges e1> e4> e27> degree 0 3
+in "g" node "sh0003" out e2> e3> e7> e23> in e1< e24< e26< edges e2> e3> e7> e23> e1< e24< e26< degree 3 4
+in "g" node "sh0004" out e6> e10> in e2< edges e6> e10> e2< degree 1 2
+in "g" node "sh0005" out e5> e8> e9> in edges e5> e8> e9> degree 0 3
+in "g" node "sh0006" out e11> e15> in e3< edges e11> e15> e3< degree 1 2
+in "g" node "sh0007" out in e4< e27< edges e4< e27< degree 2 0
+in "g" node "sh0008" out in edges degree 0 0
+in "g" node "sh0009" out e24> e26> in e5< edges e24> e26> e5< degree 1 2
+in "g" node "sh0010" out in e6< edges e6< degree 1 0
+in "g" node "sh0011" out in e7< edges e7< degree 1 0
+in "g" node "sh0012" out e22> e18> in e8< edges e22> e18> e8< degree 1 2
+in "g" node "sh0013" out in e9< e25< edges e9< e25< degree 2 0
+in "g" node "sh0014" out e13> in e10< e22< edges e13> e10< e22< degree 2 1
+in "g" node "sh0015" out e19> in edges e19> degree 0 1
+in "g" node "sh0016" out e12> in e11< edges e12> e11< degree 1 1
+in "g" node "sh0017" out in e12< edges e12< degree 1 0
+in "g" node "sh0018" out e14> in e13< edges e14> e13< degree 1 1
+in "g" node "sh0019" out in e14< edges e14< degree 1 0
+in "g" node "sh0020" out e16> e17> e21> in e15< edges e16> e17> e21> e15< degree 1 3
+in "g" node "sh0021" out e25> e20> in e16< edges e25> e20> e16< degree 1 2
+in "g" node "sh0022" out in e17< edges e17< degree 1 0
+in "g" node "sh0023" out in e18< edges e18< degree 1 0
+in "g" node "sh0024" out in e19< edges e19< degree 1 0
+in "g" node "sh0025" out in e20< edges e20< degree 1 0
+in "g" node "sh0026" out in e23< e21< edges e23< e21< degree 2 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e27< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+find e12> forward e12< backward none
+find e13> forward e13< backward none
+find e14> forward e14< backward none
+find e15> forward e15< backward none
+find e16> forward e16< backward none
+find e17> forward e17< backward none
+find e18> forward e18< backward none
+find e19> forward e19< backward none
+find e20> forward e20< backward none
+find e21> forward e21< backward none
+find e22> forward e22< backward none
+find e23> forward e23< backward none
+find e24> forward e26< backward none
+find e25> forward e25< backward none
+find e26> forward e26< backward none
+find e27> forward e27< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "1.7791290775144804"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.5390411285652599"
+attr "sh0003" "height" "1.1312437722589073"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.3886356228501464"
+attr "sh0004" "height" "1.6643349412993325"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.30369037745187544"
+attr "sh0005" "height" "0.7518374552016515"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "0.8280248663566924"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.412838931768557"
+attr "sh0007" "height" "0.514965247560147"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "2.1007283307254565"
+attr "sh0008" "height" "0.6666666666666666"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "1.786273198376386"
+attr "sh0009" "height" "0.6666666666666666"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.1800583316780549"
+attr "sh0010" "height" "0.6666666666666666"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.9676658388863086"
+attr "sh0011" "height" "1.4177604379855402"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "0.8041126572078118"
+attr "sh0012" "height" "1.18971318868786"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "1.4906408766941106"
+attr "sh0013" "height" "1.6623229665437522"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "0.33810290896987194"
+attr "sh0014" "height" "0.6666666666666666"
+attr "sh0015" "shape" "box"
+attr "sh0015" "width" "0.4206213140427591"
+attr "sh0015" "height" "1.6041610028524906"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "1.0638869792502383"
+attr "sh0016" "height" "1.4300359135267071"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "1.8355755383049355"
+attr "sh0017" "height" "0.5979119909030762"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "2.2026826785476494"
+attr "sh0018" "height" "0.9139064859246128"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "1.844885340024658"
+attr "sh0019" "height" "0.6666666666666666"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "2.016000079282722"
+attr "sh0020" "height" "0.6666666666666666"
+attr "sh0021" "shape" "box"
+attr "sh0021" "width" "1.2941234475095251"
+attr "sh0021" "height" "0.6666666666666666"
+attr "sh0022" "shape" "box"
+attr "sh0022" "width" "1.4896877570101923"
+attr "sh0022" "height" "0.6666666666666666"
+attr "sh0023" "shape" "box"
+attr "sh0023" "width" "1.5120947120099038"
+attr "sh0023" "height" "0.6666666666666666"
+attr "sh0024" "shape" "box"
+attr "sh0024" "width" "2.08334331756061"
+attr "sh0024" "height" "0.6666666666666666"
+attr "sh0025" "shape" "box"
+attr "sh0025" "width" "1.7749917831471482"
+attr "sh0025" "height" "0.6666666666666666"
+attr "sh0026" "shape" "box"
+attr "sh0026" "width" "1.5468434269355722"
+attr "sh0026" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "3"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "1"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "none"
+attr e10> "minlen" "1"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "none"
+attr e11> "minlen" "2"
+attr e12> "arrowtail" "none"
+attr e12> "arrowhead" "none"
+attr e12> "minlen" "1"
+attr e13> "arrowtail" "none"
+attr e13> "arrowhead" "none"
+attr e13> "minlen" "1"
+attr e14> "arrowtail" "none"
+attr e14> "arrowhead" "none"
+attr e14> "minlen" "3"
+attr e15> "arrowtail" "none"
+attr e15> "arrowhead" "none"
+attr e15> "minlen" "3"
+attr e16> "arrowtail" "none"
+attr e16> "arrowhead" "none"
+attr e16> "minlen" "1"
+attr e17> "arrowtail" "none"
+attr e17> "arrowhead" "none"
+attr e17> "minlen" "1"
+attr e18> "arrowtail" "none"
+attr e18> "arrowhead" "none"
+attr e18> "minlen" "1"
+attr e19> "arrowtail" "none"
+attr e19> "arrowhead" "none"
+attr e19> "minlen" "1"
+attr e20> "arrowtail" "none"
+attr e20> "arrowhead" "none"
+attr e20> "minlen" "1"
+attr e21> "arrowtail" "none"
+attr e21> "arrowhead" "none"
+attr e21> "minlen" "1"
+attr e22> "arrowtail" "none"
+attr e22> "arrowhead" "none"
+attr e22> "minlen" "1"
+attr e23> "arrowtail" "none"
+attr e23> "arrowhead" "none"
+attr e23> "minlen" "3"
+attr e24> "arrowtail" "none"
+attr e24> "arrowhead" "none"
+attr e24> "minlen" "1"
+attr e25> "arrowtail" "none"
+attr e25> "arrowhead" "none"
+attr e25> "minlen" "1"
+attr e26> "arrowtail" "none"
+attr e26> "arrowhead" "none"
+attr e26> "minlen" "1"
+attr e27> "arrowtail" "none"
+attr e27> "arrowhead" "none"
+attr e27> "minlen" "1"
+attr "g" "rankdir" "LR"

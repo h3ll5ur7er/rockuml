@@ -1,0 +1,58 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 5
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0004" "sh0006" "sh0007"
+graph ids "g" "cluster2"
+node ids "sh0005" "sh0003" "sh0004" "sh0006" "sh0007"
+in "g" node "sh0005" out in e1< e4< edges e1< e4< degree 2 0
+in "g" node "sh0003" out e1> e2> e3> in edges e1> e2> e3> degree 0 3
+in "g" node "sh0004" out in edges degree 0 0
+in "g" node "sh0006" out e4> in e2< e5< edges e4> e2< e5< degree 2 1
+in "g" node "sh0007" out e5> in e3< edges e5> e3< degree 1 1
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0004" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0007" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+induce "cluster2" e2> e3> e5>
+in "cluster2" node "sh0003" out e2> e3> in edges e2> e3> degree 0 2
+in "cluster2" node "sh0004" out in edges degree 0 0
+in "cluster2" node "sh0006" out in e2< e5< edges e2< e5< degree 2 0
+in "cluster2" node "sh0007" out e5> in e3< edges e5> e3< degree 1 1
+contains "cluster2" 0 1 1 1 1 0 1 1 0 1
+attr "g" "margin" "16"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.9088449043518958"
+attr "sh0005" "height" "1.052554829848339"
+attr "cluster2" "label" "_dim_55_17_"
+attr "cluster2" "margin" "20"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.24739102760224"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.935643247582131"
+attr "sh0004" "height" "0.7184471261997697"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.786172038861689"
+attr "sh0006" "height" "1.5749805411282933"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.6624252322597215"
+attr "sh0007" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"

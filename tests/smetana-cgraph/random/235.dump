@@ -1,0 +1,157 @@
+cgraph-dump 1
+graph "g" nodes 18 edges 20
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4" "N5" "N6" "N7" "N8" "N9" "N10" "N11" "N12" "N13" "N14" "N15" "N16" "N17"
+in "g" node "N0" out in e1< edges e1< degree 1 0
+in "g" node "N1" out e1> in e2< e4< edges e1> e2< e4< degree 2 1
+in "g" node "N2" out e2> in e3< e5< edges e2> e3< e5< degree 2 1
+in "g" node "N3" out e3> in e6< edges e3> e6< degree 1 1
+in "g" node "N4" out e4> e5> in e7< e8< edges e4> e5> e7< e8< degree 2 2
+in "g" node "N5" out e6> in edges e6> degree 0 1
+in "g" node "N6" out e7> in edges e7> degree 0 1
+in "g" node "N7" out e8> in e9< edges e8> e9< degree 1 1
+in "g" node "N8" out e9> in e10< e11< e13< edges e9> e10< e11< e13< degree 3 1
+in "g" node "N9" out e10> in e12< edges e10> e12< degree 1 1
+in "g" node "N10" out e11> e12> in e15< edges e11> e12> e15< degree 1 2
+in "g" node "N11" out e13> in e14< edges e13> e14< degree 1 1
+in "g" node "N12" out e14> in e16< edges e14> e16< degree 1 1
+in "g" node "N13" out e15> in e17< e18< edges e15> e17< e18< degree 2 1
+in "g" node "N14" out e16> e17> in e19< e20< edges e16> e17> e19< e20< degree 2 2
+in "g" node "N15" out e18> in edges e18> degree 0 1
+in "g" node "N16" out e19> in edges e19> degree 0 1
+in "g" node "N17" out e20> in edges e20> degree 0 1
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+find e12> forward e12< backward none
+find e13> forward e13< backward none
+find e14> forward e14< backward none
+find e15> forward e15< backward none
+find e16> forward e16< backward none
+find e17> forward e17< backward none
+find e18> forward e18< backward none
+find e19> forward e19< backward none
+find e20> forward e20< backward none
+attr "g" "ranksep" "0.35"
+attr "N0" "shape" "box"
+attr "N0" "height" "0.36209560100713056"
+attr "N0" "width" "1.3596954026980095"
+attr "N1" "shape" "box"
+attr "N1" "height" "0.45586881210654556"
+attr "N1" "width" "1.347903906104459"
+attr "N2" "shape" "box"
+attr "N2" "height" "0.35761002931826513"
+attr "N2" "width" "1.8365258050767561"
+attr "N3" "shape" "box"
+attr "N3" "height" "0.3971696484862927"
+attr "N3" "width" "1.1086284249078249"
+attr "N4" "shape" "box"
+attr "N4" "height" "0.4035680882081545"
+attr "N4" "width" "1.8640288881228788"
+attr "N5" "shape" "box"
+attr "N5" "height" "0.38347784939338947"
+attr "N5" "width" "1.0210187897015186"
+attr "N6" "shape" "box"
+attr "N6" "height" "0.43074039047508433"
+attr "N6" "width" "1.4425519261376616"
+attr "N7" "shape" "box"
+attr "N7" "height" "0.3912403180927455"
+attr "N7" "width" "1.45848903200121"
+attr "N8" "shape" "box"
+attr "N8" "height" "0.4057875309943608"
+attr "N8" "width" "1.0232488656815848"
+attr "N9" "shape" "box"
+attr "N9" "height" "0.4052657934789892"
+attr "N9" "width" "0.7827882347735632"
+attr "N10" "shape" "box"
+attr "N10" "height" "0.4473568521336922"
+attr "N10" "width" "1.398192796725953"
+attr "N11" "shape" "box"
+attr "N11" "height" "0.4355666492049578"
+attr "N11" "width" "1.8100238442017254"
+attr "N12" "shape" "box"
+attr "N12" "height" "0.4029326500076366"
+attr "N12" "width" "1.2323470640413352"
+attr "N13" "shape" "box"
+attr "N13" "height" "0.4861556950192721"
+attr "N13" "width" "0.9104651003063774"
+attr "N14" "shape" "box"
+attr "N14" "height" "0.373276626986464"
+attr "N14" "width" "0.9854548657495639"
+attr "N15" "shape" "box"
+attr "N15" "height" "0.40320324640817035"
+attr "N15" "width" "1.6597116002999879"
+attr "N16" "shape" "box"
+attr "N16" "height" "0.3931592762614927"
+attr "N16" "width" "0.6814861111530585"
+attr "N17" "shape" "box"
+attr "N17" "height" "0.5244618113774336"
+attr "N17" "width" "1.298994254928247"
+attr e1> "arrowsize" ".7"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e2> "arrowsize" ".7"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e3> "arrowsize" ".7"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e4> "arrowsize" ".7"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e5> "arrowsize" ".7"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "normal"
+attr e6> "arrowsize" ".7"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "normal"
+attr e7> "arrowsize" ".7"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "normal"
+attr e8> "arrowsize" ".7"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "normal"
+attr e9> "arrowsize" ".7"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "normal"
+attr e10> "arrowsize" ".7"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "normal"
+attr e11> "arrowsize" ".7"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "normal"
+attr e12> "arrowsize" ".7"
+attr e12> "arrowtail" "none"
+attr e12> "arrowhead" "normal"
+attr e13> "arrowsize" ".7"
+attr e13> "arrowtail" "none"
+attr e13> "arrowhead" "normal"
+attr e14> "arrowsize" ".7"
+attr e14> "arrowtail" "none"
+attr e14> "arrowhead" "normal"
+attr e15> "arrowsize" ".7"
+attr e15> "arrowtail" "none"
+attr e15> "arrowhead" "normal"
+attr e16> "arrowsize" ".7"
+attr e16> "arrowtail" "none"
+attr e16> "arrowhead" "normal"
+attr e17> "arrowsize" ".7"
+attr e17> "arrowtail" "none"
+attr e17> "arrowhead" "normal"
+attr e18> "arrowsize" ".7"
+attr e18> "arrowtail" "none"
+attr e18> "arrowhead" "normal"
+attr e19> "arrowsize" ".7"
+attr e19> "arrowtail" "none"
+attr e19> "arrowhead" "normal"
+attr e20> "arrowsize" ".7"
+attr e20> "arrowtail" "none"
+attr e20> "arrowhead" "normal"

@@ -1,0 +1,33 @@
+cgraph-dump 1
+graph "g" nodes 4 edges 3
+graph ids "g"
+node ids "N0" "N1" "N2" "N3"
+in "g" node "N0" out e1> in edges e1> degree 0 1
+in "g" node "N1" out e2> in e1< edges e2> e1< degree 1 1
+in "g" node "N2" out e3> in edges e3> degree 0 1
+in "g" node "N3" out in e2< e3< edges e2< e3< degree 2 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+attr "g" "ranksep" "0.35"
+attr "N0" "shape" "box"
+attr "N0" "height" "0.4166666666666667"
+attr "N0" "width" "1.675446544700489"
+attr "N1" "shape" "box"
+attr "N1" "height" "0.2361111111111111"
+attr "N1" "width" "1.8111585038248705"
+attr "N2" "shape" "box"
+attr "N2" "height" "0.4166666666666667"
+attr "N2" "width" "1.9401028228841415"
+attr "N3" "shape" "box"
+attr "N3" "height" "0.2361111111111111"
+attr "N3" "width" "1.493180483663074"
+attr e1> "arrowsize" ".7"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e2> "arrowsize" ".7"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e3> "arrowsize" ".7"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"

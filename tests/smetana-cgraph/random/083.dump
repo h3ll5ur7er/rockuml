@@ -1,0 +1,66 @@
+cgraph-dump 1
+graph "g" nodes 7 edges 5
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0006" "sh0007" "zent0002"
+graph ids "g" "cluster2"
+node ids "sh0004" "sh0005" "sh0008" "sh0003" "sh0006" "sh0007" "zent0002"
+in "g" node "sh0004" out in e1< edges e1< degree 1 0
+in "g" node "sh0005" out e3> in e5< e2< edges e3> e5< e2< degree 2 1
+in "g" node "sh0008" out e5> in e4< edges e5> e4< degree 1 1
+in "g" node "sh0003" out e1> e2> in edges e1> e2> degree 0 2
+in "g" node "sh0006" out in e3< edges e3< degree 1 0
+in "g" node "sh0007" out in edges degree 0 0
+in "g" node "zent0002" out e4> in edges e4> degree 0 1
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0007" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+induce "cluster2"
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0007" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+contains "cluster2" 0 0 0 1 1 1 1 0 0 0 0 0
+attr "g" "margin" "16"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.3690007222549487"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.3782816798445725"
+attr "sh0005" "height" "1.0292605401751556"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.5841886193084236"
+attr "sh0008" "height" "0.6666666666666666"
+attr "cluster2" "label" "_dim_73_17_"
+attr "cluster2" "margin" "16"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "0.8621295545529137"
+attr "sh0003" "height" "1.3372105706810637"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.9866925746220927"
+attr "sh0006" "height" "0.4524096151486461"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "2.0908558370193884"
+attr "sh0007" "height" "1.0618164556445906"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "2"
+attr "zent0002" "shape" "box"
+attr "zent0002" "width" "0.1"
+attr "zent0002" "height" "0.1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"

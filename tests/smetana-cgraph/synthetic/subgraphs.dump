@@ -1,0 +1,66 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 6
+subgraph "cluster_late" parent "g" seq 3 nodes "x" "n2"
+subgraph "cluster_a" parent "g" seq 1 nodes "n1" "n3" "n4"
+subgraph "cluster_a2" parent "cluster_a" seq 4 nodes "n1"
+subgraph "plain" parent "cluster_a" seq 5 nodes "n3" "n4"
+subgraph "cluster_inner" parent "plain" seq 6 nodes "n3"
+subgraph "cluster_freed" parent "g" seq 2 nodes "x"
+graph ids "g" "cluster_late" "cluster_a" "cluster_freed" "cluster_a2" "plain" "cluster_inner"
+node ids "x" "n1" "n2" "n3" "n4"
+in "g" node "x" out in e3< edges e3< degree 1 0
+in "g" node "n1" out e1> e6> in e2< e4< edges e1> e6> e2< e4< degree 2 2
+in "g" node "n2" out e3> e2> in edges e3> e2> degree 0 2
+in "g" node "n3" out e4> in e1< e6< e5< edges e4> e1< e6< e5< degree 3 1
+in "g" node "n4" out e5> in edges e5> degree 0 1
+in "cluster_late" node "x" out in e3< edges e3< degree 1 0
+in "cluster_late" node "n2" out e3> in edges e3> degree 0 1
+in "cluster_a" node "n1" out e1> e6> in e4< edges e1> e6> e4< degree 1 2
+in "cluster_a" node "n3" out e4> in e1< e6< e5< edges e4> e1< e6< e5< degree 3 1
+in "cluster_a" node "n4" out e5> in edges e5> degree 0 1
+in "cluster_a2" node "n1" out in edges degree 0 0
+in "plain" node "n3" out in e5< edges e5< degree 1 0
+in "plain" node "n4" out e5> in edges e5> degree 0 1
+in "cluster_inner" node "n3" out in edges degree 0 0
+in "cluster_freed" node "x" out in edges degree 0 0
+find e1> forward e6< backward e4<
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward e6<
+find e5> forward e5< backward none
+find e6> forward e6< backward e4<
+induce "cluster_late" e3>
+in "cluster_late" node "x" out in e3< edges e3< degree 1 0
+in "cluster_late" node "n2" out e3> in edges e3> degree 0 1
+induce "cluster_a" e1> e6> e4> e5>
+in "cluster_a" node "n1" out e1> e6> in e4< edges e1> e6> e4< degree 1 2
+in "cluster_a" node "n3" out e4> in e1< e6< e5< edges e4> e1< e6< e5< degree 3 1
+in "cluster_a" node "n4" out e5> in edges e5> degree 0 1
+induce "cluster_a2"
+in "cluster_a2" node "n1" out in edges degree 0 0
+induce "plain" e5>
+in "plain" node "n3" out in e5< edges e5< degree 1 0
+in "plain" node "n4" out e5> in edges e5> degree 0 1
+induce "cluster_inner"
+in "cluster_inner" node "n3" out in edges degree 0 0
+induce "cluster_freed"
+in "cluster_freed" node "x" out in edges degree 0 0
+contains "cluster_late" 1 0 1 0 0 0 0 1 0 0 0
+contains "cluster_a" 0 1 0 1 1 1 0 0 1 1 1
+contains "cluster_a2" 0 1 0 0 0 0 0 0 0 0 0
+contains "plain" 0 0 0 1 1 0 0 0 0 1 0
+contains "cluster_inner" 0 0 0 1 0 0 0 0 0 0 0
+contains "cluster_freed" 1 0 0 0 0 0 0 0 0 0 0
+attr "g" "margin" "16"
+attr "x" "label" "cluster_late"
+attr "x" "comment" "other"
+attr "cluster_a" "label" "_dim_30_17_"
+attr "cluster_a" "margin" "20"
+attr "cluster_a2" "margin" "8"
+attr "g" "rankdir" "LR"
+attr "cluster_inner" "label" "inner"
+attr "n1" "shape" "box"
+attr "n3" "shape" "record"
+attr "n4" "shape" "box"
+attr e2> "arrowhead" "none"
+attr e4> "arrowhead" "normal"
