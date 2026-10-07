@@ -329,9 +329,9 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,
   all ~41 commands, notes, groups, refs, dividers, delays, autonumber, boxes, return, activation, create/destroy, newpage.
 - **Exit:** L1 ≥ 98% on the sequence corpus. This is the first genuinely usable release.
-- **Status: done.** All 85 sequence corpus cases pass L1 (debug). L2 (deterministic SVG) and L4 (PNG size) pass on all
-  84 cases PlantUML can render (`notes-aligned` crashes Java's SVG and PNG output). L3 (font-measured SVG) passes on
-  83: `stereotypes` draws its spot letters as glyph outlines from Courier New Bold, which the embedded Liberation Mono
+- **Status: done.** All 89 sequence corpus cases pass L1 (debug). L2 (deterministic SVG) and L4 (PNG size) pass on all
+  88 cases PlantUML can render (`notes-aligned` crashes Java's SVG and PNG output). L3 (font-measured SVG) passes on
+  87: `stereotypes` draws its spot letters as glyph outlines from Courier New Bold, which the embedded Liberation Mono
   cannot reproduce. Done:
   - the `real` constraint solver, `YGauge`s, living spaces with their activation stairs, and every teoz tile:
     messages (to self, from and to the border, multicast, creation), notes (beside, over, across, merged, on
