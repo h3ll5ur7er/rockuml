@@ -174,6 +174,15 @@ impl Titled {
         &'a self,
         drawing: Box<dyn TextBlock + 'a>,
     ) -> Box<dyn TextBlock + 'a> {
+        self.add_chrome_titled(drawing, self.title.as_ref())
+    }
+
+    /// Like [`Self::add_chrome`], with another title, as the pages of sequence diagrams have.
+    pub(super) fn add_chrome_titled<'a>(
+        &'a self,
+        drawing: Box<dyn TextBlock + 'a>,
+        title: Option<&'a Positioned>,
+    ) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
         if let Some((legend, vertical)) = &self.legend {
             let style = self.style(&[
@@ -192,7 +201,7 @@ impl Titled {
                 }
             };
         }
-        if let Some(title) = &self.title {
+        if let Some(title) = title {
             let style = self.document_style(Some(SName::Title));
             result = Box::new(DecorateEntityImage::new(
                 result,

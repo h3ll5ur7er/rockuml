@@ -5,17 +5,17 @@ use crate::color::Colors;
 use crate::creole::Display;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
-    LiveColors, MessageCommon, Note, NoteStyle, ParticipantId, ParticipantType,
+    Labelled, LiveColors, MessageCommon, Note, NoteStyle, ParticipantId, ParticipantType, Reference,
 };
 use crate::diagram::sequence::styles::{
     merged, merged_with_stereotype, message_style, note_style, participant_styles,
-    sequence_signature, sequence_signature2,
+    reference_styles, sequence_signature, sequence_signature2,
 };
-use crate::klimt::TextBlock;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::arrow::ArrowConfiguration;
 use crate::skin::component::{
-    ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text,
+    ArrowComponent, Component, TextBlockEmpty, TextualPart, component_text, creole_text,
 };
 use crate::skin::rose::actor::ComponentRoseActor;
 use crate::skin::rose::life::{
@@ -24,6 +24,10 @@ use crate::skin::rose::life::{
 use crate::skin::rose::line::ComponentRoseLine;
 use crate::skin::rose::participant::ComponentRoseParticipant;
 use crate::skin::rose::queue::ComponentRoseQueue;
+use crate::skin::rose::reference::ComponentRoseReference;
+use crate::skin::rose::separators::{
+    ComponentRoseDelayText, ComponentRoseDivider, ComponentRoseNewpage,
+};
 use crate::skin::rose::{self, MessageLabel, NoteShape};
 use crate::skin::symbol::{Boundary, Control, EntityDomain, SmallDatabase, SmallQueue};
 use crate::style::{PName, SName, StyleBuilder, ValueReading};
@@ -211,4 +215,63 @@ pub(super) fn note(
         &note.colors,
         over_several,
     )
+}
+
+pub(super) fn divider(divider: &Labelled) -> Box<dyn Component> {
+    let style = merged(
+        &divider.style_builder,
+        &sequence_signature(SName::Separator),
+    );
+    let display = &divider.display;
+    let empty = display.lines().first().is_none_or(String::is_empty);
+    Box::new(ComponentRoseDivider::new(
+        TextualPart::new(
+            component_text(display, style.font_configuration(), &style),
+            ClockwiseTopRightBottomLeft::same(4.0),
+        ),
+        style.value(PName::BackGroundColor).as_color(),
+        style.value(PName::LineColor).as_color(),
+        style.stroke(),
+        f64::from(style.value(PName::RoundCorner).as_int()),
+        empty,
+    ))
+}
+
+pub(super) fn delay_text(delay: &Labelled) -> Box<dyn Component> {
+    let style = merged(
+        &delay.style_builder,
+        &sequence_signature2(SName::LifeLine, SName::Delay),
+    );
+    Box::new(ComponentRoseDelayText::new(TextualPart::new(
+        component_text(&delay.display, style.font_configuration(), &style),
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(4.0, 0.0, 4.0, 0.0),
+    )))
+}
+
+pub(super) fn newpage(style_builder: &StyleBuilder) -> Box<dyn Component> {
+    let style = merged(style_builder, &sequence_signature(SName::Newpage));
+    Box::new(ComponentRoseNewpage::new(
+        style.value(PName::LineColor).as_color(),
+        style.stroke(),
+    ))
+}
+
+/// A reference frame: `ref` in the tab, the text below.
+pub(super) fn reference(reference: &Reference) -> Box<dyn Component> {
+    let (style, header_style) = reference_styles(reference);
+    let header = creole_text(
+        &["ref".to_owned()],
+        header_style.font_configuration(),
+        HorizontalAlignment::Left,
+    );
+    Box::new(ComponentRoseReference::new(
+        TextualPart::new(
+            component_text(&reference.display, style.font_configuration(), &style),
+            ClockwiseTopRightBottomLeft::same(4.0),
+        ),
+        header,
+        style.symbol_context(&Colors::default()),
+        header_style.symbol_context(&Colors::default()),
+        style.horizontal_alignment(),
+    ))
 }

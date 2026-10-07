@@ -12,6 +12,7 @@ use super::note_tiles::{
     NoteTile, NotesTile, Side,
 };
 use super::self_tile::CommunicationTileSelf;
+use super::span_tiles::{DelayTile, DividerTile, HSpaceTile, NewpageTile, ReferenceTile};
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::SequenceDiagram;
@@ -83,6 +84,10 @@ pub(super) trait Tile<'a> {
     fn as_note(&self) -> Option<&NoteTile<'a>> {
         None
     }
+
+    fn as_newpage(&self) -> Option<&NewpageTile<'a>> {
+        None
+    }
 }
 
 /// What every tile is built with (PlantUML's `TileArguments`).
@@ -152,9 +157,19 @@ pub(super) fn build_one<'a>(
         Event::MessageExo(_) => return Err(NotYetPorted("messages from the border")),
         Event::Note(note) => Box::new(NoteTile::new(arguments.clone(), event, note, current_y)),
         Event::Notes(notes) => Box::new(NotesTile::new(arguments.clone(), event, notes, current_y)),
-        Event::Divider(_) => return Err(NotYetPorted("dividers")),
-        Event::Delay(_) => return Err(NotYetPorted("delays")),
-        Event::HSpace(_) => return Err(NotYetPorted("spacing")),
+        Event::Divider(divider) => Box::new(DividerTile::new(
+            arguments.clone(),
+            event,
+            divider,
+            current_y,
+        )),
+        Event::Delay(delay) => Box::new(DelayTile::new(arguments.clone(), event, delay, current_y)),
+        Event::HSpace(pixels) => Box::new(HSpaceTile::new(
+            arguments.clone(),
+            event,
+            *pixels,
+            current_y,
+        )),
         Event::GroupingStart(_) | Event::GroupingLeaf(_) => {
             return Err(NotYetPorted("sequence groups"));
         }
@@ -164,8 +179,18 @@ pub(super) fn build_one<'a>(
             life_event,
             current_y,
         )),
-        Event::Newpage(_) => return Err(NotYetPorted("newpage")),
-        Event::Reference(_) => return Err(NotYetPorted("references")),
+        Event::Newpage(style_builder) => Box::new(NewpageTile::new(
+            arguments.clone(),
+            event,
+            style_builder,
+            current_y,
+        )),
+        Event::Reference(reference) => Box::new(ReferenceTile::new(
+            arguments.clone(),
+            event,
+            reference,
+            current_y,
+        )),
     }))
 }
 

@@ -1,6 +1,7 @@
 //! PlantUML's `debug` output format: a plain-text listing of every drawn shape, with text measured by a
 //! seeded pseudo-random metric instead of real fonts so that the output is the same everywhere.
 
+use super::clip::UClip;
 use super::font::{StringBounder, UFont};
 use super::geom::{UTranslate, XDimension2D};
 use super::shape::{UEllipse, URectangle, USegment, UShape, UText};
@@ -177,8 +178,31 @@ impl UGraphicDebug {
     }
 }
 
+/// Whether a clip drops a shape: rectangles, ellipses, lines and texts go when both their corners are out.
+fn is_out_of_clip(shape: &UShape, at: UTranslate, clip: Option<&UClip>) -> bool {
+    let Some(clip) = clip else {
+        return false;
+    };
+    let (x, y) = (at.dx, at.dy);
+    let both_out = |dx: f64, dy: f64| !clip.is_inside(x, y) && !clip.is_inside(x + dx, y + dy);
+    match shape {
+        UShape::Rectangle(rectangle) => both_out(rectangle.width, rectangle.height),
+        UShape::Ellipse(ellipse) => both_out(ellipse.width, ellipse.height),
+        UShape::Line { dx, dy } => both_out(*dx, *dy),
+        UShape::Text(text) => {
+            let dimension = StringBounderDebug.calculate_dimension(&text.font.font(), &text.text);
+            both_out(dimension.width, -dimension.height)
+        }
+        UShape::Path(segments) => !clip.is_path_inside(x, y, segments),
+        _ => false,
+    }
+}
+
 impl UGraphicBackend for UGraphicDebug {
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
+        if is_out_of_clip(shape, at, param.clip.as_ref()) {
+            return;
+        }
         match shape {
             UShape::Text(text) => self.out_text(text, at),
             UShape::Ellipse(ellipse) => self.out_ellipse(ellipse, at, param),

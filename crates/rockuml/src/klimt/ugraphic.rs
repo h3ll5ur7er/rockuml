@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::fmt;
 use std::rc::Rc;
 
+use super::clip::UClip;
 use super::font::StringBounder;
 use super::geom::UTranslate;
 use super::group::UGroup;
@@ -48,6 +49,8 @@ pub struct UParam {
     pub color: HColor,
     pub backcolor: HColor,
     pub stroke: UStroke,
+    /// Where on the document drawing is limited to.
+    pub clip: Option<UClip>,
 }
 
 /// Receives the shapes of one output document.
@@ -91,6 +94,7 @@ impl UGraphic {
                 color: HColor::NONE,
                 backcolor: HColor::NONE,
                 stroke: UStroke::SIMPLE,
+                clip: None,
             },
             stencil: None,
         }
@@ -137,6 +141,14 @@ impl UGraphic {
     pub fn with_stroke(&self, stroke: UStroke) -> Self {
         let mut copy = self.clone();
         copy.param.stroke = stroke;
+        copy
+    }
+
+    /// Drawing is limited to `clip`, given where this surface is.
+    #[must_use]
+    pub fn with_clip(&self, clip: UClip) -> Self {
+        let mut copy = self.clone();
+        copy.param.clip = Some(clip.translate(self.translate.dx, self.translate.dy));
         copy
     }
 

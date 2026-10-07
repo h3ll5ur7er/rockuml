@@ -8,6 +8,7 @@ use super::living_space::VerticalAlignment;
 use super::tile::{Tile, TileArguments, build_several};
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
+use crate::klimt::clip::UClip;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::limit_finder::LimitFinder;
 use crate::klimt::ugraphic::UGraphic;
@@ -104,6 +105,20 @@ impl<'a> PlayingSpace<'a> {
     }
 
     /// The height of everything drawn, found by drawing it.
+    /// Where each page break starts.
+    fn newpage_tops(&self) -> Vec<(f64, f64)> {
+        self.tiles
+            .iter()
+            .filter_map(|tile| tile.as_newpage())
+            .map(|newpage| {
+                (
+                    newpage.y_gauge().min.current_value(),
+                    newpage.preferred_height(),
+                )
+            })
+            .collect()
+    }
+
     pub(super) fn preferred_height(&self) -> f64 {
         let (ug, finder) = LimitFinder::surface(self.arguments.string_bounder.clone());
         let final_y = self.draw_internal(
@@ -120,14 +135,31 @@ impl<'a> PlayingSpace<'a> {
 /// The diagram's body: heads, lifelines, tiles and tails (PlantUML's `PlayingSpaceWithParticipants`).
 pub(super) struct PlayingSpaceWithParticipants<'a> {
     playing_space: PlayingSpace<'a>,
+    page: usize,
     dimension: OnceCell<XDimension2D>,
 }
 
 impl<'a> PlayingSpaceWithParticipants<'a> {
-    pub(super) fn new(playing_space: PlayingSpace<'a>) -> Self {
+    pub(super) fn new(playing_space: PlayingSpace<'a>, page: usize) -> Self {
         Self {
             playing_space,
+            page,
             dimension: OnceCell::new(),
+        }
+    }
+
+    fn y_min(&self) -> f64 {
+        match self.page {
+            0 => 0.0,
+            page => self.playing_space.newpage_tops()[page - 1].0,
+        }
+    }
+
+    /// The page ends after its page break, or with the diagram.
+    fn y_max(&self, full_height: f64) -> f64 {
+        match self.playing_space.newpage_tops().get(self.page) {
+            None => full_height,
+            Some(&(top, height)) => (top + height).min(full_height),
         }
     }
 
@@ -146,7 +178,8 @@ impl<'a> PlayingSpaceWithParticipants<'a> {
         *self.dimension.get_or_init(|| {
             let space = &self.playing_space;
             let width = space.max().current_value() - space.min().current_value();
-            let page_height = space.preferred_height();
+            let full_height = space.preferred_height();
+            let page_height = self.y_max(full_height) - self.y_min();
             let factor = if space.show_footbox { 2.0 } else { 1.0 };
             XDimension2D::new(width, page_height + factor * self.head_height())
         })
@@ -160,8 +193,12 @@ impl<'a> PlayingSpaceWithParticipants<'a> {
         let living_spaces = &space.arguments.living_spaces;
         let head_height = self.head_height();
         let full_height = space.preferred_height();
-        let page_height = full_height;
-        let body = ug.translated(0.0, head_height);
+        let y_min = self.y_min();
+        let page_height = self.y_max(full_height) - y_min;
+        let mut body = ug.translated(0.0, head_height - y_min);
+        if !space.newpage_tops().is_empty() {
+            body = body.with_clip(UClip::new(-1000.0, y_min, f64::MAX, page_height + 1.0));
+        }
         space.draw_background(&body);
         living_spaces.draw_life_lines(&body, full_height, context);
         living_spaces.draw_heads(ug, context, VerticalAlignment::Bottom);

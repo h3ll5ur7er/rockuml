@@ -4,9 +4,10 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use super::clip::{UClip, path_bounds};
 use super::font::StringBounder;
 use super::geom::{MinMax, UTranslate};
-use super::shape::{USegment, UShape};
+use super::shape::UShape;
 use super::ugraphic::{UGraphic, UGraphicBackend, UParam};
 use crate::color::HColor;
 
@@ -16,6 +17,8 @@ const HACK_X_FOR_POLYGON: f64 = 10.0;
 pub(crate) struct LimitFinder {
     string_bounder: Rc<dyn StringBounder>,
     min_max: MinMax,
+    /// The clip of the shape being measured: points outside it do not count.
+    clip: Option<UClip>,
 }
 
 impl LimitFinder {
@@ -26,6 +29,7 @@ impl LimitFinder {
         let finder = Rc::new(RefCell::new(LimitFinder {
             string_bounder: string_bounder.clone(),
             min_max: MinMax::from_origin(),
+            clip: None,
         }));
         let ug = UGraphic::new(finder.clone(), string_bounder, HColor::WHITE);
         (ug, finder)
@@ -36,7 +40,9 @@ impl LimitFinder {
     }
 
     fn add_point(&mut self, x: f64, y: f64) {
-        self.min_max = self.min_max.add_point(x, y);
+        if self.clip.is_none_or(|clip| clip.is_inside(x, y)) {
+            self.min_max = self.min_max.add_point(x, y);
+        }
     }
 
     /// The bounding box of points, empty ones adding nothing.
@@ -63,20 +69,9 @@ impl LimitFinder {
     }
 }
 
-/// The points PlantUML bounds a path by: every point of a segment, but only the end of an arc.
-fn path_points(segments: &[USegment]) -> Vec<(f64, f64)> {
-    segments
-        .iter()
-        .flat_map(|segment| match *segment {
-            USegment::MoveTo(x, y) | USegment::LineTo(x, y) => vec![(x, y)],
-            USegment::CubicTo { ctrl1, ctrl2, end } => vec![ctrl1, ctrl2, end],
-            USegment::ArcTo { end, .. } => vec![end],
-        })
-        .collect()
-}
-
 impl UGraphicBackend for LimitFinder {
-    fn draw(&mut self, shape: &UShape, at: UTranslate, _param: &UParam) {
+    fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
+        self.clip = param.clip;
         let (x, y) = (at.dx, at.dy);
         match shape {
             UShape::Text(text) => {
@@ -104,7 +99,12 @@ impl UGraphicBackend for LimitFinder {
             UShape::Polygon(points) => {
                 self.add_bounds(x, y, points.iter().copied(), HACK_X_FOR_POLYGON);
             }
-            UShape::Path(segments) => self.add_bounds(x, y, path_points(segments), 0.0),
+            UShape::Path(segments) => {
+                if let Some((min_x, min_y, max_x, max_y)) = path_bounds(segments) {
+                    self.add_point(x + min_x, y + min_y);
+                    self.add_point(x + max_x, y + max_y);
+                }
+            }
             UShape::Image(image) => {
                 self.add_point(x, y);
                 self.add_point(x + image.width - 1.0, y + image.height - 1.0);

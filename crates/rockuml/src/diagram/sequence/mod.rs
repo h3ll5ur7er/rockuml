@@ -588,7 +588,11 @@ impl Diagram for SequenceDiagram {
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let drawing = teoz::SequenceDiagramFileMakerTeoz::new(self, string_bounder.clone(), page)?;
-        Ok(self.titled.add_chrome(Box::new(drawing)))
+        if page == 0 {
+            return Ok(self.titled.add_chrome(Box::new(drawing)));
+        }
+        let title = Some(&self.page_titles[page - 1]).filter(|title| !title.display.is_white());
+        Ok(self.titled.add_chrome_titled(Box::new(drawing), title))
     }
 
     fn export_settings(&self) -> ExportSettings {

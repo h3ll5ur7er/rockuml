@@ -7,7 +7,9 @@ pub(crate) mod line;
 pub(crate) mod note;
 pub(crate) mod participant;
 pub(crate) mod queue;
+pub(crate) mod reference;
 pub(crate) mod self_arrow;
+pub(crate) mod separators;
 
 use arrow::{ArrowParts, ComponentRoseArrow};
 use self_arrow::ComponentRoseSelfArrow;

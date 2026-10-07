@@ -9,6 +9,7 @@ mod living_space;
 mod note_tiles;
 mod playing_space;
 mod self_tile;
+mod span_tiles;
 mod tile;
 mod y_gauge;
 
@@ -39,9 +40,6 @@ impl<'a> SequenceDiagramFileMakerTeoz<'a> {
         string_bounder: Rc<dyn StringBounder>,
         page: usize,
     ) -> Result<Self, NotYetPorted> {
-        if page > 0 {
-            return Err(NotYetPorted("newpage"));
-        }
         let x_origin = Real::origin();
         let mut x_current = x_origin.add_at_least(0.0);
         let y_origin = Real::origin();
@@ -83,7 +81,7 @@ impl<'a> SequenceDiagramFileMakerTeoz<'a> {
         let _ = arguments
             .borders
             .set((main_tile.min().clone(), main_tile.max().clone()));
-        let body = PlayingSpaceWithParticipants::new(main_tile);
+        let body = PlayingSpaceWithParticipants::new(main_tile, page);
         let min1 = body.min_x().clone();
         Ok(Self { body, min1 })
     }

@@ -174,39 +174,67 @@ fn apply_stroke(svg: &mut SvgGraphics, stroke: UStroke) {
 }
 
 impl UGraphicBackend for UGraphicSvg {
+    /// Clips as PlantUML's SVG drivers do: straight lines and rectangles are cut to the clip, other shapes
+    /// are dropped unless inside.
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
+        let clip = param.clip.as_ref();
+        let inside = |x: f64, y: f64| clip.is_none_or(|clip| clip.is_inside(x, y));
         match shape {
-            UShape::Text(text) => self.draw_text(text, at),
+            UShape::Text(text) => {
+                if inside(at.dx, at.dy) {
+                    self.draw_text(text, at);
+                }
+            }
             UShape::Rectangle(rectangle) => {
+                let (x, y, width, height) = match clip {
+                    Some(clip) => {
+                        clip.clipped_rectangle(at.dx, at.dy, rectangle.width, rectangle.height)
+                    }
+                    None => (at.dx, at.dy, rectangle.width, rectangle.height),
+                };
+                if clip.is_some() && height <= 0.0 {
+                    return;
+                }
                 self.apply_colors_and_stroke(param);
-                self.svg().rectangle(
-                    at.dx,
-                    at.dy,
-                    rectangle.width,
-                    rectangle.height,
-                    rectangle.rx / 2.0,
-                    rectangle.ry / 2.0,
-                );
+                self.svg()
+                    .rectangle(x, y, width, height, rectangle.rx / 2.0, rectangle.ry / 2.0);
             }
             UShape::Ellipse(ellipse) => {
+                if !inside(at.dx, at.dy) || !inside(at.dx + ellipse.width, at.dy + ellipse.height) {
+                    return;
+                }
                 self.apply_colors_and_stroke(param);
                 let (x_radius, y_radius) = (ellipse.width / 2.0, ellipse.height / 2.0);
                 self.svg()
                     .ellipse(at.dx + x_radius, at.dy + y_radius, x_radius, y_radius);
             }
             UShape::Line { dx, dy } => {
+                let start = (at.dx, at.dy);
+                let end = (at.dx + dx, at.dy + dy);
+                let Some(((x1, y1), (x2, y2))) = (match clip {
+                    Some(clip) => clip.clipped_line(start, end),
+                    None => Some((start, end)),
+                }) else {
+                    return;
+                };
                 let svg = self.svg();
                 svg.set_stroke_color(Some(&param.color.to_svg()));
                 apply_stroke(svg, param.stroke);
-                svg.line(at.dx, at.dy, at.dx + dx, at.dy + dy);
+                svg.line(x1, y1, x2, y2);
             }
             UShape::Polygon(points) => {
-                self.apply_colors_and_stroke(param);
                 let points: Vec<(f64, f64)> =
                     points.iter().map(|(x, y)| (at.dx + x, at.dy + y)).collect();
+                if !points.iter().all(|&(x, y)| inside(x, y)) {
+                    return;
+                }
+                self.apply_colors_and_stroke(param);
                 self.svg().polygon(&points);
             }
             UShape::Path(segments) => {
+                if clip.is_some_and(|clip| !clip.is_path_inside(at.dx, at.dy, segments)) {
+                    return;
+                }
                 // A path filled with the colour of its outline gets no outline in PlantUML.
                 if param.color == param.backcolor {
                     let svg = self.svg();
@@ -218,7 +246,11 @@ impl UGraphicBackend for UGraphicSvg {
                 }
                 self.svg().path(at.dx, at.dy, segments);
             }
-            UShape::Image(image) => self.draw_image(image, at),
+            UShape::Image(image) => {
+                if inside(at.dx, at.dy) && inside(at.dx + image.width, at.dy + image.height) {
+                    self.draw_image(image, at);
+                }
+            }
             UShape::Empty(_) | UShape::HorizontalLine => {}
         }
     }

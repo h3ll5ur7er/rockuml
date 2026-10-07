@@ -156,3 +156,21 @@ pub(crate) fn grouping_start_styles(start: &GroupingStart) -> (Style, Style) {
         header,
     )
 }
+
+/// A reference's frame style and its tab's (`Reference.getUsedStyles`).
+pub(crate) fn reference_styles(reference: &super::model::Reference) -> (Style, Style) {
+    let builder = &reference.style_builder;
+    let style = merged(builder, &sequence_signature(SName::Reference));
+    let flat = merged(builder, &sequence_signature(SName::ReferenceHeader));
+    let nested = merged(
+        builder,
+        &sequence_signature2(SName::Reference, SName::Header),
+    );
+    let header = flat
+        .merge_nested_child_over(&nested, &style)
+        .eventually_override(
+            PName::BackGroundColor,
+            reference.back_color_element.as_ref(),
+        );
+    (style, header)
+}
