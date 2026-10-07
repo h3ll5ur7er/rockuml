@@ -126,34 +126,6 @@ impl LinkDecor {
         )
     }
 
-    pub(crate) fn get_arrow_size(self) -> f64 {
-        match self {
-            Self::None => 0.0,
-            Self::Extends | Self::Redefines | Self::DefinedBy => 2.0,
-            Self::Composition | Self::Aggregation => 1.3,
-            Self::Crowfoot
-            | Self::CircleCrowfoot
-            | Self::CircleLine
-            | Self::LineCrowfoot
-            | Self::ArrowTriangle => 0.8,
-            Self::DoubleLine => 0.7,
-            Self::NotNavigable
-            | Self::Arrow
-            | Self::ArrowAndCircle
-            | Self::Circle
-            | Self::CircleFill
-            | Self::CircleConnect
-            | Self::Square
-            | Self::CircleCross => 0.5,
-            Self::Parenthesis => 1.0,
-            Self::Plus | Self::HalfArrowUp | Self::HalfArrowDown => 1.5,
-        }
-    }
-
-    pub(crate) fn is_extends_like(self) -> bool {
-        matches!(self, Self::Extends | Self::Redefines | Self::DefinedBy)
-    }
-
     /// The decoration written `s` at the start of an arrow; `None` for anything else.
     pub(crate) fn lookup_decors1(s: Option<&str>) -> Self {
         Self::lookup(s, Self::decors1)
@@ -281,11 +253,8 @@ mod tests {
     }
 
     #[test]
-    fn sizes_are_plantumls() {
-        assert_eq!(LinkDecor::Extends.get_arrow_size(), 2.0);
-        assert_eq!(LinkDecor::Parenthesis.get_arrow_size(), 1.0);
+    fn arrows_and_diamonds_are_filled() {
         assert!(LinkDecor::Composition.is_fill());
         assert!(!LinkDecor::Aggregation.is_fill());
-        assert!(LinkDecor::DefinedBy.is_extends_like());
     }
 }

@@ -280,7 +280,6 @@ fn dump_images(diagram: &DescriptionDiagram) -> String {
             double_to_string(dimension.height)
         )
         .unwrap();
-        writeln!(out, "shape: {}", screaming(image.get_shape_type())).unwrap();
         let debug = Rc::new(RefCell::new(UGraphicDebug::new("DATE".to_owned())));
         let ug = UGraphic::new(debug.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
         image.draw_u(&ug);

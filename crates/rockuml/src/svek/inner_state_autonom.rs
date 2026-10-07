@@ -3,7 +3,7 @@
 
 use super::image::{EntityImageState, entity_group, get_state_description, get_style_state};
 use super::rounded_container::RoundedContainer;
-use super::{IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
+use super::{IEntityImage, MARGIN, MARGIN_LINE};
 use crate::abel::Entity;
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, SheetBlock2};
@@ -170,12 +170,4 @@ impl TextBlock for InnerStateAutonom {
     }
 }
 
-impl IEntityImage for InnerStateAutonom {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.im.is_hidden()
-    }
-}
+impl IEntityImage for InnerStateAutonom {}

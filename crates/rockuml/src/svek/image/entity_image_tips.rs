@@ -15,7 +15,7 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
 use crate::style::{PName, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext};
 
 /// The space between two tips.
 const Y_SPACING: f64 = 10.0;
@@ -141,14 +141,6 @@ impl TextBlock for EntityImageTips {
 }
 
 impl IEntityImage for EntityImageTips {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-
     /// Next to the entity at the other end of the tips' link (`Bibliotekon.getOnlyOther`).
     fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
         let me = self.base.get_entity();

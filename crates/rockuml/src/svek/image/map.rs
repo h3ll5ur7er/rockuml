@@ -23,7 +23,7 @@ use crate::skin::SkinParam;
 use crate::skin::font_param::FontParam;
 use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 /// The room each side of the title.
 const X_MARGIN_CIRCLE: f64 = 5.0;
@@ -179,10 +179,6 @@ impl DataBox {
         ug.close_group();
     }
 
-    pub(super) fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-
     pub(super) fn backcolor(&self) -> HColor {
         self.image.get_backcolor()
     }
@@ -246,15 +242,7 @@ impl TextBlock for EntityImageMap {
     }
 }
 
-impl IEntityImage for EntityImageMap {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RectangleHtmlForPorts
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.data_box.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageMap {}
 
 /// A row: the key, and its value unless the key links to an entity.
 struct MapRow {

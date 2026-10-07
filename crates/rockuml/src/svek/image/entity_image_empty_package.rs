@@ -17,7 +17,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::TextBlockEmpty;
 use crate::skin::font_param::FontParam;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{ClusterDecoration, IEntityImage, ShapeType};
+use crate::svek::{ClusterDecoration, IEntityImage};
 
 /// The room around the title and stereotype.
 const MARGIN: f64 = 10.0;
@@ -134,12 +134,4 @@ impl TextBlock for EntityImageEmptyPackage {
     }
 }
 
-impl IEntityImage for EntityImageEmptyPackage {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        false
-    }
-}
+impl IEntityImage for EntityImageEmptyPackage {}

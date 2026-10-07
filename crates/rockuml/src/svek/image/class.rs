@@ -22,7 +22,7 @@ use crate::skin::SkinParam;
 use crate::skin::component::TextBlockEmpty;
 use crate::skin::font_param::FontParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 pub(crate) struct EntityImageClass {
     image: AbstractEntityImage,
@@ -37,7 +37,6 @@ pub(crate) struct EntityImageClass {
     header_backcolor: HColor,
     backcolor: HColor,
     stroke: UStroke,
-    has_ports: bool,
 }
 
 fn margin(top: f64, right: f64, bottom: f64, left: f64) -> ClockwiseTopRightBottomLeft {
@@ -91,7 +90,6 @@ impl EntityImageClass {
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: get_stroke(&style, colors),
-            has_ports: entity.get_port_short_names().next().is_some(),
         }
     }
 
@@ -182,19 +180,7 @@ impl TextBlock for EntityImageClass {
     }
 }
 
-impl IEntityImage for EntityImageClass {
-    fn get_shape_type(&self) -> ShapeType {
-        if self.has_ports {
-            ShapeType::RectangleHtmlForPorts
-        } else {
-            ShapeType::Rectangle
-        }
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageClass {}
 /// `root element classDiagram class`, then `more`, with the entity's `<<<style>>>` names.
 /// `root element classDiagram class`, then `more`.
 fn class_signature(entity: &Entity, more: &[SName]) -> StyleSignature {

@@ -21,7 +21,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::TextBlockEmpty;
 use crate::skin::font_param::FontParam;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 /// How tall an object without fields is.
 const MARGIN_EMPTY_FIELDS_OR_METHOD: f64 = 13.0;
@@ -42,7 +42,6 @@ pub(crate) struct EntityImageObject {
     header_backcolor: HColor,
     backcolor: HColor,
     stroke: UStroke,
-    has_ports: bool,
 }
 
 fn object_signature(more: &[SName]) -> StyleSignature {
@@ -135,7 +134,6 @@ impl EntityImageObject {
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: style.stroke(),
-            has_ports: entity.get_port_short_names().next().is_some(),
         }
     }
 
@@ -254,16 +252,4 @@ impl TextBlock for EntityImageObject {
     }
 }
 
-impl IEntityImage for EntityImageObject {
-    fn get_shape_type(&self) -> ShapeType {
-        if self.has_ports {
-            ShapeType::RectangleHtmlForPorts
-        } else {
-            ShapeType::Rectangle
-        }
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageObject {}

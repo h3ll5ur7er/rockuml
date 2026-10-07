@@ -1,7 +1,7 @@
 //! The concurrent regions of a state side by side or one above the other, with dashed separators between them
 //! (PlantUML's `ConcurrentStates`).
 
-use super::{IEntityImage, ShapeType};
+use super::IEntityImage;
 use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
@@ -125,12 +125,4 @@ impl TextBlock for ConcurrentStates {
     }
 }
 
-impl IEntityImage for ConcurrentStates {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        false
-    }
-}
+impl IEntityImage for ConcurrentStates {}

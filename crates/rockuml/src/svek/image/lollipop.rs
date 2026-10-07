@@ -14,7 +14,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage};
 
 const SIZE: f64 = 10.0;
 
@@ -92,12 +92,4 @@ impl TextBlock for EntityImageLollipopInterface {
     }
 }
 
-impl IEntityImage for EntityImageLollipopInterface {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Circle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageLollipopInterface {}

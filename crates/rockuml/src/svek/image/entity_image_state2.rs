@@ -14,10 +14,9 @@ use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 pub(crate) struct EntityImageState2 {
-    base: AbstractEntityImage,
     url: Option<Url>,
     as_small: Box<dyn TextBlock>,
 }
@@ -44,7 +43,6 @@ impl EntityImageState2 {
             diagram.skin().stereotype_alignment(),
         );
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             url: entity.url.clone(),
             as_small,
         }
@@ -96,12 +94,4 @@ impl TextBlock for EntityImageState2 {
     }
 }
 
-impl IEntityImage for EntityImageState2 {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageState2 {}

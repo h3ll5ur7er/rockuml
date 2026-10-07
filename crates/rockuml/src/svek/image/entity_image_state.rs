@@ -15,7 +15,7 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, ValueReading};
 use crate::svek::rounded_container::RoundedContainer;
-use crate::svek::{IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
+use crate::svek::{IEntityImage, MARGIN, MARGIN_LINE};
 
 const MIN_WIDTH: f64 = 50.0;
 const MIN_HEIGHT: f64 = 50.0;
@@ -158,12 +158,4 @@ impl TextBlock for EntityImageState {
     }
 }
 
-impl IEntityImage for EntityImageState {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.common.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageState {}

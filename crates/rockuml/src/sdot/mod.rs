@@ -264,7 +264,7 @@ impl CucaDiagramFileMakerSmetana {
     ) -> Result<(), NotYetPorted> {
         let image = match self.diagram.get_svek_image(ent) {
             Some(image) => Box::new(image),
-            None => create_entity_image_block(ent, &self.diagram, &self.bibliotekon)?,
+            None => create_entity_image_block(ent, &self.diagram)?,
         };
         self.cluster_manager.add_node(
             &mut self.bibliotekon,

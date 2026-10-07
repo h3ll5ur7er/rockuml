@@ -11,7 +11,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::Rankdir;
 use crate::style::{PName, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext};
 
 use super::entity_image_state_common::get_style_state;
 
@@ -109,14 +109,6 @@ impl EntityImageStateBorder {
 }
 
 impl IEntityImage for EntityImageStateBorder {
-    fn get_shape_type(&self) -> ShapeType {
-        self.entity_position.get_shape_type()
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-
     fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
         self.draw(ug, self.up_position(layout));
     }

@@ -13,7 +13,6 @@ use crate::klimt::url::Url;
 use crate::skin::component::TextBlockEmpty;
 use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
-use crate::svek::AbstractEntityImage;
 
 /// `root, element, stateDiagram, state`, whatever the diagram.
 pub(crate) fn state_signature() -> StyleSignature {
@@ -62,7 +61,6 @@ pub(crate) fn get_state_description(group: &Entity, diagram: &CucaDiagram) -> Bo
 }
 
 pub(crate) struct EntityImageStateCommon {
-    pub base: AbstractEntityImage,
     pub name: SheetBlock2,
     pub url: Option<Url>,
     /// The colours the state sets for itself.
@@ -85,7 +83,6 @@ impl EntityImageStateCommon {
             CreoleMode::Full,
         );
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             name,
             url: entity.url.clone(),
             colors: entity.colors.clone(),

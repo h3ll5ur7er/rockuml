@@ -12,7 +12,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::creole_text;
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext};
 
 use super::entity_group;
 
@@ -93,14 +93,6 @@ impl TextBlock for EntityImagePort {
 }
 
 impl IEntityImage for EntityImagePort {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RectanglePort
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-
     /// A port in the upper half of its component has its name above it.
     fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
         let up_position = self

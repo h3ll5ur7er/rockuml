@@ -9,7 +9,7 @@ use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::style::{SName, Style};
-use crate::svek::{IEntityImage, MARGIN, ShapeType};
+use crate::svek::{IEntityImage, MARGIN};
 
 const MIN_WIDTH: f64 = 50.0;
 const MIN_HEIGHT: f64 = 40.0;
@@ -68,12 +68,4 @@ impl TextBlock for EntityImageStateEmptyDescription {
     }
 }
 
-impl IEntityImage for EntityImageStateEmptyDescription {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RoundRectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.common.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageStateEmptyDescription {}

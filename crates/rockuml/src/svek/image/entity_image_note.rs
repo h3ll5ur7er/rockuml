@@ -19,7 +19,7 @@ use crate::skin::body::enhanced_text;
 use crate::skin::component::TextBlockEmpty;
 use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext};
 
 /// Where the one link of a note drawn as a callout runs once laid out, instead of being drawn itself.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -216,14 +216,6 @@ impl TextBlock for EntityImageNote {
 }
 
 impl IEntityImage for EntityImageNote {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-
     fn set_opale_link(&mut self, link: LinkId, other: EntityId) {
         self.opale_link = Some((link, other));
     }

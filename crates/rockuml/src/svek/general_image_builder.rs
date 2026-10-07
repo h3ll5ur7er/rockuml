@@ -1,5 +1,6 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
+use super::IEntityImage;
 use super::image::{
     EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
@@ -9,7 +10,6 @@ use super::image::{
     EntityImageState, EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
     EntityImageSynchroBar, EntityImageTips,
 };
-use super::{Bibliotekon, IEntityImage};
 use crate::abel::{Entity, EntityId, LeafType};
 use crate::diagram::NotYetPorted;
 use crate::diagram::cuca::CucaDiagram;
@@ -23,7 +23,6 @@ use crate::diagram::cuca::CucaDiagram;
 pub(crate) fn create_entity_image_block(
     leaf: EntityId,
     diagram: &CucaDiagram,
-    _bibliotekon: &Bibliotekon,
 ) -> Result<Box<dyn IEntityImage>, NotYetPorted> {
     let entity = diagram.entity(leaf);
     assert!(!entity.is_removed(diagram), "removed leaves are not drawn");

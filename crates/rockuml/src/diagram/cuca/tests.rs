@@ -614,15 +614,7 @@ impl TextBlock for Drawn {
     fn draw_u(&self, _: &crate::klimt::ugraphic::UGraphic) {}
 }
 
-impl IEntityImage for Drawn {
-    fn get_shape_type(&self) -> crate::svek::ShapeType {
-        crate::svek::ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        false
-    }
-}
+impl IEntityImage for Drawn {}
 
 #[test]
 fn types_mute_between_class_like_ones_only() {
@@ -698,10 +690,8 @@ fn states_on_the_border_take_their_position_from_the_stereotype() {
 fn entity_images_read_what_they_need_of_the_entity() {
     let mut diagram = diagram(None);
     let a = class(&mut diagram, "A");
-    diagram.hide_or_show2("A", false);
     diagram.titled.skin.set_param("backgroundColor", "#EEEEEE");
     let image = AbstractEntityImage::new(diagram.entity(a), &diagram);
-    assert!(image.is_hidden());
     assert_eq!(image.get_entity(), a);
     assert_eq!(
         image.get_backcolor(),

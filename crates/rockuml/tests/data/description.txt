@@ -7,7 +7,6 @@ link lnk4 ent0001 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0002 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 107.6315421996173 75.0
-shape: RECTANGLE
 COMMENT: entity Customer
 ELLIPSE:
   pt1: [ 37.8158 ; 0.5000 ]
@@ -68,7 +67,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 72.3019856248596 75.0
-shape: RECTANGLE
 COMMENT: entity Clerk
 ELLIPSE:
   pt1: [ 20.1510 ; 0.5000 ]
@@ -129,7 +127,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 80.51578424854341 25.79898987322333
-shape: OVAL
 COMMENT: entity UC1
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -160,7 +157,6 @@ link lnk6 ent0002 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 117.44727949259031 47.0
-shape: RECTANGLE
 COMMENT: entity Visitor
 ELLIPSE:
   pt1: [ 54.2236 ; 0.5000 ]
@@ -217,7 +213,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 74.05491052427502 47.0
-shape: RECTANGLE
 COMMENT: entity Member
 ELLIPSE:
   pt1: [ 32.5275 ; 0.5000 ]
@@ -274,7 +269,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 127.19215636580658 30.238431273161318
-shape: OVAL
 COMMENT: entity Browse
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -297,7 +291,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 106.26858385909787 26.053716771819577
-shape: OVAL
 COMMENT: entity Post
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -330,7 +323,6 @@ link lnk8 ent0001 ent0004 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label=""
 link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 176.46589687409602 74.0
-shape: RECTANGLE
 COMMENT: entity First Actor
 ELLIPSE:
   pt1: [ 80.2329 ; 0.5000 ]
@@ -375,7 +367,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 147.2057005933283 74.0
-shape: RECTANGLE
 COMMENT: entity Man2
 ELLIPSE:
   pt1: [ 65.6029 ; 0.5000 ]
@@ -420,7 +411,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 72.45913027274968 74.0
-shape: RECTANGLE
 COMMENT: entity Woman3
 ELLIPSE:
   pt1: [ 28.2296 ; 0.5000 ]
@@ -465,7 +455,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 175.14193978400885 74.0
-shape: RECTANGLE
 COMMENT: entity Person1
 ELLIPSE:
   pt1: [ 79.5710 ; 0.5000 ]
@@ -510,7 +499,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 160.75524910786893 74.0
-shape: RECTANGLE
 COMMENT: entity Q
 ELLIPSE:
   pt1: [ 72.3776 ; 0.5000 ]
@@ -565,7 +553,6 @@ link lnk7 ent0001 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="green dash
 link lnk9 ent0001 ent0008 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="blue dotted" q1=null q2=null NONE_OR_SEVERAL TEXT=#0000FF LINE=#0000FF stroke=1.0-3.0-1.0 stereo=null
 image ent0001 EntityImageDescription
 dimension: 46.03234685503541 74.0
-shape: RECTANGLE
 COMMENT: entity foo
 ELLIPSE:
   pt1: [ 15.0162 ; 0.5000 ]
@@ -610,7 +597,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 73.89823514187023 25.798989873223334
-shape: OVAL
 COMMENT: entity bar
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -633,7 +619,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 97.4286123256992 25.798989873223334
-shape: OVAL
 COMMENT: entity bar1
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -656,7 +641,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 97.41087603969207 25.79898987322333
-shape: OVAL
 COMMENT: entity bar2
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -679,7 +663,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 97.40732937254654 25.79898987322333
-shape: OVAL
 COMMENT: entity bar3
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -716,7 +699,6 @@ link lnk12 ent0001 ent0007 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk13 ent0001 ent0008 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 58.01815924128079 74.0
-shape: RECTANGLE
 COMMENT: entity g
 ELLIPSE:
   pt1: [ 21.0091 ; 0.5000 ]
@@ -761,7 +743,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 57.750188284933415 74.0
-shape: RECTANGLE
 COMMENT: entity c
 ELLIPSE:
   pt1: [ 20.8751 ; 0.5000 ]
@@ -806,7 +787,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 130.7388498929613 74.0
-shape: RECTANGLE
 COMMENT: entity fc
 ELLIPSE:
   pt1: [ 57.3694 ; 0.5000 ]
@@ -851,7 +831,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 151.0004771462688 35.00009542925376
-shape: OVAL
 COMMENT: entity UC1
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -874,7 +853,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 230.0613503647081 50.81227007294162
-shape: OVAL
 COMMENT: entity UC2
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -897,7 +875,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 94.52412474924868 25.798989873223334
-shape: OVAL
 COMMENT: entity UC3
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -920,7 +897,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 123.62776161599935 29.52555232319987
-shape: OVAL
 COMMENT: entity UC4
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -951,7 +927,6 @@ link lnk6 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 204.51557128901868 74.0
-shape: RECTANGLE
 COMMENT: entity BA
 ELLIPSE:
   pt1: [ 94.2578 ; 0.5000 ]
@@ -1003,7 +978,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 85.12098317719514 74.0
-shape: RECTANGLE
 COMMENT: entity Plain
 ELLIPSE:
   pt1: [ 34.5605 ; 0.5000 ]
@@ -1048,7 +1022,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 305.1500778274152 65.83001556548305
-shape: OVAL
 COMMENT: entity BU
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1082,7 +1055,6 @@ LINE:
 
 image ent0004 EntityImageDescription
 dimension: 240.0338281567171 52.806765631343424
-shape: OVAL
 COMMENT: entity PU
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1111,7 +1083,6 @@ link lnk4 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0001 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 73.95726134768404 77.0
-shape: RECTANGLE
 COMMENT: entity Alice
 ELLIPSE:
   pt1: [ 28.9786 ; 2.0000 ]
@@ -1156,7 +1127,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 91.99355152036803 25.79898987322333
-shape: OVAL
 COMMENT: entity Login
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1179,7 +1149,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 111.58357245871404 27.116714491742812
-shape: OVAL
 COMMENT: entity Logout
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1212,7 +1181,6 @@ link lnk9 ent0007 ent0001 NONE ARROW NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk11 ent0001 ent0010 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 60.81863207770806 74.0
-shape: RECTANGLE
 COMMENT: entity user
 ELLIPSE:
   pt1: [ 22.4093 ; 0.5000 ]
@@ -1257,7 +1225,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 148.19260747171157 34.43852149434231
-shape: OVAL
 COMMENT: entity dummyLeft
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1280,7 +1247,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 171.02887685552153 39.005775371104306
-shape: OVAL
 COMMENT: entity dummyRight
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1303,7 +1269,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 120.69299179262406 28.938598358524814
-shape: OVAL
 COMMENT: entity dummyUp
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1326,7 +1291,6 @@ TEXT:
 
 image ent0010 EntityImageDescription
 dimension: 180.53854438565597 40.90770887713119
-shape: OVAL
 COMMENT: entity dummyDown
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1359,7 +1323,6 @@ link lnk8 ent0002 ent0005 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="Â«includeÂ
 link lnk9 ent0004 ent0002 ARROW NONE NONE 7.0-7.0-1.0 length=1 label="extends" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 107.6315421996173 74.0
-shape: RECTANGLE
 COMMENT: entity Customer
 ELLIPSE:
   pt1: [ 45.8158 ; 0.5000 ]
@@ -1404,7 +1367,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 147.27844028798143 34.25568805759629
-shape: OVAL
 COMMENT: entity CO
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1427,7 +1389,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 68.85778010143022 25.79898987322333
-shape: OVAL
 COMMENT: entity PAY
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1450,7 +1411,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 166.34424395647352 38.068848791294705
-shape: OVAL
 COMMENT: entity CP
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1473,7 +1433,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 105.2558959830283 25.85117919660566
-shape: OVAL
 COMMENT: entity LI
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1505,7 +1464,6 @@ link lnk7 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk8 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 174.2420316831905 74.0
-shape: RECTANGLE
 COMMENT: entity Admin
 ELLIPSE:
   pt1: [ 79.1210 ; 0.5000 ]
@@ -1550,7 +1508,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 342.3522081510401 73.27044163020803
-shape: OVAL
 COMMENT: entity Use
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1573,7 +1530,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 47.96778518689069 74.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 15.9839 ; 0.5000 ]
@@ -1618,7 +1574,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 100.02600587728585 25.79898987322333
-shape: OVAL
 COMMENT: entity Start
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1650,7 +1605,6 @@ link lnk7 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk8 ent0002 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 72.14781689643955 74.0
-shape: RECTANGLE
 COMMENT: entity Driver
 ELLIPSE:
   pt1: [ 28.0739 ; 0.5000 ]
@@ -1695,7 +1649,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 104.39050318609095 74.0
-shape: RECTANGLE
 COMMENT: entity Mechanic
 ELLIPSE:
   pt1: [ 44.1953 ; 0.5000 ]
@@ -1740,7 +1693,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 202.66058127460104 45.33211625492021
-shape: OVAL
 COMMENT: entity S
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1763,7 +1715,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 115.72830702066516 27.945661404133034
-shape: OVAL
 COMMENT: entity R
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1786,7 +1737,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 118.06265516004797 28.412531032009596
-shape: OVAL
 COMMENT: entity F
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1820,7 +1770,6 @@ link lnk8 ent0007 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=3 label="This is ye
 link lnk10 ent0002 ent0009 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 47.96778518689069 74.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 15.9839 ; 0.5000 ]
@@ -1865,7 +1814,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 88.84250054496863 74.0
-shape: RECTANGLE
 COMMENT: entity Admin
 ELLIPSE:
   pt1: [ 36.4213 ; 0.5000 ]
@@ -1910,7 +1858,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 100.02600587728585 25.79898987322333
-shape: OVAL
 COMMENT: entity Start
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1933,7 +1880,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 342.3522081510401 73.27044163020803
-shape: OVAL
 COMMENT: entity Use the application
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -1956,7 +1902,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 174.2420316831905 74.0
-shape: RECTANGLE
 COMMENT: entity Main Admin
 ELLIPSE:
   pt1: [ 79.1210 ; 0.5000 ]
@@ -2001,7 +1946,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 138.56386101014445 32.51277220202889
-shape: OVAL
 COMMENT: entity Configure
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2028,7 +1972,6 @@ leaf ent0002 "Writer" DESCRIPTION ACTOR_STICKMAN display="Writer"
 link lnk3 ent0002 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 662.2162818285345 162.93420795032335
-shape: OVAL
 COMMENT: entity UC1
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2150,7 +2093,6 @@ LINE:
 
 image ent0002 EntityImageDescription
 dimension: 102.7186202245561 74.0
-shape: RECTANGLE
 COMMENT: entity Writer
 ELLIPSE:
   pt1: [ 43.3593 ; 0.5000 ]
@@ -2210,7 +2152,6 @@ link lnk15 ent0004 ent0014 NONE NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null 
 link lnk16 ent0014 ent0002 NONE NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 174.2420316831905 74.0
-shape: RECTANGLE
 COMMENT: entity Admin
 ELLIPSE:
   pt1: [ 79.1210 ; 0.5000 ]
@@ -2255,7 +2196,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 342.3522081510401 73.27044163020803
-shape: OVAL
 COMMENT: entity Use
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2278,7 +2218,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 47.96778518689069 74.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 15.9839 ; 0.5000 ]
@@ -2323,7 +2262,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 100.02600587728585 25.79898987322333
-shape: OVAL
 COMMENT: entity Start
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2357,7 +2295,6 @@ link lnk9 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk10 ent0007 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 58.01815924128079 74.0
-shape: RECTANGLE
 COMMENT: entity Guest
 ELLIPSE:
   pt1: [ 21.0091 ; 0.5000 ]
@@ -2402,7 +2339,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 186.5572058684871 42.11144117369742
-shape: OVAL
 COMMENT: entity UC1
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2425,7 +2361,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 131.67253157968617 31.134506315937234
-shape: OVAL
 COMMENT: entity UC2
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2448,7 +2383,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 191.04026668778272 43.00805333755655
-shape: OVAL
 COMMENT: entity UC3
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2471,7 +2405,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 72.3019856248596 74.0
-shape: RECTANGLE
 COMMENT: entity Clerk
 ELLIPSE:
   pt1: [ 28.1510 ; 0.5000 ]
@@ -2526,7 +2459,6 @@ link lnk8 ent0007 ent0003 ARROW NONE NONE 7.0-7.0-1.0 length=1 label="extends" q
 link lnk9 ent0003 ent0002 NONE NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 139.55597270975323 74.0
-shape: RECTANGLE
 COMMENT: entity customer
 ELLIPSE:
   pt1: [ 61.7780 ; 0.5000 ]
@@ -2571,7 +2503,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 90.2594248726883 74.0
-shape: RECTANGLE
 COMMENT: entity clerk
 ELLIPSE:
   pt1: [ 37.1297 ; 0.5000 ]
@@ -2616,7 +2547,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 147.97759218923292 34.39551843784659
-shape: OVAL
 COMMENT: entity payment
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2639,7 +2569,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 105.84471931285168 25.968943862570338
-shape: OVAL
 COMMENT: entity help
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2670,7 +2599,6 @@ link lnk6 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 125.27489718827475 88.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 54.6374 ; 14.5000 ]
@@ -2727,7 +2655,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 213.31366001886565 88.0
-shape: RECTANGLE
 COMMENT: entity MySql
 ELLIPSE:
   pt1: [ 98.6568 ; 14.5000 ]
@@ -2784,7 +2711,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 194.90794031274925 43.78158806254985
-shape: OVAL
 COMMENT: entity Start
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2819,7 +2745,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 342.3522081510401 73.27044163020803
-shape: OVAL
 COMMENT: entity Use
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -2862,7 +2787,6 @@ link lnk6 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 125.27489718827475 88.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 54.6374 ; 14.5000 ]
@@ -2919,7 +2843,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 213.31366001886565 88.0
-shape: RECTANGLE
 COMMENT: entity MySql
 ELLIPSE:
   pt1: [ 98.6568 ; 14.5000 ]
@@ -2976,7 +2899,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 194.90794031274925 43.78158806254985
-shape: OVAL
 COMMENT: entity Start
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3011,7 +2933,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 342.3522081510401 73.27044163020803
-shape: OVAL
 COMMENT: entity Use
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3055,7 +2976,6 @@ link lnk7 ent0001 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk8 ent0002 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 82.20706053898225 74.0
-shape: RECTANGLE
 COMMENT: entity Reader
 ELLIPSE:
   pt1: [ 33.1035 ; 0.5000 ]
@@ -3100,7 +3020,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 146.05208461414537 74.0
-shape: RECTANGLE
 COMMENT: entity Librarian
 ELLIPSE:
   pt1: [ 65.0260 ; 0.5000 ]
@@ -3145,7 +3064,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 196.30670439999514 44.06134087999903
-shape: OVAL
 COMMENT: entity B
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3168,7 +3086,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 186.2928618412147 42.05857236824294
-shape: OVAL
 COMMENT: entity R
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3191,7 +3108,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 286.78762797895115 62.15752559579023
-shape: OVAL
 COMMENT: entity G
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3224,7 +3140,6 @@ link lnk8 ent0001 ent0004 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label=""
 link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 249.17644601115666 54.635289202231334
-shape: OVAL
 COMMENT: entity First usecase
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3247,7 +3162,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 226.8425148557468 50.168502971149366
-shape: OVAL
 COMMENT: entity UC2
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3270,7 +3184,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 59.63556481190403 25.79898987322333
-shape: OVAL
 COMMENT: entity UC3
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3293,7 +3206,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 159.03951485416192 36.607902970832384
-shape: OVAL
 COMMENT: entity UC4
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3316,7 +3228,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 227.23778484502216 50.247556969004435
-shape: OVAL
 COMMENT: entity UC5
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3357,7 +3268,6 @@ link lnk17 ent0005 ent0013 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk18 ent0013 ent0016 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -3380,7 +3290,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 310.19451855436705 44.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3433,7 +3342,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 238.9669803620402 44.0
-shape: RECTANGLE
 COMMENT: entity Another component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3486,7 +3394,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity FTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -3509,7 +3416,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 228.28392341656698 44.0
-shape: RECTANGLE
 COMMENT: entity Second Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3562,7 +3468,6 @@ TEXT:
 
 image ent0013 EntityImageDescription
 dimension: 177.31597136233822 44.0
-shape: RECTANGLE
 COMMENT: entity Example 1
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3615,7 +3520,6 @@ TEXT:
 
 image ent0016 EntityImageDescription
 dimension: 161.38910450439687 44.0
-shape: RECTANGLE
 COMMENT: entity Folder 3
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3674,7 +3578,6 @@ link lnk4 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0002 ent0003 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL LINE=#0000FF stereo=null
 image ent0001 EntityImageDescription
 dimension: 87.85403035378901 44.0
-shape: RECTANGLE
 COMMENT: entity Red
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3727,7 +3630,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 106.67888739521347 44.0
-shape: RECTANGLE
 COMMENT: entity Green
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3780,7 +3682,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 106.31324730348818 44.0
-shape: RECTANGLE
 COMMENT: entity Blue
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3843,7 +3744,6 @@ link lnk8 ent0001 ent0004 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label=""
 link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 286.0900329290225 44.0
-shape: RECTANGLE
 COMMENT: entity First component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3896,7 +3796,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 238.9669803620402 44.0
-shape: RECTANGLE
 COMMENT: entity Comp2
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -3949,7 +3848,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 100.14557692079929 44.0
-shape: RECTANGLE
 COMMENT: entity Comp3
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4002,7 +3900,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 200.81087654825546 44.0
-shape: RECTANGLE
 COMMENT: entity Comp4
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4055,7 +3952,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 318.204809246006 44.0
-shape: RECTANGLE
 COMMENT: entity Comp5
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4122,7 +4018,6 @@ link lnk13 ent0009 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk14 ent0006 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImageDescription
 dimension: 77.44139404811017 44.0
-shape: RECTANGLE
 COMMENT: entity Api
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4175,7 +4070,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 111.32537590252682 44.0
-shape: RECTANGLE
 COMMENT: entity Images
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4228,7 +4122,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 161.5969407107538 44.0
-shape: RECTANGLE
 COMMENT: entity Scheduler
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4281,7 +4174,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 91.89486522017464 44.0
-shape: RECTANGLE
 COMMENT: entity Cdn
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4334,7 +4226,6 @@ TEXT:
 
 image ent0011 EntityImageDescription
 dimension: 136.13937257787055 44.0
-shape: RECTANGLE
 COMMENT: entity Schema
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4397,7 +4288,6 @@ link lnk9 ent0007 ent0001 NONE ARROW NONE 0.0-0.0-1.0 length=1 label="" q1=null 
 link lnk11 ent0001 ent0010 ARROW NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 135.43847314808517 44.0
-shape: RECTANGLE
 COMMENT: entity Center
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4450,7 +4340,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 65.48289549067934 44.0
-shape: RECTANGLE
 COMMENT: entity Up
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4503,7 +4392,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 101.70201287671759 44.0
-shape: RECTANGLE
 COMMENT: entity Down
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4556,7 +4444,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 97.53175722900717 44.0
-shape: RECTANGLE
 COMMENT: entity Left
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4609,7 +4496,6 @@ TEXT:
 
 image ent0010 EntityImageDescription
 dimension: 123.06485080078919 44.0
-shape: RECTANGLE
 COMMENT: entity Right
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4669,7 +4555,6 @@ link lnk5 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk6 ent0001 ent0004 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 53.24250114939251 44.0
-shape: RECTANGLE
 COMMENT: entity A
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4722,7 +4607,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 53.241873972678945 44.0
-shape: RECTANGLE
 COMMENT: entity B
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4775,7 +4659,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity I
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4808,7 +4691,6 @@ link lnk8 ent0001 ent0004 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label=""
 link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity First Interface
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4831,7 +4713,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity Interf2
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4854,7 +4735,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity Interf3
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4877,7 +4757,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity Interf4
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4900,7 +4779,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 155.89204207591402 44.0
-shape: RECTANGLE
 COMMENT: entity component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -4963,7 +4841,6 @@ link lnk7 ent0004 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0002 ent0008 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 122.07606991301101 44.0
-shape: RECTANGLE
 COMMENT: entity Ingest
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5016,7 +4893,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 96.07300827856949 44.0
-shape: RECTANGLE
 COMMENT: entity Parse
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5069,7 +4945,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 145.69975632978492 44.0
-shape: RECTANGLE
 COMMENT: entity Validate
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5122,7 +4997,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 100.42455216851313 44.0
-shape: RECTANGLE
 COMMENT: entity Store
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5175,7 +5049,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 140.5084327963993 44.0
-shape: RECTANGLE
 COMMENT: entity Errors
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5234,7 +5107,6 @@ link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="has" q1="1
 link lnk5 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="refers to" q1="*" q2="1" NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 113.92416916955383 44.0
-shape: RECTANGLE
 COMMENT: entity Order
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5287,7 +5159,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 94.19584852618408 44.0
-shape: RECTANGLE
 COMMENT: entity Line
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5340,7 +5211,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 156.01958457879041 44.0
-shape: RECTANGLE
 COMMENT: entity Product
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5402,7 +5272,6 @@ link lnk7 ent0002 ent0006 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="SMTP" q1=n
 link lnk8 ent0006 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="notifies" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 115.4119960485244 44.0
-shape: RECTANGLE
 COMMENT: entity Client
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5455,7 +5324,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 140.43786877856627 44.0
-shape: RECTANGLE
 COMMENT: entity Server
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5508,7 +5376,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 66.16640128335943 44.0
-shape: RECTANGLE
 COMMENT: entity Db
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5561,7 +5428,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 87.67442702412266 44.0
-shape: RECTANGLE
 COMMENT: entity Mail
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5628,7 +5494,6 @@ link lnk12 ent0010 ent0011 ARROW NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null
 link lnk13 ent0011 ent0002 NONE ARROW NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 79.95213220672306 44.0
-shape: RECTANGLE
 COMMENT: entity Web
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5681,7 +5546,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 77.44139404811017 44.0
-shape: RECTANGLE
 COMMENT: entity Api
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5734,7 +5598,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 127.17394712814321 44.0
-shape: RECTANGLE
 COMMENT: entity Cache
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5787,7 +5650,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 66.16640128335943 44.0
-shape: RECTANGLE
 COMMENT: entity Db
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5840,7 +5702,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 91.89486522017464 44.0
-shape: RECTANGLE
 COMMENT: entity Cdn
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5893,7 +5754,6 @@ TEXT:
 
 image ent0010 EntityImageDescription
 dimension: 141.23273875516372 44.0
-shape: RECTANGLE
 COMMENT: entity Worker
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -5946,7 +5806,6 @@ TEXT:
 
 image ent0011 EntityImageDescription
 dimension: 98.30966148631623 44.0
-shape: RECTANGLE
 COMMENT: entity Queue
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6007,7 +5866,6 @@ link lnk5 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=nu
 link lnk7 ent0006 ent0004 PARENTHESIS NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity DataAccess
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6030,7 +5888,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 310.19451855436705 44.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6083,7 +5940,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6106,7 +5962,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 228.28392341656698 44.0
-shape: RECTANGLE
 COMMENT: entity Second Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6171,7 +6026,6 @@ link lnk10 ent0004 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk11 ent0006 ent0009 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0004 EntityImageDescription
 dimension: 169.41347335657983 44.0
-shape: RECTANGLE
 COMMENT: entity Service A
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6224,7 +6078,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 169.4304033727534 44.0
-shape: RECTANGLE
 COMMENT: entity Service B
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6277,7 +6130,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 98.11044785705181 44.0
-shape: RECTANGLE
 COMMENT: entity Users
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6339,7 +6191,6 @@ link lnk6 ent0004 ent0002 NONE NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null q
 link lnk9 ent0008 ent0001 NONE NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 184.30066660367174 44.0
-shape: RECTANGLE
 COMMENT: entity Producer
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6392,7 +6243,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 142.4800016884285 44.0
-shape: RECTANGLE
 COMMENT: entity Consumer
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6455,7 +6305,6 @@ link lnk8 ent0007 ent0004 NONE NONE NONE 7.0-7.0-1.0 length=1 label="" q1=null q
 link lnk11 ent0002 ent0010 NONE NONE NONE 7.0-7.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6478,7 +6327,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 310.19451855436705 44.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6531,7 +6379,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6564,7 +6411,6 @@ link lnk8 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0005 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImageDescription
 dimension: 154.39074238340612 44.0
-shape: RECTANGLE
 COMMENT: entity Web App
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6617,7 +6463,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 208.91926761978686 44.0
-shape: RECTANGLE
 COMMENT: entity Mobile App
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6670,7 +6515,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 161.9571138462488 44.0
-shape: RECTANGLE
 COMMENT: entity Gateway
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6723,7 +6567,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 130.18670945319204 44.0
-shape: RECTANGLE
 COMMENT: entity Orders
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6792,7 +6635,6 @@ link lnk13 ent0006 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk15 ent0004 ent0014 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: p1
   position: [ -8.5060 ; 22.8889 ]
@@ -6814,7 +6656,6 @@ RECTANGLE:
 
 image ent0003 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: p2
   position: [ -8.5054 ; 22.8889 ]
@@ -6836,7 +6677,6 @@ RECTANGLE:
 
 image ent0004 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: po1
   position: [ -11.6472 ; 22.8889 ]
@@ -6858,7 +6698,6 @@ RECTANGLE:
 
 image ent0005 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: po2
   position: [ -11.6500 ; 22.8889 ]
@@ -6880,7 +6719,6 @@ RECTANGLE:
 
 image ent0006 EntityImageDescription
 dimension: 64.74169966254803 44.0
-shape: RECTANGLE
 COMMENT: entity c1
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6933,7 +6771,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 124.92841889866389 44.0
-shape: RECTANGLE
 COMMENT: entity Caller
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -6986,7 +6823,6 @@ TEXT:
 
 image ent0014 EntityImageDescription
 dimension: 101.6108051235083 44.0
-shape: RECTANGLE
 COMMENT: entity Sink
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7048,7 +6884,6 @@ link lnk7 ent0005 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk8 ent0005 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: p1
   position: [ -8.5060 ; 22.8889 ]
@@ -7070,7 +6905,6 @@ RECTANGLE:
 
 image ent0003 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: p2
   position: [ -8.5054 ; 22.8889 ]
@@ -7092,7 +6926,6 @@ RECTANGLE:
 
 image ent0004 EntityImagePort
 dimension: 12.0 12.0
-shape: RECTANGLE_PORT
 TEXT:
   text: p3
   position: [ -8.5023 ; 22.8889 ]
@@ -7114,7 +6947,6 @@ RECTANGLE:
 
 image ent0005 EntityImageDescription
 dimension: 64.74169966254803 44.0
-shape: RECTANGLE
 COMMENT: entity c1
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7173,7 +7005,6 @@ link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 122.36710873971987 34.0
-shape: RECTANGLE
 COMMENT: entity Frontend
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7196,7 +7027,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 107.66839220873558 34.0
-shape: RECTANGLE
 COMMENT: entity Backend
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7219,7 +7049,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 135.08366723052353 34.0
-shape: RECTANGLE
 COMMENT: entity Storage
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7250,7 +7079,6 @@ link lnk6 ent0002 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0002 EntityImageDescription
 dimension: 124.97185918644718 44.0
-shape: RECTANGLE
 COMMENT: entity Alpha
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7303,7 +7131,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 94.62206673262651 44.0
-shape: RECTANGLE
 COMMENT: entity Beta
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7356,7 +7183,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 108.26915960911792 44.0
-shape: RECTANGLE
 COMMENT: entity Gamma
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7417,7 +7243,6 @@ link lnk6 ent0003 ent0005 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=nu
 link lnk7 ent0005 ent0002 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7440,7 +7265,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 170.5742469750718 56.0
-shape: RECTANGLE
 COMMENT: entity WS
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7505,7 +7329,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 290.894910086198 43.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7558,7 +7381,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7587,7 +7409,6 @@ link lnk4 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0003 ent0001 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 194.97774856356355 58.0
-shape: RECTANGLE
 COMMENT: entity Billing
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7652,7 +7473,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 168.35709360696728 58.0
-shape: RECTANGLE
 COMMENT: entity Ledger
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7717,7 +7537,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity IPay
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7758,7 +7577,6 @@ link lnk3 ent0001 ent0002 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q
 link lnk5 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7781,7 +7599,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 290.19451855436705 34.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7824,7 +7641,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7853,7 +7669,6 @@ link lnk3 ent0001 ent0002 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q
 link lnk5 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7876,7 +7691,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 310.19451855436705 44.0
-shape: RECTANGLE
 COMMENT: entity First Component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -7929,7 +7743,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7958,7 +7771,6 @@ link lnk4 ent0003 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0003 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 87.90597702391801 44.0
-shape: RECTANGLE
 COMMENT: entity Prod
 POLYGON:
   points:
@@ -8010,7 +7822,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 105.99731249517906 44.0
-shape: RECTANGLE
 COMMENT: entity Stage
 POLYGON:
   points:
@@ -8062,7 +7873,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 99.22212827783169 44.0
-shape: RECTANGLE
 COMMENT: entity Edge
 PATH:
    - type: SEG_MOVETO
@@ -8165,7 +7975,6 @@ link lnk16 ent0007 ent0008 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="
 link lnk17 ent0008 ent0009 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 83.45105775115688 74.0
-shape: RECTANGLE
 COMMENT: entity actor
 ELLIPSE:
   pt1: [ 33.7255 ; 0.5000 ]
@@ -8210,7 +8019,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 107.18184810357307 74.0
-shape: RECTANGLE
 COMMENT: entity actor/
 ELLIPSE:
   pt1: [ 45.5909 ; 0.5000 ]
@@ -8262,7 +8070,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 93.65721999632974 34.0
-shape: RECTANGLE
 COMMENT: entity agent
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8285,7 +8092,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 142.55113460268805 46.0
-shape: RECTANGLE
 COMMENT: entity boundary
 PATH:
    - type: SEG_MOVETO
@@ -8322,7 +8128,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 93.64660797258132 46.0
-shape: RECTANGLE
 COMMENT: entity control
 ELLIPSE:
   pt1: [ 34.8233 ; 4.0000 ]
@@ -8357,7 +8162,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 88.0284364263583 46.0
-shape: RECTANGLE
 COMMENT: entity entity
 ELLIPSE:
   pt1: [ 32.0142 ; 4.0000 ]
@@ -8387,7 +8191,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 104.19737168057577 58.998683093143555
-shape: RECTANGLE
 COMMENT: entity person
 ELLIPSE:
   pt1: [ 39.5993 ; 0.0000 ]
@@ -8420,7 +8223,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 123.74256751278568 29.54851350255714
-shape: OVAL
 COMMENT: entity usecase
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8443,7 +8245,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 140.56892581087982 32.91378516217597
-shape: OVAL
 COMMENT: entity usecase/
 ELLIPSE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8489,7 +8290,6 @@ link lnk10 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 link lnk11 ent0006 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 77.39579540044159 44.0
-shape: RECTANGLE
 COMMENT: entity web
 POLYGON:
   points:
@@ -8541,7 +8341,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 147.50654204211435 37.0
-shape: RECTANGLE
 COMMENT: entity war
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8591,7 +8390,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 44.92229568084822 43.0
-shape: RECTANGLE
 COMMENT: entity db
 PATH:
    - type: SEG_MOVETO
@@ -8652,7 +8450,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 87.99562316000998 24.0
-shape: RECTANGLE
 COMMENT: entity jobs
 PATH:
    - type: SEG_MOVETO
@@ -8709,7 +8506,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 86.09145196355549 34.0
-shape: RECTANGLE
 COMMENT: entity disk
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8732,7 +8528,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 83.73393742114294 44.0
-shape: RECTANGLE
 COMMENT: entity cdn
 PATH:
    - type: SEG_MOVETO
@@ -8833,7 +8628,6 @@ link lnk14 ent0004 ent0007 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label="
 link lnk15 ent0007 ent0008 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 131.43648918098975 34.0
-shape: RECTANGLE
 COMMENT: entity action
 POLYGON:
   points:
@@ -8858,7 +8652,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity circle
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -8881,7 +8674,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 173.75602575614917 34.0
-shape: RECTANGLE
 COMMENT: entity collections
 RECTANGLE:
   pt1: [ 4.0000 ; 4.0000 ]
@@ -8914,7 +8706,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 155.89204207591402 44.0
-shape: RECTANGLE
 COMMENT: entity component
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -8967,7 +8758,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 134.4797393510051 43.0
-shape: RECTANGLE
 COMMENT: entity database
 PATH:
    - type: SEG_MOVETO
@@ -9028,7 +8818,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity interface
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -9051,7 +8840,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 99.97751821530237 34.0
-shape: RECTANGLE
 COMMENT: entity label
 TEXT:
   text: label
@@ -9064,7 +8852,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 139.27194905650816 34.0
-shape: RECTANGLE
 COMMENT: entity process
 POLYGON:
   points:
@@ -9116,7 +8903,6 @@ link lnk24 ent0011 ent0012 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label="
 link lnk25 ent0009 ent0013 NONE NONE NONE 0.0-0.0-1.0 invisible length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 127.72310270959973 37.0
-shape: RECTANGLE
 COMMENT: entity artifact
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -9166,7 +8952,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 74.43267954819736 20.0
-shape: RECTANGLE
 COMMENT: entity card
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -9189,7 +8974,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 111.48547608403761 44.0
-shape: RECTANGLE
 COMMENT: entity cloud
 PATH:
    - type: SEG_MOVETO
@@ -9290,7 +9074,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 79.58929792291923 34.0
-shape: RECTANGLE
 COMMENT: entity file
 PATH:
    - type: SEG_MOVETO
@@ -9357,7 +9140,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 120.75977843706794 52.0
-shape: FOLDER
 COMMENT: entity folder
 PATH:
    - type: SEG_MOVETO
@@ -9427,7 +9209,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 112.11842450469676 44.0
-shape: RECTANGLE
 COMMENT: entity frame
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -9464,7 +9245,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 208.15292603312045 24.0
-shape: HEXAGON
 COMMENT: entity hexagon
 TEXT:
   text: hexagon
@@ -9477,7 +9257,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 94.33414611846939 44.0
-shape: RECTANGLE
 COMMENT: entity node
 POLYGON:
   points:
@@ -9529,7 +9308,6 @@ TEXT:
 
 image ent0009 EntityImageDescription
 dimension: 158.73810258218663 37.0
-shape: FOLDER
 COMMENT: entity package
 PATH:
    - type: SEG_MOVETO
@@ -9603,7 +9381,6 @@ TEXT:
 
 image ent0010 EntityImageDescription
 dimension: 83.79634590542636 24.0
-shape: RECTANGLE
 COMMENT: entity queue
 PATH:
    - type: SEG_MOVETO
@@ -9660,7 +9437,6 @@ TEXT:
 
 image ent0011 EntityImageDescription
 dimension: 142.45506097756504 34.0
-shape: RECTANGLE
 COMMENT: entity rectangle
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -9683,7 +9459,6 @@ TEXT:
 
 image ent0012 EntityImageDescription
 dimension: 122.99877144910826 34.0
-shape: RECTANGLE
 COMMENT: entity stack
 RECTANGLE:
   pt1: [ 15.0000 ; 0.0000 ]
@@ -9748,7 +9523,6 @@ TEXT:
 
 image ent0013 EntityImageDescription
 dimension: 103.7795389161671 34.0
-shape: RECTANGLE
 COMMENT: entity storage
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -9782,7 +9556,6 @@ link lnk9 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk10 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 47.96778518689069 74.0
-shape: RECTANGLE
 COMMENT: entity User
 ELLIPSE:
   pt1: [ 15.9839 ; 0.5000 ]
@@ -9827,7 +9600,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 65.25338824198775 44.0
-shape: RECTANGLE
 COMMENT: entity Lb
 POLYGON:
   points:
@@ -9879,7 +9651,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 84.86586655092782 44.0
-shape: RECTANGLE
 COMMENT: entity App1
 POLYGON:
   points:
@@ -9931,7 +9702,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 84.87339141979304 44.0
-shape: RECTANGLE
 COMMENT: entity App2
 POLYGON:
   points:
@@ -9983,7 +9753,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 46.166401283359434 43.0
-shape: RECTANGLE
 COMMENT: entity Db
 PATH:
    - type: SEG_MOVETO
@@ -10060,7 +9829,6 @@ link lnk14 ent0006 ent0007 ARROW_TRIANGLE NONE NONE 0.0-0.0-1.0 length=2 label="
 link lnk15 ent0007 ent0008 CIRCLE NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 64.81443964434595 44.0
-shape: RECTANGLE
 COMMENT: entity a1
 POLYGON:
   points:
@@ -10112,7 +9880,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 64.8182018701623 44.0
-shape: RECTANGLE
 COMMENT: entity a2
 POLYGON:
   points:
@@ -10164,7 +9931,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 64.8169479339677 44.0
-shape: RECTANGLE
 COMMENT: entity a3
 POLYGON:
   points:
@@ -10216,7 +9982,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 64.81067720991334 44.0
-shape: RECTANGLE
 COMMENT: entity a4
 POLYGON:
   points:
@@ -10268,7 +10033,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 64.80942285648621 44.0
-shape: RECTANGLE
 COMMENT: entity a5
 POLYGON:
   points:
@@ -10320,7 +10084,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 64.81318549953508 44.0
-shape: RECTANGLE
 COMMENT: entity a6
 POLYGON:
   points:
@@ -10372,7 +10135,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 64.81193135472421 44.0
-shape: RECTANGLE
 COMMENT: entity a7
 POLYGON:
   points:
@@ -10424,7 +10186,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 64.80566063066986 44.0
-shape: RECTANGLE
 COMMENT: entity a8
 POLYGON:
   points:
@@ -10486,7 +10247,6 @@ link lnk8 ent0003 ent0004 NONE NONE NONE 1.0-3.0-1.0 length=2 label="" q1=null q
 link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-2.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 69.0847818637313 44.0
-shape: RECTANGLE
 COMMENT: entity n1
 POLYGON:
   points:
@@ -10538,7 +10298,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 69.08352751030417 44.0
-shape: RECTANGLE
 COMMENT: entity n2
 POLYGON:
   points:
@@ -10590,7 +10349,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 69.08729015335302 44.0
-shape: RECTANGLE
 COMMENT: entity n3
 POLYGON:
   points:
@@ -10642,7 +10400,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 69.08603600854217 44.0
-shape: RECTANGLE
 COMMENT: entity n4
 POLYGON:
   points:
@@ -10694,7 +10451,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 69.07976507587156 44.0
-shape: RECTANGLE
 COMMENT: entity n5
 POLYGON:
   points:
@@ -10755,7 +10511,6 @@ link lnk7 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="publish" q
 link lnk8 ent0004 ent0001 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="push" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 115.4119960485244 44.0
-shape: RECTANGLE
 COMMENT: entity Client
 POLYGON:
   points:
@@ -10807,7 +10562,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 140.43786877856627 44.0
-shape: RECTANGLE
 COMMENT: entity Server
 POLYGON:
   points:
@@ -10859,7 +10613,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 46.166401283359434 43.0
-shape: RECTANGLE
 COMMENT: entity Db
 PATH:
    - type: SEG_MOVETO
@@ -10920,7 +10673,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 72.76962684481478 24.0
-shape: RECTANGLE
 COMMENT: entity Bus
 PATH:
    - type: SEG_MOVETO
@@ -10987,7 +10739,6 @@ link lnk7 ent0001 ent0006 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="green dash
 link lnk9 ent0001 ent0008 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="blue dotted" q1=null q2=null NONE_OR_SEVERAL TEXT=#0000FF LINE=#0000FF stroke=1.0-3.0-1.0 stereo=null
 image ent0001 EntityImageDescription
 dimension: 86.0323468550354 44.0
-shape: RECTANGLE
 COMMENT: entity foo
 POLYGON:
   points:
@@ -11039,7 +10790,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity bar
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11062,7 +10812,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity bar1
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11085,7 +10834,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity bar2
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11108,7 +10856,6 @@ TEXT:
 
 image ent0008 EntityImageDescription
 dimension: 18.0 18.0
-shape: RECTANGLE
 COMMENT: entity bar3
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11137,7 +10884,6 @@ link lnk4 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk5 ent0002 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="stores customer records and invoices" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 627.9593942506572 44.0
-shape: RECTANGLE
 COMMENT: entity N1
 POLYGON:
   points:
@@ -11189,7 +10935,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 891.5971499952867 37.0
-shape: RECTANGLE
 COMMENT: entity A1
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -11239,7 +10984,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 491.18855567952585 43.0
-shape: RECTANGLE
 COMMENT: entity D1
 PATH:
    - type: SEG_MOVETO
@@ -11307,7 +11051,6 @@ leaf ent0005 "RegionZoneRackBlade2" DESCRIPTION CARD display="Blade2"
 link lnk6 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0004 EntityImageDescription
 dimension: 100.32749699330772 20.0
-shape: RECTANGLE
 COMMENT: entity Blade1
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -11330,7 +11073,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 100.32373393302635 20.0
-shape: RECTANGLE
 COMMENT: entity Blade2
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -11363,7 +11105,6 @@ link lnk8 ent0003 ent0007 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0003 EntityImageDescription
 dimension: 178.93198230760973 37.0
-shape: RECTANGLE
 COMMENT: entity service.jar
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -11413,7 +11154,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 122.32695413216426 34.0
-shape: RECTANGLE
 COMMENT: entity data.bin
 PATH:
    - type: SEG_MOVETO
@@ -11480,7 +11220,6 @@ TEXT:
 
 image ent0007 EntityImageDescription
 dimension: 164.72337263930513 43.0
-shape: RECTANGLE
 COMMENT: entity Managed DB
 PATH:
    - type: SEG_MOVETO
@@ -11549,7 +11288,6 @@ link lnk6 ent0001 ent0005 NONE NONE NONE 7.0-7.0-1.0 length=1 label="" q1=null q
 link lnk9 ent0002 ent0008 NONE NONE NONE 7.0-7.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 161.9571138462488 44.0
-shape: RECTANGLE
 COMMENT: entity Gateway
 POLYGON:
   points:
@@ -11601,7 +11339,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 107.17394712814321 43.0
-shape: RECTANGLE
 COMMENT: entity Cache
 PATH:
    - type: SEG_MOVETO
@@ -11674,7 +11411,6 @@ link lnk10 ent0002 ent0005 NONE NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk11 ent0003 ent0006 NONE NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 136.97302801673544 44.0
-shape: RECTANGLE
 COMMENT: entity R
 POLYGON:
   points:
@@ -11726,7 +11462,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 155.01384762763814 44.0
-shape: RECTANGLE
 COMMENT: entity SA
 POLYGON:
   points:
@@ -11778,7 +11513,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 155.00883021392963 44.0
-shape: RECTANGLE
 COMMENT: entity SB
 POLYGON:
   points:
@@ -11830,7 +11564,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 127.76084192382606 44.0
-shape: RECTANGLE
 COMMENT: entity H1
 POLYGON:
   points:
@@ -11882,7 +11615,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 127.75708011524222 44.0
-shape: RECTANGLE
 COMMENT: entity H2
 POLYGON:
   points:
@@ -11934,7 +11666,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 124.72833541736259 44.0
-shape: RECTANGLE
 COMMENT: entity H3
 POLYGON:
   points:
@@ -11994,7 +11725,6 @@ link lnk6 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0003 EntityImageDescription
 dimension: 91.12810090880747 24.0
-shape: RECTANGLE
 COMMENT: entity Inbox
 PATH:
    - type: SEG_MOVETO
@@ -12051,7 +11781,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 142.61360547490827 34.0
-shape: RECTANGLE
 COMMENT: entity Workers
 RECTANGLE:
   pt1: [ 4.0000 ; 4.0000 ]
@@ -12084,7 +11813,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 69.69949536817647 34.0
-shape: RECTANGLE
 COMMENT: entity SAN
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12111,7 +11839,6 @@ leaf ent0002 "Store" DESCRIPTION DATABASE display="Store"
 link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 79.95213220672306 44.0
-shape: RECTANGLE
 COMMENT: entity Web
 POLYGON:
   points:
@@ -12163,7 +11890,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 80.42455216851313 43.0
-shape: RECTANGLE
 COMMENT: entity Store
 PATH:
    - type: SEG_MOVETO
@@ -12232,7 +11958,6 @@ link lnk6 ent0001 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk7 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 144.65255265571076 58.0
-shape: RECTANGLE
 COMMENT: entity server
 POLYGON:
   points:
@@ -12296,7 +12021,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 153.6926505372122 58.0
-shape: RECTANGLE
 COMMENT: entity client
 POLYGON:
   points:
@@ -12360,7 +12084,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 250.1539916074972 51.0
-shape: RECTANGLE
 COMMENT: entity app
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12422,7 +12145,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 227.6582077301118 57.0
-shape: RECTANGLE
 COMMENT: entity db
 PATH:
    - type: SEG_MOVETO
@@ -12499,7 +12221,6 @@ leaf ent0002 "Pkg" DESCRIPTION ARTIFACT display="Pkg"
 link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 75.61097877145315 44.0
-shape: RECTANGLE
 COMMENT: entity Box
 POLYGON:
   points:
@@ -12551,7 +12272,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 74.8610284700948 37.0
-shape: RECTANGLE
 COMMENT: entity Pkg
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12611,7 +12331,6 @@ link lnk8 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0003 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 55.627909726399885 54.0
-shape: RECTANGLE
 COMMENT: entity crm
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12778,7 +12497,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 229.44208765638243 54.0
-shape: RECTANGLE
 COMMENT: entity api
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12883,7 +12601,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 87.77439924413754 54.0
-shape: RECTANGLE
 COMMENT: entity fn
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -12974,7 +12691,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 219.64410490850196 48.0
-shape: RECTANGLE
 COMMENT: entity data
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13009,7 +12725,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 236.908272714153 54.0
-shape: RECTANGLE
 COMMENT: entity svc
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13116,7 +12831,6 @@ link lnk8 ent0005 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 127.6315421996173 54.0
-shape: RECTANGLE
 COMMENT: entity customer
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13271,7 +12985,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 165.5188651576845 54.0
-shape: RECTANGLE
 COMMENT: entity role
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13462,7 +13175,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 166.3378281906316 54.0
-shape: RECTANGLE
 COMMENT: entity process
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13569,7 +13281,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 95.92005039430904 54.0
-shape: RECTANGLE
 COMMENT: entity object
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13646,7 +13357,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 197.22274312043865 54.0
-shape: RECTANGLE
 COMMENT: entity service
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13753,7 +13463,6 @@ link lnk8 ent0006 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0002 ent0003 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 78.78769678032867 54.0
-shape: RECTANGLE
 COMMENT: entity sales
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -13860,7 +13569,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 73.66709069408395 54.0
-shape: RECTANGLE
 COMMENT: entity shop
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14027,7 +13735,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 97.17414471090765 54.0
-shape: RECTANGLE
 COMMENT: entity cloud
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14132,7 +13839,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 93.92416916955383 54.0
-shape: RECTANGLE
 COMMENT: entity order
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14393,7 +14099,6 @@ TEXT:
 
 image ent0006 EntityImageDescription
 dimension: 143.00518519998013 54.0
-shape: RECTANGLE
 COMMENT: entity web
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14508,7 +14213,6 @@ link lnk8 ent0003 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 80.17136939668796 54.0
-shape: RECTANGLE
 COMMENT: entity stake
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14699,7 +14403,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 88.26454326676416 54.0
-shape: RECTANGLE
 COMMENT: entity goal
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -14878,7 +14581,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 190.68249675640956 54.0
-shape: RECTANGLE
 COMMENT: entity outcome
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15133,7 +14835,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 149.3543319948118 54.0
-shape: RECTANGLE
 COMMENT: entity cap
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15262,7 +14963,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 253.56364169256 54.0
-shape: RECTANGLE
 COMMENT: entity wp
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15421,7 +15121,6 @@ link lnk8 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null 
 link lnk9 ent0004 ent0005 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
 image ent0001 EntityImageDescription
 dimension: 120.43786877856627 54.0
-shape: RECTANGLE
 COMMENT: entity server
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15518,7 +15217,6 @@ TEXT:
 
 image ent0002 EntityImageDescription
 dimension: 101.65797308046407 54.0
-shape: RECTANGLE
 COMMENT: entity os
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15657,7 +15355,6 @@ TEXT:
 
 image ent0003 EntityImageDescription
 dimension: 60.86526765038394 54.0
-shape: RECTANGLE
 COMMENT: entity net
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15874,7 +15571,6 @@ TEXT:
 
 image ent0004 EntityImageDescription
 dimension: 134.31393288867338 54.0
-shape: RECTANGLE
 COMMENT: entity host
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
@@ -15971,7 +15667,6 @@ TEXT:
 
 image ent0005 EntityImageDescription
 dimension: 105.20175684530955 54.0
-shape: RECTANGLE
 COMMENT: entity art
 RECTANGLE:
   pt1: [ 0.0000 ; 0.0000 ]
