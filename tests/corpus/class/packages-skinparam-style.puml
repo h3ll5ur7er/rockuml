@@ -1,0 +1,12 @@
+@startuml
+skinparam packageStyle rectangle
+package domain {
+  class Order
+  class Line
+}
+package infra {
+  class OrderDao
+}
+Order *-- Line
+OrderDao --> Order
+@enduml

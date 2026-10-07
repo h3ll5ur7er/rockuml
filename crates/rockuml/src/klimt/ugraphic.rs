@@ -8,7 +8,9 @@ use super::font::StringBounder;
 use super::geom::UTranslate;
 use super::group::UGroup;
 use super::shape::UShape;
-use super::stencil::{Stencil, StencilFrame, UHorizontalLine};
+use super::stencil::{
+    HorizontalLineDrawer, Stencil, StencilFrame, UGraphicStencil, UHorizontalLine,
+};
 use super::url::Url;
 use crate::color::HColor;
 
@@ -180,17 +182,35 @@ impl UGraphic {
     /// Separators drawn on the result span `stencil`, which is placed where this surface is.
     #[must_use]
     pub fn with_stencil(&self, stencil: Rc<dyn Stencil>) -> Self {
+        self.with_horizontal_line_drawer(Rc::new(UGraphicStencil {
+            stencil,
+            default_stroke: None,
+        }))
+    }
+
+    /// Like [`Self::with_stencil`], separators without a style of their own drawn with `default_stroke`.
+    #[must_use]
+    pub fn with_stencil_stroke(&self, stencil: Rc<dyn Stencil>, default_stroke: UStroke) -> Self {
+        self.with_horizontal_line_drawer(Rc::new(UGraphicStencil {
+            stencil,
+            default_stroke: Some(default_stroke),
+        }))
+    }
+
+    /// Separators drawn on the result are drawn by `drawer`, on a surface placed where this one is.
+    #[must_use]
+    pub fn with_horizontal_line_drawer(&self, drawer: Rc<dyn HorizontalLineDrawer>) -> Self {
         Self {
             stencil: Some(StencilFrame {
-                stencil,
+                drawer,
                 origin: self.translate,
             }),
             ..self.clone()
         }
     }
 
-    /// Draws the separator across the stencil, or as a bare separator shape where there is none (which only
-    /// the debug format lists).
+    /// Draws the separator with the surface's drawer, or as a bare separator shape where there is none (which
+    /// only the debug format lists).
     pub fn draw_horizontal_line(&self, line: &UHorizontalLine) {
         let Some(frame) = &self.stencil else {
             self.draw(&UShape::HorizontalLine);
@@ -201,11 +221,9 @@ impl UGraphic {
             stencil: None,
             ..self.clone()
         };
-        line.draw_line_internal(
-            &at_stencil,
-            frame.stencil.as_ref(),
-            self.translate.dy - frame.origin.dy,
-        );
+        frame
+            .drawer
+            .draw_hline(&at_stencil, line, self.translate.dy - frame.origin.dy);
     }
 
     /// Draws `block` as PlantUML's `SpecialText`.

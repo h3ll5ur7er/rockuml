@@ -1,74 +1,19 @@
 //! Notes: with a folded corner, as a box (`rnote`) or as a hexagon (`hnote`) (PlantUML's
-//! `ComponentRoseNote`, `ComponentRoseNoteBox`, `ComponentRoseNoteHexagonal` and `Opale`).
+//! `ComponentRoseNote`, `ComponentRoseNoteBox` and `ComponentRoseNoteHexagonal`).
 
 use std::rc::Rc;
 
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::fashion::Fashion;
 use crate::klimt::font::StringBounder;
-use crate::klimt::shape::{URectangle, USegment, UShape};
+use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::stencil::Stencil;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::skin::component::{Area, Component, TextualPart};
+use crate::svek::image::{get_corner, get_polygon_normal};
 
-/// The size of a note's folded corner.
+/// How far the hexagon's points stick out.
 const CORNER_SIZE: f64 = 10.0;
-
-/// The outline of a note with its top right corner cut (`Opale.getPolygonNormal`).
-fn polygon_normal(width: f64, height: f64, round_corner: f64) -> Vec<USegment> {
-    if round_corner == 0.0 {
-        return vec![
-            USegment::MoveTo(0.0, 0.0),
-            USegment::LineTo(0.0, height),
-            USegment::LineTo(width, height),
-            USegment::LineTo(width, CORNER_SIZE),
-            USegment::LineTo(width - CORNER_SIZE, 0.0),
-            USegment::LineTo(0.0, 0.0),
-        ];
-    }
-    let half = round_corner / 2.0;
-    vec![
-        USegment::MoveTo(0.0, half),
-        USegment::LineTo(0.0, height - half),
-        arc(half, (half, height)),
-        USegment::LineTo(width - half, height),
-        arc(half, (width, height - half)),
-        USegment::LineTo(width, CORNER_SIZE),
-        USegment::LineTo(width - CORNER_SIZE, 0.0),
-        USegment::LineTo(half, 0.0),
-        arc(half, (0.0, half)),
-    ]
-}
-
-/// The fold of the corner (`Opale.getCorner`).
-fn corner(width: f64, round_corner: f64) -> Vec<USegment> {
-    let mut segments = vec![USegment::MoveTo(width - CORNER_SIZE, 0.0)];
-    if round_corner == 0.0 {
-        segments.push(USegment::LineTo(width - CORNER_SIZE, CORNER_SIZE));
-    } else {
-        segments.push(USegment::LineTo(
-            width - CORNER_SIZE,
-            CORNER_SIZE - round_corner / 4.0,
-        ));
-        segments.push(arc(
-            round_corner / 4.0,
-            (width - CORNER_SIZE + round_corner / 4.0, CORNER_SIZE),
-        ));
-    }
-    segments.push(USegment::LineTo(width, CORNER_SIZE));
-    segments.push(USegment::LineTo(width - CORNER_SIZE, 0.0));
-    segments
-}
-
-fn arc(radius: f64, end: (f64, f64)) -> USegment {
-    USegment::ArcTo {
-        radius: (radius, radius),
-        x_axis_rotation: 0.0,
-        large_arc: false,
-        sweep: false,
-        end,
-    }
-}
 
 /// Where a note's text goes when the note is wider than its text.
 fn text_x(
@@ -153,8 +98,12 @@ impl Component for ComponentRoseNote {
         }
         let ug = self.fashion.apply(ug);
         let round_corner = self.fashion.round_corner;
-        ug.draw(&UShape::Path(polygon_normal(x2, text_height, round_corner)));
-        ug.draw(&UShape::Path(corner(x2, round_corner)));
+        ug.draw(&UShape::Path(get_polygon_normal(
+            x2,
+            text_height,
+            round_corner,
+        )));
+        ug.draw(&UShape::Path(get_corner(x2, round_corner)));
         let ug = ug.with_stencil(Rc::new(NoteStencil { text_width }));
         let padding = self.text.padding();
         let x = text_x(

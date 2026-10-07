@@ -1,0 +1,15 @@
+@startuml
+<style>
+node {
+  BackGroundColor #ddeeff
+  LineThickness 2
+  LineColor navy
+}
+artifact {
+  BackGroundColor #ffeedd
+}
+</style>
+node Box
+artifact Pkg
+Box --> Pkg
+@enduml

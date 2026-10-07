@@ -1,0 +1,6 @@
+@startuml
+[Client] --> [Server] : HTTPS
+[Server] --> [Db] : SQL
+[Server] ..> [Mail] : SMTP
+[Mail] --> [Client] : notifies
+@enduml

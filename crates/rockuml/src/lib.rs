@@ -1,11 +1,15 @@
 //! PlantUML-compatible diagram engine.
 
+mod abel;
 mod assets;
 mod color;
 mod command;
 mod creole;
+mod cucadiagram;
+mod decoration;
 mod deflate;
 pub mod diagram;
+mod direction;
 mod emoji;
 mod file_policy;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.
@@ -19,13 +23,16 @@ pub mod json;
 mod klimt;
 mod openiconic;
 mod pattern;
+mod plasma;
 pub mod preproc;
 mod real;
+mod sdot;
 mod security_profile;
 mod skin;
 mod stdlib;
 mod stereo;
 mod style;
+mod svek;
 mod svg_parser;
 mod text;
 mod tim;

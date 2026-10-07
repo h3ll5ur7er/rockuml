@@ -1,0 +1,11 @@
+@startuml
+archimate #Motivation "Board" as stake <<motivation-stakeholder>>
+archimate #Motivation "Growth" as goal <<motivation-goal>>
+archimate #Motivation "Halve churn" as outcome <<motivation-outcome>>
+archimate #Strategy "Retention" as cap <<strategy-capability>>
+archimate #Implementation "Loyalty program" as wp <<implementation-workpackage>>
+stake --> goal
+goal --> outcome
+outcome --> cap
+cap --> wp
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+skinparam class {
+  BackgroundColor<<Entity>> LightBlue
+  BorderColor<<Entity>> Navy
+  BackgroundColor<<Value>> Wheat
+}
+class User <<Entity>>
+class Address <<Value>>
+class Plain
+User *-- Address
+User --> Plain
+@enduml

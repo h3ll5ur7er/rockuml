@@ -1,0 +1,7 @@
+@startuml
+(First usecase)
+(Another usecase) as (UC2)
+usecase UC3
+usecase (Last usecase) as UC4
+usecase "Quoted usecase" as UC5
+@enduml

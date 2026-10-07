@@ -1,0 +1,219 @@
+DPI: 96
+dimension: [ 314.0000 ; 187.0000 ]
+scaleFactor: 1.0000
+seed: -4457706117535174219
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Person
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 299.1188 ; 172.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 86.3192 ; 12.0000 ]
+  pt2: [ 112.3192 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 90.3192 ; 17.0000 ]
+  pt2: [ 112.3192 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 101.3192 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 118.8192 ; 21.0000 ]
+  pt2: [ 218.7997 ; 35.0000 ]
+
+TEXT:
+  text: Person
+  position: [ 121.8192 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 298.1188 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 299.1188 ; 108.0000 ]
+
+RECTANGLE:
+  pt1: [ 14.0000 ; 53.5000 ]
+  pt2: [ 20.0000 ; 59.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffc82930
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: name : String
+  position: [ 26.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 17.0000 ; 65.5000 ]
+   - [ 21.0000 ; 69.5000 ]
+   - [ 17.0000 ; 73.5000 ]
+   - [ 13.0000 ; 69.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffb38d22
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: age : int
+  position: [ 26.0000 ; 72.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 17.0000 ; 80.5000 ]
+   - [ 13.0000 ; 86.5000 ]
+   - [ 21.0000 ; 86.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff1963a0
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: address : String
+  position: [ 26.0000 ; 86.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 14.0000 ; 95.5000 ]
+  pt2: [ 20.0000 ; 101.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff038048
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: email : String
+  position: [ 26.0000 ; 100.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 108.0000 ]
+  pt2: [ 298.1188 ; 108.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 108.0000 ]
+  pt2: [ 298.0198 ; 172.0000 ]
+
+RECTANGLE:
+  pt1: [ 14.0000 ; 117.5000 ]
+  pt2: [ 20.0000 ; 123.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffc82930
+  backcolor: fff24d5c
+
+TEXT:
+  text: validate() : boolean
+  position: [ 26.0000 ; 122.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 17.0000 ; 129.5000 ]
+   - [ 21.0000 ; 133.5000 ]
+   - [ 17.0000 ; 137.5000 ]
+   - [ 13.0000 ; 133.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffb38d22
+  backcolor: ffffff44
+
+TEXT:
+  text: recompute()
+  position: [ 26.0000 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 17.0000 ; 144.5000 ]
+   - [ 13.0000 ; 150.5000 ]
+   - [ 21.0000 ; 150.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff1963a0
+  backcolor: ff4177af
+
+TEXT:
+  text: helper()
+  position: [ 26.0000 ; 150.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 14.0000 ; 159.5000 ]
+  pt2: [ 20.0000 ; 165.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff038048
+  backcolor: ff84be84
+
+TEXT:
+  text: getName() : String
+  position: [ 26.0000 ; 164.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

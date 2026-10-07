@@ -1,0 +1,10 @@
+@startuml
+[*] --> Waiting
+Waiting --> Running : start
+note on link
+  triggered by
+  the scheduler
+end note
+Running --> Waiting : yield
+Running --> [*]
+@enduml

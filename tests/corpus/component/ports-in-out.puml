@@ -1,0 +1,16 @@
+@startuml
+component C {
+  portin p1
+  portin p2
+  portout po1
+  portout po2
+  component c1
+}
+[Caller] --> p1
+[Caller] --> p2
+p1 --> c1
+p2 --> c1
+c1 --> po1
+c1 --> po2
+po1 --> [Sink]
+@enduml

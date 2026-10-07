@@ -18,6 +18,10 @@ impl StringBounder for StringBounderDebug {
         let utf16_length = text.encode_utf16().count() as f64;
         XDimension2D::new(size * utf16_length * factor, size)
     }
+
+    fn shared(&self) -> std::rc::Rc<dyn StringBounder> {
+        std::rc::Rc::new(Self)
+    }
 }
 
 /// What the debug document says about the image before listing its shapes.
@@ -101,8 +105,8 @@ impl UGraphicDebug {
                 "  pt2: {}",
                 point(at.dx + ellipse.width, at.dy + ellipse.height)
             ),
-            "  start: 0.0".to_owned(),
-            "  extend: 0.0".to_owned(),
+            format!("  start: {}", java::double_to_string(ellipse.start)),
+            format!("  extend: {}", java::double_to_string(ellipse.extend)),
         ]);
         self.out_style(param);
     }
@@ -243,6 +247,7 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
+            UShape::Comment(comment) => self.lines.push(format!("COMMENT: {comment}")),
             UShape::Empty(dimension) => self.lines.extend([
                 "EMPTY:".to_owned(),
                 format!("  pt1: {}", point(at.dx, at.dy)),
@@ -281,6 +286,11 @@ fn color_to_string(color: Option<&HColor>, render_date: &str) -> String {
         None => "NULL_COLOR".to_owned(),
         Some(color) if color.is_transparent() => "NULL_COLOR".to_owned(),
         Some(HColor::Simple(color)) => format!("{:x}", color.argb()),
+        // PlantUML names the first colour twice.
+        Some(HColor::Middle(color1, _)) => {
+            let color1 = color_to_string(Some(&HColor::Simple(*color1)), render_date);
+            format!("middle({color1} & {color1} )")
+        }
         Some(other) => format!("{} {render_date}", other.java_class_name()),
     }
 }

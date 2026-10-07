@@ -5,6 +5,7 @@ pub(crate) mod big_frame;
 pub(crate) mod blocks;
 pub(crate) mod clip;
 pub(crate) mod debug;
+pub(crate) mod dot_path;
 pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
@@ -24,8 +25,13 @@ mod width_table_data;
 
 use crate::color::HColor;
 use font::StringBounder;
-use geom::XDimension2D;
+use geom::{UTranslate, XDimension2D, XPoint2D, XRectangle2D};
 use ugraphic::UGraphic;
+
+/// Something that can draw itself.
+pub(crate) trait UDrawable {
+    fn draw_u(&self, ug: &UGraphic);
+}
 
 /// Something that knows its size and can draw itself.
 pub trait TextBlock {
@@ -41,6 +47,26 @@ pub trait TextBlock {
 
     /// The colour the block asks to be drawn on, which stacking blocks paint behind it.
     fn backcolor(&self) -> Option<HColor> {
+        None
+    }
+
+    /// How far a link ending at `position`, on the block's bounding box, moves to reach the block's outline
+    /// (`getMagneticBorder().getForceAt`).
+    fn magnetic_border_force_at(
+        &self,
+        _string_bounder: &dyn StringBounder,
+        _position: XPoint2D,
+    ) -> UTranslate {
+        UTranslate::default()
+    }
+
+    /// Where the block draws the class member written `member`, for the notes that point at it; blocks
+    /// without members draw none (`getInnerPosition`).
+    fn get_inner_position(
+        &self,
+        _member: &str,
+        _string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
         None
     }
 }
@@ -61,6 +87,22 @@ impl<T: TextBlock + ?Sized> TextBlock for &T {
     fn backcolor(&self) -> Option<HColor> {
         (**self).backcolor()
     }
+
+    fn magnetic_border_force_at(
+        &self,
+        string_bounder: &dyn StringBounder,
+        position: XPoint2D,
+    ) -> UTranslate {
+        (**self).magnetic_border_force_at(string_bounder, position)
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        (**self).get_inner_position(member, string_bounder)
+    }
 }
 
 impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
@@ -78,6 +120,22 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
 
     fn backcolor(&self) -> Option<HColor> {
         (**self).backcolor()
+    }
+
+    fn magnetic_border_force_at(
+        &self,
+        string_bounder: &dyn StringBounder,
+        position: XPoint2D,
+    ) -> UTranslate {
+        (**self).magnetic_border_force_at(string_bounder, position)
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        (**self).get_inner_position(member, string_bounder)
     }
 }
 
@@ -125,6 +183,23 @@ impl HorizontalAlignment {
         }
     }
 
+    /// Draws `block` aligned in `width`, `xpadding` from its side (`HorizontalAlignment.draw`).
+    pub(crate) fn draw(
+        self,
+        ug: &UGraphic,
+        block: &dyn TextBlock,
+        xpadding: f64,
+        ypadding: f64,
+        width: f64,
+    ) {
+        let x = match self {
+            Self::Left => xpadding,
+            Self::Right => width - block.calculate_dimension(ug.string_bounder()).width - xpadding,
+            Self::Center => (width - block.calculate_dimension(ug.string_bounder()).width) / 2.0,
+        };
+        block.draw_u(&ug.translated(x, ypadding));
+    }
+
     pub(crate) fn from_name(name: &str) -> Option<Self> {
         match name.to_ascii_lowercase().as_str() {
             "left" => Some(Self::Left),
@@ -133,6 +208,13 @@ impl HorizontalAlignment {
             _ => None,
         }
     }
+}
+
+/// Where a legend goes: above or below what it explains.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum VerticalAlignment {
+    Top,
+    Bottom,
 }
 
 #[cfg(test)]

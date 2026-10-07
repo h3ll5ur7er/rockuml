@@ -1,0 +1,10 @@
+@startuml
+left to right direction
+[*] --> Created
+Created --> Queued : submit
+Queued --> Running : dispatch
+Running --> Finished : complete
+Running --> Failed : error
+Failed --> Queued : retry
+Finished --> [*]
+@enduml

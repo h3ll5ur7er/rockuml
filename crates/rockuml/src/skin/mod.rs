@@ -4,10 +4,18 @@ pub(crate) mod actor;
 pub(crate) mod arrow;
 pub(crate) mod body;
 pub(crate) mod component;
+pub(crate) mod component_style;
+pub(crate) mod font_param;
 pub(crate) mod rose;
 pub(crate) mod symbol;
+pub(crate) mod visibility_modifier;
 
 use actor::ActorStyle;
+use component_style::ComponentStyle;
+use font_param::FontParam;
+
+use crate::decoration::LinkStyle;
+use crate::decoration::symbol::PackageStyle;
 
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
@@ -16,16 +24,22 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
+use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
-use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
+use crate::stereo::Stereotype;
+use crate::style::{
+    PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
+};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
-#[derive(Default)]
+/// Cheap to clone, as layouts of composite states clone their diagram: sprites and images are shared.
+#[derive(Clone, Default)]
 pub(crate) struct SkinParam {
     /// Loaded from the default skin when first needed. Diagram elements keep the builder in force when they
     /// were declared, so a change makes a new builder rather than changing the shared one.
@@ -33,11 +47,20 @@ pub(crate) struct SkinParam {
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
-    sprites: HashMap<String, Rc<dyn Sprite>>,
+    sprites: Rc<HashMap<String, Rc<dyn Sprite>>>,
     /// The base64 data of the PNGs the source refers to by MD5.
-    md5_map: HashMap<String, String>,
+    md5_map: Rc<HashMap<String, String>>,
     /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
-    image_files: HashMap<String, Option<Vec<u8>>>,
+    image_files: Rc<HashMap<String, Option<Vec<u8>>>>,
+    rankdir: Rankdir,
+}
+
+/// Which way entity diagrams flow (PlantUML's `Rankdir`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Rankdir {
+    #[default]
+    TopToBottom,
+    LeftToRight,
 }
 
 impl SpriteContainer for SkinParam {
@@ -61,14 +84,14 @@ impl SkinParam {
     /// With the images of `source`.
     pub(crate) fn new(source: &UmlSource) -> Self {
         Self {
-            md5_map: source.md5_map().clone(),
-            image_files: source.image_files().clone(),
+            md5_map: Rc::new(source.md5_map().clone()),
+            image_files: Rc::new(source.image_files().clone()),
             ..Self::default()
         }
     }
 
     pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {
-        self.sprites.insert(name, sprite);
+        Rc::make_mut(&mut self.sprites).insert(name, sprite);
     }
 
     fn style_builder(&self) -> &StyleBuilder {
@@ -113,6 +136,53 @@ impl SkinParam {
             .is_some_and(|value| value.eq_ignore_ascii_case(expected))
     }
 
+    /// `skinparam backgroundColor`, or the document style's background.
+    pub(crate) fn get_background_color(&self) -> HColor {
+        match self.value("backgroundcolor") {
+            Some(value)
+                if value.eq_ignore_ascii_case("transparent")
+                    || value.eq_ignore_ascii_case("none") =>
+            {
+                HColor::NONE
+            }
+            Some(value) => HColor::parse_or_white(&value),
+            None => self
+                .merged_style(&StyleSignature::of(&[SName::Root, SName::Document]))
+                .expect("the skin styles the document")
+                .value(PName::BackGroundColor)
+                .as_color(),
+        }
+    }
+
+    /// `circledCharacterRadius`, or what suits the circled characters' font size.
+    pub(crate) fn get_circled_character_radius(&self) -> i32 {
+        self.as_int("circledCharacterRadius")
+            .unwrap_or_else(|| self.get_font(FontParam::CircledCharacter, None).size() / 3 + 6)
+    }
+
+    /// `classAttributeIconSize`: the size of visibility icons, 0 to write visibilities as characters.
+    pub(crate) fn class_attribute_icon_size(&self) -> i32 {
+        self.as_int("classAttributeIconSize").unwrap_or(10)
+    }
+
+    /// The letter `spotChar<<stereotype>>` gives the stereotype's spot.
+    pub(crate) fn get_circled_character(&self, stereotype: &Stereotype) -> Option<char> {
+        self.value(&format!("spotchar{}", stereotype.label_double_comparator()))
+            .and_then(|value| value.chars().next())
+    }
+
+    /// `genericDisplay old`: generics written after the name rather than in a box.
+    pub(crate) fn display_generic_with_old_fashion(&self) -> bool {
+        self.value_is("genericDisplay", "old")
+    }
+
+    /// `getAsInt`: the value if it is only digits.
+    fn as_int(&self, key: &str) -> Option<i32> {
+        self.value(key)
+            .filter(|value| is_digits(value))
+            .and_then(|value| value.parse().ok())
+    }
+
     pub(crate) fn strict_uml_style(&self) -> bool {
         self.value_is("style", "strictuml")
     }
@@ -123,6 +193,79 @@ impl SkinParam {
 
     pub(crate) fn actor_style(&self) -> ActorStyle {
         ActorStyle::named(&self.value("actorstyle").unwrap_or_default())
+    }
+
+    /// Strict UML draws UML 2 components whatever `componentStyle` says.
+    pub(crate) fn component_style(&self) -> ComponentStyle {
+        if self.strict_uml_style() {
+            return ComponentStyle::Uml2;
+        }
+        let value = self.value("componentstyle").unwrap_or_default();
+        if value.eq_ignore_ascii_case("uml1") {
+            ComponentStyle::Uml1
+        } else if value.eq_ignore_ascii_case("rectangle") {
+            ComponentStyle::Rectangle
+        } else {
+            ComponentStyle::Uml2
+        }
+    }
+
+    pub(crate) fn package_style(&self) -> PackageStyle {
+        self.value("packageStyle")
+            .and_then(|value| PackageStyle::from_string(&value))
+            .unwrap_or(PackageStyle::Folder)
+    }
+
+    /// `stereotypeAlignment`, centred by default.
+    pub(crate) fn stereotype_alignment(&self) -> HorizontalAlignment {
+        self.value("stereotypealignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Center)
+    }
+
+    /// `packageTitleAlignment`, centred by default.
+    pub(crate) fn package_title_alignment(&self) -> HorizontalAlignment {
+        self.value("packageTitleAlignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Center)
+    }
+
+    /// The stroke `<param>Thickness` or a `<param>Style` other than plain sets, like `arrowThickness`
+    /// (`getThickness(LineParam, null)`).
+    pub(crate) fn get_thickness(&self, param: &str) -> Option<UStroke> {
+        let thickness = self
+            .value(&format!("{param}thickness"))
+            .filter(|value| value.chars().all(|c| c.is_ascii_digit() || c == '.'));
+        if let Some(thickness) = thickness {
+            return Some(
+                LinkStyle::NORMAL
+                    .go_thickness(thickness.parse().unwrap_or_default())
+                    .get_stroke3(),
+            );
+        }
+        self.value(&format!("{param}style"))
+            .and_then(|value| LinkStyle::from_string2(&value))
+            .filter(|style| !style.is_normal())
+            .map(LinkStyle::get_stroke3)
+    }
+
+    /// `defaultTextAlignment`, or `default`.
+    pub(crate) fn get_default_text_alignment(
+        &self,
+        default: HorizontalAlignment,
+    ) -> HorizontalAlignment {
+        self.value("defaulttextalignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(default)
+    }
+
+    /// The direction `left to right direction` and `top to bottom direction` set.
+    pub(crate) fn get_rankdir(&self) -> Rankdir {
+        self.rankdir
+    }
+
+    pub(crate) fn set_rankdir(&mut self, rankdir: Rankdir) {
+        self.rankdir = rankdir;
     }
 
     /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.
@@ -156,6 +299,14 @@ impl SkinParam {
             .unwrap_or(0.0)
     }
 
+    /// `roundCorner` when written in digits, else 0 (`getRoundCorner(CornerParam.DEFAULT, null)`).
+    pub(crate) fn get_round_corner(&self) -> f64 {
+        self.value("roundcorner")
+            .filter(|value| is_digits(value))
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(0.0)
+    }
+
     pub(crate) fn value(&self, key: &str) -> Option<String> {
         if let Some(known) = self.looked_up.borrow().get(key) {
             return known.clone();
@@ -171,9 +322,13 @@ impl SkinParam {
     }
 }
 
+/// `isDigits`: ASCII digits only, at least one.
+fn is_digits(value: &str) -> bool {
+    !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit())
+}
+
 /// `\d+(\.\d+)?`.
 fn is_int_or_decimal(value: &str) -> bool {
-    let is_digits = |part: &str| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit());
     match value.split_once('.') {
         Some((int, decimals)) => is_digits(int) && is_digits(decimals),
         None => is_digits(value),
@@ -215,7 +370,6 @@ fn clean_for_key(key: &str) -> Vec<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::style::{PName, SName, ValueReading};
 
     #[test]
     fn keys_are_normalised_like_plantuml() {
@@ -243,6 +397,24 @@ mod tests {
             "#ABCDEF"
         );
         assert_eq!(skin.value("backgroundcolor").as_deref(), Some("#ABCDEF"));
+    }
+
+    #[test]
+    fn the_background_comes_from_the_skinparam_or_the_document() {
+        let background = |value: Option<&str>| {
+            let mut skin = SkinParam::default();
+            if let Some(value) = value {
+                skin.set_param("backgroundColor", value);
+            }
+            skin.get_background_color()
+        };
+        assert_eq!(background(None), HColor::WHITE);
+        assert_eq!(
+            background(Some("#ABCDEF")),
+            HColor::parse("#ABCDEF").unwrap().unwrap()
+        );
+        assert_eq!(background(Some("Transparent")), HColor::NONE);
+        assert_eq!(background(Some("nosuchcolor")), HColor::WHITE);
     }
 
     #[test]

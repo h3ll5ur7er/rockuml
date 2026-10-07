@@ -1,0 +1,11 @@
+@startuml
+rectangle "Subsystem" {
+  [Alpha]
+  [Beta]
+}
+rectangle "Other" {
+  [Gamma]
+}
+[Alpha] --> [Beta]
+[Beta] --> [Gamma]
+@enduml

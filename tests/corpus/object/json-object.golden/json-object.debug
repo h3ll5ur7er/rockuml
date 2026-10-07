@@ -1,0 +1,214 @@
+DPI: 96
+dimension: [ 313.0000 ; 193.0000 ]
+scaleFactor: 1.0000
+seed: 7241394429544853153
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 88.0000 ; 12.0000 ]
+  pt2: [ 216.3960 ; 102.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 103.2077 ; 12.0000 ]
+  pt2: [ 201.1883 ; 30.0000 ]
+
+TEXT:
+  text: Person
+  position: [ 105.2077 ; 24.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 169.6845 ; 30.0000 ]
+  pt2: [ 169.6845 ; 102.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 88.0000 ; 30.0000 ]
+  pt2: [ 216.3960 ; 30.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 88.0000 ; 30.0000 ]
+  pt2: [ 147.6020 ; 48.0000 ]
+
+TEXT:
+  text: name
+  position: [ 93.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 169.6845 ; 30.0000 ]
+  pt2: [ 216.3960 ; 48.0000 ]
+
+TEXT:
+  text: Ada
+  position: [ 174.6845 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 88.0000 ; 48.0000 ]
+  pt2: [ 216.3960 ; 48.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 88.0000 ; 48.0000 ]
+  pt2: [ 148.0355 ; 66.0000 ]
+
+TEXT:
+  text: age
+  position: [ 93.0000 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 169.6845 ; 48.0000 ]
+  pt2: [ 206.5620 ; 66.0000 ]
+
+TEXT:
+  text: 36
+  position: [ 174.6845 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 88.0000 ; 66.0000 ]
+  pt2: [ 216.3960 ; 66.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 88.0000 ; 66.0000 ]
+  pt2: [ 169.6845 ; 84.0000 ]
+
+TEXT:
+  text: langs
+  position: [ 93.0000 ; 78.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 169.6845 ; 66.0000 ]
+  pt2: [ 204.5529 ; 84.0000 ]
+
+TEXT:
+  text: en
+  position: [ 174.6845 ; 78.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 169.6845 ; 84.0000 ]
+  pt2: [ 216.3960 ; 84.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 169.6845 ; 84.0000 ]
+  pt2: [ 204.5441 ; 102.0000 ]
+
+TEXT:
+  text: fr
+  position: [ 174.6845 ; 96.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 138.0000 ]
+  pt2: [ 298.2626 ; 178.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 104.3706 ; 138.0000 ]
+  pt2: [ 199.8919 ; 156.0000 ]
+
+TEXT:
+  text: Employer
+  position: [ 106.3706 ; 150.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 156.0000 ]
+  pt2: [ 297.2626 ; 156.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 156.0000 ]
+  pt2: [ 298.2626 ; 178.0000 ]
+
+TEXT:
+  text: name = "Engines Ltd"
+  position: [ 12.0000 ; 170.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 152.0000 ; 137.5442 ]
+   - [ 156.0000 ; 128.5442 ]
+   - [ 152.0000 ; 132.5442 ]
+   - [ 148.0000 ; 128.5442 ]
+   - [ 152.0000 ; 137.5442 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 146.0000 ; 96.2879 ]
+   - type: SEG_CUBICTO
+     pt1: [ 146.0000 ; 108.6438 ]
+     pt2: [ 146.0000 ; 116.4378 ]
+     pt3: [ 146.0000 ; 126.5442 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

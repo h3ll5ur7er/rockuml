@@ -1,0 +1,223 @@
+DPI: 96
+dimension: [ 913.0000 ; 241.0000 ]
+scaleFactor: 1.0000
+seed: -2439117309134387172
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity N1
+POLYGON:
+  points:
+   - [ 138.0000 ; 22.0000 ]
+   - [ 148.0000 ; 12.0000 ]
+   - [ 765.9594 ; 12.0000 ]
+   - [ 765.9594 ; 46.0000 ]
+   - [ 755.9594 ; 56.0000 ]
+   - [ 138.0000 ; 56.0000 ]
+   - [ 138.0000 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 755.9594 ; 22.0000 ]
+  pt2: [ 765.9594 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 138.0000 ; 22.0000 ]
+  pt2: [ 755.9594 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 755.9594 ; 22.0000 ]
+  pt2: [ 755.9594 ; 56.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 138.0000 ; 56.0000 ]
+  pt2: [ 148.0000 ; 66.0000 ]
+
+TEXT:
+  text: A node with a rather long name that wraps nothing
+  position: [ 153.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity A1
+RECTANGLE:
+  pt1: [ 6.0000 ; 93.0000 ]
+  pt2: [ 897.5971 ; 130.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+POLYGON:
+  points:
+   - [ 880.5971 ; 98.0000 ]
+   - [ 880.5971 ; 112.0000 ]
+   - [ 892.5971 ; 112.0000 ]
+   - [ 892.5971 ; 104.0000 ]
+   - [ 886.5971 ; 98.0000 ]
+   - [ 880.5971 ; 98.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 886.5971 ; 98.0000 ]
+  pt2: [ 886.5971 ; 104.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 892.5971 ; 104.0000 ]
+  pt2: [ 886.5971 ; 104.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: an-artifact-with-a-very-long-file-name-1.2.3-SNAPSHOT.jar
+  position: [ 16.0000 ; 116.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity D1
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 0.0000 ]
+     pt2: [ 245.5943 ; 0.0000 ]
+     pt3: [ 245.5943 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 245.5943 ; 0.0000 ]
+     pt2: [ 491.1886 ; 0.0000 ]
+     pt3: [ 491.1886 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 491.1886 ; 33.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 491.1886 ; 43.0000 ]
+     pt2: [ 245.5943 ; 43.0000 ]
+     pt3: [ 245.5943 ; 43.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 245.5943 ; 43.0000 ]
+     pt2: [ 0.0000 ; 43.0000 ]
+     pt3: [ 0.0000 ; 33.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 20.0000 ]
+     pt2: [ 245.5943 ; 20.0000 ]
+     pt3: [ 245.5943 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 245.5943 ; 20.0000 ]
+     pt2: [ 491.1886 ; 20.0000 ]
+     pt3: [ 491.1886 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 697.6886 ; 226.0000 ]
+  pt2: [ 707.6886 ; 236.0000 ]
+
+TEXT:
+  text: Primary customer and billing database
+  position: [ 216.5000 ; 217.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 452.0000 ; 92.6494 ]
+   - [ 456.0000 ; 83.6494 ]
+   - [ 452.0000 ; 87.6494 ]
+   - [ 448.0000 ; 83.6494 ]
+   - [ 452.0000 ; 92.6494 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 446.0000 ; 50.0310 ]
+   - type: SEG_CUBICTO
+     pt1: [ 446.0000 ; 61.5499 ]
+     pt2: [ 446.0000 ; 70.6716 ]
+     pt3: [ 446.0000 ; 81.6494 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 452.0000 ; 182.8222 ]
+   - [ 456.0000 ; 173.8222 ]
+   - [ 452.0000 ; 177.8222 ]
+   - [ 448.0000 ; 173.8222 ]
+   - [ 452.0000 ; 182.8222 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 446.0000 ; 124.0457 ]
+   - type: SEG_CUBICTO
+     pt1: [ 446.0000 ; 139.1268 ]
+     pt2: [ 446.0000 ; 155.8975 ]
+     pt3: [ 446.0000 ; 171.8222 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 452.0000 ; 148.0000 ]
+  pt2: [ 889.6982 ; 165.0000 ]
+
+EMPTY:
+  pt1: [ 453.0000 ; 149.0000 ]
+  pt2: [ 888.6982 ; 164.0000 ]
+
+TEXT:
+  text: stores customer records and invoices
+  position: [ 454.0000 ; 160.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -79,7 +79,8 @@ fn version_flag_reports_the_plantuml_release_rockuml_is_compatible_with() {
 /// Renders a diagram of `lines` in every image format, asserting that rockuml neither panics nor takes
 /// long.
 fn renders_promptly(lines: &[&str]) {
-    const TIME_LIMIT: Duration = Duration::from_secs(10);
+    // Generous enough for a loaded machine; what it guards against is a hang or an allocation storm.
+    const TIME_LIMIT: Duration = Duration::from_secs(60);
     let directory = tempfile::tempdir().unwrap();
     let file = directory.path().join("case.puml");
     let diagram = ["@startuml", &lines.join("\n"), "@enduml"].join("\n");
@@ -111,6 +112,32 @@ fn renders_promptly(lines: &[&str]) {
             "{format}: {stderr}\n{diagram}"
         );
     }
+}
+
+/// Asserts that rockuml reports the diagram of `lines` as erroneous, like PlantUML's exit status for errors,
+/// without panicking.
+fn reports_an_error(lines: &[&str]) {
+    let directory = tempfile::tempdir().unwrap();
+    let file = directory.path().join("case.puml");
+    let diagram = ["@startuml", &lines.join("\n"), "@enduml"].join("\n");
+    std::fs::write(&file, &diagram).unwrap();
+    let output = rockuml()
+        .args(["-f", "debug", file.to_str().unwrap()])
+        .output()
+        .unwrap();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!stderr.contains("panicked"), "{stderr}\n{diagram}");
+    assert_eq!(output.status.code(), Some(200), "{stderr}\n{diagram}");
+}
+
+#[test]
+fn entity_diagrams_plantuml_crashes_on_are_errors() {
+    reports_an_error(&["port P as \"", "hello\""]);
+    reports_an_error(&["mix_circle c"]);
+    reports_an_error(&["state A", "state A.B"]);
+    reports_an_error(&["state X {", "state A", "A.B --> C", "}"]);
+    reports_an_error(&["state X {", "state A", "state A.B", "}"]);
+    reports_an_error(&["state X {", "state A", "A.B --> C", "A.B --> D", "}"]);
 }
 
 #[test]

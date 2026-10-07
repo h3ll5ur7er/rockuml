@@ -1,0 +1,17 @@
+@startuml
+package com.shop {
+  class Cart
+  class Item
+  package com.shop.billing {
+    class Invoice
+    class Payment
+  }
+}
+package util {
+  class Money
+}
+Cart o-- Item
+Invoice --> Payment
+Invoice --> Cart
+Item --> Money
+@enduml

@@ -11,19 +11,20 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use super::common_commands::common_commands;
+use super::common_commands::{add_common_commands2, add_common_scale_commands, add_title_commands};
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
 use super::source::UmlSource;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted};
 use crate::command::{
-    Command, CommandError, CommandResult, SingleLine, SingleLineCommand, factory,
+    Command, CommandError, CommandResult, ParserPass, SingleLine, SingleLineCommand, factory,
 };
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexResult, RegexTree, java_regex};
@@ -65,10 +66,12 @@ impl SaltDiagram {
             source,
             lines: Vec::new(),
         };
-        let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = common_commands();
+        let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = add_common_commands2();
+        commands.extend(add_common_scale_commands());
+        commands.extend(add_title_commands());
         commands.push(Box::new(SingleLine(Anything::new())));
         let lines = diagram.source.lines().to_vec();
-        match factory::execute_lines(&lines, &mut diagram, &commands) {
+        match factory::execute_lines(&lines, &mut diagram, &commands, ParserPass::One) {
             Ok(()) => Box::new(diagram),
             Err(failure) => Box::new(ErrorDiagram::new(
                 diagram.source,
@@ -154,7 +157,8 @@ impl Diagram for SaltDiagram {
     }
 
     fn export_settings(&self) -> ExportSettings {
-        self.titled.export_settings(self.source.seed(), 5.0)
+        self.titled
+            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(5.0))
     }
 }
 

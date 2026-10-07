@@ -1,0 +1,34 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 2
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011"
+graph ids "g" "cluster6"
+node ids "sh0012" "sh0010" "sh0011"
+in "g" node "sh0012" out e2> in edges e2> degree 0 1
+in "g" node "sh0010" out e1> in e2< edges e1> e2< degree 1 1
+in "g" node "sh0011" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+induce "cluster6" e1>
+in "cluster6" node "sh0010" out e1> in edges e1> degree 0 1
+in "cluster6" node "sh0011" out in e1< edges e1< degree 1 0
+contains "cluster6" 0 1 1 1 0
+attr "g" "margin" "16"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "1.9393269749946844"
+attr "sh0012" "height" "0.6666666666666666"
+attr "cluster6" "label" "_dim_303_66_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.2110995838135834"
+attr "sh0010" "height" "0.6666666666666666"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.074996103251169"
+attr "sh0011" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"

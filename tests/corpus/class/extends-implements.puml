@@ -1,0 +1,8 @@
+@startuml
+interface Runnable
+interface Closeable
+abstract class Task
+class Job extends Task implements Runnable
+class Pipe implements Closeable
+class Worker extends Job
+@enduml

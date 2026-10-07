@@ -12,7 +12,7 @@ use graphics::{SvgGraphics, SvgText};
 use super::font::{FontStyle, StringBounder};
 use super::geom::UTranslate;
 use super::group::UGroup;
-use super::shape::{UCenteredCharacter, UImage, UShape, UText};
+use super::shape::{UCenteredCharacter, UEllipse, UImage, UShape, UText};
 use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
@@ -214,6 +214,32 @@ impl UGraphicSvg {
         });
     }
 
+    fn draw_ellipse(&mut self, ellipse: &UEllipse, at: UTranslate) {
+        let (x_radius, y_radius) = (ellipse.width / 2.0, ellipse.height / 2.0);
+        let (cx, cy) = (at.dx + x_radius, at.dy + y_radius);
+        if !ellipse.is_arc() {
+            self.svg().ellipse(cx, cy, x_radius, y_radius);
+            return;
+        }
+        // With sine for x and cosine for y, a quarter turn more keeps AWT's angles: counter-clockwise from
+        // three o'clock.
+        let start = ellipse.start + 90.0;
+        let on_ellipse = |degrees: f64| {
+            let radians = degrees * std::f64::consts::PI / 180.0;
+            (
+                cx + radians.sin() * ellipse.width / 2.0,
+                cy + radians.cos() * ellipse.height / 2.0,
+            )
+        };
+        let (from, to) = if ellipse.extend > 0.0 {
+            (start, start + ellipse.extend)
+        } else {
+            (start + ellipse.extend, start)
+        };
+        self.svg()
+            .arc_ellipse(x_radius, y_radius, on_ellipse(from), on_ellipse(to));
+    }
+
     /// The pixels drawn, re-encoded as PNG as PlantUML does.
     fn draw_image(&mut self, image: &UImage, at: UTranslate) {
         let Some(pixels) = image.image() else {
@@ -270,9 +296,7 @@ impl UGraphicBackend for UGraphicSvg {
                     return;
                 }
                 self.apply_colors_and_stroke(param);
-                let (x_radius, y_radius) = (ellipse.width / 2.0, ellipse.height / 2.0);
-                self.svg()
-                    .ellipse(at.dx + x_radius, at.dy + y_radius, x_radius, y_radius);
+                self.draw_ellipse(ellipse, at);
             }
             UShape::Line { dx, dy } => {
                 let start = (at.dx, at.dy);
@@ -325,6 +349,7 @@ impl UGraphicBackend for UGraphicSvg {
             UShape::CenteredCharacter(centered) => {
                 self.draw_centered_character(centered, at, param);
             }
+            UShape::Comment(comment) => self.svg().add_comment(comment),
             UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
         }
     }

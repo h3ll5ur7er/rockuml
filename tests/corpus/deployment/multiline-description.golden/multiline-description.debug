@@ -1,0 +1,211 @@
+DPI: 96
+dimension: [ 337.4289 ; 210.0000 ]
+scaleFactor: 1.0000
+seed: -8314931528086509445
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity node1
+POLYGON:
+  points:
+   - [ 10.0000 ; 22.0000 ]
+   - [ 20.0000 ; 12.0000 ]
+   - [ 322.4289 ; 12.0000 ]
+   - [ 322.4289 ; 90.0000 ]
+   - [ 312.4289 ; 100.0000 ]
+   - [ 10.0000 ; 100.0000 ]
+   - [ 10.0000 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 312.4289 ; 22.0000 ]
+  pt2: [ 322.4289 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 10.0000 ; 22.0000 ]
+  pt2: [ 312.4289 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 312.4289 ; 22.0000 ]
+  pt2: [ 312.4289 ; 100.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 10.0000 ; 100.0000 ]
+  pt2: [ 20.0000 ; 110.0000 ]
+
+TEXT:
+  text: This is a node
+  position: [ 25.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 10.0000 ; 46.0000 ]
+  pt2: [ 312.4289 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 312.4289 ; 46.0000 ]
+  pt2: [ 322.4289 ; 36.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 25.0000 ; 46.0000 ]
+  pt2: [ 210.5216 ; 68.0000 ]
+
+TEXT:
+  text: with a separator
+  position: [ 25.0000 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 10.0000 ; 68.0000 ]
+  pt2: [ 312.4289 ; 68.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 312.4289 ; 68.0000 ]
+  pt2: [ 322.4289 ; 58.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 10.0000 ; 70.0000 ]
+  pt2: [ 312.4289 ; 70.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 312.4289 ; 70.0000 ]
+  pt2: [ 322.4289 ; 60.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 25.0000 ; 68.0000 ]
+  pt2: [ 297.4289 ; 90.0000 ]
+
+TEXT:
+  text: and a double one
+  position: [ 25.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity art
+RECTANGLE:
+  pt1: [ 42.0000 ; 136.0000 ]
+  pt2: [ 290.2504 ; 195.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+POLYGON:
+  points:
+   - [ 273.2504 ; 141.0000 ]
+   - [ 273.2504 ; 155.0000 ]
+   - [ 285.2504 ; 155.0000 ]
+   - [ 285.2504 ; 147.0000 ]
+   - [ 279.2504 ; 141.0000 ]
+   - [ 273.2504 ; 141.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 279.2504 ; 141.0000 ]
+  pt2: [ 279.2504 ; 147.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 285.2504 ; 147.0000 ]
+  pt2: [ 279.2504 ; 147.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: build output
+  position: [ 52.0000 ; 159.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 43.0000 ; 163.0000 ]
+  pt2: [ 289.2504 ; 163.0000 ]
+  stroke: 1.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 52.0000 ; 163.0000 ]
+  pt2: [ 125.5390 ; 185.0000 ]
+
+TEXT:
+  text: signed
+  position: [ 52.0000 ; 177.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 166.0000 ; 135.8839 ]
+   - [ 170.0000 ; 126.8839 ]
+   - [ 166.0000 ; 130.8839 ]
+   - [ 162.0000 ; 126.8839 ]
+   - [ 166.0000 ; 135.8839 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 156.0000 ; 94.1050 ]
+   - type: SEG_CUBICTO
+     pt1: [ 156.0000 ; 106.1380 ]
+     pt2: [ 156.0000 ; 113.9125 ]
+     pt3: [ 156.0000 ; 124.8839 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

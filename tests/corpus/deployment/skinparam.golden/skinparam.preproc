@@ -1,0 +1,13 @@
+@startuml
+skinparam node {
+  BackgroundColor LightYellow
+  BorderColor Olive
+}
+skinparam database {
+  BackgroundColor LightBlue
+}
+skinparam ArrowColor Maroon
+node Web
+database Store
+Web --> Store
+@enduml

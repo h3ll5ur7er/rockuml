@@ -1,0 +1,12 @@
+@startuml
+class Car
+Car : make : String
+Car : model : String
+Car : year : int
+Car : start()
+Car : stop()
+class Engine
+Engine : power : int
+Engine : ignite()
+Car *-- Engine
+@enduml

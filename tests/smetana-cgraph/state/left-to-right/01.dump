@@ -1,0 +1,67 @@
+cgraph-dump 1
+graph "g" nodes 7 edges 7
+graph ids "g"
+node ids "sh0006" "sh0007" "sh0008" "sh0009" "sh0010" "sh0011" "sh0012"
+in "g" node "sh0006" out e1> in edges e1> degree 0 1
+in "g" node "sh0007" out e2> in e1< edges e2> e1< degree 1 1
+in "g" node "sh0008" out e3> in e2< e6< edges e3> e2< e6< degree 2 1
+in "g" node "sh0009" out e4> e5> in e3< edges e4> e5> e3< degree 1 2
+in "g" node "sh0010" out e7> in e4< edges e7> e4< degree 1 1
+in "g" node "sh0011" out e6> in e5< edges e6> e5< degree 1 1
+in "g" node "sh0012" out in e7< edges e7< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+attr "g" "margin" "16"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "0.2777777777777778"
+attr "sh0006" "height" "0.2777777777777778"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.8008352350196886"
+attr "sh0007" "height" "0.6944444444444444"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "1.4824691449912395"
+attr "sh0008" "height" "0.6944444444444444"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "1.666076947568636"
+attr "sh0009" "height" "0.6944444444444444"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.9749994004032538"
+attr "sh0010" "height" "0.6944444444444444"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.5759813966546967"
+attr "sh0011" "height" "0.6944444444444444"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "0.3055555555555556"
+attr "sh0012" "height" "0.3055555555555556"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e2> "label" "_dim_92_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "label" "_dim_96_17_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e4> "label" "_dim_121_17_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e5> "label" "_dim_76_17_"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e6> "label" "_dim_78_17_"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr "g" "rankdir" "LR"

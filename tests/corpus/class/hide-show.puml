@@ -1,0 +1,18 @@
+@startuml
+class Visible {
+  a : int
+  b()
+}
+class Hidden {
+  c : int
+  d()
+}
+interface Api {
+  call()
+}
+Hidden --> Visible
+Api <|.. Visible
+hide members
+show Visible fields
+hide circle
+@enduml

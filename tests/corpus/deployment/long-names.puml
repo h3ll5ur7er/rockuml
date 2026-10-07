@@ -1,0 +1,7 @@
+@startuml
+node "A node with a rather long name that wraps nothing" as N1
+artifact "an-artifact-with-a-very-long-file-name-1.2.3-SNAPSHOT.jar" as A1
+database "Primary customer and billing database" as D1
+N1 --> A1
+A1 --> D1 : stores customer records and invoices
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+left to right direction
+[Ingest] --> [Parse]
+[Parse] --> [Validate]
+[Validate] --> [Store]
+[Parse] --> [Errors]
+@enduml

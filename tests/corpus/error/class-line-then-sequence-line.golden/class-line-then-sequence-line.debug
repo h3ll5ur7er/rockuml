@@ -1,0 +1,94 @@
+DPI: 96
+dimension: [ 918.9485 ; 133.0000 ]
+scaleFactor: 1.0000
+seed: -2745240657838992480
+svgLinkTarget: null
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 918.9485 ; 133.0000 ]
+
+EMPTY:
+  pt1: [ 5.0000 ; 5.0000 ]
+  pt2: [ 711.4921 ; 25.0000 ]
+
+TEXT:
+  text: PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]
+  position: [ 5.0000 ; 17.0000 ]
+  orientation: 0
+  font: SansSerif.bolditalic/12 [ITALIC, BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 913.9485 ; 44.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff33ff02
+  backcolor: ff33ff02
+
+EMPTY:
+  pt1: [ 5.0000 ; 25.0000 ]
+  pt2: [ 913.9485 ; 44.0000 ]
+
+TEXT:
+  text: [From class-line-then-sequence-line.puml (line 4) ]
+  position: [ 6.0000 ; 40.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 5.0000 ; 58.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: @startuml
+  position: [ 5.0000 ; 72.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: class A
+  position: [ 5.0000 ; 86.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: A -> B : hello
+  position: [ 5.0000 ; 100.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff33ff02
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: activate B
+  position: [ 5.0000 ; 114.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD, WAVE]
+  color: ff33ff02
+  extendedColor: ffff0000
+
+TEXT:
+  text:  Syntax Error? (Assumed diagram type: class)
+  position: [ 5.0000 ; 128.0000 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ffff0000
+  extendedColor: NULL_COLOR
+

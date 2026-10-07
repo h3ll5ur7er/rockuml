@@ -1,0 +1,190 @@
+DPI: 96
+dimension: [ 243.0000 ; 191.0000 ]
+scaleFactor: 1.0000
+seed: 4475755289873873592
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Tree
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 228.4728 ; 88.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+  backcolor: ff98fb98
+
+EMPTY:
+  pt1: [ 72.3171 ; 12.0000 ]
+  pt2: [ 98.3171 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 76.3171 ; 17.0000 ]
+  pt2: [ 98.3171 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff9acd32
+
+CENTERED_CHAR:
+  char: C
+  position: [ 87.3171 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 104.8171 ; 21.0000 ]
+  pt2: [ 162.1557 ; 35.0000 ]
+
+TEXT:
+  text: Tree
+  position: [ 107.8171 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 227.4728 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 228.4728 ; 66.0000 ]
+
+TEXT:
+  text: -height : int
+  position: [ 12.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 66.0000 ]
+  pt2: [ 227.4728 ; 66.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+
+EMPTY:
+  pt1: [ 6.0000 ; 66.0000 ]
+  pt2: [ 128.7634 ; 88.0000 ]
+
+TEXT:
+  text: +grow()
+  position: [ 12.0000 ; 80.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class Leaf
+RECTANGLE:
+  pt1: [ 50.5000 ; 124.0000 ]
+  pt2: [ 183.6775 ; 176.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+  backcolor: ff98fb98
+
+EMPTY:
+  pt1: [ 50.5000 ; 126.0000 ]
+  pt2: [ 76.5000 ; 158.0000 ]
+
+ELLIPSE:
+  pt1: [ 54.5000 ; 131.0000 ]
+  pt2: [ 76.5000 ; 153.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff9acd32
+
+CENTERED_CHAR:
+  char: C
+  position: [ 65.5000 ; 142.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 76.5000 ; 129.0000 ]
+  pt2: [ 183.6775 ; 141.0000 ]
+
+TEXT:
+  text: «Green»
+  position: [ 77.5000 ; 138.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 98.7480 ; 141.0000 ]
+  pt2: [ 161.4295 ; 155.0000 ]
+
+TEXT:
+  text: Leaf
+  position: [ 101.7480 ; 151.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 51.5000 ; 160.0000 ]
+  pt2: [ 182.6775 ; 160.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+
+EMPTY:
+  pt1: [ 50.5000 ; 160.0000 ]
+  pt2: [ 62.5000 ; 168.0000 ]
+
+LINE:
+  pt1: [ 51.5000 ; 168.0000 ]
+  pt2: [ 182.6775 ; 168.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff00ff7f
+
+EMPTY:
+  pt1: [ 50.5000 ; 168.0000 ]
+  pt2: [ 62.5000 ; 176.0000 ]
+
+POLYGON:
+  points:
+   - [ 117.0000 ; 88.0496 ]
+   - [ 113.0000 ; 94.0496 ]
+   - [ 117.0000 ; 100.0496 ]
+   - [ 121.0000 ; 94.0496 ]
+   - [ 117.0000 ; 88.0496 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2e8b57
+  backcolor: ff2e8b57
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 111.0000 ; 94.0496 ]
+   - type: SEG_CUBICTO
+     pt1: [ 111.0000 ; 105.9742 ]
+     pt2: [ 111.0000 ; 106.9045 ]
+     pt3: [ 111.0000 ; 117.7745 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff2e8b57
+  backcolor: NULL_COLOR
+

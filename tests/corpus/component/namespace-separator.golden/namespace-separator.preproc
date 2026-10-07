@@ -1,0 +1,5 @@
+@startuml
+set separator ::
+[app::core] --> [app::ui]
+[app::ui] --> [lib]
+@enduml

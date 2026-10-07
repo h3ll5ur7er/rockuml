@@ -446,6 +446,23 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - `ExternalDot` engine (optional): port svek's DOT writer and colour-tag SVG back-parser. Selected with
   `!pragma layout dot`, or automatically when `dot` is on PATH if the user opts in via config. Smetana stays the default.
 - **Exit:** L1 ≥ 95% per type.
+- **Status: done.** Every corpus case of the family passes L1 (debug), L2 (deterministic SVG) and PNG size: class 63,
+  object 16, usecase 22, component 29, deployment 20, archimate 5, state 35 (47 layouts with the nested ones), chen 6.
+  L3 (font-measured SVG) passes everywhere except class diagrams (1 of 63): a class's spot letter is drawn as the
+  outline of a Courier New Bold glyph, which the embedded Liberation Mono cannot reproduce (as `sequence/stereotypes`).
+  Every layout builds exactly the Smetana graph PlantUML builds, call for call (checked against the traces).
+  - `@startuml` tries PlantUML's factories in order and picks its best error when none parses; diagram types not
+    ported yet still parse (their commands exist as parse-only stubs generated from Java's command lists) so that the
+    selection and error positions match, then report that they are not ported.
+  - Ported: the CucaDiagram model (`abel`, `plasma`, `diagram/cuca`), the class, description, state and chen
+    commands, notes and tips, hide/show/remove, the Smetana driver (`sdot`), svek's clusters and entity images,
+    USymbols, link decorations (extremities).
+  - Deviations: links to a package drawn with a symbol that has no big form crash Java; rockuml draws them. State
+    transitions drawn as nodes (`-[node]->`) are reported as not ported: PlantUML names that node with the current
+    time. A stray `}` at the top level is an error (PlantUML accepts it and fails later). Corpus cases use Java's
+    logical fonts only: fonts the reference machine happens to have are named `Dialog` by rockuml.
+  - Not ported (no corpus case): `newpage` in these diagrams, `(element)` creation in class diagrams, domain and
+    requirement elements, stereotype skinparam colours on notes, the optional ExternalDot engine.
 
 ### Phase 6 — Activity v3 (~25k)
 - ftile + vcompact + vertical + gtile, swimlanes, goto, notes, partitions, parallel/split, switch, repeat/while, detach.
@@ -488,6 +505,5 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 5: the CucaDiagram family (class, object, usecase, component, deployment, state) on `smetana::Graph`, with
-   the `@startuml` best-error selection.
+1. Phase 6: activity v3 (`ftile`), the other half of everyday UML.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

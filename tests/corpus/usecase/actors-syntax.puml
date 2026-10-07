@@ -1,0 +1,7 @@
+@startuml
+:First Actor:
+:Another actor: as Man2
+actor Woman3
+actor :Last actor: as Person1
+actor "Quoted Actor" as Q
+@enduml

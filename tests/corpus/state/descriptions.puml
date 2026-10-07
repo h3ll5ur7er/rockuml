@@ -1,0 +1,11 @@
+@startuml
+state Idle : waiting for input
+state Busy : processing
+Busy : may take a while
+state "Long Name State" as LNS
+LNS : described here
+[*] --> Idle
+Idle --> Busy : start
+Busy --> LNS : overflow
+LNS --> Idle : reset
+@enduml

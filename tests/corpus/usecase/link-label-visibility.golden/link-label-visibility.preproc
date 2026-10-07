@@ -1,0 +1,6 @@
+@startuml
+actor User
+usecase Run
+User --> Run : +start
+Run --> User : -stop <<event>>
+@enduml

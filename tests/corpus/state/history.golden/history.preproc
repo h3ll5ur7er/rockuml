@@ -1,0 +1,11 @@
+@startuml
+[*] --> Working
+state Working {
+  [*] --> Step1
+  Step1 --> Step2
+  Step2 --> Step3
+}
+Working --> Paused : pause
+Paused --> Working[H] : resume
+Paused --> Working[H*] : deep resume
+@enduml

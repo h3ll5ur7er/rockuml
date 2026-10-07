@@ -1,0 +1,8 @@
+@startuml
+state Start <<sdlreceive>>
+state Send <<sdlsend>>
+state Plain <<custom>>
+[*] --> Start
+Start --> Send
+Send --> Plain
+@enduml

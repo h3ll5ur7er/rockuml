@@ -1,0 +1,14 @@
+@startchen
+entity PERSON {
+  Name
+}
+entity CAR {
+  Plate
+}
+relationship OWNS {
+}
+OWNS -1- PERSON
+OWNS -N- CAR
+hide circle
+hide stereotype
+@endchen

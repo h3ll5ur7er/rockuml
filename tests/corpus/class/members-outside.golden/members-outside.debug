@@ -1,0 +1,218 @@
+DPI: 96
+dimension: [ 268.0000 ; 257.0000 ]
+scaleFactor: 1.0000
+seed: 9036939746974650666
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Car
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 253.4219 ; 130.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 83.7036 ; 12.0000 ]
+  pt2: [ 109.7036 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 87.7036 ; 17.0000 ]
+  pt2: [ 109.7036 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 98.7036 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 116.2036 ; 21.0000 ]
+  pt2: [ 175.7182 ; 35.0000 ]
+
+TEXT:
+  text: Car
+  position: [ 119.2036 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 252.4219 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 253.4219 ; 94.0000 ]
+
+TEXT:
+  text: make : String
+  position: [ 12.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: model : String
+  position: [ 12.0000 ; 72.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: year : int
+  position: [ 12.0000 ; 86.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 94.0000 ]
+  pt2: [ 252.4219 ; 94.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 94.0000 ]
+  pt2: [ 116.5925 ; 130.0000 ]
+
+TEXT:
+  text: start()
+  position: [ 12.0000 ; 108.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: stop()
+  position: [ 12.0000 ; 122.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class Engine
+RECTANGLE:
+  pt1: [ 50.5000 ; 166.0000 ]
+  pt2: [ 208.5145 ; 242.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 58.7006 ; 166.0000 ]
+  pt2: [ 84.7006 ; 198.0000 ]
+
+ELLIPSE:
+  pt1: [ 62.7006 ; 171.0000 ]
+  pt2: [ 84.7006 ; 193.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 73.7006 ; 182.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 86.5229 ; 175.0000 ]
+  pt2: [ 200.3140 ; 189.0000 ]
+
+TEXT:
+  text: Engine
+  position: [ 89.5229 ; 185.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 51.5000 ; 198.0000 ]
+  pt2: [ 207.5145 ; 198.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 50.5000 ; 198.0000 ]
+  pt2: [ 208.5145 ; 220.0000 ]
+
+TEXT:
+  text: power : int
+  position: [ 56.5000 ; 212.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 51.5000 ; 220.0000 ]
+  pt2: [ 207.5145 ; 220.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 50.5000 ; 220.0000 ]
+  pt2: [ 193.5387 ; 242.0000 ]
+
+TEXT:
+  text: ignite()
+  position: [ 56.5000 ; 234.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 129.5000 ; 130.2214 ]
+   - [ 125.5000 ; 136.2214 ]
+   - [ 129.5000 ; 142.2214 ]
+   - [ 133.5000 ; 136.2214 ]
+   - [ 129.5000 ; 130.2214 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 123.5000 ; 136.2214 ]
+   - type: SEG_CUBICTO
+     pt1: [ 123.5000 ; 148.2481 ]
+     pt2: [ 123.5000 ; 148.6063 ]
+     pt3: [ 123.5000 ; 159.6469 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

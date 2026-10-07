@@ -1,0 +1,20 @@
+@startuml
+node "Server" {
+  [Api]
+}
+folder "Assets" {
+  [Images]
+}
+frame "Runtime" {
+  [Scheduler]
+}
+cloud {
+  [Cdn]
+}
+database "Postgres" {
+  [Schema]
+}
+[Api] --> [Schema]
+[Cdn] --> [Images]
+[Scheduler] --> [Api]
+@enduml

@@ -1,0 +1,103 @@
+DPI: 96
+dimension: [ 593.5000 ; 168.0000 ]
+scaleFactor: 1.0000
+seed: -6912411478932379224
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity First usecase
+ELLIPSE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 255.1764 ; 66.6353 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: First usecase
+  position: [ 14.1464 ; 42.8176 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC2
+ELLIPSE:
+  pt1: [ 273.0000 ; 14.5000 ]
+  pt2: [ 499.8425 ; 64.6685 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Another usecase
+  position: [ 281.6937 ; 43.0843 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC3
+ELLIPSE:
+  pt1: [ 518.5000 ; 26.5000 ]
+  pt2: [ 578.1356 ; 52.2990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: UC3
+  position: [ 529.3547 ; 42.8995 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC4
+ELLIPSE:
+  pt1: [ 51.0000 ; 109.5000 ]
+  pt2: [ 210.0395 ; 146.1079 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Last usecase
+  position: [ 62.4736 ; 131.3040 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC5
+ELLIPSE:
+  pt1: [ 228.0000 ; 103.0000 ]
+  pt2: [ 455.2378 ; 153.2476 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Quoted usecase
+  position: [ 236.6830 ; 131.6238 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

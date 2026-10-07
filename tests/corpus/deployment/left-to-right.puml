@@ -1,0 +1,13 @@
+@startuml
+left to right direction
+actor User
+node Lb
+node App1
+node App2
+database Db
+User --> Lb
+Lb --> App1
+Lb --> App2
+App1 --> Db
+App2 --> Db
+@enduml

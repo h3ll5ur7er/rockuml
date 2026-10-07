@@ -1,0 +1,284 @@
+DPI: 96
+dimension: [ 446.0000 ; 278.0000 ]
+scaleFactor: 1.0000
+seed: 2689945544476374800
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity actor
+ELLIPSE:
+  pt1: [ 69.7255 ; 12.5000 ]
+  pt2: [ 85.7255 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: actor
+  position: [ 36.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity actor/
+ELLIPSE:
+  pt1: [ 182.5909 ; 12.5000 ]
+  pt2: [ 198.5909 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 188.6471 ; 28.2603 ]
+  pt2: [ 198.3512 ; 18.5562 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: actor/
+  position: [ 137.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity agent
+RECTANGLE:
+  pt1: [ 262.5000 ; 32.0000 ]
+  pt2: [ 356.1572 ; 66.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: agent
+  position: [ 272.5000 ; 52.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity boundary
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 24.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 17.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 73.7756 ; 126.0000 ]
+  pt2: [ 97.7756 ; 150.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: boundary
+  position: [ 6.0000 ; 164.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity control
+ELLIPSE:
+  pt1: [ 202.3233 ; 126.0000 ]
+  pt2: [ 226.3233 ; 150.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+POLYGON:
+  points:
+   - [ 210.3233 ; 126.0000 ]
+   - [ 216.3233 ; 121.0000 ]
+   - [ 214.3233 ; 126.0000 ]
+   - [ 216.3233 ; 131.0000 ]
+   - [ 210.3233 ; 126.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+TEXT:
+  text: control
+  position: [ 167.5000 ; 164.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity entity
+ELLIPSE:
+  pt1: [ 311.5142 ; 126.0000 ]
+  pt2: [ 335.5142 ; 150.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 311.5142 ; 152.0000 ]
+  pt2: [ 335.5142 ; 152.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: entity
+  position: [ 279.5000 ; 164.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity person
+ELLIPSE:
+  pt1: [ 65.0993 ; 204.0000 ]
+  pt2: [ 90.0980 ; 228.9987 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 25.5000 ; 228.9987 ]
+  pt2: [ 129.6974 ; 262.9987 ]
+  xCorner: 24
+  yCorner: 24
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: person
+  position: [ 35.5000 ; 249.8876 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity usecase
+ELLIPSE:
+  pt1: [ 147.5000 ; 218.5000 ]
+  pt2: [ 271.2426 ; 248.0485 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: usecase
+  position: [ 162.0339 ; 236.7743 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity usecase/
+ELLIPSE:
+  pt1: [ 290.0000 ; 217.0000 ]
+  pt2: [ 430.5689 ; 249.9138 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 302.8197 ; 224.4569 ]
+  pt2: [ 417.7492 ; 238.4569 ]
+
+TEXT:
+  text: usecase/
+  position: [ 309.8197 ; 235.3458 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 424.9670 ; 227.7200 ]
+  pt2: [ 407.6048 ; 245.0822 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+

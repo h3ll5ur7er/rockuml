@@ -51,6 +51,13 @@ impl Style {
         self.stroke_of(PName::LineThickness, PName::LineStyle)
     }
 
+    /// `getStroke(Colors)`: the line style an element sets for itself wins.
+    pub(crate) fn stroke_with(&self, colors: &Colors) -> UStroke {
+        colors
+            .get_specific_line_stroke()
+            .unwrap_or_else(|| self.stroke())
+    }
+
     fn stroke_of(&self, thickness: PName, line_style: PName) -> UStroke {
         let thickness = self.value(thickness).as_double();
         let dash = self.value(line_style).as_string();
@@ -133,10 +140,12 @@ impl Style {
             .get(ColorType::Line)
             .cloned()
             .unwrap_or_else(|| self.value(PName::LineColor).as_color());
-        Fashion {
-            round_corner: self.value(PName::RoundCorner).as_double(),
-            ..Fashion::new(back_color, fore_color).with_stroke(self.stroke())
-        }
+        Fashion::new(back_color, fore_color)
+            .with_stroke(self.stroke())
+            .with_corner(
+                self.value(PName::RoundCorner).as_double(),
+                self.value(PName::DiagonalCorner).as_double(),
+            )
     }
 
     /// The style with a colour set by the diagram element, which keeps the property's priority.

@@ -1,0 +1,226 @@
+DPI: 96
+dimension: [ 548.0000 ; 271.0000 ]
+scaleFactor: 1.0000
+seed: 1382732247757994106
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Account
+RECTANGLE:
+  pt1: [ 6.0000 ; 124.0000 ]
+  pt2: [ 532.5707 ; 256.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 198.2236 ; 124.0000 ]
+  pt2: [ 224.2236 ; 156.0000 ]
+
+ELLIPSE:
+  pt1: [ 202.2236 ; 129.0000 ]
+  pt2: [ 224.2236 ; 151.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 213.2236 ; 140.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 230.7236 ; 133.0000 ]
+  pt2: [ 340.3471 ; 147.0000 ]
+
+TEXT:
+  text: Account
+  position: [ 233.7236 ; 143.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 156.0000 ]
+  pt2: [ 531.5707 ; 156.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 156.0000 ]
+  pt2: [ 332.9929 ; 206.0000 ]
+
+TEXT:
+  text: id : Long
+  position: [ 12.0000 ; 170.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: owner : String
+  position: [ 12.0000 ; 184.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: balance : BigDecimal
+  position: [ 12.0000 ; 198.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 206.0000 ]
+  pt2: [ 531.5707 ; 206.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 206.0000 ]
+  pt2: [ 532.5707 ; 256.0000 ]
+
+TEXT:
+  text: deposit(amount : BigDecimal) : void
+  position: [ 12.0000 ; 220.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: withdraw(amount : BigDecimal) : boolean
+  position: [ 12.0000 ; 234.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: String toString()
+  position: [ 12.0000 ; 248.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class Ledger
+RECTANGLE:
+  pt1: [ 116.5000 ; 12.0000 ]
+  pt2: [ 422.5487 ; 88.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 215.7882 ; 12.0000 ]
+  pt2: [ 241.7882 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 219.7882 ; 17.0000 ]
+  pt2: [ 241.7882 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 230.7882 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 248.2882 ; 21.0000 ]
+  pt2: [ 323.2605 ; 35.0000 ]
+
+TEXT:
+  text: Ledger
+  position: [ 251.2882 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 117.5000 ; 44.0000 ]
+  pt2: [ 421.5487 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 116.5000 ; 44.0000 ]
+  pt2: [ 422.5487 ; 66.0000 ]
+
+TEXT:
+  text: entries : List<Entry>
+  position: [ 122.5000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 117.5000 ; 66.0000 ]
+  pt2: [ 421.5487 ; 66.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 116.5000 ; 66.0000 ]
+  pt2: [ 267.4442 ; 88.0000 ]
+
+TEXT:
+  text: Entry last()
+  position: [ 122.5000 ; 80.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 269.5000 ; 88.3448 ]
+   - [ 265.5000 ; 94.3448 ]
+   - [ 269.5000 ; 100.3448 ]
+   - [ 273.5000 ; 94.3448 ]
+   - [ 269.5000 ; 88.3448 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 263.5000 ; 94.3448 ]
+   - type: SEG_CUBICTO
+     pt1: [ 263.5000 ; 105.3603 ]
+     pt2: [ 263.5000 ; 105.7501 ]
+     pt3: [ 263.5000 ; 117.9731 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

@@ -5,7 +5,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::font::{FontConfiguration, UFont};
-use super::geom::XDimension2D;
+use super::geom::{XDimension2D, XPoint2D};
 use super::image::PortableImage;
 use crate::color::XColor;
 
@@ -33,6 +33,8 @@ pub enum UShape {
     HorizontalLine,
     /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
     SpecialText,
+    /// A note for whoever reads the document, which only SVG and the debug listing keep.
+    Comment(String),
 }
 
 impl UShape {
@@ -51,6 +53,7 @@ impl UShape {
             Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
             Self::SpecialText => "SpecialText",
+            Self::Comment(_) => "UComment",
         }
     }
 }
@@ -78,6 +81,17 @@ pub enum USegment {
 }
 
 impl USegment {
+    /// `UPath.arcTo(end, radius, 0, sweep)`: the shorter arc of a circle to `end`, clockwise when `sweep`.
+    pub(crate) fn arc_to(end: (f64, f64), radius: f64, sweep: bool) -> Self {
+        Self::ArcTo {
+            radius: (radius, radius),
+            x_axis_rotation: 0.0,
+            large_arc: false,
+            sweep,
+            end,
+        }
+    }
+
     /// An arc's radii and rotation do not move with it.
     #[must_use]
     pub fn translate(self, dx: f64, dy: f64) -> Self {
@@ -128,15 +142,61 @@ pub struct UCenteredCharacter {
     pub font: UFont,
 }
 
+/// A whole ellipse, or only its arc from `start` over `extend` degrees when either is non-zero.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct UEllipse {
     pub width: f64,
     pub height: f64,
+    pub start: f64,
+    pub extend: f64,
 }
 
 impl UEllipse {
     pub const fn new(width: f64, height: f64) -> Self {
-        Self { width, height }
+        Self::arc(width, height, 0.0, 0.0)
+    }
+
+    pub const fn arc(width: f64, height: f64, start: f64, extend: f64) -> Self {
+        Self {
+            width,
+            height,
+            start,
+            extend,
+        }
+    }
+
+    pub(crate) fn is_arc(&self) -> bool {
+        self.start != 0.0 || self.extend != 0.0
+    }
+
+    #[must_use]
+    pub(crate) fn bigger(self, more: f64) -> Self {
+        Self::new(self.width + more, self.height + more)
+    }
+
+    #[must_use]
+    pub(crate) fn scale(self, factor: f64) -> Self {
+        Self::new(self.width * factor, self.height * factor)
+    }
+
+    /// Where the ellipse's outline starts on the line at height `y`.
+    pub(crate) fn get_starting_x(self, y: f64) -> f64 {
+        let y = y / self.height * 2.0;
+        let x = 1.0 - (1.0 - (y - 1.0) * (y - 1.0)).sqrt();
+        x * self.width / 2.0
+    }
+
+    /// Where the ellipse's outline ends on the line at height `y`.
+    pub(crate) fn get_ending_x(self, y: f64) -> f64 {
+        let y = y / self.height * 2.0;
+        let x = 1.0 + (1.0 - (y - 1.0) * (y - 1.0)).sqrt();
+        x * self.width / 2.0
+    }
+
+    pub(crate) fn get_point_at_angle(self, alpha: f64) -> XPoint2D {
+        let x = self.width / 2.0 + self.width / 2.0 * alpha.cos();
+        let y = self.height / 2.0 + self.height / 2.0 * alpha.sin();
+        XPoint2D::new(x, y)
     }
 }
 
@@ -364,6 +424,23 @@ impl URectangle {
             ry: corner,
             ..self
         }
+    }
+
+    /// `halfRounded`: the rectangle with only its top corners rounded.
+    pub(crate) fn half_rounded(self, round_corner: f64) -> UShape {
+        if round_corner == 0.0 {
+            return UShape::Rectangle(self);
+        }
+        let (width, height, r) = (self.width, self.height, round_corner / 2.0);
+        UShape::Path(vec![
+            USegment::MoveTo(r, 0.0),
+            USegment::LineTo(width - r, 0.0),
+            USegment::arc_to((width, r), r, true),
+            USegment::LineTo(width, height),
+            USegment::LineTo(0.0, height),
+            USegment::LineTo(0.0, r),
+            USegment::arc_to((r, 0.0), r, true),
+        ])
     }
 }
 

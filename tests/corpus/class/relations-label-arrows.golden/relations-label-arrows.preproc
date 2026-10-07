@@ -1,0 +1,10 @@
+@startuml
+class Driver
+class Car
+class Road
+class Garage
+Driver -- Car : drives >
+Car -- Road : < runs on
+Car --> Garage : parks in >
+Garage .. Road : < next to
+@enduml

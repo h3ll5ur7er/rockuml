@@ -11,12 +11,17 @@ use crate::java;
 pub(super) fn parse_and_build(definition: &[u16]) -> Vec<Challenge> {
     assert!(!definition.is_empty(), "empty ubrex");
     let mut input = definition;
+    parse_and_consume(&mut input)
+}
+
+/// The atoms up to the end of the input, spaces being no syntax (`CompositeList.parseAndConsumeNow`).
+fn parse_and_consume(input: &mut &[u16]) -> Vec<Challenge> {
     let mut challenges = Vec::new();
     while !input.is_empty() {
         if char_at(input, 0) == ' ' {
-            jump(&mut input, 1);
+            jump(input, 1);
         } else {
-            challenges.extend(parse(&mut input));
+            challenges.extend(parse(input));
         }
     }
     challenges
@@ -75,6 +80,9 @@ fn manage_class(input: &mut &[u16]) -> Challenge {
 fn manage_quantifier(input: &mut &[u16]) -> Vec<Challenge> {
     let operator = char_at(input, 1);
     jump(input, 2);
+    if operator == 'l' {
+        return manage_quantifier_lazzy(input);
+    }
     let challenge = match operator {
         '{' => {
             let repetition = parse_repetition(input);
@@ -86,6 +94,20 @@ fn manage_quantifier(input: &mut &[u16]) -> Vec<Challenge> {
         _ => panic!("unknown quantifier 〇{operator}"),
     };
     vec![challenge]
+}
+
+/// `〇l+x rest`: as few `x` as let the rest of the list match next. The rest stays in the list, after the
+/// repetition that only peeks at it.
+fn manage_quantifier_lazzy(input: &mut &[u16]) -> Vec<Challenge> {
+    jump(input, 1);
+    let origin = parse_single(input);
+    let remaining = parse_and_consume(input);
+    let mut challenges = vec![Challenge::OneOrMoreUpTo {
+        origin: Box::new(origin),
+        stop_condition: Box::new(Challenge::List(remaining.clone())),
+    }];
+    challenges.extend(remaining);
+    challenges
 }
 
 /// `Repetition.parse`: `;`-separated counts (`3`), ranges (`2-4`) and minimums (`5+`) up to `}`.

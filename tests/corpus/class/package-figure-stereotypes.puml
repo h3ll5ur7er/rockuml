@@ -1,0 +1,23 @@
+@startuml
+package Shop <<boundary>> {
+  class Cart
+}
+package Staff <<person>> {
+  class Clerk
+}
+package Front <<actor>> {
+  class Desk
+}
+package Checkout <<usecase>> {
+  class Payment
+}
+package Api <<interface>> {
+  class Endpoint
+}
+package Logic <<control>> {
+  class Rule
+}
+Clerk --> Cart
+Desk ..> Payment
+Endpoint --> Rule
+@enduml

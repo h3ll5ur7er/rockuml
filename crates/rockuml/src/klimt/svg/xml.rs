@@ -13,6 +13,7 @@ enum XmlContent {
     Element(XmlNode),
     Text(String),
     ProcessingInstruction { target: String, data: String },
+    Comment(String),
 }
 
 impl XmlNode {
@@ -45,6 +46,10 @@ impl XmlNode {
             target: target.to_owned(),
             data: data.to_owned(),
         });
+    }
+
+    pub(super) fn append_comment(&mut self, comment: &str) {
+        self.children.push(XmlContent::Comment(comment.to_owned()));
     }
 
     pub(super) fn has_children(&self) -> bool {
@@ -91,6 +96,16 @@ impl XmlNode {
                         out.push_str(data);
                     }
                     out.push_str("?>");
+                }
+                XmlContent::Comment(comment) => {
+                    // A comment cannot hold `--`, nor end with `-`.
+                    let safe = comment.replace("--", "- -");
+                    out.push_str("<!--");
+                    out.push_str(&safe);
+                    if safe.ends_with('-') {
+                        out.push(' ');
+                    }
+                    out.push_str("-->");
                 }
             }
         }

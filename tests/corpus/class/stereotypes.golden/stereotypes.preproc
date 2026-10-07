@@ -1,0 +1,11 @@
+@startuml
+class Customer <<Entity>>
+class CustomerService <<Service>> <<Transactional>>
+interface CustomerRepository <<Repository>>
+class CustomerDto <<DTO>> {
+  name : String
+}
+CustomerService --> CustomerRepository
+CustomerRepository --> Customer
+CustomerService ..> CustomerDto
+@enduml

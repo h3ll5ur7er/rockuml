@@ -1,8 +1,14 @@
+use super::{CreoleMode, CreoleParser, SheetBlock1, SheetBlock2};
+use crate::java;
 use crate::jaws::{
     BLOCK_E1_BREAKLINE, BLOCK_E1_NEWLINE, BLOCK_E1_NEWLINE_LEFT_ALIGN,
     BLOCK_E1_NEWLINE_RIGHT_ALIGN, BLOCK_E1_REAL_BACKSLASH,
 };
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::font::FontConfiguration;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::sprite::SpriteContainer;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 
 /// Marks a quote PlantUML keeps out of the text.
@@ -144,6 +150,45 @@ impl Display {
         self.map_lines(|line| line.replace(from, to))
     }
 
+    /// `<<stereotypes>>` in the lines read as `«stereotypes»`; the visibility character starting the first
+    /// line goes when `manage_visibility_modifier`, as it shows as an icon.
+    #[must_use]
+    pub(crate) fn manage_guillemet(&self, manage_visibility_modifier: bool) -> Self {
+        let mut result = self.map_lines(super::parser::manage_guillemet);
+        if manage_visibility_modifier
+            && let Some(first) = self.lines.first()
+            && VisibilityModifier::is_visibility_character(first)
+        {
+            let rest: String = first.chars().skip(1).collect();
+            result.lines[0] = super::parser::manage_guillemet(java::trim(&rest));
+        }
+        result
+    }
+
+    /// `appended` goes before the first line.
+    ///
+    /// # Panics
+    ///
+    /// If there is no first line.
+    #[must_use]
+    pub(crate) fn append_first_line(&self, appended: &str) -> Self {
+        let mut result = self.clone();
+        result.lines[0].insert_str(0, appended);
+        result
+    }
+
+    /// `<generic>` after the last line.
+    #[must_use]
+    pub(crate) fn add_generic(&self, generic: &str) -> Self {
+        let mut result = self.clone();
+        let generic = format!("<{generic}>");
+        match result.lines.last_mut() {
+            Some(last) => last.push_str(&generic),
+            None => result.lines.push(generic),
+        }
+        result
+    }
+
     #[must_use]
     pub(crate) fn underlined(&self) -> Self {
         self.map_lines(|line| format!("<u>{line}"))
@@ -163,6 +208,24 @@ impl Display {
 
     pub(crate) fn natural_alignment(&self) -> Option<HorizontalAlignment> {
         self.natural_alignment
+    }
+
+    /// The display drawn in `font`, its lines wrapping beyond `max_width` unless it is 0 (`Display.create0`;
+    /// `create`, `create7` and `create8` call it).
+    pub(crate) fn create0(
+        &self,
+        font: &FontConfiguration,
+        alignment: HorizontalAlignment,
+        sprites: &dyn SpriteContainer,
+        max_width: f64,
+        mode: CreoleMode,
+    ) -> SheetBlock2 {
+        let alignment = self.natural_alignment.unwrap_or(alignment);
+        let sheet = CreoleParser::with_mode(font.clone(), alignment, mode, sprites)
+            .create_display_sheet(self, font);
+        SheetBlock2::new(
+            SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
+        )
     }
 
     pub(crate) fn is_single_empty_line(&self) -> bool {
@@ -191,6 +254,20 @@ mod tests {
             display.natural_alignment(),
             Some(HorizontalAlignment::Right)
         );
+    }
+
+    #[test]
+    fn package_names_join_on_the_first_line() {
+        let display = Display::create(["b", "second"]).append_first_line("a.");
+        assert_eq!(display.lines(), ["a.b", "second"]);
+    }
+
+    #[test]
+    fn stereotypes_in_labels_get_guillemets() {
+        let display = Display::create(["uses <<friend>>"]).manage_guillemet(false);
+        assert_eq!(display.lines(), ["uses \u{AB}friend\u{BB}"]);
+        let display = Display::create(["+ uses <<friend>>"]).manage_guillemet(true);
+        assert_eq!(display.lines(), ["uses \u{AB}friend\u{BB}"]);
     }
 
     #[test]

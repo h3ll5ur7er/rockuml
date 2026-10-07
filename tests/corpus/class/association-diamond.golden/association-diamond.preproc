@@ -1,0 +1,9 @@
+@startuml
+class Player
+class Team
+class Season
+<> membership
+Player -- membership
+Team -- membership
+Season -- membership
+@enduml

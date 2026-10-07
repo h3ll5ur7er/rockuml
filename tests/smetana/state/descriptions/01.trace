@@ -1,0 +1,88 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "3.329695071740327" ""
+agsafeset node "sh0006" "height" "0.6944444444444444" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "2.913056216117674" ""
+agsafeset node "sh0007" "height" "0.8611111111111112" ""
+agnode graph "g" "sh0008"
+agsafeset node "sh0008" "shape" "box" ""
+agsafeset node "sh0008" "width" "3.6775622961491177" ""
+agsafeset node "sh0008" "height" "0.6944444444444444" ""
+agnode graph "g" "sh0009"
+agsafeset node "sh0009" "shape" "box" ""
+agsafeset node "sh0009" "width" "0.2777777777777778" ""
+agsafeset node "sh0009" "height" "0.2777777777777778" ""
+agedge graph "g" node "sh0009" node "sh0006"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "sh0006" node "sh0007"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+agsafeset edge e2 "label" dim(70,17) ""
+agedge graph "g" node "sh0007" node "sh0008"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "1" ""
+agsafeset edge e3 "label" dim(114,17) ""
+agedge graph "g" node "sh0008" node "sh0006"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "1" ""
+agsafeset edge e4 "label" dim(69,17) ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 6
+node "sh0006" rank 2
+node "sh0007" rank 4
+node "sh0008" rank 6
+node "sh0009" rank 0
+agedge graph "g" node "sh0006" node "sh0008"
+phase mincross
+rank 0 "sh0009"
+rank 1 v1
+rank 2 "sh0006"
+rank 3 v2 v3
+rank 4 "sh0007" v4
+rank 5 v5 v6
+rank 6 "sh0008"
+phase position
+node "sh0009" rank 0 coord 0.0 317.0 lw 10.0 rw 10.0 ht 24.0
+node v1 rank 1 coord 0.0 286.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0006" rank 2 coord 0.0 243.0 lw 120.0 rw 120.0 ht 50.0
+node v2 rank 3 coord -70.0 191.5 lw 18.0 rw 70.0 ht 17.0
+node v3 rank 3 coord 43.0 191.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0007" rank 4 coord -98.0 134.0 lw 105.0 rw 105.0 ht 62.0
+node v4 rank 4 coord 43.0 134.0 lw 18.0 rw 69.0 ht 17.0
+node v5 rank 5 coord -92.0 76.5 lw 18.0 rw 114.0 ht 17.0
+node v6 rank 5 coord 43.0 76.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0008" rank 6 coord -25.0 25.0 lw 132.5 rw 132.5 ht 50.0
+graph "g" bb -203.0 0.0 120.0 329.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 304.75 0.0 295.0205078125 0.0 280.6162986755371 0.0 268.2755388170481
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -24.07137943963548 217.78235472699896 -29.686954128349583 212.0116528139426 -35.60182831982442 205.83378334373398 -41.0 200.0 -51.397626078282926 188.7633255436055 -62.55853303559039 176.16196735324414 -72.22383289669301 165.0672572826606
+edge e2 label pos -6.0 191.5 dimen 70.0 17.0 set 1
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -96.71291920026718 102.72185899753558 -95.0478561342658 91.11154434700506 -91.67224348457349 78.21221575944432 -85.0 68.0 -80.61851904031015 61.29391545591801 -74.75982021312389 55.34487227923576 -68.41632352367458 50.18639896129563
+edge e3 label pos -28.0 76.5 dimen 114.0 17.0 set 1
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 15.193131495591125 50.160019566656715 20.772856233319978 55.321545422491155 25.7125962000775 61.278444794450095 29.0 68.0 54.77528484136373 120.70116193334206 46.45779928688131 143.99104516386024 29.0 200.0 27.048757786022467 206.26006951054597 23.802420738719448 212.41043574937007 20.172755755807874 217.9914474853817
+edge e4 label pos 79.5 134.0 dimen 69.0 17.0 set 1
+phase final
+graph "g" bb 0.0 0.0 323.0 329.0
+node "sh0006" coord 203.0 243.0 width 3.3333333333333335 height 0.6944444444444444 lw 120.0 rw 120.0 ht 50.0
+node "sh0007" coord 105.0 134.0 width 2.9166666666666665 height 0.8611111111111112 lw 105.0 rw 105.0 ht 62.0
+node "sh0008" coord 178.0 25.0 width 3.6805555555555554 height 0.6944444444444444 lw 132.5 rw 132.5 ht 50.0
+node "sh0009" coord 203.0 317.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 203.0 304.75 203.0 295.0205078125 203.0 280.6162986755371 203.0 268.2755388170481
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 178.92862056036452 217.78235472699896 173.31304587165042 212.0116528139426 167.39817168017558 205.83378334373398 162.0 200.0 151.60237392171706 188.7633255436055 140.4414669644096 176.16196735324414 130.776167103307 165.0672572826606
+edge e2 label pos 197.0 191.5 dimen 70.0 17.0 set 1
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 106.28708079973282 102.72185899753558 107.9521438657342 91.11154434700506 111.32775651542651 78.21221575944432 118.0 68.0 122.38148095968985 61.29391545591801 128.24017978687613 55.34487227923576 134.58367647632542 50.18639896129563
+edge e3 label pos 175.0 76.5 dimen 114.0 17.0 set 1
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 218.19313149559113 50.160019566656715 223.77285623331997 55.321545422491155 228.71259620007748 61.278444794450095 232.0 68.0 257.7752848413637 120.70116193334206 249.4577992868813 143.99104516386024 232.0 200.0 230.04875778602246 206.26006951054597 226.80242073871943 212.41043574937007 223.17275575580788 217.9914474853817
+edge e4 label pos 282.5 134.0 dimen 69.0 17.0 set 1

@@ -26,9 +26,8 @@ use super::component::{
 };
 use crate::color::Colors;
 use crate::creole::Display;
-use crate::klimt::font::StringBounder;
-use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
-use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::blocks::TextBlockHorizontal;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 
@@ -69,30 +68,6 @@ fn message_text(
         ),
         right: creole_text(label.display.lines(), font, alignment, max_width, skin),
     })
-}
-
-/// Two blocks side by side, centred vertically (`TextBlockUtils.mergeLR`).
-struct TextBlockHorizontal {
-    left: Box<dyn TextBlock>,
-    right: Box<dyn TextBlock>,
-}
-
-impl TextBlock for TextBlockHorizontal {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let left = self.left.calculate_dimension(string_bounder);
-        let right = self.right.calculate_dimension(string_bounder);
-        XDimension2D::new(left.width + right.width, left.height.max(right.height))
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        let total = self.calculate_dimension(ug.string_bounder());
-        let mut x = 0.0;
-        for block in [&self.left, &self.right] {
-            let dimension = block.calculate_dimension(ug.string_bounder());
-            block.draw_u(&ug.translated(x, (total.height - dimension.height) / 2.0));
-            x += dimension.width;
-        }
-    }
 }
 
 /// The label and style every message arrow shares. The style's wrap width wins over `maxMessageSize`.
@@ -234,7 +209,7 @@ pub(crate) fn create_component_note(
             let text = if display.is_single_empty_line() {
                 Box::new(TextBlockEmpty::default()) as Box<dyn TextBlock>
             } else {
-                enhanced_text(display, font, alignment, style, skin)
+                enhanced_text(display, font, alignment, style.wrap_width(), style, skin)
             };
             Box::new(ComponentRoseNote::new(
                 TextualPart::new(text, text_padding),

@@ -1,0 +1,15 @@
+@startuml
+abstract class Repository {
+  {static} instances : int
+  {classifier} DEFAULT_SIZE : int
+  {abstract} find(id : Long) : Entity
+  {abstract} save(e : Entity)
+  {static} create() : Repository
+  count() : int
+}
+class JdbcRepository {
+  find(id : Long) : Entity
+  save(e : Entity)
+}
+Repository <|-- JdbcRepository
+@enduml

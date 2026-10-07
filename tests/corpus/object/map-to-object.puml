@@ -1,0 +1,15 @@
+@startuml
+object Config {
+  version = 2
+}
+map Settings {
+  theme => dark
+  lang => en
+}
+map Limits {
+  cpu => 2
+  memory => 4G
+}
+Config --> Settings
+Settings --> Limits
+@enduml

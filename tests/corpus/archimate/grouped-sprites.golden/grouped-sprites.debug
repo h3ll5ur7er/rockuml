@@ -1,0 +1,982 @@
+DPI: 96
+dimension: [ 309.0000 ; 322.0000 ]
+scaleFactor: 1.0000
+seed: -7824932263924165602
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: cluster channel
+RECTANGLE:
+  pt1: [ 14.0000 ; 12.0000 ]
+  pt2: [ 302.0000 ; 143.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffcc
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 7.1910 ; 3.8600 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.1698 ; 3.8703 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.1502 ; 3.8623 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.7310 ; 3.9088 ]
+     pt2: [ 0.9848 ; 6.7263 ]
+     pt3: [ 1.0255 ; 10.1456 ]
+   - type: SEG_CUBICTO
+     pt1: [ 1.0662 ; 13.5649 ]
+     pt2: [ 3.8791 ; 16.3156 ]
+     pt3: [ 7.2985 ; 16.2806 ]
+   - type: SEG_CUBICTO
+     pt1: [ 8.2542 ; 16.2706 ]
+     pt2: [ 9.1584 ; 16.0444 ]
+     pt3: [ 9.9640 ; 15.6486 ]
+   - type: SEG_CUBICTO
+     pt1: [ 10.8065 ; 16.0624 ]
+     pt2: [ 11.7549 ; 16.2908 ]
+     pt3: [ 12.7556 ; 16.2806 ]
+   - type: SEG_CUBICTO
+     pt1: [ 16.1750 ; 16.2456 ]
+     pt2: [ 18.9296 ; 13.4379 ]
+     pt3: [ 18.9004 ; 10.0184 ]
+   - type: SEG_CUBICTO
+     pt1: [ 18.8712 ; 6.5990 ]
+     pt2: [ 16.0676 ; 3.8367 ]
+     pt3: [ 12.6481 ; 3.8601 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.6346 ; 3.8741 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.6072 ; 3.8622 ]
+   - type: SEG_CUBICTO
+     pt1: [ 11.6593 ; 3.8751 ]
+     pt2: [ 10.7629 ; 4.1011 ]
+     pt3: [ 9.9634 ; 4.4937 ]
+   - type: SEG_CUBICTO
+     pt1: [ 9.1267 ; 4.0821 ]
+     pt2: [ 8.1848 ; 3.8533 ]
+     pt3: [ 7.1910 ; 3.8601 ]
+   - type: SEG_MOVETO
+     pt1: [ 12.6325 ; 4.8506 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.6563 ; 4.8606 ]
+   - type: SEG_CUBICTO
+     pt1: [ 15.5360 ; 4.8409 ]
+     pt2: [ 17.8759 ; 7.1471 ]
+     pt3: [ 17.9004 ; 10.0267 ]
+   - type: SEG_CUBICTO
+     pt1: [ 17.9249 ; 12.9063 ]
+     pt2: [ 15.6237 ; 15.2512 ]
+     pt3: [ 12.7441 ; 15.2806 ]
+   - type: SEG_CUBICTO
+     pt1: [ 12.1345 ; 15.2866 ]
+     pt2: [ 11.5486 ; 15.1888 ]
+     pt3: [ 11.0036 ; 15.0031 ]
+   - type: SEG_CUBICTO
+     pt1: [ 12.5003 ; 13.8562 ]
+     pt2: [ 13.4605 ; 12.0447 ]
+     pt3: [ 13.4432 ; 10.0184 ]
+   - type: SEG_CUBICTO
+     pt1: [ 13.4262 ; 8.0309 ]
+     pt2: [ 12.4717 ; 6.2656 ]
+     pt3: [ 11.0041 ; 5.1402 ]
+   - type: SEG_CUBICTO
+     pt1: [ 11.5115 ; 4.9674 ]
+     pt2: [ 12.0552 ; 4.8704 ]
+     pt3: [ 12.6211 ; 4.8627 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.6324 ; 4.8508 ]
+   - type: SEG_MOVETO
+     pt1: [ 7.1832 ; 4.8546 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.1992 ; 4.8606 ]
+   - type: SEG_CUBICTO
+     pt1: [ 7.8032 ; 4.8566 ]
+     pt2: [ 8.3835 ; 4.9548 ]
+     pt3: [ 8.9236 ; 5.1392 ]
+   - type: SEG_CUBICTO
+     pt1: [ 7.4202 ; 6.2906 ]
+     pt2: [ 6.4582 ; 8.1115 ]
+     pt3: [ 6.4824 ; 10.1456 ]
+   - type: SEG_CUBICTO
+     pt1: [ 6.5060 ; 12.1259 ]
+     pt2: [ 7.4594 ; 13.8817 ]
+     pt3: [ 8.9220 ; 15.0022 ]
+   - type: SEG_CUBICTO
+     pt1: [ 8.4090 ; 15.1771 ]
+     pt2: [ 7.8595 ; 15.2749 ]
+     pt3: [ 7.2870 ; 15.2807 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.4074 ; 15.3101 ]
+     pt2: [ 2.0596 ; 13.0133 ]
+     pt3: [ 2.0253 ; 10.1337 ]
+   - type: SEG_CUBICTO
+     pt1: [ 1.9910 ; 7.2542 ]
+     pt2: [ 4.2845 ; 4.9019 ]
+     pt3: [ 7.1640 ; 4.8627 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.1831 ; 4.8547 ]
+   - type: SEG_MOVETO
+     pt1: [ 9.9644 ; 5.6293 ]
+   - type: SEG_CUBICTO
+     pt1: [ 11.4403 ; 6.5371 ]
+     pt2: [ 12.4274 ; 8.1620 ]
+     pt3: [ 12.4433 ; 10.0270 ]
+   - type: SEG_CUBICTO
+     pt1: [ 12.4595 ; 11.9245 ]
+     pt2: [ 11.4654 ; 13.5894 ]
+     pt3: [ 9.9618 ; 14.5130 ]
+   - type: SEG_CUBICTO
+     pt1: [ 8.4906 ; 13.6090 ]
+     pt2: [ 7.5045 ; 11.9935 ]
+     pt3: [ 7.4824 ; 10.1345 ]
+   - type: SEG_CUBICTO
+     pt1: [ 7.4597 ; 8.2303 ]
+     pt2: [ 8.4549 ; 6.5561 ]
+     pt3: [ 9.9644 ; 5.6293 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Online channel
+  position: [ 60.3097 ; 44.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity sales
+RECTANGLE:
+  pt1: [ 37.5000 ; 163.0000 ]
+  pt2: [ 116.2877 ; 217.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffcc
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 13.7290 ; 3.5000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.4009 ; 3.9746 ]
+   - type: SEG_LINETO
+     pt1: [ 13.4263 ; 6.6113 ]
+   - type: SEG_LINETO
+     pt1: [ 0.8693 ; 6.6153 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.3693 ; 7.1153 ]
+   - type: SEG_LINETO
+     pt1: [ 0.3654 ; 13.1641 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.8673 ; 13.6641 ]
+   - type: SEG_LINETO
+     pt1: [ 13.3963 ; 13.6172 ]
+   - type: SEG_LINETO
+     pt1: [ 13.3963 ; 15.9434 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 14.2791 ; 16.2637 ]
+   - type: SEG_LINETO
+     pt1: [ 19.2732 ; 10.3106 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 19.2752 ; 9.6700 ]
+   - type: SEG_LINETO
+     pt1: [ 14.2850 ; 3.6505 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.7284 ; 3.5001 ]
+   - type: SEG_MOVETO
+     pt1: [ 14.4145 ; 5.3730 ]
+   - type: SEG_LINETO
+     pt1: [ 18.2408 ; 9.9882 ]
+   - type: SEG_LINETO
+     pt1: [ 14.3969 ; 14.5683 ]
+   - type: SEG_LINETO
+     pt1: [ 14.3969 ; 13.1152 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.8950 ; 12.6152 ]
+   - type: SEG_LINETO
+     pt1: [ 1.3660 ; 12.6621 ]
+   - type: SEG_LINETO
+     pt1: [ 1.3699 ; 7.6152 ]
+   - type: SEG_LINETO
+     pt1: [ 13.9309 ; 7.6112 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 14.4309 ; 7.1073 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Sales
+  position: [ 47.5000 ; 203.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity shop
+RECTANGLE:
+  pt1: [ 177.0000 ; 163.0000 ]
+  pt2: [ 250.6671 ; 217.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffc2f0ff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 18.7600 ; 4.6390 ]
+   - type: SEG_LINETO
+     pt1: [ 3.9340 ; 4.6860 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 3.4343 ; 5.1857 ]
+   - type: SEG_LINETO
+     pt1: [ 3.4343 ; 6.6233 ]
+   - type: SEG_LINETO
+     pt1: [ 0.9461 ; 6.6037 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.4417 ; 7.1039 ]
+   - type: SEG_LINETO
+     pt1: [ 0.4417 ; 9.0392 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.9420 ; 9.5395 ]
+   - type: SEG_LINETO
+     pt1: [ 3.4225 ; 9.5395 ]
+   - type: SEG_LINETO
+     pt1: [ 3.3987 ; 10.5823 ]
+   - type: SEG_LINETO
+     pt1: [ 0.8991 ; 10.5626 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.3952 ; 11.0628 ]
+   - type: SEG_LINETO
+     pt1: [ 0.3952 ; 12.9981 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.8949 ; 13.4984 ]
+   - type: SEG_LINETO
+     pt1: [ 3.3873 ; 13.4984 ]
+   - type: SEG_LINETO
+     pt1: [ 3.3873 ; 16.5003 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 3.8876 ; 17.0005 ]
+   - type: SEG_LINETO
+     pt1: [ 18.7606 ; 17.0470 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 19.2624 ; 16.5473 ]
+   - type: SEG_LINETO
+     pt1: [ 19.2624 ; 5.1393 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 18.7606 ; 4.6391 ]
+   - type: SEG_MOVETO
+     pt1: [ 18.2618 ; 5.6410 ]
+   - type: SEG_LINETO
+     pt1: [ 18.2618 ; 16.0450 ]
+   - type: SEG_LINETO
+     pt1: [ 4.3868 ; 16.0021 ]
+   - type: SEG_LINETO
+     pt1: [ 4.3868 ; 13.4984 ]
+   - type: SEG_LINETO
+     pt1: [ 6.8812 ; 13.4984 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.3810 ; 12.9982 ]
+   - type: SEG_LINETO
+     pt1: [ 7.3810 ; 11.1099 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.8849 ; 10.6096 ]
+   - type: SEG_LINETO
+     pt1: [ 4.3987 ; 10.5900 ]
+   - type: SEG_LINETO
+     pt1: [ 4.4225 ; 9.5394 ]
+   - type: SEG_LINETO
+     pt1: [ 6.9278 ; 9.5394 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 7.4280 ; 9.0392 ]
+   - type: SEG_LINETO
+     pt1: [ 7.4280 ; 7.1504 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.9319 ; 6.6507 ]
+   - type: SEG_LINETO
+     pt1: [ 4.4339 ; 6.6310 ]
+   - type: SEG_LINETO
+     pt1: [ 4.4339 ; 5.6838 ]
+   - type: SEG_MOVETO
+     pt1: [ 1.4418 ; 7.6078 ]
+   - type: SEG_LINETO
+     pt1: [ 6.4281 ; 7.6466 ]
+   - type: SEG_LINETO
+     pt1: [ 6.4281 ; 8.5395 ]
+   - type: SEG_LINETO
+     pt1: [ 1.4418 ; 8.5395 ]
+   - type: SEG_MOVETO
+     pt1: [ 1.3948 ; 11.5667 ]
+   - type: SEG_LINETO
+     pt1: [ 6.3811 ; 11.6060 ]
+   - type: SEG_LINETO
+     pt1: [ 6.3811 ; 12.4984 ]
+   - type: SEG_LINETO
+     pt1: [ 1.3948 ; 12.4984 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Shop
+  position: [ 187.0000 ; 203.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity cloud
+RECTANGLE:
+  pt1: [ 165.5000 ; 253.0000 ]
+  pt2: [ 262.6741 ; 307.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffc9ffc9
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 6.0230 ; 2.9000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 5.7186 ; 2.9992 ]
+   - type: SEG_LINETO
+     pt1: [ 1.6176 ; 6.0745 ]
+   - type: SEG_LINETO
+     pt1: [ 1.6032 ; 6.0854 ]
+   - type: SEG_LINETO
+     pt1: [ 1.6037 ; 6.0859 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 1.4021 ; 6.4880 ]
+   - type: SEG_LINETO
+     pt1: [ 1.4492 ; 15.2358 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 1.9473 ; 15.7318 ]
+   - type: SEG_LINETO
+     pt1: [ 13.8743 ; 15.7788 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 14.3105 ; 15.5267 ]
+   - type: SEG_LINETO
+     pt1: [ 18.2534 ; 12.4468 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 18.4446 ; 12.0525 ]
+   - type: SEG_LINETO
+     pt1: [ 18.4446 ; 3.4918 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 17.9485 ; 2.9915 ]
+   - type: SEG_MOVETO
+     pt1: [ 6.1832 ; 3.8999 ]
+   - type: SEG_LINETO
+     pt1: [ 16.4572 ; 3.9800 ]
+   - type: SEG_LINETO
+     pt1: [ 13.7127 ; 6.0321 ]
+   - type: SEG_LINETO
+     pt1: [ 3.3957 ; 5.9913 ]
+   - type: SEG_MOVETO
+     pt1: [ 17.4452 ; 4.4911 ]
+   - type: SEG_LINETO
+     pt1: [ 17.4452 ; 11.8080 ]
+   - type: SEG_LINETO
+     pt1: [ 14.3767 ; 14.2073 ]
+   - type: SEG_LINETO
+     pt1: [ 14.3767 ; 6.7824 ]
+   - type: SEG_MOVETO
+     pt1: [ 2.4042 ; 6.9876 ]
+   - type: SEG_LINETO
+     pt1: [ 13.3762 ; 7.0310 ]
+   - type: SEG_LINETO
+     pt1: [ 13.3762 ; 14.7768 ]
+   - type: SEG_LINETO
+     pt1: [ 2.4462 ; 14.7339 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Cloud
+  position: [ 175.5000 ; 293.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity order
+RECTANGLE:
+  pt1: [ 30.0000 ; 73.0000 ]
+  pt2: [ 123.9242 ; 127.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffcc
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 1.1200 ; 6.4100 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.7805 ; 7.2771 ]
+   - type: SEG_LINETO
+     pt1: [ 5.2061 ; 11.3699 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.7446 ; 11.7806 ]
+     pt2: [ 3.9582 ; 12.4821 ]
+     pt3: [ 3.1731 ; 13.1910 ]
+   - type: SEG_CUBICTO
+     pt1: [ 2.5627 ; 13.7423 ]
+     pt2: [ 1.9532 ; 14.2972 ]
+     pt3: [ 1.4952 ; 14.7263 ]
+   - type: SEG_CUBICTO
+     pt1: [ 1.2662 ; 14.9409 ]
+     pt2: [ 1.0751 ; 15.1238 ]
+     pt3: [ 0.9366 ; 15.2633 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.8673 ; 15.3330 ]
+     pt2: [ 0.8124 ; 15.3900 ]
+     pt3: [ 0.7645 ; 15.4452 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.7406 ; 15.4728 ]
+     pt2: [ 0.7189 ; 15.4972 ]
+     pt3: [ 0.6906 ; 15.5387 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.6764 ; 15.5595 ]
+     pt2: [ 0.6597 ; 15.5837 ]
+     pt3: [ 0.6379 ; 15.6328 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.6270 ; 15.6574 ]
+     pt2: [ 0.6154 ; 15.6887 ]
+     pt3: [ 0.6048 ; 15.7397 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.5998 ; 15.7652 ]
+     pt2: [ 0.5929 ; 15.8332 ]
+     pt3: [ 0.5929 ; 15.8338 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.5929 ; 15.8345 ]
+     pt2: [ 0.6103 ; 15.9739 ]
+     pt3: [ 0.6105 ; 15.9744 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5001 ; 0.5001 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 1.0932 ; 16.3454 ]
+   - type: SEG_LINETO
+     pt1: [ 13.7432 ; 16.3454 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.7472 ; 16.3454 ]
+   - type: SEG_CUBICTO
+     pt1: [ 16.4343 ; 16.3206 ]
+     pt2: [ 18.5943 ; 14.0675 ]
+     pt3: [ 18.5733 ; 11.3380 ]
+   - type: SEG_CUBICTO
+     pt1: [ 18.5521 ; 8.6102 ]
+     pt2: [ 16.3613 ; 6.3942 ]
+     pt3: [ 13.6764 ; 6.4101 ]
+   - type: SEG_CUBICTO
+     pt1: [ 13.6754 ; 6.4101 ]
+     pt2: [ 13.6744 ; 6.4101 ]
+     pt3: [ 13.6724 ; 6.4101 ]
+   - type: SEG_LINETO
+     pt1: [ 13.6664 ; 6.4101 ]
+   - type: SEG_MOVETO
+     pt1: [ 2.3974 ; 7.4099 ]
+   - type: SEG_LINETO
+     pt1: [ 13.6724 ; 7.4099 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.6764 ; 7.4099 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 13.6804 ; 7.4099 ]
+   - type: SEG_CUBICTO
+     pt1: [ 15.8134 ; 7.3974 ]
+     pt2: [ 17.5556 ; 9.1456 ]
+     pt3: [ 17.5727 ; 11.3456 ]
+   - type: SEG_CUBICTO
+     pt1: [ 17.5898 ; 13.5435 ]
+     pt2: [ 15.8793 ; 15.3200 ]
+     pt3: [ 13.7492 ; 15.3454 ]
+   - type: SEG_CUBICTO
+     pt1: [ 13.7472 ; 15.3455 ]
+     pt2: [ 13.7452 ; 15.3454 ]
+     pt3: [ 13.7432 ; 15.3454 ]
+   - type: SEG_LINETO
+     pt1: [ 2.2992 ; 15.3454 ]
+   - type: SEG_CUBICTO
+     pt1: [ 2.7362 ; 14.9380 ]
+     pt2: [ 3.2785 ; 14.4423 ]
+     pt3: [ 3.8423 ; 13.9331 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.9658 ; 12.9185 ]
+     pt2: [ 6.0937 ; 11.9168 ]
+     pt3: [ 6.2592 ; 11.7699 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3171 ; 11.7167 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3977 ; 11.5963 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3987 ; 11.5943 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4214 ; 11.5390 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4254 ; 11.5261 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4388 ; 11.4755 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4408 ; 11.4600 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4468 ; 11.4150 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4478 ; 11.3871 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4473 ; 11.3483 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4443 ; 11.3256 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4383 ; 11.2832 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4313 ; 11.2543 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4233 ; 11.2249 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.4088 ; 11.1867 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3998 ; 11.1640 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3326 ; 11.0591 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3316 ; 11.0581 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.3226 ; 11.0467 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 6.2663 ; 10.9919 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Order
+  position: [ 40.0000 ; 113.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity web
+RECTANGLE:
+  pt1: [ 142.5000 ; 73.0000 ]
+  pt2: [ 285.5052 ; 127.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffcc
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 12.4950 ; 3.3300 ]
+   - type: SEG_CUBICTO
+     pt1: [ 9.1568 ; 3.3754 ]
+     pt2: [ 6.4614 ; 6.0618 ]
+     pt3: [ 6.3734 ; 9.3710 ]
+   - type: SEG_LINETO
+     pt1: [ 1.0006 ; 9.3710 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.5009 ; 9.8707 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 1.0006 ; 10.3709 ]
+   - type: SEG_LINETO
+     pt1: [ 6.4271 ; 10.3709 ]
+   - type: SEG_CUBICTO
+     pt1: [ 6.8382 ; 13.4299 ]
+     pt2: [ 9.4805 ; 15.7822 ]
+     pt3: [ 12.6433 ; 15.7499 ]
+   - type: SEG_CUBICTO
+     pt1: [ 16.0627 ; 15.7149 ]
+     pt2: [ 18.8189 ; 12.9056 ]
+     pt3: [ 18.7897 ; 9.4862 ]
+   - type: SEG_CUBICTO
+     pt1: [ 18.7605 ; 6.0668 ]
+     pt2: [ 15.9574 ; 3.3066 ]
+     pt3: [ 12.5379 ; 3.3300 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.5260 ; 3.3414 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.4950 ; 3.3300 ]
+   - type: SEG_MOVETO
+     pt1: [ 12.5182 ; 4.3201 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.5436 ; 4.3301 ]
+   - type: SEG_CUBICTO
+     pt1: [ 15.4233 ; 4.3104 ]
+     pt2: [ 17.7652 ; 6.6166 ]
+     pt3: [ 17.7898 ; 9.4962 ]
+   - type: SEG_CUBICTO
+     pt1: [ 17.8143 ; 12.3758 ]
+     pt2: [ 15.5131 ; 14.7207 ]
+     pt3: [ 12.6335 ; 14.7502 ]
+   - type: SEG_CUBICTO
+     pt1: [ 9.7539 ; 14.7796 ]
+     pt2: [ 7.4041 ; 12.4812 ]
+     pt3: [ 7.3697 ; 9.6017 ]
+   - type: SEG_CUBICTO
+     pt1: [ 7.3353 ; 6.7222 ]
+     pt2: [ 9.6289 ; 4.3694 ]
+     pt3: [ 12.5084 ; 4.3302 ]
+   - type: SEG_ARCTO
+     radius: [ 0.5000 ; 0.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 12.5182 ; 4.3202 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text: Webshop
+  position: [ 152.5000 ; 113.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 77.0000 ; 162.9190 ]
+   - [ 81.0000 ; 153.9190 ]
+   - [ 77.0000 ; 157.9190 ]
+   - [ 73.0000 ; 153.9190 ]
+   - [ 77.0000 ; 162.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 71.0000 ; 121.4029 ]
+   - type: SEG_CUBICTO
+     pt1: [ 71.0000 ; 132.6421 ]
+     pt2: [ 71.0000 ; 140.7152 ]
+     pt3: [ 71.0000 ; 151.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 214.0000 ; 162.9190 ]
+   - [ 218.0000 ; 153.9190 ]
+   - [ 214.0000 ; 157.9190 ]
+   - [ 210.0000 ; 153.9190 ]
+   - [ 214.0000 ; 162.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 208.0000 ; 121.4029 ]
+   - type: SEG_CUBICTO
+     pt1: [ 208.0000 ; 132.6421 ]
+     pt2: [ 208.0000 ; 140.7152 ]
+     pt3: [ 208.0000 ; 151.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 214.0000 ; 252.9190 ]
+   - [ 218.0000 ; 243.9190 ]
+   - [ 214.0000 ; 247.9190 ]
+   - [ 210.0000 ; 243.9190 ]
+   - [ 214.0000 ; 252.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 208.0000 ; 211.4029 ]
+   - type: SEG_CUBICTO
+     pt1: [ 208.0000 ; 222.6421 ]
+     pt2: [ 208.0000 ; 230.7152 ]
+     pt3: [ 208.0000 ; 241.9190 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

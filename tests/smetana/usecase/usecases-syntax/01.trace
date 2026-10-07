@@ -1,0 +1,74 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "3.460783972377176" ""
+agsafeset node "sh0006" "height" "0.7588234611421019" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "3.1505904841075942" ""
+agsafeset node "sh0007" "height" "0.6967847634881856" ""
+agnode graph "g" "sh0008"
+agsafeset node "sh0008" "shape" "box" ""
+agsafeset node "sh0008" "width" "0.8282717334986671" ""
+agsafeset node "sh0008" "height" "0.3583193037947685" ""
+agnode graph "g" "sh0009"
+agsafeset node "sh0009" "shape" "box" ""
+agsafeset node "sh0009" "width" "2.208882150752249" ""
+agsafeset node "sh0009" "height" "0.5084430968171164" ""
+agnode graph "g" "sh0010"
+agsafeset node "sh0010" "shape" "box" ""
+agsafeset node "sh0010" "width" "3.156080345069752" ""
+agsafeset node "sh0010" "height" "0.6978827356806172" ""
+agedge graph "g" node "sh0006" node "sh0007"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "0" ""
+agedge graph "g" node "sh0007" node "sh0008"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "0" ""
+agedge graph "g" node "sh0006" node "sh0009"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "1" ""
+agedge graph "g" node "sh0009" node "sh0010"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "0" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "sh0006" rank 0
+node "sh0007" rank 0
+node "sh0008" rank 0
+node "sh0009" rank 1
+node "sh0010" rank 1
+phase mincross
+rank 0 "sh0006" "sh0007" "sh0008"
+rank 1 "sh0009" "sh0010"
+phase position
+node "sh0006" rank 0 coord 1.0 113.5 lw 124.5 rw 124.5 ht 55.0
+node "sh0007" rank 0 coord 257.0 113.5 lw 113.5 rw 113.5 ht 50.0
+node "sh0008" rank 0 coord 419.0 113.5 lw 30.0 rw 30.0 ht 26.0
+node "sh0009" rank 1 coord 1.0 25.0 lw 79.5 rw 79.5 ht 37.0
+node "sh0010" rank 1 coord 212.0 25.0 lw 113.5 rw 113.5 ht 50.0
+graph "g" bb -123.5 0.0 449.0 141.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 125.75 113.5 131.64599609375 113.5 137.5419921875 113.5 143.43798828125 113.5
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 370.58984375 113.5 376.64111328125 113.5 382.6923828125 113.5 388.74365234375 113.5
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 85.60501784086227 1.0 71.91699612187222 1.0 55.66584730961404 1.0 43.59252284327229
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 80.537109375 25.0 86.44266891479492 25.0 92.34822845458984 25.0 98.25378799438477 25.0
+phase final
+graph "g" bb 0.0 0.0 572.5 141.0
+node "sh0006" coord 124.5 113.5 width 3.4583333333333335 height 0.7638888888888888 lw 124.5 rw 124.5 ht 55.0
+node "sh0007" coord 380.5 113.5 width 3.1527777777777777 height 0.6944444444444444 lw 113.5 rw 113.5 ht 50.0
+node "sh0008" coord 542.5 113.5 width 0.8333333333333334 height 0.3611111111111111 lw 30.0 rw 30.0 ht 26.0
+node "sh0009" coord 124.5 25.0 width 2.2083333333333335 height 0.5138888888888888 lw 79.5 rw 79.5 ht 37.0
+node "sh0010" coord 335.5 25.0 width 3.1527777777777777 height 0.6944444444444444 lw 113.5 rw 113.5 ht 50.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 249.25 113.5 255.14599609375 113.5 261.0419921875 113.5 266.93798828125 113.5
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 494.08984375 113.5 500.14111328125 113.5 506.1923828125 113.5 512.24365234375 113.5
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 124.5 85.60501784086227 124.5 71.91699612187222 124.5 55.66584730961404 124.5 43.59252284327229
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 204.037109375 25.0 209.94266891479492 25.0 215.84822845458984 25.0 221.75378799438477 25.0

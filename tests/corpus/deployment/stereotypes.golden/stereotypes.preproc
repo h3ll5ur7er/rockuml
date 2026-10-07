@@ -1,0 +1,9 @@
+@startuml
+node server <<Linux>>
+node client <<Windows>>
+artifact app <<executable>>
+database db <<PostgreSQL>>
+client --> server
+server --> app
+app --> db
+@enduml

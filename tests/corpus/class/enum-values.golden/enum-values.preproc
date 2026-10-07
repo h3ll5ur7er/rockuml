@@ -1,0 +1,22 @@
+@startuml
+enum Weekday {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
+enum Status {
+  ACTIVE
+  SUSPENDED
+  CLOSED
+  --
+  isOpen() : boolean
+}
+class Schedule {
+  day : Weekday
+  status : Status
+}
+Schedule --> Weekday
+Schedule --> Status
+@enduml

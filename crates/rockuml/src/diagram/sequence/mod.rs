@@ -9,15 +9,18 @@ mod teoz;
 
 use std::rc::Rc;
 
+use super::builder::CommandFactory;
 use super::diagram_type::DiagramType;
-use super::error::ErrorDiagram;
-use super::titled::{Positioned, Titled, TitledDiagram};
+use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::{DisplayPositioned, EntityPortion};
 use crate::color::{Colors, HColor};
-use crate::command::{CommandError, CommandResult, factory};
+use crate::command::factory::AbstractDiagram;
+use crate::command::{Command, CommandError, CommandResult};
 use crate::creole::Display;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::stereo::Stereotype;
 use crate::style::SName;
 use autonumber::AutoNumber;
@@ -29,7 +32,7 @@ use model::{
 // The flags are independent settings, each mirroring a field of PlantUML's `SequenceDiagram`.
 #[allow(clippy::struct_excessive_bools)]
 pub(crate) struct SequenceDiagram {
-    source: UmlSource,
+    source: Rc<UmlSource>,
     titled: Titled,
     /// Every participant ever declared; `ParticipantId`s index it.
     participants: Vec<Participant>,
@@ -40,7 +43,7 @@ pub(crate) struct SequenceDiagram {
     englobers: Vec<ParticipantEnglober>,
     events: Vec<Event>,
     /// The titles of the pages after the first.
-    page_titles: Vec<Positioned>,
+    page_titles: Vec<DisplayPositioned>,
     last_event_with_deactivate: Option<EventId>,
     last_delay: Option<EventId>,
     pending_create: Option<EventId>,
@@ -55,6 +58,8 @@ pub(crate) struct SequenceDiagram {
     current_englober: Option<usize>,
     autoactivate: bool,
     link_anchors: Vec<LinkAnchor>,
+    /// What `hide stereotype` hid of every participant, as a set.
+    hidden_portions: Vec<EntityPortion>,
 }
 
 /// `{start} <-> {end} : text`, a duration between two anchored messages.
@@ -68,15 +73,24 @@ impl TitledDiagram for SequenceDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.titled
     }
+
+    fn sequence_diagram(&mut self) -> Option<&mut SequenceDiagram> {
+        Some(self)
+    }
 }
 
-impl SequenceDiagram {
-    /// The diagram, the error image for its first faulty line, or nothing if the lines are no sequence
-    /// diagram.
-    pub(crate) fn create(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
-        let mut diagram = Self {
-            titled: Titled::new(SName::SequenceDiagram, "SEQUENCE", &source),
-            source,
+/// Reads sequence diagrams (PlantUML's `SequenceDiagramFactory`).
+pub(super) struct SequenceDiagramFactory;
+
+impl CommandFactory for SequenceDiagramFactory {
+    type Diagram = SequenceDiagram;
+
+    const DIAGRAM_TYPE: DiagramType = DiagramType::Sequence;
+
+    fn create_empty_diagram(source: &Rc<UmlSource>) -> SequenceDiagram {
+        SequenceDiagram {
+            titled: Titled::new(SName::SequenceDiagram, "SEQUENCE", source),
+            source: source.clone(),
             participants: Vec::new(),
             order: Vec::new(),
             englober_of: Vec::new(),
@@ -95,26 +109,41 @@ impl SequenceDiagram {
             current_englober: None,
             autoactivate: false,
             link_anchors: Vec::new(),
-        };
-        let lines = diagram.source.lines().to_vec();
-        if let Err(failure) = factory::execute_lines(&lines, &mut diagram, &commands::commands()) {
-            if failure.error.message == "Syntax Error?" {
-                return Err(NotYetPorted("diagram types other than sequence"));
-            }
-            return Ok(Box::new(ErrorDiagram::new(
-                diagram.source,
-                failure.trace,
-                &failure.error.message,
-                Some(DiagramType::Sequence),
-            )));
+            hidden_portions: Vec::new(),
         }
-        if diagram.hide_unlinked {
-            diagram.remove_hidden_participants();
+    }
+
+    fn init_commands_list() -> Vec<Box<dyn Command<SequenceDiagram>>> {
+        commands::commands()
+    }
+}
+
+impl AbstractDiagram for SequenceDiagram {
+    fn check_final_error(&mut self) -> Option<String> {
+        if self.hide_unlinked {
+            self.remove_hidden_participants();
         }
-        if diagram.order.is_empty() {
-            return Err(NotYetPorted("diagram types other than sequence"));
+        None
+    }
+
+    /// Lines without participants are some other diagram.
+    fn is_incomplete(&self) -> bool {
+        self.order.is_empty()
+    }
+}
+
+impl SequenceDiagram {
+    /// `hide` or `show` of portions of every participant (`hideOrShow`).
+    pub(crate) fn hide_or_show(&mut self, portions: &[EntityPortion], show: bool) {
+        self.hidden_portions
+            .retain(|hidden| !portions.contains(hidden));
+        if !show {
+            self.hidden_portions.extend_from_slice(portions);
         }
-        Ok(Box::new(diagram))
+    }
+
+    pub(crate) fn is_hidden_portion(&self, portion: EntityPortion) -> bool {
+        self.hidden_portions.contains(&portion)
     }
 
     pub(crate) fn participant(&self, id: ParticipantId) -> &Participant {
@@ -296,7 +325,7 @@ impl SequenceDiagram {
         &self.events[id]
     }
 
-    pub(crate) fn newpage(&mut self, title: Positioned) {
+    pub(crate) fn newpage(&mut self, title: DisplayPositioned) {
         if self.ignore_newpage {
             return;
         }
@@ -596,6 +625,7 @@ impl Diagram for SequenceDiagram {
     }
 
     fn export_settings(&self) -> ExportSettings {
-        self.titled.export_settings(self.source.seed(), 5.0)
+        self.titled
+            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(5.0))
     }
 }

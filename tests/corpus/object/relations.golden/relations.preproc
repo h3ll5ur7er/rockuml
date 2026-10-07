@@ -1,0 +1,14 @@
+@startuml
+object Car
+object Engine
+object Wheel1
+object Wheel2
+object Owner
+object Garage
+Car *-- Engine
+Car o-- Wheel1
+Car o-- Wheel2
+Owner --> Car : owns
+Garage .. Car
+Owner <|-- Garage
+@enduml

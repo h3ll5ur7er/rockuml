@@ -1,0 +1,7 @@
+@startuml
+component [Billing] <<service>>
+component [Ledger] <<library>>
+interface IPay <<rest>>
+[Billing] --> [Ledger]
+IPay - [Billing]
+@enduml

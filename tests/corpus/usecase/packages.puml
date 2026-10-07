@@ -1,0 +1,14 @@
+@startuml
+actor Guest
+package "Online Store" {
+  usecase "Browse catalog" as UC1
+  usecase "Search" as UC2
+}
+package Backoffice {
+  usecase "Manage stock" as UC3
+}
+actor Clerk
+Guest --> UC1
+Guest --> UC2
+Clerk --> UC3
+@enduml

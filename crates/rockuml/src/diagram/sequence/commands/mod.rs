@@ -10,13 +10,13 @@ use super::SequenceDiagram;
 use super::model::{LifeEventType, LiveColors, ParticipantId};
 use crate::color::{ColorType, Colors, HColor};
 use crate::command::{Command, CommandError, CommandResult};
-use crate::diagram::common_commands::common_commands;
+use crate::diagram::common_commands::add_common_commands1;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::unquoted;
 
 pub(super) fn commands() -> Vec<Box<dyn Command<SequenceDiagram>>> {
-    let mut commands = common_commands();
+    let mut commands = add_common_commands1();
     commands.extend([
         misc::hide_unlinked(),
         misc::activate(),
@@ -62,14 +62,12 @@ pub(super) fn commands() -> Vec<Box<dyn Command<SequenceDiagram>>> {
 /// The pattern of a participant name: a code, or anything quoted.
 const PARTICIPANT_CODE_OR_QUOTED: &str = r"([%pLN_.@]+|[%g][^%g]+[%g])";
 
-/// `UrlBuilder.OPTIONAL`.
 fn optional_url() -> RegexTree {
-    RegexTree::optional(RegexTree::named(12, "URL", Url::command_pattern()))
+    Url::optional_pattern()
 }
 
-/// `ColorParser.simpleColor`: an optional colour specification named `COLOR`.
 fn optional_colors() -> RegexTree {
-    RegexTree::named(1, "COLOR", format!("({})?", crate::color::COLORS_REGEXP))
+    crate::color::optional_pattern("COLOR")
 }
 
 /// `HColorSet.getColor`: an unknown colour fails the command.
@@ -78,7 +76,7 @@ fn color_named(text: &str) -> Result<HColor, CommandError> {
 }
 
 fn no_such_color() -> CommandError {
-    CommandError::new("No such color")
+    CommandError::bad_color()
 }
 
 /// The colours a `COLOR` specification gives, the main one painting the background.

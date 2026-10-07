@@ -1,8 +1,12 @@
 //! The components drawing each part of the diagram, with the styles PlantUML gives them (the
 //! `createComponent` calls of PlantUML's teoz tiles).
 
+use std::rc::Rc;
+
+use crate::abel::EntityPortion;
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::decoration::symbol::USymbols;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
     GroupingLeaf, GroupingStart, Labelled, LiveColors, MessageCommon, Note, NoteStyle,
@@ -35,7 +39,7 @@ use crate::skin::rose::separators::{
     ComponentRoseDelayText, ComponentRoseDivider, ComponentRoseNewpage,
 };
 use crate::skin::rose::{self, MessageLabel, NoteShape};
-use crate::skin::symbol::{Boundary, Control, EntityDomain, SmallDatabase, SmallQueue};
+use crate::skin::symbol::{Boundary, Control, EntityDomain};
 use crate::style::{PName, SName, StyleBuilder, ValueReading};
 
 /// The display of a participant as its boxes show it: underlined if the skin asks for it, with its
@@ -48,8 +52,10 @@ fn participant_display(diagram: &SequenceDiagram, participant: ParticipantId) ->
         model.display.clone()
     };
     match &model.stereotype {
-        Some((stereotype, top)) => display.with_stereotype(stereotype.clone(), *top),
-        None => display,
+        Some((stereotype, top)) if !diagram.is_hidden_portion(EntityPortion::Stereotype) => {
+            display.with_stereotype(stereotype.clone(), *top)
+        }
+        _ => display,
     }
 }
 
@@ -81,9 +87,13 @@ pub(super) fn participant_component(
                 style.margin(),
             ))
         }
-        ParticipantType::Queue => Box::new(ComponentRoseQueue::new(Box::new(SmallQueue::new(
-            text_block, fashion,
-        )))),
+        ParticipantType::Queue => Box::new(ComponentRoseQueue::new(USymbols::QUEUE.as_small(
+            empty_block(XDimension2D::default()),
+            Rc::from(text_block),
+            empty_block(XDimension2D::default()),
+            fashion,
+            HorizontalAlignment::Center,
+        ))),
         ParticipantType::Actor => with_symbol(
             text_block,
             diagram.skin().actor_style().text_block(fashion),
@@ -97,16 +107,20 @@ pub(super) fn participant_component(
             with_symbol(text_block, Box::new(EntityDomain::new(fashion)), head)
         }
         ParticipantType::Database => {
-            let room = Box::new(TextBlockEmpty {
-                dimension: XDimension2D::new(16.0, 17.0),
-            });
-            with_symbol(
-                text_block,
-                Box::new(SmallDatabase::new(room, fashion)),
-                head,
-            )
+            let cylinder = USymbols::DATABASE.as_small(
+                empty_block(XDimension2D::default()),
+                empty_block(XDimension2D::new(16.0, 17.0)),
+                empty_block(XDimension2D::default()),
+                fashion,
+                HorizontalAlignment::Center,
+            );
+            with_symbol(text_block, cylinder, head)
         }
     }
+}
+
+fn empty_block(dimension: XDimension2D) -> Rc<dyn TextBlock> {
+    Rc::new(TextBlockEmpty { dimension })
 }
 
 fn with_symbol(

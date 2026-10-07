@@ -1,0 +1,11 @@
+@startuml
+component comp1 [
+This component
+has a long comment
+on several lines
+]
+component comp2 [
+Short text
+]
+comp1 --> comp2
+@enduml

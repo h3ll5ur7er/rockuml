@@ -1,0 +1,11 @@
+@startuml
+class Order
+class Customer
+class Invoice
+class Payment
+Customer --> Order : +places
+Order --> Invoice : -bills
+Invoice ..> Payment : #settles
+Payment --> Customer : ~refunds
+Order --> Payment : no icon
+@enduml

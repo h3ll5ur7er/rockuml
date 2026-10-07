@@ -1,0 +1,11 @@
+@startuml
+actor Customer
+usecase "Checkout" as CO
+usecase "Pay" as PAY
+usecase "Apply coupon" as CP
+usecase "Log in" as LI
+Customer --> CO
+CO .> PAY : include
+CO ..> LI : <<include>>
+CP .> CO : extends
+@enduml

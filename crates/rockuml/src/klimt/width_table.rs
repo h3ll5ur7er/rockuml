@@ -20,6 +20,10 @@ impl StringBounder for StringBounderFromWidthTable {
         let width: f64 = text.chars().map(char_width).sum();
         XDimension2D::new(width * size / REFERENCE_SIZE, size)
     }
+
+    fn shared(&self) -> std::rc::Rc<dyn StringBounder> {
+        std::rc::Rc::new(Self)
+    }
 }
 
 /// A character's width as a fraction of the font size.

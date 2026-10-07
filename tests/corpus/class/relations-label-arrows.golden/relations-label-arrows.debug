@@ -1,0 +1,400 @@
+DPI: 96
+dimension: [ 263.5000 ; 378.0000 ]
+scaleFactor: 1.0000
+seed: 7983689328010410105
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Driver
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 110.1478 ; 60.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 32.0000 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 10.0000 ; 17.0000 ]
+  pt2: [ 32.0000 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 21.0000 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 32.0000 ; 21.0000 ]
+  pt2: [ 110.1478 ; 35.0000 ]
+
+TEXT:
+  text: Driver
+  position: [ 35.0000 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 109.1478 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 18.0000 ; 52.0000 ]
+
+LINE:
+  pt1: [ 7.0000 ; 52.0000 ]
+  pt2: [ 109.1478 ; 52.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 52.0000 ]
+  pt2: [ 18.0000 ; 60.0000 ]
+
+COMMENT: class Car
+RECTANGLE:
+  pt1: [ 15.0000 ; 113.0000 ]
+  pt2: [ 100.5146 ; 161.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 15.0000 ; 113.0000 ]
+  pt2: [ 41.0000 ; 145.0000 ]
+
+ELLIPSE:
+  pt1: [ 19.0000 ; 118.0000 ]
+  pt2: [ 41.0000 ; 140.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 30.0000 ; 129.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 41.0000 ; 122.0000 ]
+  pt2: [ 100.5146 ; 136.0000 ]
+
+TEXT:
+  text: Car
+  position: [ 44.0000 ; 132.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 16.0000 ; 145.0000 ]
+  pt2: [ 99.5146 ; 145.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 15.0000 ; 145.0000 ]
+  pt2: [ 27.0000 ; 153.0000 ]
+
+LINE:
+  pt1: [ 16.0000 ; 153.0000 ]
+  pt2: [ 99.5146 ; 153.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 15.0000 ; 153.0000 ]
+  pt2: [ 27.0000 ; 161.0000 ]
+
+COMMENT: class Road
+RECTANGLE:
+  pt1: [ 8.5000 ; 315.0000 ]
+  pt2: [ 107.9624 ; 363.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 8.5000 ; 315.0000 ]
+  pt2: [ 34.5000 ; 347.0000 ]
+
+ELLIPSE:
+  pt1: [ 12.5000 ; 320.0000 ]
+  pt2: [ 34.5000 ; 342.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 23.5000 ; 331.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 34.5000 ; 324.0000 ]
+  pt2: [ 107.9624 ; 338.0000 ]
+
+TEXT:
+  text: Road
+  position: [ 37.5000 ; 334.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 9.5000 ; 347.0000 ]
+  pt2: [ 106.9624 ; 347.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 8.5000 ; 347.0000 ]
+  pt2: [ 20.5000 ; 355.0000 ]
+
+LINE:
+  pt1: [ 9.5000 ; 355.0000 ]
+  pt2: [ 106.9624 ; 355.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 8.5000 ; 355.0000 ]
+  pt2: [ 20.5000 ; 363.0000 ]
+
+COMMENT: class Garage
+RECTANGLE:
+  pt1: [ 113.5000 ; 214.0000 ]
+  pt2: [ 248.1019 ; 262.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 113.5000 ; 214.0000 ]
+  pt2: [ 139.5000 ; 246.0000 ]
+
+ELLIPSE:
+  pt1: [ 117.5000 ; 219.0000 ]
+  pt2: [ 139.5000 ; 241.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 128.5000 ; 230.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 139.5000 ; 223.0000 ]
+  pt2: [ 248.1019 ; 237.0000 ]
+
+TEXT:
+  text: Garage
+  position: [ 142.5000 ; 233.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 114.5000 ; 246.0000 ]
+  pt2: [ 247.1019 ; 246.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 113.5000 ; 246.0000 ]
+  pt2: [ 125.5000 ; 254.0000 ]
+
+LINE:
+  pt1: [ 114.5000 ; 254.0000 ]
+  pt2: [ 247.1019 ; 254.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 113.5000 ; 254.0000 ]
+  pt2: [ 125.5000 ; 262.0000 ]
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 52.0000 ; 54.2111 ]
+   - type: SEG_CUBICTO
+     pt1: [ 52.0000 ; 70.0991 ]
+     pt2: [ 52.0000 ; 91.0775 ]
+     pt3: [ 52.0000 ; 106.9343 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 58.0000 ; 78.0000 ]
+  pt2: [ 157.5873 ; 95.0000 ]
+
+EMPTY:
+  pt1: [ 59.0000 ; 79.0000 ]
+  pt2: [ 156.5873 ; 94.0000 ]
+
+TEXT:
+  text: drives
+  position: [ 60.0000 ; 90.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 34.6505 ; 155.2588 ]
+   - type: SEG_CUBICTO
+     pt1: [ 25.0280 ; 169.6410 ]
+     pt2: [ 14.0178 ; 188.9416 ]
+     pt3: [ 9.0000 ; 208.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.5684 ; 228.6303 ]
+     pt2: [ 3.5684 ; 235.3697 ]
+     pt3: [ 9.0000 ; 256.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 14.0178 ; 275.0584 ]
+     pt2: [ 25.0280 ; 294.3590 ]
+     pt3: [ 34.6505 ; 308.7412 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 15.0000 ; 229.5000 ]
+  pt2: [ 104.9937 ; 246.5000 ]
+
+EMPTY:
+  pt1: [ 16.0000 ; 230.5000 ]
+  pt2: [ 103.9937 ; 245.5000 ]
+
+TEXT:
+  text: runs on
+  position: [ 17.0000 ; 241.6111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 152.3426 ; 213.9343 ]
+   - [ 147.8396 ; 205.1752 ]
+   - [ 148.4476 ; 210.7993 ]
+   - [ 142.8235 ; 211.4073 ]
+   - [ 152.3426 ; 213.9343 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 80.8380 ; 155.2111 ]
+   - type: SEG_CUBICTO
+     pt1: [ 100.5777 ; 171.0991 ]
+     pt2: [ 122.7466 ; 188.9424 ]
+     pt3: [ 142.4476 ; 204.7993 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 126.0000 ; 179.0000 ]
+  pt2: [ 215.4513 ; 196.0000 ]
+
+EMPTY:
+  pt1: [ 127.0000 ; 180.0000 ]
+  pt2: [ 214.4513 ; 195.0000 ]
+
+TEXT:
+  text: parks in
+  position: [ 128.0000 ; 191.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 146.1620 ; 256.2111 ]
+   - type: SEG_CUBICTO
+     pt1: [ 126.4223 ; 272.0991 ]
+     pt2: [ 100.3583 ; 293.0775 ]
+     pt3: [ 80.6574 ; 308.9343 ]
+  stroke: 7.0-7.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 126.0000 ; 280.0000 ]
+  pt2: [ 211.6775 ; 297.0000 ]
+
+EMPTY:
+  pt1: [ 127.0000 ; 281.0000 ]
+  pt2: [ 210.6775 ; 296.0000 ]
+
+TEXT:
+  text: next to
+  position: [ 128.0000 ; 292.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

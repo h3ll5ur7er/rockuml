@@ -1,0 +1,11 @@
+@startuml
+rectangle "Datacenter" {
+  stack "Stack" {
+    queue "Inbox"
+    collections "Workers"
+  }
+  storage "SAN"
+}
+"Inbox" --> "Workers"
+"Workers" --> "SAN"
+@enduml

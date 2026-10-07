@@ -1,0 +1,7 @@
+@startuml
+class Service
+class Client
+class Monitor
+Service ()- Client
+Service -() Monitor
+@enduml

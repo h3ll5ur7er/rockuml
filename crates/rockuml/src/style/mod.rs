@@ -2,6 +2,7 @@
 //! merge by specificity and declaration order.
 
 mod from_skinparam;
+mod merged;
 mod names;
 mod parser;
 mod signature;
@@ -17,6 +18,12 @@ pub(crate) use parser::StyleParsingError;
 pub(crate) use signature::StyleSignature;
 pub(crate) use style_values::max_width;
 pub(crate) use value::{Value, ValueReading};
+
+/// The properties a line like `BackGroundColor:pink;LineColor:red` declares (`StyleParser.parseSingleLine`).
+pub(crate) fn parse_single_line(line: &str) -> Result<Style, StyleParsingError> {
+    let mut counter = 0;
+    StyleParser::new(&mut counter).parse_single_line(line)
+}
 
 /// Raised for properties of stereotype rules, so that they beat plain rules.
 const STEREOTYPE_PRIORITY: i32 = 1000;

@@ -1,0 +1,12 @@
+@startuml
+object user {
+  name = "Dummy"
+  id = 123
+  active = true
+}
+object session {
+  token = "abc"
+  expires = 3600
+}
+user --> session
+@enduml

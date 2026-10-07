@@ -1,0 +1,6 @@
+@startuml
+state Ready <<BackGroundColor:pink;LineColor:red>>
+state Error <<FontColor:red;LineColor:blue>>
+[*] --> Ready
+Ready --> Error
+@enduml

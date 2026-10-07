@@ -1,0 +1,13 @@
+@startuml
+hide empty members
+class Empty
+class Full {
+  x : int
+  f()
+}
+class OnlyField {
+  y : int
+}
+Empty --> Full
+Full --> OnlyField
+@enduml

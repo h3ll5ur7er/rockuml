@@ -1,0 +1,189 @@
+DPI: 96
+dimension: [ 219.0000 ; 164.0000 ]
+scaleFactor: 1.0000
+seed: -902499047107927885
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Customer
+ELLIPSE:
+  pt1: [ 43.8158 ; 12.5000 ]
+  pt2: [ 75.8158 ; 44.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Customer
+  position: [ 6.0000 ; 83.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Clerk
+ELLIPSE:
+  pt1: [ 152.1510 ; 12.5000 ]
+  pt2: [ 184.1510 ; 44.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Clerk
+  position: [ 132.0000 ; 83.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity UC1
+ELLIPSE:
+  pt1: [ 73.5000 ; 123.0000 ]
+  pt2: [ 154.0158 ; 148.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Buy
+  position: [ 87.4126 ; 139.3995 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 106.3061 ; 122.9605 ]
+   - [ 104.8303 ; 113.2229 ]
+   - [ 103.6137 ; 118.7474 ]
+   - [ 98.0892 ; 117.5308 ]
+   - [ 106.3061 ; 122.9605 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 77.5281 ; 81.3171 ]
+   - type: SEG_CUBICTO
+     pt1: [ 85.7135 ; 94.1258 ]
+     pt2: [ 91.6394 ; 103.3987 ]
+     pt3: [ 97.6137 ; 112.7474 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 121.6939 ; 122.9605 ]
+   - [ 129.9108 ; 117.5308 ]
+   - [ 124.3863 ; 118.7474 ]
+   - [ 123.1697 ; 113.2229 ]
+   - [ 121.6939 ; 122.9605 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 138.4719 ; 81.3171 ]
+   - type: SEG_CUBICTO
+     pt1: [ 130.2865 ; 94.1258 ]
+     pt2: [ 124.3606 ; 103.3987 ]
+     pt3: [ 118.3863 ; 112.7474 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

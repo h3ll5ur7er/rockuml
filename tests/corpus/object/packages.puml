@@ -1,0 +1,15 @@
+@startuml
+package runtime {
+  object heap {
+    used = 512
+  }
+  object stack {
+    depth = 12
+  }
+}
+package process {
+  object main
+}
+main --> heap
+main --> stack
+@enduml

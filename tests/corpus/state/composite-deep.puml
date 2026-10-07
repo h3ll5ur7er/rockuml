@@ -1,0 +1,15 @@
+@startuml
+[*] --> Running
+state Running {
+  [*] --> Loading
+  state Loading {
+    [*] --> Fetching
+    Fetching --> Parsing
+    Parsing --> [*]
+  }
+  Loading --> Ready
+  Ready --> [*]
+}
+Running --> Stopped
+Stopped --> [*]
+@enduml

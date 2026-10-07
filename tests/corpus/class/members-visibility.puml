@@ -1,0 +1,12 @@
+@startuml
+class Person {
+  - name : String
+  # age : int
+  ~ address : String
+  + email : String
+  - validate() : boolean
+  # recompute()
+  ~ helper()
+  + getName() : String
+}
+@enduml

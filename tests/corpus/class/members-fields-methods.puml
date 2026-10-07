@@ -1,0 +1,15 @@
+@startuml
+class Account {
+  id : Long
+  owner : String
+  balance : BigDecimal
+  deposit(amount : BigDecimal) : void
+  withdraw(amount : BigDecimal) : boolean
+  String toString()
+}
+class Ledger {
+  entries : List<Entry>
+  Entry last()
+}
+Ledger o-- Account
+@enduml

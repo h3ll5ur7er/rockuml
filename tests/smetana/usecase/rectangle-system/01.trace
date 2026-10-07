@@ -1,0 +1,94 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0012"
+agsafeset node "sh0012" "shape" "box" ""
+agsafeset node "sh0012" "width" "1.9382773987465727" ""
+agsafeset node "sh0012" "height" "1.0277777777777777" ""
+agnode graph "g" "sh0013"
+agsafeset node "sh0013" "shape" "box" ""
+agsafeset node "sh0013" "width" "1.253603123231782" ""
+agsafeset node "sh0013" "height" "1.0277777777777777" ""
+agsubg graph "g" "cluster6"
+agsafeset graph "cluster6" "label" dim(102,17) ""
+agsafeset graph "cluster6" "margin" "16" ""
+agnode graph "cluster6" "sh0010"
+agsafeset node "sh0010" "shape" "box" ""
+agsafeset node "sh0010" "width" "2.0552443359615684" ""
+agsafeset node "sh0010" "height" "0.4777155338589804" ""
+agnode graph "cluster6" "sh0011"
+agsafeset node "sh0011" "shape" "box" ""
+agsafeset node "sh0011" "width" "1.4700655460118288" ""
+agsafeset node "sh0011" "height" "0.3606797758690325" ""
+agnode graph "cluster6" "zent0003"
+agsafeset node "zent0003" "shape" "box" ""
+agsafeset node "zent0003" "width" "0.1" ""
+agsafeset node "zent0003" "height" "0.1" ""
+agedge graph "g" node "sh0012" node "zent0003"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "zent0003" node "sh0010"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "0" ""
+agsafeset edge e2 "label" dim(81,17) ""
+agedge graph "g" node "sh0011" node "zent0003"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "0" ""
+agsafeset edge e3 "label" dim(118,17) ""
+agedge graph "g" node "zent0003" node "sh0013"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "1" ""
+gvContext
+agsafeset graph "g" "rankdir" "LR" "LR"
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 4
+graph "cluster6" minrank 2 maxrank 2
+node "sh0012" rank 0
+node "sh0013" rank 4
+node "sh0010" rank 2
+node "sh0011" rank 2
+node "zent0003" rank 2
+phase mincross
+rank 0 "sh0012"
+rank 1 v1
+rank 2 "sh0011" "zent0003" "sh0010"
+rank 3 v2
+rank 4 "sh0013"
+phase position
+node "sh0012" rank 0 coord 1.0 394.0 lw 37.0 rw 37.0 ht 140.0
+node v1 rank 1 coord 1.0 305.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0011" rank 2 coord -59.0 207.0 lw 13.0 rw 13.0 ht 106.0
+node "zent0003" rank 2 coord 1.0 207.0 lw 12.0 rw 12.0 ht 16.0
+node "sh0010" rank 2 coord 65.0 207.0 lw 17.0 rw 17.0 ht 148.0
+node v2 rank 3 coord 1.0 108.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0013" rank 4 coord 1.0 45.0 lw 37.0 rw 37.0 ht 90.0
+graph "g" bb -96.0 0.0 131.0 464.0
+graph "cluster6" bb -88.0 117.0 123.0 297.0
+graph "cluster6" label pos 0.0 0.0 dimen 102.0 17.0 set 0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 323.84974703378975 1.0 281.9766936226806 1.0 233.2730983738843 1.0 215.21493517380625
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 13.037910461425781 207.0 22.88688063621521 207.0 36.936401911079884 207.0 47.94374774559401 207.0
+edge e2 label pos 30.5 218.5 dimen 81.0 17.0 set 1
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -45.98089361190796 207.0 -35.64115807041526 207.0 -21.288690340792527 207.0 -11.17577743677225 207.0
+edge e3 label pos -28.5 218.5 dimen 118.0 17.0 set 1
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 198.70936965942383 1.0 179.81892126053572 1.0 128.10833124532655 1.0 90.0730251556515
+phase final
+graph "g" bb 0.0 0.0 464.0 227.0
+graph "cluster6" bb 167.0 8.0 347.0 219.0
+graph "cluster6" label pos 257.0 206.5 dimen 102.0 17.0 set 1
+node "sh0012" coord 70.0 97.0 width 1.9444444444444444 height 1.0277777777777777 lw 70.0 rw 70.0 ht 74.0
+node "sh0013" coord 419.0 97.0 width 1.25 height 1.0277777777777777 lw 45.0 rw 45.0 ht 74.0
+node "sh0010" coord 257.0 161.0 width 2.0555555555555554 height 0.4722222222222222 lw 74.0 rw 74.0 ht 34.0
+node "sh0011" coord 257.0 37.0 width 1.4722222222222223 height 0.3611111111111111 lw 53.0 rw 53.0 ht 26.0
+node "zent0003" coord 257.0 97.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 140.15025296621025 97.0 182.0233063773194 97.0 230.7269016261157 97.0 248.78506482619375 97.0
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 257.0 109.03791046142578 257.0 118.88688063621521 257.0 132.93640191107988 257.0 143.943747745594
+edge e2 label pos 245.5 126.5 dimen 81.0 17.0 set 1
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 257.0 50.01910638809204 257.0 60.35884192958474 257.0 74.71130965920747 257.0 84.82422256322775
+edge e3 label pos 245.5 67.5 dimen 118.0 17.0 set 1
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 265.2906303405762 97.0 284.1810787394643 97.0 335.89166875467345 97.0 373.9269748443485 97.0

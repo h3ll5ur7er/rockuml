@@ -1,0 +1,15 @@
+@startuml
+class User {
+  id : Long
+  profile : Profile
+  roles : List<Role>
+}
+class Profile {
+  bio : String
+}
+class Role {
+  name : String
+}
+User::profile --> Profile
+User::roles --> Role
+@enduml

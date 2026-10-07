@@ -1,0 +1,35 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "3.4364148094530678" ""
+agsafeset node "sh0006" "height" "1.6388888888888888" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "2.1946463884840295" ""
+agsafeset node "sh0007" "height" "1.0555555555555556" ""
+agedge graph "g" node "sh0006" node "sh0007"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "sh0006" rank 0
+node "sh0007" rank 1
+phase mincross
+rank 0 "sh0006"
+rank 1 "sh0007"
+phase position
+node "sh0006" rank 0 coord 0.0 171.0 lw 123.5 rw 123.5 ht 118.0
+node "sh0007" rank 1 coord 0.0 38.0 lw 79.0 rw 79.0 ht 76.0
+graph "g" bb -123.5 0.0 123.5 230.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 111.77860306203365 0.0 99.75186509406194 0.0 87.39369407818594 0.0 76.35307845175839
+phase final
+graph "g" bb 0.0 0.0 247.0 230.0
+node "sh0006" coord 123.5 171.0 width 3.4305555555555554 height 1.6388888888888888 lw 123.5 rw 123.5 ht 118.0
+node "sh0007" coord 123.5 38.0 width 2.1944444444444446 height 1.0555555555555556 lw 79.0 rw 79.0 ht 76.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 123.5 111.77860306203365 123.5 99.75186509406194 123.5 87.39369407818594 123.5 76.35307845175839

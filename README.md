@@ -19,6 +19,9 @@ A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`
 ### Supported diagrams
 
 - Sequence diagrams (`@startuml`), laid out like PlantUML's teoz engine, the only sequence engine of 1.2026.8.
+- Class, object, use case, component, deployment, archimate and state diagrams (`@startuml`) and Chen ER diagrams
+  (`@startchen`), laid out by `crates/smetana`, a bit-exact port of PlantUML's Smetana (its Java translation of
+  Graphviz `dot`), so no Graphviz installation is needed.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in

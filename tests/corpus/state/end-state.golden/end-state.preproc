@@ -1,0 +1,7 @@
+@startuml
+state Active
+state Done <<end>>
+[*] --> Active
+Active --> Done : finish
+Active --> [*] : abort
+@enduml

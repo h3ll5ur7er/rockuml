@@ -24,7 +24,7 @@ const GREEN: HColor = HColor::Simple(crate::color::XColor::rgb(0x33, 0xFF, 0x02)
 const RED: HColor = HColor::Simple(crate::color::XColor::rgb(0xFF, 0x00, 0x00));
 
 pub(super) struct ErrorDiagram {
-    source: UmlSource,
+    source: Rc<UmlSource>,
     /// The lines read up to the error, the faulty one last.
     trace: Vec<StringLocated>,
     message: String,
@@ -33,7 +33,7 @@ pub(super) struct ErrorDiagram {
 impl ErrorDiagram {
     /// `diagram_type` names the diagram the lines were read as, which the message mentions.
     pub(super) fn new(
-        source: UmlSource,
+        source: impl Into<Rc<UmlSource>>,
         trace: Vec<StringLocated>,
         error: &str,
         diagram_type: Option<DiagramType>,
@@ -46,7 +46,7 @@ impl ErrorDiagram {
             None => error.to_owned(),
         };
         Self {
-            source,
+            source: source.into(),
             trace,
             message,
         }

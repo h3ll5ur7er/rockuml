@@ -13,7 +13,7 @@ use super::xml::XmlNode;
 use crate::color::{Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
-use crate::klimt::group::UGroup;
+use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::shape::{UImageSvg, USegment};
 use crate::klimt::typeface::GlyphSegment;
 
@@ -238,6 +238,32 @@ impl SvgGraphics {
         self.style_me(&mut element, "");
         self.current_group().append_child(element);
         self.ensure_visible(x + x_radius, y + y_radius);
+    }
+
+    /// The arc of an ellipse with these radii from `from` to `to`, drawn counter-clockwise.
+    pub(super) fn arc_ellipse(
+        &mut self,
+        x_radius: f64,
+        y_radius: f64,
+        (x1, y1): (f64, f64),
+        (x2, y2): (f64, f64),
+    ) {
+        let mut element = XmlNode::new("path");
+        let d = format!(
+            "M{},{} A{},{} 0 0 0 {} {}",
+            self.length(x1),
+            self.length(y1),
+            self.length(x_radius),
+            self.length(y_radius),
+            self.length(x2),
+            self.length(y2)
+        );
+        element.set_attribute("d", d);
+        self.fill_me(&mut element);
+        self.style_me(&mut element, "");
+        self.current_group().append_child(element);
+        self.ensure_visible(x1, y1);
+        self.ensure_visible(x2, y2);
     }
 
     pub(super) fn polygon(&mut self, points: &[(f64, f64)]) {
@@ -506,13 +532,17 @@ impl SvgGraphics {
         Some(scaled)
     }
 
+    pub(super) fn add_comment(&mut self, comment: &str) {
+        self.current_group().append_comment(comment);
+    }
+
     pub(super) fn start_group(&mut self, group: &UGroup) {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
             if let Some(name) = kind.svg_attribute_name() {
                 element.set_attribute(name, value);
-            } else {
+            } else if kind == UGroupType::Title {
                 let mut title = XmlNode::new("title");
                 title.set_text_content(value);
                 element.append_child(title);

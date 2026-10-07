@@ -1,0 +1,7 @@
+@startuml
+object firstObject
+object "My Second Object" as o2
+object third
+firstObject --> o2
+o2 --> third
+@enduml
