@@ -1,5 +1,6 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
+use super::image::{EntityImageNote, EntityImageTips};
 use super::{Bibliotekon, IEntityImage};
 use crate::abel::{EntityId, LeafType};
 use crate::diagram::NotYetPorted;
@@ -26,7 +27,7 @@ pub(crate) fn create_entity_image_block(
         return not_ported("EntityImageClass");
     }
     match leaf_type {
-        LeafType::Note => not_ported("EntityImageNote"),
+        LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
         LeafType::Activity => not_ported("EntityImageActivity"),
         LeafType::Portin | LeafType::Portout => not_ported("EntityImagePort"),
         LeafType::State => not_ported("EntityImageState"),
@@ -57,7 +58,7 @@ pub(crate) fn create_entity_image_block(
         LeafType::PseudoState => not_ported("EntityImagePseudoState"),
         LeafType::StateTransitionLabel => not_ported("EntityImageTransitionLabel"),
         LeafType::DeepHistory => not_ported("EntityImageDeepHistory"),
-        LeafType::Tips => not_ported("EntityImageTips"),
+        LeafType::Tips => Ok(Box::new(EntityImageTips::new(entity, diagram))),
         LeafType::ChenEntity => not_ported("EntityImageChenEntity"),
         LeafType::ChenRelationship => not_ported("EntityImageChenRelationship"),
         LeafType::ChenAttribute => not_ported("EntityImageChenAttribute"),

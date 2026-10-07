@@ -265,6 +265,14 @@ impl SkinParam {
             .unwrap_or(0.0)
     }
 
+    /// `roundCorner` when written in digits, else 0 (`getRoundCorner(CornerParam.DEFAULT, null)`).
+    pub(crate) fn get_round_corner(&self) -> f64 {
+        self.value("roundcorner")
+            .filter(|value| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit()))
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(0.0)
+    }
+
     pub(crate) fn value(&self, key: &str) -> Option<String> {
         if let Some(known) = self.looked_up.borrow().get(key) {
             return known.clone();

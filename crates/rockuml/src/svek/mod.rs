@@ -1,6 +1,7 @@
 //! What PlantUML's `svek` package holds for laying out and drawing entity diagrams.
 
 pub(crate) mod extremity;
+pub(crate) mod image;
 
 mod bibliotekon;
 mod cluster;

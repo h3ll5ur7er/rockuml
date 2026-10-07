@@ -60,12 +60,10 @@ impl SvekNode {
         self.dim_image.height
     }
 
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_min_x(&self) -> f64 {
         self.min_x.get()
     }
 
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_min_y(&self) -> f64 {
         self.min_y.get()
     }
@@ -81,7 +79,6 @@ impl SvekNode {
     }
 
     /// How far a link ending at `position`, in drawing coordinates, moves to reach the drawn outline.
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_magnetic_border_force_at(
         &self,
         string_bounder: &dyn StringBounder,
