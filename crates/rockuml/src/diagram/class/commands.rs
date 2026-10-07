@@ -661,11 +661,11 @@ pub(super) fn link_lollipop<D: NotPortedCommands + 'static>() -> Box<dyn Command
     .boxed()
 }
 
-/// PlantUML's `CommandFactoryTipOnEntity$1`.
+/// `note right of A::member {` ... `}` (`CommandFactoryTipOnEntity.createMultiLine(true)`).
 pub(super) fn tip_on_entity_multi_line_with_bracket<D: NotPortedCommands + 'static>()
 -> Box<dyn Command<D>> {
     Box::new(unported::multi_line(
-        "CommandFactoryTipOnEntity$1",
+        "CommandFactoryTipOnEntity",
         RegexTree::concat(vec![
             RegexTree::start(),
             RegexTree::leaf(r"note"),
@@ -695,10 +695,10 @@ pub(super) fn tip_on_entity_multi_line_with_bracket<D: NotPortedCommands + 'stat
     ))
 }
 
-/// PlantUML's `CommandFactoryTipOnEntity$1`.
+/// `note right of A::member` ... `end note` (`CommandFactoryTipOnEntity.createMultiLine(false)`).
 pub(super) fn tip_on_entity_multi_line<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
     Box::new(unported::multi_line(
-        "CommandFactoryTipOnEntity$1",
+        "CommandFactoryTipOnEntity",
         RegexTree::concat(vec![
             RegexTree::start(),
             RegexTree::leaf(r"note"),

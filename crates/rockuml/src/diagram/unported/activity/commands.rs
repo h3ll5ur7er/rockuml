@@ -46,10 +46,10 @@ pub(super) fn link_long_activity<D: NotPortedCommands + 'static>() -> Box<dyn Co
     )
 }
 
-/// PlantUML's `CommandFactoryNoteActivity$2`.
+/// A note in an activity diagram on one line (`CommandFactoryNoteActivity.createSingleLine`).
 pub(super) fn note_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
     unported::single_line(
-        "CommandFactoryNoteActivity$2",
+        "CommandFactoryNoteActivity",
         RegexTree::concat(vec![
             RegexTree::start(),
             RegexTree::leaf(r"note"),
@@ -67,10 +67,10 @@ pub(super) fn note_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command
     .boxed()
 }
 
-/// PlantUML's `CommandFactoryNoteActivity$1`.
+/// A note in an activity diagram up to `end note` (`CommandFactoryNoteActivity.createMultiLine`).
 pub(super) fn note_activity_multi_line<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
     Box::new(unported::multi_line(
-        "CommandFactoryNoteActivity$1",
+        "CommandFactoryNoteActivity",
         RegexTree::concat(vec![
             RegexTree::start(),
             RegexTree::leaf(r"note"),
