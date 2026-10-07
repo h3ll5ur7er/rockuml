@@ -137,18 +137,47 @@ and with the attribute values PlantUML uses, in one of three styles:
 | `json` | `jsondiagram/SmetanaForJson` | a tree of `shape=record` nodes with ports, edges leaving through `tailport=P<n>` |
 
 ```bash
-bash tools/oracle/smetana-random.sh        # seeds 1 to 300
-bash tools/oracle/smetana-random.sh 500    # seeds 1 to 500
+bash tools/oracle/smetana-random.sh        # seeds 1 to 300, plus the extra seeds
+bash tools/oracle/smetana-random.sh 500    # seeds 1 to 500, plus the extra seeds
 ```
 
-Seed `s` always gives the same graph, and its trace is `tests/smetana/random/<s>.trace` (three digits). Low seeds
-are small, plain graphs; graphs grow to 40 nodes and features get denser up to seed 200. `summary.txt` has one line
-per seed, `<seed> ok <style> nodes N edges E <features>` (`virtual` means the layout made virtual nodes), or
-`<seed> skipped <reason>` for a graph Smetana threw on (no trace). The generator avoids what PlantUML cannot build,
-such as a record graph without any label (Smetana cannot parse the default `\N` as a record).
+Seed `s` always gives the same graph, and its trace is `tests/smetana/random/<s>.trace` (at least three digits). Low
+seeds are small, plain graphs; graphs grow to 40 nodes and features get denser up to seed 200. `summary.txt` has one
+line per seed, `<seed> ok <style> nodes N edges E <features>` (`virtual` means the layout made virtual nodes), or
+`<seed> skipped <reason>` for a graph Smetana threw on or that timed out (no trace). The generator avoids what
+PlantUML cannot build, such as a record graph without any label (Smetana cannot parse the default `\N` as a record).
+
+`tests/smetana/random/extra-seeds.txt` lists higher seeds that are laid out too, because they reach code the first
+300 miss (PlantUML's position patch: skipped label constraints and `clampSkippedLabelVnodes`).
 
 One JVM lays out a batch of seeds (`BATCH`, default 50). The traces do not depend on the batch size: runs with one
 JVM per seed and with one JVM for all seeds are byte-identical.
+
+Each layout gets `SEED_TIMEOUT` seconds (default 120). Some graphs make Smetana loop forever, for example seeds 623
+and 2602: `mincross__c.flat_reorder` reverses two opposite flat edges between clusters one after the other, and
+`fastgr__c.merge_oneway` merges each into the other, so `basic_merge` follows an `ED_to_virt` cycle. PlantUML
+hangs the same way on the class diagram below. Such a seed is recorded as `skipped timeout`, and the batch's JVM is
+restarted after it.
+
+```
+@startuml
+package A {
+  class A1
+  class A2
+  class A3
+  class X
+}
+package B {
+  class B1
+  class B2
+  class B3
+  class B4
+}
+B1 - A
+X -- B
+B -- X
+@enduml
+```
 
 ## cgraph dumps
 

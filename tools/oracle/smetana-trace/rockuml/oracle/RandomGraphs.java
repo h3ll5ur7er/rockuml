@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,27 +41,56 @@ import smetana.core.Macro;
  * Seed {@code s} always gives the same graph; low seeds give small, plain graphs and features get denser up to
  * seed {@link #FULL_DENSITY_SEED}.
  * <p>
- * Usage: {@code RandomGraphs <output directory> <first seed> <last seed>}, with {@code ROCKUML_SMETANA_TRACE}
+ * Usage: {@code RandomGraphs <output directory> <timeout seconds> <seed>...}, with {@code ROCKUML_SMETANA_TRACE}
  * naming an empty staging directory. Each laid-out graph's trace is moved to {@code <output>/<seed>.trace}, and one
  * summary line per seed is printed: {@code <seed> ok <style> nodes N edges E [features]} or
  * {@code <seed> skipped <reason>}.
+ * <p>
+ * A layout that runs longer than the timeout cannot be stopped (Smetana never checks for interruption), so its
+ * seed is reported as skipped, its thread's stack goes to stderr and the JVM exits with {@link #TIMED_OUT}; the
+ * caller resumes with the seeds after it.
  */
 public final class RandomGraphs {
 	private static final int FULL_DENSITY_SEED = 200;
 	private static final int MAX_NODES = 40;
 	private static final Pattern VIRTUAL_NODE = Pattern.compile("(?m) v1( |$)");
+	/** Exit status after a seed timed out. */
+	private static final int TIMED_OUT = 3;
 
 	private RandomGraphs() {
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		final Path staging = Paths.get(System.getenv("ROCKUML_SMETANA_TRACE"));
 		final Path output = Paths.get(args[0]);
-		final int first = Integer.parseInt(args[1]);
-		final int last = Integer.parseInt(args[2]);
+		final int timeoutSeconds = Integer.parseInt(args[1]);
 		Files.createDirectories(output);
-		for (int seed = first; seed <= last; seed++)
-			System.out.print(String.format("%03d ", seed) + layOut(seed, staging, output) + "\n");
+		for (int i = 2; i < args.length; i++) {
+			final int seed = Integer.parseInt(args[i]);
+			System.out.print(String.format("%03d ", seed) + layOutWithin(timeoutSeconds, seed, staging, output) + "\n");
+			System.out.flush();
+		}
+	}
+
+	private static String layOutWithin(int timeoutSeconds, int seed, Path staging, Path output) throws Exception {
+		final FutureTask<String> task = new FutureTask<>(() -> layOut(seed, staging, output));
+		final Thread worker = new Thread(task, "seed " + seed);
+		worker.setDaemon(true);
+		worker.start();
+		try {
+			return task.get(timeoutSeconds, TimeUnit.SECONDS);
+		} catch (ExecutionException e) {
+			throw e.getCause() instanceof Exception ? (Exception) e.getCause() : e;
+		} catch (TimeoutException e) {
+			final StringBuilder stack = new StringBuilder("seed " + seed + " timed out in:\n");
+			for (StackTraceElement frame : worker.getStackTrace())
+				stack.append("\tat ").append(frame).append('\n');
+			System.err.print(stack);
+			System.out.print(String.format("%03d skipped timeout after %d s\n", seed, timeoutSeconds));
+			System.out.flush();
+			System.exit(TIMED_OUT);
+			throw e;
+		}
 	}
 
 	private static String layOut(int seed, Path staging, Path output) throws IOException {
