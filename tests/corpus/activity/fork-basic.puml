@@ -1,0 +1,13 @@
+@startuml
+start
+:Prepare the release;
+fork
+  :Build Windows;
+fork again
+  :Build Linux;
+fork again
+  :Build macOS;
+end fork
+:Publish;
+stop
+@enduml

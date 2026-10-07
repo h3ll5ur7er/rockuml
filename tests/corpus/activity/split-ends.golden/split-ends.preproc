@@ -1,0 +1,11 @@
+@startuml
+start
+:Triage the ticket;
+split
+  :Close as duplicate;
+  kill
+split again
+  :Assign to a developer;
+  stop
+end split
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+start
+if (Grade >= 90?) then (yes)
+  :A;
+(no) elseif (Grade >= 80?) then (yes)
+  :B;
+(no) elseif (Grade >= 70?) then (yes)
+  :C;
+else (no)
+  :F;
+endif
+stop
+@enduml

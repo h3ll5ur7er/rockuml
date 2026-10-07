@@ -1,0 +1,13 @@
+@startuml
+start
+switch (Payment method?)
+case (Card)
+  :Charge the card;
+case (PayPal)
+  :Redirect to PayPal;
+case (Invoice)
+  :Send an invoice;
+endswitch
+:Confirm the order;
+stop
+@enduml

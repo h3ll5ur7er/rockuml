@@ -1,0 +1,11 @@
+@startuml
+start
+:Check the input;
+if (Input empty?) then (yes)
+  :Show a hint;
+  stop
+else (no)
+  :Process the input;
+  end
+endif
+@enduml

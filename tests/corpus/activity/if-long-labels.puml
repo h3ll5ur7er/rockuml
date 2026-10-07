@@ -1,0 +1,10 @@
+@startuml
+start
+if (Is the customer\na premium member?) then (yes, premium)
+  :Apply a twenty percent discount;
+else (no, regular customer)
+  :Apply the standard price;
+endif
+:Print the invoice;
+stop
+@enduml

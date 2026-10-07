@@ -1,0 +1,16 @@
+@startuml
+start
+switch (Command)
+case (start)
+  :Start the service;
+case (stop)
+  :Stop the service;
+  stop
+case (status)
+  :Print the status;
+case (help)
+  :Print the usage;
+endswitch
+:Exit with code 0;
+stop
+@enduml

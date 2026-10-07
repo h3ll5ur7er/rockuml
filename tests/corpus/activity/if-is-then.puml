@@ -1,0 +1,11 @@
+@startuml
+start
+if (Traffic light) is (green) then
+  :Drive on;
+elseif (Traffic light) is (orange) then
+  :Slow down;
+else (red)
+  :Stop the car;
+endif
+stop
+@enduml

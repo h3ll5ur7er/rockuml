@@ -1,0 +1,12 @@
+@startuml
+start
+fork
+  :Check the stock;
+fork again
+  :Check the credit;
+fork again
+  :Check the address;
+end merge
+:Accept the order;
+stop
+@enduml

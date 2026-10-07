@@ -1,0 +1,8 @@
+@startuml
+start
+repeat :Ask for the password;
+  :Check the password;
+repeat while (Valid?) is (no) not (yes)
+:Open the session;
+stop
+@enduml

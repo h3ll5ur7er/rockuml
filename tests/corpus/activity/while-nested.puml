@@ -1,0 +1,11 @@
+@startuml
+start
+while (Rows left?) is (yes)
+  :Next row;
+  while (Columns left?) is (yes)
+    :Process the cell;
+  endwhile (no)
+  :Write the row;
+endwhile (no)
+stop
+@enduml

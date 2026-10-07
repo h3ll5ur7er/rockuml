@@ -1,0 +1,98 @@
+DPI: 96
+dimension: [ 358.1128 ; 171.0000 ]
+scaleFactor: 1.0000
+seed: 488503441165243008
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 16.0000 ]
+  pt2: [ 339.1128 ; 48.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Read the configuration
+  position: [ 26.0000 ; 35.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 18.1812 ; 68.0000 ]
+  pt2: [ 336.9316 ; 100.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Connect to the database
+  position: [ 28.1812 ; 87.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 99.0899 ; 120.0000 ]
+  pt2: [ 256.0229 ; 152.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Serve requests
+  position: [ 109.0899 ; 139.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 177.5564 ; 48.0000 ]
+  pt2: [ 177.5564 ; 68.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 173.5564 ; 58.0000 ]
+   - [ 177.5564 ; 68.0000 ]
+   - [ 181.5564 ; 58.0000 ]
+   - [ 177.5564 ; 62.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 177.5564 ; 100.0000 ]
+  pt2: [ 177.5564 ; 120.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 173.5564 ; 110.0000 ]
+   - [ 177.5564 ; 120.0000 ]
+   - [ 181.5564 ; 110.0000 ]
+   - [ 177.5564 ; 114.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

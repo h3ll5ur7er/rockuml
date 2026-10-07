@@ -1,0 +1,168 @@
+DPI: 96
+dimension: [ 247.6713 ; 250.0000 ]
+scaleFactor: 1.0000
+seed: 2500273674908112625
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 112.3357 ; 15.0000 ]
+  pt2: [ 132.3357 ; 35.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 55.0000 ]
+  pt2: [ 228.6713 ; 87.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Receive the order
+  position: [ 26.0000 ; 74.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 22.3583 ; 107.0000 ]
+  pt2: [ 222.3131 ; 139.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Check the stock
+  position: [ 32.3583 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 19.6582 ; 159.0000 ]
+  pt2: [ 225.0132 ; 191.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Ship the parcel
+  position: [ 29.6582 ; 178.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 112.3357 ; 211.0000 ]
+  pt2: [ 132.3357 ; 231.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 116.1485 ; 214.8128 ]
+  pt2: [ 128.5229 ; 227.1872 ]
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff222222
+
+LINE:
+  pt1: [ 128.5229 ; 214.8128 ]
+  pt2: [ 116.1485 ; 227.1872 ]
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff222222
+
+LINE:
+  pt1: [ 122.3357 ; 35.0000 ]
+  pt2: [ 122.3357 ; 55.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 118.3357 ; 45.0000 ]
+   - [ 122.3357 ; 55.0000 ]
+   - [ 126.3357 ; 45.0000 ]
+   - [ 122.3357 ; 49.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 122.3357 ; 87.0000 ]
+  pt2: [ 122.3357 ; 107.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 118.3357 ; 97.0000 ]
+   - [ 122.3357 ; 107.0000 ]
+   - [ 126.3357 ; 97.0000 ]
+   - [ 122.3357 ; 101.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 122.3357 ; 139.0000 ]
+  pt2: [ 122.3357 ; 159.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 118.3357 ; 149.0000 ]
+   - [ 122.3357 ; 159.0000 ]
+   - [ 126.3357 ; 149.0000 ]
+   - [ 122.3357 ; 153.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 122.3357 ; 191.0000 ]
+  pt2: [ 122.3357 ; 211.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 118.3357 ; 201.0000 ]
+   - [ 122.3357 ; 211.0000 ]
+   - [ 126.3357 ; 201.0000 ]
+   - [ 122.3357 ; 205.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

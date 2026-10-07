@@ -1,0 +1,9 @@
+@startuml
+start
+if (Debug mode?) then (yes)
+else (no)
+  :Minify the output;
+endif
+:Write the bundle;
+stop
+@enduml

@@ -1,0 +1,17 @@
+@startuml
+start
+if (Has an account?) then (yes)
+  if (Password correct?) then (yes)
+    :Log in;
+  else (no)
+    if (Attempts left?) then (yes)
+      :Ask again;
+    else (no)
+      :Lock the account;
+    endif
+  endif
+else (no)
+  :Offer to register;
+endif
+stop
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+start
+if (Online?) then (yes)
+  :Sync the data;
+else (no)
+  :Queue the changes;
+end if
+stop
+@enduml

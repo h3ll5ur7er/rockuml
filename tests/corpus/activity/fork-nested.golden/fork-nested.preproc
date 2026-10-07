@@ -1,0 +1,15 @@
+@startuml
+start
+fork
+  :Fetch the users;
+  fork
+    :Fetch the avatars;
+  fork again
+    :Fetch the settings;
+  end fork
+fork again
+  :Fetch the products;
+end fork
+:Render the page;
+stop
+@enduml

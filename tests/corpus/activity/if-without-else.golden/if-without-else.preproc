@@ -1,0 +1,9 @@
+@startuml
+start
+:Fetch the page;
+if (Cached?) then (yes)
+  :Use the cache;
+endif
+:Render the page;
+stop
+@enduml

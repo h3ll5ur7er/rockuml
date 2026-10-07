@@ -1,0 +1,11 @@
+@startuml
+split
+  -[hidden]->
+  :Order from the web shop;
+split again
+  -[hidden]->
+  :Order by phone;
+end split
+:Process the order;
+stop
+@enduml

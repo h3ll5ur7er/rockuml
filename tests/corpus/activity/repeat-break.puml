@@ -1,0 +1,13 @@
+@startuml
+start
+repeat
+  :Test something;
+  if (Something went wrong?) then (no)
+    :OK;
+    break
+  endif
+  :Alert the operator;
+repeat while (Retry?) is (yes) not (no)
+:Continue;
+stop
+@enduml

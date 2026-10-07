@@ -1,0 +1,12 @@
+@startuml
+start
+while (Queue not empty?) is (yes)
+  :Take the next job;
+  if (Shutdown requested?) then (yes)
+    break
+  endif
+  :Run the job;
+endwhile (no)
+:Release the workers;
+stop
+@enduml

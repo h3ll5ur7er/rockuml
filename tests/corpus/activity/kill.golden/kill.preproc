@@ -1,0 +1,13 @@
+@startuml
+start
+:Load the file;
+if (File valid?) then (yes)
+  :Parse the content;
+  :Store the records;
+else (no)
+  :Log the error;
+  kill
+endif
+:Report success;
+stop
+@enduml

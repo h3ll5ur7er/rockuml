@@ -1,0 +1,12 @@
+@startuml
+start
+:Accept the request;
+fork
+  :Reply to the client;
+fork again
+  :Write the audit log;
+  detach
+end fork
+:Close the connection;
+stop
+@enduml
