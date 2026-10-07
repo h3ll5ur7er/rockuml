@@ -446,6 +446,32 @@ mod tests {
         assert!(error.to_string().contains("ratio"), "{error}");
     }
 
+    /// Smetana throws in `local_cross` when a node with ports has several in-edges, which JSON-shaped record
+    /// graphs can reach.
+    #[test]
+    fn a_throw_inside_the_layout_is_an_error() {
+        let mut graph = Graph::new();
+        let root = graph.root();
+        let record = |graph: &mut Graph, name| {
+            let n = graph.node(root, name);
+            graph.set(n, "shape", "record");
+            graph.set(n, "label", "<P0>_dim_20_10_|<P1>_dim_20_10_");
+            n
+        };
+        let (a, b, c, d) = (
+            record(&mut graph, "a"),
+            record(&mut graph, "b"),
+            record(&mut graph, "c"),
+            record(&mut graph, "d"),
+        );
+        graph.edge(root, a, c);
+        graph.edge(root, b, c);
+        let e = graph.edge(root, c, d);
+        graph.set(e, "tailport", "P1");
+        let error = graph.layout().unwrap_err();
+        assert!(error.to_string().contains("local_cross"), "{error}");
+    }
+
     #[test]
     fn asking_for_a_name_twice_gives_the_same_object() {
         let mut graph = Graph::new();
