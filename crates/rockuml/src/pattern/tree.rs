@@ -3,6 +3,7 @@
 //! The pieces are concatenated into one Java regex; leaves declare how many capturing groups they hold so
 //! the positional groups of a match can be handed back under the leaves' names.
 
+use std::borrow::Cow;
 use std::sync::OnceLock;
 
 use super::JavaPattern;
@@ -16,27 +17,32 @@ pub(crate) enum RegexTree {
     Leaf {
         name: Option<&'static str>,
         group_count: usize,
-        pattern: &'static str,
+        pattern: Cow<'static, str>,
     },
     Concat(Vec<RegexTree>, OnceLock<JavaPattern>),
-    Or(Vec<RegexTree>),
+    /// A named alternation also captures what matched as a whole.
+    Or(Option<&'static str>, Vec<RegexTree>),
     Optional(Box<RegexTree>),
 }
 
 impl RegexTree {
-    pub(crate) fn leaf(pattern: &'static str) -> Self {
+    pub(crate) fn leaf(pattern: impl Into<Cow<'static, str>>) -> Self {
         Self::Leaf {
             name: None,
             group_count: 0,
-            pattern,
+            pattern: pattern.into(),
         }
     }
 
-    pub(crate) fn named(group_count: usize, name: &'static str, pattern: &'static str) -> Self {
+    pub(crate) fn named(
+        group_count: usize,
+        name: &'static str,
+        pattern: impl Into<Cow<'static, str>>,
+    ) -> Self {
         Self::Leaf {
             name: Some(name),
             group_count,
-            pattern,
+            pattern: pattern.into(),
         }
     }
 
@@ -61,21 +67,27 @@ impl RegexTree {
     }
 
     pub(crate) fn or(alternatives: Vec<RegexTree>) -> Self {
-        Self::Or(alternatives)
+        Self::Or(None, alternatives)
+    }
+
+    pub(crate) fn named_or(name: &'static str, alternatives: Vec<RegexTree>) -> Self {
+        Self::Or(Some(name), alternatives)
     }
 
     pub(crate) fn optional(part: RegexTree) -> Self {
         Self::Optional(Box::new(part))
     }
 
-    fn pattern_string(&self) -> String {
+    /// The Java regex the tree stands for, in PlantUML's dialect.
+    pub(crate) fn pattern_string(&self) -> String {
         match self {
-            Self::Leaf { pattern, .. } => (*pattern).to_owned(),
+            Self::Leaf { pattern, .. } => pattern.to_string(),
             Self::Concat(parts, _) => parts.iter().map(Self::pattern_string).collect(),
-            Self::Or(alternatives) => {
+            Self::Or(name, alternatives) => {
                 let alternatives: Vec<String> =
                     alternatives.iter().map(Self::pattern_string).collect();
-                format!("(?:{})", alternatives.join("|"))
+                let group = if name.is_some() { "" } else { "?:" };
+                format!("({group}{})", alternatives.join("|"))
             }
             Self::Optional(part) => format!("(?:{})?", part.pattern_string()),
         }
@@ -119,8 +131,14 @@ impl RegexTree {
                 }
                 result
             }
-            Self::Concat(parts, _) | Self::Or(parts) => {
+            Self::Concat(parts, _) | Self::Or(None, parts) => {
                 Self::composed_partial_match(parts.iter(), groups)
+            }
+            Self::Or(Some(name), parts) => {
+                let whole = groups.next().flatten();
+                let mut result = Self::composed_partial_match(parts.iter(), groups);
+                result.put((*name).to_owned(), vec![whole]);
+                result
             }
             Self::Optional(part) => Self::composed_partial_match([&**part], groups),
         }

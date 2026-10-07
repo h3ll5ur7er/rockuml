@@ -6,14 +6,17 @@ use crate::text::LineLocation;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum UGroupType {
     Class,
+    /// A tooltip, which SVG writes as a `<title>` child rather than an attribute.
+    Title,
     DataSourceLine,
 }
 
 impl UGroupType {
-    pub fn svg_attribute_name(self) -> &'static str {
+    pub fn svg_attribute_name(self) -> Option<&'static str> {
         match self {
-            Self::Class => "class",
-            Self::DataSourceLine => "data-source-line",
+            Self::Class => Some("class"),
+            Self::Title => None,
+            Self::DataSourceLine => Some("data-source-line"),
         }
     }
 }
@@ -30,6 +33,12 @@ impl UGroup {
         if let Some(location) = location {
             group.put(UGroupType::DataSourceLine, &location.position().to_string());
         }
+        group
+    }
+
+    pub fn singleton(kind: UGroupType, value: &str) -> Self {
+        let mut group = Self::default();
+        group.put(kind, value);
         group
     }
 

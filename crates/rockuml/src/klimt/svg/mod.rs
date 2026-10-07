@@ -47,7 +47,11 @@ impl UGraphicSvg {
         let fill = self.paint(&param.backcolor);
         let stroke = self.paint(&param.color);
         let svg = self.svg();
-        svg.set_fill_color(Some(&fill));
+        if param.backcolor == HColor::TransparentFill {
+            svg.set_invisible_fill();
+        } else {
+            svg.set_fill_color(Some(&fill));
+        }
         svg.set_stroke_color(Some(&stroke));
         apply_stroke(svg, param.stroke);
     }

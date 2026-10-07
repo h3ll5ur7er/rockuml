@@ -21,6 +21,7 @@ pub mod preproc;
 mod real;
 mod skin;
 mod stdlib;
+mod stereo;
 mod style;
 mod text;
 mod tim;

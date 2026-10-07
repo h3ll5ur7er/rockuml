@@ -31,9 +31,6 @@ impl ColorType {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct NoSuchColor(pub String);
 
-/// The pattern of one colour: `#name`, `#rrggbb` or a gradient like `#red/green`.
-pub(crate) const COLOR_REGEXP: &str = r"#\w+[-\\|/]?\w+";
-
 /// The pattern of a colour specification, single colour or `;`-separated parts.
 pub(crate) const COLORS_REGEXP: &str = concat!(
     r"(?:#(?:\w+[-\\|/]?\w+;)?(?:(?:text|back|header|line|line\.dashed|line\.dotted|line\.bold|shadowing)",

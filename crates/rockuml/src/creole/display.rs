@@ -107,6 +107,19 @@ impl Display {
         }
     }
 
+    /// Every `from` in every line becomes `to`.
+    #[must_use]
+    pub(crate) fn replace(&self, from: &str, to: &str) -> Self {
+        Self {
+            lines: self
+                .lines
+                .iter()
+                .map(|line| line.replace(from, to))
+                .collect(),
+            natural_alignment: self.natural_alignment,
+        }
+    }
+
     pub(crate) fn lines(&self) -> &[String] {
         &self.lines
     }

@@ -1,6 +1,6 @@
 @startuml
 skinparam actorStyle awesome
 actor Awesome
-actor/ Business
+actor Business
 Awesome -> Business : hello
 @enduml

@@ -57,11 +57,49 @@ impl Style {
     /// `other` declared over this style: its properties win unless declared with a lower priority.
     #[must_use]
     pub(crate) fn merge_with(&self, other: &Style) -> Style {
+        self.merge(other, false)
+    }
+
+    /// Like [`Self::merge_with`], except that properties a stereotype rule set here are kept
+    /// (`MergeStrategy.KEEP_EXISTING_VALUE_OF_STEREOTYPE`).
+    #[must_use]
+    pub(crate) fn merge_keeping_stereotype_values(&self, other: &Style) -> Style {
+        self.merge(other, true)
+    }
+
+    fn merge(&self, other: &Style, keep_stereotype_values: bool) -> Style {
         let mut properties = self.properties.clone();
         for (&name, value) in &other.properties {
-            properties.insert(name, value.merge_with(self.properties.get(&name)));
+            let previous = self.properties.get(&name);
+            if keep_stereotype_values
+                && previous.is_some_and(|previous| previous.priority() > STEREOTYPE_PRIORITY)
+            {
+                continue;
+            }
+            properties.insert(name, value.merge_with(previous));
         }
         Style::new(self.signature.merge_with(&other.signature), properties)
+    }
+
+    /// A nested rule like `group { header {} }` over this flat one like `groupHeader`, keeping only what the
+    /// nested rule sets itself rather than inherits from `nested_parent`.
+    #[must_use]
+    pub(crate) fn merge_nested_child_over(&self, nested: &Style, nested_parent: &Style) -> Style {
+        let divergent: BTreeMap<PName, Value> = nested
+            .properties
+            .iter()
+            .filter(|(name, value)| {
+                nested_parent
+                    .properties
+                    .get(name)
+                    .is_none_or(|ancestor| Some(ancestor).as_string() != Some(*value).as_string())
+            })
+            .map(|(name, value)| (*name, value.clone()))
+            .collect();
+        if divergent.is_empty() {
+            return self.clone();
+        }
+        self.merge_with(&Style::new(nested.signature.clone(), divergent))
     }
 }
 

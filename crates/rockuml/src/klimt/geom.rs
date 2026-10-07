@@ -22,6 +22,18 @@ impl XDimension2D {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct XPoint2D {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl XPoint2D {
+    pub const fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct UTranslate {
     pub dx: f64,
     pub dy: f64,
@@ -87,6 +99,20 @@ impl ClockwiseTopRightBottomLeft {
         Self::same(0.0)
     }
 
+    pub(crate) const fn top_right_bottom_left(
+        top: f64,
+        right: f64,
+        bottom: f64,
+        left: f64,
+    ) -> Self {
+        Self {
+            top,
+            right,
+            bottom,
+            left,
+        }
+    }
+
     pub(crate) const fn same(value: f64) -> Self {
         Self {
             top: value,
@@ -95,4 +121,13 @@ impl ClockwiseTopRightBottomLeft {
             left: value,
         }
     }
+}
+
+/// A vector rotated by `angle` radians, as Java's `XAffineTransform.getRotateInstance` turns it.
+pub(crate) fn rotate(x: f64, y: f64, angle: f64) -> (f64, f64) {
+    if angle == 0.0 {
+        return (x, y);
+    }
+    let (sin, cos) = angle.sin_cos();
+    (cos * x + -sin * y, sin * x + cos * y)
 }

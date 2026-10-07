@@ -144,6 +144,11 @@ impl SvgGraphics {
         self.fill = fix_color(color);
     }
 
+    /// A fill at zero opacity, which paints nothing but still catches the pointer.
+    pub(super) fn set_invisible_fill(&mut self) {
+        self.fill = "#00000000".to_owned();
+    }
+
     pub(super) fn set_stroke_color(&mut self, color: Option<&str>) {
         self.stroke = fix_color(color);
     }
@@ -421,7 +426,14 @@ impl SvgGraphics {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
-            element.set_attribute(kind.svg_attribute_name(), value);
+            match kind.svg_attribute_name() {
+                Some(name) => element.set_attribute(name, value),
+                None => {
+                    let mut title = XmlNode::new("title");
+                    title.set_text_content(value);
+                    element.append_child(title);
+                }
+            }
         }
         self.open_elements.push(element);
         self.reopen_innermost_link();

@@ -20,13 +20,29 @@ impl OutputNamer {
         }
     }
 
-    pub(crate) fn next_name(&mut self, name_from_diagram: Option<&str>) -> String {
+    /// The names of a diagram's pages; the pages after the first take the numbers of the diagrams that
+    /// follow.
+    pub(crate) fn next_names(
+        &mut self,
+        name_from_diagram: Option<&str>,
+        pages: usize,
+    ) -> Vec<String> {
         if let Some(name) = name_from_diagram {
-            return change_extension(name, self.suffix, 0);
+            return (0..pages)
+                .map(|page| change_extension(name, self.suffix, page))
+                .collect();
         }
-        let name = change_extension(&self.input_file_name, self.suffix, self.unnamed_count);
-        self.unnamed_count += 1;
-        name
+        let names = (0..pages)
+            .map(|page| {
+                change_extension(
+                    &self.input_file_name,
+                    self.suffix,
+                    self.unnamed_count + page,
+                )
+            })
+            .collect();
+        self.unnamed_count += pages;
+        names
     }
 }
 
@@ -54,9 +70,16 @@ mod tests {
     #[test]
     fn unnamed_diagrams_are_numbered_from_the_second_on() {
         let mut namer = OutputNamer::new("flow.puml", ".svg");
-        assert_eq!(namer.next_name(None), "flow.svg");
-        assert_eq!(namer.next_name(Some("named")), "named.svg");
-        assert_eq!(namer.next_name(None), "flow_001.svg");
+        assert_eq!(namer.next_names(None, 1), ["flow.svg"]);
+        assert_eq!(namer.next_names(Some("named"), 1), ["named.svg"]);
+        assert_eq!(namer.next_names(None, 1), ["flow_001.svg"]);
+    }
+
+    #[test]
+    fn pages_take_the_numbers_of_following_diagrams() {
+        let mut namer = OutputNamer::new("flow.puml", ".svg");
+        assert_eq!(namer.next_names(None, 2), ["flow.svg", "flow_001.svg"]);
+        assert_eq!(namer.next_names(None, 1), ["flow_002.svg"]);
     }
 
     #[test]

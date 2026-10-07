@@ -6,6 +6,7 @@ mod diagram_type;
 mod error;
 mod salt;
 mod scale;
+mod sequence;
 mod source;
 mod titled;
 
@@ -45,8 +46,17 @@ pub trait Diagram {
     /// The source the diagram was built from, as it was prepared for building.
     fn source(&self) -> &UmlSource;
 
-    /// Everything the diagram draws.
-    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
+    /// Everything the diagram draws on one of its pages, laid out for `string_bounder`.
+    fn text_block(
+        &self,
+        page: usize,
+        string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
+
+    /// How many images the diagram makes: sequence diagrams break into pages with `newpage`.
+    fn page_count(&self) -> usize {
+        1
+    }
 
     fn export_settings(&self) -> ExportSettings;
 
@@ -95,6 +105,7 @@ pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorte
     match diagram_type {
         Some(DiagramType::Creole) => Ok(CreoleDiagram::create(source)),
         Some(DiagramType::Salt) => Ok(salt::SaltDiagram::create(source)),
+        Some(DiagramType::Uml) => sequence::SequenceDiagram::create(source),
         _ => Err(NotYetPorted("this diagram type")),
     }
 }
@@ -135,17 +146,18 @@ pub enum ImageFormat {
 /// The image's bytes. `fonts` measure the text of formats that use fonts, and draw it in PNG.
 pub fn export(
     diagram: &dyn Diagram,
+    page: usize,
     format: ImageFormat,
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<Vec<u8>, NotYetPorted> {
     let settings = diagram.export_settings();
-    let text_block = diagram.text_block()?;
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
         ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
         ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
     };
+    let text_block = diagram.text_block(page, &string_bounder)?;
     let margin = settings.margin;
     let dimension = text_block
         .calculate_dimension(string_bounder.as_ref())

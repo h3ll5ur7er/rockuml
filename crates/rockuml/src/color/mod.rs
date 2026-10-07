@@ -5,7 +5,7 @@ mod hsl;
 mod hsluv;
 mod named;
 
-pub(crate) use colors::{COLOR_REGEXP, COLORS_REGEXP, ColorType, Colors, NoSuchColor};
+pub(crate) use colors::{COLORS_REGEXP, ColorType, Colors, NoSuchColor};
 pub(crate) use hsl::to_rgb as hsl_to_rgb;
 use named::NAMED_COLORS;
 
@@ -56,6 +56,9 @@ pub enum HColor {
     Automagic,
     Scheme,
     Gradient(Gradient),
+    /// Transparent, but SVG still fills shapes with it, at zero opacity, so that they catch the pointer
+    /// (PlantUML's `transparent(WITH_FILL_OPACITY)`).
+    TransparentFill,
 }
 
 /// A colour fading into another, like `red-blue`.
@@ -82,6 +85,7 @@ impl HColor {
 
     pub fn is_transparent(&self) -> bool {
         matches!(self, HColor::Simple(color) if color.alpha == 0)
+            || *self == HColor::TransparentFill
     }
 
     /// A colour as `parse` reads it; white when the text names none (PlantUML's `getColorOrWhite`).
@@ -210,13 +214,14 @@ impl HColor {
             HColor::Simple(color) => *color,
             HColor::Gradient(gradient) => gradient.from,
             HColor::Automagic | HColor::Scheme => XColor::rgb(0, 0, 0),
+            HColor::TransparentFill => HColor::NONE.as_xcolor(),
         }
     }
 
     /// The name of the Java class PlantUML represents the colour with.
     pub fn java_class_name(&self) -> &'static str {
         match self {
-            HColor::Simple(_) => "HColorSimple",
+            HColor::Simple(_) | HColor::TransparentFill => "HColorSimple",
             HColor::Automagic => "HColorAutomagic",
             HColor::Scheme => "HColorScheme",
             HColor::Gradient(_) => "HColorGradient",
@@ -227,6 +232,7 @@ impl HColor {
     pub fn as_string(&self) -> String {
         match self {
             HColor::Simple(color) if color.alpha == 0 => "transparent".to_owned(),
+            HColor::TransparentFill => "transparent".to_owned(),
             HColor::Simple(color) if color.alpha == 255 => {
                 format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
             }

@@ -2,7 +2,7 @@
 participant Alice #lightblue
 participant Bob #red/yellow
 actor Carol #technology
-database Db #pink;line:red;line.bold;text:red
+database Db #pink
 Alice -> Bob
 Bob -> Carol
 Carol -> Db

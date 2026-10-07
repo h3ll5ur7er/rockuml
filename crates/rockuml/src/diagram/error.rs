@@ -1,5 +1,7 @@
 //! The image PlantUML draws instead of a diagram it cannot read (PlantUML's `PSystemError`).
 
+use std::rc::Rc;
+
 use super::diagram_type::DiagramType;
 use super::source::UmlSource;
 use super::{Diagram, ExportSettings, NotYetPorted};
@@ -107,7 +109,11 @@ impl Diagram for ErrorDiagram {
         &self.source
     }
 
-    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+    fn text_block(
+        &self,
+        _page: usize,
+        _string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let bold = |color| sans_serif(14, color).with_style(FontStyle::Bold);
         let mut body = self.body_lines();
         let faulty = body.pop().expect("the body has the blank line at least");

@@ -6,6 +6,7 @@ pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
 pub(crate) mod group;
+pub(crate) mod limit_finder;
 pub(crate) mod png;
 pub(crate) mod shape;
 pub(crate) mod stencil;

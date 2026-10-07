@@ -1,7 +1,12 @@
 //! A diagram's `skinparam` settings and the styles they feed (PlantUML's `SkinParam`).
 
+pub(crate) mod arrow;
+pub(crate) mod component;
+pub(crate) mod rose;
+
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
+use std::rc::Rc;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -14,8 +19,9 @@ const DEFAULT_SKIN: &str = "plantuml.skin";
 
 #[derive(Default)]
 pub(crate) struct SkinParam {
-    /// Loaded from the default skin when first needed.
-    style_builder: OnceCell<StyleBuilder>,
+    /// Loaded from the default skin when first needed. Diagram elements keep the builder in force when they
+    /// were declared, so a change makes a new builder rather than changing the shared one.
+    style_builder: OnceCell<Rc<StyleBuilder>>,
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
@@ -24,12 +30,18 @@ pub(crate) struct SkinParam {
 impl SkinParam {
     fn style_builder(&self) -> &StyleBuilder {
         self.style_builder
-            .get_or_init(|| StyleBuilder::load_skin(DEFAULT_SKIN))
+            .get_or_init(|| Rc::new(StyleBuilder::load_skin(DEFAULT_SKIN)))
+    }
+
+    /// The rules in force now, which later changes leave untouched.
+    pub(crate) fn current_style_builder(&self) -> Rc<StyleBuilder> {
+        self.style_builder();
+        self.style_builder.get().expect("just initialised").clone()
     }
 
     fn style_builder_mut(&mut self) -> &mut StyleBuilder {
         self.style_builder();
-        self.style_builder.get_mut().expect("just initialised")
+        Rc::make_mut(self.style_builder.get_mut().expect("just initialised"))
     }
 
     pub(crate) fn merged_style(&self, element: &StyleSignature) -> Option<Style> {
@@ -51,6 +63,31 @@ impl SkinParam {
         if key.eq_ignore_ascii_case("style") && value.eq_ignore_ascii_case("strictuml") {
             self.style_builder_mut().apply_skin("strictuml.skin");
         }
+    }
+
+    fn value_is(&self, key: &str, expected: &str) -> bool {
+        self.value(key)
+            .is_some_and(|value| value.eq_ignore_ascii_case(expected))
+    }
+
+    pub(crate) fn strict_uml_style(&self) -> bool {
+        self.value_is("style", "strictuml")
+    }
+
+    pub(crate) fn response_message_below_arrow(&self) -> bool {
+        self.value_is("responsemessagebelowarrow", "true")
+    }
+
+    pub(crate) fn force_sequence_participant_underlined(&self) -> bool {
+        self.value_is("sequenceParticipant", "underline")
+    }
+
+    /// `maxMessageSize`: how wide messages may grow before they wrap, or 0.
+    pub(crate) fn max_message_size(&self) -> f64 {
+        let value = self
+            .value("wrapmessagewidth")
+            .or_else(|| self.value("maxmessagesize"));
+        crate::style::max_width(&value.unwrap_or_default())
     }
 
     pub(crate) fn value(&self, key: &str) -> Option<String> {

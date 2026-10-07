@@ -3,6 +3,8 @@
 pub(super) enum DiagramType {
     /// `@startuml`: sequence, class, activity and the other UML diagrams, told apart by their content.
     Uml,
+    /// The `@startuml` diagram its lines read as.
+    Sequence,
     Bpm,
     Board,
     Chart,
@@ -75,6 +77,7 @@ impl DiagramType {
             Self::Uml => {
                 unreachable!("`@startuml` diagrams are named by the type their content reveals")
             }
+            Self::Sequence => "sequence",
             Self::Bpm => "bpm",
             Self::Board => "board",
             Self::Chart => "chart",

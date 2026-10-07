@@ -3,11 +3,13 @@ use super::error::ErrorDiagram;
 use super::source::UmlSource;
 use super::{Diagram, ExportSettings, NotYetPorted};
 use crate::creole::{CreoleParser, SheetBlock1, SheetBlock2};
+use crate::klimt::font::StringBounder;
 use crate::klimt::font::{FontConfiguration, UFont};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::preproc::start_utils;
 use crate::text::StringLocated;
+use std::rc::Rc;
 
 /// `@startcreole`: the lines are creole markup, shown as they are.
 pub(super) struct CreoleDiagram {
@@ -50,7 +52,11 @@ impl Diagram for CreoleDiagram {
         &self.source
     }
 
-    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+    fn text_block(
+        &self,
+        _page: usize,
+        _string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let font = FontConfiguration::black_blue_true(UFont::serif(14));
         let sheet = CreoleParser::new(font, HorizontalAlignment::Left).create_sheet(&self.lines);
         // Unlike PlantUML, whose sheet has no stencil here and so cannot draw its separators.

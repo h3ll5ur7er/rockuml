@@ -5,6 +5,8 @@ mod data_source;
 mod elements;
 mod tree;
 
+use std::rc::Rc;
+
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -138,7 +140,11 @@ impl Diagram for SaltDiagram {
         &self.source
     }
 
-    fn text_block(&self) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+    fn text_block(
+        &self,
+        _page: usize,
+        _string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let lines = self.widget_lines()?;
         let mut source = DataSource::new(&lines);
         let root = top_level_element(&mut source)?;
