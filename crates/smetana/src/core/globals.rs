@@ -9,7 +9,7 @@
 use std::collections::HashMap;
 
 use crate::cdt::{Dicts, JStr};
-use crate::core::carray::{CArray, CArrays};
+use crate::core::carray::CArrays;
 use crate::core::ids::{
     AdjmatrixId, Arena, ArenaId, ClosId, EdgeId, FieldId, GraphId, NodeId, PolygonId, ShapeDescId,
     SplinesId, StrId, SubnodeId, SymId, TextlabelId,
@@ -159,7 +159,6 @@ pub struct Globals {
     pub GlobalMinRank: i32,
     pub GlobalMaxRank: i32,
     pub ReMincross: bool,
-    pub TE_list: Option<CArray<Option<EdgeId>>>,
     pub TI_list: Vec<i32>,
     pub Last_node_decomp: Option<NodeId>,
     pub Last_node_rank: Option<NodeId>,
@@ -322,7 +321,6 @@ impl Globals {
             GlobalMinRank: 0,
             GlobalMaxRank: 0,
             ReMincross: false,
-            TE_list: None,
             TI_list: Vec::new(),
             Last_node_decomp: None,
             Last_node_rank: None,
