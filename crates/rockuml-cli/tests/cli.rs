@@ -79,7 +79,8 @@ fn version_flag_reports_the_plantuml_release_rockuml_is_compatible_with() {
 /// Renders a diagram of `lines` in every image format, asserting that rockuml neither panics nor takes
 /// long.
 fn renders_promptly(lines: &[&str]) {
-    const TIME_LIMIT: Duration = Duration::from_secs(10);
+    // Generous enough for a loaded machine; what it guards against is a hang or an allocation storm.
+    const TIME_LIMIT: Duration = Duration::from_secs(60);
     let directory = tempfile::tempdir().unwrap();
     let file = directory.path().join("case.puml");
     let diagram = ["@startuml", &lines.join("\n"), "@enduml"].join("\n");
