@@ -50,7 +50,8 @@ bash tools/oracle/smetana-traces.sh path/to/x.puml   # selected cases
 
 Each case is rendered with `-f debug` (font-independent text measurement, so traces match on every machine), and
 each Smetana layout it runs writes `tests/smetana/<area>/<case>/NN.trace`, numbered from `01` in the order the
-graphs are opened. Cases that do not use Smetana get no directory. A full run deletes `tests/smetana` first.
+graphs are opened. Cases that do not use Smetana get no directory. A full run first deletes `tests/smetana`, except
+the random graphs' traces in `tests/smetana/random` (see below).
 
 ### How it is hooked in
 
@@ -122,3 +123,29 @@ fields verbatim inside the quoted string, because Smetana's record parser splits
 Two full runs produce byte-identical traces, and the debug output with tracing on equals the goldens. Smetana's
 object ids come from a JVM-wide `CString` counter (`CString.UID`), so absolute ids depend on what ran before in the
 JVM; only their relative order (creation order) affects cgraph's dictionaries. One JVM per case keeps that stable.
+
+### Random graphs
+
+The corpus gives few layouts, so `smetana-trace/rockuml/oracle/RandomGraphs.java` (compiled into the jar with the
+tracer) adds reproducible random ones. It builds each graph through the cgraph calls PlantUML makes, in the order
+and with the attribute values PlantUML uses, in one of three styles:
+
+| Style | Copied from | Graph |
+|---|---|---|
+| `cuca` | `sdot/CucaDiagramFileMakerSmetana` | boxes, nested clusters with fixed-size labels and margin 16 or 20, group core nodes (`zent…`), edges with `minlen` 0-3 and fixed-size `label`/`taillabel`/`headlabel`, self loops, multi-edges, back edges, sometimes `rankdir=LR` |
+| `git` | `gitlog/SmetanaForGit` | boxes, `ranksep=0.35`, edges with `arrowhead=normal` |
+| `json` | `jsondiagram/SmetanaForJson` | a tree of `shape=record` nodes with ports, edges leaving through `tailport=P<n>` |
+
+```bash
+bash tools/oracle/smetana-random.sh        # seeds 1 to 300
+bash tools/oracle/smetana-random.sh 500    # seeds 1 to 500
+```
+
+Seed `s` always gives the same graph, and its trace is `tests/smetana/random/<s>.trace` (three digits). Low seeds
+are small, plain graphs; graphs grow to 40 nodes and features get denser up to seed 200. `summary.txt` has one line
+per seed, `<seed> ok <style> nodes N edges E <features>` (`virtual` means the layout made virtual nodes), or
+`<seed> skipped <reason>` for a graph Smetana threw on (no trace). The generator avoids what PlantUML cannot build,
+such as a record graph without any label (Smetana cannot parse the default `\N` as a record).
+
+One JVM lays out a batch of seeds (`BATCH`, default 50). The traces do not depend on the batch size: runs with one
+JVM per seed and with one JVM for all seeds are byte-identical.

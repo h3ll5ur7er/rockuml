@@ -1,0 +1,47 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0004"
+agsafeset node "sh0004" "shape" "box" ""
+agsafeset node "sh0004" "width" "0.43959389464231957" ""
+agsafeset node "sh0004" "height" "1.1888200663728847" ""
+agnode graph "g" "sh0005"
+agsafeset node "sh0005" "shape" "box" ""
+agsafeset node "sh0005" "width" "1.422992935928235" ""
+agsafeset node "sh0005" "height" "0.6666666666666666" ""
+agsubg graph "g" "cluster2"
+agsafeset graph "cluster2" "margin" "16" ""
+agnode graph "cluster2" "sh0003"
+agsafeset node "sh0003" "shape" "box" ""
+agsafeset node "sh0003" "width" "0.962056512090041" ""
+agsafeset node "sh0003" "height" "0.6666666666666666" ""
+agedge graph "g" node "sh0003" node "sh0005"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+graph "cluster2" minrank 0 maxrank 0
+node "sh0004" rank 0
+node "sh0005" rank 1
+node "sh0003" rank 0
+phase mincross
+rank 0 "sh0004" "sh0003"
+rank 1 "sh0005"
+phase position
+node "sh0004" rank 0 coord -82.0 127.0 lw 16.0 rw 16.0 ht 86.0
+node "sh0003" rank 0 coord 1.0 127.0 lw 34.5 rw 34.5 ht 48.0
+node "sh0005" rank 1 coord 1.0 24.0 lw 51.0 rw 51.0 ht 48.0
+graph "g" bb -98.0 0.0 60.0 175.0
+graph "cluster2" bb -50.0 87.0 52.0 167.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 102.82855980098248 1.0 86.40500481060008 1.0 64.46295135315154 1.0 48.06361979756739
+phase final
+graph "g" bb 0.0 0.0 158.0 175.0
+graph "cluster2" bb 48.0 87.0 150.0 167.0
+node "sh0004" coord 16.0 127.0 width 0.4444444444444444 height 1.1944444444444444 lw 16.0 rw 16.0 ht 86.0
+node "sh0005" coord 99.0 24.0 width 1.4166666666666667 height 0.6666666666666666 lw 51.0 rw 51.0 ht 48.0
+node "sh0003" coord 99.0 127.0 width 0.9583333333333334 height 0.6666666666666666 lw 34.5 rw 34.5 ht 48.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 99.0 102.82855980098248 99.0 86.40500481060008 99.0 64.46295135315154 99.0 48.06361979756739
