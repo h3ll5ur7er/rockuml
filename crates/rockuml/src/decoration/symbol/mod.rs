@@ -32,6 +32,7 @@ mod usecase;
 use std::rc::Rc;
 
 pub(crate) use package_style::PackageStyle;
+pub(crate) use usecase::TextBlockInEllipse;
 
 use crate::klimt::blocks::TextBlockVertical;
 use crate::klimt::fashion::Fashion;

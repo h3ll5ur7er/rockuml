@@ -54,6 +54,17 @@ impl StyleSignature {
         }
     }
 
+    /// The signature with style names a stereotype gives as `<<<name>>>`, as written (`with(Stereostyles)`).
+    #[must_use]
+    pub(crate) fn with_stereostyles(&self, names: &[String]) -> Self {
+        let mut stereotypes = self.stereotypes.clone();
+        stereotypes.extend(names.iter().cloned());
+        Self {
+            stereotypes,
+            ..self.clone()
+        }
+    }
+
     #[must_use]
     pub(crate) fn with_level(&self, level: i32) -> Self {
         Self {

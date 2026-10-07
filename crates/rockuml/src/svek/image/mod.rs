@@ -1,6 +1,7 @@
 //! The images of entities (PlantUML's `svek.image` package).
 
 mod association;
+mod chen;
 mod class;
 mod entity_image_note;
 mod entity_image_note_link;
@@ -12,8 +13,14 @@ mod object;
 mod opale;
 
 pub(crate) use association::{EntityImageAssociation, EntityImageAssociationPoint};
+pub(crate) use chen::{
+    EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
+    EntityImageChenRelationship,
+};
 pub(crate) use class::EntityImageClass;
-pub(crate) use entity_image_note::{EntityImageNote, OpaleLink};
+pub(crate) use entity_image_note::EntityImageNote;
+#[cfg(test)]
+pub(crate) use entity_image_note::OpaleLink;
 pub(crate) use entity_image_note_link::EntityImageNoteLink;
 pub(crate) use entity_image_tips::EntityImageTips;
 pub(crate) use json::EntityImageJson;

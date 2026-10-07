@@ -1,10 +1,11 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
 use super::image::{
-    EntityImageAssociation, EntityImageAssociationPoint, EntityImageClass, EntityImageJson,
-    EntityImageLollipopInterface, EntityImageMap, EntityImageObject,
+    EntityImageAssociation, EntityImageAssociationPoint, EntityImageChenAttribute,
+    EntityImageChenCircle, EntityImageChenEntity, EntityImageChenRelationship, EntityImageClass,
+    EntityImageJson, EntityImageLollipopInterface, EntityImageMap, EntityImageNote,
+    EntityImageObject, EntityImageTips,
 };
-use super::image::{EntityImageNote, EntityImageTips};
 use super::{Bibliotekon, IEntityImage};
 use crate::abel::{EntityId, LeafType};
 use crate::diagram::NotYetPorted;
@@ -65,10 +66,12 @@ pub(crate) fn create_entity_image_block(
         LeafType::StateTransitionLabel => not_ported("EntityImageTransitionLabel"),
         LeafType::DeepHistory => not_ported("EntityImageDeepHistory"),
         LeafType::Tips => Ok(Box::new(EntityImageTips::new(entity, diagram))),
-        LeafType::ChenEntity => not_ported("EntityImageChenEntity"),
-        LeafType::ChenRelationship => not_ported("EntityImageChenRelationship"),
-        LeafType::ChenAttribute => not_ported("EntityImageChenAttribute"),
-        LeafType::ChenCircle => not_ported("EntityImageChenCircle"),
+        LeafType::ChenEntity => Ok(Box::new(EntityImageChenEntity::new(entity, diagram))),
+        LeafType::ChenRelationship => {
+            Ok(Box::new(EntityImageChenRelationship::new(entity, diagram)))
+        }
+        LeafType::ChenAttribute => Ok(Box::new(EntityImageChenAttribute::new(entity, diagram))),
+        LeafType::ChenCircle => Ok(Box::new(EntityImageChenCircle::new(entity, diagram))),
         LeafType::Domain | LeafType::Requirement => not_ported("EntityImageDomain"),
         // PlantUML has no image for the other kinds and fails.
         _ => not_ported("GeneralImageBuilder"),

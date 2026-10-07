@@ -107,13 +107,13 @@ impl HorizontalLineDrawer for EllipseLines {
 
 /// A text block in the smallest ellipse around it, a little bigger, about as much higher than wide as the text
 /// (PlantUML's `TextBlockInEllipse`).
-struct TextBlockInEllipse<T> {
+pub(crate) struct TextBlockInEllipse<T> {
     text: T,
     ellipse: ContainingEllipse,
 }
 
 impl<T: TextBlock> TextBlockInEllipse<T> {
-    fn new(text: T, string_bounder: &dyn StringBounder) -> Self {
+    pub(crate) fn new(text: T, string_bounder: &dyn StringBounder) -> Self {
         let text_dim = text.calculate_dimension(string_bounder);
         let alpha = (text_dim.height / text_dim.width).clamp(0.2, 0.8);
         let ellipse = footprint::get_ellipse(string_bounder, &text, alpha);

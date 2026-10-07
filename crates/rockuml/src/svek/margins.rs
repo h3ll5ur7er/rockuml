@@ -1,3 +1,8 @@
+#![allow(
+    dead_code,
+    reason = "the images of the class and description families have shields"
+)]
+
 /// Room kept free around a node, left (`x1`), right (`x2`), top (`y1`) and bottom (`y2`) (PlantUML's
 /// `Margins`).
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
