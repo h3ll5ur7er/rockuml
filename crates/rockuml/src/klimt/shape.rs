@@ -5,7 +5,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use super::font::{FontConfiguration, UFont};
-use super::geom::XDimension2D;
+use super::geom::{XDimension2D, XPoint2D};
 use super::image::PortableImage;
 use crate::color::XColor;
 
@@ -153,6 +153,36 @@ impl UEllipse {
 
     pub(crate) fn is_arc(&self) -> bool {
         self.start != 0.0 || self.extend != 0.0
+    }
+
+    #[must_use]
+    pub(crate) fn bigger(self, more: f64) -> Self {
+        Self::new(self.width + more, self.height + more)
+    }
+
+    #[must_use]
+    pub(crate) fn scale(self, factor: f64) -> Self {
+        Self::new(self.width * factor, self.height * factor)
+    }
+
+    /// Where the ellipse's outline starts on the line at height `y`.
+    pub(crate) fn get_starting_x(self, y: f64) -> f64 {
+        let y = y / self.height * 2.0;
+        let x = 1.0 - (1.0 - (y - 1.0) * (y - 1.0)).sqrt();
+        x * self.width / 2.0
+    }
+
+    /// Where the ellipse's outline ends on the line at height `y`.
+    pub(crate) fn get_ending_x(self, y: f64) -> f64 {
+        let y = y / self.height * 2.0;
+        let x = 1.0 + (1.0 - (y - 1.0) * (y - 1.0)).sqrt();
+        x * self.width / 2.0
+    }
+
+    pub(crate) fn get_point_at_angle(self, alpha: f64) -> XPoint2D {
+        let x = self.width / 2.0 + self.width / 2.0 * alpha.cos();
+        let y = self.height / 2.0 + self.height / 2.0 * alpha.sin();
+        XPoint2D::new(x, y)
     }
 }
 

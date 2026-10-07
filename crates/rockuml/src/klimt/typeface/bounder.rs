@@ -38,6 +38,10 @@ impl StringBounder for StringBounderFonts {
         let (_, descent, _) = self.fonts.font_for(font, text).vertical_metrics();
         descent * font.size_2d()
     }
+
+    fn shared(&self) -> std::rc::Rc<dyn StringBounder> {
+        std::rc::Rc::new(Self::new(self.fonts.clone()))
+    }
 }
 
 #[cfg(test)]

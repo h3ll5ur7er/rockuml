@@ -1,6 +1,5 @@
-//! The small symbols that stand for robustness-diagram participants and data stores (PlantUML's
-//! `svek.Boundary`, `svek.Control`, `svek.EntityDomain`, and `asSmall` of `USymbolDatabase` and
-//! `USymbolQueue`).
+//! The small figures that stand for robustness-diagram participants and interfaces (PlantUML's
+//! `svek.Boundary`, `svek.Control`, `svek.EntityDomain` and `svek.CircleInterface2`).
 
 use crate::color::HColor;
 use crate::klimt::TextBlock;
@@ -15,10 +14,6 @@ const RADIUS: f64 = 12.0;
 
 fn circle() -> UShape {
     UShape::Ellipse(UEllipse::new(RADIUS * 2.0, RADIUS * 2.0))
-}
-
-fn cubic(ctrl1: (f64, f64), ctrl2: (f64, f64), end: (f64, f64)) -> USegment {
-    USegment::CubicTo { ctrl1, ctrl2, end }
 }
 
 /// A circle with a vertical bar on its left.
@@ -122,126 +117,40 @@ impl TextBlock for EntityDomain {
     }
 }
 
-/// The room a symbol leaves around its label (`USymbol.Margin`).
-struct Margin {
-    x1: f64,
-    x2: f64,
-    y1: f64,
-    y2: f64,
+/// A small circle, in the stroke of the surface it is drawn on.
+pub(crate) struct CircleInterface2 {
+    background_color: HColor,
+    foreground_color: HColor,
 }
 
-impl Margin {
-    fn add_dimension(&self, dimension: XDimension2D) -> XDimension2D {
-        dimension.delta(self.x1 + self.x2, self.y1 + self.y2)
+impl CircleInterface2 {
+    const MARGIN: f64 = 1.0;
+    const RADIUS: f64 = 8.0;
+
+    pub(crate) fn new(background_color: HColor, foreground_color: HColor) -> Self {
+        Self {
+            background_color,
+            foreground_color,
+        }
     }
 }
 
-/// A cylinder standing upright around its label (`USymbolDatabase.asSmall`).
-pub(crate) struct SmallDatabase {
-    label: Box<dyn TextBlock>,
-    fashion: Fashion,
-}
-
-impl SmallDatabase {
-    const MARGIN: Margin = Margin {
-        x1: 10.0,
-        x2: 10.0,
-        y1: 24.0,
-        y2: 5.0,
-    };
-
-    pub(crate) fn new(label: Box<dyn TextBlock>, fashion: Fashion) -> Self {
-        Self { label, fashion }
-    }
-}
-
-impl TextBlock for SmallDatabase {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        Self::MARGIN.add_dimension(self.label.calculate_dimension(string_bounder))
-    }
-
-    /// The empty square past the bottom right corner makes room for the cylinder's curves.
-    fn draw_u(&self, ug: &UGraphic) {
-        let XDimension2D { width, height } = self.calculate_dimension(ug.string_bounder());
-        let ug = self.fashion.apply(ug);
-        ug.draw(&UShape::Path(vec![
-            USegment::MoveTo(0.0, 10.0),
-            cubic((0.0, 0.0), (width / 2.0, 0.0), (width / 2.0, 0.0)),
-            cubic((width / 2.0, 0.0), (width, 0.0), (width, 10.0)),
-            USegment::LineTo(width, height - 10.0),
-            cubic(
-                (width, height),
-                (width / 2.0, height),
-                (width / 2.0, height),
-            ),
-            cubic((width / 2.0, height), (0.0, height), (0.0, height - 10.0)),
-            USegment::LineTo(0.0, 10.0),
-        ]));
-        ug.with_backcolor(HColor::NONE).draw(&UShape::Path(vec![
-            USegment::MoveTo(0.0, 10.0),
-            cubic((0.0, 20.0), (width / 2.0, 20.0), (width / 2.0, 20.0)),
-            cubic((width / 2.0, 20.0), (width, 20.0), (width, 10.0)),
-        ]));
-        ug.translated(width, height)
-            .draw(&UShape::Empty(XDimension2D::new(10.0, 10.0)));
-        self.label
-            .draw_u(&ug.translated(Self::MARGIN.x1, Self::MARGIN.y1));
-    }
-}
-
-/// A cylinder lying on its side around its label (`USymbolQueue.asSmall`).
-pub(crate) struct SmallQueue {
-    label: Box<dyn TextBlock>,
-    fashion: Fashion,
-}
-
-impl SmallQueue {
-    const DX: f64 = 5.0;
-    const MARGIN: Margin = Margin {
-        x1: 5.0,
-        x2: 15.0,
-        y1: 5.0,
-        y2: 5.0,
-    };
-
-    pub(crate) fn new(label: Box<dyn TextBlock>, fashion: Fashion) -> Self {
-        Self { label, fashion }
-    }
-}
-
-impl TextBlock for SmallQueue {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        Self::MARGIN.add_dimension(self.label.calculate_dimension(string_bounder))
+impl TextBlock for CircleInterface2 {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        XDimension2D::new(
+            Self::RADIUS * 2.0 + 2.0 * Self::MARGIN,
+            Self::RADIUS * 2.0 + 2.0 * Self::MARGIN,
+        )
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let dx = Self::DX;
-        let XDimension2D { width, height } = self.calculate_dimension(ug.string_bounder());
-        let ug = self.fashion.apply(ug);
-        ug.draw(&UShape::Path(vec![
-            USegment::MoveTo(dx, 0.0),
-            USegment::LineTo(width - dx, 0.0),
-            cubic((width, 0.0), (width, height / 2.0), (width, height / 2.0)),
-            cubic((width, height / 2.0), (width, height), (width - dx, height)),
-            USegment::LineTo(dx, height),
-            cubic((0.0, height), (0.0, height / 2.0), (0.0, height / 2.0)),
-            cubic((0.0, height / 2.0), (0.0, 0.0), (dx, 0.0)),
-        ]));
-        ug.with_backcolor(HColor::NONE).draw(&UShape::Path(vec![
-            USegment::MoveTo(width - dx, 0.0),
-            cubic(
-                (width - dx * 2.0, 0.0),
-                (width - dx * 2.0, height / 2.0),
-                (width - dx * 2.0, height / 2.0),
-            ),
-            cubic(
-                (width - dx * 2.0, height),
-                (width - dx, height),
-                (width - dx, height),
-            ),
-        ]));
-        self.label
-            .draw_u(&ug.translated(Self::MARGIN.x1, Self::MARGIN.y1));
+        ug.with_backcolor(self.background_color.clone())
+            .with_color(self.foreground_color.clone())
+            .translated(Self::MARGIN, Self::MARGIN)
+            .draw(&UShape::Ellipse(UEllipse::new(
+                Self::RADIUS * 2.0,
+                Self::RADIUS * 2.0,
+            )));
     }
 }
 
@@ -249,7 +158,6 @@ impl TextBlock for SmallQueue {
 mod tests {
     use super::*;
     use crate::klimt::debug::StringBounderDebug;
-    use crate::skin::component::TextBlockEmpty;
 
     fn fashion() -> Fashion {
         Fashion::new(HColor::WHITE, HColor::BLACK)
@@ -257,12 +165,6 @@ mod tests {
 
     fn dimension(symbol: &dyn TextBlock) -> XDimension2D {
         symbol.calculate_dimension(&StringBounderDebug)
-    }
-
-    fn label(width: f64, height: f64) -> Box<dyn TextBlock> {
-        Box::new(TextBlockEmpty {
-            dimension: XDimension2D::new(width, height),
-        })
     }
 
     #[test]
@@ -278,18 +180,6 @@ mod tests {
         assert_eq!(
             dimension(&EntityDomain::new(fashion())),
             XDimension2D::new(32.0, 32.0)
-        );
-    }
-
-    #[test]
-    fn stores_grow_around_their_label() {
-        assert_eq!(
-            dimension(&SmallDatabase::new(label(16.0, 17.0), fashion())),
-            XDimension2D::new(36.0, 46.0)
-        );
-        assert_eq!(
-            dimension(&SmallQueue::new(label(10.0, 4.0), fashion())),
-            XDimension2D::new(30.0, 14.0)
         );
     }
 }

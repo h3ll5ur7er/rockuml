@@ -1,5 +1,6 @@
-//! How links look: their end and middle decorations, line styles and colours (PlantUML's `decoration`
-//! package, without the drawing of extremities, which lives with svek).
+//! How diagram elements and links are decorated: link ends and middles, line styles, colours and the
+//! symbols of elements (PlantUML's `decoration` package, without the drawing of link extremities, which
+//! lives with svek).
 
 #![cfg_attr(
     not(test),
@@ -22,6 +23,14 @@ mod link_decor;
 mod link_style;
 mod link_type;
 mod rainbow;
+#[cfg_attr(
+    not(test),
+    allow(
+        dead_code,
+        reason = "drawn by the description diagrams and clusters, which are ported next"
+    )
+)]
+pub(crate) mod symbol;
 
 pub(crate) use link_decor::LinkDecor;
 pub(crate) use link_style::LinkStyle;
