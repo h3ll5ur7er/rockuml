@@ -6,6 +6,7 @@ use crate::cgraph::{aghead, agtail};
 use crate::common::utils::UF_find;
 use crate::core::Globals;
 use crate::core::ids::{GraphId, NodeId};
+use crate::h::elist;
 
 fn G_decomp(zz: &Globals) -> GraphId {
     zz.G_decomp.expect("G_decomp")
@@ -47,25 +48,51 @@ fn end_component(zz: &mut Globals) {
     zz.node_lists.set(list, i, nlist);
 }
 
-/// `search_component`: adds the component of `n` (through all four edge lists) depth first.
+/// `search_component`: adds the component of `n` (through all four edge lists) depth first. A stack replaces the
+/// recursion, which goes as deep as the graph.
 fn search_component(zz: &mut Globals, n: NodeId) {
-    add_to_component(zz, n);
-    let info = zz.nd(n);
-    let vec = [info.out, info.in_, info.flat_out, info.flat_in];
-    for l in vec {
-        if l.list.is_none() {
-            continue;
+    /// A node being searched: its lists as they were when the search reached it, and the position in them.
+    struct Search {
+        n: NodeId,
+        lists: [elist; 4],
+        list: usize,
+        i: i32,
+    }
+    let enter = |zz: &mut Globals, n: NodeId| {
+        add_to_component(zz, n);
+        let info = zz.nd(n);
+        Search {
+            n,
+            lists: [info.out, info.in_, info.flat_out, info.flat_in],
+            list: 0,
+            i: 0,
         }
-        let mut i = 0;
-        while let Some(e) = l.get(&zz.edge_lists, i) {
-            let mut other = aghead(zz, e);
-            if other == n {
-                other = agtail(zz, e);
-            }
-            if zz.nd(other).mark != i32::from(zz.Cmark) && other == UF_find(zz, other) {
-                search_component(zz, other);
-            }
-            i += 1;
+    };
+    let mut stack = vec![enter(zz, n)];
+    while let Some(top) = stack.last_mut() {
+        let Some(&l) = top.lists.get(top.list) else {
+            stack.pop();
+            continue;
+        };
+        let next = if l.list.is_none() {
+            None
+        } else {
+            l.get(&zz.edge_lists, top.i)
+        };
+        let Some(e) = next else {
+            top.list += 1;
+            top.i = 0;
+            continue;
+        };
+        top.i += 1;
+        let n = top.n;
+        let mut other = aghead(zz, e);
+        if other == n {
+            other = agtail(zz, e);
+        }
+        if zz.nd(other).mark != i32::from(zz.Cmark) && other == UF_find(zz, other) {
+            let child = enter(zz, other);
+            stack.push(child);
         }
     }
 }

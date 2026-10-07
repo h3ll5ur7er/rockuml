@@ -16,25 +16,37 @@ pub(crate) fn reverse_edge(zz: &mut Globals, e: EdgeId) {
     }
 }
 
-/// `dfs`: reverses the edges that lead back onto the depth-first search stack.
+/// `dfs`: reverses the edges that lead back onto the depth-first search stack. A stack of nodes with their
+/// out-edge positions replaces the recursion, which goes as deep as the graph.
 fn dfs(zz: &mut Globals, n: NodeId) {
     if zz.nd(n).mark != 0 {
         return;
     }
-    zz.nd_mut(n).mark = 1;
-    zz.nd_mut(n).onstack = 1;
-    let mut i = 0;
-    while let Some(e) = zz.nd(n).out.get(&zz.edge_lists, i) {
+    let enter = |zz: &mut Globals, n: NodeId| {
+        zz.nd_mut(n).mark = 1;
+        zz.nd_mut(n).onstack = 1;
+        (n, 0)
+    };
+    let mut stack = vec![enter(zz, n)];
+    while let Some((n, i)) = stack.last_mut() {
+        let n = *n;
+        let Some(e) = zz.nd(n).out.get(&zz.edge_lists, *i) else {
+            zz.nd_mut(n).onstack = 0;
+            stack.pop();
+            continue;
+        };
         let w = aghead(zz, e);
         if zz.nd(w).onstack != 0 {
+            // The edge leaves the list, so the next one takes its place.
             reverse_edge(zz, e);
-            i -= 1;
-        } else if zz.nd(w).mark == 0 {
-            dfs(zz, w);
+        } else {
+            *i += 1;
+            if zz.nd(w).mark == 0 {
+                let child = enter(zz, w);
+                stack.push(child);
+            }
         }
-        i += 1;
     }
-    zz.nd_mut(n).onstack = 0;
 }
 
 /// `acyclic`.

@@ -234,63 +234,81 @@ fn leave_candidate(zz: &Globals, rv: &mut Option<EdgeId>, cnt: &mut i32) -> bool
     *cnt >= zz.Search_size
 }
 
+/// How far a depth-first search has got through a node's edges: its first list, then its second.
+struct Visit {
+    v: NodeId,
+    second: bool,
+    i: i32,
+}
+
+impl Visit {
+    fn new(v: NodeId) -> Self {
+        Self {
+            v,
+            second: false,
+            i: 0,
+        }
+    }
+}
+
 /// `dfs_enter_outedge`: the non-tree edge of least slack leaving the subtree below `v`.
 fn dfs_enter_outedge(zz: &mut Globals, v: NodeId) {
-    let mut i = 0;
-    while let Some(e) = out_edge(zz, v, i) {
-        let head = aghead(zz, e);
-        if !TREE_EDGE(zz, e) {
-            if !SEQ(zz.Low, zz.nd(head).lim, zz.Lim) {
-                let slack = SLACK(zz, e);
-                if slack < zz.Slack || zz.Enter.is_none() {
-                    zz.Enter = Some(e);
-                    zz.Slack = slack;
-                }
-            }
-        } else if zz.nd(head).lim < zz.nd(v).lim {
-            dfs_enter_outedge(zz, head);
-        }
-        i += 1;
-    }
-    let mut i = 0;
-    while let Some(e) = tree_in_edge(zz, v, i)
-        && zz.Slack > 0
-    {
-        let tail = agtail(zz, e);
-        if zz.nd(tail).lim < zz.nd(v).lim {
-            dfs_enter_outedge(zz, tail);
-        }
-        i += 1;
-    }
+    dfs_enter(zz, v, out_edge, aghead, tree_in_edge, agtail);
 }
 
 /// `dfs_enter_inedge`: the non-tree edge of least slack entering the subtree below `v`.
 fn dfs_enter_inedge(zz: &mut Globals, v: NodeId) {
-    let mut i = 0;
-    while let Some(e) = in_edge(zz, v, i) {
-        let tail = agtail(zz, e);
+    dfs_enter(zz, v, in_edge, agtail, tree_out_edge, aghead);
+}
+
+/// `dfs_enter_outedge` and `dfs_enter_inedge`, which only swap the edge directions: candidates are the edges of
+/// `edges` whose `far` end is outside the subtree, which the search enters through the tree edges of `edges` and
+/// `tree_edges`. A stack replaces the recursion, which goes as deep as the tree; the visiting order is the same.
+fn dfs_enter(
+    zz: &mut Globals,
+    v: NodeId,
+    edges: fn(&Globals, NodeId, i32) -> Option<EdgeId>,
+    far: fn(&Globals, EdgeId) -> NodeId,
+    tree_edges: fn(&Globals, NodeId, i32) -> Option<EdgeId>,
+    tree_far: fn(&Globals, EdgeId) -> NodeId,
+) {
+    let mut stack = vec![Visit::new(v)];
+    while let Some(top) = stack.last_mut() {
+        let v = top.v;
+        let next = if top.second {
+            tree_edges(zz, v, top.i).filter(|_| zz.Slack > 0)
+        } else {
+            edges(zz, v, top.i)
+        };
+        let Some(e) = next else {
+            if top.second {
+                stack.pop();
+            } else {
+                top.second = true;
+                top.i = 0;
+            }
+            continue;
+        };
+        top.i += 1;
+        if top.second {
+            let w = tree_far(zz, e);
+            if zz.nd(w).lim < zz.nd(v).lim {
+                stack.push(Visit::new(w));
+            }
+            continue;
+        }
+        let w = far(zz, e);
         if !TREE_EDGE(zz, e) {
-            if !SEQ(zz.Low, zz.nd(tail).lim, zz.Lim) {
+            if !SEQ(zz.Low, zz.nd(w).lim, zz.Lim) {
                 let slack = SLACK(zz, e);
                 if slack < zz.Slack || zz.Enter.is_none() {
                     zz.Enter = Some(e);
                     zz.Slack = slack;
                 }
             }
-        } else if zz.nd(tail).lim < zz.nd(v).lim {
-            dfs_enter_inedge(zz, tail);
+        } else if zz.nd(w).lim < zz.nd(v).lim {
+            stack.push(Visit::new(w));
         }
-        i += 1;
-    }
-    let mut i = 0;
-    while let Some(e) = tree_out_edge(zz, v, i)
-        && zz.Slack > 0
-    {
-        let head = aghead(zz, e);
-        if zz.nd(head).lim < zz.nd(v).lim {
-            dfs_enter_inedge(zz, head);
-        }
-        i += 1;
     }
 }
 
@@ -315,29 +333,39 @@ fn enter_edge(zz: &mut Globals, e: EdgeId) -> Option<EdgeId> {
     zz.Enter
 }
 
-/// `treesearch`: grows the tree from `v` along tight edges; true once it spans all nodes.
+/// `treesearch`: grows the tree from `v` along tight edges, out-edges first; true once it spans all nodes. A
+/// stack replaces the recursion, which goes as deep as the tree.
 fn treesearch(zz: &mut Globals, v: NodeId) -> bool {
-    let mut i = 0;
-    while let Some(e) = out_edge(zz, v, i) {
-        let head = aghead(zz, e);
-        if zz.nd(head).mark == 0 && SLACK(zz, e) == 0 {
+    let mut stack = vec![Visit::new(v)];
+    while let Some(top) = stack.last_mut() {
+        let v = top.v;
+        let next = if top.second {
+            in_edge(zz, v, top.i)
+        } else {
+            out_edge(zz, v, top.i)
+        };
+        let Some(e) = next else {
+            if top.second {
+                stack.pop();
+            } else {
+                top.second = true;
+                top.i = 0;
+            }
+            continue;
+        };
+        top.i += 1;
+        let w = if top.second {
+            agtail(zz, e)
+        } else {
+            aghead(zz, e)
+        };
+        if zz.nd(w).mark == 0 && SLACK(zz, e) == 0 {
             add_tree_edge(zz, e);
-            if zz.Tree_edge.size == zz.N_nodes - 1 || treesearch(zz, head) {
+            if zz.Tree_edge.size == zz.N_nodes - 1 {
                 return true;
             }
+            stack.push(Visit::new(w));
         }
-        i += 1;
-    }
-    let mut i = 0;
-    while let Some(e) = in_edge(zz, v, i) {
-        let tail = agtail(zz, e);
-        if zz.nd(tail).mark == 0 && SLACK(zz, e) == 0 {
-            add_tree_edge(zz, e);
-            if zz.Tree_edge.size == zz.N_nodes - 1 || treesearch(zz, tail) {
-                return true;
-            }
-        }
-        i += 1;
     }
     false
 }
@@ -437,23 +465,63 @@ fn treeupdate(zz: &mut Globals, mut v: NodeId, w: NodeId, cutvalue: i32, dir: bo
     v
 }
 
-/// `rerank`: moves the subtree at `v` (away from its parent edge) up by `delta` ranks.
+/// A node of a walk down the spanning tree: how far it has got through the node's tree edges (out-edges first),
+/// skipping `par`, the edge it came from.
+struct TreeWalk {
+    visit: Visit,
+    par: Option<EdgeId>,
+}
+
+impl TreeWalk {
+    fn new(v: NodeId, par: Option<EdgeId>) -> Self {
+        Self {
+            visit: Visit::new(v),
+            par,
+        }
+    }
+
+    /// The next tree edge below the node, with its far end.
+    fn next_child(&mut self, zz: &Globals) -> Option<(EdgeId, NodeId)> {
+        let Visit { v, second, i } = &mut self.visit;
+        loop {
+            let e = if *second {
+                tree_in_edge(zz, *v, *i)
+            } else {
+                tree_out_edge(zz, *v, *i)
+            };
+            let Some(e) = e else {
+                if *second {
+                    return None;
+                }
+                *second = true;
+                *i = 0;
+                continue;
+            };
+            *i += 1;
+            if Some(e) != self.par {
+                let w = if *second {
+                    agtail(zz, e)
+                } else {
+                    aghead(zz, e)
+                };
+                return Some((e, w));
+            }
+        }
+    }
+}
+
+/// `rerank`: moves the subtree at `v` (away from its parent edge) up by `delta` ranks. A stack replaces the
+/// recursion, which goes as deep as the tree.
 fn rerank(zz: &mut Globals, v: NodeId, delta: i32) {
     zz.nd_mut(v).rank -= delta;
-    let par = zz.nd(v).par;
-    let mut i = 0;
-    while let Some(e) = tree_out_edge(zz, v, i) {
-        if Some(e) != par {
-            rerank(zz, aghead(zz, e), delta);
+    let mut stack = vec![TreeWalk::new(v, zz.nd(v).par)];
+    while let Some(top) = stack.last_mut() {
+        if let Some((_, w)) = top.next_child(zz) {
+            zz.nd_mut(w).rank -= delta;
+            stack.push(TreeWalk::new(w, zz.nd(w).par));
+        } else {
+            stack.pop();
         }
-        i += 1;
-    }
-    let mut i = 0;
-    while let Some(e) = tree_in_edge(zz, v, i) {
-        if Some(e) != par {
-            rerank(zz, agtail(zz, e), delta);
-        }
-        i += 1;
     }
 }
 
@@ -755,47 +823,50 @@ fn x_val(zz: &Globals, e: EdgeId, v: NodeId, dir: i32) -> i32 {
     rv
 }
 
-/// `dfs_cutval`: the cut values of the tree below `v`, bottom up.
+/// `dfs_cutval`: the cut values of the tree below `v`, bottom up. A stack replaces the recursion, which goes as
+/// deep as the tree.
 fn dfs_cutval(zz: &mut Globals, v: NodeId, par: Option<EdgeId>) {
-    let mut i = 0;
-    while let Some(e) = tree_out_edge(zz, v, i) {
-        if Some(e) != par {
-            dfs_cutval(zz, aghead(zz, e), Some(e));
+    let mut stack = vec![TreeWalk::new(v, par)];
+    while let Some(top) = stack.last_mut() {
+        if let Some((e, w)) = top.next_child(zz) {
+            stack.push(TreeWalk::new(w, Some(e)));
+        } else if let Some(par) = stack.pop().and_then(|done| done.par) {
+            x_cutval(zz, par);
         }
-        i += 1;
-    }
-    let mut i = 0;
-    while let Some(e) = tree_in_edge(zz, v, i) {
-        if Some(e) != par {
-            dfs_cutval(zz, agtail(zz, e), Some(e));
-        }
-        i += 1;
-    }
-    if let Some(par) = par {
-        x_cutval(zz, par);
     }
 }
 
 /// `dfs_range`: numbers the tree below `v` in postorder (`lim`), each node also getting the least number below
-/// it (`low`). Returns the next number.
+/// it (`low`). Returns the next number. A stack replaces the recursion, which goes as deep as the tree.
 fn dfs_range(zz: &mut Globals, v: NodeId, par: Option<EdgeId>, low: i32) -> i32 {
-    let mut lim = low;
-    zz.nd_mut(v).par = par;
-    zz.nd_mut(v).low = low;
-    let mut i = 0;
-    while let Some(e) = tree_out_edge(zz, v, i) {
-        if Some(e) != par {
-            lim = dfs_range(zz, aghead(zz, e), Some(e), lim);
-        }
-        i += 1;
+    /// A node being numbered, with the next number for its subtrees.
+    struct Range {
+        walk: TreeWalk,
+        lim: i32,
     }
-    let mut i = 0;
-    while let Some(e) = tree_in_edge(zz, v, i) {
-        if Some(e) != par {
-            lim = dfs_range(zz, agtail(zz, e), Some(e), lim);
+    let enter = |zz: &mut Globals, v: NodeId, par: Option<EdgeId>, low: i32| {
+        zz.nd_mut(v).par = par;
+        zz.nd_mut(v).low = low;
+        Range {
+            walk: TreeWalk::new(v, par),
+            lim: low,
         }
-        i += 1;
+    };
+    let mut stack = vec![enter(zz, v, par, low)];
+    loop {
+        let top = stack.last_mut().expect("a node being numbered");
+        if let Some((e, w)) = top.walk.next_child(zz) {
+            let low = top.lim;
+            let child = enter(zz, w, Some(e), low);
+            stack.push(child);
+            continue;
+        }
+        let done = stack.pop().expect("a node being numbered");
+        zz.nd_mut(done.walk.visit.v).lim = done.lim;
+        let next = done.lim + 1;
+        match stack.last_mut() {
+            Some(parent) => parent.lim = next,
+            None => return next,
+        }
     }
-    zz.nd_mut(v).lim = lim;
-    lim + 1
 }

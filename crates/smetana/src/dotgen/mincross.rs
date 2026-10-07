@@ -578,47 +578,73 @@ fn flat_rev(zz: &mut Globals, g: GraphId, e: EdgeId) {
 }
 
 /// `flat_search`: depth-first search of the flat edges from `v`, recording their left-to-right constraints in
-/// the rank's matrix and reversing the edges that close cycles.
+/// the rank's matrix and reversing the edges that close cycles. A stack replaces the recursion, which goes as
+/// deep as the chains of flat edges.
 fn flat_search(zz: &mut Globals, g: GraphId, v: NodeId) {
-    let M = zz
-        .rank(g, zz.nd(v).rank)
-        .flat
-        .expect("flat adjacency matrix");
-    zz.nd_mut(v).mark = 1;
-    zz.nd_mut(v).onstack = 1;
+    /// A node being searched: its rank's matrix, whether it had flat out-edges when reached, and the position
+    /// in them.
+    struct Search {
+        v: NodeId,
+        M: AdjmatrixId,
+        has_flat_out: bool,
+        i: i32,
+    }
+    let enter = |zz: &mut Globals, v: NodeId| {
+        let M = zz
+            .rank(g, zz.nd(v).rank)
+            .flat
+            .expect("flat adjacency matrix");
+        zz.nd_mut(v).mark = 1;
+        zz.nd_mut(v).onstack = 1;
+        Search {
+            v,
+            M,
+            has_flat_out: zz.nd(v).flat_out.list.is_some(),
+            i: 0,
+        }
+    };
     let root = dot_root(zz, g);
     let hascl = zz.gd(root).n_cluster > 0;
-    if zz.nd(v).flat_out.list.is_some() {
-        let mut i = 0;
-        while let Some(e) = zz.nd(v).flat_out.get(&zz.edge_lists, i) {
-            i += 1;
-            let (tail, head) = (agtail(zz, e), aghead(zz, e));
-            if hascl && !(agcontains(zz, g, tail) && agcontains(zz, g, head)) {
+    let low = |zz: &Globals, n: NodeId| usize::try_from(zz.nd(n).low).expect("flat index");
+    let mut stack = vec![enter(zz, v)];
+    while let Some(top) = stack.last_mut() {
+        let (v, M) = (top.v, top.M);
+        let next = if top.has_flat_out {
+            zz.nd(v).flat_out.get(&zz.edge_lists, top.i)
+        } else {
+            None
+        };
+        let Some(e) = next else {
+            zz.nd_mut(v).onstack = 0;
+            stack.pop();
+            continue;
+        };
+        top.i += 1;
+        let (tail, head) = (agtail(zz, e), aghead(zz, e));
+        if hascl && !(agcontains(zz, g, tail) && agcontains(zz, g, head)) {
+            continue;
+        }
+        if zz.ed(e).weight == 0 {
+            continue;
+        }
+        if zz.nd(head).onstack != 0 {
+            let (h, t) = (low(zz, head), low(zz, tail));
+            zz.adjmatrices[M].data[h][t] = 1;
+            delete_flat_edge(zz, e);
+            top.i -= 1;
+            if zz.ed(e).edge_type == FLATORDER {
                 continue;
             }
-            if zz.ed(e).weight == 0 {
-                continue;
-            }
-            let low = |zz: &Globals, n: NodeId| usize::try_from(zz.nd(n).low).expect("flat index");
-            if zz.nd(head).onstack != 0 {
-                let (h, t) = (low(zz, head), low(zz, tail));
-                zz.adjmatrices[M].data[h][t] = 1;
-                delete_flat_edge(zz, e);
-                i -= 1;
-                if zz.ed(e).edge_type == FLATORDER {
-                    continue;
-                }
-                flat_rev(zz, g, e);
-            } else {
-                let (t, h) = (low(zz, tail), low(zz, head));
-                zz.adjmatrices[M].data[t][h] = 1;
-                if zz.nd(head).mark == 0 {
-                    flat_search(zz, g, head);
-                }
+            flat_rev(zz, g, e);
+        } else {
+            let (t, h) = (low(zz, tail), low(zz, head));
+            zz.adjmatrices[M].data[t][h] = 1;
+            if zz.nd(head).mark == 0 {
+                let child = enter(zz, head);
+                stack.push(child);
             }
         }
     }
-    zz.nd_mut(v).onstack = 0;
 }
 
 /// `flat_breakcycles`: numbers each rank's nodes (`flatindex`) and breaks the cycles of its flat edges.
@@ -804,25 +830,56 @@ fn constraining_flat_edge(zz: &mut Globals, g: GraphId, e: EdgeId) -> bool {
 }
 
 /// `postorder`: writes the nodes reachable from `v` by constraining flat edges to `list`, in postorder, and
-/// returns their number.
+/// returns their number. A stack replaces the recursion, which goes as deep as the chains of flat edges.
 fn postorder(zz: &mut Globals, g: GraphId, v: NodeId, list: CArray<Option<NodeId>>) -> i32 {
-    let mut cnt = 0;
-    zz.nd_mut(v).mark = 1;
-    if zz.nd(v).flat_out.size > 0 {
-        let mut i = 0;
-        while let Some(e) = zz.nd(v).flat_out.get(&zz.edge_lists, i) {
-            i += 1;
+    /// A node being ordered: where its subtree goes, how many nodes it has so far, whether it had flat
+    /// out-edges when reached, and the position in them.
+    struct Order {
+        v: NodeId,
+        list: CArray<Option<NodeId>>,
+        cnt: i32,
+        has_flat_out: bool,
+        i: i32,
+    }
+    let enter = |zz: &mut Globals, v: NodeId, list: CArray<Option<NodeId>>| {
+        zz.nd_mut(v).mark = 1;
+        Order {
+            v,
+            list,
+            cnt: 0,
+            has_flat_out: zz.nd(v).flat_out.size > 0,
+            i: 0,
+        }
+    };
+    let mut stack = vec![enter(zz, v, list)];
+    loop {
+        let top = stack.last_mut().expect("a node being ordered");
+        let next = if top.has_flat_out {
+            zz.nd(top.v).flat_out.get(&zz.edge_lists, top.i)
+        } else {
+            None
+        };
+        if let Some(e) = next {
+            top.i += 1;
             if !constraining_flat_edge(zz, g, e) {
                 continue;
             }
             let head = aghead(zz, e);
             if zz.nd(head).mark == 0 {
-                cnt += postorder(zz, g, head, list.plus_(cnt));
+                let rest = top.list.plus_(top.cnt);
+                let child = enter(zz, head, rest);
+                stack.push(child);
             }
+            continue;
+        }
+        let done = stack.pop().expect("a node being ordered");
+        zz.node_lists.set(done.list, done.cnt, Some(done.v));
+        let cnt = done.cnt + 1;
+        match stack.last_mut() {
+            Some(parent) => parent.cnt += cnt,
+            None => return cnt,
         }
     }
-    zz.node_lists.set(list, cnt, Some(v));
-    cnt + 1
 }
 
 /// `flat_reorder`: orders each rank so that its constraining flat edges point left to right, and reverses the
