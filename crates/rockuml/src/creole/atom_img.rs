@@ -8,6 +8,7 @@ use base64::prelude::BASE64_STANDARD;
 
 use super::Atom;
 use super::atom_text::AtomText;
+use crate::diagram::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
 use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::XDimension2D;
@@ -16,9 +17,6 @@ use crate::klimt::shape::{UImage, UImageSvg, UShape};
 use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::ugraphic::UGraphic;
 
-/// What `UmlSource.patchBase64` leaves of a PNG data URI: this, then the MD5 of the data.
-const BASE64_TAG_REPLACEMENT: &str = "data:image/png;md5,";
-const DATA_IMAGE_PNG_BASE64: &str = "data:image/png;base64,";
 const DATA_IMAGE_SVG_BASE64: &str = "data:image/svg+xml;base64,";
 
 /// A raster image.
@@ -37,12 +35,8 @@ impl AtomImg {
             let Some(base64) = sprites.get_from_md5(md5) else {
                 return text(&format!("[md5:{md5}]"));
             };
-            let image = BASE64_STANDARD
-                .decode(base64)
-                .ok()
-                .and_then(|data| PortableImage::read(&data));
-            return image.map_or_else(
-                || text(&format!("(Cannot decode: {DATA_IMAGE_PNG_BASE64}{base64})")),
+            return PortableImage::read_base64(base64).map_or_else(
+                || text(&format!("(Cannot decode: {BASE64_TAG_START}{base64})")),
                 |image| raster(image, scale),
             );
         }

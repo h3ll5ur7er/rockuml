@@ -299,8 +299,8 @@ fn parse_movements(commands: &[SvgCommand]) -> Vec<Movement> {
                 (letter, tail)
             }
             SvgCommand::Number(_) => match last_letter {
-                Some(letter) => (letter, rest),
-                None => break,
+                Some(letter) if argument_number(letter) != Some(0) => (letter, rest),
+                _ => break,
             },
         };
         let Some(count) = argument_number(letter).filter(|&count| count <= arguments.len()) else {
@@ -465,6 +465,15 @@ mod tests {
         assert_eq!(
             SvgPath::new("1 2L3", UTranslate::default()).to_upath(1.0),
             []
+        );
+    }
+
+    #[test]
+    fn numbers_after_a_closing_end_the_path() {
+        let path = SvgPath::new("M0 0h5z 1 1", UTranslate::default());
+        assert_eq!(
+            path.to_upath(1.0),
+            [USegment::MoveTo(0.0, 0.0), USegment::LineTo(5.0, 0.0)]
         );
     }
 

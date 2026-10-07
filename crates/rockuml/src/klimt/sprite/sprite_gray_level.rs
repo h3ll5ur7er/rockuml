@@ -42,19 +42,22 @@ impl SpriteGrayLevel {
         }
     }
 
-    /// One byte per pixel, row by row, deflated and written in PlantUML's URL alphabet.
+    /// One byte per pixel, row by row, deflated and written in PlantUML's URL alphabet. PlantUML fails on
+    /// too few pixels and on levels beyond the sprite's.
     pub(crate) fn build_sprite_z(
         self,
         width: usize,
         height: usize,
         compressed: &str,
     ) -> Option<SpriteMonochrome> {
-        let pixels = url_code::inflate(&url_code::decode_6bit(compressed).ok()?).ok()?;
+        let compressed = url_code::decode_6bit(compressed).ok()?;
+        let pixels = url_code::inflate_prefix(&compressed, width * height).ok()?;
         let mut result = SpriteMonochrome::new(width, height, self.nb_color());
-        let mut levels = pixels.iter();
+        let mut levels = pixels.iter().map(|&level| usize::from(level));
         for line in 0..height {
             for col in 0..width {
-                result.set_gray(col, line, usize::from(*levels.next()?));
+                let level = levels.next().filter(|&level| level < self.nb_color())?;
+                result.set_gray(col, line, level);
             }
         }
         Some(result)
@@ -137,5 +140,15 @@ mod tests {
             .unwrap();
         assert_eq!(first_column(&sprite), [0, 2]);
         assert_eq!(sprite.get_gray(1, 1), 3);
+    }
+
+    #[test]
+    fn compressed_sprites_need_a_valid_level_for_every_pixel() {
+        let compressed = |levels: &[u8]| url_code::encode_6bit(&crate::deflate::deflate(levels));
+        let build =
+            |levels: &[u8]| SpriteGrayLevel::Gray4.build_sprite_z(2, 1, &compressed(levels));
+        assert!(build(&[0, 3]).is_some());
+        assert!(build(&[0]).is_none(), "too few pixels");
+        assert!(build(&[0, 4]).is_none(), "a level beyond the sprite's");
     }
 }

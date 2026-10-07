@@ -1,3 +1,4 @@
+use std::cell::OnceCell;
 use std::rc::Rc;
 use std::sync::LazyLock;
 
@@ -140,33 +141,31 @@ impl UEllipse {
 }
 
 /// A bitmap: the image as given and the scale it is drawn at (PlantUML's `UImage` over a `PixelImage`).
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct UImage {
     image_scale1: Rc<PortableImage>,
     scale: f64,
-    /// The pixels drawn, scaled from `image_scale1`.
-    image: Rc<PortableImage>,
+    /// Resampled once, when first drawn, as `PixelImage` caches it.
+    scaled: OnceCell<Option<Rc<PortableImage>>>,
 }
 
 impl UImage {
     pub(crate) fn new(image: PortableImage) -> Self {
-        let image = Rc::new(image);
+        Self::with_scale(Rc::new(image), 1.0)
+    }
+
+    fn with_scale(image_scale1: Rc<PortableImage>, scale: f64) -> Self {
         Self {
-            image_scale1: image.clone(),
-            scale: 1.0,
-            image,
+            image_scale1,
+            scale,
+            scaled: OnceCell::new(),
         }
     }
 
     /// Scaled from the image as given, so that scaling twice resamples once.
     #[must_use]
     pub(crate) fn scale(&self, scale: f64) -> Self {
-        let scale = self.scale * scale;
-        Self {
-            image_scale1: self.image_scale1.clone(),
-            scale,
-            image: Rc::new(self.image_scale1.scale(scale)),
-        }
+        Self::with_scale(self.image_scale1.clone(), self.scale * scale)
     }
 
     /// The image with its darkest opaque colour replaced by `new_color` (`PixelImage.muteColor`).
@@ -194,25 +193,35 @@ impl UImage {
                 }
             }
         }
-        Self {
-            image: Rc::new(copy.scale(self.scale)),
-            image_scale1: Rc::new(copy),
-            scale: self.scale,
-        }
+        Self::with_scale(Rc::new(copy), self.scale)
     }
 
-    /// The pixels drawn.
-    pub(crate) fn image(&self) -> &PortableImage {
-        &self.image
+    /// `None` where Java fails to draw the image: when it has no pixels or cannot be scaled.
+    pub(crate) fn image(&self) -> Option<&PortableImage> {
+        let image = if self.scale == 1.0 {
+            Some(self.image_scale1.as_ref())
+        } else {
+            self.scaled
+                .get_or_init(|| self.image_scale1.scale(self.scale).map(Rc::new))
+                .as_deref()
+        };
+        image.filter(|image| image.width() > 0 && image.height() > 0)
     }
 
     /// One less than the pixels drawn across, as PlantUML measures images.
     pub(crate) fn width(&self) -> f64 {
-        self.image.width() as f64 - 1.0
+        self.image_scale1.scaled_size(self.scale).0 as f64 - 1.0
     }
 
     pub(crate) fn height(&self) -> f64 {
-        self.image.height() as f64 - 1.0
+        self.image_scale1.scaled_size(self.scale).1 as f64 - 1.0
+    }
+}
+
+/// The same image at the same scale, whether or not it was resampled yet.
+impl PartialEq for UImage {
+    fn eq(&self, other: &Self) -> bool {
+        self.image_scale1 == other.image_scale1 && self.scale == other.scale
     }
 }
 
@@ -243,8 +252,8 @@ impl UImageSvg {
 
     /// The document starting with a bare `<svg>`, ready for another root element: without its XML
     /// declaration and root attributes, a background its root's style gives painted by a rectangle
-    /// (`getSvg(false)`).
-    pub(crate) fn svg(&self) -> String {
+    /// (`getSvg(false)`). `None` for a document whose root is not `<svg>`, on which PlantUML fails.
+    pub(crate) fn svg(&self) -> Option<String> {
         static STYLE: LazyLock<Regex> =
             LazyLock::new(|| Regex::new(r#"(?i)<svg[^>]+style="([^">]+)""#).unwrap());
         static BACKGROUND: LazyLock<Regex> =
@@ -256,10 +265,11 @@ impl UImageSvg {
         {
             result = &result[start..];
         }
-        let mut result = match result.find('>') {
-            Some(end) if result.starts_with("<svg") => format!("<svg>{}", &result[end + 1..]),
-            _ => result.to_owned(),
-        };
+        if !result.starts_with("<svg") {
+            return None;
+        }
+        let end = result.find('>')?;
+        let mut result = format!("<svg>{}", &result[end + 1..]);
         if let Some(style) = STYLE
             .captures(&self.svg)
             .map(|captures| captures[1].to_owned())
@@ -271,7 +281,7 @@ impl UImageSvg {
             );
             result = result.replacen("<g>", &rect, 1);
         }
-        result
+        Some(result)
     }
 
     pub(crate) fn data_width(&self) -> u32 {
@@ -365,6 +375,13 @@ mod tests {
             r#"<?xml version="1.0"?><svg width="1" height="1"><g/></svg>"#.to_owned(),
             1.0,
         );
-        assert_eq!(image.svg(), "<svg><g/></svg>");
+        assert_eq!(image.svg().unwrap(), "<svg><g/></svg>");
+    }
+
+    #[test]
+    fn documents_whose_root_is_not_svg_are_not_embedded() {
+        for document in [r#"<html><svg width="1" height="1"/></html>"#, "<svg"] {
+            assert_eq!(UImageSvg::new(document.to_owned(), 1.0).svg(), None);
+        }
     }
 }

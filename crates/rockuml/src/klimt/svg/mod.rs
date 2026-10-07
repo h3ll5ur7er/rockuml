@@ -216,7 +216,9 @@ impl UGraphicSvg {
 
     /// The pixels drawn, re-encoded as PNG as PlantUML does.
     fn draw_image(&mut self, image: &UImage, at: UTranslate) {
-        let pixels = image.image();
+        let Some(pixels) = image.image() else {
+            return;
+        };
         self.svg().png_image(
             &pixels.to_png(),
             at.dx,

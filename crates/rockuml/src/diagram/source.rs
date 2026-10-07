@@ -6,6 +6,11 @@ use crate::java;
 use crate::preproc::start_utils;
 use crate::text::{StringLocated, ends_with_backslash};
 
+/// Where a PNG's base64 data starts in the source.
+pub(crate) const BASE64_TAG_START: &str = "data:image/png;base64,";
+/// What [`UmlSource::patch_base64`] puts in its place, followed by the data's MD5.
+pub(crate) const BASE64_TAG_REPLACEMENT: &str = "data:image/png;md5,";
+
 /// A diagram's preprocessed lines, from its `@start` line to its `@end` line (PlantUML's `UmlSource`).
 pub struct UmlSource {
     lines: Vec<StringLocated>,
@@ -161,8 +166,6 @@ impl UmlSource {
 }
 
 fn patch_base64_line(line: &str, md5_map: &mut HashMap<String, String>) -> Option<String> {
-    const BASE64_TAG_START: &str = "data:image/png;base64,";
-    const BASE64_TAG_REPLACEMENT: &str = "data:image/png;md5,";
     let is_base64_char = |c: char| c.is_ascii_alphanumeric() || matches!(c, '+' | '/' | '=');
     if !line.contains(BASE64_TAG_START) {
         return None;

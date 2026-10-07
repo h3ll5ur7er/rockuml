@@ -143,7 +143,9 @@ mod tests {
         sprite.set_gray(2, 0, 4);
         sprite.set_gray(3, 0, 15);
         let image = sprite.to_uimage(&HColor::NONE, &HColor::BLUE);
-        let pixels: Vec<u32> = (0..4).map(|x| image.image().get_rgb(x, 0)).collect();
+        let pixels: Vec<u32> = (0..4)
+            .map(|x| image.image().unwrap().get_rgb(x, 0))
+            .collect();
         assert_eq!(pixels, [0x00ffffff, 0xccccccff, 0xffbbbbff, 0xff0000ff]);
     }
 }

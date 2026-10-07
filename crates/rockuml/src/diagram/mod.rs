@@ -11,6 +11,8 @@ mod sequence;
 mod source;
 mod titled;
 
+pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
+
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;

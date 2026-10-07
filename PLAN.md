@@ -357,6 +357,11 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     `img-jpeg` fails the SVG pixel comparison. Undecodable base64 draws `(Cannot decode...)` instead of PlantUML's
     exception text, and an SVG declaring no size takes no room where PlantUML fails. `plantuml.include.path` is not
     searched. `@startcreole`, salt and error images do not read images yet.
+  - Where PlantUML fails on an image it cannot make, rockuml draws nothing: images without pixels (a `0x0` sprite, a
+    tiny scale), scaling a source 32768 pixels wide or high (medialib refuses), and an SVG image whose root is not
+    `<svg>`. So that no input exhausts memory, declared sprite sizes beyond 32767 pixels a side or 2^24 pixels (a
+    4096 x 4096 image, PlantUML's default `PLANTUML_LIMIT_SIZE`) are a command error, scaled images beyond that draw
+    nothing, and compressed sprites inflate no more bytes than they have pixels.
 
 ### Phase 3 — Sequence diagrams (~20k)
 - Also: the `@startuml` factory order and best-error selection, so that unknown syntax gives PlantUML's error image.

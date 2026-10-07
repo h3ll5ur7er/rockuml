@@ -451,6 +451,9 @@ impl SvgGraphics {
 
     /// An SVG document embedded as a data URI, under a root element of its scaled size.
     pub(super) fn svg_image(&mut self, image: &UImageSvg, x: f64, y: f64) {
+        let Some(svg) = self.manage_scale(image) else {
+            return;
+        };
         let mut element = XmlNode::new("image");
         element.set_attribute("width", self.length(image.width()));
         element.set_attribute("height", self.length(image.height()));
@@ -466,7 +469,6 @@ impl SvgGraphics {
             (image.height() * self.option.scale) as i32,
             (image.width() * self.option.scale) as i32,
         );
-        let svg = self.manage_scale(image);
         let svg = format!("{header}{}", svg.strip_prefix("<svg>").unwrap_or(&svg));
         element.set_attribute(
             "xlink:href",
@@ -481,12 +483,12 @@ impl SvgGraphics {
     }
 
     /// The document with its first group scaled, wrapping its content in a group if it has none.
-    fn manage_scale(&self, image: &UImageSvg) -> String {
+    fn manage_scale(&self, image: &UImageSvg) -> Option<String> {
         static FIRST_GROUP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<g\b").unwrap());
 
-        let mut svg = image.svg();
+        let mut svg = image.svg()?;
         if image.scale() * self.option.scale == 1.0 {
-            return svg;
+            return Some(svg);
         }
         let on_one_line = svg.replace(['\n', '\r'], " ");
         if !on_one_line.contains("<g ") && !on_one_line.contains("<g>") {
@@ -495,12 +497,13 @@ impl SvgGraphics {
                 .replacen("</svg>", "</g></svg>", 1);
         }
         let factor = self.length(image.scale());
-        FIRST_GROUP
+        let scaled = FIRST_GROUP
             .replace(
                 &svg,
                 format!("<g transform=\"scale({factor},{factor})\" ").as_str(),
             )
-            .into_owned()
+            .into_owned();
+        Some(scaled)
     }
 
     pub(super) fn start_group(&mut self, group: &UGroup) {

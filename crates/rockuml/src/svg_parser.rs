@@ -333,14 +333,19 @@ fn get_scale(transform: &str) -> (f64, f64) {
     })
 }
 
+/// PlantUML reads the data of a `d="..."` attribute only, and fails on a path without one.
 fn draw_path(ugs: &UGraphicWithScale, s: &str, stack_g: &[&str]) {
     // An `id` attribute would be read as the path data.
     let s = s.replace("id=\"", "ID=\"");
+    let Some(data) = s
+        .split_once("d=\"")
+        .and_then(|(_, rest)| rest.split_once('"'))
+        .map(|(data, _)| data)
+    else {
+        return;
+    };
     let ugs = apply_transform(&apply_fill_and_stroke(ugs, &s, stack_g), &s);
-    let start = s.find("d=\"").expect("a path has data") + 3;
-    let length = s[start..].find('"').expect("the path data is quoted");
-    let path = SvgPath::new(&s[start..start + length], UTranslate::default())
-        .to_upath_affine(ugs.affine_transform());
+    let path = SvgPath::new(data, UTranslate::default()).to_upath_affine(ugs.affine_transform());
     if path
         .iter()
         .any(|segment| !matches!(segment, USegment::MoveTo(..)))
@@ -543,6 +548,17 @@ mod tests {
             shapes[1].0,
             UShape::Path(vec![USegment::MoveTo(5.0, 5.0), USegment::LineTo(6.0, 5.0)])
         );
+    }
+
+    #[test]
+    fn paths_without_double_quoted_data_draw_nothing() {
+        for svg in [
+            r#"<path fill="red"/>"#,
+            "<path d='M0 0 h5'/>",
+            r#"<path fill="red" d="M0 0 h5>"#,
+        ] {
+            assert!(draw(svg, 1.0, None).is_empty(), "{svg}");
+        }
     }
 
     #[test]

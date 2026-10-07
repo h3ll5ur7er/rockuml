@@ -4,6 +4,22 @@ mod bilinear;
 
 use std::io::Cursor;
 
+use base64::Engine;
+use base64::prelude::BASE64_STANDARD;
+
+/// Java's medialib transforms no image this wide or high (`mlib_ImageAffine`): its 16.16 fixed-point
+/// arithmetic would overflow.
+const MLIB_MAX_SIDE: usize = 1 << 15;
+
+/// A 4096 x 4096 image, 64 MiB: as big as PlantUML draws a whole diagram unless `PLANTUML_LIMIT_SIZE` says
+/// otherwise. Absurd sprite and scale declarations would exhaust memory.
+const MAX_PIXELS: usize = 1 << 24;
+
+/// Whether rockuml makes images of this size, which declared sprites and scaled images must keep to.
+pub(crate) fn is_acceptable_size(width: usize, height: usize) -> bool {
+    width < MLIB_MAX_SIDE && height < MLIB_MAX_SIDE && width * height <= MAX_PIXELS
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct PortableImage {
     width: usize,
@@ -51,6 +67,12 @@ impl PortableImage {
         }
     }
 
+    /// The image a base64 text encodes, as PlantUML reads data URIs (`Base64Coder.decode`, then
+    /// `SImageIO.read`).
+    pub(crate) fn read_base64(base64: &str) -> Option<Self> {
+        Self::read(&BASE64_STANDARD.decode(base64).ok()?)
+    }
+
     /// The pixels of a PNG file, or `None` if it is not one.
     pub(crate) fn from_png(data: &[u8]) -> Option<Self> {
         let mut decoder = png::Decoder::new(Cursor::new(data));
@@ -79,24 +101,26 @@ impl PortableImage {
         })
     }
 
-    /// The first frame, placed on the logical screen, which transparent pixels leave see-through.
+    /// The first frame, as Java's GIF reader gives it: of its own size, whatever the logical screen and
+    /// the frame's position on it.
     fn from_gif(data: &[u8]) -> Option<Self> {
         let mut options = gif::DecodeOptions::new();
         options.set_color_output(gif::ColorOutput::RGBA);
         let mut decoder = options.read_info(data).ok()?;
-        let mut image = Self::new(usize::from(decoder.width()), usize::from(decoder.height()));
         let frame = decoder.read_next_frame().ok()??;
-        let (left, top) = (usize::from(frame.left), usize::from(frame.top));
-        for (index, &[red, green, blue, alpha]) in
-            frame.buffer.as_chunks::<4>().0.iter().enumerate()
-        {
-            let x = left + index % usize::from(frame.width);
-            let y = top + index / usize::from(frame.width);
-            if x < image.width && y < image.height {
-                image.set_rgb(x, y, argb(red, green, blue, alpha));
-            }
-        }
-        Some(image)
+        let (width, height) = (usize::from(frame.width), usize::from(frame.height));
+        let pixels: Vec<u32> = frame
+            .buffer
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|&[red, green, blue, alpha]| argb(red, green, blue, alpha))
+            .collect();
+        (pixels.len() == width * height).then_some(Self {
+            width,
+            height,
+            pixels,
+        })
     }
 
     fn from_jpeg(data: &[u8]) -> Option<Self> {
@@ -143,7 +167,7 @@ impl PortableImage {
         Self { pixels, ..*self }
     }
 
-    /// The image as a PNG file.
+    /// The image, which must have pixels, as a PNG file.
     pub(crate) fn to_png(&self) -> Vec<u8> {
         let mut png = Vec::new();
         let mut encoder = png::Encoder::new(&mut png, self.width as u32, self.height as u32);
@@ -160,19 +184,30 @@ impl PortableImage {
         encoder
             .write_header()
             .and_then(|mut writer| writer.write_image_data(&rgba))
-            .expect("encoding to memory succeeds");
+            .expect("an image with pixels encodes to memory");
         png
     }
 
-    /// `PortableImageAwt.scale` with bilinear interpolation: Java 2D's `AffineTransformOp` into an image of
-    /// the rounded scaled size.
-    #[must_use]
-    pub(crate) fn scale(&self, factor: f64) -> Self {
+    /// The size of the image scaled by `factor`, rounded.
+    pub(crate) fn scaled_size(&self, factor: f64) -> (usize, usize) {
         if factor == 1.0 {
-            return self.clone();
+            return (self.width, self.height);
         }
-        let width = (self.width as f64 * factor).round() as usize;
-        let height = (self.height as f64 * factor).round() as usize;
+        let scaled = |size: usize| (size as f64 * factor).round() as usize;
+        (scaled(self.width), scaled(self.height))
+    }
+
+    /// `PortableImageAwt.scale` with bilinear interpolation: Java 2D's `AffineTransformOp` into an image of
+    /// the rounded scaled size. `None` where Java fails, for a scaled image without pixels or a source
+    /// medialib refuses, and beyond the sizes rockuml makes.
+    pub(crate) fn scale(&self, factor: f64) -> Option<Self> {
+        if factor == 1.0 {
+            return Some(self.clone());
+        }
+        let (width, height) = self.scaled_size(factor);
+        if width == 0 || height == 0 || !is_acceptable_size(width, height) {
+            return None;
+        }
         bilinear::scale(self, factor, width, height)
     }
 }
@@ -209,6 +244,13 @@ mod tests {
     }
 
     #[test]
+    fn gifs_are_the_size_of_their_first_frame() {
+        let gif =
+            PortableImage::read_base64("R0lGODlh/////4AAAAAAAP///ywAAAAAAQABAAACAkQBADs=").unwrap();
+        assert_eq!((gif.width(), gif.height()), (1, 1));
+    }
+
+    #[test]
     fn drawing_on_transparent_rounds_through_premultiplied_alpha() {
         let mut image = PortableImage::new(3, 1);
         image.set_rgb(0, 0, 0x00FF_FFFF);
@@ -228,7 +270,18 @@ mod tests {
     #[test]
     fn scaled_size_is_rounded() {
         let image = PortableImage::new(16, 10);
-        let scaled = image.scale(14.0 / 13.0);
+        let scaled = image.scale(14.0 / 13.0).unwrap();
         assert_eq!((scaled.width(), scaled.height()), (17, 11));
+    }
+
+    #[test]
+    fn scaling_fails_without_pixels_and_beyond_the_largest_image() {
+        let image = PortableImage::new(4, 2);
+        assert!(image.scale(100_000.0).is_none());
+        assert_eq!(image.scaled_size(100_000.0), (400_000, 200_000));
+        assert!(
+            image.scale(0.01).is_none(),
+            "Java makes no image without pixels"
+        );
     }
 }

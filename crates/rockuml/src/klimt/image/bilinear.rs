@@ -6,7 +6,7 @@
 
 use std::ops::RangeInclusive;
 
-use super::PortableImage;
+use super::{MLIB_MAX_SIDE, PortableImage};
 
 const MLIB_SHIFT: i32 = 16;
 const MLIB_PREC: i32 = 1 << MLIB_SHIFT;
@@ -14,12 +14,16 @@ const MLIB_MASK: i32 = MLIB_PREC - 1;
 const MLIB_ROUND: i32 = 1 << (MLIB_SHIFT - 1);
 const HALF_PIXEL: i32 = 1 << (MLIB_SHIFT - 1);
 
+/// `None` for a source medialib refuses, as Java fails with "Unable to transform src image".
 pub(super) fn scale(
     source: &PortableImage,
     factor: f64,
     width: usize,
     height: usize,
-) -> PortableImage {
+) -> Option<PortableImage> {
+    if source.width >= MLIB_MAX_SIDE || source.height >= MLIB_MAX_SIDE {
+        return None;
+    }
     let mut target = PortableImage::new(width, height);
     let geometry = Geometry {
         source: (source.width as i32, source.height as i32),
@@ -30,7 +34,7 @@ pub(super) fn scale(
     let whole = geometry.affine_edges(Region::Whole);
     affine_bl(source, &mut target, &interior);
     edge_extend_bl(source, &mut target, &interior, &whole);
-    target
+    Some(target)
 }
 
 /// Which destination pixels a pass covers: those whose centre maps between the centres of the source's
@@ -446,7 +450,7 @@ mod tests {
             ],
         );
         assert_eq!(
-            source.scale(14.0 / 13.0).pixels,
+            source.scale(14.0 / 13.0).unwrap().pixels,
             [
                 0xbb1ad573, 0x2aa7a2cd, 0x59ef2781, 0x7047f58e, 0x393ccced, 0x1954ace6
             ]
@@ -457,7 +461,7 @@ mod tests {
     fn interpolates_between_border_pixels_like_java2d() {
         let source = image(2, 2, &[0xbb0f1799, 0xa3773418, 0xbfc9945a, 0x02770b39]);
         assert_eq!(
-            source.scale(1.5).pixels,
+            source.scale(1.5).unwrap().pixels,
             [
                 0xbb0f1799, 0xaf422558, 0xa3773418, 0xbd6c5579, 0x88723b52, 0x52771f28, 0xbfc9945a,
                 0x60a04f49, 0x02770b39
@@ -475,6 +479,14 @@ mod tests {
                 0x73af2bd6,
             ],
         );
-        assert_eq!(source.scale(0.5).pixels, [0x8394a192, 0x7898905f]);
+        assert_eq!(source.scale(0.5).unwrap().pixels, [0x8394a192, 0x7898905f]);
+    }
+
+    #[test]
+    fn medialib_refuses_sources_beyond_its_fixed_point_range() {
+        let wide = PortableImage::new(MLIB_MAX_SIDE, 1);
+        assert!(scale(&wide, 0.5, MLIB_MAX_SIDE / 2, 1).is_none());
+        let high = PortableImage::new(1, MLIB_MAX_SIDE);
+        assert!(scale(&high, 0.5, 1, MLIB_MAX_SIDE / 2).is_none());
     }
 }

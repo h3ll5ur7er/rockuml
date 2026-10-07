@@ -3,22 +3,26 @@
 use std::rc::Rc;
 use std::sync::LazyLock;
 
-use base64::Engine;
-use base64::prelude::BASE64_STANDARD;
 use regex::Regex;
 
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
 };
+use crate::diagram::BASE64_TAG_REPLACEMENT;
 use crate::diagram::titled::TitledDiagram;
-use crate::klimt::image::PortableImage;
+use crate::klimt::image::{PortableImage, is_acceptable_size};
 use crate::klimt::sprite::{
-    Sprite, SpriteColorBuilder4096, SpriteContainer, SpriteGrayLevel, SpriteImage,
+    Sprite, SpriteColorBuilder4096, SpriteContainer, SpriteGrayLevel, SpriteImage, SpriteMonochrome,
 };
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stdlib::Stdlib;
 use crate::svg_parser::SvgNanoParser;
 use crate::text::{LineLocation, StringLocated};
+
+const NAME: &str = "([-%pLN_]+)";
+/// Sprites declared with their data, inline or by MD5, may have dots in their names.
+const NAME_WITH_DOTS: &str = "([-.%pLN_]+)";
+const OPTIONAL_DOLLAR: &str = r"\$?";
 
 /// `sprite $name [16x16/8] {` ... `}`, the size optional for 16 gray levels.
 pub(super) fn multi_line<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
@@ -75,17 +79,15 @@ pub(super) fn single_line<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
 /// [`crate::diagram::source::UmlSource::patch_base64`] has taken the data out (PlantUML's
 /// `CommandSpriteMd5`).
 pub(super) fn md5<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
-    let pattern = RegexTree::concat(vec![
-        RegexTree::start(),
-        RegexTree::leaf("sprite"),
-        RegexTree::spaces_one_or_more(),
-        RegexTree::leaf(r"\$?"),
-        RegexTree::named(1, "NAME", "([-.%pLN_]+)"),
-        RegexTree::spaces_one_or_more(),
-        RegexTree::leaf("data:image/png;md5,"),
-        RegexTree::named(1, "MD5", "([0-9a-f]+)"),
-        RegexTree::end(),
-    ]);
+    let pattern = sprite_pattern(
+        OPTIONAL_DOLLAR,
+        NAME_WITH_DOTS,
+        vec![
+            RegexTree::spaces_one_or_more(),
+            RegexTree::leaf(BASE64_TAG_REPLACEMENT),
+            RegexTree::named(1, "MD5", "([0-9a-f]+)"),
+        ],
+    );
     Box::new(SingleLine(PatternCommand::new(
         pattern,
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
@@ -94,10 +96,7 @@ pub(super) fn md5<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
                 diagram.titled().skin.get_from_md5(md5).ok_or_else(|| {
                     CommandError::new(format!("Unknown MD5 sprite reference: {md5}"))
                 })?;
-            let image = BASE64_STANDARD
-                .decode(base64)
-                .ok()
-                .and_then(|png| PortableImage::from_png(&png))
+            let image = PortableImage::read_base64(base64)
                 .ok_or_else(|| CommandError::new("Cannot decode Base64 PNG sprite."))?;
             add_sprite(diagram, arg, Rc::new(SpriteImage::new(image)));
             Ok(())
@@ -121,16 +120,14 @@ pub(super) fn svg<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
 /// `sprite $name #library#exported`, a gray-level sprite of the standard library, which its `!include`s
 /// declare (PlantUML's `CommandSpriteStdlib`).
 pub(super) fn stdlib<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
-    let pattern = RegexTree::concat(vec![
-        RegexTree::start(),
-        RegexTree::leaf("sprite"),
-        RegexTree::spaces_one_or_more(),
-        RegexTree::leaf(r"\$"),
-        RegexTree::named(1, "NAME", "([-%pLN_]+)"),
-        RegexTree::spaces_zero_or_more(),
-        RegexTree::named(2, "STDLIB", "#([^#]+)#([^%s]+)"),
-        RegexTree::end(),
-    ]);
+    let pattern = sprite_pattern(
+        r"\$",
+        NAME,
+        vec![
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::named(2, "STDLIB", "#([^#]+)#([^%s]+)"),
+        ],
+    );
     Box::new(SingleLine(PatternCommand::new(
         pattern,
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
@@ -198,18 +195,22 @@ pub(super) fn file<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     )
 }
 
-/// `sprite $?name`, `separator` and `source`.
 fn sprite_named(separator: RegexTree, source: RegexTree) -> RegexTree {
-    RegexTree::concat(vec![
+    sprite_pattern(OPTIONAL_DOLLAR, NAME, vec![separator, source])
+}
+
+/// Each command spells the name, and whether its dollar is optional, its own way.
+fn sprite_pattern(dollar: &'static str, name: &'static str, rest: Vec<RegexTree>) -> RegexTree {
+    let mut parts = vec![
         RegexTree::start(),
         RegexTree::leaf("sprite"),
         RegexTree::spaces_one_or_more(),
-        RegexTree::leaf(r"\$?"),
-        RegexTree::named(1, "NAME", "([-%pLN_]+)"),
-        separator,
-        source,
-        RegexTree::end(),
-    ])
+        RegexTree::leaf(dollar),
+        RegexTree::named(1, "NAME", name),
+    ];
+    parts.extend(rest);
+    parts.push(RegexTree::end());
+    RegexTree::concat(parts)
 }
 
 fn single_line_named<D: TitledDiagram + 'static>(
@@ -240,55 +241,68 @@ fn add_stdlib_sprite<D: TitledDiagram>(
 
 /// `sprite $name`, an optional size and encoding, then `ending`.
 fn declaration(dimension: &'static str, ending: Vec<RegexTree>) -> RegexTree {
-    let mut parts = vec![
-        RegexTree::start(),
-        RegexTree::leaf("sprite"),
-        RegexTree::spaces_one_or_more(),
-        RegexTree::leaf(r"\$?"),
-        RegexTree::named(1, "NAME", "([-.%pLN_]+)"),
+    let mut rest = vec![
         RegexTree::spaces_zero_or_more(),
         RegexTree::optional(RegexTree::named(5, "DIM", dimension)),
     ];
-    parts.extend(ending);
-    parts.push(RegexTree::end());
-    RegexTree::concat(parts)
+    rest.extend(ending);
+    sprite_pattern(OPTIONAL_DOLLAR, NAME_WITH_DOTS, rest)
 }
 
+/// Without a size, a sprite has 16 gray levels and the size of its text.
 fn execute_internal<D: TitledDiagram>(
     diagram: &mut D,
     arg: &RegexResult,
     strings: &[String],
 ) -> CommandResult {
-    let dimension = |index| {
-        arg.get("DIM", index)
-            .and_then(|text| text.parse::<usize>().ok())
-    };
-    let sprite: Rc<dyn Sprite> = match (dimension(0), dimension(1)) {
-        (Some(_), Some(_)) if arg.get("DIM", 4).is_some() => {
+    let sprite: Rc<dyn Sprite> = if arg.get("DIM", 0).is_none() {
+        Rc::new(SpriteGrayLevel::Gray16.build_sprite(0, 0, strings))
+    } else {
+        let (width, height) = (declared_size(arg, 0)?, declared_size(arg, 1)?);
+        if arg.get("DIM", 4).is_some() {
             Rc::new(SpriteColorBuilder4096::build_sprite(strings))
+        } else {
+            Rc::new(gray_level_sprite(arg, width, height, strings)?)
         }
-        (Some(width), Some(height)) => {
-            let level = arg
-                .get("DIM", 2)
-                .and_then(|text| text.parse().ok())
-                .and_then(SpriteGrayLevel::get)
-                .ok_or_else(|| CommandError::new("Only 4, 8 or 16 graylevel are allowed."))?;
-            if arg.get("DIM", 3).is_none() {
-                Rc::new(level.build_sprite(width, height, strings))
-            } else {
-                let compressed: String =
-                    strings.iter().map(|text| crate::java::trim(text)).collect();
-                Rc::new(
-                    level
-                        .build_sprite_z(width, height, &compressed)
-                        .ok_or_else(|| CommandError::new("Cannot decode sprite."))?,
-                )
-            }
-        }
-        _ => Rc::new(SpriteGrayLevel::Gray16.build_sprite(0, 0, strings)),
     };
     add_sprite(diagram, arg, sprite);
     Ok(())
+}
+
+/// A width or height, which PlantUML reads as an `int`.
+fn declared_size(arg: &RegexResult, index: usize) -> Result<usize, CommandError> {
+    arg.get("DIM", index)
+        .and_then(|text| text.parse::<i32>().ok())
+        .and_then(|size| usize::try_from(size).ok())
+        .ok_or_else(sprite_too_large)
+}
+
+fn gray_level_sprite(
+    arg: &RegexResult,
+    width: usize,
+    height: usize,
+    strings: &[String],
+) -> Result<SpriteMonochrome, CommandError> {
+    let level = arg
+        .get("DIM", 2)
+        .and_then(|text| text.parse().ok())
+        .and_then(SpriteGrayLevel::get)
+        .ok_or_else(|| CommandError::new("Only 4, 8 or 16 graylevel are allowed."))?;
+    if !is_acceptable_size(width, height) {
+        return Err(sprite_too_large());
+    }
+    if arg.get("DIM", 3).is_none() {
+        return Ok(level.build_sprite(width, height, strings));
+    }
+    let compressed: String = strings.iter().map(|text| crate::java::trim(text)).collect();
+    level
+        .build_sprite_z(width, height, &compressed)
+        .ok_or_else(|| CommandError::new("Cannot decode sprite."))
+}
+
+/// Where PlantUML would run out of memory, or fail to parse the size.
+fn sprite_too_large() -> CommandError {
+    CommandError::new("Sprite too large.")
 }
 
 fn add_sprite<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, sprite: Rc<dyn Sprite>) {
