@@ -13,6 +13,7 @@
 
 pub mod cgraph;
 
+use crate::core::Globals;
 use crate::core::carray::{CArray, CArrays};
 use crate::core::ids::{
     AdjmatrixId, EdgeId, FieldId, GraphId, NodeId, PolygonId, ShapeDescId, SplinesId, StrId,
@@ -360,4 +361,43 @@ pub struct Agedgeinfo_t {
     pub count: i32,
     pub minlen: i32,
     pub to_virt: Option<EdgeId>,
+}
+
+/// `path`: what spline routing needs to know about an edge: its end ports and the corridor of boxes it may use.
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct path {
+    pub start: port,
+    pub end: port,
+    pub nbox: i32,
+    pub boxes: Vec<boxf>,
+    pub data: Option<EdgeId>,
+}
+
+/// `pathend_t`: the boxes around one end node of a routed edge.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct pathend_t {
+    pub nb: boxf,
+    pub np: pointf,
+    pub sidemask: i32,
+    pub boxn: i32,
+    pub boxes: [boxf; 20],
+}
+
+/// `splineInfo`: the layout engine's answers to the questions spline clipping asks.
+#[derive(Clone, Copy)]
+pub struct splineInfo {
+    pub swapEnds: fn(&Globals, EdgeId) -> bool,
+    pub splineMerge: fn(&Globals, NodeId) -> bool,
+    pub ignoreSwap: bool,
+    pub isOrtho: bool,
+}
+
+/// `inside_t`, a C union: the circle around an arrow tip (`a`) or the node and port box a spline is clipped to
+/// (`s`). `a.p` points at the circle's centre in C; Smetana only reads it while the centre stays put.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct inside_t {
+    pub a_p: pointf,
+    pub a_r: f64,
+    pub s_n: Option<NodeId>,
+    pub s_bp: Option<boxf>,
 }
