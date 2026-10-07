@@ -12,7 +12,7 @@ use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::model::{Event, ParticipantId};
 use crate::klimt::clip::UClip;
-use crate::klimt::geom::XDimension2D;
+use crate::klimt::geom::{MinMax, XDimension2D};
 use crate::klimt::limit_finder::LimitFinder;
 use crate::klimt::ugraphic::UGraphic;
 use crate::real::Real;
@@ -202,7 +202,8 @@ impl<'a> PlayingSpace<'a> {
 
     /// The height of everything drawn, found by drawing it.
     pub(super) fn preferred_height(&self) -> f64 {
-        let (ug, finder) = LimitFinder::surface(self.arguments.string_bounder.clone());
+        let (ug, finder) =
+            LimitFinder::surface(self.arguments.string_bounder.clone(), MinMax::from_origin());
         let final_y = self.draw_internal(
             &ug,
             Context2D {

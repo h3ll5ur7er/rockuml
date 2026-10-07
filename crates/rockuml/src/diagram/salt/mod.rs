@@ -143,12 +143,14 @@ impl Diagram for SaltDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let lines = self.widget_lines()?;
         let mut source = DataSource::new(&lines);
         let root = top_level_element(&mut source)?;
-        Ok(self.titled.add_chrome(Box::new(Drawing(root))))
+        Ok(self
+            .titled
+            .add_chrome(Box::new(Drawing(root)), string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

@@ -7,6 +7,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::chrome::Warning;
 use super::scale::Scale;
 use super::titled::{Positioned, TitledDiagram, VerticalAlignment};
 use crate::command::{
@@ -55,6 +56,7 @@ pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comma
             ))
         }),
         single(labelled("title", "TITLE1", "TITLE2"), set_title),
+        single(mainframe_pattern(), set_mainframe),
         single(labelled("caption", "DISPLAY1", "DISPLAY2"), set_caption),
         Box::new(Multiline::new(
             &plantuml_regex("^caption$"),
@@ -321,7 +323,31 @@ fn define_pragma<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineL
 fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
     let name = arg.get("NAME", 0).unwrap_or_default();
     let value = arg.get("VALUE", 0).unwrap_or_default();
+    if let Some(warning) = deprecation_warning(name) {
+        diagram.titled().add_warning(Warning(warning.to_owned()));
+    }
     diagram.titled().skin.set_param(name, value);
+}
+
+/// The warning for a deprecated skin parameter. As in PlantUML, `skinparam` blocks do not warn.
+fn deprecation_warning(name: &str) -> Option<&'static str> {
+    [
+        (
+            "handwritten",
+            "Please use '!option handwritten true' to enable handwritten ",
+        ),
+        (
+            "ParticipantPadding",
+            "Please use CSS style instead of skinparam ParticipantPadding",
+        ),
+        (
+            "padding",
+            "Please use CSS style instead of skinparam padding",
+        ),
+    ]
+    .into_iter()
+    .find(|(deprecated, _)| deprecated.eq_ignore_ascii_case(name))
+    .map(|(_, warning)| warning)
 }
 
 fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> CommandResult {
@@ -342,6 +368,22 @@ fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> Co
 
 fn set_title<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
     diagram.titled().set_title(label(arg, "TITLE"), location);
+}
+
+/// `mainframe text` or `mainframe: text`.
+fn mainframe_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("mainframe"),
+        RegexTree::leaf("(?:[%s]*:[%s]*|[%s]+)"),
+        RegexTree::named(1, "LABEL", "(.*[%pLN_.].*)"),
+        RegexTree::end(),
+    ])
+}
+
+fn set_mainframe<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
+    let label = Display::with_newlines(arg.get("LABEL", 0).unwrap_or_default());
+    diagram.titled().set_mainframe(label);
 }
 
 fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {

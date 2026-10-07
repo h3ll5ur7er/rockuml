@@ -4,6 +4,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use super::TextBlock;
 use super::clip::{UClip, path_bounds};
 use super::font::StringBounder;
 use super::geom::{MinMax, UTranslate};
@@ -22,13 +23,14 @@ pub(crate) struct LimitFinder {
 }
 
 impl LimitFinder {
-    /// A surface measuring what is drawn on it, from the origin on.
+    /// A surface measuring what is drawn on it, starting from `min_max`.
     pub(crate) fn surface(
         string_bounder: Rc<dyn StringBounder>,
+        min_max: MinMax,
     ) -> (UGraphic, Rc<RefCell<LimitFinder>>) {
         let finder = Rc::new(RefCell::new(LimitFinder {
             string_bounder: string_bounder.clone(),
-            min_max: MinMax::from_origin(),
+            min_max,
             clip: None,
         }));
         let ug = UGraphic::new(finder.clone(), string_bounder, HColor::WHITE);
@@ -37,6 +39,16 @@ impl LimitFinder {
 
     pub(crate) fn min_max(&self) -> MinMax {
         self.min_max
+    }
+
+    /// How far a block reaches when drawn, the origin not counting (`TextBlockUtils.getMinMax`).
+    pub(crate) fn min_max_of(
+        block: &dyn TextBlock,
+        string_bounder: Rc<dyn StringBounder>,
+    ) -> MinMax {
+        let (ug, finder) = Self::surface(string_bounder, MinMax::empty());
+        block.draw_u(&ug);
+        finder.borrow().min_max()
     }
 
     fn add_point(&mut self, x: f64, y: f64) {
@@ -113,7 +125,7 @@ impl UGraphicBackend for LimitFinder {
                 self.add_point(x, y);
                 self.add_point(x + dimension.width, y + dimension.height);
             }
-            UShape::HorizontalLine => {}
+            UShape::HorizontalLine | UShape::SpecialText => {}
         }
     }
 }

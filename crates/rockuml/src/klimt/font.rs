@@ -64,6 +64,10 @@ impl UFont {
         Self::new(Self::SERIF, UFontFace::NORMAL, size)
     }
 
+    pub fn monospace(size: i32) -> Self {
+        Self::new("Monospaced", UFontFace::NORMAL, size)
+    }
+
     pub fn size(&self) -> i32 {
         self.size
     }

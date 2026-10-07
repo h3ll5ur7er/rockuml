@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::fmt;
 use std::rc::Rc;
 
+use super::TextBlock;
 use super::clip::UClip;
 use super::font::StringBounder;
 use super::geom::UTranslate;
@@ -56,6 +57,12 @@ pub struct UParam {
 /// Receives the shapes of one output document.
 pub trait UGraphicBackend {
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam);
+
+    /// Whether the format draws the text block of a special text, as PlantUML's `AbstractUGraphic` does,
+    /// rather than receiving the shape.
+    fn draws_special_text(&self) -> bool {
+        false
+    }
 
     /// Formats without groups ignore them.
     fn start_group(&mut self, _group: &UGroup) {}
@@ -199,6 +206,15 @@ impl UGraphic {
             frame.stencil.as_ref(),
             self.translate.dy - frame.origin.dy,
         );
+    }
+
+    /// Draws `block` as PlantUML's `SpecialText`.
+    pub fn draw_special_text(&self, block: &dyn TextBlock) {
+        if self.backend.borrow().draws_special_text() {
+            block.draw_u(self);
+        } else {
+            self.draw(&UShape::SpecialText);
+        }
     }
 
     pub fn draw(&self, shape: &UShape) {
