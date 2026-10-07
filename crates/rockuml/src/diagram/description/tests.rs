@@ -1,14 +1,21 @@
 //! The description corpus read by the commands, against what PlantUML's commands make of it. The fixture
 //! comes from `tools/oracle/cuca-unit/DescriptionDump.java`.
 
+use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 use std::path::PathBuf;
 use std::rc::Rc;
 
 use super::{DescriptionDiagram, DescriptionDiagramFactory};
-use crate::abel::Entity;
-use crate::color::{ColorType, Colors};
+use crate::abel::{Entity, LeafType};
+use crate::color::{ColorType, Colors, HColor};
+use crate::java::double_to_string;
+use crate::klimt::TextBlock;
+use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
+use crate::klimt::ugraphic::UGraphic;
+use crate::svek::IEntityImage;
+use crate::svek::image::EntityImageDescription;
 use crate::command::factory::{Created, create_system};
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
@@ -236,6 +243,87 @@ fn dump_model(diagram: &DescriptionDiagram) -> String {
         .unwrap();
     }
     out
+}
+
+/// Each leaf's image as `DescriptionDump` writes it: its kind, size and drawing on the debug surface.
+fn dump_images(diagram: &DescriptionDiagram) -> String {
+    let cuca = &diagram.cuca;
+    let mut out = String::new();
+    for leaf in cuca.leafs() {
+        let entity = cuca.entity(leaf);
+        if entity.is_removed(cuca) || entity.get_leaf_type() == Some(LeafType::Note) {
+            continue;
+        }
+        let image: Box<dyn IEntityImage> = match entity.get_leaf_type() {
+            Some(
+                LeafType::Description
+                | LeafType::Usecase
+                | LeafType::UsecaseBusiness
+                | LeafType::Circle,
+            ) => Box::new(EntityImageDescription::new(entity, cuca)),
+            other => panic!("no image for {other:?}"),
+        };
+        let class = "EntityImageDescription";
+        writeln!(out, "image {} {class}", entity.get_uid()).unwrap();
+        let dimension = image.calculate_dimension(&StringBounderDebug);
+        writeln!(
+            out,
+            "dimension: {} {}",
+            double_to_string(dimension.width),
+            double_to_string(dimension.height)
+        )
+        .unwrap();
+        writeln!(out, "shape: {}", screaming(image.get_shape_type())).unwrap();
+        let debug = Rc::new(RefCell::new(UGraphicDebug::new("DATE".to_owned())));
+        let ug = UGraphic::new(debug.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
+        image.draw_u(&ug);
+        let document = debug.borrow().document(&DebugHeader {
+            dimension,
+            scale_factor: 1.0,
+            seed: 0,
+            svg_link_target: None,
+            hover_path_color_rgb: None,
+            preserve_aspect_ratio: "none".to_owned(),
+        });
+        for line in document
+            .split('\n')
+            .skip_while(|line| !line.is_empty())
+            .skip(1)
+        {
+            out += line;
+            out.push('\n');
+        }
+    }
+    out
+}
+
+#[test]
+fn the_images_draw_like_plantumls() {
+    let cases = fixture_cases();
+    let mut failures = Vec::new();
+    for (case, (model, expected)) in &cases {
+        // The note commands are ported with the notes, ports with the clusters they sit on, `remove` with
+        // `hide` and `show`.
+        if model.contains(" NOTE ")
+            || model.contains(" PORTIN ")
+            || model.contains(" PORTOUT ")
+            || *case == "component/hide-unlinked.puml"
+        {
+            continue;
+        }
+        let actual = dump_images(&read(case));
+        if actual.trim_end() != expected.trim_end() {
+            failures.push(format!(
+                "=== {case}\n--- expected\n{expected}--- actual\n{actual}"
+            ));
+        }
+    }
+    assert!(
+        failures.is_empty(),
+        "{} cases differ:\n{}",
+        failures.len(),
+        failures.join("\n")
+    );
 }
 
 #[test]

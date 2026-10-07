@@ -196,6 +196,13 @@ impl SkinParam {
     }
 
     /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.
+    /// `defaultTextAlignment`, or `default`.
+    pub(crate) fn default_text_alignment(&self, default: HorizontalAlignment) -> HorizontalAlignment {
+        self.value("defaulttextalignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(default)
+    }
+
     pub(crate) fn note_text_alignment(&self, default: HorizontalAlignment) -> HorizontalAlignment {
         ["noteTextAlignment", "defaulttextalignment"]
             .iter()

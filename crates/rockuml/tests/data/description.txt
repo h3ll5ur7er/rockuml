@@ -3358,7 +3358,6 @@ link lnk18 ent0013 ent0016 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -3488,7 +3487,6 @@ TEXT:
 image ent0007 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 8.594831579531903
 COMMENT: entity FTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4811,8 +4809,6 @@ link lnk9 ent0004 ent0005 NONE NONE NONE 0.0-0.0-1.0 invisible length=1 label=""
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 90.31792434961024 90.31792434961024 14.0 14.0
-overscan: 90.31792434961024
 COMMENT: entity First Interface
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4836,8 +4832,6 @@ TEXT:
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 107.17043707548713 107.17043707548713 14.0 14.0
-overscan: 107.17043707548713
 COMMENT: entity Interf2
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4861,8 +4855,6 @@ TEXT:
 image ent0003 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 51.901653662793585 51.901653662793585 14.0 14.0
-overscan: 51.901653662793585
 COMMENT: entity Interf3
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -4886,8 +4878,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 113.32502094125701 113.32502094125701 14.0 14.0
-overscan: 113.32502094125701
 COMMENT: entity Interf4
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6018,7 +6008,6 @@ link lnk7 ent0006 ent0004 PARENTHESIS NONE NONE 0.0-0.0-1.0 length=1 label="" q1
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 70.47005024125627
 COMMENT: entity DataAccess
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6095,7 +6084,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6468,7 +6456,6 @@ link lnk11 ent0002 ent0010 NONE NONE NONE 7.0-7.0-1.0 length=1 label="" q1=null 
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 59.77078501119625
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -6545,7 +6532,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7432,7 +7418,6 @@ link lnk7 ent0005 ent0002 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 59.77078501119625
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7574,7 +7559,6 @@ TEXT:
 image ent0005 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7734,7 +7718,6 @@ TEXT:
 image ent0003 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 36.229979554077964
 COMMENT: entity IPay
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7776,7 +7759,6 @@ link lnk5 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=nu
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 59.77078501119625
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7843,8 +7825,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 14.272096564166898 14.272096564166898 14.0 14.0
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7874,7 +7854,6 @@ link lnk5 ent0002 ent0004 ARROW NONE NONE 7.0-7.0-1.0 length=2 label="use" q1=nu
 image ent0001 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-overscan: 59.77078501119625
 COMMENT: entity DA
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -7951,8 +7930,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 14.272096564166898 14.272096564166898 14.0 14.0
-overscan: 14.272096564166898
 COMMENT: entity HTTP
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -8882,8 +8859,6 @@ TEXT:
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 41.808981144539885 41.808981144539885 14.0 14.0
-overscan: 41.808981144539885
 COMMENT: entity circle
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -9054,8 +9029,6 @@ TEXT:
 image ent0006 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 64.10566514219194 64.10566514219194 14.0 14.0
-overscan: 64.10566514219194
 COMMENT: entity interface
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11067,8 +11040,6 @@ TEXT:
 image ent0002 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 15.00565124970759 15.00565124970759 14.0 14.0
-overscan: 15.00565124970759
 COMMENT: entity bar
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11092,8 +11063,6 @@ TEXT:
 image ent0004 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 23.324895884988933 23.324895884988933 14.0 14.0
-overscan: 23.324895884988933
 COMMENT: entity bar1
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11117,8 +11086,6 @@ TEXT:
 image ent0006 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 23.31862516093458 23.31862516093458 14.0 14.0
-overscan: 23.31862516093458
 COMMENT: entity bar2
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]
@@ -11142,8 +11109,6 @@ TEXT:
 image ent0008 EntityImageDescription
 dimension: 18.0 18.0
 shape: RECTANGLE
-shield: 23.317371224739972 23.317371224739972 14.0 14.0
-overscan: 23.317371224739972
 COMMENT: entity bar3
 ELLIPSE:
   pt1: [ 1.0000 ; 1.0000 ]

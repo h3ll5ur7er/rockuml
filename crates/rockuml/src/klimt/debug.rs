@@ -256,6 +256,7 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
+            UShape::Comment(comment) => self.lines.push(format!("COMMENT: {comment}")),
             UShape::HorizontalLine
             | UShape::Image(_)
             | UShape::ImageSvg(_)

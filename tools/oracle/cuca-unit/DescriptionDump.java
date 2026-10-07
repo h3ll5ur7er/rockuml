@@ -23,7 +23,6 @@ import net.sourceforge.plantuml.klimt.geom.XDimension2D;
 import net.sourceforge.plantuml.svek.Bibliotekon;
 import net.sourceforge.plantuml.svek.GeneralImageBuilder;
 import net.sourceforge.plantuml.svek.IEntityImage;
-import net.sourceforge.plantuml.svek.Margins;
 
 /**
  * Dumps what PlantUML's description diagram commands make of each source given (entities, groups and links), and
@@ -91,12 +90,6 @@ public class DescriptionDump {
 		final XDimension2D dim = image.calculateDimension(BOUNDER);
 		out.println("dimension: " + dim.getWidth() + " " + dim.getHeight());
 		out.println("shape: " + image.getShapeType());
-		final Margins shield = image.getShield(BOUNDER);
-		if (shield.isZero() == false)
-			out.println("shield: " + shield.getX1() + " " + shield.getX2() + " " + shield.getY1() + " "
-					+ shield.getY2());
-		if (image.getOverscanX(BOUNDER) != 0)
-			out.println("overscan: " + image.getOverscanX(BOUNDER));
 		final UGraphicDebug ug = new UGraphicDebug(1, dim, null, null, 0, "none");
 		image.drawU(ug);
 		final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
