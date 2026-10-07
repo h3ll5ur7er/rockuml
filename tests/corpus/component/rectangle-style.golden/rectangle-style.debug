@@ -1,0 +1,113 @@
+DPI: 96
+dimension: [ 156.0000 ; 201.0000 ]
+scaleFactor: 1.0000
+seed: 662416868538440840
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Frontend
+RECTANGLE:
+  pt1: [ 12.5000 ; 12.0000 ]
+  pt2: [ 134.8671 ; 46.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Frontend
+  position: [ 22.5000 ; 32.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Backend
+RECTANGLE:
+  pt1: [ 19.5000 ; 82.0000 ]
+  pt2: [ 127.1684 ; 116.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Backend
+  position: [ 29.5000 ; 102.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Storage
+RECTANGLE:
+  pt1: [ 6.0000 ; 152.0000 ]
+  pt2: [ 141.0837 ; 186.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Storage
+  position: [ 16.0000 ; 172.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 73.5000 ; 81.5283 ]
+   - [ 77.5000 ; 72.5283 ]
+   - [ 73.5000 ; 76.5283 ]
+   - [ 69.5000 ; 72.5283 ]
+   - [ 73.5000 ; 81.5283 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 67.5000 ; 40.1151 ]
+   - type: SEG_CUBICTO
+     pt1: [ 67.5000 ; 50.7977 ]
+     pt2: [ 67.5000 ; 59.7733 ]
+     pt3: [ 67.5000 ; 70.5283 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 73.5000 ; 151.5283 ]
+   - [ 77.5000 ; 142.5283 ]
+   - [ 73.5000 ; 146.5283 ]
+   - [ 69.5000 ; 142.5283 ]
+   - [ 73.5000 ; 151.5283 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 67.5000 ; 110.1151 ]
+   - type: SEG_CUBICTO
+     pt1: [ 67.5000 ; 120.7977 ]
+     pt2: [ 67.5000 ; 129.7733 ]
+     pt3: [ 67.5000 ; 140.5283 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

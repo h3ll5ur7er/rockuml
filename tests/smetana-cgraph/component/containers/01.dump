@@ -1,0 +1,71 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 3
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010"
+subgraph "cluster11" parent "g" seq 2 nodes "sh0015"
+subgraph "cluster16" parent "g" seq 3 nodes "sh0020"
+subgraph "cluster21" parent "g" seq 4 nodes "sh0025"
+subgraph "cluster26" parent "g" seq 5 nodes "sh0030"
+graph ids "g" "cluster6" "cluster11" "cluster16" "cluster21" "cluster26"
+node ids "sh0010" "sh0015" "sh0020" "sh0025" "sh0030"
+in "g" node "sh0010" out e1> in e3< edges e1> e3< degree 1 1
+in "g" node "sh0015" out in e2< edges e2< degree 1 0
+in "g" node "sh0020" out e3> in edges e3> degree 0 1
+in "g" node "sh0025" out e2> in edges e2> degree 0 1
+in "g" node "sh0030" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster11" node "sh0015" out in edges degree 0 0
+in "cluster16" node "sh0020" out in edges degree 0 0
+in "cluster21" node "sh0025" out in edges degree 0 0
+in "cluster26" node "sh0030" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+induce "cluster6"
+in "cluster6" node "sh0010" out in edges degree 0 0
+induce "cluster11"
+in "cluster11" node "sh0015" out in edges degree 0 0
+induce "cluster16"
+in "cluster16" node "sh0020" out in edges degree 0 0
+induce "cluster21"
+in "cluster21" node "sh0025" out in edges degree 0 0
+induce "cluster26"
+in "cluster26" node "sh0030" out in edges degree 0 0
+contains "cluster6" 1 0 0 0 0 0 0 0
+contains "cluster11" 0 1 0 0 0 0 0 0
+contains "cluster16" 0 0 1 0 0 0 0 0
+contains "cluster21" 0 0 0 1 0 0 0 0
+contains "cluster26" 0 0 0 0 1 0 0 0
+attr "g" "margin" "16"
+attr "cluster6" "label" "_dim_160_22_"
+attr "cluster6" "margin" "20"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.0755749173348634"
+attr "sh0010" "height" "0.6111111111111112"
+attr "cluster11" "label" "_dim_75_17_"
+attr "cluster11" "margin" "16"
+attr "sh0015" "shape" "box"
+attr "sh0015" "width" "1.5461857764239835"
+attr "sh0015" "height" "0.6111111111111112"
+attr "cluster16" "label" "_dim_94_17_"
+attr "cluster16" "margin" "16"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "2.244401954316025"
+attr "sh0020" "height" "0.6111111111111112"
+attr "cluster21" "margin" "16"
+attr "sh0025" "shape" "box"
+attr "sh0025" "width" "1.2763175725024256"
+attr "sh0025" "height" "0.6111111111111112"
+attr "cluster26" "label" "_dim_123_32_"
+attr "cluster26" "margin" "16"
+attr "sh0030" "shape" "box"
+attr "sh0030" "width" "1.890824619137091"
+attr "sh0030" "height" "0.6111111111111112"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"

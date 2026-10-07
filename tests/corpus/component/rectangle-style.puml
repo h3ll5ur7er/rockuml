@@ -1,0 +1,5 @@
+@startuml
+skinparam componentStyle rectangle
+[Frontend] --> [Backend]
+[Backend] --> [Storage]
+@enduml

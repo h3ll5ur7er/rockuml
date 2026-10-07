@@ -1,0 +1,197 @@
+DPI: 96
+dimension: [ 282.7300 ; 179.0000 ]
+scaleFactor: 1.0000
+seed: 6845229045259753989
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Billing
+RECTANGLE:
+  pt1: [ 72.7300 ; 12.0000 ]
+  pt2: [ 267.7077 ; 70.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 247.7077 ; 17.0000 ]
+  pt2: [ 262.7077 ; 27.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 245.7077 ; 19.0000 ]
+  pt2: [ 249.7077 ; 21.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 245.7077 ; 23.0000 ]
+  pt2: [ 249.7077 ; 25.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 87.7300 ; 32.0000 ]
+  pt2: [ 242.7077 ; 46.0000 ]
+
+TEXT:
+  text: «service»
+  position: [ 88.7300 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Billing
+  position: [ 117.4741 ; 56.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Ledger
+RECTANGLE:
+  pt1: [ 86.2300 ; 106.0000 ]
+  pt2: [ 254.5871 ; 164.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 234.5871 ; 111.0000 ]
+  pt2: [ 249.5871 ; 121.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 232.5871 ; 113.0000 ]
+  pt2: [ 236.5871 ; 115.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 232.5871 ; 117.0000 ]
+  pt2: [ 236.5871 ; 119.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 101.2300 ; 126.0000 ]
+  pt2: [ 229.5871 ; 140.0000 ]
+
+TEXT:
+  text: «library»
+  position: [ 102.2300 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Ledger
+  position: [ 130.9224 ; 150.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity IPay
+ELLIPSE:
+  pt1: [ 37.2300 ; 30.0000 ]
+  pt2: [ 53.2300 ; 46.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: IPay
+  position: [ 22.2400 ; 65.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 0.0000 ; 7.0000 ]
+  pt2: [ 90.4600 ; 21.0000 ]
+
+TEXT:
+  text: «rest»
+  position: [ 1.0000 ; 17.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 170.2300 ; 105.7521 ]
+   - [ 174.2300 ; 96.7521 ]
+   - [ 170.2300 ; 100.7521 ]
+   - [ 166.2300 ; 96.7521 ]
+   - [ 170.2300 ; 105.7521 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 134.0000 ; 64.1029 ]
+   - type: SEG_CUBICTO
+     pt1: [ 134.0000 ; 75.4113 ]
+     pt2: [ 134.0000 ; 83.4293 ]
+     pt3: [ 134.0000 ; 94.7521 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 18.2773 ; 35.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 24.3046 ; 35.0000 ]
+     pt2: [ 30.3318 ; 35.0000 ]
+     pt3: [ 36.3590 ; 35.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

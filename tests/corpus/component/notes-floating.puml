@@ -1,0 +1,7 @@
+@startuml
+[Producer] --> [Consumer]
+note "Async messages" as N
+[Producer] .. N
+N .. [Consumer]
+note top of [Producer] : emits events
+@enduml

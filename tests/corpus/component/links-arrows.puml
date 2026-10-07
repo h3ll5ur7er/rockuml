@@ -1,0 +1,8 @@
+@startuml
+[Web] --> [Api]
+[Api] ..> [Cache] : reads
+[Api] -- [Db]
+[Web] .. [Cdn]
+[Worker] -> [Queue]
+[Queue] <- [Api]
+@enduml

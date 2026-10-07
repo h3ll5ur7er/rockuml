@@ -1,0 +1,75 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "1.8810899048345162" ""
+agsafeset node "sh0006" "height" "0.6111111111111112" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "0.9094846595927686" ""
+agsafeset node "sh0007" "height" "0.6111111111111112" ""
+agnode graph "g" "sh0008"
+agsafeset node "sh0008" "shape" "box" ""
+agsafeset node "sh0008" "width" "1.4125279566210776" ""
+agsafeset node "sh0008" "height" "0.6111111111111112" ""
+agnode graph "g" "sh0009"
+agsafeset node "sh0009" "shape" "box" ""
+agsafeset node "sh0009" "width" "1.3546077392917661" ""
+agsafeset node "sh0009" "height" "0.6111111111111112" ""
+agnode graph "g" "sh0010"
+agsafeset node "sh0010" "shape" "box" ""
+agsafeset node "sh0010" "width" "1.70923403889985" ""
+agsafeset node "sh0010" "height" "0.6111111111111112" ""
+agedge graph "g" node "sh0007" node "sh0006"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "sh0006" node "sh0008"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+agedge graph "g" node "sh0009" node "sh0006"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "0" ""
+agedge graph "g" node "sh0006" node "sh0010"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "0" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 2
+node "sh0006" rank 1
+node "sh0007" rank 0
+node "sh0008" rank 2
+node "sh0009" rank 1
+node "sh0010" rank 1
+phase mincross
+rank 0 "sh0007"
+rank 1 "sh0009" "sh0006" "sh0010"
+rank 2 "sh0008"
+phase position
+node "sh0007" rank 0 coord 1.0 182.0 lw 32.5 rw 32.5 ht 44.0
+node "sh0009" rank 1 coord -134.0 102.0 lw 49.0 rw 49.0 ht 44.0
+node "sh0006" rank 1 coord 1.0 102.0 lw 67.5 rw 67.5 ht 44.0
+node "sh0010" rank 1 coord 148.0 102.0 lw 61.5 rw 61.5 ht 44.0
+node "sh0008" rank 2 coord 1.0 22.0 lw 51.0 rw 51.0 ht 44.0
+graph "g" bb -183.0 0.0 209.5 204.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 159.6861572265625 1.0 148.5900387763977 1.0 135.07058479823172 1.0 124.0180106583357
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 1.0 79.6861572265625 1.0 68.5900387763977 1.0 55.07058479823172 1.0 44.0180106583357
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -84.95703125 102.0 -78.91317749023438 102.0 -72.86932373046875 102.0 -66.82546997070312 102.0
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 68.7578125 102.0 74.63906860351562 102.0 80.52032470703125 102.0 86.40158081054688 102.0
+phase final
+graph "g" bb 0.0 0.0 392.5 204.0
+node "sh0006" coord 184.0 102.0 width 1.875 height 0.6111111111111112 lw 67.5 rw 67.5 ht 44.0
+node "sh0007" coord 184.0 182.0 width 0.9027777777777778 height 0.6111111111111112 lw 32.5 rw 32.5 ht 44.0
+node "sh0008" coord 184.0 22.0 width 1.4166666666666667 height 0.6111111111111112 lw 51.0 rw 51.0 ht 44.0
+node "sh0009" coord 49.0 102.0 width 1.3611111111111112 height 0.6111111111111112 lw 49.0 rw 49.0 ht 44.0
+node "sh0010" coord 331.0 102.0 width 1.7083333333333333 height 0.6111111111111112 lw 61.5 rw 61.5 ht 44.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 184.0 159.6861572265625 184.0 148.5900387763977 184.0 135.07058479823172 184.0 124.0180106583357
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 184.0 79.6861572265625 184.0 68.5900387763977 184.0 55.07058479823172 184.0 44.0180106583357
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 98.04296875 102.0 104.08682250976562 102.0 110.13067626953125 102.0 116.17453002929688 102.0
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 251.7578125 102.0 257.6390686035156 102.0 263.52032470703125 102.0 269.4015808105469 102.0

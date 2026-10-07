@@ -1,0 +1,13 @@
+@startuml
+package "Front End" {
+  [Web App]
+  [Mobile App]
+}
+package "Back End" {
+  [Gateway]
+  [Orders]
+}
+[Web App] --> [Gateway]
+[Mobile App] --> [Gateway]
+[Gateway] --> [Orders]
+@enduml
