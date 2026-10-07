@@ -37,3 +37,88 @@ Liberation fonts have the Windows fonts' metrics.
 
 Where PlantUML crashes it draws a crash report with a random quote; the generator drops such goldens (and the PNG of a crashed
 SVG), because rockuml renders the diagram instead.
+
+## Smetana layout traces
+
+Phase 4 ports Smetana, PlantUML's Java port of Graphviz dot. Its oracle is a trace of every Smetana layout:
+the graph PlantUML builds, the state after each dot phase, and the final values PlantUML reads back.
+
+```bash
+bash tools/oracle/smetana-traces.sh                  # every case in tests/corpus
+bash tools/oracle/smetana-traces.sh path/to/x.puml   # selected cases
+```
+
+Each case is rendered with `-f debug` (font-independent text measurement, so traces match on every machine), and
+each Smetana layout it runs writes `tests/smetana/<area>/<case>/NN.trace`, numbered from `01` in the order the
+graphs are opened. Cases that do not use Smetana get no directory. A full run deletes `tests/smetana` first.
+
+### How it is hooked in
+
+`build-reference.sh` copies the sources named in `smetana-trace/hooks.patch` to `build/patched-sources`, applies the
+patch there and compiles those copies instead of the originals; `reference/` is never modified. The patch only adds
+calls to `smetana-trace/rockuml/oracle/SmetanaTrace.java`, which does nothing unless the environment variable
+`ROCKUML_SMETANA_TRACE` names a directory to write traces to. The hooks are:
+
+| Java method | Hook | Records |
+|---|---|---|
+| `graph__c.agopen` (entry) | `agopen` | starts a trace (the nameless ProtoGraph that `gvContext` opens is ignored) |
+| `subg__c.agsubg`, `node__c.agnode`, `edge__c.agedge`, `attr__c.agsafeset`, `gvc__c.gvContext` (entry) | same name | the call and its arguments |
+| `gvlayout__c.gvLayoutJobs` (entry) | `gvLayoutJobs` | the call; collects nodes and edges in creation order |
+| `dotinit__c.dotLayout`, after `dot_rank` / `dot_mincross` / `dot_position` / `dot_splines` | `afterRank` ... `afterSplines` | the phase state |
+| `gvlayout__c.gvLayoutJobs`, after `gvle.layout.exe` (that is `dot_layout`: `doDot`, then `dotneato_postprocess`) | `afterLayout` | the final state; writes the file |
+
+`dot_sameports` (between position and splines) only touches ports, and `dot_compoundEdges` only runs with
+`compound=true`, which PlantUML never sets. Traces are recorded per `Globals`, so a layout nested in another
+(a composite state laid out as a leaf) gets its own file.
+
+### Format (version 1)
+
+UTF-8 text, one record per line, tokens separated by single spaces. Strings are double-quoted with `\"`, `\\`,
+`\n`, `\r` and `\t` escapes. Numbers are Java `Double.toString`, the shortest decimal that parses back to the same
+double, so Rust's `str::parse::<f64>` recovers the exact bits; integers are plain.
+
+Object references:
+
+- `graph "<name>"` and `node "<name>"`: graphs, clusters and nodes by name.
+- `edge eN`: the edge created by the N-th `agedge` call (cgraph's edge sequence number, which `gvLayoutJobs` checks).
+- In layout dumps, nodes are written without the `node` keyword: `"<name>"` for real nodes and `vN` for virtual
+  nodes, numbered in the order the trace first meets them. A virtual name stays the node's name for the rest of
+  the trace.
+
+```
+smetana-trace 1
+agopen "g"
+agsubg graph "g" "cluster6"
+agnode graph "cluster6" "sh0010"
+agedge graph "g" node "sh0010" node "sh0011"
+agsafeset <object> "<attribute>" <value> <default>
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "<name>" minrank R maxrank R        # the root, then clusters depth-first (GD_clust order)
+node <node> rank R                        # every real node, in creation order
+phase mincross
+rank R <node> <node> ...                  # GD_rank(root)[R] left to right, virtual nodes included
+phase position
+node <node> rank R coord X Y lw L rw R ht H   # every node in GD_rank, rank by rank
+graph "<name>" bb LLX LLY URX URY
+graph "<name>" label pos X Y dimen W H set S  # only for graphs with a label
+phase splines
+edge eN spl none                          # no ED_spl
+edge eN bezier I sflag S eflag E sp X Y ep X Y points N X Y X Y ...
+edge eN label|head_label|tail_label|xlabel pos X Y dimen W H set S
+phase final                               # after post-processing: what PlantUML reads
+graph ... bb / label lines as above
+node <node> coord X Y width W height H lw L rw R ht H   # real nodes; width and height in inches
+edge ... lines as above
+```
+
+Attribute values are quoted strings, except PlantUML's fixed-size labels (`Macro.createHackInitDimensionFromLabel`,
+the string `_dim_W_H_`), which are written as `dim(W,H)`. Record labels (JSON and YAML) keep their `_dim_W_H_`
+fields verbatim inside the quoted string, because Smetana's record parser splits them.
+
+### Determinism
+
+Two full runs produce byte-identical traces, and the debug output with tracing on equals the goldens. Smetana's
+object ids come from a JVM-wide `CString` counter (`CString.UID`), so absolute ids depend on what ran before in the
+JVM; only their relative order (creation order) affects cgraph's dictionaries. One JVM per case keeps that stable.
