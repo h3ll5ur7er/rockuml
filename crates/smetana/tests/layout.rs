@@ -737,3 +737,46 @@ fn expected_drawing(trace: &trace::Trace) -> String {
 fn layouts_through_the_api_match_java() {
     check_all_traces(dump_drawing, expected_drawing);
 }
+
+/// Graphs that make Java's Smetana loop forever in mincross (`tests/smetana-hangs`, random seeds traced until
+/// they hung): their ranks still match Java's, and the layout terminates with a sane drawing.
+#[test]
+fn layouts_that_hang_in_java_terminate() {
+    let traces = trace::files(&trace::repo_tests_dir().join("smetana-hangs"), "trace");
+    assert!(!traces.is_empty(), "no traces");
+    for path in traces {
+        let trace = trace::parse(&std::fs::read_to_string(&path).unwrap());
+        let mut replay = trace::replay(&trace.input);
+        layout_until_rank(&mut replay);
+        assert_eq!(
+            dump_ranks(&mut replay),
+            expected_ranks(&trace),
+            "{}",
+            path.display()
+        );
+
+        let (send, receive) = std::sync::mpsc::channel();
+        std::thread::spawn(move || send.send(layout_through_api(&trace.input).0));
+        let drawing = receive
+            .recv_timeout(std::time::Duration::from_secs(60))
+            .unwrap_or_else(|_| panic!("{}: no layout within a minute", path.display()));
+        let finite = |p: &smetana::Point| p.x.is_finite() && p.y.is_finite();
+        assert!(
+            drawing.nodes().iter().all(|n| finite(&n.center)),
+            "{}",
+            path.display()
+        );
+        for e in drawing.edges() {
+            assert!(
+                !e.beziers.is_empty(),
+                "{}: an edge without spline",
+                path.display()
+            );
+            assert!(
+                e.beziers.iter().flat_map(|b| &b.points).all(finite),
+                "{}",
+                path.display()
+            );
+        }
+    }
+}

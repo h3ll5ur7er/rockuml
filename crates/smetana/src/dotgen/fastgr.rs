@@ -261,12 +261,27 @@ fn basic_merge(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
 }
 
 /// `merge_oneway`: makes `rep` stand for `e` too.
+///
+/// Deviation from Smetana: a merge that would close an `ED_to_virt` cycle is skipped (and `flat_rev` does not
+/// close it either). Java makes it when `flat_reorder` reverses two opposite flat edges between clusters one after
+/// the other, merging each into the other; `basic_merge` then follows the cycle forever, and PlantUML hangs
+/// (`tests/smetana-hangs`). Later Graphviz skips the merge when `e == ED_to_virt(rep)`, as a `merge_oneway
+/// glitch`; the port checks `rep`'s whole chain, so no longer cycle can form either. Where Smetana throws on the
+/// glitch it knows, the port still fails.
 pub(crate) fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     if Some(rep) == zz.ed(e).to_virt {
         unimplemented!("merge_oneway glitch");
     }
+    if chain_reaches(zz, rep, e) {
+        return;
+    }
     zz.ed_mut(e).to_virt = Some(rep);
     basic_merge(zz, e, rep);
+}
+
+/// Whether the `ED_to_virt` chain starting at `from` reaches `target`.
+pub(crate) fn chain_reaches(zz: &Globals, from: EdgeId, target: EdgeId) -> bool {
+    std::iter::successors(Some(from), |&x| zz.ed(x).to_virt).any(|x| x == target)
 }
 
 #[cfg(test)]

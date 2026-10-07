@@ -21,7 +21,7 @@ use crate::dotgen::cluster::{expand_cluster, install_cluster, mark_lowclusters};
 use crate::dotgen::decomp::decompose;
 use crate::dotgen::dotinit::dot_root;
 use crate::dotgen::fastgr::{
-    EdgeList, append, delete_flat_edge, flat_edge, merge_oneway, new_virtual_edge,
+    EdgeList, append, chain_reaches, delete_flat_edge, flat_edge, merge_oneway, new_virtual_edge,
 };
 use crate::dotgen::rank::cluster;
 use crate::h::{adjmatrix_t, elist, rank_t};
@@ -557,7 +557,8 @@ fn flat_rev(zz: &mut Globals, g: GraphId, e: EdgeId) {
     };
     if let Some(rev) = rev {
         merge_oneway(zz, e, rev);
-        if zz.ed(e).to_virt.is_none() {
+        // Deviation, as in merge_oneway: pointing e at rev would close the cycle that merge_oneway refused.
+        if zz.ed(e).to_virt.is_none() && !chain_reaches(zz, rev, e) {
             zz.ed_mut(e).to_virt = Some(rev);
         }
         if zz.ed(rev).edge_type == FLATORDER && zz.ed(rev).to_orig.is_none() {
