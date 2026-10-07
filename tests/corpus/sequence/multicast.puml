@@ -1,0 +1,8 @@
+@startuml
+participant Alice
+participant Bob
+participant Carl
+participant Dan
+Bob -> Carl & Alice & Dan : broadcast
+Alice -> Bob & Dan : hello
+@enduml

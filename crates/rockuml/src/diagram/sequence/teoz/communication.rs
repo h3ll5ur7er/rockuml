@@ -212,6 +212,10 @@ impl<'a> Tile<'a> for CommunicationTile<'a> {
         let dimension = component.preferred_dimension(string_bounder);
         let mut x1 = self.point1().current_value();
         let mut x2 = self.point2().current_value();
+        self.draw_multicast(
+            &ug.translated(0.0, component.pos_arrow(string_bounder)),
+            context,
+        );
         let (level1, mut level2) = self.levels();
         let (area, ug) = if self.is_reverse() {
             if level1 == 1 {
@@ -243,5 +247,36 @@ impl<'a> Tile<'a> for CommunicationTile<'a> {
             (area, ug)
         };
         component.draw_u(&ug, &area, context);
+    }
+}
+
+impl CommunicationTile<'_> {
+    /// An arrow to each further receiver, each a little lower than the last.
+    fn draw_multicast(&self, ug: &UGraphic, context: Context2D) {
+        let string_bounder = ug.string_bounder();
+        let x1 = self.point1().current_value();
+        let mut dy = 2.0;
+        for &participant in &self.message.multicast {
+            let x2 = self
+                .arguments
+                .living_space(participant)
+                .pos_c(string_bounder)
+                .current_value();
+            let configuration = &self.message.common.arrow_configuration;
+            let configuration = if x2 < x1 {
+                configuration.reverse()
+            } else {
+                configuration.clone()
+            };
+            let component = components::multicast_arrow(
+                self.arguments.diagram,
+                &self.message.common,
+                &configuration,
+            );
+            let height = component.preferred_dimension(string_bounder).height;
+            let ug = ug.translated(x1.min(x2), dy);
+            dy += 2.0;
+            component.draw_u(&ug, &Area::new((x2 - x1).abs(), height), context);
+        }
     }
 }

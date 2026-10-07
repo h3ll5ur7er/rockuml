@@ -212,6 +212,23 @@ pub(super) fn message_arrow(
     )
 }
 
+/// The unlabelled copy of a message's arrow that goes to each further receiver.
+pub(super) fn multicast_arrow(
+    diagram: &SequenceDiagram,
+    common: &MessageCommon,
+    configuration: &ArrowConfiguration,
+) -> Box<dyn ArrowComponent> {
+    rose::create_component_arrow(
+        &message_style(common),
+        configuration,
+        diagram.skin(),
+        &MessageLabel {
+            number: None,
+            display: &Display::default(),
+        },
+    )
+}
+
 /// A note, in the shape its style asks for unless `folded` forces the folded corner, as some placements
 /// do in PlantUML. Only notes not attached to a message know whether they are over several participants.
 pub(super) fn note(
