@@ -240,6 +240,32 @@ impl SvgGraphics {
         self.ensure_visible(x + x_radius, y + y_radius);
     }
 
+    /// The arc of an ellipse with these radii from `from` to `to`, drawn counter-clockwise.
+    pub(super) fn arc_ellipse(
+        &mut self,
+        x_radius: f64,
+        y_radius: f64,
+        (x1, y1): (f64, f64),
+        (x2, y2): (f64, f64),
+    ) {
+        let mut element = XmlNode::new("path");
+        let d = format!(
+            "M{},{} A{},{} 0 0 0 {} {}",
+            self.length(x1),
+            self.length(y1),
+            self.length(x_radius),
+            self.length(y_radius),
+            self.length(x2),
+            self.length(y2)
+        );
+        element.set_attribute("d", d);
+        self.fill_me(&mut element);
+        self.style_me(&mut element, "");
+        self.current_group().append_child(element);
+        self.ensure_visible(x1, y1);
+        self.ensure_visible(x2, y2);
+    }
+
     pub(super) fn polygon(&mut self, points: &[(f64, f64)]) {
         let mut element = XmlNode::new("polygon");
         let coordinates: Vec<String> = points
