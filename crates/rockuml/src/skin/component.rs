@@ -136,7 +136,7 @@ pub(crate) fn component_text(
     style: &Style,
 ) -> Box<dyn TextBlock> {
     if display.lines().len() == 1 && display.lines()[0].is_empty() {
-        return Box::new(TextBlockEmpty);
+        return Box::new(TextBlockEmpty::default());
     }
     let alignment = display
         .natural_alignment()
@@ -157,12 +157,15 @@ pub(crate) fn creole_text(
     )))
 }
 
-/// Takes no room and draws nothing (`TextBlockEmpty`).
-pub(crate) struct TextBlockEmpty;
+/// Takes room but draws nothing (`TextBlockEmpty`).
+#[derive(Default)]
+pub(crate) struct TextBlockEmpty {
+    pub dimension: XDimension2D,
+}
 
 impl TextBlock for TextBlockEmpty {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
-        XDimension2D::default()
+        self.dimension
     }
 
     fn draw_u(&self, _ug: &UGraphic) {}

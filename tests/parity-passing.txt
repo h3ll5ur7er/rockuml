@@ -44,6 +44,7 @@ debug preprocessor/control-flow-nested.puml
 debug preprocessor/control-flow.puml
 debug preprocessor/functions.puml
 debug preprocessor/include-variants.puml
+debug preprocessor/include.puml
 debug preprocessor/variables-advanced.puml
 debug preprocessor/variables.puml
 debug salt/grid-all.puml
@@ -61,6 +62,8 @@ debug salt/tree.puml
 debug salt/widgets.puml
 debug sequence/activation-shortcuts-2.puml
 debug sequence/activation.puml
+debug sequence/actor-hollow.puml
+debug sequence/actor-styles.puml
 debug sequence/arrow-colors.puml
 debug sequence/arrow-heads.puml
 debug sequence/autonumber-dotted.puml
@@ -79,7 +82,12 @@ debug sequence/message-align-right.puml
 debug sequence/message-align.puml
 debug sequence/message-below-arrow.puml
 debug sequence/message-creole.puml
+debug sequence/participant-colors.puml
+debug sequence/participant-display.puml
 debug sequence/participant-quoted.puml
+debug sequence/participant-shapes-stack.puml
+debug sequence/participants-only.puml
+debug sequence/participants.puml
 debug sequence/return-without-activation.puml
 debug sequence/reverse-arrows.puml
 debug sequence/slanted.puml
@@ -130,6 +138,7 @@ dsvg preprocessor/control-flow-nested.puml
 dsvg preprocessor/control-flow.puml
 dsvg preprocessor/functions.puml
 dsvg preprocessor/include-variants.puml
+dsvg preprocessor/include.puml
 dsvg preprocessor/theme.puml
 dsvg preprocessor/variables-advanced.puml
 dsvg preprocessor/variables.puml
@@ -148,6 +157,8 @@ dsvg salt/tree.puml
 dsvg salt/widgets.puml
 dsvg sequence/activation-shortcuts-2.puml
 dsvg sequence/activation.puml
+dsvg sequence/actor-hollow.puml
+dsvg sequence/actor-styles.puml
 dsvg sequence/arrow-colors.puml
 dsvg sequence/arrow-heads.puml
 dsvg sequence/autonumber-dotted.puml
@@ -166,7 +177,12 @@ dsvg sequence/message-align-right.puml
 dsvg sequence/message-align.puml
 dsvg sequence/message-below-arrow.puml
 dsvg sequence/message-creole.puml
+dsvg sequence/participant-colors.puml
+dsvg sequence/participant-display.puml
 dsvg sequence/participant-quoted.puml
+dsvg sequence/participant-shapes-stack.puml
+dsvg sequence/participants-only.puml
+dsvg sequence/participants.puml
 dsvg sequence/return-without-activation.puml
 dsvg sequence/reverse-arrows.puml
 dsvg sequence/slanted.puml
@@ -218,6 +234,7 @@ png preprocessor/control-flow-nested.puml
 png preprocessor/control-flow.puml
 png preprocessor/functions.puml
 png preprocessor/include-variants.puml
+png preprocessor/include.puml
 png preprocessor/variables-advanced.puml
 png preprocessor/variables.puml
 png salt/grid-all.puml
@@ -235,6 +252,8 @@ png salt/tree.puml
 png salt/widgets.puml
 png sequence/activation-shortcuts-2.puml
 png sequence/activation.puml
+png sequence/actor-hollow.puml
+png sequence/actor-styles.puml
 png sequence/anchors-duration.puml
 png sequence/arrow-colors.puml
 png sequence/arrow-heads.puml
@@ -254,8 +273,13 @@ png sequence/message-align-right.puml
 png sequence/message-align.puml
 png sequence/message-below-arrow.puml
 png sequence/message-creole.puml
+png sequence/participant-colors.puml
+png sequence/participant-display.puml
 png sequence/participant-multiline.puml
 png sequence/participant-quoted.puml
+png sequence/participant-shapes-stack.puml
+png sequence/participants-only.puml
+png sequence/participants.puml
 png sequence/return-without-activation.puml
 png sequence/reverse-arrows.puml
 png sequence/slanted.puml
@@ -469,6 +493,7 @@ svg preprocessor/control-flow-nested.puml
 svg preprocessor/control-flow.puml
 svg preprocessor/functions.puml
 svg preprocessor/include-variants.puml
+svg preprocessor/include.puml
 svg preprocessor/variables-advanced.puml
 svg preprocessor/variables.puml
 svg salt/grid-all.puml
@@ -486,6 +511,8 @@ svg salt/tree.puml
 svg salt/widgets.puml
 svg sequence/activation-shortcuts-2.puml
 svg sequence/activation.puml
+svg sequence/actor-hollow.puml
+svg sequence/actor-styles.puml
 svg sequence/arrow-colors.puml
 svg sequence/arrow-heads.puml
 svg sequence/autonumber-dotted.puml
@@ -504,7 +531,12 @@ svg sequence/message-align-right.puml
 svg sequence/message-align.puml
 svg sequence/message-below-arrow.puml
 svg sequence/message-creole.puml
+svg sequence/participant-colors.puml
+svg sequence/participant-display.puml
 svg sequence/participant-quoted.puml
+svg sequence/participant-shapes-stack.puml
+svg sequence/participants-only.puml
+svg sequence/participants.puml
 svg sequence/return-without-activation.puml
 svg sequence/reverse-arrows.puml
 svg sequence/slanted.puml

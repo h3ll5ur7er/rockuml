@@ -496,6 +496,7 @@ mod tests {
         let diagram = SaltDiagram::create(source);
         export(
             diagram.as_ref(),
+            0,
             ImageFormat::Debug,
             &Arc::new(FontRegistry::default()),
             &IsolatedHost,

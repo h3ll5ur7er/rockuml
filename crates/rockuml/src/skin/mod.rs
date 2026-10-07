@@ -1,8 +1,12 @@
 //! A diagram's `skinparam` settings and the styles they feed (PlantUML's `SkinParam`).
 
+pub(crate) mod actor;
 pub(crate) mod arrow;
 pub(crate) mod component;
 pub(crate) mod rose;
+pub(crate) mod symbol;
+
+use actor::ActorStyle;
 
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
@@ -76,6 +80,10 @@ impl SkinParam {
 
     pub(crate) fn response_message_below_arrow(&self) -> bool {
         self.value_is("responsemessagebelowarrow", "true")
+    }
+
+    pub(crate) fn actor_style(&self) -> ActorStyle {
+        ActorStyle::named(&self.value("actorstyle").unwrap_or_default())
     }
 
     pub(crate) fn force_sequence_participant_underlined(&self) -> bool {
