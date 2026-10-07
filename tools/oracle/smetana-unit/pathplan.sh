@@ -20,5 +20,7 @@ classes_path="$(echo "$classes" | to_native_paths)"
 # java.exe on Windows wants ';' between classpath entries.
 separator=":"
 [[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* || "$(uname -s)" == CYGWIN* ]] && separator=";"
-"$jdk_bin/java" -cp "$jar_path$separator$classes_path" PathplanDump "$(echo "$fixture" | to_native_paths)" 2> /dev/null
+# A fixed line separator keeps the fixture's bytes the same on every platform.
+"$jdk_bin/java" -Dline.separator=$'\n' -cp "$jar_path$separator$classes_path" PathplanDump \
+	"$(echo "$fixture" | to_native_paths)" 2> /dev/null
 echo "$(grep -c '^case\|^solve3' "$fixture") cases in $fixture."
