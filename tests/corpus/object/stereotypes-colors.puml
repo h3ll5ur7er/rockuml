@@ -1,0 +1,13 @@
+@startuml
+object order <<entity>> #lightblue {
+  id = 42
+}
+object item1 <<value>> #lightyellow {
+  sku = "A-1"
+}
+object item2 <<value>> #lightyellow {
+  sku = "B-7"
+}
+order *-- item1
+order *-- item2
+@enduml

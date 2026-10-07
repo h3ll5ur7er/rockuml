@@ -1,0 +1,15 @@
+@startuml
+map "Map **Country => CapitalCity**" as CC {
+  UK => London
+  USA => Washington
+  Germany => Berlin
+}
+map "Map **CapitalCity => Population**" as CP {
+  London => 15 000 000
+  Washington => 5 000 000
+  Berlin => 6 000 000
+}
+CC::UK --> CP::London
+CC::USA --> CP::Washington
+CC::Germany --> CP::Berlin
+@enduml

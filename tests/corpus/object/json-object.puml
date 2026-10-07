@@ -1,0 +1,11 @@
+@startuml
+json Person {
+  "name": "Ada",
+  "age": 36,
+  "langs": ["en", "fr"]
+}
+object Employer {
+  name = "Engines Ltd"
+}
+Person --> Employer
+@enduml

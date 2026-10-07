@@ -1,0 +1,138 @@
+DPI: 96
+dimension: [ 238.0000 ; 185.0000 ]
+scaleFactor: 1.0000
+seed: 2820794637039818879
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 17.0000 ; 12.0000 ]
+  pt2: [ 211.5054 ; 80.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 81.8434 ; 12.0000 ]
+  pt2: [ 146.6620 ; 30.0000 ]
+
+TEXT:
+  text: user
+  position: [ 83.8434 ; 24.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 18.0000 ; 30.0000 ]
+  pt2: [ 210.5054 ; 30.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 17.0000 ; 30.0000 ]
+  pt2: [ 211.5054 ; 80.0000 ]
+
+TEXT:
+  text: name = "Dummy"
+  position: [ 23.0000 ; 44.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: id = 123
+  position: [ 23.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: active = true
+  position: [ 23.0000 ; 72.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 116.0000 ]
+  pt2: [ 223.1878 ; 170.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 67.3958 ; 116.0000 ]
+  pt2: [ 161.7920 ; 134.0000 ]
+
+TEXT:
+  text: session
+  position: [ 69.3958 ; 128.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 134.0000 ]
+  pt2: [ 222.1878 ; 134.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 134.0000 ]
+  pt2: [ 223.1878 ; 170.0000 ]
+
+TEXT:
+  text: token = "abc"
+  position: [ 12.0000 ; 148.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: expires = 3600
+  position: [ 12.0000 ; 162.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 114.5000 ; 115.8248 ]
+   - [ 118.5000 ; 106.8248 ]
+   - [ 114.5000 ; 110.8248 ]
+   - [ 110.5000 ; 106.8248 ]
+   - [ 114.5000 ; 115.8248 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 108.5000 ; 74.2264 ]
+   - type: SEG_CUBICTO
+     pt1: [ 108.5000 ; 85.8908 ]
+     pt2: [ 108.5000 ; 93.8211 ]
+     pt3: [ 108.5000 ; 104.8248 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

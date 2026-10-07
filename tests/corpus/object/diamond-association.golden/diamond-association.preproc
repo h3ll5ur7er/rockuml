@@ -1,0 +1,9 @@
+@startuml
+object alice
+object bob
+object project
+diamond dia
+alice --> dia
+bob --> dia
+dia --> project
+@enduml
