@@ -1,0 +1,89 @@
+cgraph-dump 1
+graph "g" nodes 9 edges 12
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4" "N5" "N6" "N7" "N8"
+in "g" node "N0" out in e1< e4< e7< e12< edges e1< e4< e7< e12< degree 4 0
+in "g" node "N1" out e1> in e2< e3< edges e1> e2< e3< degree 2 1
+in "g" node "N2" out e2> in e5< edges e2> e5< degree 1 1
+in "g" node "N3" out e4> e3> in e6< edges e4> e3> e6< degree 1 2
+in "g" node "N4" out e5> in e9< edges e5> e9< degree 1 1
+in "g" node "N5" out e7> e6> in e8< e10< e11< edges e7> e6> e8< e10< e11< degree 3 2
+in "g" node "N6" out e8> in edges e8> degree 0 1
+in "g" node "N7" out e9> e10> in edges e9> e10> degree 0 2
+in "g" node "N8" out e12> e11> in edges e12> e11> degree 0 2
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+find e12> forward e12< backward none
+attr "g" "ranksep" "0.35"
+attr "N0" "shape" "box"
+attr "N0" "height" "0.42444037189256023"
+attr "N0" "width" "0.9466152270533844"
+attr "N1" "shape" "box"
+attr "N1" "height" "0.5227032754909886"
+attr "N1" "width" "1.0345758868905865"
+attr "N2" "shape" "box"
+attr "N2" "height" "0.3582493194606595"
+attr "N2" "width" "1.1588999775386055"
+attr "N3" "shape" "box"
+attr "N3" "height" "0.5101931399971766"
+attr "N3" "width" "1.540793684245656"
+attr "N4" "shape" "box"
+attr "N4" "height" "0.4633904399967778"
+attr "N4" "width" "1.4037317959555236"
+attr "N5" "shape" "box"
+attr "N5" "height" "0.36145132973374455"
+attr "N5" "width" "0.5870664212466844"
+attr "N6" "shape" "box"
+attr "N6" "height" "0.38775353515077676"
+attr "N6" "width" "0.8830698378768402"
+attr "N7" "shape" "box"
+attr "N7" "height" "0.34480583552985355"
+attr "N7" "width" "0.6967069142767462"
+attr "N8" "shape" "box"
+attr "N8" "height" "0.3655410159712825"
+attr "N8" "width" "1.8646478609912682"
+attr e1> "arrowsize" ".7"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e2> "arrowsize" ".7"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e3> "arrowsize" ".7"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e4> "arrowsize" ".7"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e5> "arrowsize" ".7"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "normal"
+attr e6> "arrowsize" ".7"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "normal"
+attr e7> "arrowsize" ".7"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "normal"
+attr e8> "arrowsize" ".7"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "normal"
+attr e9> "arrowsize" ".7"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "normal"
+attr e10> "arrowsize" ".7"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "normal"
+attr e11> "arrowsize" ".7"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "normal"
+attr e12> "arrowsize" ".7"
+attr e12> "arrowtail" "none"
+attr e12> "arrowhead" "normal"

@@ -1,0 +1,12 @@
+@startuml
+class Source
+class Target
+class Other
+Source --> Target
+Source --> Target : second
+Source --> Target : third
+Target --> Source : back
+Source ..> Other
+Source ..> Other
+Other --> Target
+@enduml

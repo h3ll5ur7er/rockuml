@@ -1,0 +1,69 @@
+cgraph-dump 1
+graph "g" nodes 4 edges 7
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0004" "sh0006"
+graph ids "g" "cluster2"
+node ids "sh0005" "sh0003" "sh0004" "sh0006"
+in "g" node "sh0005" out e3> e7> in e2< edges e3> e7> e2< degree 1 2
+in "g" node "sh0003" out e2> e1> in edges e2> e1> degree 0 2
+in "g" node "sh0004" out in e1< e4< e5< e6< edges e1< e4< e5< e6< degree 4 0
+in "g" node "sh0006" out e4> e5> e6> in e3< e7< edges e4> e5> e6> e3< e7< degree 2 3
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0004" out in edges degree 0 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e7< backward none
+find e4> forward e5< backward none
+find e5> forward e5< backward none
+find e6> forward e5< backward none
+find e7> forward e7< backward none
+induce "cluster2" e1> e4> e5> e6>
+in "cluster2" node "sh0003" out e1> in edges e1> degree 0 1
+in "cluster2" node "sh0004" out in e1< e4< e5< e6< edges e1< e4< e5< e6< degree 4 0
+in "cluster2" node "sh0006" out e4> e5> e6> in edges e4> e5> e6> degree 0 3
+contains "cluster2" 0 1 1 1 1 0 0 1 1 1 0
+attr "g" "margin" "16"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.6707517051422522"
+attr "sh0005" "height" "1.4484147062793276"
+attr "cluster2" "label" "_dim_129_17_"
+attr "cluster2" "margin" "16"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "0.7509291972423437"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.8491656554707236"
+attr "sh0004" "height" "0.6666666666666666"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.0476950476532159"
+attr "sh0006" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "label" "_dim_14_32_"
+attr e1> "headlabel" "_dim_45_15_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e2> "label" "_dim_98_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "label" "_dim_29_17_"
+attr e3> "headlabel" "_dim_23_15_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e4> "label" "_dim_122_17_"
+attr e4> "headlabel" "_dim_9_15_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e5> "taillabel" "_dim_55_15_"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e7> "label" "_dim_98_17_"

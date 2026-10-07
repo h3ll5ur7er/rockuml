@@ -1,0 +1,79 @@
+cgraph-dump 1
+graph "g" nodes 8 edges 7
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4" "N5" "N6" "N7"
+in "g" node "N0" out e7> in edges e7> degree 0 1
+in "g" node "N1" out e6> in e7< edges e6> e7< degree 1 1
+in "g" node "N2" out e5> in e6< edges e5> e6< degree 1 1
+in "g" node "N3" out e4> in e5< edges e4> e5< degree 1 1
+in "g" node "N4" out e3> in e4< edges e3> e4< degree 1 1
+in "g" node "N5" out e2> in e3< edges e2> e3< degree 1 1
+in "g" node "N6" out e1> in e2< edges e1> e2< degree 1 1
+in "g" node "N7" out in e1< edges e1< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "0.8224760799344728"
+attr "N0" "width" "2.0"
+attr "N0" "label" "{_dim_144.0_22.809216530264454_|{<P0>_dim_18.0_20.409061225017588_|<P1>_dim_18.0_20.409061225017588_|<P2>_dim_36.0_20.409061225017588_|<P3>_dim_18.0_20.409061225017588_|<P4>_dim_18.0_20.409061225017588_|<P5>_dim_18.0_20.409061225017588_|<P6>_dim_18.0_20.409061225017588_}}"
+attr "N1" "shape" "record"
+attr "N1" "height" "1.449522405052594"
+attr "N1" "width" "1.5"
+attr "N1" "label" "{_dim_108.0_58.832754733231354_|{<P0>_dim_18.0_29.53285843055542_|<P1>_dim_36.0_29.53285843055542_|<P2>_dim_18.0_29.53285843055542_|<P3>_dim_18.0_29.53285843055542_|<P4>_dim_18.0_29.53285843055542_}}"
+attr "N2" "shape" "record"
+attr "N2" "height" "2.0721344381061653"
+attr "N2" "width" "1.5"
+attr "N2" "label" "{_dim_108.0_39.51900842493984_|{<P0>_dim_18.0_93.67467111870405_|<P1>_dim_18.0_93.67467111870405_|<P2>_dim_18.0_93.67467111870405_|<P3>_dim_18.0_93.67467111870405_|<P4>_dim_18.0_93.67467111870405_|<P5>_dim_18.0_93.67467111870405_}}"
+attr "N3" "shape" "record"
+attr "N3" "height" "0.7965462683254216"
+attr "N3" "width" "2.0"
+attr "N3" "label" "<P0>_dim_18.0_49.35133131943036_|<P1>_dim_18.0_49.35133131943036_|<P2>_dim_36.0_49.35133131943036_|<P3>_dim_18.0_49.35133131943036_|<P4>_dim_18.0_49.35133131943036_|<P5>_dim_18.0_49.35133131943036_|<P6>_dim_18.0_49.35133131943036_"
+attr "N4" "shape" "record"
+attr "N4" "height" "0.8945792762274052"
+attr "N4" "width" "1.25"
+attr "N4" "label" "<P0>_dim_18.0_56.40970788837318_|<P1>_dim_18.0_56.40970788837318_|<P2>_dim_36.0_56.40970788837318_|<P3>_dim_18.0_56.40970788837318_"
+attr "N5" "shape" "record"
+attr "N5" "height" "1.317825741223863"
+attr "N5" "width" "1.25"
+attr "N5" "label" "{_dim_90.0_58.20688847595024_|{<P0>_dim_18.0_20.676564892167903_|<P1>_dim_18.0_20.676564892167903_|<P2>_dim_18.0_20.676564892167903_|<P3>_dim_18.0_20.676564892167903_|<P4>_dim_18.0_20.676564892167903_}}"
+attr "N6" "shape" "record"
+attr "N6" "height" "1.9162318929609508"
+attr "N6" "width" "0.5"
+attr "N6" "label" "{_dim_36.0_77.40368884362933_|{<P0>_dim_18.0_44.565007449559126_|<P1>_dim_18.0_44.565007449559126_}}"
+attr "N7" "shape" "record"
+attr "N7" "height" "2.1361716836203968"
+attr "N7" "width" "1.75"
+attr "N7" "label" "{_dim_126.0_68.67657395197003_|{<P0>_dim_18.0_69.12778726869853_|<P1>_dim_18.0_69.12778726869853_|<P2>_dim_18.0_69.12778726869853_|<P3>_dim_18.0_69.12778726869853_|<P4>_dim_36.0_69.12778726869853_|<P5>_dim_18.0_69.12778726869853_}}"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P0"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P0"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P0"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P0"
+attr e5> "arrowsize" ".75"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "normal"
+attr e5> "tailport" "P0"
+attr e6> "arrowsize" ".75"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "normal"
+attr e6> "tailport" "P1"
+attr e7> "arrowsize" ".75"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "normal"
+attr e7> "tailport" "P2"

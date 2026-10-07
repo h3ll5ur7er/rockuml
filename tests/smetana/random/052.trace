@@ -1,0 +1,76 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0002"
+agsafeset node "sh0002" "shape" "box" ""
+agsafeset node "sh0002" "width" "1.9358966763328533" ""
+agsafeset node "sh0002" "height" "0.8208461561042889" ""
+agnode graph "g" "sh0003"
+agsafeset node "sh0003" "shape" "box" ""
+agsafeset node "sh0003" "width" "0.7677325262316055" ""
+agsafeset node "sh0003" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0004"
+agsafeset node "sh0004" "shape" "box" ""
+agsafeset node "sh0004" "width" "1.070868905534401" ""
+agsafeset node "sh0004" "height" "0.8642510318629193" ""
+agnode graph "g" "sh0005"
+agsafeset node "sh0005" "shape" "box" ""
+agsafeset node "sh0005" "width" "0.9261994788597219" ""
+agsafeset node "sh0005" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "2.186698718273954" ""
+agsafeset node "sh0006" "height" "0.6666666666666666" ""
+agedge graph "g" node "sh0002" node "sh0003"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "sh0003" node "sh0004"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+agedge graph "g" node "sh0004" node "sh0005"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "1" ""
+agedge graph "g" node "sh0003" node "sh0006"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "1" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 3
+node "sh0002" rank 0
+node "sh0003" rank 1
+node "sh0004" rank 2
+node "sh0005" rank 3
+node "sh0006" rank 2
+phase mincross
+rank 0 "sh0002"
+rank 1 "sh0003"
+rank 2 "sh0004" "sh0006"
+rank 3 "sh0005"
+phase position
+node "sh0002" rank 0 coord 67.0 295.5 lw 69.5 rw 69.5 ht 59.0
+node "sh0003" rank 1 coord 67.0 206.0 lw 27.5 rw 27.5 ht 48.0
+node "sh0004" rank 2 coord 0.0 115.0 lw 38.5 rw 38.5 ht 62.0
+node "sh0006" rank 2 coord 135.0 115.0 lw 78.5 rw 78.5 ht 48.0
+node "sh0005" rank 3 coord 0.0 24.0 lw 33.5 rw 33.5 ht 48.0
+graph "g" bb -38.5 0.0 213.5 325.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 67.0 265.8492274284363 67.0 254.28607032448053 67.0 241.11896764009725 67.0 230.1756686719109
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 49.396538734436035 181.6162977218628 41.254549380391836 170.80081932619214 31.481647369582788 157.81890471481893 22.78540254234116 146.2671765114681
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 83.86865997314453 0.0 72.16915929317474 0.0 58.98528446443379 0.0 48.06441754553816
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 84.8661994934082 181.6162977218628 94.86111350357533 168.53471909090877 107.27757871878566 152.28375726511877 117.25312392281126 139.2275289833794
+phase final
+graph "g" bb 0.0 0.0 252.0 325.0
+node "sh0002" coord 105.5 295.5 width 1.9305555555555556 height 0.8194444444444444 lw 69.5 rw 69.5 ht 59.0
+node "sh0003" coord 105.5 206.0 width 0.7638888888888888 height 0.6666666666666666 lw 27.5 rw 27.5 ht 48.0
+node "sh0004" coord 38.5 115.0 width 1.0694444444444444 height 0.8611111111111112 lw 38.5 rw 38.5 ht 62.0
+node "sh0005" coord 38.5 24.0 width 0.9305555555555556 height 0.6666666666666666 lw 33.5 rw 33.5 ht 48.0
+node "sh0006" coord 173.5 115.0 width 2.1805555555555554 height 0.6666666666666666 lw 78.5 rw 78.5 ht 48.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 105.5 265.8492274284363 105.5 254.28607032448053 105.5 241.11896764009725 105.5 230.1756686719109
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 87.89653873443604 181.6162977218628 79.75454938039184 170.80081932619214 69.98164736958279 157.81890471481893 61.28540254234116 146.2671765114681
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 38.5 83.86865997314453 38.5 72.16915929317474 38.5 58.98528446443379 38.5 48.06441754553816
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 123.3661994934082 181.6162977218628 133.36111350357533 168.53471909090877 145.77757871878566 152.28375726511877 155.75312392281126 139.2275289833794

@@ -1,0 +1,17 @@
+cgraph-dump 1
+graph "g" nodes 2 edges 1
+graph ids "g"
+node ids "N0" "N1"
+in "g" node "N0" out in e1< edges e1< degree 1 0
+in "g" node "N1" out e1> in edges e1> degree 0 1
+find e1> forward e1< backward none
+attr "g" "ranksep" "0.35"
+attr "N0" "shape" "box"
+attr "N0" "height" "0.3413856404778595"
+attr "N0" "width" "1.1214441683498282"
+attr "N1" "shape" "box"
+attr "N1" "height" "0.49127547279370226"
+attr "N1" "width" "1.4706489437105734"
+attr e1> "arrowsize" ".7"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"

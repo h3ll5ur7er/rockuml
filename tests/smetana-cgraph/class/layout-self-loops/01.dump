@@ -1,0 +1,44 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 6
+graph ids "g"
+node ids "sh0006" "sh0007" "sh0008"
+in "g" node "sh0006" out e1> e2> e5> in e1< e2< e4< edges e1> e2> e5> e4< degree 3 3
+in "g" node "sh0007" out e4> e3> in e3< edges e4> e3> degree 1 2
+in "g" node "sh0008" out e6> in e5< e6< edges e6> e5< degree 2 1
+find e1> forward e2< backward e2<
+find e2> forward e2< backward e2<
+find e3> forward e3< backward e3<
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward e6<
+attr "g" "margin" "16"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.4314680736695324"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.1574806990949869"
+attr "sh0007" "height" "0.6666666666666666"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "1.2316868282888227"
+attr "sh0008" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "label" "_dim_48_17_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e2> "label" "_dim_112_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e6> "label" "_dim_54_17_"

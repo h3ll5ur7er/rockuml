@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+package model {
+  class User
+  class Account
+}
+class Service
+class Repository
+class Database
+Service --> User : reads
+Service --> Account
+Service --> Repository : uses
+Repository --> Database
+User "1" -- "*" Account
+@enduml

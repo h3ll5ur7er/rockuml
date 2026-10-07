@@ -1,0 +1,12 @@
+# Seeds above the default range that tools/oracle/smetana-random.sh also lays out, one per line.
+#
+# PlantUML's position patch: make_LR_constraints skips a flat edge label's constraint that would close a cycle in the
+# X aux graph, and clampSkippedLabelVnodes moves the label back between its endpoints.
+391
+815
+935   # two labels
+975
+1070
+1456
+1469
+1495

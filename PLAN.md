@@ -414,6 +414,28 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Unit oracle: a debug hook in both versions that dumps node coordinates and edge bezier points for a given graph,
   built from the JSON diagram (which always uses Smetana) and from class diagrams.
 - **Exit:** identical coordinates on all corpus graphs (bit-exact f64, or within 1e-9).
+- **Status: done.** The crate `crates/smetana` (about 12k lines) reproduces Smetana bit-exactly, with no tolerance, on
+  329 traces: the 21 layouts the corpus makes plus 308 seeded random graphs built through the same cgraph calls as
+  PlantUML's three drivers (class-like diagrams, JSON/YAML records with ports, git). Every phase is compared on its
+  own (ranks, mincross orders, positions, splines, final layout), and the routing, pathplan and xlabels building blocks
+  against thousands of recorded calls.
+  - Oracle: `tools/oracle/smetana-trace/` patches copies of eight Smetana sources at build time so that, with
+    `ROCKUML_SMETANA_TRACE` set, each layout writes its cgraph call sequence and the state after every dot phase.
+    `smetana-traces.sh` traces the corpus, `smetana-random.sh` the random graphs (`RandomGraphs.java`);
+    `tools/oracle/smetana-unit/` dumps unit fixtures.
+  - Java's `Math.cos`/`sin`/`pow` are HotSpot intrinsics, not fdlibm. `jmath` computes them correctly rounded, which
+    equals Java on every value the traces and fixtures use (1 ulp apart in about 0.1% of random arguments); `atan2` is
+    fdlibm's (`libm`). Bit-exact everywhere would need a port of HotSpot's GPL-only stubs.
+  - Recursions as deep as the graph (network simplex, acyclic, decompose, flat search) use explicit stacks with the
+    same visiting order, so 2000-node graphs lay out on a 1 MB stack (the wasm default).
+  - `smetana::Graph` builds a graph with PlantUML's calls and `layout()` returns a `Drawing` or a `LayoutError` for
+    what Smetana throws on; on wasm, where panics abort, such input still aborts. PlantUML never produces it except
+    as noted below.
+  - Deviation: Smetana loops forever in `fastgr`'s `basic_merge` when two opposite edges between clusters merge into
+    each other (`merge_oneway`), which real PlantUML hits on a small class diagram with two packages linked both ways
+    (`tools/oracle/README.md`). rockuml skips such a merge, as later Graphviz does, and lays the graph out.
+  - Java fails, and so does rockuml, on record ports under `rankdir=LR`, some vertical record labels and a record
+    port node with several in-edges; PlantUML's JSON diagrams could produce these.
 
 ### Phase 5 — CucaDiagram family (~40k: svek + cucadiagram + decoration + diagrams)
 - The svek glue (`EntityImage*`, clusters, `SvekEdge` label placement, extremities), the `sdot` driver
@@ -466,5 +488,6 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 4: Smetana, the layout engine every CucaDiagram type needs.
+1. Phase 5: the CucaDiagram family (class, object, usecase, component, deployment, state) on `smetana::Graph`, with
+   the `@startuml` best-error selection.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

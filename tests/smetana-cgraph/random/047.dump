@@ -1,0 +1,129 @@
+cgraph-dump 1
+graph "g" nodes 12 edges 9
+subgraph "cluster2" parent "g" seq 1 nodes "sh0006" "sh0013" "zent0002"
+subgraph "cluster4" parent "cluster2" seq 2 nodes "sh0006" "sh0013"
+subgraph "cluster3" parent "g" seq 3 nodes "sh0005" "sh0009" "sh0014" "zent0003"
+graph ids "g" "cluster2" "cluster4" "cluster3"
+node ids "sh0007" "sh0008" "sh0010" "sh0011" "sh0012" "sh0006" "sh0013" "sh0005" "sh0009" "sh0014" "zent0003" "zent0002"
+in "g" node "sh0007" out in e2< edges e2< degree 1 0
+in "g" node "sh0008" out e3> e9> in e8< edges e3> e9> e8< degree 1 2
+in "g" node "sh0010" out e8> e6> in e4< edges e8> e6> e4< degree 1 2
+in "g" node "sh0011" out in e5< edges e5< degree 1 0
+in "g" node "sh0012" out e7> in edges e7> degree 0 1
+in "g" node "sh0006" out e4> in edges e4> degree 0 1
+in "g" node "sh0013" out in e6< edges e6< degree 1 0
+in "g" node "sh0005" out e2> e5> e1> in edges e2> e5> e1> degree 0 3
+in "g" node "sh0009" out in e3< edges e3< degree 1 0
+in "g" node "sh0014" out in e7< edges e7< degree 1 0
+in "g" node "zent0003" out in e1< edges e1< degree 1 0
+in "g" node "zent0002" out in e9< edges e9< degree 1 0
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0013" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+in "cluster4" node "sh0006" out in edges degree 0 0
+in "cluster4" node "sh0013" out in edges degree 0 0
+in "cluster3" node "sh0005" out in edges degree 0 0
+in "cluster3" node "sh0009" out in edges degree 0 0
+in "cluster3" node "sh0014" out in edges degree 0 0
+in "cluster3" node "zent0003" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+induce "cluster2"
+in "cluster2" node "sh0006" out in edges degree 0 0
+in "cluster2" node "sh0013" out in edges degree 0 0
+in "cluster2" node "zent0002" out in edges degree 0 0
+induce "cluster4"
+in "cluster4" node "sh0006" out in edges degree 0 0
+in "cluster4" node "sh0013" out in edges degree 0 0
+induce "cluster3" e1>
+in "cluster3" node "sh0005" out e1> in edges e1> degree 0 1
+in "cluster3" node "sh0009" out in edges degree 0 0
+in "cluster3" node "sh0014" out in edges degree 0 0
+in "cluster3" node "zent0003" out in e1< edges e1< degree 1 0
+contains "cluster2" 0 0 0 0 0 1 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+contains "cluster4" 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+contains "cluster3" 0 0 0 0 0 0 0 1 1 1 1 0 1 0 0 0 0 0 0 0 0
+attr "g" "margin" "16"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "1.147346016089859"
+attr "sh0007" "height" "0.6666666666666666"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "1.2755550740104145"
+attr "sh0008" "height" "1.5321630078521922"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "0.6902521149705636"
+attr "sh0010" "height" "0.6666666666666666"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "2.0660692917116674"
+attr "sh0011" "height" "0.6852216983198383"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "1.569612215808415"
+attr "sh0012" "height" "0.6666666666666666"
+attr "cluster2" "label" "_dim_44_30_"
+attr "cluster2" "margin" "20"
+attr "cluster4" "label" "_dim_74_17_"
+attr "cluster4" "margin" "20"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.8080520874379609"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "0.8773207415641567"
+attr "sh0013" "height" "0.6666666666666666"
+attr "cluster3" "label" "_dim_132_17_"
+attr "cluster3" "margin" "16"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.7244653116693507"
+attr "sh0005" "height" "0.6666666666666666"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "1.6476814698458861"
+attr "sh0009" "height" "0.904169493757652"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "2.0875421905697586"
+attr "sh0014" "height" "0.6507230516638859"
+attr "zent0003" "shape" "box"
+attr "zent0003" "width" "0.1"
+attr "zent0003" "height" "0.1"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "label" "_dim_101_17_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e2> "label" "_dim_75_17_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "2"
+attr e4> "label" "_dim_37_17_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e5> "label" "_dim_64_32_"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e6> "label" "_dim_47_32_"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "2"
+attr e7> "label" "_dim_75_17_"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr e8> "label" "_dim_53_32_"
+attr "zent0002" "shape" "box"
+attr "zent0002" "width" "0.1"
+attr "zent0002" "height" "0.1"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "3"

@@ -1,0 +1,49 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 4
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4"
+in "g" node "N0" out e4> in edges e4> degree 0 1
+in "g" node "N1" out e3> in e4< edges e3> e4< degree 1 1
+in "g" node "N2" out e2> in e3< edges e2> e3< degree 1 1
+in "g" node "N3" out e1> in e2< edges e1> e2< degree 1 1
+in "g" node "N4" out in e1< edges e1< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "0.4338744604183902"
+attr "N0" "width" "0.25"
+attr "N0" "label" "<P0>_dim_18.0_23.238961150124094_"
+attr "N1" "shape" "record"
+attr "N1" "height" "1.205659323334693"
+attr "N1" "width" "0.25"
+attr "N1" "label" "{_dim_18.0_45.151999244127175_|{<P0>_dim_18.0_25.655472035970718_}}"
+attr "N2" "shape" "record"
+attr "N2" "height" "1.9291926762408198"
+attr "N2" "width" "1.25"
+attr "N2" "label" "{_dim_90.0_30.79023941436988_|{<P0>_dim_18.0_92.11163327496915_|<P1>_dim_18.0_92.11163327496915_|<P2>_dim_18.0_92.11163327496915_|<P3>_dim_18.0_92.11163327496915_|<P4>_dim_18.0_92.11163327496915_}}"
+attr "N3" "shape" "record"
+attr "N3" "height" "1.3741987873973347"
+attr "N3" "width" "1.5"
+attr "N3" "label" "{_dim_108.0_42.70903204850531_|{<P0>_dim_18.0_40.23328064410279_|<P1>_dim_36.0_40.23328064410279_|<P2>_dim_18.0_40.23328064410279_|<P3>_dim_18.0_40.23328064410279_|<P4>_dim_18.0_40.23328064410279_}}"
+attr "N4" "shape" "record"
+attr "N4" "height" "1.5885871149952535"
+attr "N4" "width" "1.5"
+attr "N4" "label" "<P0>_dim_18.0_106.37827227965825_|<P1>_dim_18.0_106.37827227965825_|<P2>_dim_18.0_106.37827227965825_|<P3>_dim_18.0_106.37827227965825_|<P4>_dim_36.0_106.37827227965825_"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P0"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P2"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P0"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P0"

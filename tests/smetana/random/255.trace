@@ -1,0 +1,453 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0002"
+agsafeset node "sh0002" "shape" "box" ""
+agsafeset node "sh0002" "width" "1.0618019321003271" ""
+agsafeset node "sh0002" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0003"
+agsafeset node "sh0003" "shape" "box" ""
+agsafeset node "sh0003" "width" "1.0574021233938768" ""
+agsafeset node "sh0003" "height" "0.8546276420147986" ""
+agnode graph "g" "sh0004"
+agsafeset node "sh0004" "shape" "box" ""
+agsafeset node "sh0004" "width" "1.9236840247241451" ""
+agsafeset node "sh0004" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0005"
+agsafeset node "sh0005" "shape" "box" ""
+agsafeset node "sh0005" "width" "1.5706109018359065" ""
+agsafeset node "sh0005" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "0.44794683172995675" ""
+agsafeset node "sh0006" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "0.4091504025678609" ""
+agsafeset node "sh0007" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0008"
+agsafeset node "sh0008" "shape" "box" ""
+agsafeset node "sh0008" "width" "1.8488803252673425" ""
+agsafeset node "sh0008" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0009"
+agsafeset node "sh0009" "shape" "box" ""
+agsafeset node "sh0009" "width" "1.6047022132304893" ""
+agsafeset node "sh0009" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0010"
+agsafeset node "sh0010" "shape" "box" ""
+agsafeset node "sh0010" "width" "1.4090326326619105" ""
+agsafeset node "sh0010" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0011"
+agsafeset node "sh0011" "shape" "box" ""
+agsafeset node "sh0011" "width" "1.818254665362718" ""
+agsafeset node "sh0011" "height" "1.3931138223382495" ""
+agnode graph "g" "sh0012"
+agsafeset node "sh0012" "shape" "box" ""
+agsafeset node "sh0012" "width" "1.0580523740953536" ""
+agsafeset node "sh0012" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0013"
+agsafeset node "sh0013" "shape" "box" ""
+agsafeset node "sh0013" "width" "1.8140761934362177" ""
+agsafeset node "sh0013" "height" "0.8938717161530195" ""
+agnode graph "g" "sh0014"
+agsafeset node "sh0014" "shape" "box" ""
+agsafeset node "sh0014" "width" "2.0803764125106463" ""
+agsafeset node "sh0014" "height" "0.9371329501441179" ""
+agnode graph "g" "sh0015"
+agsafeset node "sh0015" "shape" "box" ""
+agsafeset node "sh0015" "width" "0.5731705302430655" ""
+agsafeset node "sh0015" "height" "0.8444444969447683" ""
+agnode graph "g" "sh0016"
+agsafeset node "sh0016" "shape" "box" ""
+agsafeset node "sh0016" "width" "1.5552791696271222" ""
+agsafeset node "sh0016" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0017"
+agsafeset node "sh0017" "shape" "box" ""
+agsafeset node "sh0017" "width" "1.0038718536985178" ""
+agsafeset node "sh0017" "height" "0.8506351696358389" ""
+agnode graph "g" "sh0018"
+agsafeset node "sh0018" "shape" "box" ""
+agsafeset node "sh0018" "width" "0.5604447296139871" ""
+agsafeset node "sh0018" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0019"
+agsafeset node "sh0019" "shape" "box" ""
+agsafeset node "sh0019" "width" "1.0159195325612214" ""
+agsafeset node "sh0019" "height" "1.0732978031851608" ""
+agnode graph "g" "sh0020"
+agsafeset node "sh0020" "shape" "box" ""
+agsafeset node "sh0020" "width" "1.6004056257292556" ""
+agsafeset node "sh0020" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0021"
+agsafeset node "sh0021" "shape" "box" ""
+agsafeset node "sh0021" "width" "1.9801719040905548" ""
+agsafeset node "sh0021" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0022"
+agsafeset node "sh0022" "shape" "box" ""
+agsafeset node "sh0022" "width" "1.0690307044088518" ""
+agsafeset node "sh0022" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0023"
+agsafeset node "sh0023" "shape" "box" ""
+agsafeset node "sh0023" "width" "1.281111683504423" ""
+agsafeset node "sh0023" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0024"
+agsafeset node "sh0024" "shape" "box" ""
+agsafeset node "sh0024" "width" "1.443870747615197" ""
+agsafeset node "sh0024" "height" "0.6666666666666666" ""
+agedge graph "g" node "sh0002" node "sh0003"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agsafeset edge e1 "label" dim(22,17) ""
+agedge graph "g" node "sh0002" node "sh0004"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+agsafeset edge e2 "label" dim(117,32) ""
+agsafeset edge e2 "taillabel" dim(23,15) ""
+agsafeset edge e2 "headlabel" dim(73,15) ""
+agedge graph "g" node "sh0004" node "sh0005"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "1" ""
+agsafeset edge e3 "label" dim(127,17) ""
+agsafeset edge e3 "taillabel" dim(36,15) ""
+agsafeset edge e3 "headlabel" dim(13,15) ""
+agedge graph "g" node "sh0002" node "sh0006"
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "none" ""
+agsafeset edge e4 "minlen" "1" ""
+agsafeset edge e4 "label" dim(94,17) ""
+agedge graph "g" node "sh0005" node "sh0007"
+agsafeset edge e5 "arrowtail" "none" ""
+agsafeset edge e5 "arrowhead" "none" ""
+agsafeset edge e5 "minlen" "0" ""
+agedge graph "g" node "sh0005" node "sh0008"
+agsafeset edge e6 "arrowtail" "none" ""
+agsafeset edge e6 "arrowhead" "none" ""
+agsafeset edge e6 "minlen" "1" ""
+agsafeset edge e6 "headlabel" dim(78,15) ""
+agedge graph "g" node "sh0004" node "sh0009"
+agsafeset edge e7 "arrowtail" "none" ""
+agsafeset edge e7 "arrowhead" "none" ""
+agsafeset edge e7 "minlen" "1" ""
+agsafeset edge e7 "headlabel" dim(74,15) ""
+agedge graph "g" node "sh0003" node "sh0010"
+agsafeset edge e8 "arrowtail" "none" ""
+agsafeset edge e8 "arrowhead" "none" ""
+agsafeset edge e8 "minlen" "0" ""
+agsafeset edge e8 "label" dim(25,17) ""
+agedge graph "g" node "sh0005" node "sh0011"
+agsafeset edge e9 "arrowtail" "none" ""
+agsafeset edge e9 "arrowhead" "none" ""
+agsafeset edge e9 "minlen" "1" ""
+agsafeset edge e9 "headlabel" dim(39,15) ""
+agedge graph "g" node "sh0002" node "sh0012"
+agsafeset edge e10 "arrowtail" "none" ""
+agsafeset edge e10 "arrowhead" "none" ""
+agsafeset edge e10 "minlen" "1" ""
+agsafeset edge e10 "label" dim(118,17) ""
+agedge graph "g" node "sh0003" node "sh0013"
+agsafeset edge e11 "arrowtail" "none" ""
+agsafeset edge e11 "arrowhead" "none" ""
+agsafeset edge e11 "minlen" "0" ""
+agedge graph "g" node "sh0008" node "sh0015"
+agsafeset edge e12 "arrowtail" "none" ""
+agsafeset edge e12 "arrowhead" "none" ""
+agsafeset edge e12 "minlen" "0" ""
+agsafeset edge e12 "label" dim(76,17) ""
+agsafeset edge e12 "taillabel" dim(23,15) ""
+agsafeset edge e12 "headlabel" dim(56,15) ""
+agedge graph "g" node "sh0007" node "sh0016"
+agsafeset edge e13 "arrowtail" "none" ""
+agsafeset edge e13 "arrowhead" "none" ""
+agsafeset edge e13 "minlen" "3" ""
+agsafeset edge e13 "label" dim(61,17) ""
+agedge graph "g" node "sh0012" node "sh0017"
+agsafeset edge e14 "arrowtail" "none" ""
+agsafeset edge e14 "arrowhead" "none" ""
+agsafeset edge e14 "minlen" "3" ""
+agedge graph "g" node "sh0009" node "sh0018"
+agsafeset edge e15 "arrowtail" "none" ""
+agsafeset edge e15 "arrowhead" "none" ""
+agsafeset edge e15 "minlen" "1" ""
+agsafeset edge e15 "headlabel" dim(78,15) ""
+agedge graph "g" node "sh0013" node "sh0019"
+agsafeset edge e16 "arrowtail" "none" ""
+agsafeset edge e16 "arrowhead" "none" ""
+agsafeset edge e16 "minlen" "0" ""
+agsafeset edge e16 "headlabel" dim(52,15) ""
+agedge graph "g" node "sh0003" node "sh0020"
+agsafeset edge e17 "arrowtail" "none" ""
+agsafeset edge e17 "arrowhead" "none" ""
+agsafeset edge e17 "minlen" "0" ""
+agsafeset edge e17 "label" dim(92,17) ""
+agedge graph "g" node "sh0008" node "sh0021"
+agsafeset edge e18 "arrowtail" "none" ""
+agsafeset edge e18 "arrowhead" "none" ""
+agsafeset edge e18 "minlen" "1" ""
+agsafeset edge e18 "headlabel" dim(70,15) ""
+agedge graph "g" node "sh0005" node "sh0023"
+agsafeset edge e19 "arrowtail" "none" ""
+agsafeset edge e19 "arrowhead" "none" ""
+agsafeset edge e19 "minlen" "2" ""
+agsafeset edge e19 "label" dim(70,32) ""
+agsafeset edge e19 "headlabel" dim(34,15) ""
+agedge graph "g" node "sh0004" node "sh0024"
+agsafeset edge e20 "arrowtail" "none" ""
+agsafeset edge e20 "arrowhead" "none" ""
+agsafeset edge e20 "minlen" "0" ""
+agsafeset edge e20 "label" dim(26,32) ""
+agsafeset edge e20 "taillabel" dim(53,15) ""
+agsafeset edge e20 "headlabel" dim(51,15) ""
+agedge graph "g" node "sh0010" node "sh0008"
+agsafeset edge e21 "arrowtail" "none" ""
+agsafeset edge e21 "arrowhead" "none" ""
+agsafeset edge e21 "minlen" "0" ""
+agsafeset edge e21 "label" dim(13,32) ""
+agedge graph "g" node "sh0014" node "sh0003"
+agsafeset edge e22 "arrowtail" "none" ""
+agsafeset edge e22 "arrowhead" "none" ""
+agsafeset edge e22 "minlen" "1" ""
+agsafeset edge e22 "headlabel" dim(13,15) ""
+agedge graph "g" node "sh0022" node "sh0020"
+agsafeset edge e23 "arrowtail" "none" ""
+agsafeset edge e23 "arrowhead" "none" ""
+agsafeset edge e23 "minlen" "1" ""
+agsafeset edge e23 "label" dim(90,32) ""
+agedge graph "g" node "sh0007" node "sh0016"
+agsafeset edge e24 "arrowtail" "none" ""
+agsafeset edge e24 "arrowhead" "none" ""
+agsafeset edge e24 "minlen" "1" ""
+agsafeset edge e24 "taillabel" dim(49,15) ""
+gvContext
+agsafeset graph "g" "rankdir" "LR" "LR"
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 10
+node "sh0002" rank 0
+node "sh0003" rank 2
+node "sh0004" rank 2
+node "sh0005" rank 4
+node "sh0006" rank 2
+node "sh0007" rank 4
+node "sh0008" rank 6
+node "sh0009" rank 4
+node "sh0010" rank 3
+node "sh0011" rank 6
+node "sh0012" rank 2
+node "sh0013" rank 2
+node "sh0014" rank 0
+node "sh0015" rank 6
+node "sh0016" rank 10
+node "sh0017" rank 8
+node "sh0018" rank 6
+node "sh0019" rank 2
+node "sh0020" rank 2
+node "sh0021" rank 8
+node "sh0022" rank 0
+node "sh0023" rank 8
+node "sh0024" rank 2
+phase mincross
+rank 0 "sh0022" "sh0014" "sh0002"
+rank 1 v1 v2 v3 v4 v5 v6
+rank 2 "sh0020" "sh0013" "sh0003" "sh0019" "sh0024" "sh0004" "sh0012" "sh0006"
+rank 3 "sh0010" v7 v8 v9
+rank 4 v10 "sh0005" "sh0009" "sh0007" v11
+rank 5 v12 v13 v14 v15 v16 v17 v18 v19
+rank 6 "sh0011" "sh0015" "sh0008" v20 "sh0018" v21 v22 v23
+rank 7 v24 v25 v26 v27 v28
+rank 8 "sh0021" "sh0023" v29 v30 "sh0017"
+rank 9 v31 v32
+rank 10 "sh0016"
+phase position
+node "sh0022" rank 0 coord -602.0 1206.0 lw 24.0 rw 24.0 ht 77.0
+node "sh0014" rank 0 coord -510.0 1206.0 lw 33.5 rw 33.5 ht 150.0
+node "sh0002" rank 0 coord -144.0 1206.0 lw 24.0 rw 24.0 ht 76.0
+node v1 rank 1 coord -602.0 1054.0 lw 18.0 rw 32.0 ht 90.0
+node v2 rank 1 coord -510.0 1054.0 lw 10.0 rw 10.0 ht 1.0
+node v33 rank 1 coord -486.0 1054.0 lw 8.5 rw 8.5 ht 92.0
+node v3 rank 1 coord -332.0 1054.0 lw 18.0 rw 17.0 ht 22.0
+node v4 rank 1 coord -177.0 1054.0 lw 18.0 rw 32.0 ht 117.0
+node v5 rank 1 coord -119.0 1054.0 lw 18.0 rw 17.0 ht 118.0
+node v6 rank 1 coord -48.0 1054.0 lw 18.0 rw 17.0 ht 94.0
+node "sh0020" rank 2 coord -602.0 907.5 lw 24.0 rw 24.0 ht 115.0
+node "sh0013" rank 2 coord -528.0 907.5 lw 32.0 rw 32.0 ht 131.0
+node "sh0003" rank 2 coord -447.0 907.5 lw 31.0 rw 31.0 ht 76.0
+node "sh0019" rank 2 coord -359.0 907.5 lw 38.5 rw 38.5 ht 73.0
+node "sh0024" rank 2 coord -278.0 907.5 lw 24.0 rw 24.0 ht 104.0
+node "sh0004" rank 2 coord -180.0 907.5 lw 24.0 rw 24.0 ht 139.0
+node "sh0012" rank 2 coord -114.0 907.5 lw 24.0 rw 24.0 ht 76.0
+node "sh0006" rank 2 coord -48.0 907.5 lw 24.0 rw 24.0 ht 32.0
+node "sh0010" rank 3 coord -447.0 756.5 lw 24.0 rw 24.0 ht 101.0
+node v7 rank 3 coord -231.0 756.5 lw 18.0 rw 17.0 ht 127.0
+node v8 rank 3 coord -180.0 756.5 lw 10.0 rw 10.0 ht 1.0
+node v9 rank 3 coord -27.0 756.5 lw 10.0 rw 10.0 ht 1.0
+node v10 rank 4 coord -447.0 617.0 lw 18.0 rw 32.0 ht 13.0
+node "sh0005" rank 4 coord -250.0 617.0 lw 24.0 rw 24.0 ht 113.0
+node "sh0009" rank 4 coord -180.0 617.0 lw 24.0 rw 24.0 ht 116.0
+node "sh0007" rank 4 coord -114.0 617.0 lw 24.0 rw 24.0 ht 29.0
+node v11 rank 4 coord -27.0 617.0 lw 10.0 rw 10.0 ht 1.0
+node v12 rank 5 coord -447.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v13 rank 5 coord -422.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v14 rank 5 coord -292.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v15 rank 5 coord -250.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v16 rank 5 coord -176.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v17 rank 5 coord -124.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v18 rank 5 coord -86.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node v19 rank 5 coord -27.0 540.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0011" rank 6 coord -498.0 455.5 lw 50.0 rw 50.0 ht 131.0
+node "sh0015" rank 6 coord -399.0 455.5 lw 30.5 rw 30.5 ht 41.0
+node "sh0008" rank 6 coord -310.0 455.5 lw 24.0 rw 24.0 ht 133.0
+node v20 rank 6 coord -250.0 455.5 lw 18.0 rw 32.0 ht 70.0
+node "sh0018" rank 6 coord -176.0 455.5 lw 24.0 rw 24.0 ht 40.0
+node v21 rank 6 coord -124.0 455.5 lw 10.0 rw 10.0 ht 1.0
+node v22 rank 6 coord -86.0 455.5 lw 10.0 rw 10.0 ht 1.0
+node v23 rank 6 coord -27.0 455.5 lw 10.0 rw 10.0 ht 1.0
+node v24 rank 7 coord -316.0 340.5 lw 10.0 rw 10.0 ht 1.0
+node v25 rank 7 coord -250.0 340.5 lw 10.0 rw 10.0 ht 1.0
+node v26 rank 7 coord -124.0 340.5 lw 18.0 rw 17.0 ht 61.0
+node v27 rank 7 coord -86.0 340.5 lw 10.0 rw 10.0 ht 1.0
+node v28 rank 7 coord -27.0 340.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0021" rank 8 coord -316.0 220.5 lw 24.0 rw 24.0 ht 143.0
+node "sh0023" rank 8 coord -250.0 220.5 lw 24.0 rw 24.0 ht 92.0
+node v29 rank 8 coord -124.0 220.5 lw 10.0 rw 10.0 ht 1.0
+node v30 rank 8 coord -86.0 220.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0017" rank 8 coord -27.0 220.5 lw 30.5 rw 30.5 ht 72.0
+node v31 rank 9 coord -124.0 130.5 lw 10.0 rw 10.0 ht 1.0
+node v32 rank 9 coord -86.0 130.5 lw 10.0 rw 10.0 ht 1.0
+node "sh0016" rank 10 coord -105.0 56.0 lw 24.0 rw 24.0 ht 112.0
+graph "g" bb -626.0 0.0 3.5 1281.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -168.10656383454418 1188.3194125807695 -217.38545540193957 1153.3781910978003 -331.3759506908044 1068.1547243419739 -407.0 977.0 -414.9137488703482 967.4610292178512 -422.2069907224828 956.1628081555727 -428.3379103334647 945.5212901249897
+edge e1 label pos -262.5 1054.0 dimen 22.0 17.0 set 1
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -156.57621586203035 1167.8340142155853 -161.6473322253693 1151.2482992555083 -166.9990175336616 1131.3457104493407 -170.0 1113.0 -177.34504124940236 1068.0980382219918 -179.84504124940236 1016.9730382219918 -180.50878093705177 977.0735286664939
+edge e2 label pos -154.0 1054.0 dimen 117.0 32.0 set 1
+edge e2 head_label pos 0.0 0.0 dimen 73.0 15.0 set 0
+edge e2 tail_label pos 0.0 0.0 dimen 23.0 15.0 set 0
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -196.7364771624442 837.5667753484407 -198.17867400065634 831.6251858326514 -199.61512309442207 825.7067282354559 -201.0 820.0 -212.999468612959 770.5532180743078 -226.6454118641819 714.2964398226203 -236.48397641230238 673.7314768634516
+edge e3 label pos -192.5 756.5 dimen 127.0 17.0 set 1
+edge e3 head_label pos 0.0 0.0 dimen 13.0 15.0 set 0
+edge e3 tail_label pos 0.0 0.0 dimen 36.0 15.0 set 0
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -124.61917402567153 1167.6125825281715 -116.59018181954085 1151.1562213340294 -107.62601233466364 1131.4142527121087 -101.0 1113.0 -76.16429216085962 1043.9794522956854 -57.78574500787608 957.9866158481124 -50.93355805434215 923.6674909545565
+edge e4 label pos -58.5 1054.0 dimen 94.0 17.0 set 1
+edge e5 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 -246.60324718486544 673.8174336066118 -241.58661235491468 703.582211709343 -230.036361587916 737.6700995580454 -204.0 756.5 -186.71366325045668 769.0017467936484 -173.1218597352161 769.2260767842528 -156.0 756.5 -116.21292799679868 726.9276672532301 -112.73018109224938 660.8656301577641 -113.28321262154275 631.5235070241529
+edge e6 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -270.9850883483887 560.2146401405334 -275.81755694001913 547.3683278011158 -280.994065019695 533.6074438226442 -285.94546913746615 520.4449612095692
+edge e6 head_label pos 0.0 0.0 dimen 78.0 15.0 set 0
+edge e7 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -180.0 837.7635959358886 -180.0 788.0975073513073 -180.0 721.7986516245122 -180.0 675.0535120991846
+edge e7 head_label pos 0.0 0.0 dimen 74.0 15.0 set 0
+edge e8 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -447.0 869.2853622883558 -447.0 850.4944625604548 -447.0 827.4396566232451 -447.0 807.1585231723489
+edge e8 label pos 0.0 0.0 dimen 25.0 17.0 set 0
+edge e9 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -274.00436722641405 607.4389853041802 -311.5596849061278 593.3341156207987 -385.4473803881463 562.67244346241 -439.0 522.0 -441.9251178095484 519.7784151439828 -444.82033071730643 517.3976938547188 -447.6655368491119 514.9071998615904
+edge e9 head_label pos 0.0 0.0 dimen 39.0 15.0 set 0
+edge e10 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -140.23085590079427 1167.7482924861833 -134.47108771228523 1110.822583556419 -123.54197911436523 1002.8065602469763 -117.77732215819927 945.8325339968694
+edge e10 label pos -113.5 1054.0 dimen 118.0 17.0 set 1
+edge e11 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -478.2154541015625 907.5 -484.052490234375 907.5 -489.8895263671875 907.5 -495.7265625 907.5
+edge e12 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -334.22227553191993 455.5 -344.75204101982854 455.5 -357.2085838788189 455.5 -368.3712488412857 455.5
+edge e12 label pos -351.25 467.0 dimen 76.0 17.0 set 1
+edge e12 head_label pos 0.0 0.0 dimen 56.0 15.0 set 0
+edge e12 tail_label pos 0.0 0.0 dimen 23.0 15.0 set 0
+edge e13 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 -114.22404654060131 602.4550931258273 -114.82428993528613 565.4056028091313 -116.45962528990465 459.264510941496 -117.0 371.0 -117.16597706261545 343.8893969581328 -117.64240962455514 337.10349895407035 -117.0 310.0 -115.38496320263572 241.86100196045462 -111.326526140361 163.4861928311009 -108.37555404877106 112.24973942082661
+edge e13 label pos -108.5 340.5 dimen 61.0 17.0 set 1
+edge e14 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -108.41976839542882 869.2478035879228 -101.6342908895788 823.5332406519728 -89.97685119105071 743.6337624353 -81.0 675.0 -60.61418252825902 519.1374014532271 -39.417766937188155 332.7074560915988 -30.891954546823538 256.52720223285354
+edge e15 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -178.56720632314682 558.8673521354795 -177.8364076211583 529.7267538936867 -176.99546230774195 496.1940595212101 -176.48090887039248 475.67624120690067
+edge e15 head_label pos 0.0 0.0 dimen 78.0 15.0 set 0
+edge e16 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 -522.5610296483999 973.2322531416744 -516.4304042645595 1002.9824610262921 -503.7922182671276 1035.5497702363434 -478.0 1054.0 -455.5883131591426 1070.0319972218888 -438.74460116759764 1069.5560843306478 -416.0 1054.0 -380.1828395452444 1029.502987965677 -366.869133654404 978.9223921863919 -361.92210871171744 944.1088191494127
+edge e16 head_label pos 0.0 0.0 dimen 52.0 15.0 set 0
+edge e17 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -441.42613134012 945.7567346243063 -438.11297998873385 985.1184057416654 -440.3084416276391 1044.9360790214587 -477.5 1076.0 -524.957008069411 1115.638047262944 -564.2870632829636 1028.3268508465874 -585.3562307555251 965.1913284136994
+edge e17 label pos -486.0 1054.0 dimen 92.0 17.0 set 1
+edge e18 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -311.68730160593987 388.97645430266857 -312.46371124498546 358.8258799863979 -313.38623987685423 323.00101811549393 -314.17842372535233 292.23787866548446
+edge e18 head_label pos 0.0 0.0 dimen 70.0 15.0 set 0
+edge e19 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -250.0 560.3144976869226 -250.0 481.51744853415585 -250.0 339.01704506165254 -250.0 266.50646263074526
+edge e19 label pos -234.0 455.5 dimen 70.0 32.0 set 1
+edge e19 head_label pos 0.0 0.0 dimen 34.0 15.0 set 0
+edge e20 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -204.28568824084073 907.5 -219.37422793417863 907.5 -238.69816338364035 907.5 -253.77527499198914 907.5
+edge e20 label pos -229.0 926.5 dimen 26.0 32.0 set 1
+edge e20 head_label pos 0.0 0.0 dimen 51.0 15.0 set 0
+edge e20 tail_label pos 0.0 0.0 dimen 53.0 15.0 set 0
+edge e21 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -424.22344738431275 705.7905895467848 -399.3049722800806 651.4064723484971 -359.5300868915833 564.5985108071782 -334.09994763792434 509.0976959397035
+edge e21 label pos -342.0 617.0 dimen 13.0 32.0 set 1
+edge e22 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 -513.0478308080809 1130.6810306012849 -512.7487158388426 1089.8473967729617 -509.10373689787673 1038.7540105396113 -496.0 995.0 -494.36594478719945 989.5438107037414 -481.38942112197446 966.716635955187 -469.20179445104884 945.8829368613004
+edge e22 head_label pos 0.0 0.0 dimen 13.0 15.0 set 0
+edge e23 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -602.0 1167.4480701088905 -602.0 1116.4143591845059 -602.0 1024.719280275292 -602.0 965.2612435097503
+edge e23 label pos -586.0 1054.0 dimen 90.0 32.0 set 1
+edge e24 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 -110.91418873595141 602.2671896206547 -107.71594480296964 587.2958818495026 -102.92102918239254 562.5872731166992 -101.0 541.0 -98.25226450180982 510.1227404583173 -98.8880910186751 162.50577677363947 -100.0 130.0 -100.19542673269896 124.28685453988815 -100.47664399394125 118.32660628743281 -100.80745255107072 112.38265807302218
+edge e24 tail_label pos 0.0 0.0 dimen 49.0 15.0 set 0
+phase final
+graph "g" bb 0.0 0.0 1281.0 629.5
+node "sh0002" coord 75.0 482.0 width 1.0555555555555556 height 0.6666666666666666 lw 38.0 rw 38.0 ht 48.0
+node "sh0003" coord 373.5 179.0 width 1.0555555555555556 height 0.8611111111111112 lw 38.0 rw 38.0 ht 62.0
+node "sh0004" coord 373.5 446.0 width 1.9305555555555556 height 0.6666666666666666 lw 69.5 rw 69.5 ht 48.0
+node "sh0005" coord 664.0 376.0 width 1.5694444444444444 height 0.6666666666666666 lw 56.5 rw 56.5 ht 48.0
+node "sh0006" coord 373.5 578.0 width 0.4444444444444444 height 0.6666666666666666 lw 16.0 rw 16.0 ht 48.0
+node "sh0007" coord 664.0 512.0 width 0.4027777777777778 height 0.6666666666666666 lw 14.5 rw 14.5 ht 48.0
+node "sh0008" coord 825.5 316.0 width 1.8472222222222223 height 0.6666666666666666 lw 66.5 rw 66.5 ht 48.0
+node "sh0009" coord 664.0 446.0 width 1.6111111111111112 height 0.6666666666666666 lw 58.0 rw 58.0 ht 48.0
+node "sh0010" coord 524.5 179.0 width 1.4027777777777777 height 0.6666666666666666 lw 50.5 rw 50.5 ht 48.0
+node "sh0011" coord 825.5 128.0 width 1.8194444444444444 height 1.3888888888888888 lw 65.5 rw 65.5 ht 100.0
+node "sh0012" coord 373.5 512.0 width 1.0555555555555556 height 0.6666666666666666 lw 38.0 rw 38.0 ht 48.0
+node "sh0013" coord 373.5 98.0 width 1.8194444444444444 height 0.8888888888888888 lw 65.5 rw 65.5 ht 64.0
+node "sh0014" coord 75.0 116.0 width 2.0833333333333335 height 0.9305555555555556 lw 75.0 rw 75.0 ht 67.0
+node "sh0015" coord 825.5 227.0 width 0.5694444444444444 height 0.8472222222222222 lw 20.5 rw 20.5 ht 61.0
+node "sh0016" coord 1225.0 521.0 width 1.5555555555555556 height 0.6666666666666666 lw 56.0 rw 56.0 ht 48.0
+node "sh0017" coord 1060.5 599.0 width 1.0 height 0.8472222222222222 lw 36.0 rw 36.0 ht 61.0
+node "sh0018" coord 825.5 450.0 width 0.5555555555555556 height 0.6666666666666666 lw 20.0 rw 20.0 ht 48.0
+node "sh0019" coord 373.5 267.0 width 1.0138888888888888 height 1.0694444444444444 lw 36.5 rw 36.5 ht 77.0
+node "sh0020" coord 373.5 24.0 width 1.5972222222222223 height 0.6666666666666666 lw 57.5 rw 57.5 ht 48.0
+node "sh0021" coord 1060.5 310.0 width 1.9861111111111112 height 0.6666666666666666 lw 71.5 rw 71.5 ht 48.0
+node "sh0022" coord 75.0 24.0 width 1.0694444444444444 height 0.6666666666666666 lw 38.5 rw 38.5 ht 48.0
+node "sh0023" coord 1060.5 376.0 width 1.2777777777777777 height 0.6666666666666666 lw 46.0 rw 46.0 ht 48.0
+node "sh0024" coord 373.5 348.0 width 1.4444444444444444 height 0.6666666666666666 lw 52.0 rw 52.0 ht 48.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 92.6805874192305 457.8934361654558 127.62180890219975 408.61454459806043 212.84527565802614 294.6240493091956 304.0 219.0 313.5389707821488 211.08625112965183 324.83719184442725 203.79300927751723 335.4787098750103 197.66208966653528
+edge e1 label pos 227.0 363.5 dimen 22.0 17.0 set 1
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 113.16598578441472 469.4237841379696 129.7517007444917 464.35266777463073 149.6542895506593 459.0009824663384 168.0 456.0 212.90196177800817 448.65495875059764 264.0269617780082 446.15495875059764 303.92647133350613 445.49121906294823
+edge e2 label pos 227.0 472.0 dimen 117.0 32.0 set 1
+edge e2 head_label pos 267.42647133350613 437.99121906294823 dimen 73.0 15.0 set 1
+edge e2 tail_label pos 124.66598578441472 461.9237841379696 dimen 23.0 15.0 set 1
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 443.43322465155927 429.2635228375558 449.37481416734863 427.8213259993437 455.2932717645441 426.3848769055779 461.0 425.0 510.4467819256922 413.000531387041 566.7035601773797 399.35458813581806 607.2685231365484 389.51602358769765
+edge e3 label pos 524.5 433.5 dimen 127.0 17.0 set 1
+edge e3 head_label pos 600.7685231365484 382.01602358769765 dimen 13.0 15.0 set 1
+edge e3 tail_label pos 461.43322465155927 421.7635228375558 dimen 36.0 15.0 set 1
+edge e4 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 113.38741747182848 501.38082597432845 129.8437786659706 509.4098181804592 149.5857472878913 518.3739876653364 168.0 525.0 237.0205477043146 549.8357078391404 323.01338415188764 568.2142549921239 357.33250904544354 575.0664419456579
+edge e4 label pos 227.0 567.5 dimen 94.0 17.0 set 1
+edge e5 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 607.1825663933882 379.39675281513456 577.417788290657 384.4133876450853 543.3299004419546 395.96363841208404 524.5 422.0 511.9982532063516 439.28633674954335 511.77392321574723 452.8781402647839 524.5 470.0 554.0723327467699 509.78707200320133 620.1343698422359 513.2698189077506 649.4764929758471 512.7167873784573
+edge e6 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 720.7853598594666 355.0149116516113 733.6316721988842 350.18244305998087 747.3925561773558 345.005934980305 760.5550387904308 340.05453086253385
+edge e6 head_label pos 799.5550387904308 347.55453086253385 dimen 78.0 15.0 set 1
+edge e7 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 443.2364040641114 446.0 492.9024926486927 446.0 559.2013483754878 446.0 605.9464879008154 446.0
+edge e7 head_label pos 568.9464879008154 453.5 dimen 74.0 15.0 set 1
+edge e8 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 411.7146377116442 179.0 430.50553743954515 179.0 453.5603433767549 179.0 473.84147682765115 179.0
+edge e8 label pos 429.7192196235244 170.5 dimen 25.0 17.0 set 1
+edge e9 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 673.5610146958198 351.99563277358595 687.6658843792013 314.4403150938722 718.32755653759 240.5526196118537 759.0 187.0 761.2215848560172 184.0748821904516 763.6023061452812 181.17966928269357 766.0928001384096 178.3344631508881
+edge e9 head_label pos 746.5928001384096 185.8344631508881 dimen 39.0 15.0 set 1
+edge e10 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 113.25170751381665 485.76914409920573 170.17741644358102 491.5289122877148 278.19343975302365 502.45802088563477 335.1674660031306 508.22267784180076
+edge e10 label pos 227.0 512.5 dimen 118.0 17.0 set 1
+edge e11 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 373.5 147.7845458984375 373.5 141.947509765625 373.5 136.1104736328125 373.5 130.2734375
+edge e12 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 825.5 291.77772446808007 825.5 281.24795898017146 825.5 268.7914161211811 825.5 257.6287511587143
+edge e12 label pos 814.0 274.75 dimen 76.0 17.0 set 1
+edge e12 head_label pos 853.5 261.3787511587143 dimen 56.0 15.0 set 1
+edge e12 tail_label pos 814.0 284.27772446808007 dimen 23.0 15.0 set 1
+edge e13 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 678.5449068741727 511.7759534593987 715.5943971908687 511.1757100647139 821.7354890585041 509.54037471009536 910.0 509.0 937.1106030418672 508.83402293738453 943.8965010459297 508.35759037544483 971.0 509.0 1039.1389980395454 510.61503679736427 1117.5138071688991 514.673473859639 1168.7502605791733 517.624445951229
+edge e13 label pos 940.5 517.5 dimen 61.0 17.0 set 1
+edge e14 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 411.7521964120772 517.5802316045712 457.46675934802715 524.3657091104212 537.3662375647 536.0231488089493 606.0 545.0 761.8625985467729 565.385817471741 948.2925439084013 586.5822330628118 1024.4727977671464 595.1080454531765
+edge e15 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 722.1326478645205 447.4327936768532 751.2732461063133 448.1635923788417 784.8059404787899 449.00453769225805 805.3237587930994 449.51909112960755
+edge e15 head_label pos 766.3237587930994 442.01909112960755 dimen 78.0 15.0 set 1
+edge e16 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 307.7677468583256 103.43897035160012 278.01753897370793 109.56959573544054 245.45022976365658 122.20778173287238 227.0 148.0 210.9680027781112 170.41168684085739 211.44391566935224 187.25539883240236 227.0 210.0 251.497012034323 245.8171604547556 302.0776078136081 259.130866345596 336.89118085058726 264.07789128828256
+edge e16 head_label pos 310.89118085058726 256.57789128828256 dimen 52.0 15.0 set 1
+edge e17 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 335.2432653756937 184.57386865988002 295.88159425833464 187.88702001126615 236.06392097854132 185.69155837236087 205.0 148.5 165.36195273705607 101.04299193058898 252.67314915341262 61.71293671703643 315.80867158630065 40.643769244474925
+edge e17 label pos 227.0 140.0 dimen 92.0 17.0 set 1
+edge e18 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 892.0235456973314 314.31269839406013 922.1741200136021 313.53628875501454 957.9989818845061 312.61376012314577 988.7621213345155 311.82157627464767
+edge e18 head_label pos 953.7621213345155 304.32157627464767 dimen 70.0 15.0 set 1
+edge e19 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 720.6855023130774 376.0 799.4825514658442 376.0 941.9829549383475 376.0 1014.4935373692547 376.0
+edge e19 label pos 825.5 392.0 dimen 70.0 32.0 set 1
+edge e19 head_label pos 997.4935373692547 368.5 dimen 34.0 15.0 set 1
+edge e20 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 373.5 421.7143117591593 373.5 406.62577206582137 373.5 387.30183661635965 373.5 372.22472500801086
+edge e20 label pos 354.5 397.0 dimen 26.0 32.0 set 1
+edge e20 head_label pos 399.0 379.72472500801086 dimen 51.0 15.0 set 1
+edge e20 tail_label pos 400.0 414.2143117591593 dimen 53.0 15.0 set 1
+edge e21 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 575.2094104532152 201.77655261568725 629.5935276515029 226.69502771991938 716.4014891928218 266.4699131084167 771.9023040602965 291.90005236207566
+edge e21 label pos 664.0 284.0 dimen 13.0 32.0 set 1
+edge e22 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 7 150.31896939871513 112.9521691919191 191.1526032270383 113.2512841611574 242.24598946038873 116.89626310212327 286.0 130.0 291.4561892962586 131.63405521280055 314.28336404481297 144.61057887802554 335.11706313869956 156.79820554895116
+edge e22 head_label pos 328.61706313869956 149.29820554895116 dimen 13.0 15.0 set 1
+edge e23 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 113.55192989110947 24.0 164.58564081549412 24.0 256.280719724708 24.0 315.73875649024967 24.0
+edge e23 label pos 227.0 40.0 dimen 90.0 32.0 set 1
+edge e24 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 10 678.7328103793453 515.0858112640486 693.7041181504974 518.2840551970304 718.4127268833008 523.0789708176075 740.0 525.0 770.8772595416826 527.7477354981902 1118.4942232263606 527.1119089813249 1151.0 526.0 1156.713145460112 525.8045732673011 1162.6733937125673 525.5233560060587 1168.6173419269778 525.1925474489293
+edge e24 tail_label pos 703.2328103793453 507.5858112640486 dimen 49.0 15.0 set 1

@@ -1,0 +1,308 @@
+001 ok git nodes 2 edges 1
+002 ok cuca nodes 2 edges 1
+003 ok cuca nodes 2 edges 4 cycle label virtual
+004 ok cuca nodes 3 edges 2
+005 ok git nodes 3 edges 2
+006 ok cuca nodes 3 edges 2
+007 ok cuca nodes 3 edges 1 clusters
+008 ok cuca nodes 3 edges 1 cluster-label clusters lr
+009 ok cuca nodes 3 edges 3 multi
+010 ok cuca nodes 2 edges 1
+011 ok cuca nodes 2 edges 3 cycle multi
+012 ok json nodes 2 edges 1 record
+013 ok cuca nodes 3 edges 1 cluster-label clusters
+014 ok cuca nodes 4 edges 3 cycle
+015 ok cuca nodes 4 edges 4 flat headlabel selfloop taillabel
+016 ok cuca nodes 4 edges 4 selfloop
+017 ok cuca nodes 4 edges 2 lr taillabel
+018 ok cuca nodes 4 edges 3 label virtual
+019 ok cuca nodes 4 edges 3
+020 ok cuca nodes 5 edges 5 selfloop
+021 ok cuca nodes 5 edges 7 long multi selfloop virtual
+022 ok json nodes 4 edges 3 record
+023 ok cuca nodes 4 edges 4 cycle flat taillabel
+024 ok cuca nodes 2 edges 1
+025 ok cuca nodes 7 edges 8 long lr multi virtual
+026 ok git nodes 2 edges 1
+027 ok cuca nodes 6 edges 5 headlabel label taillabel virtual
+028 ok cuca nodes 5 edges 4
+029 ok json nodes 3 edges 2 record
+030 ok cuca nodes 2 edges 1
+031 ok cuca nodes 2 edges 1 label virtual
+032 ok cuca nodes 6 edges 4
+033 ok cuca nodes 6 edges 6 cluster-label clusters cycle flat multi
+034 ok cuca nodes 7 edges 6 headlabel taillabel
+035 ok git nodes 7 edges 8 virtual
+036 ok cuca nodes 7 edges 5 label virtual
+037 ok cuca nodes 7 edges 6
+038 ok cuca nodes 7 edges 7 selfloop
+039 ok cuca nodes 7 edges 3
+040 ok cuca nodes 7 edges 3 flat headlabel taillabel
+041 ok cuca nodes 3 edges 1
+042 ok json nodes 10 edges 9 record
+043 ok cuca nodes 2 edges 1
+044 ok cuca nodes 5 edges 4
+045 ok cuca nodes 5 edges 5 selfloop
+046 ok git nodes 5 edges 4
+047 ok cuca nodes 10 edges 9 cluster-label clusters core label long margin20 nested virtual
+048 ok git nodes 10 edges 9
+049 ok cuca nodes 6 edges 4 cluster-label clusters margin20 virtual
+050 ok cuca nodes 9 edges 7
+051 ok cuca nodes 4 edges 3 label selfloop virtual
+052 ok cuca nodes 5 edges 4
+053 ok cuca nodes 9 edges 10 flat headlabel long multi taillabel virtual
+054 ok cuca nodes 6 edges 7 cluster-label clusters flat selfloop
+055 ok cuca nodes 11 edges 9 long virtual
+056 ok cuca nodes 12 edges 14 cycle virtual
+057 ok cuca nodes 12 edges 9
+058 ok cuca nodes 8 edges 7 cluster-label clusters label long lr margin20 virtual
+059 ok json nodes 5 edges 4 record
+060 ok cuca nodes 5 edges 4 cluster-label clusters multi
+061 ok cuca nodes 2 edges 3 long multi selfloop
+062 ok cuca nodes 8 edges 9 cycle lr virtual
+063 ok json nodes 7 edges 6 record
+064 ok json nodes 4 edges 3 record
+065 ok cuca nodes 3 edges 2 long lr virtual
+066 ok cuca nodes 5 edges 5 cluster-label clusters margin20 virtual
+067 ok cuca nodes 13 edges 13 cluster-label clusters core virtual
+068 ok git nodes 11 edges 11 virtual
+069 ok cuca nodes 10 edges 10 flat multi
+070 ok cuca nodes 12 edges 10 headlabel lr taillabel
+071 ok cuca nodes 11 edges 10 clusters cycle headlabel multi taillabel
+072 ok cuca nodes 9 edges 6 clusters
+073 ok cuca nodes 12 edges 10 cluster-label clusters long margin20 virtual
+074 ok cuca nodes 10 edges 8 flat lr
+075 ok cuca nodes 11 edges 11 virtual
+076 ok cuca nodes 13 edges 10 label long lr virtual
+077 ok cuca nodes 14 edges 10 cluster-label clusters
+078 ok cuca nodes 13 edges 13 long selfloop virtual
+079 ok json nodes 13 edges 12 record
+080 ok cuca nodes 13 edges 14 cluster-label clusters cycle multi selfloop
+081 ok json nodes 2 edges 1 record
+082 ok cuca nodes 13 edges 12 label virtual
+083 ok cuca nodes 6 edges 5 cluster-label clusters core long
+084 ok cuca nodes 11 edges 11 cluster-label clusters headlabel lr margin20 selfloop taillabel virtual
+085 ok json nodes 9 edges 8 record
+086 ok cuca nodes 16 edges 14 flat headlabel taillabel
+087 ok cuca nodes 14 edges 13 flat flat-label headlabel label taillabel virtual
+088 ok cuca nodes 2 edges 2 label multi selfloop
+089 ok git nodes 12 edges 12
+090 ok cuca nodes 19 edges 23 long multi selfloop virtual
+091 ok cuca nodes 11 edges 8 flat flat-label label virtual
+092 ok cuca nodes 5 edges 6 lr selfloop
+093 ok cuca nodes 14 edges 16 cycle label multi virtual
+094 ok cuca nodes 20 edges 17 cluster-label clusters cycle flat headlabel multi selfloop taillabel
+095 ok cuca nodes 2 edges 3 cycle lr multi
+096 ok cuca nodes 3 edges 0 lr
+097 ok cuca nodes 4 edges 3 cluster-label clusters flat flat-label label virtual
+098 ok git nodes 2 edges 1
+099 ok cuca nodes 9 edges 9 cycle virtual
+100 ok cuca nodes 17 edges 20 headlabel label long taillabel virtual
+101 ok json nodes 2 edges 1 record
+102 ok cuca nodes 5 edges 5 cluster-label clusters label lr margin20 multi virtual
+103 ok cuca nodes 11 edges 12 cycle headlabel taillabel virtual
+104 ok cuca nodes 2 edges 3 label lr selfloop virtual
+105 ok json nodes 8 edges 7 record
+106 ok cuca nodes 10 edges 10 cluster-label clusters core lr margin20 virtual
+107 ok cuca nodes 16 edges 18 cluster-label clusters cycle flat lr nested selfloop virtual
+108 ok cuca nodes 7 edges 7 cluster-label clusters flat headlabel taillabel
+109 ok git nodes 2 edges 1
+110 ok cuca nodes 22 edges 22 cycle headlabel multi selfloop taillabel virtual
+111 ok cuca nodes 15 edges 16 cluster-label clusters label long multi virtual
+112 ok cuca nodes 14 edges 14 label long selfloop virtual
+113 ok cuca nodes 7 edges 6 headlabel long lr taillabel virtual
+114 ok cuca nodes 4 edges 7 cluster-label clusters headlabel label multi taillabel virtual
+115 ok json nodes 23 edges 22 record
+116 ok cuca nodes 11 edges 14 cycle flat long multi virtual
+117 ok cuca nodes 8 edges 6 flat long virtual
+118 ok cuca nodes 16 edges 17 cluster-label clusters core flat long margin20 virtual
+119 ok git nodes 13 edges 15 virtual
+120 ok cuca nodes 2 edges 1
+121 ok cuca nodes 11 edges 14 flat flat-label label long selfloop virtual
+122 ok cuca nodes 7 edges 9 cycle label multi selfloop virtual
+123 ok cuca nodes 16 edges 15 cluster-label clusters cycle flat headlabel margin20 selfloop taillabel
+124 ok cuca nodes 16 edges 17 cluster-label clusters flat long multi virtual
+125 ok cuca nodes 13 edges 14 cluster-label clusters flat long margin20 nested virtual
+126 ok json nodes 11 edges 10 record
+127 ok cuca nodes 12 edges 14 cycle flat lr selfloop virtual
+128 ok cuca nodes 16 edges 19 cluster-label clusters lr margin20 multi nested selfloop virtual
+129 ok cuca nodes 17 edges 19 flat flat-label label lr selfloop virtual
+130 ok cuca nodes 26 edges 27 cluster-label clusters core flat margin20 selfloop virtual
+131 ok git nodes 26 edges 32 virtual
+132 ok cuca nodes 23 edges 18 cluster-label clusters flat headlabel long lr margin20 nested taillabel virtual
+133 ok cuca nodes 23 edges 21 cluster-label clusters flat lr selfloop
+134 ok cuca nodes 24 edges 25 flat long multi virtual
+135 ok cuca nodes 24 edges 20 cluster-label clusters core flat flat-label headlabel label long lr margin20 taillabel virtual
+136 ok cuca nodes 14 edges 14 cluster-label clusters core long lr virtual
+137 ok cuca nodes 14 edges 18 cluster-label clusters headlabel label long lr margin20 nested selfloop taillabel virtual
+138 ok json nodes 12 edges 11 record
+139 ok cuca nodes 13 edges 16 headlabel long lr multi selfloop taillabel virtual
+140 ok cuca nodes 16 edges 19 cycle flat headlabel multi selfloop taillabel virtual
+141 ok cuca nodes 23 edges 23 cluster-label clusters headlabel label margin20 nested selfloop taillabel virtual
+142 ok json nodes 6 edges 5 record
+143 ok cuca nodes 24 edges 19 flat headlabel long taillabel virtual
+144 ok json nodes 22 edges 21 record
+145 ok cuca nodes 8 edges 10 cluster-label clusters core cycle flat headlabel lr taillabel
+146 ok cuca nodes 9 edges 9 headlabel multi selfloop taillabel
+147 ok cuca nodes 21 edges 18 cluster-label clusters core flat flat-label label lr virtual
+148 ok git nodes 21 edges 24 virtual
+149 ok cuca nodes 3 edges 4 cluster-label clusters core cycle flat margin20 multi virtual
+150 ok cuca nodes 26 edges 35 cycle flat lr selfloop virtual
+151 ok cuca nodes 29 edges 30 flat headlabel long lr multi taillabel virtual
+152 ok cuca nodes 17 edges 18 flat flat-label label long lr multi selfloop virtual
+153 ok cuca nodes 2 edges 4 cycle selfloop
+154 ok cuca nodes 16 edges 19 cluster-label clusters cycle flat headlabel margin20 multi taillabel virtual
+155 ok cuca nodes 31 edges 31 headlabel label long selfloop taillabel virtual
+156 ok cuca nodes 19 edges 22 headlabel label long taillabel virtual
+157 ok cuca nodes 9 edges 10 headlabel label lr selfloop taillabel virtual
+158 ok cuca nodes 6 edges 6 clusters core headlabel long lr margin20 multi selfloop taillabel
+159 ok json nodes 17 edges 16 record
+160 ok json nodes 11 edges 10 record
+161 ok cuca nodes 22 edges 22 cluster-label clusters flat headlabel long multi nested taillabel virtual
+162 ok cuca nodes 25 edges 21 clusters core flat flat-label headlabel label long lr multi taillabel virtual
+163 ok cuca nodes 25 edges 27 long lr multi virtual
+164 ok json nodes 25 edges 24 record
+165 ok cuca nodes 25 edges 19 flat flat-label label lr multi selfloop virtual
+166 ok cuca nodes 25 edges 24 cluster-label clusters headlabel label long margin20 multi nested selfloop taillabel virtual
+167 ok cuca nodes 7 edges 12 cluster-label clusters core cycle flat headlabel lr multi selfloop taillabel virtual
+168 ok git nodes 19 edges 28 virtual
+169 ok cuca nodes 2 edges 1 headlabel
+170 ok cuca nodes 21 edges 19 cluster-label clusters core cycle flat margin20 nested selfloop
+171 ok cuca nodes 4 edges 7 clusters headlabel label long multi selfloop taillabel virtual
+172 ok cuca nodes 15 edges 13 cluster-label clusters flat headlabel multi taillabel
+173 ok cuca nodes 19 edges 19 cluster-label clusters headlabel label long lr margin20 taillabel virtual
+174 ok cuca nodes 26 edges 28 flat flat-label headlabel label selfloop taillabel virtual
+175 ok cuca nodes 24 edges 32 cluster-label clusters headlabel label long margin20 multi nested selfloop taillabel virtual
+176 ok cuca nodes 22 edges 24 headlabel label long lr taillabel virtual
+177 ok cuca nodes 19 edges 18 headlabel multi selfloop taillabel
+178 ok git nodes 9 edges 12 virtual
+179 ok cuca nodes 29 edges 27 cluster-label clusters cycle label virtual
+180 ok cuca nodes 27 edges 35 cluster-label clusters cycle flat flat-label headlabel label lr margin20 multi nested selfloop taillabel virtual
+181 ok json nodes 13 edges 12 record
+182 ok cuca nodes 21 edges 24 cluster-label clusters headlabel label long lr margin20 multi nested selfloop taillabel virtual
+183 ok cuca nodes 29 edges 27 cluster-label clusters flat flat-label headlabel label long margin20 nested selfloop taillabel virtual
+184 ok cuca nodes 4 edges 8 cluster-label clusters core cycle flat flat-label label long lr multi selfloop virtual
+185 ok git nodes 14 edges 16 virtual
+186 ok cuca nodes 21 edges 25 flat headlabel lr multi selfloop taillabel virtual
+187 ok cuca nodes 31 edges 39 cluster-label clusters label long margin20 nested virtual
+188 ok cuca nodes 6 edges 4 cluster-label clusters label lr virtual
+189 ok cuca nodes 31 edges 42 cluster-label clusters headlabel label long margin20 multi nested selfloop taillabel virtual
+190 ok cuca nodes 28 edges 30 virtual
+191 ok cuca nodes 17 edges 17 flat flat-label headlabel label long taillabel virtual
+192 ok cuca nodes 37 edges 38 cluster-label clusters core cycle flat flat-label label long multi nested virtual
+193 ok cuca nodes 26 edges 27 cluster-label clusters core flat flat-label headlabel label long margin20 multi taillabel virtual
+194 ok json nodes 9 edges 8 record
+195 ok cuca nodes 29 edges 28 cluster-label clusters core flat flat-label headlabel label long margin20 multi taillabel virtual
+196 ok cuca nodes 13 edges 17 cluster-label clusters headlabel label lr taillabel virtual
+197 ok cuca nodes 32 edges 33 cluster-label clusters core flat flat-label headlabel label long lr margin20 multi nested selfloop taillabel virtual
+198 ok git nodes 11 edges 13 virtual
+199 ok cuca nodes 34 edges 41 flat flat-label headlabel label long selfloop taillabel virtual
+200 ok cuca nodes 19 edges 21 flat flat-label headlabel label lr multi taillabel virtual
+201 ok json nodes 31 edges 30 record
+202 ok cuca nodes 33 edges 32 cluster-label clusters core flat headlabel long lr nested selfloop taillabel virtual
+203 ok cuca nodes 6 edges 6 cycle flat flat-label headlabel label long lr taillabel virtual
+204 ok cuca nodes 30 edges 31 label lr multi selfloop virtual
+205 ok git nodes 3 edges 2
+206 ok cuca nodes 5 edges 12 cluster-label clusters cycle flat headlabel multi selfloop taillabel
+207 ok cuca nodes 17 edges 19 cluster-label clusters core flat headlabel long lr margin20 nested selfloop taillabel virtual
+208 ok cuca nodes 30 edges 39 cluster-label clusters core flat flat-label headlabel label lr multi selfloop taillabel virtual
+209 ok cuca nodes 3 edges 7 cluster-label clusters cycle headlabel label long lr margin20 multi selfloop taillabel virtual
+210 ok cuca nodes 4 edges 2 headlabel label long taillabel virtual
+211 ok json nodes 17 edges 16 record
+212 ok cuca nodes 2 edges 4 cycle long lr multi selfloop taillabel virtual
+213 ok cuca nodes 14 edges 10 cluster-label clusters core flat flat-label headlabel label lr margin20 selfloop taillabel virtual
+214 ok cuca nodes 16 edges 17 cluster-label clusters core flat flat-label headlabel label nested selfloop taillabel virtual
+215 ok git nodes 28 edges 33 virtual
+216 ok cuca nodes 13 edges 16 cycle headlabel label long multi selfloop taillabel virtual
+217 ok cuca nodes 25 edges 23 flat flat-label headlabel label taillabel virtual
+218 ok cuca nodes 27 edges 25 cluster-label clusters core flat long lr margin20 multi virtual
+219 ok cuca nodes 39 edges 42 cluster-label clusters core cycle flat flat-label label margin20 multi nested virtual
+220 ok cuca nodes 24 edges 26 cluster-label clusters flat flat-label headlabel label long lr multi nested selfloop taillabel virtual
+221 ok cuca nodes 37 edges 46 lr multi selfloop virtual
+222 ok cuca nodes 38 edges 37 cluster-label clusters core headlabel multi selfloop taillabel virtual
+223 ok cuca nodes 12 edges 12 cluster-label clusters core cycle headlabel label margin20 selfloop taillabel virtual
+224 ok cuca nodes 8 edges 12 flat flat-label headlabel label lr multi selfloop taillabel virtual
+225 ok cuca nodes 20 edges 24 cycle flat headlabel long lr selfloop taillabel virtual
+226 ok cuca nodes 22 edges 27 cluster-label clusters flat flat-label headlabel label long lr margin20 multi taillabel virtual
+227 ok cuca nodes 34 edges 47 cluster-label clusters core cycle flat long multi selfloop virtual
+228 ok cuca nodes 19 edges 24 cluster-label clusters core cycle flat long lr margin20 selfloop virtual
+229 ok cuca nodes 32 edges 29 flat selfloop
+230 ok cuca nodes 33 edges 32 cluster-label clusters core cycle headlabel label multi taillabel virtual
+231 ok json nodes 7 edges 6 record
+232 ok cuca nodes 30 edges 32 cluster-label clusters flat headlabel long lr margin20 taillabel virtual
+233 ok cuca nodes 4 edges 5 cluster-label clusters core cycle flat headlabel lr multi taillabel
+234 ok cuca nodes 5 edges 7 cycle label long lr multi virtual
+235 ok git nodes 18 edges 20 virtual
+236 ok cuca nodes 3 edges 2 clusters core long lr margin20 multi virtual
+237 ok cuca nodes 15 edges 14 cluster-label clusters core flat headlabel long lr margin20 taillabel virtual
+238 ok cuca nodes 16 edges 16 flat flat-label headlabel label lr taillabel virtual
+239 ok cuca nodes 29 edges 35 headlabel label lr multi selfloop taillabel virtual
+240 ok cuca nodes 2 edges 4 cycle headlabel label long lr selfloop taillabel virtual
+241 ok cuca nodes 15 edges 19 flat flat-label headlabel label long multi selfloop taillabel virtual
+242 ok cuca nodes 16 edges 14 cluster-label clusters core flat flat-label label lr multi virtual
+243 ok cuca nodes 29 edges 28 cluster-label clusters core cycle flat headlabel long lr margin20 selfloop taillabel virtual
+244 ok cuca nodes 13 edges 17 cluster-label clusters core cycle flat flat-label headlabel label long lr multi selfloop taillabel virtual
+245 ok cuca nodes 26 edges 25 clusters cycle headlabel label lr multi selfloop taillabel virtual
+246 ok cuca nodes 27 edges 29 cycle headlabel label long lr multi taillabel virtual
+247 ok cuca nodes 40 edges 44 cluster-label clusters flat flat-label headlabel label long multi selfloop taillabel virtual
+248 ok json nodes 25 edges 24 record
+249 ok cuca nodes 37 edges 40 cluster-label clusters headlabel label long lr nested selfloop taillabel virtual
+250 ok cuca nodes 38 edges 41 flat flat-label label lr multi selfloop virtual
+251 ok cuca nodes 12 edges 13 flat headlabel label lr multi taillabel virtual
+252 ok git nodes 36 edges 45 virtual
+253 ok cuca nodes 9 edges 13 cluster-label clusters core cycle headlabel long lr multi selfloop taillabel virtual
+254 ok cuca nodes 11 edges 16 cluster-label clusters core cycle flat flat-label label lr selfloop virtual
+255 ok cuca nodes 23 edges 24 flat flat-label headlabel label long lr multi taillabel virtual
+256 ok cuca nodes 5 edges 7 cluster-label clusters label selfloop virtual
+257 ok cuca nodes 17 edges 17 cluster-label clusters core cycle flat flat-label headlabel label long lr multi nested taillabel virtual
+258 ok cuca nodes 19 edges 17 cycle headlabel label long taillabel virtual
+259 ok cuca nodes 31 edges 32 flat flat-label headlabel label long taillabel virtual
+260 ok json nodes 16 edges 15 record
+261 ok cuca nodes 28 edges 27 cluster-label clusters core flat headlabel long lr nested taillabel virtual
+262 ok cuca nodes 30 edges 31 cluster-label clusters core cycle flat flat-label headlabel label long lr multi taillabel virtual
+263 ok cuca nodes 3 edges 5 cycle flat flat-label label long lr multi taillabel virtual
+264 ok git nodes 27 edges 32 virtual
+265 ok cuca nodes 40 edges 44 flat flat-label label long multi virtual
+266 ok cuca nodes 2 edges 4 cycle label long lr selfloop virtual
+267 ok cuca nodes 15 edges 21 cluster-label clusters core cycle flat headlabel lr selfloop taillabel
+268 ok cuca nodes 38 edges 42 cluster-label clusters cycle flat long lr margin20 multi selfloop virtual
+269 ok cuca nodes 12 edges 14 cycle flat long lr multi selfloop virtual
+270 ok cuca nodes 13 edges 21 cluster-label clusters core cycle headlabel label margin20 multi nested selfloop taillabel virtual
+271 ok cuca nodes 26 edges 34 cluster-label clusters core cycle label long lr selfloop virtual
+272 ok cuca nodes 38 edges 36 label long lr selfloop virtual
+273 ok cuca nodes 11 edges 17 cluster-label clusters core cycle headlabel label lr multi selfloop taillabel virtual
+274 ok git nodes 13 edges 19 virtual
+275 ok cuca nodes 25 edges 31 cycle flat lr multi selfloop virtual
+276 ok cuca nodes 10 edges 14 flat flat-label headlabel label multi selfloop taillabel virtual
+277 ok cuca nodes 23 edges 28 flat flat-label label long lr selfloop virtual
+278 ok cuca nodes 24 edges 23 cluster-label clusters core flat flat-label label margin20 nested selfloop virtual
+279 ok cuca nodes 37 edges 42 cluster-label clusters core flat long multi nested virtual
+280 ok cuca nodes 21 edges 23 cluster-label clusters cycle headlabel lr margin20 nested selfloop taillabel
+281 ok json nodes 34 edges 33 record
+282 ok cuca nodes 35 edges 47 cluster-label clusters core headlabel label long margin20 multi nested selfloop taillabel virtual
+283 ok cuca nodes 9 edges 10 cluster-label clusters core flat flat-label headlabel label long lr selfloop taillabel virtual
+284 ok cuca nodes 33 edges 33 cluster-label clusters headlabel long margin20 nested selfloop taillabel virtual
+285 ok git nodes 6 edges 6 virtual
+286 ok cuca nodes 7 edges 10 headlabel label long lr selfloop taillabel virtual
+287 ok cuca nodes 20 edges 25 clusters core headlabel long lr nested taillabel virtual
+288 ok cuca nodes 16 edges 17 cluster-label clusters core flat headlabel long lr margin20 multi nested taillabel virtual
+289 ok cuca nodes 29 edges 38 cycle flat long lr selfloop virtual
+290 ok json nodes 30 edges 29 record
+291 ok cuca nodes 4 edges 8 cluster-label clusters cycle headlabel long lr multi selfloop taillabel virtual
+292 ok cuca nodes 28 edges 29 cluster-label clusters core label lr margin20 nested selfloop virtual
+293 ok cuca nodes 40 edges 43 cluster-label clusters cycle headlabel label long multi nested selfloop taillabel virtual
+294 ok git nodes 2 edges 1
+295 ok cuca nodes 15 edges 16 cluster-label clusters core flat flat-label headlabel label long lr margin20 selfloop taillabel virtual
+296 ok cuca nodes 39 edges 41 cluster-label clusters cycle headlabel long lr margin20 multi nested selfloop taillabel virtual
+297 ok cuca nodes 12 edges 16 cluster-label clusters flat flat-label headlabel label long lr margin20 nested selfloop taillabel virtual
+298 ok cuca nodes 14 edges 19 cycle headlabel label long lr multi selfloop taillabel virtual
+299 ok cuca nodes 26 edges 37 cycle flat headlabel lr multi selfloop taillabel virtual
+300 ok cuca nodes 11 edges 16 cycle flat headlabel long lr multi selfloop taillabel virtual
+391 ok cuca nodes 35 edges 31 cluster-label clusters cycle flat flat-label label long multi nested virtual
+815 ok cuca nodes 28 edges 32 cluster-label clusters core cycle flat flat-label headlabel label long lr margin20 multi nested selfloop taillabel virtual
+935 ok cuca nodes 37 edges 48 cluster-label clusters core cycle flat flat-label headlabel label long lr margin20 multi nested selfloop taillabel virtual
+975 ok cuca nodes 32 edges 31 cluster-label clusters core cycle flat flat-label headlabel label margin20 multi nested taillabel virtual
+1070 ok cuca nodes 21 edges 28 cluster-label clusters core cycle flat flat-label headlabel label multi selfloop taillabel virtual
+1456 ok cuca nodes 23 edges 19 cluster-label clusters flat flat-label headlabel label long lr margin20 multi taillabel virtual
+1469 ok cuca nodes 30 edges 29 cluster-label clusters cycle flat flat-label headlabel label margin20 multi selfloop taillabel virtual
+1495 ok cuca nodes 34 edges 34 cluster-label clusters core flat flat-label headlabel label long lr margin20 multi nested taillabel virtual

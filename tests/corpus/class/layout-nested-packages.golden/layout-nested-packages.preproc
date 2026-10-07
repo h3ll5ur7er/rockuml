@@ -1,0 +1,27 @@
+@startuml
+package outer {
+  class A
+  package middle {
+    class B
+    package inner {
+      class C
+      class D
+    }
+  }
+  package sibling {
+    class E
+  }
+}
+package other {
+  class F
+}
+class G
+A --> B
+B --> C
+C --> D
+A --> E
+E --> F
+D --> G
+G --> other
+inner ..> sibling
+@enduml

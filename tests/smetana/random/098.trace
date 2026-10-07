@@ -1,0 +1,35 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "ranksep" "0.35" ""
+agnode graph "g" "N0"
+agsafeset node "N0" "shape" "box" ""
+agsafeset node "N0" "height" "0.4809829264374595" ""
+agsafeset node "N0" "width" "1.8183831300457125" ""
+agnode graph "g" "N1"
+agsafeset node "N1" "shape" "box" ""
+agsafeset node "N1" "height" "0.3615121231665356" ""
+agsafeset node "N1" "width" "0.6276471332821553" ""
+agedge graph "g" node "N1" node "N0"
+agsafeset edge e1 "arrowsize" ".7" ""
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "normal" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "N0" rank 1
+node "N1" rank 0
+phase mincross
+rank 0 "N1"
+rank 1 "N0"
+phase position
+node "N1" rank 0 coord 0.0 73.0 lw 22.5 rw 22.5 ht 26.0
+node "N0" rank 1 coord 0.0 17.5 lw 65.5 rw 65.5 ht 35.0
+graph "g" bb -65.5 0.0 65.5 86.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 0.0 35.2557480416331 points 4 0.0 59.86002188920975 0.0 54.7442392055309 0.0 48.600071700239745 0.0 42.63146653219803
+phase final
+graph "g" bb 0.0 0.0 131.0 86.0
+node "N0" coord 65.5 17.5 width 1.8194444444444444 height 0.4861111111111111 lw 65.5 rw 65.5 ht 35.0
+node "N1" coord 65.5 73.0 width 0.625 height 0.3611111111111111 lw 22.5 rw 22.5 ht 26.0
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 65.5 35.2557480416331 points 4 65.5 59.86002188920975 65.5 54.7442392055309 65.5 48.600071700239745 65.5 42.63146653219803

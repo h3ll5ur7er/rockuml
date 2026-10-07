@@ -1,0 +1,56 @@
+cgraph-dump 1
+graph "g" nodes 6 edges 5
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007"
+in "g" node "sh0002" out e1> e3> in edges e1> e3> degree 0 2
+in "g" node "sh0003" out e2> in e1< edges e2> e1< degree 1 1
+in "g" node "sh0004" out in e2< edges e2< degree 1 0
+in "g" node "sh0005" out e4> e5> in e3< edges e4> e5> e3< degree 1 2
+in "g" node "sh0006" out in e4< edges e4< degree 1 0
+in "g" node "sh0007" out in e5< edges e5< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "1.7640863051406899"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.0918965270945815"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.627523753077569"
+attr "sh0004" "height" "0.3763521110763654"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "1.0088532013396208"
+attr "sh0005" "height" "0.6609355374078594"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "1.6986310760105683"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "0.7423281295859119"
+attr "sh0007" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e1> "headlabel" "_dim_25_15_"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e2> "label" "_dim_117_17_"
+attr e2> "taillabel" "_dim_50_15_"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "headlabel" "_dim_55_15_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e4> "taillabel" "_dim_49_15_"
+attr e4> "headlabel" "_dim_19_15_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e5> "label" "_dim_98_17_"

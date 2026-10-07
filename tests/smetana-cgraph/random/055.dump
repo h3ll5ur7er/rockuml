@@ -1,0 +1,85 @@
+cgraph-dump 1
+graph "g" nodes 11 edges 9
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004" "sh0005" "sh0006" "sh0007" "sh0008" "sh0009" "sh0010" "sh0011" "sh0012"
+in "g" node "sh0002" out e2> e3> e8> in edges e2> e3> e8> degree 0 3
+in "g" node "sh0003" out e1> e5> in edges e1> e5> degree 0 2
+in "g" node "sh0004" out e4> e9> in e1< edges e4> e9> e1< degree 1 2
+in "g" node "sh0005" out in e2< edges e2< degree 1 0
+in "g" node "sh0006" out e6> e7> in e3< edges e6> e7> e3< degree 1 2
+in "g" node "sh0007" out in e4< edges e4< degree 1 0
+in "g" node "sh0008" out in e5< edges e5< degree 1 0
+in "g" node "sh0009" out in e6< edges e6< degree 1 0
+in "g" node "sh0010" out in e7< edges e7< degree 1 0
+in "g" node "sh0011" out in e8< edges e8< degree 1 0
+in "g" node "sh0012" out in e9< edges e9< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "0.5219262337366085"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.126390930795286"
+attr "sh0003" "height" "0.6666666666666666"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "2.2170488615502233"
+attr "sh0004" "height" "1.5234480075453813"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "0.4470955298178152"
+attr "sh0005" "height" "0.8718503902008913"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "0.8959224424193197"
+attr "sh0006" "height" "0.6666666666666666"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "0.43311197292444054"
+attr "sh0007" "height" "0.6690296476196472"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.9107586101548103"
+attr "sh0008" "height" "0.6666666666666666"
+attr "sh0009" "shape" "box"
+attr "sh0009" "width" "0.521679572748687"
+attr "sh0009" "height" "0.6666666666666666"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "1.1994100264457035"
+attr "sh0010" "height" "0.6666666666666666"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "0.6361887478600922"
+attr "sh0011" "height" "0.6666666666666666"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "1.8443187893502302"
+attr "sh0012" "height" "0.6666666666666666"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "3"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "2"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "1"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "1"

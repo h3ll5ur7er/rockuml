@@ -1,0 +1,11 @@
+@startuml
+class Node
+class Tree
+class Leaf
+Node --> Node : next
+Node --> Node : previous
+Tree --> Tree
+Tree --> Node
+Node --> Leaf
+Leaf --> Leaf : self
+@enduml

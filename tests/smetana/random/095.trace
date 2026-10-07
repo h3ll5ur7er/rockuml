@@ -1,0 +1,49 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0002"
+agsafeset node "sh0002" "shape" "box" ""
+agsafeset node "sh0002" "width" "1.9712440669319575" ""
+agsafeset node "sh0002" "height" "0.6666666666666666" ""
+agnode graph "g" "sh0003"
+agsafeset node "sh0003" "shape" "box" ""
+agsafeset node "sh0003" "width" "0.44652414851637495" ""
+agsafeset node "sh0003" "height" "0.800557067346792" ""
+agedge graph "g" node "sh0002" node "sh0003"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "sh0003" node "sh0002"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+agedge graph "g" node "sh0002" node "sh0003"
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "none" ""
+agsafeset edge e3 "minlen" "1" ""
+gvContext
+agsafeset graph "g" "rankdir" "LR" "LR"
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "sh0002" rank 0
+node "sh0003" rank 1
+agedge graph "g" node "sh0002" node "sh0003"
+phase mincross
+rank 0 "sh0002"
+rank 1 "sh0003"
+phase position
+node "sh0002" rank 0 coord 0.0 139.0 lw 24.0 rw 24.0 ht 142.0
+node "sh0003" rank 1 coord 0.0 16.0 lw 29.0 rw 29.0 ht 32.0
+graph "g" bb -29.0 0.0 29.0 210.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 -13.349830627441406 67.9642001837492 -12.918644070625305 54.375864400179125 -11.558896764647216 41.445863679003196 -9.270588709507138 32.009648657876745
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 32.009648657876745 0.0 41.445863679003196 0.0 54.375864400179125 0.0 67.9642001837492
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 13.349830627441406 67.9642001837492 12.918644070625305 54.375864400179125 11.558896764647216 41.445863679003196 9.270588709507138 32.009648657876745
+phase final
+graph "g" bb 0.0 0.0 210.0 58.0
+node "sh0002" coord 71.0 29.0 width 1.9722222222222223 height 0.6666666666666666 lw 71.0 rw 71.0 ht 48.0
+node "sh0003" coord 194.0 29.0 width 0.4444444444444444 height 0.8055555555555556 lw 16.0 rw 16.0 ht 58.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 142.0357998162508 15.650169372558594 155.62413559982087 16.081355929374695 168.5541363209968 17.441103235352784 177.99035134212326 19.729411290492862
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 177.99035134212326 29.0 168.5541363209968 29.0 155.62413559982087 29.0 142.0357998162508 29.0
+edge e3 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 142.0357998162508 42.349830627441406 155.62413559982087 41.918644070625305 168.5541363209968 40.558896764647216 177.99035134212326 38.27058870950714

@@ -537,6 +537,14 @@ preproc blocks/multiple-blocks.puml
 preproc blocks/pause-append.puml
 preproc blocks/yaml-header.puml
 preproc class/basic.puml
+preproc class/layout-cycles.puml
+preproc class/layout-edge-labels.puml
+preproc class/layout-hidden-links.puml
+preproc class/layout-left-to-right.puml
+preproc class/layout-long-edges.puml
+preproc class/layout-multi-edges.puml
+preproc class/layout-nested-packages.puml
+preproc class/layout-self-loops.puml
 preproc class/packages.puml
 preproc class/relations.puml
 preproc common/chrome.puml
@@ -574,6 +582,7 @@ preproc error/salt-keyword.puml
 preproc error/sequence-unclosed-note.puml
 preproc error/sequence-unknown-line.puml
 preproc error/unknown-syntax.puml
+preproc git/basic.puml
 preproc images/emoji-note-title.puml
 preproc images/emoji-scale-color.puml
 preproc images/emoji-transforms.puml
@@ -599,6 +608,7 @@ preproc images/sprite-svg-multiline.puml
 preproc images/sprite-svg.puml
 preproc images/stdlib-archimate-svg.puml
 preproc images/stdlib-office.puml
+preproc json/basic.puml
 preproc mindmap/basic.puml
 preproc preprocessor/builtins-color.puml
 preproc preprocessor/builtins-date.puml
@@ -726,6 +736,7 @@ preproc sequence/title-header-footer.puml
 preproc sequence/wrap-width.puml
 preproc state/basic.puml
 preproc usecase/basic.puml
+preproc yaml/basic.puml
 svg blocks/commented-header.puml
 svg blocks/continuation.puml
 svg blocks/crlf-bom.puml
@@ -908,6 +919,14 @@ url blocks/multiple-blocks.puml
 url blocks/pause-append.puml
 url blocks/yaml-header.puml
 url class/basic.puml
+url class/layout-cycles.puml
+url class/layout-edge-labels.puml
+url class/layout-hidden-links.puml
+url class/layout-left-to-right.puml
+url class/layout-long-edges.puml
+url class/layout-multi-edges.puml
+url class/layout-nested-packages.puml
+url class/layout-self-loops.puml
 url class/packages.puml
 url class/relations.puml
 url common/chrome.puml
@@ -945,6 +964,7 @@ url error/salt-keyword.puml
 url error/sequence-unclosed-note.puml
 url error/sequence-unknown-line.puml
 url error/unknown-syntax.puml
+url git/basic.puml
 url images/emoji-note-title.puml
 url images/emoji-scale-color.puml
 url images/emoji-transforms.puml
@@ -970,6 +990,7 @@ url images/sprite-svg-multiline.puml
 url images/sprite-svg.puml
 url images/stdlib-archimate-svg.puml
 url images/stdlib-office.puml
+url json/basic.puml
 url mindmap/basic.puml
 url preprocessor/builtins-color.puml
 url preprocessor/builtins-date.puml
@@ -1097,3 +1118,4 @@ url sequence/title-header-footer.puml
 url sequence/wrap-width.puml
 url state/basic.puml
 url usecase/basic.puml
+url yaml/basic.puml

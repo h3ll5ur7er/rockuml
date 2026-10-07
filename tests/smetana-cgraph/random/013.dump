@@ -1,0 +1,30 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 1
+subgraph "cluster2" parent "g" seq 1 nodes "sh0003" "sh0005"
+graph ids "g" "cluster2"
+node ids "sh0004" "sh0003" "sh0005"
+in "g" node "sh0004" out in e1< edges e1< degree 1 0
+in "g" node "sh0003" out e1> in edges e1> degree 0 1
+in "g" node "sh0005" out in edges degree 0 0
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0005" out in edges degree 0 0
+find e1> forward e1< backward none
+induce "cluster2"
+in "cluster2" node "sh0003" out in edges degree 0 0
+in "cluster2" node "sh0005" out in edges degree 0 0
+contains "cluster2" 0 1 1 0
+attr "g" "margin" "16"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "2.165772507546409"
+attr "sh0004" "height" "0.6666666666666666"
+attr "cluster2" "label" "_dim_24_32_"
+attr "cluster2" "margin" "16"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "1.0558504522829462"
+attr "sh0003" "height" "1.5161035899403545"
+attr "sh0005" "shape" "box"
+attr "sh0005" "width" "2.0271503598403164"
+attr "sh0005" "height" "1.0203745670309272"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"

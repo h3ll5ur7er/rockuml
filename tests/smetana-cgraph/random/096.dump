@@ -1,0 +1,18 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 0
+graph ids "g"
+node ids "sh0002" "sh0003" "sh0004"
+in "g" node "sh0002" out in edges degree 0 0
+in "g" node "sh0003" out in edges degree 0 0
+in "g" node "sh0004" out in edges degree 0 0
+attr "g" "margin" "16"
+attr "sh0002" "shape" "box"
+attr "sh0002" "width" "0.5087638006659225"
+attr "sh0002" "height" "0.6666666666666666"
+attr "sh0003" "shape" "box"
+attr "sh0003" "width" "2.193472755950826"
+attr "sh0003" "height" "0.4414618545200771"
+attr "sh0004" "shape" "box"
+attr "sh0004" "width" "1.87822651473436"
+attr "sh0004" "height" "0.6666666666666666"
+attr "g" "rankdir" "LR"
