@@ -68,10 +68,6 @@ impl Cluster {
         self.parent
     }
 
-    pub(crate) fn get_group(&self) -> EntityId {
-        self.group
-    }
-
     pub(super) fn add_node(&mut self, leaf: EntityId) {
         self.nodes.push(leaf);
     }

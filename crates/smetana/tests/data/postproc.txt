@@ -136,6 +136,23 @@ node "sh0007" coord 0.0 276.0 width 1.5 height 0.6666666666666666 lw 54.0 rw 54.
 node "sh0008" coord 0.0 192.0 width 1.3888888888888888 height 0.6666666666666666 lw 50.0 rw 50.0 ht 48.0
 node "sh0009" coord 0.0 108.0 width 1.3333333333333333 height 0.6666666666666666 lw 48.0 rw 48.0 ht 48.0
 node "sh0010" coord 0.0 24.0 width 2.4583333333333335 height 0.6666666666666666 lw 88.5 rw 88.5 ht 48.0
+trace class/empty-packages-styled/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 0 label_pos 0 bb -163.0 0.0 222.5 132.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters
+node "sh0009" coord -118.0 24.0 width 1.25 height 0.6666666666666666 lw 45.0 rw 45.0 ht 48.0
+node "sh0010" coord 1.0 24.0 width 1.5555555555555556 height 0.6666666666666666 lw 56.0 rw 56.0 ht 48.0
+node "sh0011" coord 149.0 24.0 width 2.0416666666666665 height 0.6666666666666666 lw 73.5 rw 73.5 ht 48.0
+node "sh0012" coord 1.0 108.0 width 1.4861111111111112 height 0.6666666666666666 lw 53.5 rw 53.5 ht 48.0
+trace class/empty-packages/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 9 label_pos 0 bb -170.5 0.0 194.0 289.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters "cluster7"
+graph "cluster7" rankdir 0 flags 0 has_labels 0 label_pos 1 bb 16.0 176.0 186.0 281.0 border 0.0 0.0 0.0 0.0 70.0 25.0 0.0 0.0 clusters
+graph "cluster7" label pos 0.0 0.0 dimen 54.0 17.0 set 0
+node "sh0014" coord -136.0 24.0 width 0.9583333333333334 height 0.6666666666666666 lw 34.5 rw 34.5 ht 48.0
+node "sh0015" coord -4.0 24.0 width 2.1944444444444446 height 0.6666666666666666 lw 79.0 rw 79.0 ht 48.0
+node "sh0016" coord -70.0 216.0 width 1.9444444444444444 height 0.6666666666666666 lw 70.0 rw 70.0 ht 48.0
+node "sh0017" coord -70.0 125.0 width 2.0833333333333335 height 0.6666666666666666 lw 75.0 rw 75.0 ht 48.0
+node "sh0011" coord 101.0 216.0 width 1.9027777777777777 height 0.6666666666666666 lw 68.5 rw 68.5 ht 48.0
 trace class/enum-values/01.trace
 state State 1 EdgeLabelsDone 1
 graph "g" rankdir 0 flags 10 has_labels 0 label_pos 0 bb -200.5 0.0 241.5 230.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters
@@ -690,6 +707,13 @@ node "sh0007" coord 1.0 182.0 width 0.9027777777777778 height 0.6111111111111112
 node "sh0008" coord 1.0 22.0 width 1.4166666666666667 height 0.6111111111111112 lw 51.0 rw 51.0 ht 44.0
 node "sh0009" coord -134.0 102.0 width 1.3611111111111112 height 0.6111111111111112 lw 49.0 rw 49.0 ht 44.0
 node "sh0010" coord 148.0 102.0 width 1.7083333333333333 height 0.6111111111111112 lw 61.5 rw 61.5 ht 44.0
+trace component/empty-packages/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 0 label_pos 0 bb -149.0 0.0 132.5 124.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters
+node "sh0009" coord -105.0 22.0 width 1.2222222222222223 height 0.5138888888888888 lw 44.0 rw 44.0 ht 37.0
+node "sh0010" coord 1.0 22.0 width 1.2222222222222223 height 0.6111111111111112 lw 44.0 rw 44.0 ht 44.0
+node "sh0011" coord 98.0 22.0 width 0.9583333333333334 height 0.4722222222222222 lw 34.5 rw 34.5 ht 34.0
+node "sh0012" coord 1.0 102.0 width 1.0694444444444444 height 0.6111111111111112 lw 38.5 rw 38.5 ht 44.0
 trace component/hide-unlinked/01.trace
 state State 1 EdgeLabelsDone 1
 graph "g" rankdir 0 flags 10 has_labels 0 label_pos 0 bb -25.5 0.0 64.0 124.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters
