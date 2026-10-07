@@ -24,7 +24,7 @@ mod width_table_data;
 
 use crate::color::HColor;
 use font::StringBounder;
-use geom::XDimension2D;
+use geom::{UTranslate, XDimension2D, XPoint2D};
 use ugraphic::UGraphic;
 
 /// Something that knows its size and can draw itself.
@@ -42,6 +42,16 @@ pub trait TextBlock {
     /// The colour the block asks to be drawn on, which stacking blocks paint behind it.
     fn backcolor(&self) -> Option<HColor> {
         None
+    }
+
+    /// How far a link ending at `position`, on the block's bounding box, moves to reach the block's outline
+    /// (`getMagneticBorder().getForceAt`).
+    fn magnetic_border_force_at(
+        &self,
+        _string_bounder: &dyn StringBounder,
+        _position: XPoint2D,
+    ) -> UTranslate {
+        UTranslate::default()
     }
 }
 
@@ -61,6 +71,14 @@ impl<T: TextBlock + ?Sized> TextBlock for &T {
     fn backcolor(&self) -> Option<HColor> {
         (**self).backcolor()
     }
+
+    fn magnetic_border_force_at(
+        &self,
+        string_bounder: &dyn StringBounder,
+        position: XPoint2D,
+    ) -> UTranslate {
+        (**self).magnetic_border_force_at(string_bounder, position)
+    }
 }
 
 impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
@@ -78,6 +96,14 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
 
     fn backcolor(&self) -> Option<HColor> {
         (**self).backcolor()
+    }
+
+    fn magnetic_border_force_at(
+        &self,
+        string_bounder: &dyn StringBounder,
+        position: XPoint2D,
+    ) -> UTranslate {
+        (**self).magnetic_border_force_at(string_bounder, position)
     }
 }
 

@@ -1,6 +1,8 @@
 //! The figures an actor is drawn as, chosen with `skinparam actorStyle` (PlantUML's `ActorStyle`,
 //! `ActorStickMan`, `ActorAwesome` and `ActorHollow`).
 
+use std::f64::consts::PI;
+
 use crate::color::HColor;
 use crate::klimt::TextBlock;
 use crate::klimt::fashion::Fashion;
@@ -13,6 +15,7 @@ use crate::klimt::ugraphic::UGraphic;
 pub(crate) enum ActorStyle {
     #[default]
     Stickman,
+    StickmanBusiness,
     Awesome,
     Hollow,
 }
@@ -30,7 +33,14 @@ impl ActorStyle {
 
     pub(crate) fn text_block(self, fashion: Fashion) -> Box<dyn TextBlock> {
         match self {
-            Self::Stickman => Box::new(ActorStickMan { fashion }),
+            Self::Stickman => Box::new(ActorStickMan {
+                fashion,
+                actor_business: false,
+            }),
+            Self::StickmanBusiness => Box::new(ActorStickMan {
+                fashion,
+                actor_business: true,
+            }),
             Self::Awesome => Box::new(ActorAwesome { fashion }),
             Self::Hollow => Box::new(ActorHollow { fashion }),
         }
@@ -39,6 +49,8 @@ impl ActorStyle {
 
 pub(crate) struct ActorStickMan {
     fashion: Fashion,
+    /// A business actor's head is crossed by a chord.
+    actor_business: bool,
 }
 
 impl ActorStickMan {
@@ -51,6 +63,23 @@ impl ActorStickMan {
 
     fn thickness(&self) -> f64 {
         self.fashion.stroke.thickness
+    }
+
+    /// Draws the chord on a surface centred on the head.
+    fn special_business(ug: &UGraphic) {
+        let alpha = 21.0 * PI / 64.0;
+        let on_circle = |alpha: f64| {
+            (
+                Self::HEAD_DIAM / 2.0 * alpha.cos(),
+                Self::HEAD_DIAM / 2.0 * alpha.sin(),
+            )
+        };
+        let (x1, y1) = on_circle(PI / 4.0 + alpha);
+        let (x2, y2) = on_circle(PI / 4.0 - alpha);
+        ug.translated(x1, y1).draw(&UShape::Line {
+            dx: x2 - x1,
+            dy: y2 - y1,
+        });
     }
 }
 
@@ -82,6 +111,12 @@ impl TextBlock for ActorStickMan {
                 Self::HEAD_DIAM,
                 Self::HEAD_DIAM,
             )));
+        if self.actor_business {
+            Self::special_business(&ug.translated(
+                start_x + Self::HEAD_DIAM / 2.0,
+                self.thickness() + Self::HEAD_DIAM / 2.0,
+            ));
+        }
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
             .with_backcolor(HColor::NONE)
             .draw(&UShape::Path(body));

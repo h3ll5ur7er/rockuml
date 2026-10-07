@@ -287,6 +287,10 @@ mod tests {
         fn calculate_dimension(&self, _font: &UFont, text: &str) -> XDimension2D {
             XDimension2D::new(10.0 * text.chars().count() as f64, 10.0)
         }
+
+        fn shared(&self) -> std::rc::Rc<dyn StringBounder> {
+            std::rc::Rc::new(Self)
+        }
     }
 
     fn line_widths(text: &str, max_width: f64) -> Vec<f64> {

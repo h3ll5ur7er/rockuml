@@ -18,6 +18,10 @@ impl StringBounder for StringBounderDebug {
         let utf16_length = text.encode_utf16().count() as f64;
         XDimension2D::new(size * utf16_length * factor, size)
     }
+
+    fn shared(&self) -> std::rc::Rc<dyn StringBounder> {
+        std::rc::Rc::new(Self)
+    }
 }
 
 /// What the debug document says about the image before listing its shapes.

@@ -4,6 +4,7 @@ mod assets;
 mod color;
 mod command;
 mod creole;
+mod decoration;
 mod deflate;
 pub mod diagram;
 mod emoji;

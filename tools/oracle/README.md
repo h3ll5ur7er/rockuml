@@ -216,3 +216,17 @@ never draws, boxes `checkpath` must repair) and the corpus cases that use Smetan
 state of the nodes and edges it reads (only where it changed since the last call) and is followed by its results
 and the state it changed; `crates/smetana/tests/routing.rs` rebuilds that state, makes the same call and compares
 bit for bit.
+
+## CucaDiagram unit oracles
+
+`cuca-unit/` holds harnesses that draw single pieces of the class, description and state diagrams on PlantUML's
+debug surface (text measured as `-f debug` measures it); their fixtures are in `crates/rockuml/tests/data`.
+
+```bash
+bash tools/oracle/cuca-unit/usymbol.sh       # usymbol.txt: every USymbol's asSmall and asBig, magnetic borders
+```
+
+`USymbolDump` draws each symbol around a fixed set of labels (with and without stereotypes, with separators that
+the symbols' own line drawers handle) and at a fixed set of big sizes, alignments and corners;
+`crates/rockuml/src/decoration/symbol/tests.rs` rebuilds the same inputs from each case's header and compares the
+listing.
