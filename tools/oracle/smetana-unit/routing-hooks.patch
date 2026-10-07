@@ -1,0 +1,140 @@
+diff --git a/gen/lib/common/routespl__c.java b/gen/lib/common/routespl__c.java
+--- a/gen/lib/common/routespl__c.java
++++ b/gen/lib/common/routespl__c.java
+@@ -145,7 +145,14 @@
+ @Original(version="2.38.0", path="lib/common/routespl.c", name="simpleSplineRoute", key="7ebl6qohcfpf1b9ucih5r9qgp", definition="pointf* simpleSplineRoute (pointf tp, pointf hp, Ppoly_t poly, int* n_spl_pts,     int polyline)")
+ public static CArray<ST_pointf> simpleSplineRoute(Globals zz, final ST_pointf tp, final ST_pointf hp, final ST_Ppoly_t poly, int[] n_spl_pts, boolean polyline) {
+ // WARNING!! STRUCT
+-return simpleSplineRoute_w_(zz, tp.copy(), hp.copy(), (ST_Ppoly_t) poly.copy(), n_spl_pts, polyline);
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.simpleSplineRoute(zz, tp, hp, poly, polyline);
++try {
++final CArray<ST_pointf> r = simpleSplineRoute_w_(zz, tp.copy(), hp.copy(), (ST_Ppoly_t) poly.copy(), n_spl_pts, polyline);
++rockuml.oracle.RoutingDump.simpleSplineRoute_done(ev, r, n_spl_pts[0]);
++return r;
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
+ }
+ private static CArray<ST_pointf> simpleSplineRoute_w_(Globals zz, final ST_pointf tp, final ST_pointf hp, final ST_Ppoly_t poly, int[] n_spl_pts, boolean polyline) {
+ ENTERING("7ebl6qohcfpf1b9ucih5r9qgp","simpleSplineRoute");
+@@ -302,6 +309,16 @@
+ @Unused
+ @Original(version="2.38.0", path="lib/common/routespl.c", name="", key="3mcnemqisisnqtd4mr72ej76y", definition="static pointf *_routesplines(path * pp, int *npoints, int polyline)")
+ public static CArray<ST_pointf> _routesplines(Globals zz, ST_path pp, int npoints[], int polyline) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.routesplines(zz, pp, polyline);
++try {
++final CArray<ST_pointf> r = _routesplines__orig(zz, pp, npoints, polyline);
++rockuml.oracle.RoutingDump.routesplines_done(ev, r, npoints[0]);
++return r;
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static CArray<ST_pointf> _routesplines__orig(Globals zz, ST_path pp, int npoints[], int polyline) {
+ ENTERING("3mcnemqisisnqtd4mr72ej76y","_routesplines");
+ try {
+     final ST_Ppoly_t poly = new ST_Ppoly_t();
+diff --git a/gen/lib/common/shapes__c.java b/gen/lib/common/shapes__c.java
+--- a/gen/lib/common/shapes__c.java
++++ b/gen/lib/common/shapes__c.java
+@@ -1199,6 +1199,16 @@
+ @Reviewed(when = "13/11/2020")
+ @Original(version="2.38.0", path="lib/common/shapes.c", name="poly_port", key="5k2b9gfpwm2tj3zmzniuz9azt", definition="static port poly_port(node_t * n, char *portname, char *compass)")
+ public static ST_port poly_port(Globals zz, ST_Agnode_s n, CString portname, CString compass) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.port(zz, n, portname, compass, "poly_port");
++try {
++final ST_port r = poly_port__orig(zz, n, portname, compass);
++rockuml.oracle.RoutingDump.port_done(ev, r);
++return r;
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static ST_port poly_port__orig(Globals zz, ST_Agnode_s n, CString portname, CString compass) {
+ // WARNING!! STRUCT
+ return poly_port_w_(zz, n, portname, compass).copy();
+ }
+@@ -1946,6 +1956,16 @@
+ @Unused
+ @Original(version="2.38.0", path="lib/common/shapes.c", name="record_port", key="chsi0jlfodruvkjj5dlrv5ur3", definition="static port record_port(node_t * n, char *portname, char *compass)")
+ public static ST_port record_port(Globals zz, ST_Agnode_s n, CString portname, CString compass) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.port(zz, n, portname, compass, "record_port");
++try {
++final ST_port r = record_port__orig(zz, n, portname, compass);
++rockuml.oracle.RoutingDump.port_done(ev, r);
++return r;
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static ST_port record_port__orig(Globals zz, ST_Agnode_s n, CString portname, CString compass) {
+     ST_field_t f;
+     ST_field_t subf;
+     final ST_port rv = new ST_port();
+diff --git a/gen/lib/common/splines__c.java b/gen/lib/common/splines__c.java
+--- a/gen/lib/common/splines__c.java
++++ b/gen/lib/common/splines__c.java
+@@ -388,6 +388,15 @@
+ @Unused
+ @Original(version="2.38.0", path="lib/common/splines.c", name="clip_and_install", key="duednxyuvf6xrff752uuv620f", definition="void clip_and_install(edge_t * fe, node_t * hn, pointf * ps, int pn, 		 splineInfo * info)")
+ public static void clip_and_install(Globals zz, ST_Agedge_s fe, ST_Agnode_s hn, CArray<ST_pointf> ps, int pn, ST_splineInfo info) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.clip_and_install(zz, fe, hn, ps, pn, info);
++try {
++clip_and_install__orig(zz, fe, hn, ps, pn, info);
++rockuml.oracle.RoutingDump.clip_and_install_done(ev);
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static void clip_and_install__orig(Globals zz, ST_Agedge_s fe, ST_Agnode_s hn, CArray<ST_pointf> ps, int pn, ST_splineInfo info) {
+ ENTERING("duednxyuvf6xrff752uuv620f","clip_and_install");
+ try {
+     final ST_pointf p2 = new ST_pointf();
+@@ -589,6 +598,15 @@
+ @Comment(comment = "Side choice?")
+ @Original(version="2.38.0", path="lib/common/splines.c", name="beginpath", key="7pc43ifcw5g56449d101qf590", definition="void beginpath(path * P, edge_t * e, int et, pathend_t * endp, boolean merge)")
+ public static void beginpath(Globals zz, ST_path P, ST_Agedge_s e, int et, final ST_pathend_t endp, boolean merge) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.beginpath(zz, P, e, et, endp, merge, true);
++try {
++beginpath__orig(zz, P, e, et, endp, merge);
++rockuml.oracle.RoutingDump.beginpath_done(ev);
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static void beginpath__orig(Globals zz, ST_path P, ST_Agedge_s e, int et, final ST_pathend_t endp, boolean merge) {
+ ENTERING("7pc43ifcw5g56449d101qf590","beginpath");
+ try {
+     int side, mask;
+@@ -802,6 +820,15 @@
+ @Reviewed(when = "02/12/2020")
+ @Original(version="2.38.0", path="lib/common/splines.c", name="endpath", key="79dr5om55xs3n5lgai1sf58vu", definition="void endpath(path * P, edge_t * e, int et, pathend_t * endp, boolean merge)")
+ public static void endpath(Globals zz, ST_path P, ST_Agedge_s e, int et, final ST_pathend_t endp, boolean merge) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.beginpath(zz, P, e, et, endp, merge, false);
++try {
++endpath__orig(zz, P, e, et, endp, merge);
++rockuml.oracle.RoutingDump.beginpath_done(ev);
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static void endpath__orig(Globals zz, ST_path P, ST_Agedge_s e, int et, final ST_pathend_t endp, boolean merge) {
+ ENTERING("79dr5om55xs3n5lgai1sf58vu","endpath");
+ try {
+     int side, mask;
+@@ -1436,6 +1463,15 @@
+ @Unused
+ @Original(version="2.38.0", path="lib/common/splines.c", name="makeSelfEdge", key="bt3fwgprixbc5rceeewozdqr9", definition="void makeSelfEdge(path * P, edge_t * edges[], int ind, int cnt, double sizex, 	     double sizey, splineInfo * sinfo)")
+ public static void makeSelfEdge(Globals zz, ST_path P, CArrayOfStar<ST_Agedge_s> edges, int ind, int cnt, double sizex, double sizey, ST_splineInfo sinfo) {
++final rockuml.oracle.RoutingDump.Event ev = rockuml.oracle.RoutingDump.makeSelfEdge(zz, edges, ind, cnt, sizex, sizey, sinfo);
++try {
++makeSelfEdge__orig(zz, P, edges, ind, cnt, sizex, sizey, sinfo);
++rockuml.oracle.RoutingDump.makeSelfEdge_done(ev);
++} finally {
++rockuml.oracle.RoutingDump.leave(ev);
++}
++}
++public static void makeSelfEdge__orig(Globals zz, ST_path P, CArrayOfStar<ST_Agedge_s> edges, int ind, int cnt, double sizex, double sizey, ST_splineInfo sinfo) {
+ ENTERING("bt3fwgprixbc5rceeewozdqr9","makeSelfEdge");
+ try {
+     ST_Agedge_s e;
