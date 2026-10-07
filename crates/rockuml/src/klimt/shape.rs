@@ -81,6 +81,17 @@ pub enum USegment {
 }
 
 impl USegment {
+    /// `UPath.arcTo(end, radius, 0, sweep)`: the shorter arc of a circle to `end`, clockwise when `sweep`.
+    pub(crate) fn arc_to(end: (f64, f64), radius: f64, sweep: bool) -> Self {
+        Self::ArcTo {
+            radius: (radius, radius),
+            x_axis_rotation: 0.0,
+            large_arc: false,
+            sweep,
+            end,
+        }
+    }
+
     /// An arc's radii and rotation do not move with it.
     #[must_use]
     pub fn translate(self, dx: f64, dy: f64) -> Self {
@@ -413,6 +424,23 @@ impl URectangle {
             ry: corner,
             ..self
         }
+    }
+
+    /// `halfRounded`: the rectangle with only its top corners rounded.
+    pub(crate) fn half_rounded(self, round_corner: f64) -> UShape {
+        if round_corner == 0.0 {
+            return UShape::Rectangle(self);
+        }
+        let (width, height, r) = (self.width, self.height, round_corner / 2.0);
+        UShape::Path(vec![
+            USegment::MoveTo(r, 0.0),
+            USegment::LineTo(width - r, 0.0),
+            USegment::arc_to((width, r), r, true),
+            USegment::LineTo(width, height),
+            USegment::LineTo(0.0, height),
+            USegment::LineTo(0.0, r),
+            USegment::arc_to((r, 0.0), r, true),
+        ])
     }
 }
 

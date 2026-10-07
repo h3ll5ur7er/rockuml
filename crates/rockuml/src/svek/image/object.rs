@@ -3,7 +3,7 @@
 
 use std::rc::Rc;
 
-use super::{entity_group, half_rounded};
+use super::entity_group;
 use crate::abel::{Entity, EntityPortion};
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, Display};
@@ -211,7 +211,7 @@ impl TextBlock for EntityImageObject {
         if self.backcolor != self.header_backcolor {
             ug.with_backcolor(self.header_backcolor.clone())
                 .with_stroke(self.stroke)
-                .draw(&half_rounded(total.width, title.height, self.round_corner));
+                .draw(&URectangle::new(total.width, title.height).half_rounded(self.round_corner));
         }
         let mut header: Vec<&dyn TextBlock> = Vec::new();
         if let Some(stereo) = &self.stereo {

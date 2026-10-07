@@ -79,13 +79,7 @@ impl ComponentRoseGroupingHeader {
             USegment::LineTo(width - CORNER_SIZE, height),
             USegment::LineTo(0.0, height),
             USegment::LineTo(0.0, round / 2.0),
-            USegment::ArcTo {
-                radius: (round / 2.0, round / 2.0),
-                x_axis_rotation: 0.0,
-                large_arc: false,
-                sweep: true,
-                end: (round / 2.0, 0.0),
-            },
+            USegment::arc_to((round / 2.0, 0.0), round / 2.0, true),
         ])
     }
 }

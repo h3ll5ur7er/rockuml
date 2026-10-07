@@ -103,7 +103,10 @@ impl SkinParam {
         let size = self
             .font_value(param, "fontsize", stereotype)
             .filter(|value| is_digits(value))
-            .or_else(|| self.value("defaultfontsize").filter(|value| is_digits(value)))
+            .or_else(|| {
+                self.value("defaultfontsize")
+                    .filter(|value| is_digits(value))
+            })
             .and_then(|value| value.parse().ok())
             .unwrap_or_else(|| param.default_size());
         UFont::new(&family, face, size)

@@ -3,8 +3,8 @@
 
 use std::rc::Rc;
 
+use super::entity_group;
 use super::object::{draw_title, name_and_stereotype_dimension};
-use super::{entity_group, half_rounded};
 use crate::abel::{Entity, EntityPortion};
 use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, Display};
@@ -29,10 +29,6 @@ use crate::svek::{AbstractEntityImage, IEntityImage};
 const X_MARGIN_CIRCLE: f64 = 5.0;
 /// How wide and tall a key linked to an entity leaves its value.
 const POINT_DIAMETER: f64 = 7.0;
-
-pub(super) fn margin(vertical: f64, horizontal: f64) -> ClockwiseTopRightBottomLeft {
-    ClockwiseTopRightBottomLeft::top_right_bottom_left(vertical, horizontal, vertical, horizontal)
-}
 
 /// The box of a map or a JSON element: its name and stereotype above the body, and its colours.
 pub(super) struct DataBox {
@@ -92,7 +88,10 @@ impl DataBox {
         let line_color = colors.get(ColorType::Line).filter(|_| kind == SName::Map);
         Self {
             image: AbstractEntityImage::new(entity, diagram),
-            name: Box::new(TextBlockMarged::new(name, margin(2.0, 2.0))),
+            name: Box::new(TextBlockMarged::new(
+                name,
+                ClockwiseTopRightBottomLeft::same(2.0),
+            )),
             stereo,
             url: entity.url.clone(),
             group: entity_group(entity, diagram, "entity", entity.get_location()),
@@ -154,7 +153,7 @@ impl DataBox {
         if self.backcolor != self.header_backcolor {
             ug.with_backcolor(self.header_backcolor.clone())
                 .with_stroke(self.stroke)
-                .draw(&half_rounded(total.width, title.height, self.round_corner));
+                .draw(&URectangle::new(total.width, title.height).half_rounded(self.round_corner));
         }
         let mut blocks: Vec<&dyn TextBlock> = Vec::new();
         if let Some(stereo) = &self.stereo {
@@ -198,7 +197,10 @@ pub(super) fn entry_text(
         word_wrap,
         CreoleMode::Full,
     );
-    Box::new(TextBlockMarged::new(block, margin(2.0, 5.0)))
+    Box::new(TextBlockMarged::new(
+        block,
+        ClockwiseTopRightBottomLeft::margin1_margin2(2.0, 5.0),
+    ))
 }
 
 pub(crate) struct EntityImageMap {

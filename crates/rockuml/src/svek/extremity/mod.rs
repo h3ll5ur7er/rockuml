@@ -130,6 +130,14 @@ fn change_back(ug: &UGraphic) -> UGraphic {
     ug.with_backcolor(ug.param().color.clone())
 }
 
+/// The point at `angle` on the circle of `radius` whose bounding square starts at (`px`, `py`).
+fn point_on_circle(px: f64, py: f64, radius: f64, angle: f64) -> XPoint2D {
+    XPoint2D::new(
+        px + radius + radius * angle.cos(),
+        py + radius + radius * angle.sin(),
+    )
+}
+
 /// A line from `p1` to `p2`, both relative to (`x`, `y`).
 fn draw_line(ug: &UGraphic, x: f64, y: f64, p1: XPoint2D, p2: XPoint2D) {
     let (dx, dy) = (p2.x - p1.x, p2.y - p1.y);

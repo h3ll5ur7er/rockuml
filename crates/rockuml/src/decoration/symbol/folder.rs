@@ -24,16 +24,6 @@ const MARGIN: Margin = Margin::new(10.0, 10.0 + 10.0, 10.0 + 3.0, 10.0);
 /// The size taken by the tab of a folder without a title.
 const UNTITLED: XDimension2D = XDimension2D::new(40.0, 15.0);
 
-fn arc_to(end: (f64, f64), radius: f64) -> USegment {
-    USegment::ArcTo {
-        radius: (radius, radius),
-        x_axis_rotation: 0.0,
-        large_arc: false,
-        sweep: true,
-        end,
-    }
-}
-
 fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, round_corner: f64) {
     let wtitle = get_w_title(width, dim_title);
     let htitle = get_h_title(dim_title);
@@ -52,16 +42,16 @@ fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, 
         ug.draw(&UShape::Path(vec![
             USegment::MoveTo(r, 0.0),
             USegment::LineTo(wtitle - r, 0.0),
-            arc_to((wtitle, r), r * 1.5),
+            USegment::arc_to((wtitle, r), r * 1.5, true),
             USegment::LineTo(wtitle + MARGIN_TITLE_X3, htitle),
             USegment::LineTo(width - r, htitle),
-            arc_to((width, htitle + r), r),
+            USegment::arc_to((width, htitle + r), r, true),
             USegment::LineTo(width, height - r),
-            arc_to((width - r, height), r),
+            USegment::arc_to((width - r, height), r, true),
             USegment::LineTo(r, height),
-            arc_to((0.0, height - r), r),
+            USegment::arc_to((0.0, height - r), r, true),
             USegment::LineTo(0.0, r),
-            arc_to((r, 0.0), r),
+            USegment::arc_to((r, 0.0), r, true),
         ]));
     }
     ug.translated(0.0, htitle).draw(&UShape::Line {

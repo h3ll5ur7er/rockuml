@@ -39,10 +39,6 @@ pub(crate) struct EntityImageClass {
     stroke: UStroke,
 }
 
-fn margin(top: f64, right: f64, bottom: f64, left: f64) -> ClockwiseTopRightBottomLeft {
-    ClockwiseTopRightBottomLeft::top_right_bottom_left(top, right, bottom, left)
-}
-
 impl EntityImageClass {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let skin = diagram.skin();
@@ -236,11 +232,17 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             false,
         );
         name = Box::new(TextBlockHorizontal {
-            left: Box::new(TextBlockMarged::new(icon, margin(4.0, 0.0, 0.0, 0.0))),
+            left: Box::new(TextBlockMarged::new(
+                icon,
+                ClockwiseTopRightBottomLeft::top_right_bottom_left(4.0, 0.0, 0.0, 0.0),
+            )),
             right: name,
         });
     }
-    let name = Box::new(TextBlockMarged::new(name, margin(0.0, 3.0, 0.0, 3.0)));
+    let name = Box::new(TextBlockMarged::new(
+        name,
+        ClockwiseTopRightBottomLeft::margin1_margin2(0.0, 3.0),
+    ));
     let stereotype_font = skin.get_font_configuration(FontParam::ClassStereotype, stereotype);
     let stereo = diagram
         .get_visible_stereotype_labels(entity.id())
@@ -253,7 +255,10 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
                 0.0,
                 CreoleMode::Full,
             );
-            Box::new(TextBlockMarged::new(block, margin(0.0, 1.0, 0.0, 1.0)))
+            Box::new(TextBlockMarged::new(
+                block,
+                ClockwiseTopRightBottomLeft::margin1_margin2(0.0, 1.0),
+            ))
         });
     let generic = generic.map(|generic| -> Box<dyn TextBlock> {
         let style_generic = class_signature(entity, &[SName::Generic])
@@ -266,18 +271,24 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             CreoleMode::Full,
         );
         let block = TextBlockGeneric {
-            block: Box::new(TextBlockMarged::new(block, margin(1.0, 1.0, 1.0, 1.0))),
+            block: Box::new(TextBlockMarged::new(
+                block,
+                ClockwiseTopRightBottomLeft::same(1.0),
+            )),
             background: style_generic.value(PName::BackGroundColor).as_color(),
             border: style_generic.value(PName::LineColor).as_color(),
         };
-        Box::new(TextBlockMarged::new(block, margin(1.0, 1.0, 1.0, 1.0)))
+        Box::new(TextBlockMarged::new(
+            block,
+            ClockwiseTopRightBottomLeft::same(1.0),
+        ))
     });
     let circled_character = diagram
         .show_portion(EntityPortion::CircledCharacter, entity.id())
         .then(|| -> Box<dyn TextBlock> {
             Box::new(TextBlockMarged::new(
                 circled_character(entity, leaf_type, skin),
-                margin(5.0, 0.0, 5.0, 4.0),
+                ClockwiseTopRightBottomLeft::top_right_bottom_left(5.0, 0.0, 5.0, 4.0),
             ))
         });
     HeaderLayout {

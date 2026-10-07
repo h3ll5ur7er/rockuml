@@ -1,6 +1,5 @@
 //! The bottom of a rounded box, painted in its own colour (PlantUML's `RoundedSouth`).
 
-use super::rounded_north::arc_to;
 use crate::color::HColor;
 use crate::klimt::shape::{URectangle, USegment, UShape};
 use crate::klimt::ugraphic::{UGraphic, UStroke};
@@ -25,9 +24,9 @@ impl RoundedSouth {
                 USegment::MoveTo(0.0, 0.0),
                 USegment::LineTo(width, 0.0),
                 USegment::LineTo(width, height - r),
-                arc_to(r, width - r, height),
+                USegment::arc_to((width - r, height), r, true),
                 USegment::LineTo(r, height),
-                arc_to(r, 0.0, height - r),
+                USegment::arc_to((0.0, height - r), r, true),
                 USegment::LineTo(0.0, 0.0),
             ])
         };

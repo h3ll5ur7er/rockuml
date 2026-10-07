@@ -2,7 +2,7 @@
 
 use std::f64::consts::PI;
 
-use super::{Extremity, ExtremityFactory, draw_line};
+use super::{Extremity, ExtremityFactory, draw_line, point_on_circle};
 use crate::color::HColor;
 use crate::klimt::UDrawable;
 use crate::klimt::geom::XPoint2D;
@@ -41,10 +41,7 @@ struct ExtremityCircleCross {
 
 impl ExtremityCircleCross {
     fn point_on_circle(&self, angle: f64) -> XPoint2D {
-        XPoint2D::new(
-            self.px + RADIUS + RADIUS * angle.cos(),
-            self.py + RADIUS + RADIUS * angle.sin(),
-        )
+        point_on_circle(self.px, self.py, RADIUS, angle)
     }
 }
 
