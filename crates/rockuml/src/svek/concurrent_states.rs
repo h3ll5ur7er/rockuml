@@ -2,6 +2,7 @@
 //! (PlantUML's `ConcurrentStates`).
 
 use super::IEntityImage;
+use super::image::state_signature;
 use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
@@ -9,7 +10,7 @@ use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
-use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::style::{PName, ValueReading};
 
 /// How far the separator overshoots the regions.
 const DASH: f64 = 8.0;
@@ -83,13 +84,7 @@ impl ConcurrentStates {
         concurrent_separator: char,
         diagram: &CucaDiagram,
     ) -> Self {
-        let style = StyleSignature::of(&[
-            SName::Root,
-            SName::Element,
-            SName::StateDiagram,
-            SName::State,
-        ])
-        .get_merged_style(&diagram.skin().current_style_builder());
+        let style = state_signature().get_merged_style(&diagram.skin().current_style_builder());
         Self {
             inners,
             separator: Separator::from_char(concurrent_separator),

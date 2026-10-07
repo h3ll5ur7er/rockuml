@@ -46,7 +46,9 @@ pub(crate) use entity_image_port::EntityImagePort;
 pub(crate) use entity_image_pseudo_state::EntityImagePseudoState;
 pub(crate) use entity_image_state::EntityImageState;
 pub(crate) use entity_image_state_border::EntityImageStateBorder;
-pub(crate) use entity_image_state_common::{get_state_description, get_style_state};
+pub(crate) use entity_image_state_common::{
+    get_state_description, get_style_state, state_signature,
+};
 pub(crate) use entity_image_state_empty_description::EntityImageStateEmptyDescription;
 pub(crate) use entity_image_state2::EntityImageState2;
 pub(crate) use entity_image_synchro_bar::EntityImageSynchroBar;
