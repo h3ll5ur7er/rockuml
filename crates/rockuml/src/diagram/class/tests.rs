@@ -4,13 +4,22 @@ use crate::command::factory::{self, Created};
 use crate::decoration::LinkDecor;
 use crate::text::{LineLocation, StringLocated};
 
-/// The class diagram the lines make, or the error they get.
+/// The class diagram the lines between `@startuml` and `@enduml` make, or the error they get.
 fn parse(texts: &[&str]) -> Result<ClassDiagram, String> {
-    let location = LineLocation::new("test", None);
-    let lines: Vec<StringLocated> = ["@startuml"]
+    let lines: Vec<&str> = ["@startuml"]
         .iter()
         .chain(texts)
         .chain(&["@enduml"])
+        .copied()
+        .collect();
+    parse_source(&lines)
+}
+
+/// The class diagram a whole source makes, or the error it gets.
+fn parse_source(texts: &[&str]) -> Result<ClassDiagram, String> {
+    let location = LineLocation::new("test", None);
+    let lines: Vec<StringLocated> = texts
+        .iter()
         .map(|text| StringLocated::new(*text, location.clone()))
         .collect();
     let source = Rc::new(UmlSource::new(lines, Vec::new()));
@@ -200,4 +209,54 @@ fn bad_declarations_are_errors() {
         parse(&["usecase U"]).err().unwrap(),
         "Use 'allowmixing' if you want to mix classes and other UML elements."
     );
+}
+
+fn repository_tests() -> &'static std::path::Path {
+    std::path::Path::new(concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests"))
+}
+
+/// Cases whose description elements are drawn by images not ported yet.
+const WITH_DESCRIPTION_ELEMENTS: [&str; 2] = ["class/allowmixing", "class/kinds-records"];
+
+/// The bridge makes the graph PlantUML makes for every class and object case, call for call.
+#[test]
+fn the_smetana_graph_is_the_one_plantuml_lays_out() {
+    use crate::klimt::debug::StringBounderDebug;
+    use crate::sdot::CucaDiagramFileMakerSmetana;
+
+    let mut checked = 0;
+    for area in ["class", "object"] {
+        let directories = std::fs::read_dir(repository_tests().join("smetana").join(area))
+            .expect("traces of the area");
+        for entry in directories {
+            let name = entry.expect("a trace directory").file_name();
+            let case = format!("{area}/{}", name.to_string_lossy());
+            if WITH_DESCRIPTION_ELEMENTS.contains(&case.as_str()) {
+                continue;
+            }
+            let text =
+                std::fs::read_to_string(repository_tests().join(format!("corpus/{case}.puml")))
+                    .expect("corpus case");
+            let lines: Vec<&str> = text.lines().collect();
+            let diagram = parse_source(&lines).unwrap_or_else(|error| panic!("{case}: {error}"));
+            let mut cuca = diagram.diagram.cuca.clone();
+            cuca.eventually_build_phantom_groups(None);
+            let calls = CucaDiagramFileMakerSmetana::new(cuca)
+                .smetana_calls(&StringBounderDebug)
+                .unwrap_or_else(|NotYetPorted(what)| panic!("{case}: {what} is not ported"));
+            let trace = std::fs::read_to_string(
+                repository_tests().join(format!("smetana/{case}/01.trace")),
+            )
+            .expect("Smetana trace");
+            let traced: Vec<String> = trace
+                .lines()
+                .skip(1)
+                .take_while(|line| !line.starts_with("gvLayoutJobs"))
+                .map(str::to_owned)
+                .collect();
+            assert_eq!(calls, traced, "{case}");
+            checked += 1;
+        }
+    }
+    assert_eq!(checked, 71, "every case with a trace is checked");
 }

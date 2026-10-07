@@ -181,9 +181,10 @@ impl Display {
     #[must_use]
     pub(crate) fn add_generic(&self, generic: &str) -> Self {
         let mut result = self.clone();
+        let generic = format!("<{generic}>");
         match result.lines.last_mut() {
-            Some(last) => last.push_str(&format!("<{generic}>")),
-            None => result.lines.push(format!("<{generic}>")),
+            Some(last) => last.push_str(&generic),
+            None => result.lines.push(generic),
         }
         result
     }

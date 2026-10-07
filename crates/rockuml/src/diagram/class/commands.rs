@@ -49,13 +49,7 @@ pub(super) fn add_method() -> Box<dyn Command<ClassDiagram>> {
             let cuca = diagram.cuca();
             let name = arg.get("NAME", 0).unwrap_or_default();
             let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(name));
-            let entity = match cuca.quark(quark).get_data() {
-                Some(entity) => entity,
-                None => {
-                    let display = Display::with_newlines(cuca.quark(quark).get_name());
-                    cuca.really_create_leaf(Some(location), quark, display, LeafType::Class)
-                }
-            };
+            let entity = get_or_create_class(cuca, location, quark);
             let field = arg.get("DATA", 0).unwrap_or_default();
             cuca.entity_mut(entity).bodier.add_field_or_method(field);
             Ok(())
@@ -189,12 +183,14 @@ fn create_class_entity(
     };
     check_if_package_hierarchy_is_ok(cuca, quark)?;
     cuca.set_last_entity(Some(entity));
-    let stereotype = header.get("STEREO", 0).map(stereotype).transpose()?;
+    let stereo = header.get("STEREO", 0);
+    let stereotype = stereo.map(stereotype).transpose()?;
     let colors = colors_with_line(header)?;
     let entity_mut = cuca.entity_mut(entity);
     entity_mut.visibility_modifier = visibility;
     if stereotype.is_some() {
         entity_mut.stereotype = stereotype;
+        entity_mut.stereostyles = crate::stereo::stereostyles(stereo.unwrap_or_default());
     }
     if let Some(url) = url_of(header) {
         entity_mut.url = Some(url);
@@ -249,13 +245,7 @@ fn manage_extends(
     for code in java::split(CucaDiagram::clean_id(codes), ",") {
         let id_short = java::trim(&code);
         let quark = cuca.quark_in_context(false, CucaDiagram::clean_id(id_short));
-        let cl2 = match cuca.quark(quark).get_data() {
-            Some(cl2) => cl2,
-            None => {
-                let display = Display::with_newlines(cuca.quark(quark).get_name());
-                cuca.really_create_leaf(Some(location), quark, display, type2)
-            }
-        };
+        let cl2 = get_or_create(cuca, location, quark, type2);
         let mut link_type = LinkType::new(LinkDecor::None, LinkDecor::Extends);
         if type2 == LeafType::Interface && entity_type != Some(LeafType::Interface) {
             link_type = link_type.go_dashed();
@@ -446,20 +436,19 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                 let id_short =
                     CucaDiagram::clean_id(header.get_lazzy("CODE", 0).unwrap_or_default());
                 let quark = cuca.quark_in_context(true, id_short);
-                let entity = match cuca.quark(quark).get_data() {
-                    Some(entity) => entity,
-                    None => {
-                        let display = display_or_name(
-                            header.get_lazzy("DISPLAY", 0),
-                            cuca.quark(quark).get_name(),
-                        );
-                        cuca.really_create_leaf(
-                            Some(lines[0].location()),
-                            quark,
-                            display,
-                            LeafType::Object,
-                        )
-                    }
+                let entity = if let Some(entity) = cuca.quark(quark).get_data() {
+                    entity
+                } else {
+                    let display = display_or_name(
+                        header.get_lazzy("DISPLAY", 0),
+                        cuca.quark(quark).get_name(),
+                    );
+                    cuca.really_create_leaf(
+                        Some(lines[0].location()),
+                        quark,
+                        display,
+                        LeafType::Object,
+                    )
                 };
                 decorate_object(cuca, entity, &header)?;
                 let bodier = &mut cuca.entity_mut(entity).bodier;
@@ -846,14 +835,12 @@ impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
         let id_short = CucaDiagram::clean_id(&code_raw).to_owned();
         let display = Display::with_newlines(display_raw.unwrap_or(&id_short));
         let quark = cuca.quark_in_context(true, &id_short);
-        let entity = match cuca.quark(quark).get_data() {
-            Some(entity) => entity,
-            None => {
-                let entity =
-                    cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type);
-                cuca.entity_mut(entity).usymbol = usymbol;
-                entity
-            }
+        let entity = if let Some(entity) = cuca.quark(quark).get_data() {
+            entity
+        } else {
+            let entity = cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type);
+            cuca.entity_mut(entity).usymbol = usymbol;
+            entity
         };
         let stereotype = arg.get_lazzy("STEREOTYPE", 0).map(stereotype).transpose()?;
         let back = back_color(arg)?;
@@ -1204,13 +1191,21 @@ fn get_or_create_class(
     location: &LineLocation,
     quark: QuarkId,
 ) -> EntityId {
-    match cuca.quark(quark).get_data() {
-        Some(entity) => entity,
-        None => {
-            let display = Display::with_newlines(cuca.quark(quark).get_name());
-            cuca.really_create_leaf(Some(location), quark, display, LeafType::Class)
-        }
+    get_or_create(cuca, location, quark, LeafType::Class)
+}
+
+/// The entity `quark` holds, or a new leaf of `leaf_type` named after it.
+fn get_or_create(
+    cuca: &mut CucaDiagram,
+    location: &LineLocation,
+    quark: QuarkId,
+    leaf_type: LeafType,
+) -> EntityId {
+    if let Some(entity) = cuca.quark(quark).get_data() {
+        return entity;
     }
+    let display = Display::with_newlines(cuca.quark(quark).get_name());
+    cuca.really_create_leaf(Some(location), quark, display, leaf_type)
 }
 
 /// The two entities of `(A, B)`, which must exist.

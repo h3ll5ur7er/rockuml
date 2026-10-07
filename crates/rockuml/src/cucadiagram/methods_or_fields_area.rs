@@ -85,7 +85,7 @@ impl MethodsOrFieldsArea {
     }
 
     /// The area under a separator line, with room around it (`asBlockMemberImpl`).
-    pub(crate) fn as_block_member_impl(self, line_thickness: f64) -> Box<dyn TextBlock> {
+    pub(crate) fn into_block_member_impl(self, line_thickness: f64) -> Box<dyn TextBlock> {
         Box::new(TextBlockLineBefore {
             block: Box::new(TextBlockMarged::new(
                 self,
@@ -151,20 +151,17 @@ impl MethodsOrFieldsArea {
         let mut result = Vec::with_capacity(self.rows.len());
         for row in &self.rows {
             let text = row.text.calculate_dimension(string_bounder);
-            match self.small_icon {
-                Some(column) => {
-                    let icon = row.icon.calculate_dimension(string_bounder);
-                    let height = icon.height.max(text.height);
-                    result.push((
-                        Some(XPoint2D::new(0.0, 2.0 + y + (height - icon.height) / 2.0)),
-                        XPoint2D::new(column, y + (height - text.height) / 2.0),
-                    ));
-                    y += height;
-                }
-                None => {
-                    result.push((None, XPoint2D::new(self.align.offset(width, text.width), y)));
-                    y += text.height;
-                }
+            if let Some(column) = self.small_icon {
+                let icon = row.icon.calculate_dimension(string_bounder);
+                let height = icon.height.max(text.height);
+                result.push((
+                    Some(XPoint2D::new(0.0, 2.0 + y + (height - icon.height) / 2.0)),
+                    XPoint2D::new(column, y + (height - text.height) / 2.0),
+                ));
+                y += height;
+            } else {
+                result.push((None, XPoint2D::new(self.align.offset(width, text.width), y)));
+                y += text.height;
             }
         }
         result

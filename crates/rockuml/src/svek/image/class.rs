@@ -47,12 +47,14 @@ fn margin(top: f64, right: f64, bottom: f64, left: f64) -> ClockwiseTopRightBott
 impl EntityImageClass {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let skin = diagram.skin();
-        let style = class_signature(&[]).get_merged_style_with(
-            &entity_style_builder(entity, skin),
-            entity.stereotype.as_ref(),
-        );
+        let entity_builder = entity_style_builder(entity, skin);
+        let style = class_signature(entity, &[])
+            .get_merged_style_with(&entity_builder, entity.stereotype.as_ref());
+        // The header's text takes the rules in force at the end, its background those of the declaration.
+        let header_back_style = class_signature(entity, &[SName::Header])
+            .get_merged_style_with(&entity_builder, entity.stereotype.as_ref());
         let builder = skin.current_style_builder();
-        let style_header = class_signature(&[SName::Header])
+        let style_header = class_signature(entity, &[SName::Header])
             .get_merged_style_with(&builder, entity.stereotype.as_ref());
         let context = BodyContext {
             skin,
@@ -72,7 +74,7 @@ impl EntityImageClass {
             .get(ColorType::Header)
             .cloned()
             .or_else(|| backcolor.clone())
-            .unwrap_or_else(|| style_header.value(PName::BackGroundColor).as_color());
+            .unwrap_or_else(|| header_back_style.value(PName::BackGroundColor).as_color());
         Self {
             image: AbstractEntityImage::new(entity, diagram),
             body,
@@ -193,9 +195,9 @@ impl IEntityImage for EntityImageClass {
         self.image.is_hidden()
     }
 }
-
+/// `root element classDiagram class`, then `more`, with the entity's `<<<style>>>` names.
 /// `root element classDiagram class`, then `more`.
-fn class_signature(more: &[SName]) -> StyleSignature {
+fn class_signature(entity: &Entity, more: &[SName]) -> StyleSignature {
     let mut names = vec![
         SName::Root,
         SName::Element,
@@ -203,7 +205,7 @@ fn class_signature(more: &[SName]) -> StyleSignature {
         SName::Class,
     ];
     names.extend_from_slice(more);
-    StyleSignature::of(&names)
+    StyleSignature::of(&names).with_stereostyles(&entity.stereostyles)
 }
 
 /// The rules in force when the entity was declared.
@@ -275,7 +277,7 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             Box::new(TextBlockMarged::new(block, margin(0.0, 1.0, 0.0, 1.0)))
         });
     let generic = generic.map(|generic| -> Box<dyn TextBlock> {
-        let style_generic = class_signature(&[SName::Generic])
+        let style_generic = class_signature(entity, &[SName::Generic])
             .get_merged_style_with(&skin.current_style_builder(), stereotype);
         let block = Display::with_newlines(generic).create0(
             &stereotype_font,

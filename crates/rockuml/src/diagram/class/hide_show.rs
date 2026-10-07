@@ -34,14 +34,12 @@ pub(in crate::diagram) fn hide_show_by_gender<D: TitledDiagram + 'static>() -> B
             ),
             RegexTree::end(),
         ]),
-        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| match diagram
-            .class_or_object_diagram()
-        {
-            Some(cuca) => execute_class_diagram(cuca, arg),
-            None => {
-                diagram.command_not_ported("CommandHideShowByGender");
-                Ok(())
+        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
+            if let Some(cuca) = diagram.class_or_object_diagram() {
+                return execute_class_diagram(cuca, arg);
             }
+            diagram.command_not_ported("CommandHideShowByGender");
+            Ok(())
         },
     )))
 }

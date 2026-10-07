@@ -48,7 +48,7 @@ impl Member {
         let mut display_clean =
             java::trim(&REMOVE_STATIC_CLASSIFIER_ABSTRACT.replace_all(text, "")).to_owned();
         if display_clean.is_empty() {
-            display_clean = " ".to_owned();
+            " ".clone_into(&mut display_clean);
         }
         let visibility_modifier = VisibilityModifier::is_visibility_character(&display_clean)
             .then(|| VisibilityModifier::get_visibility_modifier(&display_clean, !is_method))

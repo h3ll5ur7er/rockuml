@@ -217,7 +217,7 @@ impl Bodier {
                         context.colors,
                         HorizontalAlignment::Left,
                     )
-                    .as_block_member_impl(context.style.value(PName::LineThickness).as_double())
+                    .into_block_member_impl(context.style.value(PName::LineThickness).as_double())
                 };
                 let fields = || area(self.get_fields_to_display(context.hidden));
                 let methods = || area(self.get_methods_to_display(context.hidden));
