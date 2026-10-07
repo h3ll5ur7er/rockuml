@@ -1,0 +1,244 @@
+DPI: 96
+dimension: [ 268.5965 ; 231.0000 ]
+scaleFactor: 1.0000
+seed: -776426680489498999
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 31.3525 ; 39.0000 ]
+  pt2: [ 39.3525 ; 192.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 34.8525 ; 39.0000 ]
+  pt2: [ 34.8525 ; 192.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 211.1179 ; 39.0000 ]
+  pt2: [ 219.1179 ; 192.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 214.6179 ; 39.0000 ]
+  pt2: [ 214.6179 ; 192.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 59.7050 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 17.0000 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 170.6393 ; 10.0000 ]
+  pt2: [ 258.5965 ; 38.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 177.6393 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 192.0000 ]
+  pt2: [ 59.7050 ; 220.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 17.0000 ; 209.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 170.6393 ; 192.0000 ]
+  pt2: [ 258.5965 ; 220.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 177.6393 ; 209.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 202.6179 ; 62.0000 ]
+   - [ 212.6179 ; 66.0000 ]
+   - [ 202.6179 ; 70.0000 ]
+   - [ 206.6179 ; 66.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: ffff0000
+
+LINE:
+  pt1: [ 34.8525 ; 66.0000 ]
+  pt2: [ 208.6179 ; 66.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+TEXT:
+  text: hello
+  position: [ 41.8525 ; 61.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 45.8525 ; 89.0000 ]
+   - [ 35.8525 ; 93.0000 ]
+   - [ 45.8525 ; 97.0000 ]
+   - [ 41.8525 ; 93.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff0000ff
+  backcolor: ff0000ff
+
+LINE:
+  pt1: [ 39.8525 ; 93.0000 ]
+  pt2: [ 213.6179 ; 93.0000 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff0000ff
+
+TEXT:
+  text: ok
+  position: [ 51.8525 ; 88.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 202.6179 ; 116.0000 ]
+   - [ 212.6179 ; 120.0000 ]
+   - [ 202.6179 ; 124.0000 ]
+   - [ 206.6179 ; 120.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff008000
+  backcolor: ff008000
+
+LINE:
+  pt1: [ 34.8525 ; 120.0000 ]
+  pt2: [ 208.6179 ; 120.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff008000
+
+TEXT:
+  text: bold green
+  position: [ 41.8525 ; 115.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 45.8525 ; 143.0000 ]
+   - [ 35.8525 ; 147.0000 ]
+   - [ 45.8525 ; 151.0000 ]
+   - [ 41.8525 ; 147.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 39.8525 ; 147.0000 ]
+  pt2: [ 213.6179 ; 147.0000 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: dotted
+  position: [ 51.8525 ; 142.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 202.6179 ; 170.0000 ]
+   - [ 212.6179 ; 174.0000 ]
+   - [ 202.6179 ; 178.0000 ]
+   - [ 206.6179 ; 174.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff8800
+  backcolor: ffff8800
+
+LINE:
+  pt1: [ 34.8525 ; 174.0000 ]
+  pt2: [ 208.6179 ; 174.0000 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ffff8800
+
+TEXT:
+  text: thick dashed
+  position: [ 41.8525 ; 169.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,7 @@
+@startuml
+note over Alice : initial state of Alice
+/ note over Bob : initial state of Bob
+Bob -> Alice : hello
+note over Bob, Alice : synced
+/ note over Alice : and again
+@enduml

@@ -5,7 +5,7 @@ use crate::klimt::font::UFontFace;
 /// A property's value as written, for the light scheme and the `@media dark` one. Later declarations get
 /// higher priorities and win merges.
 #[derive(Clone, Debug, PartialEq)]
-struct DarkString {
+pub(crate) struct DarkString {
     light: Option<String>,
     dark: Option<String>,
     priority: i32,
@@ -43,13 +43,17 @@ impl DarkString {
     }
 }
 
-/// A value written in a style sheet (PlantUML's `ValueImpl`).
+/// A property's value: as written in a style sheet (PlantUML's `ValueImpl`), or a colour a diagram element
+/// overrides it with (`ValueColor`).
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct Value(DarkString);
+pub(crate) enum Value {
+    Written(DarkString),
+    Color { color: HColor, priority: i32 },
+}
 
 impl Value {
     pub(crate) fn regular(text: &str, priority: i32) -> Self {
-        Self(DarkString {
+        Self::Written(DarkString {
             light: Some(text.to_owned()),
             dark: None,
             priority,
@@ -57,38 +61,51 @@ impl Value {
     }
 
     pub(crate) fn dark(text: &str, priority: i32) -> Self {
-        Self(DarkString {
+        Self::Written(DarkString {
             light: None,
             dark: Some(text.to_owned()),
             priority,
         })
     }
 
-    /// Only the tests read it: they compare priorities with those PlantUML prints.
-    #[cfg(test)]
     pub(crate) fn priority(&self) -> i32 {
-        self.0.priority
+        match self {
+            Self::Written(written) => written.priority,
+            Self::Color { priority, .. } => *priority,
+        }
     }
 
     #[must_use]
     pub(crate) fn with_added_priority(&self, delta: i32) -> Self {
-        Self(DarkString {
-            priority: self.0.priority + delta,
-            ..self.0.clone()
-        })
-    }
-
-    /// This value declared over `previous`.
-    #[must_use]
-    pub(crate) fn merge_with(&self, previous: Option<&Value>) -> Value {
-        match previous {
-            None => self.clone(),
-            Some(previous) => Self(self.0.merge_with(&previous.0)),
+        match self {
+            Self::Written(written) => Self::Written(DarkString {
+                priority: written.priority + delta,
+                ..written.clone()
+            }),
+            Self::Color { color, priority } => Self::Color {
+                color: color.clone(),
+                priority: priority + delta,
+            },
         }
     }
 
-    fn light(&self) -> Option<&str> {
-        self.0.light.as_deref()
+    /// This value declared over `previous`. A colour override only gives way to a higher priority.
+    #[must_use]
+    pub(crate) fn merge_with(&self, previous: Option<&Value>) -> Value {
+        match (self, previous) {
+            (Self::Written(written), Some(Self::Written(previous))) => {
+                Self::Written(written.merge_with(previous))
+            }
+            (_, Some(previous)) if previous.priority() > self.priority() => previous.clone(),
+            _ => self.clone(),
+        }
+    }
+
+    fn light(&self) -> Option<String> {
+        match self {
+            Self::Written(written) => written.light.clone(),
+            Self::Color { color, .. } => Some(color.as_string()),
+        }
     }
 }
 
@@ -105,7 +122,7 @@ pub(crate) trait ValueReading {
 
 impl ValueReading for Option<&Value> {
     fn as_string(&self) -> String {
-        self.and_then(Value::light).unwrap_or_default().to_owned()
+        self.and_then(Value::light).unwrap_or_default()
     }
 
     fn as_int(&self) -> i32 {
@@ -153,13 +170,16 @@ impl ValueReading for Option<&Value> {
     /// Unknown colour names read as white. PlantUML fails on a colour declared only for dark mode; here
     /// it reads as missing.
     fn as_color(&self) -> HColor {
+        if let Some(Value::Color { color, .. }) = self {
+            return color.clone();
+        }
         let Some(text) = self.and_then(Value::light) else {
             return HColor::BLACK;
         };
         if text.eq_ignore_ascii_case("none") || text.eq_ignore_ascii_case("transparent") {
             return HColor::NONE;
         }
-        HColor::parse(text).ok().flatten().unwrap_or(HColor::WHITE)
+        HColor::parse(&text).ok().flatten().unwrap_or(HColor::WHITE)
     }
 }
 

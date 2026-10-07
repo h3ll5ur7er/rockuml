@@ -1,0 +1,10 @@
+@startuml
+Alice -> Bob : hello
+alt ok
+  Bob -> Alice : yes
+  note left : left in group
+else not ok
+  Bob -> Alice : no
+  note over Alice, Bob : over in group
+end
+@enduml

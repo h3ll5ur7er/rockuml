@@ -1,0 +1,10 @@
+@startuml
+!pragma teoz true
+Alice -> Bob : one
+== Section ==
+...
+Bob -> Alice : two
+||30||
+...wait...
+Alice -> Bob : three
+@enduml

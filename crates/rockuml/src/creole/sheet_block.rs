@@ -1,6 +1,7 @@
+use std::borrow::Cow;
 use std::rc::Rc;
 
-use super::{Atom, Sheet};
+use super::{Atom, Sheet, Stripe, fission};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D};
 use crate::klimt::stencil::Stencil;
@@ -11,6 +12,8 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 pub(crate) struct SheetBlock1 {
     sheet: Sheet,
     padding: ClockwiseTopRightBottomLeft,
+    /// How wide a line may grow before it wraps; 0 never wraps.
+    max_width: f64,
 }
 
 #[derive(Clone, Copy)]
@@ -20,7 +23,9 @@ struct Position {
     dimension: XDimension2D,
 }
 
-struct Layout {
+struct Layout<'s> {
+    /// The sheet's stripes, wrapped.
+    stripes: Cow<'s, [Stripe]>,
     /// Per stripe, per atom.
     positions: Vec<Vec<Position>>,
     min_max: MinMax,
@@ -28,7 +33,30 @@ struct Layout {
 
 impl SheetBlock1 {
     pub(crate) fn new(sheet: Sheet, padding: ClockwiseTopRightBottomLeft) -> Self {
-        Self { sheet, padding }
+        Self {
+            sheet,
+            padding,
+            max_width: 0.0,
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn wrapped_at(self, max_width: f64) -> Self {
+        Self { max_width, ..self }
+    }
+
+    fn stripes(&self, string_bounder: &dyn StringBounder) -> Cow<'_, [Stripe]> {
+        if self.max_width == 0.0 {
+            return Cow::Borrowed(&self.sheet.stripes);
+        }
+        Cow::Owned(
+            self.sheet
+                .stripes
+                .iter()
+                .flat_map(|stripe| fission::split(stripe, self.max_width, string_bounder))
+                .filter(|stripe| !stripe.atoms.is_empty())
+                .collect(),
+        )
     }
 
     /// How a single line of text aligns itself in a table cell; longer sheets align left.
@@ -39,12 +67,13 @@ impl SheetBlock1 {
         }
     }
 
-    fn layout(&self, string_bounder: &dyn StringBounder) -> Layout {
-        let mut positions = Vec::with_capacity(self.sheet.stripes.len());
-        let mut widths = Vec::with_capacity(self.sheet.stripes.len());
+    fn layout(&self, string_bounder: &dyn StringBounder) -> Layout<'_> {
+        let stripes = self.stripes(string_bounder);
+        let mut positions = Vec::with_capacity(stripes.len());
+        let mut widths = Vec::with_capacity(stripes.len());
         let mut min_max = MinMax::from_origin();
         let mut y = 0.0;
-        for stripe in &self.sheet.stripes {
+        for stripe in stripes.iter() {
             let (sea, width) = sea(&stripe.atoms, y, string_bounder);
             for position in &sea {
                 min_max = min_max.add_point(
@@ -58,7 +87,7 @@ impl SheetBlock1 {
         }
 
         let max_width = widths.iter().copied().fold(0.0, f64::max);
-        for ((stripe, sea), width) in self.sheet.stripes.iter().zip(&mut positions).zip(widths) {
+        for ((stripe, sea), width) in stripes.iter().zip(&mut positions).zip(widths) {
             let shared_by = match stripe.cell_alignment {
                 HorizontalAlignment::Left => continue,
                 HorizontalAlignment::Center => 2.0,
@@ -70,13 +99,17 @@ impl SheetBlock1 {
                 }
             }
         }
-        Layout { positions, min_max }
+        Layout {
+            stripes,
+            positions,
+            min_max,
+        }
     }
 }
 
 /// Places atoms left to right on a common baseline, the topmost at `top`. Returns them and their width.
 fn sea(
-    atoms: &[Box<dyn Atom>],
+    atoms: &[Rc<dyn Atom>],
     top: f64,
     string_bounder: &dyn StringBounder,
 ) -> (Vec<Position>, f64) {
@@ -128,7 +161,7 @@ impl TextBlock for SheetBlock1 {
     fn draw_u(&self, ug: &UGraphic) {
         let layout = self.layout(ug.string_bounder());
         let ug = ug.translated(self.padding.left, self.padding.top);
-        for (stripe, positions) in self.sheet.stripes.iter().zip(&layout.positions) {
+        for (stripe, positions) in layout.stripes.iter().zip(&layout.positions) {
             for (atom, position) in stripe.atoms.iter().zip(positions) {
                 atom.draw_u(&ug.translated(position.x, position.y));
             }

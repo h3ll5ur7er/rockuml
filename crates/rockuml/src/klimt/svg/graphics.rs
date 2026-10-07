@@ -15,6 +15,7 @@ use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
 use crate::klimt::shape::USegment;
+use crate::klimt::typeface::GlyphSegment;
 
 const DEFAULT_FONT_FAMILY: &str = "sans-serif";
 const DECIMALS: usize = 3;
@@ -142,6 +143,11 @@ impl SvgGraphics {
     /// `None` and fully transparent colours paint nothing.
     pub(super) fn set_fill_color(&mut self, color: Option<&str>) {
         self.fill = fix_color(color);
+    }
+
+    /// A fill at zero opacity, which paints nothing but still catches the pointer.
+    pub(super) fn set_invisible_fill(&mut self) {
+        "#00000000".clone_into(&mut self.fill);
     }
 
     pub(super) fn set_stroke_color(&mut self, color: Option<&str>) {
@@ -290,6 +296,32 @@ impl SvgGraphics {
         self.current_group().append_child(element);
     }
 
+    /// A glyph's outline moved by (`x`, `y`), filled without outline (`drawPathIterator`).
+    pub(super) fn glyph_path(&mut self, x: f64, y: f64, segments: &[GlyphSegment]) {
+        let mut d = String::new();
+        for segment in segments {
+            let at = |(dx, dy): (f64, f64)| (x + dx, y + dy);
+            let (command, points) = match *segment {
+                GlyphSegment::MoveTo(dx, dy) => ("M", vec![at((dx, dy))]),
+                GlyphSegment::LineTo(dx, dy) => ("L", vec![at((dx, dy))]),
+                GlyphSegment::QuadTo { ctrl, end } => ("Q", vec![at(ctrl), at(end)]),
+                GlyphSegment::CubicTo { ctrl1, ctrl2, end } => {
+                    ("C", vec![at(ctrl1), at(ctrl2), at(end)])
+                }
+                GlyphSegment::Close => ("Z", Vec::new()),
+            };
+            let points: Vec<String> = points
+                .into_iter()
+                .map(|(x, y)| self.visible_point(x, y))
+                .collect();
+            write!(d, "{command}{} ", points.join(" ")).expect("writing to a string");
+        }
+        let mut element = XmlNode::new("path");
+        element.set_attribute("d", d);
+        self.fill_me(&mut element);
+        self.current_group().append_child(element);
+    }
+
     /// `x,y`, after growing the image to show the point.
     fn visible_point(&mut self, x: f64, y: f64) -> String {
         self.ensure_visible(x, y);
@@ -421,7 +453,13 @@ impl SvgGraphics {
         self.close_innermost_link_element();
         let mut element = XmlNode::new("g");
         for (kind, value) in group.entries() {
-            element.set_attribute(kind.svg_attribute_name(), value);
+            if let Some(name) = kind.svg_attribute_name() {
+                element.set_attribute(name, value);
+            } else {
+                let mut title = XmlNode::new("title");
+                title.set_text_content(value);
+                element.append_child(title);
+            }
         }
         self.open_elements.push(element);
         self.reopen_innermost_link();

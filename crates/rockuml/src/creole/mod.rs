@@ -3,18 +3,22 @@
 //! A label's lines become a [`Sheet`] of [`Stripe`]s (one per visual line), each a row of [`Atom`]s that
 //! [`SheetBlock1`] lays out.
 
+use std::rc::Rc;
+
 mod atom_text;
 mod atoms;
 mod char_hidder;
 mod code;
 mod commands;
 mod display;
+mod fission;
 mod parser;
 mod sheet_block;
 mod table;
 mod tree;
 
 pub(crate) use display::Display;
+use fission::Neutron;
 pub(crate) use parser::CreoleParser;
 pub(crate) use sheet_block::{SheetBlock1, SheetBlock2};
 
@@ -34,10 +38,18 @@ pub(crate) enum CreoleMode {
 pub(crate) trait Atom: TextBlock {
     /// How far the atom sits above the line's bottom: raised for superscript, lowered for subscript.
     fn starting_altitude(&self, string_bounder: &dyn StringBounder) -> f64;
+
+    /// The pieces a line may break between; `None` keeps the atom whole.
+    fn neutrons(&self) -> Option<Vec<Neutron>> {
+        None
+    }
 }
 
+#[derive(Clone)]
 pub(crate) struct Stripe {
-    atoms: Vec<Box<dyn Atom>>,
+    /// A list item's bullet or number, also the first of the atoms (PlantUML's `lHeader`).
+    header: Option<Rc<dyn Atom>>,
+    atoms: Vec<Rc<dyn Atom>>,
     cell_alignment: HorizontalAlignment,
 }
 

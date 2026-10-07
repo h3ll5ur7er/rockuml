@@ -1,0 +1,5 @@
+@startuml
+skinparam sequenceMessageAlign center
+Alice -> Bob : centered
+Bob -> Alice : back centered and longer
+@enduml

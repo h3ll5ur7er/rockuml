@@ -1,10 +1,14 @@
 //! PlantUML's drawing layer (`klimt`): fonts, shapes, and the surfaces they are drawn on.
 
+pub(crate) mod big_frame;
 pub(crate) mod blocks;
+pub(crate) mod clip;
 pub(crate) mod debug;
+pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
 pub(crate) mod group;
+pub(crate) mod limit_finder;
 pub(crate) mod png;
 pub(crate) mod shape;
 pub(crate) mod stencil;
@@ -35,6 +39,24 @@ pub trait TextBlock {
     /// The colour the block asks to be drawn on, which stacking blocks paint behind it.
     fn backcolor(&self) -> Option<HColor> {
         None
+    }
+}
+
+impl<T: TextBlock + ?Sized> TextBlock for &T {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        (**self).calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        (**self).draw_u(ug);
+    }
+
+    fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
+        (**self).draw_in_padding(ug, left, right);
+    }
+
+    fn backcolor(&self) -> Option<HColor> {
+        (**self).backcolor()
     }
 }
 

@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob : hello **bold** and //italic//
+Bob -> Alice : <color:red>red</color> and ""mono""
+Alice -> Bob : --strike-- __under__ ~~wave~~
+Bob -> Alice : line one\nline <u>two</u>
+@enduml

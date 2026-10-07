@@ -1,0 +1,23 @@
+@startuml
+<style>
+sequenceDiagram {
+  participant {
+    BackGroundColor #ffe0b0
+    LineColor #aa6600
+    FontColor #663300
+  }
+  arrow {
+    LineColor #0033aa
+    LineThickness 2
+  }
+  lifeLine {
+    LineColor #888888
+  }
+  note {
+    BackGroundColor #ccffcc
+  }
+}
+</style>
+Alice -> Bob : styled
+note right : green note
+@enduml

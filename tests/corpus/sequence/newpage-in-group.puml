@@ -1,0 +1,9 @@
+@startuml
+Alice -> Bob : before
+group retry
+  Bob -> Alice : first try
+  newpage Second page
+  Bob -> Alice : second try
+end
+Alice -> Bob : after
+@enduml

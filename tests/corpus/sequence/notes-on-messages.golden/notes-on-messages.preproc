@@ -1,0 +1,11 @@
+@startuml
+Alice -> Bob : hello
+note left : a note\non the left
+Bob -> Alice : ok
+note right #yellow : on the right
+Alice -> Alice : self
+note right : self note right
+Alice -> Alice : self again
+note left : self note left
+Bob -> Alice : hello again
+@enduml

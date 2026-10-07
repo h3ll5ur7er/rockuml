@@ -1,14 +1,18 @@
 //! What every diagram with a skin shares: skinparams and styles, and the title drawn around it
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
+use std::rc::Rc;
+
+use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
-use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
+
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
-use crate::klimt::ugraphic::UStroke;
+
+use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
@@ -16,6 +20,7 @@ use crate::text::LineLocation;
 
 pub(super) struct Titled {
     pub skin: SkinParam,
+    pub pragma: Pragma,
     /// The diagram's own style name, like `saltDiagram`, for the styles of its legend and background.
     diagram_style: SName,
     /// The name SVG documents announce the diagram type with, like `SALT`.
@@ -25,7 +30,67 @@ pub(super) struct Titled {
     legend: Option<(Positioned, VerticalAlignment)>,
     header: Option<Positioned>,
     footer: Option<Positioned>,
+    mainframe: Option<Display>,
     scale: Option<Scale>,
+    /// Without repeats, in the order they came.
+    warnings: Vec<Warning>,
+}
+
+/// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
+#[derive(Default)]
+pub(super) struct Pragma {
+    values: Vec<(PragmaKey, Option<String>)>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum PragmaKey {
+    SequenceMessageSpan,
+    Teoz,
+}
+
+impl PragmaKey {
+    /// Names match ignoring case and anything but letters, as in PlantUML.
+    fn named(name: &str) -> Option<Self> {
+        let simplified: String = name
+            .chars()
+            .filter(char::is_ascii_alphabetic)
+            .map(|c| c.to_ascii_lowercase())
+            .collect();
+        match simplified.as_str() {
+            "sequencemessagespan" => Some(Self::SequenceMessageSpan),
+            "teoz" => Some(Self::Teoz),
+            _ => None,
+        }
+    }
+
+    /// The value of the pragma written without one.
+    fn default_value(self) -> Option<&'static str> {
+        match self {
+            Self::Teoz => Some("true"),
+            Self::SequenceMessageSpan => None,
+        }
+    }
+}
+
+impl Pragma {
+    pub(super) fn define(&mut self, name: &str, value: Option<&str>) {
+        let Some(key) = PragmaKey::named(name) else {
+            return;
+        };
+        let value = value.or(key.default_value()).map(str::to_owned);
+        self.values.retain(|(known, _)| *known != key);
+        self.values.push((key, value));
+    }
+
+    /// `true` or `on`.
+    pub(super) fn is_true(&self, key: PragmaKey) -> bool {
+        self.values.iter().any(|(known, value)| {
+            *known == key
+                && value.as_deref().is_some_and(|value| {
+                    value.eq_ignore_ascii_case("true") || value.eq_ignore_ascii_case("on")
+                })
+        })
+    }
 }
 
 /// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
@@ -51,6 +116,7 @@ impl Titled {
     pub(super) fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
         Self {
             skin: SkinParam::default(),
+            pragma: Pragma::default(),
             diagram_style,
             diagram_type,
             title: None,
@@ -58,8 +124,20 @@ impl Titled {
             legend: None,
             header: None,
             footer: None,
+            mainframe: None,
             scale: None,
+            warnings: Vec::new(),
         }
+    }
+
+    pub(super) fn add_warning(&mut self, warning: Warning) {
+        if !self.warnings.contains(&warning) {
+            self.warnings.push(warning);
+        }
+    }
+
+    pub(super) fn set_mainframe(&mut self, label: Display) {
+        self.mainframe = Some(label);
     }
 
     pub(super) fn set_scale(&mut self, scale: Scale) {
@@ -109,13 +187,36 @@ impl Titled {
             .expect("the skin styles the document")
     }
 
-    /// The diagram's drawing with its legend, title, caption, header and footer around it, added in
-    /// PlantUML's order.
+    /// The diagram's drawing with its warnings, mainframe, legend, title, caption, header and footer around
+    /// it, added in PlantUML's order. `string_bounder` measures the drawing for its mainframe.
     pub(super) fn add_chrome<'a>(
         &'a self,
         drawing: Box<dyn TextBlock + 'a>,
+        string_bounder: &Rc<dyn StringBounder>,
+    ) -> Box<dyn TextBlock + 'a> {
+        self.add_chrome_titled(drawing, string_bounder, self.title.as_ref())
+    }
+
+    /// Like [`Self::add_chrome`], with another title, as the pages of sequence diagrams have.
+    pub(super) fn add_chrome_titled<'a>(
+        &'a self,
+        drawing: Box<dyn TextBlock + 'a>,
+        string_bounder: &Rc<dyn StringBounder>,
+        title: Option<&'a Positioned>,
     ) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
+        if !self.warnings.is_empty() {
+            result = Box::new(WithWarnings::new(result, &self.warnings));
+        }
+        if let Some(label) = &self.mainframe {
+            let style = self.document_style(Some(SName::Mainframe));
+            result = Box::new(MainFrame::new(
+                result,
+                label,
+                &style,
+                string_bounder.clone(),
+            ));
+        }
         if let Some((legend, vertical)) = &self.legend {
             let style = self.style(&[
                 SName::Root,
@@ -133,7 +234,7 @@ impl Titled {
                 }
             };
         }
-        if let Some(title) = &self.title {
+        if let Some(title) = title {
             let style = self.document_style(Some(SName::Title));
             result = Box::new(DecorateEntityImage::new(
                 result,
@@ -166,7 +267,7 @@ impl Titled {
     pub(super) fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
         let document = self.document_style(None);
         let margin = if document.has_value(PName::Margin) {
-            margin_of(&document, PName::Margin)
+            document.margin()
         } else {
             ClockwiseTopRightBottomLeft::same(default_margin)
         };
@@ -225,101 +326,15 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
             .unwrap_or_default()
     });
     let sheet =
-        CreoleParser::new(font_configuration(style), alignment).create_sheet(display.lines());
+        CreoleParser::new(style.font_configuration(), alignment).create_sheet(display.lines());
     let text = SheetBlock2::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()));
     let bordered = TextBlockBordered::new(
         text,
-        stroke(style),
+        style.stroke(),
         style.value(PName::LineColor).as_color(),
         style.value(PName::BackGroundColor).as_color(),
         f64::from(style.value(PName::RoundCorner).as_int()),
-        margin_of(style, PName::Padding),
+        style.padding(),
     );
-    Box::new(TextBlockMarged::new(
-        bordered,
-        margin_of(style, PName::Margin),
-    ))
-}
-
-/// `Style.getFontConfiguration`.
-pub(super) fn font_configuration(style: &Style) -> FontConfiguration {
-    let size = match style.value(PName::FontSize).as_int_or_minus_one() {
-        -1 => 14,
-        size => size,
-    };
-    let mut face = style.value(PName::FontStyle).as_font_face();
-    let weight = style.value(PName::FontWeight).as_font_face();
-    if weight.weight != 400 {
-        face = UFontFace {
-            weight: weight.weight,
-            ..face
-        };
-    }
-    let font = UFont::new(&style.value(PName::FontName).as_string(), face, size);
-    FontConfiguration::new(font, style.value(PName::FontColor).as_color(), 8).with_hyperlink_style(
-        style.value(PName::HyperLinkColor).as_color(),
-        stroke_of(
-            style,
-            PName::HyperlinkUnderlineThickness,
-            PName::HyperlinkUnderlineStyle,
-        ),
-    )
-}
-
-/// `Style.getStroke`: the line thickness, dashed by a `visible-space` line style.
-fn stroke(style: &Style) -> UStroke {
-    stroke_of(style, PName::LineThickness, PName::LineStyle)
-}
-
-fn stroke_of(style: &Style, thickness: PName, line_style: PName) -> UStroke {
-    let thickness = style.value(thickness).as_double();
-    let dash = style.value(line_style).as_string();
-    let mut lengths = dash
-        .split(['-', ';', ','])
-        .filter(|part| !part.is_empty())
-        .map(|part| crate::java::trim(part).parse::<f64>());
-    match lengths.next() {
-        Some(Ok(visible)) => {
-            let space = match lengths.next() {
-                Some(Ok(space)) => space,
-                Some(Err(_)) => return UStroke::with_thickness(thickness),
-                None => visible,
-            };
-            UStroke {
-                dash_visible: visible,
-                dash_space: space,
-                thickness,
-            }
-        }
-        _ => UStroke::with_thickness(thickness),
-    }
-}
-
-/// `ClockwiseTopRightBottomLeft.read`: one to four whole numbers, CSS-style; anything else is none.
-fn margin_of(style: &Style, property: PName) -> ClockwiseTopRightBottomLeft {
-    let text = style.value(property).as_string();
-    if text.is_empty() || !text.chars().all(|c| c.is_ascii_digit() || c == ' ') {
-        return ClockwiseTopRightBottomLeft::none();
-    }
-    let numbers: Result<Vec<f64>, _> = text
-        .split(' ')
-        .filter(|part| !part.is_empty())
-        .map(|part| part.parse::<i32>().map(f64::from))
-        .collect();
-    let Ok(numbers) = numbers else {
-        return ClockwiseTopRightBottomLeft::none();
-    };
-    let (top, right, bottom, left) = match numbers.as_slice() {
-        [all] => (*all, *all, *all, *all),
-        [vertical, horizontal] => (*vertical, *horizontal, *vertical, *horizontal),
-        [top, horizontal, bottom] => (*top, *horizontal, *bottom, *horizontal),
-        [top, right, bottom, left] => (*top, *right, *bottom, *left),
-        _ => return ClockwiseTopRightBottomLeft::none(),
-    };
-    ClockwiseTopRightBottomLeft {
-        top,
-        right,
-        bottom,
-        left,
-    }
+    Box::new(TextBlockMarged::new(bordered, style.margin()))
 }

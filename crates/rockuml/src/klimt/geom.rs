@@ -22,6 +22,18 @@ impl XDimension2D {
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub(crate) struct XPoint2D {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl XPoint2D {
+    pub(crate) const fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct UTranslate {
     pub dx: f64,
     pub dy: f64,
@@ -58,6 +70,32 @@ impl MinMax {
         }
     }
 
+    /// A box holding no point yet, which the first point added replaces (`MinMax.getEmpty(false)`).
+    pub(crate) const fn empty() -> Self {
+        Self {
+            min_x: f64::MAX,
+            min_y: f64::MAX,
+            max_x: -f64::MAX,
+            max_y: -f64::MAX,
+        }
+    }
+
+    pub(crate) fn min_x(self) -> f64 {
+        self.min_x
+    }
+
+    pub(crate) fn min_y(self) -> f64 {
+        self.min_y
+    }
+
+    pub(crate) fn max_x(self) -> f64 {
+        self.max_x
+    }
+
+    pub(crate) fn max_y(self) -> f64 {
+        self.max_y
+    }
+
     #[must_use]
     pub(crate) fn add_point(self, x: f64, y: f64) -> Self {
         Self {
@@ -87,6 +125,20 @@ impl ClockwiseTopRightBottomLeft {
         Self::same(0.0)
     }
 
+    pub(crate) const fn top_right_bottom_left(
+        top: f64,
+        right: f64,
+        bottom: f64,
+        left: f64,
+    ) -> Self {
+        Self {
+            top,
+            right,
+            bottom,
+            left,
+        }
+    }
+
     pub(crate) const fn same(value: f64) -> Self {
         Self {
             top: value,
@@ -95,4 +147,21 @@ impl ClockwiseTopRightBottomLeft {
             left: value,
         }
     }
+
+    #[must_use]
+    pub(crate) fn inc_top(self, delta: f64) -> Self {
+        Self {
+            top: self.top + delta,
+            ..self
+        }
+    }
+}
+
+/// A vector rotated by `angle` radians, as Java's `XAffineTransform.getRotateInstance` turns it.
+pub(crate) fn rotate(x: f64, y: f64, angle: f64) -> (f64, f64) {
+    if angle == 0.0 {
+        return (x, y);
+    }
+    let (sin, cos) = angle.sin_cos();
+    (cos * x + -sin * y, sin * x + cos * y)
 }

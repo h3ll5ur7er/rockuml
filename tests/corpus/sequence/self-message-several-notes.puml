@@ -1,0 +1,12 @@
+@startuml
+a -> a : hi
+note left : n1
+note top : n2
+a -> a : again
+note right : n3
+note bottom : n4
+note top : n5
+a -> a : levels
+note top : n6
+note bottom : n7
+@enduml

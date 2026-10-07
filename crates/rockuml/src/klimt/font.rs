@@ -64,6 +64,10 @@ impl UFont {
         Self::new(Self::SERIF, UFontFace::NORMAL, size)
     }
 
+    pub fn monospace(size: i32) -> Self {
+        Self::new("Monospaced", UFontFace::NORMAL, size)
+    }
+
     pub fn size(&self) -> i32 {
         self.size
     }
@@ -365,6 +369,16 @@ impl FontConfiguration {
     pub fn with_size(&self, size: f32) -> Self {
         Self {
             font: self.font.with_size(size),
+            ..self.clone()
+        }
+    }
+
+    /// Another font and colour, with the styles kept (`forceFont`).
+    #[must_use]
+    pub fn force_font(&self, font: UFont, color: HColor) -> Self {
+        Self {
+            font,
+            color,
             ..self.clone()
         }
     }

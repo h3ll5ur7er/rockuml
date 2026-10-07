@@ -59,6 +59,11 @@ impl Url {
         ))
     }
 
+    /// The pattern of a `[[...]]` markup in a command, with its 12 groups (`UrlBuilder.MANDATORY`).
+    pub fn command_pattern() -> String {
+        format!("({})", Forms::alternatives())
+    }
+
     /// The length of the `[[...]]` markup at the start of `text`, if there is one.
     pub fn markup_length(text: &str) -> Option<usize> {
         static AT_START: LazyLock<Regex> =

@@ -4,6 +4,7 @@ mod graphics;
 mod xml;
 
 use std::rc::Rc;
+use std::sync::Arc;
 
 pub(crate) use graphics::SvgOption;
 use graphics::{SvgGraphics, SvgText};
@@ -11,7 +12,8 @@ use graphics::{SvgGraphics, SvgText};
 use super::font::{FontStyle, StringBounder};
 use super::geom::UTranslate;
 use super::group::UGroup;
-use super::shape::{UImage, UShape, UText};
+use super::shape::{UCenteredCharacter, UImage, UShape, UText};
+use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
 use crate::color::HColor;
@@ -19,13 +21,22 @@ use crate::color::HColor;
 pub(crate) struct UGraphicSvg {
     graphics: Option<SvgGraphics>,
     string_bounder: Rc<dyn StringBounder>,
+    /// The fonts whose glyph outlines draw centred characters; deterministic SVG has none and writes them as
+    /// text.
+    glyph_fonts: Option<Arc<FontRegistry>>,
 }
 
 impl UGraphicSvg {
-    pub(crate) fn new(seed: i64, option: SvgOption, string_bounder: Rc<dyn StringBounder>) -> Self {
+    pub(crate) fn new(
+        seed: i64,
+        option: SvgOption,
+        string_bounder: Rc<dyn StringBounder>,
+        glyph_fonts: Option<Arc<FontRegistry>>,
+    ) -> Self {
         Self {
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
+            glyph_fonts,
         }
     }
 
@@ -47,7 +58,11 @@ impl UGraphicSvg {
         let fill = self.paint(&param.backcolor);
         let stroke = self.paint(&param.color);
         let svg = self.svg();
-        svg.set_fill_color(Some(&fill));
+        if param.backcolor == HColor::TransparentFill {
+            svg.set_invisible_fill();
+        } else {
+            svg.set_fill_color(Some(&fill));
+        }
         svg.set_stroke_color(Some(&stroke));
         apply_stroke(svg, param.stroke);
     }
@@ -157,6 +172,44 @@ impl UGraphicSvg {
         }
     }
 
+    /// The glyph's outline, centred on its pixels. Deterministic SVG writes the character as text in a fixed
+    /// font instead, since outlines depend on the font.
+    fn draw_centered_character(
+        &mut self,
+        centered: &UCenteredCharacter,
+        at: UTranslate,
+        param: &UParam,
+    ) {
+        let color = param.color.to_svg();
+        if let Some(fonts) = &self.glyph_fonts {
+            if let Some(outline) = fonts.glyph_outline(&centered.font, centered.character) {
+                let (center_x, center_y) = outline.center();
+                let svg = self.svg();
+                svg.set_fill_color(Some(&color));
+                svg.glyph_path(
+                    at.dx - center_x - 0.5,
+                    at.dy - center_y - 0.5,
+                    &outline.segments,
+                );
+            }
+            return;
+        }
+        let svg = self.svg();
+        svg.set_fill_color(Some(&color));
+        svg.text(&SvgText {
+            text: &centered.character.to_string(),
+            x: at.dx - 5.0,
+            y: at.dy + 5.0,
+            font_family: "monospace",
+            font_size: 14,
+            font_weight: None,
+            font_style: None,
+            text_decoration: None,
+            text_length: 0.0,
+            back_color: None,
+        });
+    }
+
     fn draw_image(&mut self, image: &UImage, at: UTranslate) {
         self.svg()
             .png_image(image.png, at.dx, at.dy, image.width, image.height);
@@ -170,39 +223,71 @@ fn apply_stroke(svg: &mut SvgGraphics, stroke: UStroke) {
 }
 
 impl UGraphicBackend for UGraphicSvg {
+    fn draws_special_text(&self) -> bool {
+        true
+    }
+
+    /// Clips as PlantUML's SVG drivers do: straight lines and rectangles are cut to the clip, other shapes
+    /// are dropped unless inside.
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
+        let clip = param.clip.as_ref();
+        let inside = |x: f64, y: f64| clip.is_none_or(|clip| clip.is_inside(x, y));
         match shape {
-            UShape::Text(text) => self.draw_text(text, at),
+            UShape::Text(text) => {
+                if inside(at.dx, at.dy) {
+                    self.draw_text(text, at);
+                }
+            }
             UShape::Rectangle(rectangle) => {
+                let (x, y, width, height) = match clip {
+                    Some(clip) => {
+                        clip.clipped_rectangle(at.dx, at.dy, rectangle.width, rectangle.height)
+                    }
+                    None => (at.dx, at.dy, rectangle.width, rectangle.height),
+                };
+                if clip.is_some() && height <= 0.0 {
+                    return;
+                }
                 self.apply_colors_and_stroke(param);
-                self.svg().rectangle(
-                    at.dx,
-                    at.dy,
-                    rectangle.width,
-                    rectangle.height,
-                    rectangle.rx / 2.0,
-                    rectangle.ry / 2.0,
-                );
+                self.svg()
+                    .rectangle(x, y, width, height, rectangle.rx / 2.0, rectangle.ry / 2.0);
             }
             UShape::Ellipse(ellipse) => {
+                if !inside(at.dx, at.dy) || !inside(at.dx + ellipse.width, at.dy + ellipse.height) {
+                    return;
+                }
                 self.apply_colors_and_stroke(param);
                 let (x_radius, y_radius) = (ellipse.width / 2.0, ellipse.height / 2.0);
                 self.svg()
                     .ellipse(at.dx + x_radius, at.dy + y_radius, x_radius, y_radius);
             }
             UShape::Line { dx, dy } => {
+                let start = (at.dx, at.dy);
+                let end = (at.dx + dx, at.dy + dy);
+                let Some(((x1, y1), (x2, y2))) = (match clip {
+                    Some(clip) => clip.clipped_line(start, end),
+                    None => Some((start, end)),
+                }) else {
+                    return;
+                };
                 let svg = self.svg();
                 svg.set_stroke_color(Some(&param.color.to_svg()));
                 apply_stroke(svg, param.stroke);
-                svg.line(at.dx, at.dy, at.dx + dx, at.dy + dy);
+                svg.line(x1, y1, x2, y2);
             }
             UShape::Polygon(points) => {
-                self.apply_colors_and_stroke(param);
                 let points: Vec<(f64, f64)> =
                     points.iter().map(|(x, y)| (at.dx + x, at.dy + y)).collect();
+                if !points.iter().all(|&(x, y)| inside(x, y)) {
+                    return;
+                }
+                self.apply_colors_and_stroke(param);
                 self.svg().polygon(&points);
             }
             UShape::Path(segments) => {
+                if clip.is_some_and(|clip| !clip.is_path_inside(at.dx, at.dy, segments)) {
+                    return;
+                }
                 // A path filled with the colour of its outline gets no outline in PlantUML.
                 if param.color == param.backcolor {
                     let svg = self.svg();
@@ -214,8 +299,15 @@ impl UGraphicBackend for UGraphicSvg {
                 }
                 self.svg().path(at.dx, at.dy, segments);
             }
-            UShape::Image(image) => self.draw_image(image, at),
-            UShape::Empty(_) | UShape::HorizontalLine => {}
+            UShape::Image(image) => {
+                if inside(at.dx, at.dy) && inside(at.dx + image.width, at.dy + image.height) {
+                    self.draw_image(image, at);
+                }
+            }
+            UShape::CenteredCharacter(centered) => {
+                self.draw_centered_character(centered, at, param);
+            }
+            UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
         }
     }
 

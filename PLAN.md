@@ -329,6 +329,32 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - teoz (`PlayingSpace`, `LivingSpaces`, tiles), the `real` constraint solver, sequence `graphic` components,
   all ~41 commands, notes, groups, refs, dividers, delays, autonumber, boxes, return, activation, create/destroy, newpage.
 - **Exit:** L1 ≥ 98% on the sequence corpus. This is the first genuinely usable release.
+- **Status: done.** All 89 sequence corpus cases pass L1 (debug). L2 (deterministic SVG) and L4 (PNG size) pass on all
+  88 cases PlantUML can render (`notes-aligned` crashes Java's SVG and PNG output). L3 (font-measured SVG) passes on
+  87: `stereotypes` draws its spot letters as glyph outlines from Courier New Bold, which the embedded Liberation Mono
+  cannot reproduce. Done:
+  - the `real` constraint solver, `YGauge`s, living spaces with their activation stairs, and every teoz tile:
+    messages (to self, from and to the border, multicast, creation), notes (beside, over, across, merged, on
+    messages), life events, groups with `else` and `partition`, references, dividers, delays, spacing and page breaks;
+  - participants of every shape, boxes around them (nested, coloured, stereotyped), autonumber, `return`,
+    autoactivate, link anchors (`{a} <-> {b}`), `mainframe`;
+  - the Rose components, their styles (with stereotype styles and the legacy skinparams) and line wrapping at
+    `maxMessageSize` / `MaximumWidth` (PlantUML's `Fission`);
+  - pages: each `newpage` starts a page with its own title, clipped as PlantUML's `UClip` does per output format;
+  - skinparam deprecation warnings drawn above the diagram.
+
+  Learned along the way / deliberate deviations:
+  - Teoz is the only sequence engine in 1.2026.8 (`!pragma teoz` changes nothing); the older Puma engine is not ported.
+  - Teoz draws links only on participants; links on messages, notes and references are parsed and dropped, as in
+    PlantUML.
+  - Shadows (`skinparam shadowing`) are not drawn yet.
+  - Several notes `note across` merged with `/` crash PlantUML; rockuml lays them out like other merged notes.
+  - A stereotype's spot letter is drawn from the font's glyph outline as in PlantUML, but centred on an unhinted
+    rendering where Java uses a hinted one; with Courier New registered the outlines match and the centre can differ
+    by a pixel.
+  - `skinparam padding` around titles, headers, legends and the mainframe is not ported yet.
+  - Moved on: the `@startuml` best-error selection needs the other UML diagram factories and moves to Phase 5. Until
+    then a `@startuml` diagram that is not a sequence diagram is reported as not ported.
 
 ### Phase 4 — Graph layout: Smetana → `ru-dot` (~30k real lines)
 - Port only the functions that are actually implemented. The `UNSUPPORTED` stubs become `unimplemented!()`.
@@ -345,6 +371,8 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - The svek glue (`EntityImage*`, clusters, `SvekEdge` label placement, extremities), the `sdot` driver
   (`CucaDiagramFileMakerSmetana`, composite-state recursion), `net/atmp/CucaDiagram`.
 - Class/object, description (usecase/component/deployment/archimate), state (multi-pass parser), chen ER.
+- The `@startuml` factory order and best-error selection (moved here from Phase 3), so that unknown syntax gives
+  PlantUML's error image.
 - `ExternalDot` engine (optional): port svek's DOT writer and colour-tag SVG back-parser. Selected with
   `!pragma layout dot`, or automatically when `dot` is on PATH if the user opts in via config. Smetana stays the default.
 - **Exit:** L1 ≥ 95% per type.
@@ -390,6 +418,5 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 2: regex/command framework, `PSystemBuilder`, style/skin, klimt core and the DEBUG backend, starting with
-   error diagrams (every unported diagram type currently fails) and `@startcreole`/`@startsalt`.
+1. Phase 2b: sprites, `<img>` and emoji, or Phase 4: Smetana, the layout engine every CucaDiagram type needs.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

@@ -1,0 +1,20 @@
+@startuml
+Alice -> Bob : start
+opt optional
+  Bob -> Alice : maybe
+end
+par parallel
+  Alice -> Bob : one
+else
+  Alice -> Carol : two
+end
+break broken
+  Bob -> Carol : stop
+end
+critical critical section
+  Carol -> Alice : exclusive
+end
+group named
+  Alice -> Alice : self
+end
+@enduml

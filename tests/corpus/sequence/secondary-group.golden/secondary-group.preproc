@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob: Authentication Request
+group My own label [My own label 2]
+    Alice -> Log : Log attack start
+end
+@enduml

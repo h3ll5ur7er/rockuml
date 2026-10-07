@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use super::{FontRegistry, ResolvedFont};
+use super::FontRegistry;
 use crate::klimt::font::{StringBounder, UFont};
 use crate::klimt::geom::XDimension2D;
 
@@ -13,20 +13,6 @@ impl StringBounderFonts {
     pub(crate) fn new(fonts: Arc<FontRegistry>) -> Self {
         Self { fonts }
     }
-
-    /// PlantUML's `FontStack`: of a comma-separated list of families, the first that can display the text.
-    fn font_for(&self, font: &UFont, text: &str) -> ResolvedFont<'_> {
-        let mut candidates = font
-            .families()
-            .map(|family| self.fonts.resolve(family, font.face()));
-        let first = candidates.next().expect("split yields at least one family");
-        if first.can_display(text) {
-            return first;
-        }
-        candidates
-            .find(|candidate| candidate.can_display(text))
-            .unwrap_or(first)
-    }
 }
 
 impl StringBounder for StringBounderFonts {
@@ -34,7 +20,7 @@ impl StringBounder for StringBounderFonts {
         if text.is_empty() {
             return XDimension2D::default();
         }
-        let resolved = self.font_for(font, text);
+        let resolved = self.fonts.font_for(font, text);
         let width: f64 = text
             .chars()
             .map(|c| {
@@ -49,7 +35,7 @@ impl StringBounder for StringBounderFonts {
     }
 
     fn descent(&self, font: &UFont, text: &str) -> f64 {
-        let (_, descent, _) = self.font_for(font, text).vertical_metrics();
+        let (_, descent, _) = self.fonts.font_for(font, text).vertical_metrics();
         descent * font.size_2d()
     }
 }

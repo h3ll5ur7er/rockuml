@@ -1,0 +1,6 @@
+@startuml
+skinparam actorStyle hollow
+actor Hollow
+participant Other
+Hollow -> Other
+@enduml

@@ -168,23 +168,27 @@ fn write_outputs(
         .map_err(|error| format!("cannot create {}: {error}", output_directory.display()))?;
     let mut namer = OutputNamer::new(&file_name(file), options.format.suffix());
     for block in blocks {
-        let output = output_directory.join(namer.next_name(block.output_name().as_deref()));
-        let content = match options.format {
-            OutputFormat::Preprocessed => block
-                .lines()
-                .flat_map(|line| [line, LINE_SEPARATOR])
-                .collect::<String>()
-                .into_bytes(),
+        let name_from_diagram = block.output_name();
+        let pages: Vec<Vec<u8>> = match options.format {
+            OutputFormat::Preprocessed => vec![
+                block
+                    .lines()
+                    .flat_map(|line| [line, LINE_SEPARATOR])
+                    .collect::<String>()
+                    .into_bytes(),
+            ],
             format => {
                 let image_format = format
                     .image_format()
                     .ok_or_else(|| format!("{format:?} output is not implemented yet"))?;
                 match render(block, image_format, fonts) {
-                    Ok(Rendered { image, is_error }) => {
+                    Ok(Rendered { pages, is_error }) => {
                         outcome.diagram_errors |= is_error;
-                        image
+                        pages
                     }
                     Err(not_ported) => {
+                        let output = output_directory
+                            .join(namer.next_names(name_from_diagram.as_deref(), 1).remove(0));
                         eprintln!("rockuml: {}: {not_ported}", output.display());
                         outcome.not_rendered = true;
                         continue;
@@ -192,14 +196,19 @@ fn write_outputs(
                 }
             }
         };
-        fs::write(&output, content)
-            .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
+        let output_names = namer.next_names(name_from_diagram.as_deref(), pages.len());
+        for (name, content) in output_names.into_iter().zip(pages) {
+            let output = output_directory.join(name);
+            fs::write(&output, content)
+                .map_err(|error| format!("cannot write {}: {error}", output.display()))?;
+        }
     }
     Ok(outcome)
 }
 
 struct Rendered {
-    image: Vec<u8>,
+    /// One image per page.
+    pages: Vec<Vec<u8>>,
     /// The image shows the diagram's errors instead of the diagram.
     is_error: bool,
 }
@@ -210,8 +219,11 @@ fn render(
     fonts: &Arc<FontRegistry>,
 ) -> Result<Rendered, NotYetPorted> {
     let diagram = rockuml::diagram::create(block)?;
+    let pages = (0..diagram.page_count())
+        .map(|page| rockuml::diagram::export(diagram.as_ref(), page, format, fonts, &SystemHost))
+        .collect::<Result<_, _>>()?;
     Ok(Rendered {
-        image: rockuml::diagram::export(diagram.as_ref(), format, fonts, &SystemHost)?,
+        pages,
         is_error: diagram.is_error(),
     })
 }

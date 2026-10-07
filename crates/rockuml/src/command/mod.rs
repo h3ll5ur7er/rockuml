@@ -7,7 +7,7 @@ mod single_line;
 
 pub(crate) use bloc_lines::BlocLines;
 pub(crate) use multiline::Multiline;
-pub(crate) use single_line::{SingleLine, SingleLineCommand};
+pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum CommandControl {

@@ -1,0 +1,292 @@
+DPI: 96
+dimension: [ 265.6196 ; 215.0000 ]
+scaleFactor: 1.0000
+seed: -2328976109584171482
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 54.8998 ; 85.0000 ]
+  pt2: [ 62.8998 ; 130.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 58.3998 ; 85.0000 ]
+  pt2: [ 58.3998 ; 130.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 182.7097 ; 85.0000 ]
+  pt2: [ 190.7097 ; 130.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 186.2097 ; 85.0000 ]
+  pt2: [ 186.2097 ; 130.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Awesome
+  position: [ 10.0000 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 42.3998 ; 10.5000 ]
+  pt2: [ 74.3998 ; 42.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Business
+  position: [ 116.7997 ; 81.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 170.2097 ; 10.5000 ]
+  pt2: [ 202.2097 ; 42.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Awesome
+  position: [ 10.0000 ; 140.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 42.3998 ; 144.5000 ]
+  pt2: [ 74.3998 ; 176.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Business
+  position: [ 116.7997 ; 140.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 170.2097 ; 144.5000 ]
+  pt2: [ 202.2097 ; 176.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+POLYGON:
+  points:
+   - [ 174.2097 ; 108.0000 ]
+   - [ 184.2097 ; 112.0000 ]
+   - [ 174.2097 ; 116.0000 ]
+   - [ 178.2097 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 58.3998 ; 112.0000 ]
+  pt2: [ 180.2097 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: hello
+  position: [ 65.3998 ; 107.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

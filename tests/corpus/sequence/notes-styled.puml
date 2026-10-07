@@ -1,0 +1,9 @@
+@startuml
+participant Alice
+participant Bob
+note over Alice #lightgreen: green note
+note over Bob #pink: plain pink
+skinparam noteBorderColor blue
+Alice -> Bob
+note right #ffcc00 : after skinparam
+@enduml

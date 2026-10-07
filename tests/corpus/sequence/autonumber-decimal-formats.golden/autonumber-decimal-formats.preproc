@@ -1,0 +1,10 @@
+@startuml
+autonumber "0."
+Alice -> Bob : a
+autonumber 10 "00.00"
+Bob -> Alice : b
+autonumber 1 "<b>[000]"
+Alice -> Bob : c
+autonumber 5 "0.0#"
+Bob -> Alice : d
+@enduml

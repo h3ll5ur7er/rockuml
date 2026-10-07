@@ -1,0 +1,236 @@
+DPI: 96
+dimension: [ 332.9902 ; 273.0000 ]
+scaleFactor: 1.0000
+seed: -319538439247254560
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 232.6249 ; 5.0000 ]
+  pt2: [ 327.9902 ; 16.0000 ]
+
+TEXT:
+  text: Page Header
+  position: [ 232.6249 ; 12.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 65.2698 ; 16.0000 ]
+  pt2: [ 267.7204 ; 51.0000 ]
+
+TEXT:
+  text: Example Title
+  position: [ 75.2698 ; 36.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 87.0697 ; 85.0000 ]
+  pt2: [ 95.0697 ; 157.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 90.5697 ; 85.0000 ]
+  pt2: [ 90.5697 ; 157.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 258.0466 ; 85.0000 ]
+  pt2: [ 266.0466 ; 157.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 261.5466 ; 85.0000 ]
+  pt2: [ 261.5466 ; 157.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 46.5910 ; 56.0000 ]
+  pt2: [ 134.5483 ; 84.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 53.5910 ; 73.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 236.6941 ; 56.0000 ]
+  pt2: [ 286.3992 ; 84.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 243.6941 ; 73.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 46.5910 ; 157.0000 ]
+  pt2: [ 134.5483 ; 185.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Alice
+  position: [ 53.5910 ; 174.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 236.6941 ; 157.0000 ]
+  pt2: [ 286.3992 ; 185.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Bob
+  position: [ 243.6941 ; 174.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 249.5466 ; 108.0000 ]
+   - [ 259.5466 ; 112.0000 ]
+   - [ 249.5466 ; 116.0000 ]
+   - [ 253.5466 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 90.5697 ; 112.0000 ]
+  pt2: [ 255.5466 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: message 1
+  position: [ 97.5697 ; 107.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 249.5466 ; 135.0000 ]
+   - [ 259.5466 ; 139.0000 ]
+   - [ 249.5466 ; 143.0000 ]
+   - [ 253.5466 ; 139.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 90.5697 ; 139.0000 ]
+  pt2: [ 255.5466 ; 139.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: message 2
+  position: [ 97.5697 ; 134.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 72.0085 ; 191.0000 ]
+  pt2: [ 291.3992 ; 240.0000 ]
+
+RECTANGLE:
+  pt1: [ 84.0085 ; 203.0000 ]
+  pt2: [ 278.3992 ; 227.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Short legend
+  position: [ 89.0085 ; 218.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 119.3883 ; 240.0000 ]
+  pt2: [ 213.6019 ; 257.0000 ]
+
+TEXT:
+  text: figure 1
+  position: [ 120.3883 ; 251.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 5.0000 ; 257.0000 ]
+  pt2: [ 327.9902 ; 268.0000 ]
+
+TEXT:
+  text: Page %page% of %lastpage%
+  position: [ 5.0000 ; 264.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

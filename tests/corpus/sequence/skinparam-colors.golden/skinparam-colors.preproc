@@ -1,0 +1,28 @@
+@startuml
+skinparam backgroundColor #EEEBDC
+skinparam sequence {
+ArrowColor DeepSkyBlue
+ActorBorderColor DeepSkyBlue
+LifeLineBorderColor blue
+LifeLineBackgroundColor #A9DCDF
+ParticipantBorderColor DeepSkyBlue
+ParticipantBackgroundColor DodgerBlue
+ParticipantFontSize 17
+ParticipantFontColor #A9DCDF
+ActorBackgroundColor aqua
+ActorFontColor DeepSkyBlue
+ActorFontSize 17
+ActorFontName Aapex
+}
+actor User
+participant "First Class" as A
+participant "Second Class" as B
+User -> A: DoWork
+activate A
+A -> B: Create Request
+activate B
+B --> A: Request Created
+deactivate B
+A --> User: Done
+deactivate A
+@enduml

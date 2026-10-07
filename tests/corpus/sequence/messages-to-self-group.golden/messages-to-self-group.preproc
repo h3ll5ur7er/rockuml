@@ -1,0 +1,7 @@
+@startuml
+Alice -> Bob : a
+loop forever
+  Bob -> Bob : spin
+  note right : busy
+end
+@enduml
