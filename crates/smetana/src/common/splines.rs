@@ -655,6 +655,33 @@ pub fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<SplinesId> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::cgraph::graph::agopen;
+    use crate::cgraph::{AGINEDGE, AGOPP, AGOUTEDGE, M_aghead, M_agtail};
+    use crate::h::cgraph::Agdirected;
+    use crate::h::textlabel_t;
+
+    #[test]
+    fn self_loops_take_room_for_their_label_in_whole_points() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let n = zz.new_agnode(g);
+        let e = zz.new_agedgepair();
+        zz.tag_mut(e).objtype = AGOUTEDGE;
+        let ein = AGOPP(&zz, e);
+        zz.tag_mut(ein).objtype = AGINEDGE;
+        M_agtail(&mut zz, e, n);
+        M_aghead(&mut zz, e, n);
+        assert_eq!(selfRightSpace(&zz, e), 18);
+        let label = zz.textlabels.push(textlabel_t {
+            dimen: pointfof(30.7, 12.0),
+            ..textlabel_t::default()
+        });
+        zz.ed_mut(e).label = Some(label);
+        assert_eq!(selfRightSpace(&zz, e), 48);
+        zz.ed_mut(e).tail_port.defined = true;
+        zz.ed_mut(e).tail_port.side = LEFT;
+        assert_eq!(selfRightSpace(&zz, e), 0);
+    }
 
     #[test]
     fn side_pairs_number_like_graphviz_table() {
