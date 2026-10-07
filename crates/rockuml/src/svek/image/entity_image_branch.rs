@@ -11,12 +11,11 @@ use crate::klimt::group::UGroup;
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 const SIZE: f64 = 12.0;
 
 pub(crate) struct EntityImageBranch {
-    base: AbstractEntityImage,
     group: UGroup,
     border: HColor,
     back: HColor,
@@ -34,7 +33,6 @@ impl EntityImageBranch {
         ])
         .get_merged_style(&diagram.skin().current_style_builder());
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             group: entity_group(entity, diagram, "entity", None),
             border: style.value(PName::LineColor).as_color(),
             back: style.value(PName::BackGroundColor).as_color(),
@@ -65,12 +63,4 @@ impl TextBlock for EntityImageBranch {
     }
 }
 
-impl IEntityImage for EntityImageBranch {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Diamond
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageBranch {}

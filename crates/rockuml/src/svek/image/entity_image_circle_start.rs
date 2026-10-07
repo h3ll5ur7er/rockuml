@@ -10,10 +10,9 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
 use crate::klimt::ugraphic::UGraphic;
 use crate::style::{SName, StyleSignature};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 pub(crate) struct EntityImageCircleStart {
-    base: AbstractEntityImage,
     group: UGroup,
     circle: CircleStart,
 }
@@ -29,7 +28,6 @@ impl EntityImageCircleStart {
         ])
         .get_merged_style(&diagram.skin().current_style_builder());
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
             group: entity_group(entity, diagram, "start_entity", entity.get_location()),
             circle: CircleStart::new(&style, &entity.colors),
         }
@@ -48,12 +46,4 @@ impl TextBlock for EntityImageCircleStart {
     }
 }
 
-impl IEntityImage for EntityImageCircleStart {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Circle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageCircleStart {}

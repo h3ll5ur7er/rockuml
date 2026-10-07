@@ -2,9 +2,9 @@
 //! (PlantUML's `EntityImageChenEntity`, `EntityImageChenRelationship`, `EntityImageChenAttribute` and
 //! `EntityImageChenCircle`).
 
-use super::super::{AbstractEntityImage, IEntityImage, MARGIN, MARGIN_LINE, ShapeType};
+use super::super::{AbstractEntityImage, IEntityImage, MARGIN, MARGIN_LINE};
 use crate::abel::Entity;
-use crate::color::ColorType;
+use crate::color::{ColorType, Colors};
 use crate::creole::{CreoleMode, SheetBlock2};
 use crate::decoration::symbol::TextBlockInEllipse;
 use crate::diagram::cuca::CucaDiagram;
@@ -24,7 +24,7 @@ struct ChenImage {
     /// The quark's qualified name, which PlantUML names the image's group after.
     name: String,
     url: Option<crate::klimt::url::Url>,
-    colors: crate::color::Colors,
+    colors: Colors,
 }
 
 impl ChenImage {
@@ -152,15 +152,7 @@ impl TextBlock for EntityImageChenEntity {
     }
 }
 
-impl IEntityImage for EntityImageChenEntity {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageChenEntity {}
 
 /// A Chen relationship: a diamond twice as wide as high, doubled for identifying relationships.
 pub(crate) struct EntityImageChenRelationship {
@@ -215,15 +207,7 @@ impl TextBlock for EntityImageChenRelationship {
     }
 }
 
-impl IEntityImage for EntityImageChenRelationship {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Diamond
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.image.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageChenRelationship {}
 
 /// Room above the title of attributes and circles.
 const ELLIPSE_MARGIN: f64 = 6.0;
@@ -289,15 +273,7 @@ impl TextBlock for EntityImageChenAttribute {
     }
 }
 
-impl IEntityImage for EntityImageChenAttribute {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Oval
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.0.image.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageChenAttribute {}
 
 /// The circle a superclass's subclasses hang from, with `d`, `o` or `U` in it.
 pub(crate) struct EntityImageChenCircle(ChenEllipse);
@@ -325,12 +301,4 @@ impl TextBlock for EntityImageChenCircle {
     }
 }
 
-impl IEntityImage for EntityImageChenCircle {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Oval
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.0.image.base.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageChenCircle {}

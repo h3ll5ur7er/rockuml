@@ -5,7 +5,6 @@ use crate::klimt::geom::{XDimension2D, XPoint2D};
 use crate::klimt::shape::{UEllipse, URectangle, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::Rankdir;
-use crate::svek::ShapeType;
 
 /// Entry and exit points, pins and ports sit on their container's border; normal entities inside.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -99,17 +98,6 @@ impl EntityPosition {
         }
     }
 
-    /// # Panics
-    ///
-    /// For normal entities, which have no symbol of their own.
-    pub(crate) fn get_shape_type(self) -> ShapeType {
-        match self {
-            Self::Normal => panic!("normal entities have no position symbol"),
-            Self::EntryPoint | Self::ExitPoint => ShapeType::RectanglePort,
-            _ => ShapeType::Rectangle,
-        }
-    }
-
     /// The position a state's stereotype like `<<entryPoint>>` asks for, ignoring case.
     pub(crate) fn from_stereotype(label: &str) -> Self {
         [
@@ -181,10 +169,6 @@ mod tests {
         );
         assert!(EntityPosition::ExitPoint.use_port_p());
         assert!(!EntityPosition::InputPin.use_port_p());
-        assert_eq!(
-            EntityPosition::EntryPoint.get_shape_type(),
-            ShapeType::RectanglePort
-        );
     }
 
     #[test]

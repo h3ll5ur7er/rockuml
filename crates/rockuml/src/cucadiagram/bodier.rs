@@ -9,6 +9,7 @@ use super::body_enhanced::{body_enhanced1, is_block_separator};
 use super::methods_or_fields_area::{BodyLine, MethodsOrFieldsArea};
 use super::{BodyContext, Member};
 use crate::abel::LeafType;
+use crate::command::CommandError;
 use crate::creole::Display;
 use crate::java;
 use crate::json::JsonValue;
@@ -58,12 +59,9 @@ impl Bodier {
         }
     }
 
-    /// Whether the line could be added: a map line needs `=>` or a link like `*->`.
-    ///
-    /// # Panics
-    ///
-    /// For JSON bodies, which take their data whole.
-    pub(crate) fn add_field_or_method(&mut self, s: &str) -> bool {
+    /// Whether the line could be added: a map line needs `=>` or a link like `*->`. JSON bodies take their
+    /// data whole, so a line added to one is an error.
+    pub(crate) fn add_field_or_method(&mut self, s: &str) -> Result<bool, CommandError> {
         match self {
             Self::LikeClassOrObject { raw_body, .. } => raw_body.push(s.to_owned()),
             Self::Simple { raw_body } => {
@@ -76,12 +74,14 @@ impl Bodier {
                     let pos = s.find(link).expect("the link was found in the line");
                     put(map, java::trim(&s[..pos]), "\0");
                 } else {
-                    return false;
+                    return Ok(false);
                 }
             }
-            Self::Json { .. } => panic!("JSON bodies take their data whole"),
+            Self::Json { .. } => {
+                return Err(CommandError::new("A JSON element takes no members"));
+            }
         }
-        true
+        Ok(true)
     }
 
     /// A class that turns out to be an object reads its members again, all as fields.
@@ -365,7 +365,7 @@ mod tests {
     fn class(lines: &[&str]) -> Bodier {
         let mut bodier = Bodier::for_leaf(LeafType::Class);
         for line in lines {
-            bodier.add_field_or_method(line);
+            bodier.add_field_or_method(line).unwrap();
         }
         bodier
     }
@@ -413,9 +413,9 @@ mod tests {
     #[test]
     fn maps_need_arrows() {
         let mut bodier = Bodier::for_leaf(LeafType::Map);
-        assert!(bodier.add_field_or_method("UK => London"));
-        assert!(bodier.add_field_or_method("USA *--> Washington"));
-        assert!(!bodier.add_field_or_method("nothing"));
+        assert_eq!(bodier.add_field_or_method("UK => London"), Ok(true));
+        assert_eq!(bodier.add_field_or_method("USA *--> Washington"), Ok(true));
+        assert_eq!(bodier.add_field_or_method("nothing"), Ok(false));
         let Bodier::Map { map } = bodier else {
             unreachable!()
         };
@@ -426,6 +426,12 @@ mod tests {
                 ("USA".to_owned(), "\0".to_owned())
             ]
         );
+    }
+
+    #[test]
+    fn json_elements_take_no_members() {
+        let mut bodier = Bodier::for_leaf(LeafType::Json);
+        assert!(bodier.add_field_or_method("extra").is_err());
     }
 
     #[test]

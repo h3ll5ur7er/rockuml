@@ -195,7 +195,7 @@ fn execute_create_state(
     }
     entity.colors = colors;
     if let Some(field) = arg.get("ADDFIELD", 0) {
-        entity.bodier.add_field_or_method(field);
+        entity.bodier.add_field_or_method(field)?;
     }
     add_tags(diagram, ent, arg.get_lazzy("TAGS", 0));
     let cuca = &diagram.cuca;
@@ -599,7 +599,7 @@ pub(super) fn add_field() -> Box<dyn Command<StateDiagram>> {
                 .cuca
                 .entity_mut(entity)
                 .bodier
-                .add_field_or_method(field);
+                .add_field_or_method(field)?;
             Ok(())
         },
     )

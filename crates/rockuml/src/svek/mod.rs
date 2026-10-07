@@ -14,11 +14,9 @@ mod entity_image;
 mod frontier_calculator;
 mod general_image_builder;
 mod inner_state_autonom;
-mod margins;
 mod rounded_container;
 mod rounded_north;
 mod rounded_south;
-mod shape_type;
 mod svek_node;
 
 pub(crate) use bibliotekon::Bibliotekon;
@@ -31,8 +29,6 @@ pub(crate) use concurrent_states::ConcurrentStates;
 pub(crate) use entity_image::{AbstractEntityImage, IEntityImage, LayoutContext};
 pub(crate) use general_image_builder::create_entity_image_block;
 pub(crate) use inner_state_autonom::InnerStateAutonom;
-pub(crate) use margins::Margins;
-pub(crate) use shape_type::ShapeType;
 pub(crate) use svek_node::SvekNode;
 
 /// Room around the text of entity images (`IEntityImage.MARGIN`).

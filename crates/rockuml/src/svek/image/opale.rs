@@ -27,9 +27,10 @@ pub(crate) fn get_corner(width: f64, round_corner: f64) -> Vec<USegment> {
             width - CORNERSIZE,
             CORNERSIZE - round_corner / 4.0,
         ));
-        path.push(arc_to(
+        path.push(USegment::arc_to(
             (width - CORNERSIZE + round_corner / 4.0, CORNERSIZE),
             round_corner / 4.0,
+            false,
         ));
     }
     path.push(USegment::LineTo(width, CORNERSIZE));
@@ -53,25 +54,14 @@ pub(crate) fn get_polygon_normal(width: f64, height: f64, round_corner: f64) -> 
     vec![
         USegment::MoveTo(0.0, half),
         USegment::LineTo(0.0, height - half),
-        arc_to((half, height), half),
+        USegment::arc_to((half, height), half, false),
         USegment::LineTo(width - half, height),
-        arc_to((width, height - half), half),
+        USegment::arc_to((width, height - half), half, false),
         USegment::LineTo(width, CORNERSIZE),
         USegment::LineTo(width - CORNERSIZE, 0.0),
         USegment::LineTo(half, 0.0),
-        arc_to((0.0, half), half),
+        USegment::arc_to((0.0, half), half, false),
     ]
-}
-
-/// `UPath.arcTo(pt, radius, 0, 0)`.
-fn arc_to(end: (f64, f64), radius: f64) -> USegment {
-    USegment::ArcTo {
-        radius: (radius, radius),
-        x_axis_rotation: 0.0,
-        large_arc: false,
-        sweep: false,
-        end,
-    }
 }
 
 /// `MathUtils.limitation`: `v` brought between `min` and `max`, unless they leave no room.
@@ -146,9 +136,9 @@ impl<'a> Opale<'a> {
     fn bottom(&self, width: f64, height: f64, path: &mut Vec<USegment>) {
         let half = self.round_corner / 2.0;
         path.push(USegment::LineTo(0.0, height - half));
-        path.push(arc_to((half, height), half));
+        path.push(USegment::arc_to((half, height), half, false));
         path.push(USegment::LineTo(width - half, height));
-        path.push(arc_to((width, height - half), half));
+        path.push(USegment::arc_to((width, height - half), half, false));
     }
 
     /// From the right side down to the fold, the top, and the top left corner.
@@ -157,7 +147,7 @@ impl<'a> Opale<'a> {
         path.push(USegment::LineTo(width, CORNERSIZE));
         path.push(USegment::LineTo(width - CORNERSIZE, 0.0));
         path.push(USegment::LineTo(half, 0.0));
-        path.push(arc_to((0.0, half), half));
+        path.push(USegment::arc_to((0.0, half), half, false));
     }
 
     fn get_polygon_left(
@@ -225,7 +215,7 @@ impl<'a> Opale<'a> {
             USegment::LineTo(pp2.x, pp2.y),
             USegment::LineTo(x1, 0.0),
             USegment::LineTo(half, 0.0),
-            arc_to((0.0, half), half),
+            USegment::arc_to((0.0, half), half, false),
         ]);
         path
     }
@@ -245,12 +235,12 @@ impl<'a> Opale<'a> {
         let mut path = vec![
             USegment::MoveTo(0.0, half),
             USegment::LineTo(0.0, height - half),
-            arc_to((half, height), half),
+            USegment::arc_to((half, height), half, false),
             USegment::LineTo(x1, height),
             USegment::LineTo(pp2.x, pp2.y),
             USegment::LineTo(x1 + 2.0 * DELTA, height),
             USegment::LineTo(width - half, height),
-            arc_to((width, height - half), half),
+            USegment::arc_to((width, height - half), half, false),
         ];
         self.top(width, &mut path);
         path

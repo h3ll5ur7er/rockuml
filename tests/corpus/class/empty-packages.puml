@@ -1,0 +1,14 @@
+@startuml
+package app {
+}
+namespace net.example {
+}
+package "Data Access" as dao <<Layer>> #LightBlue {
+}
+package legacy <<Frozen>> {
+}
+class Service
+Service --> app
+Service ..> dao : uses
+legacy <-- Service
+@enduml

@@ -280,7 +280,6 @@ fn dump_images(diagram: &DescriptionDiagram) -> String {
             double_to_string(dimension.height)
         )
         .unwrap();
-        writeln!(out, "shape: {}", screaming(image.get_shape_type())).unwrap();
         let debug = Rc::new(RefCell::new(UGraphicDebug::new("DATE".to_owned())));
         let ug = UGraphic::new(debug.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
         image.draw_u(&ug);
@@ -331,7 +330,7 @@ fn the_images_draw_like_plantumls() {
 #[test]
 fn the_commands_build_plantumls_model() {
     let cases = fixture_cases();
-    assert_eq!(cases.len(), 68);
+    assert_eq!(cases.len(), 70);
     let mut failures = Vec::new();
     for (case, (expected, _)) in &cases {
         let actual = dump_model(&read(case));

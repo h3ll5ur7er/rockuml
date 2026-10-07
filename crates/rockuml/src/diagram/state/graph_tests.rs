@@ -45,7 +45,7 @@ fn every_layout_makes_the_graph_plantuml_lays_out() {
         })
         .collect();
     cases.sort();
-    assert_eq!(cases.len(), 31);
+    assert_eq!(cases.len(), 32);
     let mut layouts = 0;
     for path in cases {
         let case = path.file_stem().unwrap().to_str().unwrap().to_owned();
@@ -63,5 +63,5 @@ fn every_layout_makes_the_graph_plantuml_lays_out() {
         }
         layouts += graphs.len();
     }
-    assert_eq!(layouts, 43);
+    assert_eq!(layouts, 44);
 }

@@ -1,15 +1,15 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
+use super::IEntityImage;
 use super::image::{
     EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
     EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
-    EntityImageDescription, EntityImageJson, EntityImageLollipopInterface, EntityImageMap,
-    EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState, EntityImageState,
-    EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
+    EntityImageDescription, EntityImageEmptyPackage, EntityImageJson, EntityImageLollipopInterface,
+    EntityImageMap, EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState,
+    EntityImageState, EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
     EntityImageSynchroBar, EntityImageTips,
 };
-use super::{Bibliotekon, IEntityImage};
 use crate::abel::{Entity, EntityId, LeafType};
 use crate::diagram::NotYetPorted;
 use crate::diagram::cuca::CucaDiagram;
@@ -23,7 +23,6 @@ use crate::diagram::cuca::CucaDiagram;
 pub(crate) fn create_entity_image_block(
     leaf: EntityId,
     diagram: &CucaDiagram,
-    _bibliotekon: &Bibliotekon,
 ) -> Result<Box<dyn IEntityImage>, NotYetPorted> {
     let entity = diagram.entity(leaf);
     assert!(!entity.is_removed(diagram), "removed leaves are not drawn");
@@ -66,7 +65,7 @@ pub(crate) fn create_entity_image_block(
             if entity.get_usymbol().is_some() {
                 Ok(Box::new(EntityImageDescription::new(entity, diagram)))
             } else {
-                not_ported("EntityImageEmptyPackage")
+                Ok(Box::new(EntityImageEmptyPackage::new(entity, diagram)))
             }
         }
         LeafType::PseudoState => Ok(Box::new(EntityImagePseudoState::new(entity, diagram))),

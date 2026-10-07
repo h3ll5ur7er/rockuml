@@ -6,7 +6,7 @@ use std::rc::Rc;
 use crate::abel::{Entity, LeafType};
 use crate::color::ColorType;
 use crate::creole::Display;
-use crate::decoration::symbol::{Block, USymbol, USymbols};
+use crate::decoration::symbol::{Block, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
 use crate::klimt::fashion::Fashion;
@@ -22,13 +22,13 @@ use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
 use crate::skin::component::{TextBlockEmpty, creole_text};
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 use super::entity_group;
 
 pub(crate) struct EntityImageDescription {
-    base: AbstractEntityImage,
-    shape_type: ShapeType,
+    /// Folders and packages pull the links meeting their tab down to their border.
+    is_folder: bool,
     url: Option<Url>,
     as_small: Box<dyn TextBlock>,
     desc: Block,
@@ -105,6 +105,7 @@ impl EntityImageDescription {
                 display,
                 desc_style.font_configuration(),
                 style_title.horizontal_alignment().unwrap_or_default(),
+                style.wrap_width(),
                 desc_style,
                 skin,
             ))
@@ -132,8 +133,7 @@ impl EntityImageDescription {
             )
         };
         Self {
-            base: AbstractEntityImage::new(entity, diagram),
-            shape_type: shape_type(symbol),
+            is_folder: matches!(symbol, USymbols::FOLDER | USymbols::PACKAGE),
             url: entity.url.clone(),
             as_small,
             desc,
@@ -186,7 +186,7 @@ impl TextBlock for EntityImageDescription {
         string_bounder: &dyn StringBounder,
         position: XPoint2D,
     ) -> UTranslate {
-        if self.shape_type == ShapeType::Folder {
+        if self.is_folder {
             self.as_small
                 .magnetic_border_force_at(string_bounder, position)
         } else {
@@ -195,25 +195,7 @@ impl TextBlock for EntityImageDescription {
     }
 }
 
-impl IEntityImage for EntityImageDescription {
-    fn get_shape_type(&self) -> ShapeType {
-        self.shape_type
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-}
-
-/// The outline links meet: package symbols are folders, use cases ovals.
-fn shape_type(symbol: USymbol) -> ShapeType {
-    match symbol {
-        USymbols::FOLDER | USymbols::PACKAGE => ShapeType::Folder,
-        USymbols::HEXAGON => ShapeType::Hexagon,
-        USymbols::USECASE | USymbols::USECASE_BUSINESS => ShapeType::Oval,
-        _ => ShapeType::Rectangle,
-    }
-}
+impl IEntityImage for EntityImageDescription {}
 
 /// The stereotype's sprite, or else its visible labels in `font`.
 fn stereo_block(entity: &Entity, diagram: &CucaDiagram, font: &FontConfiguration) -> Block {

@@ -3,12 +3,10 @@
 use std::cell::Cell;
 
 use super::{ColorSequence, IEntityImage};
-use crate::abel::EntityId;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{RectangleArea, UTranslate, XDimension2D, XPoint2D};
 
 pub(crate) struct SvekNode {
-    leaf: EntityId,
     dim_image: XDimension2D,
     uid: String,
     image: Box<dyn IEntityImage>,
@@ -19,24 +17,18 @@ pub(crate) struct SvekNode {
 
 impl SvekNode {
     pub(super) fn new(
-        leaf: EntityId,
         image: Box<dyn IEntityImage>,
         color_sequence: &mut ColorSequence,
         string_bounder: &dyn StringBounder,
     ) -> Self {
         let color = color_sequence.get_value();
         Self {
-            leaf,
             dim_image: image.calculate_dimension(string_bounder),
             uid: format!("sh{color:04}"),
             image,
             min_x: Cell::new(0.0),
             min_y: Cell::new(0.0),
         }
-    }
-
-    pub(crate) fn get_leaf(&self) -> EntityId {
-        self.leaf
     }
 
     /// `sh0006`: the name of the node in the layout.

@@ -83,7 +83,6 @@ public class StateImageDump {
 		out.println("=== " + header);
 		final XDimension2D dim = image.calculateDimension(bounder);
 		out.println("dimension: " + dim.getWidth() + " " + dim.getHeight());
-		out.println("shape: " + image.getShapeType());
 		final UGraphicDebug ug = new UGraphicDebug(1, dim, null, null, 0, "none");
 		image.drawU(ug);
 		final ByteArrayOutputStream bytes = new ByteArrayOutputStream();

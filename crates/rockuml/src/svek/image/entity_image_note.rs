@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+use super::entity_group;
 use super::opale::{self, MARGIN_X1, MARGIN_X2, MARGIN_Y, Opale};
 use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::{ColorType, HColor};
@@ -9,7 +10,7 @@ use crate::diagram::cuca::CucaDiagram;
 use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
-use crate::klimt::group::{UGroup, UGroupType};
+use crate::klimt::group::UGroup;
 use crate::klimt::shape::UShape;
 use crate::klimt::stencil::RectangleStencil;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
@@ -19,7 +20,7 @@ use crate::skin::body::enhanced_text;
 use crate::skin::component::TextBlockEmpty;
 use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
-use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext, ShapeType};
+use crate::svek::{AbstractEntityImage, IEntityImage, LayoutContext};
 
 /// Where the one link of a note drawn as a callout runs once laid out, instead of being drawn itself.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -70,22 +71,13 @@ impl EntityImageNote {
                 style
                     .horizontal_alignment()
                     .unwrap_or(HorizontalAlignment::Left),
+                style.wrap_width(),
                 &style,
                 skin,
             )
         };
-        let name = entity.get_name(diagram);
-        let mut group = UGroup::at(entity.get_location());
-        group.put(UGroupType::Class, "entity");
-        group.put(UGroupType::Id, &format!("entity_{name}"));
-        group.put(UGroupType::DataEntity, name);
-        group.put(UGroupType::DataUid, entity.get_uid());
-        group.put(
-            UGroupType::DataQualifiedName,
-            diagram.quark(entity.get_quark()).get_qualified_name(),
-        );
         Self {
-            group,
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             url: entity.url.clone(),
             note_background_color,
             border_color: style.value(PName::LineColor).as_color(),
@@ -105,8 +97,14 @@ impl EntityImageNote {
         self.text_block.calculate_dimension(string_bounder).height + 2.0 * MARGIN_Y
     }
 
+    /// The note as a callout along `link`, which the layout draws only for a laid out link.
+    #[cfg(test)]
+    pub(crate) fn draw_as_callout(&self, ug: &UGraphic, link: OpaleLink) {
+        self.draw_with(ug, Some(link));
+    }
+
     /// Draws the note, as a callout along `opale_link` if it has one.
-    pub(crate) fn draw_with(&self, ug: &UGraphic, opale_link: Option<OpaleLink>) {
+    fn draw_with(&self, ug: &UGraphic, opale_link: Option<OpaleLink>) {
         ug.start_group(&self.group);
         if let Some(url) = &self.url {
             ug.start_url(url);
@@ -216,14 +214,6 @@ impl TextBlock for EntityImageNote {
 }
 
 impl IEntityImage for EntityImageNote {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::Rectangle
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.base.is_hidden()
-    }
-
     fn set_opale_link(&mut self, link: LinkId, other: EntityId) {
         self.opale_link = Some((link, other));
     }

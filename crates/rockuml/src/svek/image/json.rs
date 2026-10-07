@@ -14,7 +14,7 @@ use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::SkinParam;
 use crate::style::SName;
-use crate::svek::{IEntityImage, ShapeType};
+use crate::svek::IEntityImage;
 
 /// How tall a JSON element without data is.
 const MARGIN_EMPTY_FIELDS_OR_METHOD: f64 = 13.0;
@@ -60,15 +60,7 @@ impl TextBlock for EntityImageJson {
     }
 }
 
-impl IEntityImage for EntityImageJson {
-    fn get_shape_type(&self) -> ShapeType {
-        ShapeType::RectangleHtmlForPorts
-    }
-
-    fn is_hidden(&self) -> bool {
-        self.data_box.is_hidden()
-    }
-}
+impl IEntityImage for EntityImageJson {}
 
 /// A JSON value drawn (`TextBlockCucaJSon`'s blocks).
 enum JsonBlock {
