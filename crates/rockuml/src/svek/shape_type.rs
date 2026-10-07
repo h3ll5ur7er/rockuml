@@ -1,4 +1,7 @@
-#![cfg_attr(test, allow(dead_code, reason = "drawn by the Smetana bridge"))]
+#![allow(
+    dead_code,
+    reason = "the images of the class, description and state families have the other shapes"
+)]
 
 /// The outline of a node, which decides where links meet it (PlantUML's `ShapeType`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

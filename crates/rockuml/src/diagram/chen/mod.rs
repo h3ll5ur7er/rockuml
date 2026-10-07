@@ -1,6 +1,8 @@
 //! Chen entity relationship diagrams, `@startchen` (PlantUML's `cheneer` package).
 
 mod commands;
+#[cfg(test)]
+mod tests;
 
 use std::rc::Rc;
 
@@ -37,7 +39,8 @@ impl CommandFactory for ChenEerDiagramFactory {
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ChenEerDiagram {
         ChenEerDiagram {
             source: source.clone(),
-            cuca: CucaDiagram::new(Titled::new(SName::ChenEerDiagram, "CHEN_EER", source)),
+            // PlantUML's diagram type falls back to the activity diagrams' styles for Chen diagrams.
+            cuca: CucaDiagram::new(Titled::new(SName::ActivityDiagram, "CHEN_EER", source)),
             owner_stack: Vec::new(),
         }
     }
