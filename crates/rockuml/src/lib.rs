@@ -35,7 +35,6 @@ mod style;
     not(test),
     expect(
         dead_code,
-        unused_imports,
         reason = "drawn by the Smetana bridge, which is not ported yet"
     )
 )]

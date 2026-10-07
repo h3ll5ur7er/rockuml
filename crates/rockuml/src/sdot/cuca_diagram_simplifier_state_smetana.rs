@@ -23,12 +23,12 @@ impl CucaDiagramSimplifierStateSmetana {
                     continue;
                 }
                 let image = GroupMakerStateSmetana::new(diagram, g, string_bounder).get_image()?;
-                let leaf_type =
-                    if diagram.entity(g).get_group_type() == GroupType::ConcurrentState {
-                        LeafType::StateConcurrent
-                    } else {
-                        LeafType::State
-                    };
+                let leaf_type = if diagram.entity(g).get_group_type() == GroupType::ConcurrentState
+                {
+                    LeafType::StateConcurrent
+                } else {
+                    LeafType::State
+                };
                 diagram.override_image(g, Rc::from(image), leaf_type);
                 changed = true;
             }

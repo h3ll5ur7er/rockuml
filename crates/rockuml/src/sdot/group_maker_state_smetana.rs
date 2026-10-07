@@ -67,10 +67,9 @@ impl<'a> GroupMakerStateSmetana<'a> {
             self.sub_layout()?
         } else {
             // The group's own states are the first region; the others were laid out already, deepest first.
-            let mut inners: Vec<Box<dyn IEntityImage>> = vec![Box::new(PaddedEntityImage::uniform(
-                self.sub_layout()?,
-                REGION_PADDING,
-            ))];
+            let mut inners: Vec<Box<dyn IEntityImage>> = vec![Box::new(
+                PaddedEntityImage::uniform(self.sub_layout()?, REGION_PADDING),
+            )];
             for region in regions {
                 let image = diagram
                     .get_svek_image(region)

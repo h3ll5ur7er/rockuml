@@ -66,6 +66,18 @@ impl Bibliotekon {
             .find(|cluster| cluster.get_group() == ent)
     }
 
+    /// The clusters right inside the cluster of `group`, in the order they were opened.
+    pub(crate) fn get_children(&self, group: EntityId) -> impl Iterator<Item = &Cluster> {
+        let parent = self
+            .clusters
+            .iter()
+            .position(|cluster| cluster.get_group() == group)
+            .map(ClusterId);
+        self.clusters
+            .iter()
+            .filter(move |cluster| parent.is_some() && cluster.get_parent_cluster() == parent)
+    }
+
     pub(crate) fn get_node(&self, ent: EntityId) -> Option<&SvekNode> {
         self.nodes.iter().find(|node| node.get_leaf() == ent)
     }

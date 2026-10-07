@@ -5,7 +5,7 @@ use std::cell::Cell;
 use super::{ColorSequence, IEntityImage};
 use crate::abel::EntityId;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
+use crate::klimt::geom::{RectangleArea, UTranslate, XDimension2D, XPoint2D};
 
 pub(crate) struct SvekNode {
     leaf: EntityId,
@@ -60,14 +60,21 @@ impl SvekNode {
         self.dim_image.height
     }
 
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_min_x(&self) -> f64 {
         self.min_x.get()
     }
 
-    #[expect(dead_code, reason = "read by notes drawn around their link")]
     pub(crate) fn get_min_y(&self) -> f64 {
         self.min_y.get()
+    }
+
+    pub(crate) fn get_rectangle_area(&self) -> RectangleArea {
+        RectangleArea::new(
+            self.get_min_x(),
+            self.get_min_y(),
+            self.get_min_x() + self.get_width(),
+            self.get_min_y() + self.get_height(),
+        )
     }
 
     pub(crate) fn reset_move(&self) {

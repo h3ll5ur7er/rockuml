@@ -707,7 +707,12 @@ impl Drawing {
             .get_cluster(group)
             .expect("clusters drawn have been opened");
         cluster.set_position(upper_right, lower_left);
-        cluster.draw_u(ug, &self.diagram);
+        let dim_title = cluster.get_title_dimension(ug.string_bounder());
+        cluster.set_title_position(XPoint2D::new(
+            f64::midpoint(upper_right.x, lower_left.x) - dim_title.width / 2.0,
+            upper_right.y.min(lower_left.y),
+        ));
+        cluster.draw_u(ug, &self.diagram, &self.bibliotekon);
     }
 }
 
