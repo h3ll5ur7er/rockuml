@@ -38,6 +38,7 @@ use crate::style::{
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
+/// Cheap to clone, as layouts of composite states clone their diagram: sprites and images are shared.
 #[derive(Clone, Default)]
 pub(crate) struct SkinParam {
     /// Loaded from the default skin when first needed. Diagram elements keep the builder in force when they
@@ -46,11 +47,11 @@ pub(crate) struct SkinParam {
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
-    sprites: HashMap<String, Rc<dyn Sprite>>,
+    sprites: Rc<HashMap<String, Rc<dyn Sprite>>>,
     /// The base64 data of the PNGs the source refers to by MD5.
-    md5_map: HashMap<String, String>,
+    md5_map: Rc<HashMap<String, String>>,
     /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
-    image_files: HashMap<String, Option<Vec<u8>>>,
+    image_files: Rc<HashMap<String, Option<Vec<u8>>>>,
     rankdir: Rankdir,
 }
 
@@ -83,14 +84,14 @@ impl SkinParam {
     /// With the images of `source`.
     pub(crate) fn new(source: &UmlSource) -> Self {
         Self {
-            md5_map: source.md5_map().clone(),
-            image_files: source.image_files().clone(),
+            md5_map: Rc::new(source.md5_map().clone()),
+            image_files: Rc::new(source.image_files().clone()),
             ..Self::default()
         }
     }
 
     pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {
-        self.sprites.insert(name, sprite);
+        Rc::make_mut(&mut self.sprites).insert(name, sprite);
     }
 
     fn style_builder(&self) -> &StyleBuilder {
