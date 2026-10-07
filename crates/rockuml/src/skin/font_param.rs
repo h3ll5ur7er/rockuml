@@ -12,6 +12,7 @@ pub(crate) enum FontParam {
     CircledCharacter,
     ClassStereotype,
     ObjectStereotype,
+    PackageStereotype,
 }
 
 impl FontParam {
@@ -21,6 +22,7 @@ impl FontParam {
             Self::CircledCharacter => "CIRCLED_CHARACTER",
             Self::ClassStereotype => "CLASS_STEREOTYPE",
             Self::ObjectStereotype => "OBJECT_STEREOTYPE",
+            Self::PackageStereotype => "PACKAGE_STEREOTYPE",
         }
     }
 
@@ -28,20 +30,23 @@ impl FontParam {
         match self {
             Self::CircledCharacter => 17,
             Self::ClassStereotype | Self::ObjectStereotype => 12,
+            Self::PackageStereotype => 14,
         }
     }
 
     fn default_face(self) -> UFontFace {
         match self {
             Self::CircledCharacter => UFontFace::BOLD,
-            Self::ClassStereotype | Self::ObjectStereotype => UFontFace::ITALIC,
+            Self::ClassStereotype | Self::ObjectStereotype | Self::PackageStereotype => {
+                UFontFace::ITALIC
+            }
         }
     }
 
     fn default_family(self) -> &'static str {
         match self {
             Self::CircledCharacter => "Monospaced",
-            Self::ClassStereotype | Self::ObjectStereotype => "SansSerif",
+            Self::ClassStereotype | Self::ObjectStereotype | Self::PackageStereotype => "SansSerif",
         }
     }
 }

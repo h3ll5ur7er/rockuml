@@ -1,0 +1,15 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam packageTitleAlignment left
+hide <<Hidden>> stereotype
+package first {
+}
+package second <<Hidden>> {
+}
+package third <<Shown>> #pink;line:red;line.dashed {
+}
+class Client
+Client --> first
+Client --> second
+Client --> third
+@enduml

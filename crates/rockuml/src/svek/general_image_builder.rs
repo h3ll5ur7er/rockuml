@@ -4,9 +4,9 @@ use super::image::{
     EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
     EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
-    EntityImageDescription, EntityImageJson, EntityImageLollipopInterface, EntityImageMap,
-    EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState, EntityImageState,
-    EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
+    EntityImageDescription, EntityImageEmptyPackage, EntityImageJson, EntityImageLollipopInterface,
+    EntityImageMap, EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState,
+    EntityImageState, EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
     EntityImageSynchroBar, EntityImageTips,
 };
 use super::{Bibliotekon, IEntityImage};
@@ -66,7 +66,7 @@ pub(crate) fn create_entity_image_block(
             if entity.get_usymbol().is_some() {
                 Ok(Box::new(EntityImageDescription::new(entity, diagram)))
             } else {
-                not_ported("EntityImageEmptyPackage")
+                Ok(Box::new(EntityImageEmptyPackage::new(entity, diagram)))
             }
         }
         LeafType::PseudoState => Ok(Box::new(EntityImagePseudoState::new(entity, diagram))),

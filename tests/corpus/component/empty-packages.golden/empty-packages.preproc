@@ -1,0 +1,12 @@
+@startuml
+package foo {
+}
+node bar {
+}
+rectangle box {
+}
+component web
+web --> foo
+web --> bar
+web --> box
+@enduml

@@ -9,6 +9,7 @@ mod entity_image_branch;
 mod entity_image_circle_end;
 mod entity_image_circle_start;
 mod entity_image_description;
+mod entity_image_empty_package;
 mod entity_image_note;
 mod entity_image_note_link;
 mod entity_image_port;
@@ -36,6 +37,7 @@ pub(crate) use entity_image_branch::EntityImageBranch;
 pub(crate) use entity_image_circle_end::EntityImageCircleEnd;
 pub(crate) use entity_image_circle_start::EntityImageCircleStart;
 pub(crate) use entity_image_description::EntityImageDescription;
+pub(crate) use entity_image_empty_package::EntityImageEmptyPackage;
 pub(crate) use entity_image_note::EntityImageNote;
 #[cfg(test)]
 pub(crate) use entity_image_note::OpaleLink;
