@@ -30,6 +30,19 @@ pub(crate) fn tags_pattern(name: &'static str) -> RegexTree {
     RegexTree::named(4, name, r"((\$[^%s{}%g<>$]+)([%s]+(\$[^%s{}%g<>$]+))*)?")
 }
 
+/// The style names written `<<<name>>>` in a stereotype, without repeats (`Stereostyles.build`).
+pub(crate) fn stereostyles(label: &str) -> Vec<String> {
+    static STYLE: LazyLock<Regex> = LazyLock::new(|| java_regex(r"\<{3}(.*?)\>{3}", false));
+    let mut names: Vec<String> = Vec::new();
+    for captures in STYLE.captures_iter(label) {
+        let name = captures[1].to_owned();
+        if !names.contains(&name) {
+            names.push(name);
+        }
+    }
+    names
+}
+
 /// A letter in a coloured circle drawn before the labels.
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Spot {

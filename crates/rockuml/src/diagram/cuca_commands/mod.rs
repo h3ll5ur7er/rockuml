@@ -228,7 +228,11 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::named(1, "SYMBOL", r"(package|rectangle|hexagon|node|artifact|folder|file|frame|cloud|action|process|database|storage|component|card|queue|stack)"),
+            RegexTree::named(
+                1,
+                "SYMBOL",
+                r"(package|rectangle|hexagon|node|artifact|folder|file|frame|cloud|action|process|database|storage|component|card|queue|stack)",
+            ),
             RegexTree::spaces_one_or_more(),
             RegexTree::or(vec![
                 RegexTree::concat(vec![
@@ -280,7 +284,8 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
             RegexTree::end(),
         ]),
         |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
-            let code_arg = CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default()).to_owned();
+            let code_arg =
+                CucaDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default()).to_owned();
             let colors = colors(arg, ColorType::Back)?;
             let code = if code_arg.is_empty() {
                 diagram.cuca().get_unique_sequence("##")
@@ -379,8 +384,7 @@ pub(super) const ALL_TYPES: &str = "person|artifact|actor/|actor|folder|card|fil
 
 /// PlantUML's `CommandCreateElementMultilines` of type 0: `node N as "` with a description up to the
 /// closing quote.
-pub(super) fn create_element_multilines_type0<D: EntityDiagram + 'static>()
--> Box<dyn Command<D>> {
+pub(super) fn create_element_multilines_type0<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     fn start() -> RegexTree {
         RegexTree::concat(vec![
             RegexTree::start(),
@@ -402,8 +406,7 @@ pub(super) fn create_element_multilines_type0<D: EntityDiagram + 'static>()
 }
 
 /// PlantUML's `CommandCreateElementMultilines` of type 1: `node N [` with a description up to `]`.
-pub(super) fn create_element_multilines_type1<D: EntityDiagram + 'static>()
--> Box<dyn Command<D>> {
+pub(super) fn create_element_multilines_type1<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     fn start() -> RegexTree {
         RegexTree::concat(vec![
             RegexTree::start(),

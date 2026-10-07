@@ -10,18 +10,19 @@ use std::rc::Rc;
 use super::{DescriptionDiagram, DescriptionDiagramFactory};
 use crate::abel::{Entity, LeafType};
 use crate::color::{ColorType, Colors, HColor};
-use crate::java::double_to_string;
-use crate::klimt::TextBlock;
-use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
-use crate::klimt::ugraphic::UGraphic;
-use crate::svek::IEntityImage;
-use crate::svek::image::{EntityImageDescription, EntityImagePort};
 use crate::command::factory::{Created, create_system};
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::builder::CommandFactory;
 use crate::host::IsolatedHost;
+use crate::java::double_to_string;
+use crate::klimt::TextBlock;
+use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
+use crate::klimt::ugraphic::UGraphic;
 use crate::preproc::{PreprocessorEnvironment, Source, preprocess};
+use crate::sdot::CucaDiagramFileMakerSmetana;
+use crate::svek::IEntityImage;
+use crate::svek::image::{EntityImageDescription, EntityImagePort};
 
 const FIXTURE: &str = include_str!("../../../tests/data/description.txt");
 
@@ -347,4 +348,41 @@ fn the_commands_build_plantumls_model() {
         cases.len(),
         failures.join("\n")
     );
+}
+
+/// The calls of a trace's input section, up to the layout.
+fn traced_input(trace: &str) -> Vec<String> {
+    trace
+        .lines()
+        .skip(1)
+        .take_while(|line| !line.starts_with("gvLayoutJobs"))
+        .map(str::to_owned)
+        .collect()
+}
+
+/// The bridge makes the graph PlantUML makes, call for call, value for value.
+#[test]
+fn the_smetana_graph_is_the_one_plantuml_lays_out() {
+    let traces = PathBuf::from(CORPUS).join("../smetana");
+    let mut failures = Vec::new();
+    for case in fixture_cases().keys() {
+        // `remove` is ported with `hide` and `show`.
+        if *case == "component/hide-unlinked.puml" {
+            continue;
+        }
+        let Ok(trace) =
+            std::fs::read_to_string(traces.join(case.trim_end_matches(".puml")).join("01.trace"))
+        else {
+            continue;
+        };
+        let mut cuca = read(case).cuca;
+        cuca.eventually_build_phantom_groups(None);
+        let calls = CucaDiagramFileMakerSmetana::new(cuca).smetana_calls(&StringBounderDebug);
+        match calls {
+            Ok(calls) if calls == traced_input(&trace) => {}
+            Ok(_) => failures.push((*case).to_owned()),
+            Err(not_ported) => failures.push(format!("{case}: {not_ported}")),
+        }
+    }
+    assert!(failures.is_empty(), "{failures:#?}");
 }

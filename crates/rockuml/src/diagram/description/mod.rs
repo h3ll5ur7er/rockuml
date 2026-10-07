@@ -9,20 +9,19 @@ use std::rc::Rc;
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
 use super::cuca::{CucaDiagram, EntityDiagram};
-use crate::abel::LeafType;
-use crate::decoration::symbol::USymbols;
-use crate::java;
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::LeafType;
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
+use crate::decoration::symbol::USymbols;
+use crate::java;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
-
 
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
@@ -110,7 +109,10 @@ impl EntityDiagram for DescriptionDiagram {
         if let Some(name) = id
             .strip_prefix(':')
             .and_then(|rest| rest.strip_suffix(":/"))
-            .or_else(|| id.strip_prefix('(').and_then(|rest| rest.strip_suffix(")/")))
+            .or_else(|| {
+                id.strip_prefix('(')
+                    .and_then(|rest| rest.strip_suffix(")/"))
+            })
         {
             return name;
         }

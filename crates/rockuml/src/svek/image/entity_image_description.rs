@@ -4,7 +4,7 @@
 use std::rc::Rc;
 
 use crate::abel::{Entity, LeafType};
-use crate::color::{ColorType, HColor};
+use crate::color::ColorType;
 use crate::creole::Display;
 use crate::decoration::symbol::{Block, USymbols};
 use crate::diagram::cuca::CucaDiagram;
@@ -21,7 +21,6 @@ use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
 use crate::skin::component::{TextBlockEmpty, creole_text};
-use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
 
@@ -270,4 +269,3 @@ fn name_block(
         ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 6.0, 0.0, 6.0),
     )
 }
-

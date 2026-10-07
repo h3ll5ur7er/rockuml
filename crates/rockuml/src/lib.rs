@@ -7,8 +7,8 @@ mod command;
 mod creole;
 mod decoration;
 mod deflate;
-mod direction;
 pub mod diagram;
+mod direction;
 mod emoji;
 mod file_policy;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.
@@ -31,14 +31,6 @@ mod skin;
 mod stdlib;
 mod stereo;
 mod style;
-#[cfg_attr(
-    not(test),
-    expect(
-        dead_code,
-        unused_imports,
-        reason = "drawn by the Smetana bridge, which is not ported yet"
-    )
-)]
 mod svek;
 mod svg_parser;
 mod text;

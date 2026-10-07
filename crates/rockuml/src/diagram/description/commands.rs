@@ -11,7 +11,7 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::{EntityDiagram, CucaDiagram};
+use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::labels::Labels;
 use crate::diagram::cuca_commands::{ALL_TYPES, add_tags, colors, exists_with_bad_type3};
 use crate::direction::Direction;
@@ -187,7 +187,9 @@ fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &
     }
     let display = Display::with_newlines(cuca.quark(quark).get_name());
     let (leaf_type, usymbol) = match code_char {
-        Some('(') if end_with_slash => (LeafType::UsecaseBusiness, Some(USymbols::USECASE_BUSINESS)),
+        Some('(') if end_with_slash => {
+            (LeafType::UsecaseBusiness, Some(USymbols::USECASE_BUSINESS))
+        }
         Some('(') => (LeafType::Usecase, Some(USymbols::USECASE)),
         Some(':') if end_with_slash => (
             LeafType::Description,
@@ -222,7 +224,8 @@ fn create_leaf(
     entity
 }
 
-const CODE_CORE: &str = r"[%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]";
+const CODE_CORE: &str =
+    r"[%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]";
 const DISPLAY_CORE: &str = r"[%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]";
 
 fn code() -> String {
@@ -632,7 +635,11 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::start(),
             RegexTree::named(1, "TYPE", r"(requirement|domain)"),
             RegexTree::spaces_one_or_more(),
-            RegexTree::named(2, "DISPLAY", r"[%g](.+?)(?:\<([^\<\>/](?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<\>)*\>)*\>)*\>)*\>)*)\>)?[%g]"),
+            RegexTree::named(
+                2,
+                "DISPLAY",
+                r"[%g](.+?)(?:\<([^\<\>/](?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<\>)*\>)*\>)*\>)*\>)*)\>)?[%g]",
+            ),
             RegexTree::spaces_one_or_more(),
             RegexTree::leaf(r"as"),
             RegexTree::spaces_one_or_more(),
@@ -669,7 +676,8 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
                 cuca.really_create_leaf(Some(location), quark, display, leaf_type)
             };
             if let Some(stereotype) = stereotype {
-                diagram.cuca.entity_mut(entity).stereotype = Some(stereotype_with_spot(stereotype)?);
+                diagram.cuca.entity_mut(entity).stereotype =
+                    Some(stereotype_with_spot(stereotype)?);
             }
             Ok(())
         },
