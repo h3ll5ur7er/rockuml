@@ -1,0 +1,62 @@
+cgraph-dump 1
+graph "g" nodes 7 edges 4
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011"
+subgraph "cluster12" parent "g" seq 2 nodes "sh0016" "sh0017" "sh0018" "sh0019"
+graph ids "g" "cluster6" "cluster12"
+node ids "sh0020" "sh0010" "sh0011" "sh0016" "sh0017" "sh0018" "sh0019"
+in "g" node "sh0020" out e2> e3> e4> in edges e2> e3> e4> degree 0 3
+in "g" node "sh0010" out in edges degree 0 0
+in "g" node "sh0011" out e1> in edges e1> degree 0 1
+in "g" node "sh0016" out in e2< edges e2< degree 1 0
+in "g" node "sh0017" out in e3< edges e3< degree 1 0
+in "g" node "sh0018" out in e4< edges e4< degree 1 0
+in "g" node "sh0019" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+in "cluster12" node "sh0016" out in edges degree 0 0
+in "cluster12" node "sh0017" out in edges degree 0 0
+in "cluster12" node "sh0018" out in edges degree 0 0
+in "cluster12" node "sh0019" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+attr "g" "margin" "16"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "0.805807767240011"
+attr "sh0020" "height" "1.0277777777777777"
+attr "cluster6" "label" "_dim_141_17_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "0.802085948401853"
+attr "sh0010" "height" "1.0277777777777777"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.8158173596244624"
+attr "sh0011" "height" "1.0277777777777777"
+attr "cluster12" "label" "_dim_120_17_"
+attr "cluster12" "margin" "16"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "2.0972288492537334"
+attr "sh0016" "height" "0.48611243651741337"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "3.1952965328431677"
+attr "sh0017" "height" "0.7057259732353003"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "1.3128350659617873"
+attr "sh0018" "height" "0.3583193037947685"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "1.7170522446666576"
+attr "sh0019" "height" "0.4100771155999982"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr "g" "rankdir" "LR"

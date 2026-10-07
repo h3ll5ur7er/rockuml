@@ -1,0 +1,57 @@
+cgraph-dump 1
+graph "g" nodes 6 edges 5
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011" "zent0001"
+graph ids "g" "cluster6"
+node ids "sh0012" "sh0013" "sh0014" "sh0010" "sh0011" "zent0001"
+in "g" node "sh0012" out e4> in e3< edges e4> e3< degree 1 1
+in "g" node "sh0013" out e1> in edges e1> degree 0 1
+in "g" node "sh0014" out in e5< edges e5< degree 1 0
+in "g" node "sh0010" out e2> in edges e2> degree 0 1
+in "g" node "sh0011" out e3> in e4< e2< edges e3> e4< e2< degree 2 1
+in "g" node "zent0001" out e5> in e1< edges e5> e1< degree 1 1
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+in "cluster6" node "zent0001" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward e4<
+find e4> forward e4< backward e3<
+find e5> forward e5< backward none
+attr "g" "margin" "16"
+attr "sh0012" "shape" "box"
+attr "sh0012" "width" "6.39631593507211"
+attr "sh0012" "height" "3.6666666666666665"
+attr "sh0013" "shape" "box"
+attr "sh0013" "width" "0.2777777777777778"
+attr "sh0013" "height" "0.2777777777777778"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "0.3055555555555556"
+attr "sh0014" "height" "0.3055555555555556"
+attr "cluster6" "label" "_dim_160_17_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "0.2777777777777778"
+attr "sh0010" "height" "0.2777777777777778"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "1.199427570407628"
+attr "sh0011" "height" "0.6944444444444444"
+attr "zent0001" "shape" "box"
+attr "zent0001" "width" "0.1"
+attr "zent0001" "height" "0.1"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr e3> "label" "_dim_129_17_"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e4> "label" "_dim_129_17_"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"

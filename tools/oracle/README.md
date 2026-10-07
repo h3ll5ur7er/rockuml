@@ -122,3 +122,16 @@ fields verbatim inside the quoted string, because Smetana's record parser splits
 Two full runs produce byte-identical traces, and the debug output with tracing on equals the goldens. Smetana's
 object ids come from a JVM-wide `CString` counter (`CString.UID`), so absolute ids depend on what ran before in the
 JVM; only their relative order (creation order) affects cgraph's dictionaries. One JVM per case keeps that stable.
+
+## cgraph dumps
+
+```bash
+bash tools/oracle/cgraph-dumps.sh
+```
+
+`cgraph-dump/CgraphDump.java` replays a trace's input section through Java's cgraph and dumps what the port's
+cgraph must reproduce: counts, the iteration orders of nodes, edges and subgraphs, the order of object ids, wildcard
+edge lookups (`agfindedge`) and attribute values. Each `tests/smetana/**/NN.trace` gives
+`tests/smetana-cgraph/**/NN.dump`; the hand-written inputs in `tests/smetana-cgraph/synthetic/*.trace` (same format)
+get their dump next to them. `crates/smetana/tests/cgraph_replay.rs` makes the same calls and compares. Rerun the
+script after regenerating the traces.
