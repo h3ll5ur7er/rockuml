@@ -345,8 +345,12 @@ fn execute_link(
         },
     );
     let label = arg.get("LABEL", 0).map(Display::with_newlines);
-    let link_arg = LinkArg::build(label, i32::try_from(length).unwrap_or(i32::MAX));
     let cuca = &mut diagram.cuca;
+    let link_arg = LinkArg::build_managing(
+        label,
+        i32::try_from(length).unwrap_or(i32::MAX),
+        cuca.skin().class_attribute_icon_size() > 0,
+    );
     let mut link = cuca.new_link(Some(location), cl1, cl2, link_type, link_arg);
     if matches!(direction, Some(Direction::Left | Direction::Up)) {
         link = cuca.get_inv(link);

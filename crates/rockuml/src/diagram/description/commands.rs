@@ -112,9 +112,10 @@ fn execute_link_element(
         ),
     };
     let cuca = &mut diagram.cuca;
-    let link_arg = LinkArg::build(
+    let link_arg = LinkArg::build_managing(
         labels.get_label_link().map(Display::with_newlines),
         i32::try_from(length).expect("an arrow fits a line"),
+        cuca.skin().class_attribute_icon_size() > 0,
     )
     .with_quantifier(labels.get_first_label(), labels.get_second_label());
     let mut link = cuca.new_link(Some(location), cl1, cl2, link_type, link_arg);

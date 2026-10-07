@@ -255,3 +255,22 @@ fn hide_empty_description_is_remembered() {
     let diagram = parse(&["hide empty description", "[*] --> A"]).unwrap();
     assert!(diagram.cuca.is_hide_empty_description_for_state());
 }
+
+#[test]
+fn transition_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
+    let label = |icon_size: &str| {
+        let diagram = parse(&[
+            &format!("skinparam classAttributeIconSize {icon_size}"),
+            "A --> B : +start",
+        ])
+        .unwrap();
+        let cuca = &diagram.cuca;
+        let link_arg = cuca.link(cuca.get_link_ids()[0]).get_link_arg();
+        (
+            link_arg.get_visibility_modifier().is_some(),
+            link_arg.get_label().unwrap().lines().join("\n"),
+        )
+    };
+    assert_eq!(label("10"), (true, "start".to_owned()));
+    assert_eq!(label("0"), (false, "+start".to_owned()));
+}

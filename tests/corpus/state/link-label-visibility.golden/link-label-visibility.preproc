@@ -1,6 +1,0 @@
-@startuml
-state Idle
-state Busy
-Idle --> Busy : +start
-Busy --> Idle : #stop
-@enduml

@@ -86,10 +86,20 @@ fn fixture_cases() -> BTreeMap<&'static str, (String, String)> {
 pub(super) fn read(case: &str) -> DescriptionDiagram {
     let path = PathBuf::from(CORPUS).join(case);
     let text = std::fs::read_to_string(&path).unwrap();
+    parse(&text, case, path.parent().unwrap().to_owned())
+}
+
+/// The diagram the description commands make of the lines between `@startuml` and `@enduml`.
+fn parse_lines(body: &[&str]) -> DescriptionDiagram {
+    let text = ["@startuml", &body.join("\n"), "@enduml"].join("\n");
+    parse(&text, "test", PathBuf::new())
+}
+
+fn parse(text: &str, case: &str, directory: PathBuf) -> DescriptionDiagram {
     let source = Source {
-        text: &text,
+        text,
         description: case,
-        directory: path.parent().unwrap().to_owned(),
+        directory,
         environment: PreprocessorEnvironment::default(),
     };
     let block = preprocess(&source, &IsolatedHost).remove(0);
@@ -385,4 +395,23 @@ fn the_smetana_graph_is_the_one_plantuml_lays_out() {
         }
     }
     assert!(failures.is_empty(), "{failures:#?}");
+}
+
+#[test]
+fn link_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
+    let label = |icon_size: &str| {
+        let diagram = parse_lines(&[
+            &format!("skinparam classAttributeIconSize {icon_size}"),
+            "actor User",
+            "User --> (Run) : +start",
+        ]);
+        let cuca = &diagram.cuca;
+        let link_arg = cuca.link(cuca.get_link_ids()[0]).get_link_arg();
+        (
+            link_arg.get_visibility_modifier().is_some(),
+            link_arg.get_label().unwrap().lines().join("\n"),
+        )
+    };
+    assert_eq!(label("10"), (true, "start".to_owned()));
+    assert_eq!(label("0"), (false, "+start".to_owned()));
 }
