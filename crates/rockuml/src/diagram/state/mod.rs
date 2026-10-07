@@ -3,6 +3,8 @@
 
 mod commands;
 #[cfg(test)]
+mod graph_tests;
+#[cfg(test)]
 mod image_tests;
 #[cfg(test)]
 mod tests;

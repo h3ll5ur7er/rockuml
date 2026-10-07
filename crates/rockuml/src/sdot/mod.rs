@@ -40,6 +40,48 @@ use crate::svek::{
     create_entity_image_block,
 };
 
+/// A graph to lay out; tests that record graphs get traced ones.
+fn new_graph() -> Graph {
+    #[cfg(test)]
+    if recorded_graphs::is_recording() {
+        return Graph::traced();
+    }
+    Graph::new()
+}
+
+/// The graphs layouts made on this thread, in the order they were laid out, while tests record them.
+#[cfg(test)]
+pub(crate) mod recorded_graphs {
+    use std::cell::RefCell;
+
+    use smetana::Graph;
+
+    thread_local! {
+        static RECORDED: RefCell<Option<Vec<Vec<String>>>> = const { RefCell::new(None) };
+    }
+
+    pub(crate) fn start() {
+        RECORDED.with(|recorded| *recorded.borrow_mut() = Some(Vec::new()));
+    }
+
+    /// The cgraph calls of each graph since [`start`], as Smetana traces write them.
+    pub(crate) fn take() -> Vec<Vec<String>> {
+        RECORDED.with(|recorded| recorded.borrow_mut().take().unwrap_or_default())
+    }
+
+    pub(super) fn is_recording() -> bool {
+        RECORDED.with(|recorded| recorded.borrow().is_some())
+    }
+
+    pub(super) fn record(graph: &Graph) {
+        RECORDED.with(|recorded| {
+            if let (Some(graphs), Some(calls)) = (recorded.borrow_mut().as_mut(), graph.trace()) {
+                graphs.push(calls.to_vec());
+            }
+        });
+    }
+}
+
 /// Lays a diagram out with Smetana and draws the result (PlantUML's `CucaDiagramFileMakerSmetana` and its
 /// base `CucaDiagramFileMaker`). The maker owns the diagram it lays out: drawing changes it, as PlantUML
 /// does, so callers hand it a copy.
@@ -261,10 +303,12 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
         self.print(string_bounder)?;
-        let mut graph = Graph::new();
+        let mut graph = new_graph();
         let Some(smetana) = self.export_graph(string_bounder, &mut graph) else {
             return Ok(Box::new(TextBlockEmpty::default()));
         };
+        #[cfg(test)]
+        recorded_graphs::record(&graph);
         let layout = graph
             .layout()
             .map_err(|_| NotYetPorted("graphs Smetana cannot lay out"))?;

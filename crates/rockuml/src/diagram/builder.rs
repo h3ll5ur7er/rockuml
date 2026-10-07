@@ -367,11 +367,14 @@ mod tests {
         create_uml(UmlSource::new(lines.clone(), Vec::new()), &lines)
     }
 
-    /// What the lines read as: the part not ported, or `"error"`.
+    /// What the lines read as: the part not ported, `"error"`, or the type a drawable diagram announces.
     fn read_as(texts: &[&str]) -> &'static str {
         match create(texts) {
             Ok(diagram) if diagram.is_error() => "error",
-            Ok(_) => "a drawable diagram",
+            Ok(diagram) => diagram
+                .export_settings()
+                .diagram_type
+                .unwrap_or("a drawable diagram"),
             Err(NotYetPorted(what)) => what,
         }
     }
@@ -381,7 +384,7 @@ mod tests {
         assert_eq!(read_as(&["@startuml", "@enduml"]), "the welcome screen");
         assert_eq!(
             read_as(&["@startuml", "Alice -> Bob", "@enduml"]),
-            "a drawable diagram"
+            "SEQUENCE"
         );
         assert_eq!(
             read_as(&["@startuml", "class A", "A <|-- B", "@enduml"]),
@@ -400,10 +403,7 @@ mod tests {
             read_as(&["@startuml", "actor User", "User --> (Login)", "@enduml"]),
             "usecase, component and deployment diagrams"
         );
-        assert_eq!(
-            read_as(&["@startuml", "[*] --> Idle", "@enduml"]),
-            "state diagrams"
-        );
+        assert_eq!(read_as(&["@startuml", "[*] --> Idle", "@enduml"]), "STATE");
         assert_eq!(
             read_as(&["@startuml", "start", ":Hello;", "stop", "@enduml"]),
             "activity diagrams"
