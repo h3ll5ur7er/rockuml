@@ -89,6 +89,23 @@ impl LinkStyle {
     }
 }
 
+/// As PlantUML writes it out, like `DASHED(null)` or `BOLD(2.0)`.
+impl std::fmt::Display for LinkStyle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let kind = match self.kind {
+            Type::Normal => "NORMAL",
+            Type::Dashed => "DASHED",
+            Type::Dotted => "DOTTED",
+            Type::Bold => "BOLD",
+            Type::Invisible => "INVISIBLE",
+        };
+        match self.thickness {
+            Some(thickness) => write!(f, "{kind}({})", crate::java::double_to_string(thickness)),
+            None => write!(f, "{kind}(null)"),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -90,6 +90,38 @@ impl BlocLines {
         }
     }
 
+    /// The first line replaced by `data`, the last one without its last `remove_at_end` characters, like
+    /// the markup around a block's text.
+    #[must_use]
+    pub(crate) fn remove_starting_and_ending(&self, data: &str, remove_at_end: usize) -> Self {
+        let mut lines = self.lines.clone();
+        if let Some(first) = lines.first_mut() {
+            *first = first.with_text(data);
+        }
+        if remove_at_end > 0
+            && let Some(last) = lines.last_mut()
+        {
+            let text = last.text();
+            let end = text
+                .char_indices()
+                .rev()
+                .nth(remove_at_end - 1)
+                .map_or(0, |(at, _)| at);
+            *last = last.with_text(&text[..end]);
+        }
+        Self { lines }
+    }
+
+    /// The last line's text replaced by `last`.
+    #[must_use]
+    pub(crate) fn override_last_line(&self, last: &str) -> Self {
+        let mut lines = self.lines.clone();
+        if let Some(line) = lines.last_mut() {
+            *line = line.with_text(last);
+        }
+        Self { lines }
+    }
+
     /// The lines as one, joined by hidden newlines that line breaks in labels keep.
     #[must_use]
     pub(crate) fn to_single_line_with_hidden_new_line(&self) -> Self {
