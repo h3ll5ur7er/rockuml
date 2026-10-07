@@ -2,6 +2,11 @@
 //! objects are read here too.
 
 mod commands;
+mod hide_show;
+#[cfg(test)]
+mod tests;
+
+pub(super) use hide_show::{hide_show_by_gender, hide_show_by_visibility};
 
 use std::rc::Rc;
 
@@ -21,9 +26,6 @@ use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
 
-/// Drawing class diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("class diagrams");
-
 pub(super) struct ClassDiagram {
     source: Rc<UmlSource>,
     diagram: AbstractClassOrObjectDiagram,
@@ -40,8 +42,7 @@ impl CommandFactory for ClassDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Class;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ClassDiagram {
-        let mut titled = Titled::new(SName::ClassDiagram, "CLASS", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::ClassDiagram, "CLASS", source);
         ClassDiagram {
             source: source.clone(),
             diagram: AbstractClassOrObjectDiagram::new(titled),
@@ -82,7 +83,7 @@ impl CommandFactory for ClassDiagramFactory {
             commands::namespace(),
             commands::namespace2(),
             commands::namespace_empty(),
-            commands::stereotype(),
+            commands::stereotype_command(),
             commands::link_class(),
             commands::link_lollipop(),
             note::tip_on_entity_multi_line(true),
@@ -153,6 +154,10 @@ impl TitledDiagram for ClassDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.diagram.cuca.titled
     }
+
+    fn class_or_object_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        Some(&mut self.diagram.cuca)
+    }
 }
 
 impl Diagram for ClassDiagram {
@@ -163,9 +168,10 @@ impl Diagram for ClassDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.diagram.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.diagram.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

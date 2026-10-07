@@ -98,8 +98,13 @@ impl XmlNode {
                     out.push_str("?>");
                 }
                 XmlContent::Comment(comment) => {
+                    // A comment cannot hold `--`, nor end with `-`.
+                    let safe = comment.replace("--", "- -");
                     out.push_str("<!--");
-                    out.push_str(comment);
+                    out.push_str(&safe);
+                    if safe.ends_with('-') {
+                        out.push(' ');
+                    }
                     out.push_str("-->");
                 }
             }

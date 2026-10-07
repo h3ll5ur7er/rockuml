@@ -15,6 +15,7 @@ use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::sprite::SpriteContainer;
 
+use super::cuca::CucaDiagram;
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
@@ -114,6 +115,16 @@ impl Pragma {
 /// A diagram built from commands that apply to every titled diagram.
 pub(super) trait TitledDiagram {
     fn titled(&mut self) -> &mut Titled;
+
+    /// The entities of a class or object diagram, which `hide` and `show` commands treat their own way.
+    fn class_or_object_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        None
+    }
+
+    /// The entities of a diagram that has them, whose names `set separator` splits.
+    fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        self.class_or_object_diagram()
+    }
 
     /// `hide empty description`, which only state diagrams heed.
     fn set_hide_empty_description(&mut self, _hide: bool) {}

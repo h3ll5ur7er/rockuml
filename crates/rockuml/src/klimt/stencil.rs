@@ -23,11 +23,15 @@ pub trait HorizontalLineDrawer {
 }
 
 /// Separators spanning a stencil (`UGraphicStencil`).
-pub(crate) struct UGraphicStencil(pub Rc<dyn Stencil>);
+pub(crate) struct UGraphicStencil {
+    pub stencil: Rc<dyn Stencil>,
+    /// What separators without a style of their own are drawn with: the outline of the shape the stencil is.
+    pub default_stroke: Option<UStroke>,
+}
 
 impl HorizontalLineDrawer for UGraphicStencil {
     fn draw_hline(&self, ug: &UGraphic, line: &UHorizontalLine, y: f64) {
-        line.draw_line_internal(ug, self.0.as_ref(), y);
+        line.draw_line_internal(ug, self.stencil.as_ref(), y, self.default_stroke);
     }
 }
 
@@ -60,8 +64,18 @@ const DOUBLE_LINE_GAP: f64 = 2.0;
 
 impl UHorizontalLine<'_> {
     /// Draws the separator at height `y` of a surface placed where the stencil was set.
-    pub(crate) fn draw_line_internal(&self, ug: &UGraphic, stencil: &dyn Stencil, y: f64) {
-        let ug_stroke = ug.with_stroke(self.stroke());
+    pub(crate) fn draw_line_internal(
+        &self,
+        ug: &UGraphic,
+        stencil: &dyn Stencil,
+        y: f64,
+        default_stroke: Option<UStroke>,
+    ) {
+        let stroke = match default_stroke {
+            Some(stroke) if self.style == '\0' => stroke,
+            _ => self.stroke(),
+        };
+        let ug_stroke = ug.with_stroke(stroke);
         let string_bounder = ug.string_bounder();
         let extent = |y| {
             (

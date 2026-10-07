@@ -17,6 +17,7 @@ use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
 use crate::klimt::url::Url;
 use crate::plasma::QuarkId;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::style::StyleBuilder;
 use crate::text::LineLocation;
@@ -63,6 +64,7 @@ pub(crate) struct Entity {
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
     port_short_names: JavaHashSet<String>,
+    pub visibility_modifier: Option<VisibilityModifier>,
     /// The character a state's concurrent regions were separated with, `--` or `||`.
     pub concurrent_separator: Option<char>,
 }
@@ -88,7 +90,6 @@ impl Entity {
             leaf_or_group: entity_type,
             display: Display::default(),
             stereotype: None,
-            bodier: Bodier::default(),
             stereostyles: Vec::new(),
             url: None,
             generic: None,
@@ -103,6 +104,11 @@ impl Entity {
             usymbol: None,
             tips: Vec::new(),
             port_short_names: JavaHashSet::default(),
+            bodier: match entity_type {
+                EntityType::Leaf(leaf_type) => Bodier::for_leaf(leaf_type),
+                EntityType::Group(_) => Bodier::for_group(),
+            },
+            visibility_modifier: None,
             concurrent_separator: None,
         }
     }
@@ -155,6 +161,7 @@ impl Entity {
     }
 
     pub(crate) fn mute_to_type(&mut self, new_type: LeafType) {
+        self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
     }
 
@@ -179,8 +186,15 @@ impl Entity {
                 return false;
             }
         }
+        self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
         true
+    }
+
+    fn mute_class_to_object(&mut self, new_type: LeafType) {
+        if self.get_leaf_type() == Some(LeafType::Class) && new_type == LeafType::Object {
+            self.bodier.mute_class_to_object();
+        }
     }
 
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {

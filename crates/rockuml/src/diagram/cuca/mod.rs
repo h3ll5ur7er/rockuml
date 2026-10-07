@@ -39,6 +39,7 @@ use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::plasma::{Plasma, Quark, QuarkId};
 use crate::sdot::{CucaDiagramFileMakerSmetana, CucaDiagramSimplifierStateSmetana};
 use crate::skin::SkinParam;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
 use crate::svek::IEntityImage;
@@ -88,6 +89,8 @@ pub(crate) struct CucaDiagram {
     hide_or_shows: Vec<EntityHideOrShow>,
     hides2: Vec<HideOrShow>,
     removed: Vec<HideOrShow>,
+    /// The visibilities whose members bodies leave out, as a set.
+    hide_visibility_modifier: Vec<VisibilityModifier>,
     /// Numbers entities, links and other unique names across the whole diagram.
     cpt1: i32,
     /// Numbers names afresh on every parsing pass.
@@ -115,6 +118,7 @@ impl CucaDiagram {
             hide_or_shows: Vec::new(),
             hides2: Vec::new(),
             removed: Vec::new(),
+            hide_visibility_modifier: Vec::new(),
             cpt1: 0,
             cpt2: 0,
             raw_layout: 0,
@@ -494,6 +498,28 @@ impl CucaDiagram {
                 show,
             });
         }
+    }
+
+    /// `hide private members` or `show public fields`.
+    pub(crate) fn hide_or_show_visibility_modifier(
+        &mut self,
+        visibilities: &[VisibilityModifier],
+        show: bool,
+    ) {
+        if show {
+            self.hide_visibility_modifier
+                .retain(|hidden| !visibilities.contains(hidden));
+        } else {
+            for visibility in visibilities {
+                if !self.hide_visibility_modifier.contains(visibility) {
+                    self.hide_visibility_modifier.push(*visibility);
+                }
+            }
+        }
+    }
+
+    pub(crate) fn get_hides_visibility_modifier(&self) -> &[VisibilityModifier] {
+        &self.hide_visibility_modifier
     }
 
     /// `hide what` or `show what`; inside a group, names are relative to it.

@@ -9,6 +9,7 @@ use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::url::Url;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 use crate::style::StyleBuilder;
 use crate::text::LineLocation;
@@ -49,14 +50,32 @@ pub(crate) struct LinkArg {
     labelangle: Option<String>,
     kal1: Option<String>,
     kal2: Option<String>,
+    /// A label starting with a visibility character shows it as an icon.
+    visibility_modifier: Option<VisibilityModifier>,
     length: i32,
 }
 
 impl LinkArg {
-    /// `<<stereotypes>>` in the label show in guillemets.
     pub(crate) fn build(label: Option<Display>, length: i32) -> Self {
+        Self::build_managing(label, length, true)
+    }
+
+    /// `<<stereotypes>>` in the label show in guillemets; a visibility starting it becomes an icon when
+    /// `manage_visibility_modifier`.
+    pub(crate) fn build_managing(
+        label: Option<Display>,
+        length: i32,
+        manage_visibility_modifier: bool,
+    ) -> Self {
+        let visibility_modifier = label
+            .as_ref()
+            .and_then(|label| label.lines().first())
+            .filter(|_| manage_visibility_modifier)
+            .filter(|first| VisibilityModifier::is_visibility_character(first))
+            .and_then(|first| VisibilityModifier::get_visibility_modifier(first, false));
         Self {
-            label: label.map(|label| label.manage_guillemet()),
+            visibility_modifier,
+            label: label.map(|label| label.manage_guillemet(manage_visibility_modifier)),
             quantifier1: None,
             quantifier2: None,
             role1: None,
@@ -157,6 +176,10 @@ impl LinkArg {
 
     pub(crate) fn get_kal1(&self) -> Option<&str> {
         self.kal1.as_deref()
+    }
+
+    pub(crate) fn get_visibility_modifier(&self) -> Option<VisibilityModifier> {
+        self.visibility_modifier
     }
 
     pub(crate) fn get_kal2(&self) -> Option<&str> {

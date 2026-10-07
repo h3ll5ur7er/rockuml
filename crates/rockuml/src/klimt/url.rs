@@ -59,9 +59,14 @@ impl Url {
         ))
     }
 
+    /// The forms of a `[[...]]` markup, with PlantUML's `%s`-style classes (`UrlBuilder.getRegexp`).
+    pub(crate) fn regexp() -> String {
+        Forms::alternatives()
+    }
+
     /// A `[[...]]` markup in a command, with its 12 groups (`UrlBuilder.MANDATORY`).
     pub(crate) fn mandatory_pattern() -> RegexTree {
-        RegexTree::named(12, "URL", format!("({})", Forms::alternatives()))
+        RegexTree::named(12, "URL", format!("({})", Self::regexp()))
     }
 
     /// `UrlBuilder.OPTIONAL`.

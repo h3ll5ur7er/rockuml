@@ -18,19 +18,23 @@ pub enum UGroupType {
     DataEntity2Uid,
     DataUid,
     DataSourceLine,
+    DataVisibilityModifier,
     DataLinkType,
 }
 
 impl UGroupType {
-    /// The attribute SVG writes the value in (`PortableSvgDocument.applyGroupAttribute`).
+    /// The attribute SVG writes the value in; `None` for the title and for what SVG leaves out
+    /// (`PortableSvgDocument.applyGroupAttribute`).
     pub fn svg_attribute_name(self) -> Option<&'static str> {
         match self {
             Self::Class => Some("class"),
             Self::DataQualifiedName => Some("data-qualified-name"),
+            // PlantUML writes the uid as the id, for now.
+            Self::DataUid => Some("id"),
             Self::DataEntity1Uid => Some("data-entity-1"),
             Self::DataEntity2Uid => Some("data-entity-2"),
-            Self::DataUid => Some("id"),
             Self::DataSourceLine => Some("data-source-line"),
+            Self::DataVisibilityModifier => Some("data-visibility-modifier"),
             Self::DataLinkType => Some("data-link-type"),
             Self::Id | Self::Title | Self::DataEntity | Self::DataEntity1 | Self::DataEntity2 => {
                 None

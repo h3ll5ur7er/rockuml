@@ -13,6 +13,7 @@ use super::chrome::Warning;
 use super::scale::Scale;
 use super::titled::TitledDiagram;
 use crate::abel::DisplayPositioned;
+use crate::command::unported::NotPortedCommands;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
@@ -65,7 +66,7 @@ pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Co
             &plantuml_regex("^end[%s]?header$"),
             |diagram, lines| Ribbon::Header.set_from_block(diagram, lines),
         )),
-        unported::namespace_separator(),
+        namespace_separator(),
     ]
 }
 
@@ -148,8 +149,8 @@ pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comm
                 diagram.set_hide_empty_description(hide);
             },
         ),
-        unported::hide_show_by_visibility(),
-        unported::hide_show_by_gender(),
+        super::class::hide_show_by_visibility(),
+        super::class::hide_show_by_gender(),
     ]
 }
 
@@ -160,6 +161,40 @@ pub(super) fn add_common_commands1<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
     commands.extend(add_common_scale_commands());
     commands.extend(add_common_hides());
     commands
+}
+
+/// PlantUML's `CommandNamespaceSeparator`: `set separator ::`, or `none` to keep names whole. Only diagrams of
+/// entities have namespaces.
+fn namespace_separator<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
+        RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::leaf(r"set"),
+            RegexTree::spaces_one_or_more(),
+            RegexTree::or(vec![
+                RegexTree::leaf(r"separator"),
+                RegexTree::leaf(r"namespaceseparator"),
+            ]),
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(
+                1,
+                "SEPARATOR",
+                r"((?:none|null)|[\\]{2}|::|[^%pLN%s_$#\\{}<>%g])",
+            ),
+            RegexTree::end(),
+        ]),
+        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
+            let separator = arg.get("SEPARATOR", 0).unwrap_or_default();
+            let separator = (!separator.eq_ignore_ascii_case("none")
+                && !separator.eq_ignore_ascii_case("null"))
+            .then_some(separator);
+            match diagram.entity_diagram() {
+                Some(cuca) => cuca.set_namespace_separator(separator),
+                None => diagram.command_not_ported("CommandNamespaceSeparator"),
+            }
+            Ok(())
+        },
+    )))
 }
 
 fn blank_line_pattern() -> RegexTree {

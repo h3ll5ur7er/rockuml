@@ -182,7 +182,19 @@ impl UGraphic {
     /// Separators drawn on the result span `stencil`, which is placed where this surface is.
     #[must_use]
     pub fn with_stencil(&self, stencil: Rc<dyn Stencil>) -> Self {
-        self.with_horizontal_line_drawer(Rc::new(UGraphicStencil(stencil)))
+        self.with_horizontal_line_drawer(Rc::new(UGraphicStencil {
+            stencil,
+            default_stroke: None,
+        }))
+    }
+
+    /// Like [`Self::with_stencil`], separators without a style of their own drawn with `default_stroke`.
+    #[must_use]
+    pub fn with_stencil_stroke(&self, stencil: Rc<dyn Stencil>, default_stroke: UStroke) -> Self {
+        self.with_horizontal_line_drawer(Rc::new(UGraphicStencil {
+            stencil,
+            default_stroke: Some(default_stroke),
+        }))
     }
 
     /// Separators drawn on the result are drawn by `drawer`, on a surface placed where this one is.

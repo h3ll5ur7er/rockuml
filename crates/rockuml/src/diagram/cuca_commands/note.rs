@@ -17,7 +17,7 @@ use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::plasma::QuarkId;
-use crate::stereo::{self, Stereotag, Stereotype};
+use crate::stereo::{self, Stereotype};
 use crate::text::{LineLocation, unquoted};
 
 static END_NOTE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*end[%s]?note$"));
@@ -76,17 +76,6 @@ fn side(cuca: &CucaDiagram, arg: &RegexResult) -> Position {
     Position::from_string(arg.get("POSITION", 0).unwrap_or_default())
         .expect("the pattern only matches positions")
         .with_rankdir(cuca.skin().get_rankdir())
-}
-
-/// `$tag1 $tag2` on an entity (`CommandCreateClassMultilines.addTags`).
-fn add_tags(cuca: &mut CucaDiagram, entity: EntityId, tags: Option<&str>) {
-    for tag in tags.into_iter().flat_map(|tags| tags.split(' ')) {
-        if let Some(name) = tag.strip_prefix('$') {
-            cuca.entity_mut(entity).add_stereotag(Stereotag {
-                name: name.to_owned(),
-            });
-        }
-    }
 }
 
 fn note_head(single_line: bool) -> Vec<RegexTree> {
@@ -170,7 +159,7 @@ fn create_note(
     if let Some(stereotype) = arg.get("STEREO", 0) {
         note.stereotype = Some(Stereotype::new(stereotype));
     }
-    add_tags(cuca, entity, arg.get("TAGS", 0));
+    super::add_tags(cuca.entity_mut(entity), arg.get("TAGS", 0));
     Ok(())
 }
 
@@ -293,7 +282,7 @@ fn add_note_on_entity(
     }
     entity.colors = colors;
     entity.url = url;
-    add_tags(cuca, note, arg.get_lazzy("TAGS", 0));
+    super::add_tags(cuca.entity_mut(note), arg.get_lazzy("TAGS", 0));
     let link_type = LinkType::new(LinkDecor::None, LinkDecor::None).go_dashed();
     let (entity1, entity2, length) = match position {
         Position::Right => (target, note, 1),

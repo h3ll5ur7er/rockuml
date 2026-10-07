@@ -1,10 +1,12 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
 use super::image::{
-    EntityImageBranch, EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
-    EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart,
-    EntityImageDescription, EntityImageNote, EntityImagePort, EntityImagePseudoState,
-    EntityImageState, EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
+    EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
+    EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
+    EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
+    EntityImageDescription, EntityImageJson, EntityImageLollipopInterface, EntityImageMap,
+    EntityImageNote, EntityImageObject, EntityImagePort, EntityImagePseudoState, EntityImageState,
+    EntityImageState2, EntityImageStateBorder, EntityImageStateEmptyDescription,
     EntityImageSynchroBar, EntityImageTips,
 };
 use super::{Bibliotekon, IEntityImage};
@@ -30,7 +32,7 @@ pub(crate) fn create_entity_image_block(
         return not_ported("EntityImageGroup");
     };
     if leaf_type.is_like_class() {
-        return not_ported("EntityImageClass");
+        return Ok(Box::new(EntityImageClass::new(entity, diagram)));
     }
     match leaf_type {
         LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
@@ -43,20 +45,23 @@ pub(crate) fn create_entity_image_block(
             Ok(Box::new(EntityImageBranch::new(entity, diagram)))
         }
         LeafType::LollipopFull | LeafType::LollipopHalf => {
-            not_ported("EntityImageLollipopInterface")
+            Ok(Box::new(EntityImageLollipopInterface::new(entity, diagram)))
         }
+        LeafType::Object => Ok(Box::new(EntityImageObject::new(entity, diagram))),
+        LeafType::Map => Ok(Box::new(EntityImageMap::new(entity, diagram))),
+        LeafType::Json => Ok(Box::new(EntityImageJson::new(entity, diagram))),
+        LeafType::PointForAssociation => {
+            Ok(Box::new(EntityImageAssociationPoint::new(entity, diagram)))
+        }
+        LeafType::Association => Ok(Box::new(EntityImageAssociation::new(entity, diagram))),
         LeafType::Circle
         | LeafType::Description
         | LeafType::Usecase
         | LeafType::UsecaseBusiness => Ok(Box::new(EntityImageDescription::new(entity, diagram))),
-        LeafType::Object => not_ported("EntityImageObject"),
-        LeafType::Map => not_ported("EntityImageMap"),
-        LeafType::Json => not_ported("EntityImageJson"),
         LeafType::SynchroBar | LeafType::StateForkJoin => {
             Ok(Box::new(EntityImageSynchroBar::new(entity, diagram)))
         }
         LeafType::ArcCircle => not_ported("EntityImageArcCircle"),
-        LeafType::PointForAssociation => not_ported("EntityImageAssociationPoint"),
         LeafType::EmptyPackage => {
             if entity.get_usymbol().is_some() {
                 Ok(Box::new(EntityImageDescription::new(entity, diagram)))
@@ -64,7 +69,6 @@ pub(crate) fn create_entity_image_block(
                 not_ported("EntityImageEmptyPackage")
             }
         }
-        LeafType::Association => not_ported("EntityImageAssociation"),
         LeafType::PseudoState => Ok(Box::new(EntityImagePseudoState::new(entity, diagram))),
         LeafType::StateTransitionLabel => not_ported("EntityImageTransitionLabel"),
         LeafType::DeepHistory => Ok(Box::new(EntityImagePseudoState::deep_history(

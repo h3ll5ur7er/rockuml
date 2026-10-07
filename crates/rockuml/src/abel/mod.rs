@@ -5,14 +5,7 @@
     not(test),
     expect(dead_code, reason = "used by the Phase 5 family commands")
 )]
-#![cfg_attr(
-    test,
-    allow(
-        dead_code,
-        unused_imports,
-        reason = "used by the Phase 5 family commands"
-    )
-)]
+#![cfg_attr(test, allow(dead_code, reason = "used by the Phase 5 family commands"))]
 
 mod cuca_note;
 mod entity;

@@ -25,7 +25,7 @@ mod width_table_data;
 
 use crate::color::HColor;
 use font::StringBounder;
-use geom::{UTranslate, XDimension2D, XPoint2D};
+use geom::{UTranslate, XDimension2D, XPoint2D, XRectangle2D};
 use ugraphic::UGraphic;
 
 /// Something that can draw itself.
@@ -59,6 +59,16 @@ pub trait TextBlock {
     ) -> UTranslate {
         UTranslate::default()
     }
+
+    /// Where the block draws the class member written `member`, for the notes that point at it; blocks
+    /// without members draw none (`getInnerPosition`).
+    fn get_inner_position(
+        &self,
+        _member: &str,
+        _string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        None
+    }
 }
 
 impl<T: TextBlock + ?Sized> TextBlock for &T {
@@ -85,6 +95,14 @@ impl<T: TextBlock + ?Sized> TextBlock for &T {
     ) -> UTranslate {
         (**self).magnetic_border_force_at(string_bounder, position)
     }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        (**self).get_inner_position(member, string_bounder)
+    }
 }
 
 impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
@@ -110,6 +128,14 @@ impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
         position: XPoint2D,
     ) -> UTranslate {
         (**self).magnetic_border_force_at(string_bounder, position)
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        (**self).get_inner_position(member, string_bounder)
     }
 }
 

@@ -6,6 +6,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use crate::abel::LinkArrow;
+use crate::diagram::cuca::CucaDiagram;
 use crate::java;
 use crate::pattern::{RegexResult, plantuml_regex};
 use crate::text::unquoted;
@@ -13,6 +14,8 @@ use crate::text::unquoted;
 pub(crate) struct Labels {
     first_label: Option<String>,
     second_label: Option<String>,
+    first_role: Option<String>,
+    second_role: Option<String>,
     string_with_arrow: StringWithArrow,
 }
 
@@ -23,6 +26,12 @@ impl Labels {
         let mut labels = Self {
             first_label: arg.get("FIRST_LABEL", 0).map(str::to_owned),
             second_label: arg.get("SECOND_LABEL", 0).map(str::to_owned),
+            first_role: arg
+                .get("FIRST_ROLE", 0)
+                .map(|role| unquoted(role).to_owned()),
+            second_role: arg
+                .get("SECOND_ROLE", 0)
+                .map(|role| unquoted(role).to_owned()),
             string_with_arrow: StringWithArrow::new(None),
         };
         let label_link = arg.get("LABEL_LINK", 0).map(|label| labels.init(label));
@@ -37,7 +46,7 @@ impl Labels {
             LazyLock::new(|| plantuml_regex("^[%g]([^%g]+)[%g]([^%g]+)$"));
         static SECOND_LABEL_ONLY: LazyLock<Regex> =
             LazyLock::new(|| plantuml_regex("^([^%g]+)[%g]([^%g]+)[%g]$"));
-        let middle = |text: &str| java::trim(unquoted(java::trim(text))).to_owned();
+        let middle = |text: &str| java::trim(CucaDiagram::clean_id(java::trim(text))).to_owned();
         if self.first_label.is_none() && self.second_label.is_none() {
             if let Some(m) = BOTH_LABELS.captures(label_link) {
                 self.first_label = Some(m[1].to_owned());
@@ -62,6 +71,15 @@ impl Labels {
 
     pub(crate) fn get_second_label(&self) -> Option<String> {
         self.second_label.clone()
+    }
+
+    /// The role written after `/` at the link's first end.
+    pub(crate) fn get_first_role(&self) -> Option<String> {
+        self.first_role.clone()
+    }
+
+    pub(crate) fn get_second_role(&self) -> Option<String> {
+        self.second_role.clone()
     }
 
     pub(crate) fn get_label_link(&self) -> Option<&str> {
@@ -126,7 +144,7 @@ fn unquoted_strictly(text: &str) -> &str {
 
 /// Whether the label has several lines, one of which has its own small arrow.
 fn has_several_guide_lines(label: &str) -> bool {
-    let lines: Vec<&str> = label.split("\\n").collect();
+    let lines = java::split(label, "\\n");
     lines.len() > 1
         && lines.iter().any(|line| {
             line.starts_with("< ")

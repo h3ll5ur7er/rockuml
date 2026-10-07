@@ -5,11 +5,14 @@ pub(crate) mod arrow;
 pub(crate) mod body;
 pub(crate) mod component;
 pub(crate) mod component_style;
+pub(crate) mod font_param;
 pub(crate) mod rose;
 pub(crate) mod symbol;
+pub(crate) mod visibility_modifier;
 
 use actor::ActorStyle;
 use component_style::ComponentStyle;
+use font_param::FontParam;
 
 use crate::decoration::LinkStyle;
 use crate::decoration::symbol::PackageStyle;
@@ -28,6 +31,7 @@ use crate::klimt::HorizontalAlignment;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
+use crate::stereo::Stereotype;
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
 };
@@ -147,6 +151,35 @@ impl SkinParam {
                 .value(PName::BackGroundColor)
                 .as_color(),
         }
+    }
+
+    /// `circledCharacterRadius`, or what suits the circled characters' font size.
+    pub(crate) fn get_circled_character_radius(&self) -> i32 {
+        self.as_int("circledCharacterRadius")
+            .unwrap_or_else(|| self.get_font(FontParam::CircledCharacter, None).size() / 3 + 6)
+    }
+
+    /// `classAttributeIconSize`: the size of visibility icons, 0 to write visibilities as characters.
+    pub(crate) fn class_attribute_icon_size(&self) -> i32 {
+        self.as_int("classAttributeIconSize").unwrap_or(10)
+    }
+
+    /// The letter `spotChar<<stereotype>>` gives the stereotype's spot.
+    pub(crate) fn get_circled_character(&self, stereotype: &Stereotype) -> Option<char> {
+        self.value(&format!("spotchar{}", stereotype.label_double_comparator()))
+            .and_then(|value| value.chars().next())
+    }
+
+    /// `genericDisplay old`: generics written after the name rather than in a box.
+    pub(crate) fn display_generic_with_old_fashion(&self) -> bool {
+        self.value_is("genericDisplay", "old")
+    }
+
+    /// `getAsInt`: the value if it is only digits.
+    fn as_int(&self, key: &str) -> Option<i32> {
+        self.value(key)
+            .filter(|value| !value.is_empty() && value.bytes().all(|b| b.is_ascii_digit()))
+            .and_then(|value| value.parse().ok())
     }
 
     pub(crate) fn strict_uml_style(&self) -> bool {

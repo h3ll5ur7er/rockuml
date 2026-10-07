@@ -1,9 +1,10 @@
 //! Text blocks that frame, pad, stack or mark other text blocks.
 
 use super::font::{FontConfiguration, StringBounder, UFont};
-use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use super::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XRectangle2D};
 use super::group::UGroup;
 use super::shape::{UCenteredCharacter, UEllipse, URectangle, UShape, UText};
+use super::stencil::UHorizontalLine;
 use super::ugraphic::{UGraphic, UStroke};
 use super::{HorizontalAlignment, TextBlock, layout_tabulated};
 use crate::color::HColor;
@@ -88,6 +89,8 @@ pub(crate) struct CircledCharacter {
     radius: f64,
     font: UFont,
     spot_back_color: Option<HColor>,
+    /// The outline; the surface's colour without one.
+    spot_border: Option<HColor>,
     font_color: HColor,
 }
 
@@ -104,7 +107,16 @@ impl CircledCharacter {
             radius,
             font,
             spot_back_color,
+            spot_border: None,
             font_color,
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn with_border(self, spot_border: HColor) -> Self {
+        Self {
+            spot_border: Some(spot_border),
+            ..self
         }
     }
 }
@@ -115,10 +127,13 @@ impl TextBlock for CircledCharacter {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let circle = match &self.spot_back_color {
-            Some(color) => ug.with_backcolor(color.clone()),
+        let mut circle = match &self.spot_border {
+            Some(border) => ug.with_color(border.clone()),
             None => ug.clone(),
         };
+        if let Some(color) = &self.spot_back_color {
+            circle = circle.with_backcolor(color.clone());
+        }
         circle.draw(&UShape::Ellipse(UEllipse::new(
             2.0 * self.radius,
             2.0 * self.radius,
@@ -186,6 +201,16 @@ impl<T: TextBlock> TextBlockMarged<T> {
 }
 
 impl<T: TextBlock> TextBlock for TextBlockMarged<T> {
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.inner
+            .get_inner_position(member, string_bounder)
+            .map(|parent| parent.translated(self.margin.left, self.margin.top))
+    }
+
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         let margin = self.margin;
         self.inner
@@ -312,6 +337,22 @@ impl<'a> TextBlockVertical<'a> {
 }
 
 impl TextBlock for TextBlockVertical<'_> {
+    /// PlantUML leaves the blocks' alignment out.
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        let mut y = 0.0;
+        for block in &self.blocks {
+            if let Some(result) = block.get_inner_position(member, string_bounder) {
+                return Some(result.translated(0.0, y));
+            }
+            y += block.calculate_dimension(string_bounder).height;
+        }
+        None
+    }
+
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         self.blocks
             .iter()
@@ -442,5 +483,105 @@ impl TextBlock for TextBlockRaw {
             });
             y += self.line_dimension(line, string_bounder).height;
         }
+    }
+}
+
+/// A block with a separator line across its top.
+pub(crate) struct TextBlockLineBefore<'a> {
+    pub block: Box<dyn TextBlock + 'a>,
+    pub style: char,
+    pub title: Option<Box<dyn TextBlock + 'a>>,
+    pub thickness: f64,
+}
+
+impl TextBlockLineBefore<'_> {
+    fn line(&self) -> UHorizontalLine<'_> {
+        UHorizontalLine {
+            style: self.style,
+            title: self.title.as_deref(),
+            default_thickness: self.thickness,
+            skip: 1.0,
+        }
+    }
+}
+
+impl TextBlock for TextBlockLineBefore<'_> {
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.block.get_inner_position(member, string_bounder)
+    }
+
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        let dimension = self.block.calculate_dimension(string_bounder);
+        match &self.title {
+            None => dimension,
+            Some(title) => {
+                let title = title.calculate_dimension(string_bounder);
+                XDimension2D::new(
+                    dimension.width.max(title.width + 8.0),
+                    dimension.height.max(title.height),
+                )
+            }
+        }
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        if self.title.is_none() {
+            ug.draw_horizontal_line(&self.line());
+        }
+        self.block.draw_u(ug);
+        if self.title.is_some() {
+            ug.draw_horizontal_line(&self.line());
+        }
+    }
+}
+
+/// A block under a separator with a title, which leaves room for half the title above and below the line.
+pub(crate) struct TitledSeparator {
+    pub block: Box<dyn TextBlock>,
+    pub style: char,
+    pub title: Box<dyn TextBlock>,
+    pub thickness: f64,
+    /// The room left of the block.
+    pub margin_x: f64,
+}
+
+impl TitledSeparator {
+    fn layout(&self, string_bounder: &dyn StringBounder) -> impl TextBlock + '_ {
+        let half_title = self.title.calculate_dimension(string_bounder).height / 2.0;
+        let margin = ClockwiseTopRightBottomLeft::top_right_bottom_left;
+        let raw = TextBlockLineBefore {
+            block: Box::new(TextBlockMarged::new(
+                &*self.block,
+                margin(half_title, 6.0, 4.0, self.margin_x),
+            )),
+            style: self.style,
+            title: Some(Box::new(&*self.title)),
+            thickness: self.thickness,
+        };
+        TextBlockMarged::new(raw, margin(half_title, 0.0, 0.0, 0.0))
+    }
+}
+
+impl TextBlock for TitledSeparator {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.layout(string_bounder)
+            .calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.layout(ug.string_bounder()).draw_u(ug);
+    }
+
+    fn get_inner_position(
+        &self,
+        member: &str,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XRectangle2D> {
+        self.layout(string_bounder)
+            .get_inner_position(member, string_bounder)
     }
 }

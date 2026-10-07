@@ -88,6 +88,20 @@ impl Colors {
         Ok(result)
     }
 
+    /// The line style of an old `##[dashed]` specification, any other word drawing plain lines.
+    #[must_use]
+    pub(crate) fn add_legacy_stroke(&self, style: &str) -> Self {
+        Self {
+            line_style: Some(LinkStyle::from_string1(style)),
+            ..self.clone()
+        }
+    }
+
+    /// The stroke of the line style, if there is one.
+    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
+        self.line_style.map(LinkStyle::get_stroke3)
+    }
+
     fn put(&mut self, kind: ColorType, color: HColor) {
         match self
             .colors
@@ -119,20 +133,6 @@ impl Colors {
             result.line_style = other.line_style;
         }
         result
-    }
-
-    /// A line style named like `dashed`; other names make the line plain.
-    #[must_use]
-    pub(crate) fn add_legacy_stroke(&self, style: &str) -> Self {
-        Self {
-            line_style: Some(LinkStyle::from_string1(style)),
-            ..self.clone()
-        }
-    }
-
-    /// The stroke the colours' line style asks for, if any.
-    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
-        self.line_style.map(LinkStyle::get_stroke3)
     }
 
     /// The background or line colour set here, or else the style's (`getColor(Style, PName, HColorSet)`).

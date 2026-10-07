@@ -4,30 +4,6 @@ use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
 use crate::pattern::RegexTree;
 
-/// PlantUML's `CommandNamespaceSeparator`.
-pub(super) fn namespace_separator<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandNamespaceSeparator",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::leaf(r"set"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::or(vec![
-                RegexTree::leaf(r"separator"),
-                RegexTree::leaf(r"namespaceseparator"),
-            ]),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(
-                1,
-                "SEPARATOR",
-                r"((?:none|null)|[\\]{2}|::|[^%pLN%s_$#\\{}<>%g])",
-            ),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
-}
-
 /// PlantUML's `CommandAssumeTransparent`.
 pub(super) fn assume_transparent<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
     unported::single_line(
@@ -138,43 +114,6 @@ pub(super) fn style_import<D: NotPortedCommands + 'static>() -> Box<dyn Command<
             RegexTree::named(1, "PATH", r"([^%q%g]*)"),
             RegexTree::leaf(r"[%q%g]?"),
             RegexTree::leaf(r"\>"),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
-}
-
-/// PlantUML's `CommandHideShowByVisibility`.
-pub(super) fn hide_show_by_visibility<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandHideShowByVisibility",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::named(1, "COMMAND", r"(hide|show)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "VISIBILITY", r"((?:public|private|protected|package)?(?:[,%s]+(?:public|private|protected|package))*)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "PORTION", r"(members?|attributes?|fields?|methods?)"),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
-}
-
-/// PlantUML's `CommandHideShowByGender`.
-pub(super) fn hide_show_by_gender<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandHideShowByGender",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::named(1, "COMMAND", r"(hide|show)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "GENDER", r"(?:(class|object|interface|enum|annotation|dataclass|record|abstract|[%pLN_.]+|[%g][^%g]+[%g]|\<\<.*\>\>)[%s]+)*?"),
-            RegexTree::optional(RegexTree::concat(vec![
-                RegexTree::named(1, "EMPTY", r"(empty)"),
-                RegexTree::spaces_one_or_more(),
-            ])),
-            RegexTree::named(1, "PORTION", r"(members?|attributes?|fields?|methods?|circles?|circled?|stereotypes?)"),
             RegexTree::end(),
         ]),
     )

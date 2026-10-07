@@ -388,7 +388,7 @@ mod tests {
         );
         assert_eq!(
             read_as(&["@startuml", "class A", "A <|-- B", "@enduml"]),
-            "class diagrams"
+            "CLASS"
         );
         assert_eq!(
             read_as(&[

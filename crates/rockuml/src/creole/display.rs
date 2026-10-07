@@ -1,4 +1,5 @@
 use super::{CreoleMode, CreoleParser, SheetBlock1, SheetBlock2};
+use crate::java;
 use crate::jaws::{
     BLOCK_E1_BREAKLINE, BLOCK_E1_NEWLINE, BLOCK_E1_NEWLINE_LEFT_ALIGN,
     BLOCK_E1_NEWLINE_RIGHT_ALIGN, BLOCK_E1_REAL_BACKSLASH,
@@ -7,6 +8,7 @@ use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::FontConfiguration;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::SpriteContainer;
+use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 
 /// Marks a quote PlantUML keeps out of the text.
@@ -148,10 +150,19 @@ impl Display {
         self.map_lines(|line| line.replace(from, to))
     }
 
-    /// `<<stereotypes>>` in the lines read as `«stereotypes»`.
+    /// `<<stereotypes>>` in the lines read as `«stereotypes»`; the visibility character starting the first
+    /// line goes when `manage_visibility_modifier`, as it shows as an icon.
     #[must_use]
-    pub(crate) fn manage_guillemet(&self) -> Self {
-        self.map_lines(super::parser::manage_guillemet)
+    pub(crate) fn manage_guillemet(&self, manage_visibility_modifier: bool) -> Self {
+        let mut result = self.map_lines(super::parser::manage_guillemet);
+        if manage_visibility_modifier
+            && let Some(first) = self.lines.first()
+            && VisibilityModifier::is_visibility_character(first)
+        {
+            let rest: String = first.chars().skip(1).collect();
+            result.lines[0] = super::parser::manage_guillemet(java::trim(&rest));
+        }
+        result
     }
 
     /// `appended` goes before the first line.
@@ -163,6 +174,18 @@ impl Display {
     pub(crate) fn append_first_line(&self, appended: &str) -> Self {
         let mut result = self.clone();
         result.lines[0].insert_str(0, appended);
+        result
+    }
+
+    /// `<generic>` after the last line.
+    #[must_use]
+    pub(crate) fn add_generic(&self, generic: &str) -> Self {
+        let mut result = self.clone();
+        let generic = format!("<{generic}>");
+        match result.lines.last_mut() {
+            Some(last) => last.push_str(&generic),
+            None => result.lines.push(generic),
+        }
         result
     }
 
@@ -241,7 +264,9 @@ mod tests {
 
     #[test]
     fn stereotypes_in_labels_get_guillemets() {
-        let display = Display::create(["uses <<friend>>"]).manage_guillemet();
+        let display = Display::create(["uses <<friend>>"]).manage_guillemet(false);
+        assert_eq!(display.lines(), ["uses \u{AB}friend\u{BB}"]);
+        let display = Display::create(["+ uses <<friend>>"]).manage_guillemet(true);
         assert_eq!(display.lines(), ["uses \u{AB}friend\u{BB}"]);
     }
 

@@ -33,7 +33,7 @@ pub enum UShape {
     HorizontalLine,
     /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
     SpecialText,
-    /// A note for readers of the output, which only SVG and the debug format keep.
+    /// A note for whoever reads the document, which only SVG and the debug listing keep.
     Comment(String),
 }
 
