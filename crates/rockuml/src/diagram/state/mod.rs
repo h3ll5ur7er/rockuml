@@ -27,9 +27,6 @@ use crate::plasma::QuarkId;
 use crate::style::SName;
 use crate::text::LineLocation;
 
-/// Drawing state diagrams is not ported yet; it is reported as soon as the lines read as one.
-const NOT_PORTED: NotYetPorted = NotYetPorted("state diagrams");
-
 /// Names the groups of concurrent regions, numbered afresh on each pass.
 const CONCURRENT_PREFIX: &str = "CONC";
 
@@ -49,8 +46,7 @@ impl CommandFactory for StateDiagramFactory {
     const DIAGRAM_TYPE: DiagramType = DiagramType::State;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> StateDiagram {
-        let mut titled = Titled::new(SName::StateDiagram, "STATE", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::StateDiagram, "STATE", source);
         let mut cuca = CucaDiagram::new(titled);
         cuca.set_namespace_separator(Some("."));
         StateDiagram {
@@ -317,9 +313,10 @@ impl Diagram for StateDiagram {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {

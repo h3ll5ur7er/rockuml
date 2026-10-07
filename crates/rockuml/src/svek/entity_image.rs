@@ -2,12 +2,15 @@
 
 #![cfg_attr(test, allow(dead_code, reason = "drawn by the Smetana bridge"))]
 
+use std::rc::Rc;
+
 use super::{Bibliotekon, Margins, ShapeType, SvekNode};
 use crate::abel::{Entity, EntityId, LinkId};
 use crate::color::HColor;
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
+use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::sdot::SmetanaEdge;
 use crate::stereo::Stereotype;
@@ -39,6 +42,51 @@ pub(crate) trait IEntityImage: TextBlock {
     /// drawn around their link, find it in `layout`.
     fn draw_u_in_layout(&self, ug: &UGraphic, _layout: &LayoutContext<'_>) {
         self.draw_u(ug);
+    }
+}
+
+/// The image of a group laid out on its own, which the diagram keeps and the layout of its parent draws.
+impl TextBlock for Rc<dyn IEntityImage> {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        (**self).calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        (**self).draw_u(ug);
+    }
+
+    fn backcolor(&self) -> Option<HColor> {
+        (**self).backcolor()
+    }
+
+    fn magnetic_border_force_at(
+        &self,
+        string_bounder: &dyn StringBounder,
+        position: XPoint2D,
+    ) -> UTranslate {
+        (**self).magnetic_border_force_at(string_bounder, position)
+    }
+}
+
+impl IEntityImage for Rc<dyn IEntityImage> {
+    fn get_shape_type(&self) -> ShapeType {
+        (**self).get_shape_type()
+    }
+
+    fn get_shield(&self, string_bounder: &dyn StringBounder) -> Margins {
+        (**self).get_shield(string_bounder)
+    }
+
+    fn get_overscan_x(&self, string_bounder: &dyn StringBounder) -> f64 {
+        (**self).get_overscan_x(string_bounder)
+    }
+
+    fn is_hidden(&self) -> bool {
+        (**self).is_hidden()
+    }
+
+    fn draw_u_in_layout(&self, ug: &UGraphic, layout: &LayoutContext<'_>) {
+        (**self).draw_u_in_layout(ug, layout);
     }
 }
 

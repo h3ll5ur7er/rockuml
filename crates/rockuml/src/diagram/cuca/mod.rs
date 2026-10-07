@@ -37,7 +37,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::plasma::{Plasma, Quark, QuarkId};
-use crate::sdot::CucaDiagramFileMakerSmetana;
+use crate::sdot::{CucaDiagramFileMakerSmetana, CucaDiagramSimplifierStateSmetana};
 use crate::skin::SkinParam;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
@@ -535,6 +535,9 @@ impl CucaDiagram {
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
         let mut diagram = self.clone();
         diagram.eventually_build_phantom_groups(None);
+        if self.get_style_name() == SName::StateDiagram {
+            CucaDiagramSimplifierStateSmetana::simplify(&mut diagram, string_bounder)?;
+        }
         CucaDiagramFileMakerSmetana::new(diagram).get_text_block(string_bounder)
     }
 

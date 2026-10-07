@@ -2,7 +2,11 @@
 //! drawing of the layout.
 
 mod box_info;
+mod cuca_diagram_simplifier_state_smetana;
+mod group_maker_state_smetana;
+mod padded_entity_image;
 mod smetana_edge;
+mod text_block_to_entity_image;
 mod y_mirror;
 
 use std::cell::OnceCell;
@@ -10,8 +14,10 @@ use std::cell::OnceCell;
 use smetana::{Edge, Graph, Node, Subgraph};
 
 use box_info::BoxInfo;
+pub(crate) use cuca_diagram_simplifier_state_smetana::CucaDiagramSimplifierStateSmetana;
 use smetana_edge::EdgeTexts;
 pub(crate) use smetana_edge::SmetanaEdge;
+use text_block_to_entity_image::TextBlockToEntityImage;
 use y_mirror::YMirror;
 
 use crate::abel::{EntityId, GroupType, LeafType, Link, LinkId, is_pure_inner_link12};
@@ -29,7 +35,8 @@ use crate::skin::Rankdir;
 use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
 use crate::svek::{
-    Bibliotekon, ClusterHeader, ClusterManager, LayoutContext, create_entity_image_block,
+    Bibliotekon, ClusterHeader, ClusterManager, IEntityImage, LayoutContext,
+    create_entity_image_block,
 };
 
 /// Lays a diagram out with Smetana and draws the result (PlantUML's `CucaDiagramFileMakerSmetana` and its
@@ -94,6 +101,15 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
         self.layout_and_get_text_block(string_bounder)
+    }
+
+    /// The layout of a group laid out on its own, as the image of that group (`getImage`).
+    pub(crate) fn get_image(
+        self,
+        string_bounder: &dyn StringBounder,
+    ) -> Result<Box<dyn IEntityImage>, NotYetPorted> {
+        let text_block = self.layout_and_get_text_block(string_bounder)?;
+        Ok(Box::new(TextBlockToEntityImage::new(text_block)))
     }
 
     fn is_nested_layout(&self) -> bool {
@@ -203,7 +219,10 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
         ent: EntityId,
     ) -> Result<(), NotYetPorted> {
-        let image = create_entity_image_block(ent, &self.diagram, &self.bibliotekon)?;
+        let image = match self.diagram.get_svek_image(ent) {
+            Some(image) => Box::new(image),
+            None => create_entity_image_block(ent, &self.diagram, &self.bibliotekon)?,
+        };
         self.cluster_manager.add_node(
             &mut self.bibliotekon,
             self.diagram.entity(ent),
