@@ -45,6 +45,7 @@ debug component/ports-in-out.puml
 debug component/ports.puml
 debug component/rectangle-style.puml
 debug component/rectangles-groups.puml
+debug component/skinparam.puml
 debug component/stereotypes.puml
 debug component/uml1-style.puml
 debug component/uml2-style.puml
@@ -266,7 +267,9 @@ debug state/notes.puml
 debug state/pins-expansion.puml
 debug state/self-transitions.puml
 debug state/simple.puml
+debug state/skinparam.puml
 debug state/stereotypes.puml
+debug state/style.puml
 debug state/title-legend.puml
 debug usecase/actor-styles-awesome.puml
 debug usecase/actor-styles-hollow.puml
@@ -623,6 +626,7 @@ png component/ports-in-out.puml
 png component/ports.puml
 png component/rectangle-style.puml
 png component/rectangles-groups.puml
+png component/skinparam.puml
 png component/stereotypes.puml
 png component/uml1-style.puml
 png component/uml2-style.puml
@@ -843,7 +847,9 @@ png state/notes.puml
 png state/pins-expansion.puml
 png state/self-transitions.puml
 png state/simple.puml
+png state/skinparam.puml
 png state/stereotypes.puml
+png state/style.puml
 png state/title-legend.puml
 png usecase/actor-styles-awesome.puml
 png usecase/actor-styles-hollow.puml
@@ -1291,6 +1297,7 @@ svg component/ports-in-out.puml
 svg component/ports.puml
 svg component/rectangle-style.puml
 svg component/rectangles-groups.puml
+svg component/skinparam.puml
 svg component/stereotypes.puml
 svg component/uml1-style.puml
 svg component/uml2-style.puml
@@ -1506,7 +1513,9 @@ svg state/notes.puml
 svg state/pins-expansion.puml
 svg state/self-transitions.puml
 svg state/simple.puml
+svg state/skinparam.puml
 svg state/stereotypes.puml
+svg state/style.puml
 svg state/title-legend.puml
 svg usecase/actor-styles-awesome.puml
 svg usecase/actor-styles-hollow.puml
