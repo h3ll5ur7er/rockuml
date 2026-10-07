@@ -2,6 +2,7 @@
 
 pub(crate) mod actor;
 pub(crate) mod arrow;
+pub(crate) mod body;
 pub(crate) mod component;
 pub(crate) mod rose;
 pub(crate) mod symbol;
@@ -16,6 +17,7 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use crate::java;
+use crate::klimt::HorizontalAlignment;
 use crate::pattern::java_regex;
 use crate::style::{Style, StyleBuilder, StyleParsingError, StyleSignature};
 
@@ -84,6 +86,17 @@ impl SkinParam {
 
     pub(crate) fn actor_style(&self) -> ActorStyle {
         ActorStyle::named(&self.value("actorstyle").unwrap_or_default())
+    }
+
+    /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.
+    pub(crate) fn note_text_alignment(&self, default: HorizontalAlignment) -> HorizontalAlignment {
+        ["noteTextAlignment", "defaulttextalignment"]
+            .iter()
+            .find_map(|key| {
+                self.value(key)
+                    .and_then(|value| HorizontalAlignment::from_name(&value))
+            })
+            .unwrap_or(default)
     }
 
     pub(crate) fn force_sequence_participant_underlined(&self) -> bool {

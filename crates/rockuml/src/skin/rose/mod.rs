@@ -4,6 +4,7 @@ pub(crate) mod actor;
 pub(crate) mod arrow;
 pub(crate) mod life;
 pub(crate) mod line;
+pub(crate) mod note;
 pub(crate) mod participant;
 pub(crate) mod queue;
 pub(crate) mod self_arrow;
@@ -13,7 +14,7 @@ use self_arrow::ComponentRoseSelfArrow;
 
 use super::SkinParam;
 use super::arrow::{ArrowConfiguration, ArrowDirection};
-use super::component::{ArrowComponent, TextualPart, component_text, with_margin};
+use super::component::{ArrowComponent, TextualPart, component_text, creole_text, with_margin};
 use crate::creole::Display;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
@@ -30,17 +31,22 @@ pub(crate) struct MessageLabel<'a> {
 /// `Display.create0` for a message label: a number goes left of the text, both centred vertically.
 fn message_text(label: &MessageLabel<'_>, style: &Style) -> Box<dyn TextBlock> {
     let font = style.font_configuration();
-    let text = component_text(label.display, font.clone(), style);
     let Some(number) = label.number else {
-        return text;
+        return component_text(label.display, font, style);
     };
-    let number = component_text(&Display::create([number]), font, style);
+    // Only a whole label of one empty line takes no room; the text after a number is always creole.
+    let alignment = label
+        .display
+        .natural_alignment()
+        .or_else(|| style.horizontal_alignment())
+        .unwrap_or_default();
+    let number = creole_text(&[number.to_owned()], font.clone(), alignment);
     Box::new(TextBlockHorizontal {
         left: with_margin(
             number,
             ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 4.0, 0.0, 0.0),
         ),
-        right: text,
+        right: creole_text(label.display.lines(), font, alignment),
     })
 }
 
@@ -155,4 +161,81 @@ pub(crate) fn create_component_arrow(
         !skin.strict_uml_style(),
         skin.response_message_below_arrow(),
     ))
+}
+
+/// The three shapes of notes.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum NoteShape {
+    Folded,
+    Hexagonal,
+    Box,
+}
+
+/// `Rose.createComponentNote`. Notes over several participants centre their text unless an alignment is
+/// set; `over_several` is only known for notes not attached to a message.
+pub(crate) fn create_component_note(
+    style: &Style,
+    shape: NoteShape,
+    skin: &SkinParam,
+    display: &Display,
+    colors: &crate::color::Colors,
+    over_several: bool,
+) -> Box<dyn super::component::Component> {
+    use note::{ComponentRoseNote, ComponentRoseNoteBox, ComponentRoseNoteHexagonal};
+    let fashion = style.symbol_context(colors);
+    let font = style.font_configuration();
+    let alignment = style.horizontal_alignment().unwrap_or_default();
+    let margin = ClockwiseTopRightBottomLeft::top_right_bottom_left;
+    match shape {
+        NoteShape::Folded => {
+            let (text_alignment, position) = if over_several {
+                let text_alignment = skin.note_text_alignment(HorizontalAlignment::Left);
+                let position =
+                    if text_alignment == skin.note_text_alignment(HorizontalAlignment::Center) {
+                        text_alignment
+                    } else {
+                        HorizontalAlignment::Center
+                    };
+                (text_alignment, position)
+            } else {
+                let text_alignment = skin.note_text_alignment(HorizontalAlignment::Left);
+                (text_alignment, text_alignment)
+            };
+            let padding = if text_alignment == HorizontalAlignment::Center {
+                margin(5.0, 15.0, 5.0, 15.0)
+            } else {
+                margin(5.0, 15.0, 5.0, 6.0)
+            };
+            let text = if is_single_empty_line(display) {
+                Box::new(super::component::TextBlockEmpty {
+                    dimension: XDimension2D::default(),
+                }) as Box<dyn TextBlock>
+            } else {
+                super::body::enhanced_text(display, font, alignment, style)
+            };
+            Box::new(ComponentRoseNote::new(
+                TextualPart::new(text, padding),
+                fashion,
+                Some(position),
+            ))
+        }
+        NoteShape::Hexagonal => Box::new(ComponentRoseNoteHexagonal::new(
+            TextualPart::new(
+                component_text(display, font, style),
+                margin(4.0, 12.0, 4.0, 12.0),
+            ),
+            fashion,
+        )),
+        NoteShape::Box => Box::new(ComponentRoseNoteBox::new(
+            TextualPart::new(
+                component_text(display, font, style),
+                margin(4.0, 4.0, 4.0, 4.0),
+            ),
+            fashion,
+        )),
+    }
+}
+
+fn is_single_empty_line(display: &Display) -> bool {
+    display.lines().len() == 1 && display.lines()[0].is_empty()
 }

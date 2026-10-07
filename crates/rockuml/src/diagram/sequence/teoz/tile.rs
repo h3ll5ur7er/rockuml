@@ -7,11 +7,15 @@ use std::rc::Rc;
 use super::communication::CommunicationTile;
 use super::life_event::LifeEventTile;
 use super::living_space::{LivingSpace, LivingSpaces};
+use super::note_tiles::{
+    CommunicationTileNoteLevel, CommunicationTileNoteSide, CommunicationTileSelfNote, Level,
+    NoteTile, NotesTile, Side,
+};
 use super::self_tile::CommunicationTileSelf;
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::SequenceDiagram;
-use crate::diagram::sequence::model::{Event, EventId, ParticipantId};
+use crate::diagram::sequence::model::{Event, EventId, Message, NotePosition, ParticipantId};
 use crate::klimt::font::StringBounder;
 use crate::klimt::ugraphic::UGraphic;
 use crate::real::Real;
@@ -74,6 +78,10 @@ pub(super) trait Tile<'a> {
 
     fn is_life_event(&self) -> bool {
         false
+    }
+
+    fn as_note(&self) -> Option<&NoteTile<'a>> {
+        None
     }
 }
 
@@ -140,22 +148,10 @@ pub(super) fn build_one<'a>(
 ) -> Result<Option<Box<dyn Tile<'a> + 'a>>, NotYetPorted> {
     let diagram = arguments.diagram;
     Ok(Some(match diagram.event(event) {
-        Event::Message(message) => {
-            if message.is_self_message() {
-                return Err(NotYetPorted("self messages"));
-            }
-            if !message.common.notes.is_empty() {
-                return Err(NotYetPorted("notes on messages"));
-            }
-            Box::new(CommunicationTile::new(
-                arguments.clone(),
-                event,
-                message,
-                current_y,
-            ))
-        }
+        Event::Message(message) => message_tile(arguments, event, message, current_y)?,
         Event::MessageExo(_) => return Err(NotYetPorted("messages from the border")),
-        Event::Note(_) | Event::Notes(_) => return Err(NotYetPorted("sequence notes")),
+        Event::Note(note) => Box::new(NoteTile::new(arguments.clone(), event, note, current_y)),
+        Event::Notes(notes) => Box::new(NotesTile::new(arguments.clone(), event, notes, current_y)),
         Event::Divider(_) => return Err(NotYetPorted("dividers")),
         Event::Delay(_) => return Err(NotYetPorted("delays")),
         Event::HSpace(_) => return Err(NotYetPorted("spacing")),
@@ -171,4 +167,92 @@ pub(super) fn build_one<'a>(
         Event::Newpage(_) => return Err(NotYetPorted("newpage")),
         Event::Reference(_) => return Err(NotYetPorted("references")),
     }))
+}
+
+/// A message's tile, wrapped by a tile per note on it.
+fn message_tile<'a>(
+    arguments: &Rc<TileArguments<'a>>,
+    event: EventId,
+    message: &'a Message,
+    current_y: &YGauge,
+) -> Result<Box<dyn Tile<'a> + 'a>, NotYetPorted> {
+    let notes = &message.common.notes;
+    if message.is_self_message() {
+        let tile = CommunicationTileSelf::new(arguments.clone(), event, message, current_y);
+        return match notes.as_slice() {
+            [] => Ok(Box::new(tile)),
+            [note] => Ok(match note.position {
+                NotePosition::Left => Box::new(CommunicationTileSelfNote::new(
+                    arguments.clone(),
+                    tile,
+                    note,
+                    Side::Left,
+                )),
+                NotePosition::Right => Box::new(CommunicationTileSelfNote::new(
+                    arguments.clone(),
+                    tile,
+                    note,
+                    Side::Right,
+                )),
+                NotePosition::Top => Box::new(CommunicationTileNoteLevel::new(
+                    arguments.clone(),
+                    Box::new(tile),
+                    note,
+                    Level::Top,
+                )),
+                _ => Box::new(CommunicationTileNoteLevel::new(
+                    arguments.clone(),
+                    Box::new(tile),
+                    note,
+                    Level::Bottom,
+                )),
+            }),
+            // PlantUML fails on these.
+            _ => Err(NotYetPorted("several notes on a message to self")),
+        };
+    }
+    let tile = CommunicationTile::new(arguments.clone(), event, message, current_y);
+    let reverse = tile.is_reverse();
+    let mut result: Box<dyn Tile<'a> + 'a> = Box::new(tile);
+    for note in notes {
+        result = match note.position {
+            NotePosition::Left => Box::new(CommunicationTileNoteSide::new(
+                arguments.clone(),
+                result,
+                note,
+                Side::Left,
+                if reverse {
+                    message.participant2
+                } else {
+                    message.participant1
+                },
+                message.common.is_create(),
+            )),
+            NotePosition::Right => Box::new(CommunicationTileNoteSide::new(
+                arguments.clone(),
+                result,
+                note,
+                Side::Right,
+                if reverse {
+                    message.participant1
+                } else {
+                    message.participant2
+                },
+                message.common.is_create(),
+            )),
+            NotePosition::Top => Box::new(CommunicationTileNoteLevel::new(
+                arguments.clone(),
+                result,
+                note,
+                Level::Top,
+            )),
+            _ => Box::new(CommunicationTileNoteLevel::new(
+                arguments.clone(),
+                result,
+                note,
+                Level::Bottom,
+            )),
+        };
+    }
+    Ok(result)
 }

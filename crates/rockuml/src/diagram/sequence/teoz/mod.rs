@@ -6,6 +6,7 @@ mod components;
 mod key;
 mod life_event;
 mod living_space;
+mod note_tiles;
 mod playing_space;
 mod self_tile;
 mod tile;

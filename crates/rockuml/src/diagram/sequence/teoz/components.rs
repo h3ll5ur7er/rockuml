@@ -4,10 +4,12 @@
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::diagram::sequence::SequenceDiagram;
-use crate::diagram::sequence::model::{LiveColors, MessageCommon, ParticipantId, ParticipantType};
+use crate::diagram::sequence::model::{
+    LiveColors, MessageCommon, Note, NoteStyle, ParticipantId, ParticipantType,
+};
 use crate::diagram::sequence::styles::{
-    merged, merged_with_stereotype, message_style, participant_styles, sequence_signature,
-    sequence_signature2,
+    merged, merged_with_stereotype, message_style, note_style, participant_styles,
+    sequence_signature, sequence_signature2,
 };
 use crate::klimt::TextBlock;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
@@ -22,7 +24,7 @@ use crate::skin::rose::life::{
 use crate::skin::rose::line::ComponentRoseLine;
 use crate::skin::rose::participant::ComponentRoseParticipant;
 use crate::skin::rose::queue::ComponentRoseQueue;
-use crate::skin::rose::{self, MessageLabel};
+use crate::skin::rose::{self, MessageLabel, NoteShape};
 use crate::skin::symbol::{Boundary, Control, EntityDomain, SmallDatabase, SmallQueue};
 use crate::style::{PName, SName, StyleBuilder, ValueReading};
 
@@ -184,5 +186,29 @@ pub(super) fn message_arrow(
             number: common.message_number.as_deref(),
             display: &common.label,
         },
+    )
+}
+
+/// A note, in the shape its style asks for unless `folded` forces the folded corner, as some placements
+/// do in PlantUML. Only notes not attached to a message know whether they are over several participants.
+pub(super) fn note(
+    diagram: &SequenceDiagram,
+    note: &Note,
+    folded: bool,
+    over_several: bool,
+) -> Box<dyn Component> {
+    let shape = match note.style {
+        _ if folded => NoteShape::Folded,
+        NoteStyle::Normal => NoteShape::Folded,
+        NoteStyle::Hexagonal => NoteShape::Hexagonal,
+        NoteStyle::Box => NoteShape::Box,
+    };
+    rose::create_component_note(
+        &note_style(note),
+        shape,
+        diagram.skin(),
+        &note.display,
+        &note.colors,
+        over_several,
     )
 }

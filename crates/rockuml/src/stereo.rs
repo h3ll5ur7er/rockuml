@@ -64,7 +64,7 @@ impl Stereotype {
                         .transpose()?;
                     let character = captures[1].chars().next().expect("one character");
                     spot = Some(Spot { character, color });
-                    if let Some(rest) = captures.get(3).filter(|rest| !rest.as_str().is_empty()) {
+                    if let Some(rest) = captures.get(3).filter(|rest| !is_blank(rest.as_str())) {
                         label.push_str(&format!("<<{}>>", rest.as_str()));
                     }
                 }
@@ -93,6 +93,11 @@ impl Stereotype {
             .map(|label| without_brackets(label).to_owned())
             .collect()
     }
+}
+
+/// `StringUtils.isEmpty`: only spaces and tabs.
+fn is_blank(text: &str) -> bool {
+    text.chars().all(|c| matches!(c, ' ' | '\t'))
 }
 
 /// Every `<<label>>` in the text, skipping those written with three brackets.

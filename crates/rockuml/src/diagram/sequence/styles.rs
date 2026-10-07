@@ -8,6 +8,11 @@ use super::model::{
     GroupingStart, GroupingType, MessageCommon, Note, NoteStyle, Participant, ParticipantType,
 };
 
+/// `root, element, sequenceDiagram`: what every sequence element inherits.
+pub(crate) fn sequence_signature_root() -> StyleSignature {
+    StyleSignature::of(&[SName::Root, SName::Element, SName::SequenceDiagram])
+}
+
 pub(crate) fn sequence_signature(name: SName) -> StyleSignature {
     StyleSignature::of(&[SName::Root, SName::Element, SName::SequenceDiagram, name])
 }

@@ -40,6 +40,24 @@ pub trait TextBlock {
     }
 }
 
+impl<T: TextBlock + ?Sized> TextBlock for &T {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        (**self).calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        (**self).draw_u(ug);
+    }
+
+    fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
+        (**self).draw_in_padding(ug, left, right);
+    }
+
+    fn backcolor(&self) -> Option<HColor> {
+        (**self).backcolor()
+    }
+}
+
 impl<T: TextBlock + ?Sized> TextBlock for Box<T> {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
         (**self).calculate_dimension(string_bounder)

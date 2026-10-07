@@ -16,13 +16,16 @@ pub trait Stencil {
     fn ending_x(&self, string_bounder: &dyn StringBounder, y: f64) -> f64;
 }
 
-/// A separator: `-` and `=` draw solid lines (`=` two of them), `.` a dotted one; a title sits in its middle.
+/// A separator: `-` and `=` draw solid lines (`=` two of them), `.` a dotted one, others a line of
+/// `default_thickness`; a title sits in its middle.
 pub struct UHorizontalLine<'a> {
     pub style: char,
     pub title: Option<&'a dyn TextBlock>,
+    pub default_thickness: f64,
+    /// How far inside the stencil the line starts and ends.
+    pub skip: f64,
 }
 
-const DEFAULT_THICKNESS: f64 = 1.0;
 const DOUBLE_LINE_GAP: f64 = 2.0;
 
 impl UHorizontalLine<'_> {
@@ -32,8 +35,8 @@ impl UHorizontalLine<'_> {
         let string_bounder = ug.string_bounder();
         let extent = |y| {
             (
-                stencil.starting_x(string_bounder, y),
-                stencil.ending_x(string_bounder, y),
+                stencil.starting_x(string_bounder, y) + self.skip,
+                stencil.ending_x(string_bounder, y) - self.skip,
             )
         };
         let Some(title) = self.title else {
@@ -62,7 +65,7 @@ impl UHorizontalLine<'_> {
                 thickness: 1.0,
             },
             '=' | '-' => UStroke::SIMPLE,
-            _ => UStroke::with_thickness(DEFAULT_THICKNESS),
+            _ => UStroke::with_thickness(self.default_thickness),
         }
     }
 

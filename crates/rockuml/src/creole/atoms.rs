@@ -86,6 +86,8 @@ impl TextBlock for HorizontalLine {
             .draw_horizontal_line(&UHorizontalLine {
                 style: self.style,
                 title: self.title.as_ref().map(|title| title as &dyn TextBlock),
+                default_thickness: 1.0,
+                skip: 0.0,
             });
     }
 }
