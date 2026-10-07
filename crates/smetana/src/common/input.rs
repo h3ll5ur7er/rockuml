@@ -31,6 +31,7 @@ fn unsupported_graph_attr(zz: &mut Globals, g: GraphId, name: &str, if_empty: bo
 }
 
 /// `graph_init`: reads the graph attributes every layout uses and looks up the attributes of nodes and edges.
+#[allow(clippy::too_many_lines, reason = "one Graphviz function")]
 pub fn graph_init(zz: &mut Globals, g: GraphId, use_rankdir: bool) {
     zz.gd_mut(g).drawing = Some(layout_t::default());
     unsupported_graph_attr(zz, g, "fontpath", true);

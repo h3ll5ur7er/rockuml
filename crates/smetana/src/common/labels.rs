@@ -124,7 +124,7 @@ pub fn make_label(
         ..textlabel_t::default()
     };
     if kind & LT_RECD != 0 {
-        rv.text = str.to_owned();
+        str.clone_into(&mut rv.text);
         if kind & LT_HTML != 0 {
             rv.html = true;
         }

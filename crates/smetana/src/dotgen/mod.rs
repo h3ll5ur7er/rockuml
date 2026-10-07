@@ -1,6 +1,7 @@
 //! `lib/dotgen`: the dot layout: ranking, ordering within ranks, positions and edge routes.
 
 #![allow(non_snake_case, non_camel_case_types)]
+#![allow(clippy::similar_names, reason = "Graphviz's names")]
 
 pub mod acyclic;
 pub mod aspect;

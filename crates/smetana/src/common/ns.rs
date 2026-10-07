@@ -68,9 +68,7 @@ fn nlist(zz: &Globals) -> Option<NodeId> {
 
 /// `add_tree_edge`.
 fn add_tree_edge(zz: &mut Globals, e: EdgeId) {
-    if TREE_EDGE(zz, e) {
-        panic!("add_tree_edge: missing tree edge");
-    }
+    assert!(!TREE_EDGE(zz, e), "add_tree_edge: missing tree edge");
     zz.ed_mut(e).tree_index = zz.Tree_edge.size;
     let list = zz.Tree_edge.list.expect("Tree_edge");
     zz.edge_lists.set(list, zz.Tree_edge.size, Some(e));
@@ -91,9 +89,10 @@ fn add_tree_edge(zz: &mut Globals, e: EdgeId) {
     zz.edge_lists.set(list, tree_out.size, Some(e));
     zz.edge_lists.set(list, tree_out.size + 1, None);
     zz.nd_mut(n).tree_out.size += 1;
-    if out_edge(zz, n, tree_out.size).is_none() {
-        panic!("add_tree_edge: empty outedge list");
-    }
+    assert!(
+        out_edge(zz, n, tree_out.size).is_some(),
+        "add_tree_edge: empty outedge list"
+    );
 
     let n = aghead(zz, e);
     zz.nd_mut(n).mark = 1;
@@ -102,9 +101,10 @@ fn add_tree_edge(zz: &mut Globals, e: EdgeId) {
     zz.edge_lists.set(list, tree_in.size, Some(e));
     zz.edge_lists.set(list, tree_in.size + 1, None);
     zz.nd_mut(n).tree_in.size += 1;
-    if in_edge(zz, n, tree_in.size).is_none() {
-        panic!("add_tree_edge: empty inedge list");
-    }
+    assert!(
+        in_edge(zz, n, tree_in.size).is_some(),
+        "add_tree_edge: empty inedge list"
+    );
 }
 
 /// Removes `e` from a node's tree list (`tree_out` or `tree_in`), moving the last edge into its slot.
@@ -158,7 +158,7 @@ fn exchange_tree_edges(zz: &mut Globals, e: EdgeId, f: EdgeId) {
 }
 
 /// `init_rank`: an initial feasible ranking, in topological order. If some nodes are left (a cycle), Graphviz
-/// only prints "trouble in init_rank" and goes on with their old ranks.
+/// only prints "trouble in `init_rank`" and goes on with their old ranks.
 fn init_rank(zz: &mut Globals) {
     let mut Q = new_queue(zz.N_nodes);
     let mut v = nlist(zz);
@@ -480,9 +480,10 @@ fn update(zz: &mut Globals, e: EdgeId, f: EdgeId) {
     let cutvalue = zz.ed(e).cutvalue;
     let (ftail, fhead) = (agtail(zz, f), aghead(zz, f));
     let lca = treeupdate(zz, ftail, fhead, cutvalue, true);
-    if treeupdate(zz, fhead, ftail, cutvalue, false) != lca {
-        panic!("update: mismatched lca in treeupdates");
-    }
+    assert!(
+        treeupdate(zz, fhead, ftail, cutvalue, false) == lca,
+        "update: mismatched lca in treeupdates"
+    );
     zz.ed_mut(f).cutvalue = -cutvalue;
     zz.ed_mut(e).cutvalue = 0;
     exchange_tree_edges(zz, e, f);

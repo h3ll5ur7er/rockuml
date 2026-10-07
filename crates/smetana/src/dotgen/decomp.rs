@@ -48,7 +48,7 @@ fn end_component(zz: &mut Globals) {
 }
 
 /// `search_component`: adds the component of `n` (through all four edge lists) depth first.
-fn search_component(zz: &mut Globals, g: GraphId, n: NodeId) {
+fn search_component(zz: &mut Globals, n: NodeId) {
     add_to_component(zz, n);
     let info = zz.nd(n);
     let vec = [info.out, info.in_, info.flat_out, info.flat_in];
@@ -63,7 +63,7 @@ fn search_component(zz: &mut Globals, g: GraphId, n: NodeId) {
                 other = agtail(zz, e);
             }
             if zz.nd(other).mark != i32::from(zz.Cmark) && other == UF_find(zz, other) {
-                search_component(zz, g, other);
+                search_component(zz, other);
             }
             i += 1;
         }
@@ -97,7 +97,7 @@ pub fn decompose(zz: &mut Globals, g: GraphId, pass: i32) {
         }
         if zz.nd(v).mark != i32::from(zz.Cmark) {
             begin_component(zz);
-            search_component(zz, g, v);
+            search_component(zz, v);
             end_component(zz);
         }
         n = agnxtnode(zz, g, nn);

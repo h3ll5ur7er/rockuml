@@ -68,5 +68,6 @@ pub mod core;
 pub mod dotgen;
 pub mod gvc;
 pub mod h;
+pub mod label;
 pub mod pack;
 pub mod pathplan;
