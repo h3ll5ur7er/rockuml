@@ -2,55 +2,27 @@
 //! labels dot left unplaced) with xlabels, then moves the drawing so that its bounding box starts at the origin,
 //! rotating it for `rankdir=LR`.
 
-#![allow(non_camel_case_types, non_snake_case)]
-#![allow(clippy::similar_names, reason = "Graphviz's names")]
-#![allow(
-    clippy::manual_midpoint,
-    reason = "f64::midpoint may round differently from Java's (a + b) / 2"
-)]
-
 use crate::cgraph::AGRAPH;
 use crate::cgraph::attr::agattr;
 use crate::cgraph::edge::{agfstout, agnxtout};
 use crate::cgraph::graph::agnnodes;
 use crate::cgraph::node::{agfstnode, agnxtnode};
 use crate::cgraph::obj::agroot;
+use crate::common::geom::ccwrotatepf;
+use crate::common::utils::{DIST2, dotneato_closest, gv_nodesize, late_bool, updateBB};
 use crate::core::Globals;
 use crate::core::consts::{
     EDGE_LABEL, EDGE_XLABEL, ET_CURVED, ET_NONE, ET_SPLINE, GRAPH_LABEL, HEAD_LABEL, INT_MAX,
     LABEL_AT_LEFT, LABEL_AT_RIGHT, LABEL_AT_TOP, LEFT_IX, MILLIPOINT, NODE_XLABEL, NORMAL,
     RANKDIR_BT, RANKDIR_LR, RANKDIR_RL, RANKDIR_TB, RIGHT_IX, TAIL_LABEL, TOP_IX,
 };
-use crate::core::ids::{EdgeId, GraphId, NodeId, SymId, TextlabelId};
+use crate::core::ids::{EdgeId, GraphId, NodeId, TextlabelId};
 use crate::core::jmath::{INCH2PS, max, min};
 use crate::h::{boxf, pointf, pointfof, splines};
 use crate::label::{label_params_t, object_t, placeLabels, xlabel_t};
 
 /// `State` once dot has routed the edges.
 const GVSPLINES: i32 = 1;
-
-/// `GD_rankdir(g)`: the rank direction, without the flags above it.
-fn GD_rankdir(zz: &Globals, g: GraphId) -> i32 {
-    zz.gd(g).rankdir & 0x3
-}
-
-/// `GD_flip(g)`: whether ranks run horizontally.
-fn GD_flip(zz: &Globals, g: GraphId) -> bool {
-    (GD_rankdir(zz, g) & 1) != 0
-}
-
-/// `ccwrotatepf`: `p` rotated counter-clockwise by a multiple of 90 degrees.
-pub fn ccwrotatepf(p: pointf, ccwrot: i32) -> pointf {
-    let x = p.x;
-    let y = p.y;
-    match ccwrot {
-        0 => p,
-        90 => pointf { x: -y, y: x },
-        180 => pointf { x, y: -y },
-        270 => pointf { x: y, y: x },
-        _ => unimplemented!("ccwrotatepf by {ccwrot} degrees"),
-    }
-}
 
 /// `map_point`: a point of the layout in the final drawing.
 fn map_point(zz: &Globals, p: pointf) -> pointf {
@@ -149,7 +121,7 @@ fn translate_drawing(zz: &mut Globals, g: GraphId) {
         }
         v = agnxtnode(zz, g, vv);
     }
-    translate_bb(zz, g, GD_rankdir(zz, g));
+    translate_bb(zz, g, zz.gd(g).GD_rankdir());
 }
 
 /// `centerPt`: the centre of a placed label.
@@ -454,8 +426,8 @@ fn addXLabels(zz: &mut Globals, gp: GraphId) {
 
 /// `gv_postprocess`.
 pub fn gv_postprocess(zz: &mut Globals, g: GraphId, allowTranslation: bool) {
-    zz.Rankdir = GD_rankdir(zz, g);
-    zz.Flip = GD_flip(zz, g);
+    zz.Rankdir = zz.gd(g).GD_rankdir();
+    zz.Flip = zz.gd(g).GD_flip();
     if zz.Flip {
         place_flip_graph_label(zz, g);
     } else {
@@ -545,64 +517,7 @@ fn place_graph_label(zz: &mut Globals, g: GraphId) {
     }
 }
 
-// What follows belongs to utils.c and splines.c; postproc.c is their only caller in the phases ported so far.
-
-/// `gv_nodesize` (`utils.c`): a node's half widths and height from its size in inches.
-fn gv_nodesize(zz: &mut Globals, n: NodeId, flip: bool) {
-    let nd = zz.nd_mut(n);
-    if flip {
-        let w = INCH2PS(nd.height);
-        nd.rw = w / 2.0;
-        nd.lw = w / 2.0;
-        nd.ht = INCH2PS(nd.width);
-    } else {
-        let w = INCH2PS(nd.width);
-        nd.rw = w / 2.0;
-        nd.lw = w / 2.0;
-        nd.ht = INCH2PS(nd.height);
-    }
-}
-
-/// `updateBB` (`utils.c`): grows the graph's bounding box to contain the label.
-fn updateBB(zz: &mut Globals, g: GraphId, lp: TextlabelId) {
-    let bb = addLabelBB(zz.gd(g).bb, &zz.textlabels[lp], GD_flip(zz, g));
-    zz.gd_mut(g).bb = bb;
-}
-
-/// `addLabelBB` (`utils.c`).
-fn addLabelBB(mut bb: boxf, lp: &crate::h::textlabel_t, flipxy: bool) -> boxf {
-    let p = lp.pos;
-    let (width, height) = if flipxy {
-        (lp.dimen.y, lp.dimen.x)
-    } else {
-        (lp.dimen.x, lp.dimen.y)
-    };
-    let min = p.x - width / 2.0;
-    let max = p.x + width / 2.0;
-    if min < bb.LL.x {
-        bb.LL.x = min;
-    }
-    if max > bb.UR.x {
-        bb.UR.x = max;
-    }
-    let min = p.y - height / 2.0;
-    let max = p.y + height / 2.0;
-    if min < bb.LL.y {
-        bb.LL.y = min;
-    }
-    if max > bb.UR.y {
-        bb.UR.y = max;
-    }
-    bb
-}
-
-/// `late_bool` (`utils.c`), for attributes PlantUML never sets.
-fn late_bool(attr: Option<SymId>, def: i32) -> bool {
-    if attr.is_none() {
-        return def != 0;
-    }
-    unimplemented!("late_bool on a declared attribute")
-}
+// What follows belongs to splines.c; postproc.c is its only caller in the phases ported so far.
 
 /// `getsplinepoints` (`splines.c`): the edge's splines, or those of the edge it stands for.
 fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<splines> {
@@ -616,13 +531,6 @@ fn getsplinepoints(zz: &Globals, e: EdgeId) -> Option<splines> {
         }
         le = zz.ed(le).to_orig.expect("ED_to_orig");
     }
-}
-
-/// `DIST2`.
-fn DIST2(p: pointf, q: pointf) -> f64 {
-    let a = p.x - q.x;
-    let b = p.y - q.y;
-    a * a + b * b
 }
 
 /// `edgeMidpoint` (`splines.c`): the point of a spline edge closest to the middle of its end points.
@@ -657,63 +565,4 @@ fn endPoints(zz: &Globals, spl: &splines) -> (pointf, pointf) {
     }
     let q = zz.pointfs.get(bz.list.expect("bezier points"), bz.size - 1);
     (p, q)
-}
-
-/// `dotneato_closest` (`utils.c`): the point of the bezier segment nearest to `pt`, found by bisection. Smetana
-/// only implements the first step, so it throws unless that step already decides.
-fn dotneato_closest(zz: &Globals, spl: &splines, pt: pointf) -> pointf {
-    let list = spl.list.expect("spline list");
-    let mut besti = -1;
-    let mut bestj = -1;
-    let mut bestdist2 = 1e+38;
-    for i in 0..spl.size {
-        let bz = zz.beziers.get(list, i);
-        for j in 0..bz.size {
-            let b = zz.pointfs.get(bz.list.expect("bezier points"), j);
-            let d2 = DIST2(b, pt);
-            if bestj == -1 || d2 < bestdist2 {
-                besti = i;
-                bestj = j;
-                bestdist2 = d2;
-            }
-        }
-    }
-
-    let bz = zz.beziers.get(list, besti);
-    if bestj == bz.size - 1 {
-        bestj -= 1;
-    }
-    let j = 3 * (bestj / 3);
-    let points = bz.list.expect("bezier points");
-    let c: [pointf; 4] = std::array::from_fn(|k| zz.pointfs.get(points, j + k as i32));
-    let dlow2 = DIST2(c[0], pt);
-    let dhigh2 = DIST2(c[3], pt);
-    // The first step of the bisection over [0, 1].
-    let pt2 = Bezier(&c, 0.5);
-    if (dlow2 - dhigh2).abs() < 1.0 {
-        return pt2;
-    }
-    unimplemented!("dotneato_closest beyond its first bisection step")
-}
-
-/// `Bezier` (`utils.c`) of degree 3, without the halves: the point at `t` by de Casteljau's algorithm.
-fn Bezier(V: &[pointf; 4], t: f64) -> pointf {
-    const W: usize = 5 + 1;
-    let degree: usize = 3;
-    let mut tx = [0.0; W * W];
-    let mut ty = [0.0; W * W];
-    for j in 0..=degree {
-        tx[j] = V[j].x;
-        ty[j] = V[j].y;
-    }
-    for i in 1..=degree {
-        for j in 0..=degree - i {
-            tx[i * W + j] = (1.0 - t) * tx[(i - 1) * W + j] + t * tx[(i - 1) * W + j + 1];
-            ty[i * W + j] = (1.0 - t) * ty[(i - 1) * W + j] + t * ty[(i - 1) * W + j + 1];
-        }
-    }
-    pointf {
-        x: tx[degree * W],
-        y: ty[degree * W],
-    }
 }
