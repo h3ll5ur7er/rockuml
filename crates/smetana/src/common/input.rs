@@ -7,17 +7,17 @@ use crate::cgraph::{AGNODE, AGRAPH};
 use crate::common::labels::make_label;
 use crate::common::shapes::PAD;
 use crate::common::utils::{
-    agget_text, late_double, late_int, late_nnstring, late_string, mapbool, maptoken,
+    agget_text, late_double, late_nnstring, late_string, mapbool, maptoken,
 };
 use crate::core::Globals;
 use crate::core::consts::{
     BOTTOM_IX, DEFAULT_NODESEP, DEFAULT_RANKSEP, GLOBAL, GRAPH_LABEL, LABEL_AT_BOTTOM,
-    LABEL_AT_TOP, LEFT_IX, LOCAL, LT_HTML, LT_NONE, MIN_NODESEP, MIN_RANKSEP, MYHUGE, NOCLUST,
+    LABEL_AT_TOP, LEFT_IX, LOCAL, LT_HTML, LT_NONE, MIN_NODESEP, MIN_RANKSEP, NOCLUST,
     NODENAME_ESC, RANKDIR_LR, RANKDIR_TB, RIGHT_IX, TOP_IX,
 };
 use crate::core::ids::GraphId;
 use crate::core::jmath::POINTS;
-use crate::core::jutils::{atof, atoi};
+use crate::core::jutils::atof;
 use crate::h::layout_t;
 
 /// `GVBEGIN`: the initial job state.
@@ -71,27 +71,10 @@ pub fn graph_init(zz: &mut Globals, g: GraphId, use_rankdir: bool) {
     };
     zz.gd_mut(g).ranksep = POINTS(xf);
 
-    let showboxes_sym = agfindgraphattr(zz, g, "showboxes");
-    zz.gd_mut(g).showboxes = late_int(zz, g, showboxes_sym, 0, 0);
-    let fontnames_sym = agfindgraphattr(zz, g, "fontnames");
-    let p = late_string(zz, g, fontnames_sym, None);
-    zz.gd_mut(g).fontnames = maptoken(p.as_deref(), &["gd", "ps", "svg"], &[0, 1, 2, -1]);
-
     // setRatio, and the size and page of getdoubles2ptf.
     unsupported_graph_attr(zz, g, "ratio", false);
     unsupported_graph_attr(zz, g, "size", true);
     unsupported_graph_attr(zz, g, "page", true);
-
-    let centered = mapbool(agget_text(zz, g, "center").as_deref());
-    drawing(zz, g).centered = centered;
-
-    if let Some(p) = agget_text(zz, g, "rotate") {
-        drawing(zz, g).landscape = atoi(&p) == 90;
-    } else if let Some(p) = agget_text(zz, g, "orientation") {
-        drawing(zz, g).landscape = p.starts_with(['l', 'L']);
-    } else if let Some(p) = agget_text(zz, g, "landscape") {
-        drawing(zz, g).landscape = mapbool(Some(&p));
-    }
 
     let p = agget_text(zz, g, "clusterrank");
     zz.CL_type = maptoken(
@@ -103,29 +86,15 @@ pub fn graph_init(zz: &mut Globals, g: GraphId, use_rankdir: bool) {
     zz.State = GVBEGIN;
     zz.EdgeLabelsDone = 0;
 
-    drawing(zz, g).dpi = 0.0;
-    let dpi = agget_text(zz, g, "dpi")
-        .filter(|p| !p.is_empty())
-        .or_else(|| agget_text(zz, g, "resolution").filter(|p| !p.is_empty()));
-    if let Some(p) = dpi {
-        drawing(zz, g).dpi = atof(&p);
-    }
-
     do_graph_label(zz, g);
 
-    zz.Initial_dist = MYHUGE;
-
     zz.G_ordering = agfindgraphattr(zz, g, "ordering");
-    zz.G_gradientangle = agfindgraphattr(zz, g, "gradientangle");
     zz.G_margin = agfindgraphattr(zz, g, "margin");
 
     // The attributes of nodes.
     zz.N_height = agfindnodeattr(zz, g, "height");
     zz.N_width = agfindnodeattr(zz, g, "width");
     zz.N_shape = agfindnodeattr(zz, g, "shape");
-    zz.N_color = agfindnodeattr(zz, g, "color");
-    zz.N_fillcolor = agfindnodeattr(zz, g, "fillcolor");
-    zz.N_style = agfindnodeattr(zz, g, "style");
     zz.N_fontsize = agfindnodeattr(zz, g, "fontsize");
     zz.N_fontname = agfindnodeattr(zz, g, "fontname");
     zz.N_fontcolor = agfindnodeattr(zz, g, "fontcolor");
@@ -134,31 +103,18 @@ pub fn graph_init(zz: &mut Globals, g: GraphId, use_rankdir: bool) {
         zz.N_label = agattr(zz, Some(g), AGNODE, "label", Some(NODENAME_ESC));
     }
     zz.N_xlabel = agfindnodeattr(zz, g, "xlabel");
-    zz.N_showboxes = agfindnodeattr(zz, g, "showboxes");
-    zz.N_penwidth = agfindnodeattr(zz, g, "penwidth");
+
     zz.N_ordering = agfindnodeattr(zz, g, "ordering");
-    zz.N_margin = agfindnodeattr(zz, g, "margin");
 
     // The attributes of polygon shapes.
-    zz.N_sides = agfindnodeattr(zz, g, "sides");
     zz.N_peripheries = agfindnodeattr(zz, g, "peripheries");
-    zz.N_skew = agfindnodeattr(zz, g, "skew");
     zz.N_orientation = agfindnodeattr(zz, g, "orientation");
-    zz.N_distortion = agfindnodeattr(zz, g, "distortion");
     zz.N_fixed = agfindnodeattr(zz, g, "fixedsize");
-    zz.N_imagescale = agfindnodeattr(zz, g, "imagescale");
     zz.N_nojustify = agfindnodeattr(zz, g, "nojustify");
-    zz.N_layer = agfindnodeattr(zz, g, "layer");
     zz.N_group = agfindnodeattr(zz, g, "group");
-    zz.N_comment = agfindnodeattr(zz, g, "comment");
-    zz.N_vertices = agfindnodeattr(zz, g, "vertices");
-    zz.N_z = agfindnodeattr(zz, g, "z");
-    zz.N_gradientangle = agfindnodeattr(zz, g, "gradientangle");
 
     // The attributes of edges.
     zz.E_weight = agfindedgeattr(zz, g, "weight");
-    zz.E_color = agfindedgeattr(zz, g, "color");
-    zz.E_fillcolor = agfindedgeattr(zz, g, "fillcolor");
     zz.E_fontsize = agfindedgeattr(zz, g, "fontsize");
     zz.E_fontname = agfindedgeattr(zz, g, "fontname");
     zz.E_fontcolor = agfindedgeattr(zz, g, "fontcolor");
@@ -176,16 +132,11 @@ pub fn graph_init(zz: &mut Globals, g: GraphId, use_rankdir: bool) {
     zz.E_labeldistance = agfindedgeattr(zz, g, "labeldistance");
     zz.E_labelangle = agfindedgeattr(zz, g, "labelangle");
     zz.E_minlen = agfindedgeattr(zz, g, "minlen");
-    zz.E_showboxes = agfindedgeattr(zz, g, "showboxes");
-    zz.E_style = agfindedgeattr(zz, g, "style");
-    zz.E_decorate = agfindedgeattr(zz, g, "decorate");
+
     zz.E_arrowsz = agfindedgeattr(zz, g, "arrowsize");
     zz.E_constr = agfindedgeattr(zz, g, "constraint");
-    zz.E_layer = agfindedgeattr(zz, g, "layer");
-    zz.E_comment = agfindedgeattr(zz, g, "comment");
     zz.E_tailclip = agfindedgeattr(zz, g, "tailclip");
     zz.E_headclip = agfindedgeattr(zz, g, "headclip");
-    zz.E_penwidth = agfindedgeattr(zz, g, "penwidth");
 
     // init_xdot: Smetana draws no background.
     unsupported_graph_attr(zz, g, "_background", false);

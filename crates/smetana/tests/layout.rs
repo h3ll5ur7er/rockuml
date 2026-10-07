@@ -18,7 +18,7 @@ use smetana::common::utils::setEdgeType;
 use smetana::core::Globals;
 use smetana::core::consts::{ET_SPLINE, VIRTUAL};
 use smetana::core::ids::{GraphId, NodeId, TextlabelId};
-use smetana::dotgen::aspect::{aspect_t, setAspect};
+use smetana::dotgen::aspect::setAspect;
 use smetana::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
 use smetana::dotgen::dotsplines::dot_splines;
 use smetana::dotgen::mincross::dot_mincross;
@@ -34,18 +34,16 @@ fn layout_until_rank(r: &mut Replay) {
     agbindrec(zz, g, Rec::Info);
     graph_init(zz, g, true);
     setEdgeType(zz, g, ET_SPLINE);
-    let mut aspect = aspect_t::default();
-    let asp = setAspect(zz, g, &mut aspect);
+    setAspect(zz, g);
     dot_init_subg(zz, g, g);
     dot_init_node_edge(zz, g);
-    dot_rank(zz, g, asp.as_ref());
+    dot_rank(zz, g);
 }
 
 /// `dotLayout` up to `dot_mincross`.
 fn layout_until_mincross(r: &mut Replay) {
     layout_until_rank(r);
-    // PlantUML sets no aspect ratio, so `dotLayout` never asks for balancing.
-    dot_mincross(&mut r.zz, r.root, false);
+    dot_mincross(&mut r.zz, r.root);
 }
 
 fn graph_ranks(zz: &Globals, g: GraphId, out: &mut String) {
@@ -415,7 +413,7 @@ fn positions_match_java() {
             // Virtual nodes are named in the mincross dump first.
             let mut names = Names::default();
             dump_orders(&r.zz, r.root, &mut names);
-            dot_position(&mut r.zz, r.root, None);
+            dot_position(&mut r.zz, r.root);
             dump_positions(&r.zz, r.root, &mut names)
         },
         expected_positions,
@@ -503,7 +501,7 @@ fn splines_match_java() {
     check_all(
         |r| {
             layout_until_mincross(r);
-            dot_position(&mut r.zz, r.root, None);
+            dot_position(&mut r.zz, r.root);
             dot_sameports(&mut r.zz, r.root);
             dot_splines(&mut r.zz, r.root);
             let mut out = String::new();

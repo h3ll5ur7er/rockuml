@@ -253,8 +253,7 @@ pub fn common_init_node(zz: &mut Globals, n: NodeId) {
     {
         unimplemented!("node xlabel");
     }
-    let showboxes = late_int(zz, n, zz.N_showboxes, 0, 0);
-    zz.nd_mut(n).showboxes = showboxes;
+
     initfn(zz, n);
 }
 

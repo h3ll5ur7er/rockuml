@@ -315,7 +315,6 @@ pub fn beginpath(
     }
     P.nbox = 0;
     P.data = Some(e);
-    endp.np = P.start.p;
     let side = tail_port.side;
     if et == REGULAREDGE && zz.nd(n).node_type == NORMAL && side != 0 {
         let mut b = endp.nb;
@@ -413,7 +412,7 @@ pub fn endpath(
     } else {
         P.end.constrained = false;
     }
-    endp.np = P.end.p;
+
     let side = head_port.side;
     if et == REGULAREDGE && zz.nd(n).node_type == NORMAL && side != 0 {
         let mut b = endp.nb;

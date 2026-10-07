@@ -135,8 +135,6 @@ pub struct rank_t {
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct adjmatrix_t {
-    pub nrows: i32,
-    pub ncols: i32,
     pub data: Vec<Vec<i32>>,
 }
 
@@ -160,7 +158,6 @@ pub struct splines {
 pub struct textspan_t {
     pub str: String,
     pub size: pointf,
-    pub just: i32,
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -175,35 +172,15 @@ pub struct textlabel_t {
     pub pos: pointf,
     pub span: Option<CArray<textspan_t>>,
     pub nspans: i32,
-    pub valign: i32,
     pub set: i32,
     pub html: bool,
 }
 
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub enum EN_ratio_t {
-    #[default]
-    R_NONE,
-    R_VALUE,
-    R_FILL,
-    R_COMPRESS,
-    R_AUTO,
-    R_EXPAND,
-}
-
+/// `layout_t`: of the drawing parameters, only `quantum` affects a layout Smetana can make; `graph_init` rejects
+/// `ratio` and `size`, and the others only matter to renderers.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct layout_t {
     pub quantum: f64,
-    pub scale: f64,
-    pub ratio: f64,
-    pub dpi: f64,
-    pub margin: pointf,
-    pub page: pointf,
-    pub size: pointf,
-    pub filled: bool,
-    pub landscape: bool,
-    pub centered: bool,
-    pub ratio_kind: EN_ratio_t,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -280,8 +257,6 @@ pub struct Agraphinfo_t {
     pub minrank: i32,
     pub maxrank: i32,
     pub has_flat_edges: i32,
-    pub showboxes: i32,
-    pub fontnames: i32,
     pub nodesep: i32,
     pub ranksep: i32,
     pub ln: Option<NodeId>,
@@ -290,7 +265,6 @@ pub struct Agraphinfo_t {
     pub rankleader: Option<CArray<Option<NodeId>>>,
     pub expanded: bool,
     pub installed: i32,
-    pub set_type: i32,
     pub label_pos: i32,
     pub exact_ranksep: i32,
 }
@@ -327,9 +301,6 @@ pub struct Agnodeinfo_t {
     pub xlabel: Option<TextlabelId>,
     pub alg: Option<EdgeId>,
     pub id: i32,
-    pub heapindex: i32,
-    pub hops: i32,
-    pub showboxes: i32,
     pub has_port: bool,
     pub node_type: i32,
     pub mark: i32,
@@ -376,7 +347,6 @@ pub struct Agedgeinfo_t {
     pub label_ontop: bool,
     pub to_orig: Option<EdgeId>,
     pub dist: f64,
-    pub showboxes: i32,
     pub conc_opp_flag: bool,
     pub xpenalty: i32,
     pub weight: i32,
@@ -401,7 +371,6 @@ pub struct path {
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
 pub struct pathend_t {
     pub nb: boxf,
-    pub np: pointf,
     pub sidemask: i32,
     pub boxn: i32,
     pub boxes: [boxf; 20],

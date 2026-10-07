@@ -128,9 +128,7 @@ pub(crate) struct Dt<O, K> {
     pub(crate) meth: i32,
     pub(crate) type_: i32,
     pub(crate) searchf: Searchf,
-    pub(crate) nview: i32,
     pub(crate) view: Option<crate::core::ids::DictId>,
-    pub(crate) walk: Option<crate::core::ids::DictId>,
 }
 
 impl<O: Copy + PartialEq, K: DtKey> Dt<O, K> {
@@ -147,9 +145,7 @@ impl<O: Copy + PartialEq, K: DtKey> Dt<O, K> {
             meth,
             type_: 0,
             searchf: Searchf::Dttree,
-            nview: 0,
             view: None,
-            walk: None,
         }
     }
 

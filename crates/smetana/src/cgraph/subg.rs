@@ -5,7 +5,6 @@ use super::id::agmapnametoid;
 use crate::cdt::DtArg;
 use crate::core::Globals;
 use crate::core::ids::GraphId;
-use crate::h::cgraph::Agdesc_s;
 
 /// `agfindsubg_by_id`: the child of `g` with this id.
 fn agfindsubg_by_id(zz: &mut Globals, g: GraphId, id: i32) -> Option<GraphId> {
@@ -18,13 +17,7 @@ fn localsubg(zz: &mut Globals, g: GraphId, id: i32) -> GraphId {
         return subg;
     }
     let parent = &zz.graphs[g];
-    let (desc, clos) = (
-        Agdesc_s {
-            maingraph: 0,
-            ..parent.desc
-        },
-        parent.clos,
-    );
+    let (desc, clos) = (parent.desc, parent.clos);
     let subg = new_graph(zz, desc, Some(g), clos);
     zz.graphs[subg].tag.id = id;
     agopen1(zz, subg)

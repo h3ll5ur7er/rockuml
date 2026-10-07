@@ -73,7 +73,6 @@ impl<O: Copy + PartialEq, K: DtKey> Dicts<O, K> {
                 }
                 d = self.0[di].view;
             }
-            self.0[dt].walk = d;
             return o;
         }
         assert!(ordered, "dtvsearch: unordered methods");
@@ -83,7 +82,6 @@ impl<O: Copy + PartialEq, K: DtKey> Dicts<O, K> {
         // The answer is the best of each dictionary's answer: the smallest for FIRST/NEXT, the largest for
         // LAST/PREV, the dictionary nearest the top on ties.
         let mut n: Option<(O, K)> = None;
-        let mut p = None;
         let mut d = Some(dt);
         while let Some(di) = d {
             d = self.0[di].view;
@@ -99,11 +97,9 @@ impl<O: Copy + PartialEq, K: DtKey> Dicts<O, K> {
                 }
             };
             if better {
-                p = Some(di);
                 n = Some(o);
             }
         }
-        self.0[dt].walk = p;
         n
     }
 
@@ -125,18 +121,13 @@ impl<O: Copy + PartialEq, K: DtKey> Dicts<O, K> {
         }
         // No more viewing the lower dictionary.
         let old = self.0[dt].view;
-        if let Some(o) = old {
-            self.0[o].nview -= 1;
-        }
         self.0[dt].view = None;
-        self.0[dt].walk = None;
         let Some(v) = view else {
             self.0[dt].searchf = Searchf::Dttree;
             return old;
         };
         self.0[dt].view = Some(v);
         self.0[dt].searchf = Searchf::Dtvsearch;
-        self.0[v].nview += 1;
         Some(v)
     }
 }

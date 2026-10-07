@@ -16,9 +16,9 @@ use crate::common::utils::{
     setEdgeType,
 };
 use crate::core::Globals;
-use crate::core::consts::{CL_OFFSET, ET_SPLINE, NEW_RANK};
+use crate::core::consts::{ET_SPLINE, NEW_RANK};
 use crate::core::ids::{EdgeId, GraphId, NodeId};
-use crate::dotgen::aspect::{aspect_t, setAspect};
+use crate::dotgen::aspect::setAspect;
 use crate::dotgen::class1::nonconstraint_edge;
 use crate::dotgen::dotsplines::dot_splines;
 use crate::dotgen::mincross::dot_mincross;
@@ -26,7 +26,7 @@ use crate::dotgen::position::dot_position;
 use crate::dotgen::rank::dot_rank;
 use crate::dotgen::sameport::dot_sameports;
 use crate::h::{alloc_elist, elist};
-use crate::pack::{EN_pack_mode, getPack, getPackInfo, getPackModeInfo, pack_info};
+use crate::pack::{EN_pack_mode, getPack, getPackModeInfo};
 
 /// `dot_init_subg`: binds the dot record of every subgraph and remembers the root of the layout.
 pub fn dot_init_subg(zz: &mut Globals, g: GraphId, droot: GraphId) {
@@ -87,7 +87,7 @@ fn dot_init_edge(zz: &mut Globals, e: EdgeId) {
     if nonconstraint_edge(zz, e) {
         unimplemented!("constraint=false");
     }
-    zz.ed_mut(e).showboxes = late_int(zz, e, zz.E_showboxes, 0, 0);
+
     zz.ed_mut(e).minlen = late_int(zz, e, zz.E_minlen, 1, 0);
 }
 
@@ -117,36 +117,27 @@ fn attach_phase_attrs(maxphase: i32) -> ! {
 
 /// `dotLayout`: initialisation, then the phases: rank, mincross, position, sameports, splines.
 pub fn dotLayout(zz: &mut Globals, g: GraphId) {
-    let mut aspect = aspect_t::default();
     let phase = agfindgraphattr(zz, g, "phase");
     let maxphase = late_int(zz, g, phase, -1, 1);
 
     setEdgeType(zz, g, ET_SPLINE);
-    let asp = setAspect(zz, g, &mut aspect);
+    setAspect(zz, g);
 
     dot_init_subg(zz, g, g);
     dot_init_node_edge(zz, g);
 
-    loop {
-        dot_rank(zz, g, asp.as_ref());
-        if maxphase == 1 {
-            attach_phase_attrs(maxphase);
-        }
-        if aspect.badGraph != 0 {
-            unimplemented!("aspect on disconnected graphs or graphs with clusters");
-        }
-        dot_mincross(zz, g, asp.is_some());
-        if maxphase == 2 {
-            attach_phase_attrs(maxphase);
-        }
-        dot_position(zz, g, asp.as_ref());
-        if maxphase == 3 {
-            attach_phase_attrs(maxphase);
-        }
-        aspect.nPasses -= 1;
-        if aspect.nextIter == 0 || aspect.nPasses == 0 {
-            break;
-        }
+    // Without aspect data the phases run once.
+    dot_rank(zz, g);
+    if maxphase == 1 {
+        attach_phase_attrs(maxphase);
+    }
+    dot_mincross(zz, g);
+    if maxphase == 2 {
+        attach_phase_attrs(maxphase);
+    }
+    dot_position(zz, g);
+    if maxphase == 3 {
+        attach_phase_attrs(maxphase);
     }
     if (zz.gd(g).flags & NEW_RANK) != 0 {
         unimplemented!("removeFill");
@@ -160,10 +151,9 @@ pub fn dotLayout(zz: &mut Globals, g: GraphId) {
 
 /// `doDot`: Smetana supports no packing, so the graph is laid out as a whole.
 fn doDot(zz: &mut Globals, g: GraphId) {
-    let mut pinfo = pack_info::default();
-    let Pack = getPack(zz, g, -1, CL_OFFSET);
-    let mode = getPackModeInfo(zz, g, EN_pack_mode::l_undef, &mut pinfo);
-    getPackInfo(zz, g, EN_pack_mode::l_node, 8, &mut pinfo);
+    let Pack = getPack(zz, g, -1);
+    let mode = getPackModeInfo(zz, g, EN_pack_mode::l_undef);
+    // getPackInfo reads the same two attributes again, into options only packing uses.
     if mode == EN_pack_mode::l_undef && Pack < 0 {
         // No pack information: old dot, with components handled during layout.
         dotLayout(zz, g);

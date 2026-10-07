@@ -231,11 +231,12 @@ fn port_text(p: &port) -> String {
     )
 }
 
+/// The end's boxes as Java writes them, with a placeholder for the node point `np`, which the port drops because
+/// nothing reads it.
 fn endp_text(endp: &pathend_t) -> String {
     format!(
-        "{} {} {} {} {}",
+        "{} _ _ {} {} {}",
         bx(endp.nb),
-        pt(endp.np),
         endp.sidemask,
         endp.boxn,
         bx(endp.boxes[0])
@@ -645,9 +646,10 @@ fn call(layout: &mut Layout, line: &str) -> Vec<(String, Vec<usize>)> {
             let et = t.after("et").parse().expect("et");
             let merge = t.after("merge") == "1";
             t.expect("endp");
+            let nb = t.bx();
+            t.pt();
             let mut endp = pathend_t {
-                nb: t.bx(),
-                np: t.pt(),
+                nb,
                 sidemask: t.i(),
                 boxn: t.i(),
                 ..pathend_t::default()
@@ -662,7 +664,8 @@ fn call(layout: &mut Layout, line: &str) -> Vec<(String, Vec<usize>)> {
             }
             let p = if begin { &P.start } else { &P.end };
             // Java reuses P: an unconstrained end keeps an old theta, and endpath leaves nbox alone.
-            let mut skip = vec![];
+            // Tokens 13 and 14 are `np`.
+            let mut skip = vec![13, 14];
             if !p.constrained {
                 skip.push(4);
             }

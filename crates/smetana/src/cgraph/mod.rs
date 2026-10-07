@@ -73,14 +73,6 @@ impl Globals {
     }
 }
 
-pub fn AGTYPE(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
-    zz.tag(obj).objtype
-}
-
-pub fn AGID(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
-    zz.tag(obj).id
-}
-
 pub fn AGSEQ(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
     zz.tag(obj).seq
 }
@@ -122,11 +114,6 @@ pub fn agtail(zz: &Globals, e: EdgeId) -> NodeId {
 /// `aghead` / `AGHEAD`.
 pub fn aghead(zz: &Globals, e: EdgeId) -> NodeId {
     zz.edge(AGMKOUT(zz, e)).node.expect("edge without head")
-}
-
-/// `agopp`.
-pub fn agopp(zz: &Globals, e: EdgeId) -> EdgeId {
-    AGOPP(zz, e)
 }
 
 /// `M_agtail(e, v)`: sets the tail.

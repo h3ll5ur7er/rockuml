@@ -261,7 +261,6 @@ fn newedge(zz: &mut Globals, g: GraphId, t: NodeId, h: NodeId, id: i32) -> EdgeI
             objtype: AGINEDGE,
             id,
             seq,
-            ..Agtag_s::default()
         },
         node: Some(t),
     };
@@ -270,7 +269,6 @@ fn newedge(zz: &mut Globals, g: GraphId, t: NodeId, h: NodeId, id: i32) -> EdgeI
             objtype: AGOUTEDGE,
             id,
             seq,
-            ..Agtag_s::default()
         },
         node: Some(h),
     };

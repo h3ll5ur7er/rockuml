@@ -57,13 +57,13 @@ fn edges_of(zz: &Globals, l: elist) -> Vec<EdgeId> {
 }
 
 /// `dot_mincross`.
-pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
+pub fn dot_mincross(zz: &mut Globals, g: GraphId) {
     init_mincross(zz, g);
 
     let mut c = 0;
     while c < zz.gd(g).comp.size {
         init_mccomp(zz, g, c);
-        mincross_(zz, g, 0, 2, doBalance);
+        mincross_(zz, g, 0, 2);
         c += 1;
     }
 
@@ -72,13 +72,13 @@ pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
     // Run mincross on the contents of each cluster.
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
-        mincross_clust(zz, clust, doBalance);
+        mincross_clust(zz, clust);
     }
 
     if zz.gd(g).n_cluster > 0 && agget_text(zz, g, "remincross").is_none_or(|s| mapbool(Some(&s))) {
         mark_lowclusters(zz, g);
         zz.ReMincross = true;
-        mincross_(zz, g, 2, 2, doBalance);
+        mincross_(zz, g, 2, 2);
     }
     cleanup2(zz, g);
 }
@@ -87,8 +87,6 @@ pub fn dot_mincross(zz: &mut Globals, g: GraphId, doBalance: bool) {
 fn new_matrix(zz: &mut Globals, i: i32, j: i32) -> AdjmatrixId {
     let size = usize::try_from(i.max(j) + 8).expect("matrix size");
     zz.adjmatrices.push(adjmatrix_t {
-        nrows: i,
-        ncols: j,
         data: vec![vec![0; size]; size],
     })
 }
@@ -118,16 +116,16 @@ fn ordered_edges(zz: &Globals) {
 }
 
 /// `mincross_clust`: expands cluster `g` and orders its contents, then its sub-clusters'.
-fn mincross_clust(zz: &mut Globals, g: GraphId, doBalance: bool) {
+fn mincross_clust(zz: &mut Globals, g: GraphId) {
     expand_cluster(zz, g);
     ordered_edges(zz);
     flat_breakcycles(zz, g);
     flat_reorder(zz, g);
-    mincross_(zz, g, 2, 2, doBalance);
+    mincross_(zz, g, 2, 2);
 
     for c in 1..=zz.gd(g).n_cluster {
         let clust = cluster(zz, g, c);
-        mincross_clust(zz, clust, doBalance);
+        mincross_clust(zz, clust);
     }
 
     save_vlist(zz, g);
@@ -207,11 +205,6 @@ fn exchange(zz: &mut Globals, v: NodeId, w: NodeId) {
     zz.node_lists.set(vlist, vi, Some(w));
 }
 
-/// `balance`: only with an aspect ratio, which PlantUML never sets.
-fn balance() {
-    unimplemented!("balance");
-}
-
 /// `transpose_step`: exchanges the neighbours of rank `r` whose exchange reduces crossings.
 fn transpose_step(zz: &mut Globals, g: GraphId, r: i32, reverse: bool) -> i32 {
     let root = Root(zz);
@@ -272,9 +265,8 @@ fn transpose(zz: &mut Globals, g: GraphId, reverse: bool) {
 }
 
 /// `mincross`: the passes of the ordering heuristic on `g`, from `startpass` to `endpass`, keeping the best
-/// order found.
-fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalance: bool) {
-    let mut maxthispass = 0;
+/// order found. Its final `balance` pass only runs with an aspect ratio, which `setAspect` rejects.
+fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32) {
     let (mut cur_cross, mut best_cross);
 
     if startpass > 1 {
@@ -286,6 +278,7 @@ fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalan
         best_cross = INT_MAX;
     }
     for pass in startpass..=endpass {
+        let maxthispass;
         if pass <= 1 {
             maxthispass = 4.min(zz.MaxIter);
             if g == dot_root(zz, g) {
@@ -336,11 +329,6 @@ fn mincross_(zz: &mut Globals, g: GraphId, startpass: i32, endpass: i32, doBalan
         transpose(zz, g, false);
         // C recounts best_cross here; nothing reads it any more, but the count refreshes the ranks' caches.
         ncross(zz);
-    }
-    if doBalance {
-        for _ in 0..maxthispass {
-            balance();
-        }
     }
 }
 

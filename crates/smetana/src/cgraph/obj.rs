@@ -1,8 +1,8 @@
 //! `obj.c`: operations on any object.
 
+use super::Agobj;
 use super::edge::agsubedge;
 use super::node::agidnode;
-use super::{AGINEDGE, AGNODE, AGOUTEDGE, AGRAPH, Agobj};
 use crate::core::Globals;
 use crate::core::ids::GraphId;
 
@@ -36,11 +36,4 @@ pub fn agcontains(zz: &mut Globals, g: GraphId, obj: impl Into<Agobj>) -> bool {
         }
         Agobj::Edge(e) => agsubedge(zz, g, e, false).is_some(),
     }
-}
-
-/// `agobjkind`.
-pub fn agobjkind(zz: &Globals, obj: impl Into<Agobj>) -> i32 {
-    let kind = zz.tag(obj).objtype;
-    debug_assert!(matches!(kind, AGRAPH | AGNODE | AGOUTEDGE | AGINEDGE));
-    kind
 }

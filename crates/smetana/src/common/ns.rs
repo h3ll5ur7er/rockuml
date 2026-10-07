@@ -596,22 +596,15 @@ fn TB_balance(zz: &mut Globals) {
     }
 }
 
-/// `init_graph`: counts nodes and edges, allocates the tree lists and tells whether the current ranks are
-/// feasible.
+/// `init_graph`: counts nodes, allocates the tree lists and tells whether the current ranks are feasible.
 fn init_graph(zz: &mut Globals, g: GraphId) -> bool {
     zz.G_ns = Some(g);
     zz.N_nodes = 0;
-    zz.N_edges = 0;
     zz.S_i = 0;
     let mut n = zz.gd(g).nlist;
     while let Some(nn) = n {
         zz.nd_mut(nn).mark = 0;
         zz.N_nodes += 1;
-        let mut i = 0;
-        while out_edge(zz, nn, i).is_some() {
-            zz.N_edges += 1;
-            i += 1;
-        }
         n = zz.nd(nn).next;
     }
 

@@ -20,7 +20,7 @@ use crate::core::consts::{
 };
 use crate::core::ids::{GraphId, NodeId};
 use crate::dotgen::acyclic::acyclic_;
-use crate::dotgen::aspect::aspect_t;
+
 use crate::dotgen::class1::class1_;
 use crate::dotgen::decomp::decompose;
 use crate::dotgen::dotinit::dot_root;
@@ -121,18 +121,16 @@ fn collapse_rankset(_kind: i32) {
     unimplemented!("collapse_rankset")
 }
 
-/// `rank_set_class`: what kind of set a subgraph is: a cluster or a `rank=` set (also stored as `set_type`).
+/// `rank_set_class`: what kind of set a subgraph is: a cluster or a `rank=` set.
 fn rank_set_class(zz: &mut Globals, g: GraphId) -> i32 {
     if is_cluster(zz, g) {
         return CLUSTER;
     }
-    let val = maptoken(
+    maptoken(
         agget_text(zz, g, "rank").as_deref(),
         &["same", "min", "source", "max", "sink"],
         &[SAMERANK, MINRANK, SOURCERANK, MAXRANK, SINKRANK, 0],
-    );
-    zz.gd_mut(g).set_type = val;
-    val
+    )
 }
 
 /// `make_new_cluster`: adds `subg` to `g`'s clusters and returns its number.
@@ -213,7 +211,7 @@ fn collapse_cluster(zz: &mut Globals, g: GraphId, subg: GraphId) {
     if zz.CL_type != LOCAL {
         unimplemented!("dot_scan_ranks");
     }
-    dot1_rank(zz, subg, None);
+    dot1_rank(zz, subg);
     cluster_leader(zz, subg);
 }
 
@@ -275,7 +273,7 @@ fn rank1(zz: &mut Globals, g: GraphId) {
 
 /// `expand_ranksets`: gives the nodes of collapsed sets and clusters their ranks (a cluster node's rank is its
 /// offset from the leader) and sets the rank ranges.
-fn expand_ranksets(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+fn expand_ranksets(zz: &mut Globals, g: GraphId) {
     let Some(first) = agfstnode(zz, g) else {
         zz.gd_mut(g).maxrank = 0;
         zz.gd_mut(g).minrank = 0;
@@ -287,7 +285,7 @@ fn expand_ranksets(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
     while let Some(nn) = n {
         let leader = UF_find(zz, nn);
         // ND_rank(n) is 0 for a node outside clusters, and the offset from the leader inside one.
-        if leader != nn && (asp.is_none() || zz.nd(nn).rank == 0) {
+        if leader != nn {
             zz.nd_mut(nn).rank += zz.nd(leader).rank;
         }
         let r = zz.nd(nn).rank;
@@ -311,12 +309,9 @@ fn expand_ranksets(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
     }
 }
 
-/// `dot1_rank`: ranks `g` (aspect data only for the root).
-fn dot1_rank(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+/// `dot1_rank`: ranks `g`.
+fn dot1_rank(zz: &mut Globals, g: GraphId) {
     edgelabel_ranks(zz, g);
-    if asp.is_some() {
-        unimplemented!("ranking with aspect");
-    }
     collapse_sets(zz, g, g);
     class1_(zz, g);
     let p = minmax_edges(zz, g);
@@ -326,16 +321,16 @@ fn dot1_rank(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
         decompose(zz, g, 0);
     }
     rank1(zz, g);
-    expand_ranksets(zz, g, asp);
+    expand_ranksets(zz, g);
     cleanup1(zz, g);
 }
 
 /// `dot_rank`: assigns `ND_rank` to every node and the rank ranges of the graph and its clusters.
-pub fn dot_rank(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+pub fn dot_rank(zz: &mut Globals, g: GraphId) {
     if agget(zz, g, "newrank").is_some() {
         unimplemented!("newrank");
     }
-    dot1_rank(zz, g, asp);
+    dot1_rank(zz, g);
 }
 
 /// `is_cluster`: whether a subgraph's name starts with "cluster".

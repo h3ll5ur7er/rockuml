@@ -53,15 +53,7 @@ pub(crate) fn new_graph(
 /// `agopen`: a new root graph.
 pub fn agopen(zz: &mut Globals, name: Option<&str>, desc: Agdesc_s) -> GraphId {
     let clos = agclos(zz);
-    let g = new_graph(
-        zz,
-        Agdesc_s {
-            maingraph: 1,
-            ..desc
-        },
-        None,
-        clos,
-    );
+    let g = new_graph(zz, desc, None, clos);
     if let Some(gid) = agmapnametoid(zz, g, name, true) {
         zz.graphs[g].tag.id = gid;
     }

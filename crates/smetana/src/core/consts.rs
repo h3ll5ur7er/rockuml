@@ -10,8 +10,7 @@ pub const FLATORDER: i32 = 4;
 pub const CLUSTER_EDGE: i32 = 5;
 pub const IGNORED: i32 = 6;
 
-/// Collapsed node classifications (`ND_ranktype`, `GD_set_type`).
-pub const NOCMD: i32 = 0;
+/// Collapsed node classifications (`ND_ranktype`).
 pub const SAMERANK: i32 = 1;
 pub const MINRANK: i32 = 2;
 pub const SOURCERANK: i32 = 3;
@@ -38,8 +37,7 @@ pub const RANKDIR_RL: i32 = 3;
 /// Spline edge classes (`ED_tree_index` during splines).
 pub const REGULAREDGE: i32 = 1;
 pub const FLATEDGE: i32 = 2;
-pub const SELFWPEDGE: i32 = 4;
-pub const SELFNPEDGE: i32 = 8;
+
 pub const SELFEDGE: i32 = 8;
 pub const EDGETYPEMASK: i32 = 15;
 
@@ -48,9 +46,8 @@ pub const ET_NONE: i32 = 0 << 1;
 pub const ET_LINE: i32 = 1 << 1;
 pub const ET_CURVED: i32 = 2 << 1;
 pub const ET_PLINE: i32 = 3 << 1;
-pub const ET_ORTHO: i32 = 4 << 1;
+
 pub const ET_SPLINE: i32 = 5 << 1;
-pub const ET_COMPOUND: i32 = 6 << 1;
 
 /// `NEW_RANK` in `GD_flags`.
 pub const NEW_RANK: i32 = 1 << 4;
@@ -85,8 +82,7 @@ pub const LOCAL: i32 = 100;
 pub const GLOBAL: i32 = 101;
 pub const NOCLUST: i32 = 102;
 
-/// Crossing costs and the cluster margin, in points.
-pub const CL_BACK: i32 = 10;
+/// The cluster margin in points, and the cost of a crossing with a cluster.
 pub const CL_OFFSET: i32 = 8;
 pub const CL_CROSS: i32 = 1000;
 
@@ -95,10 +91,7 @@ pub const MAXSHORT: i32 = 0x7fff;
 pub const INT_MAX: i32 = i32::MAX;
 pub const INT_MIN: i32 = i32::MIN;
 pub const USHRT_MAX: i32 = 65535;
-pub const HUGE_VAL: f64 = f64::INFINITY;
-pub const MYHUGE: f64 = 1.0e+37;
 pub const MILLIPOINT: f64 = 0.001;
-pub const MICROPOINT: f64 = 0.000_001;
 pub const M_PI: f64 = std::f64::consts::PI;
 
 pub const DEFAULT_NODESEP: f64 = 0.25;
@@ -110,7 +103,7 @@ pub const MIN_NODEHEIGHT: f64 = 0.02;
 pub const DEFAULT_NODEWIDTH: f64 = 0.75;
 pub const MIN_NODEWIDTH: f64 = 0.01;
 pub const DEFAULT_FONTSIZE: f64 = 14.0;
-pub const DEFAULT_LABEL_FONTSIZE: f64 = 11.0;
+
 pub const MIN_FONTSIZE: f64 = 1.0;
 pub const NODENAME_ESC: &str = "\\N";
 pub const DEFAULT_NODESHAPE: &str = "ellipse";

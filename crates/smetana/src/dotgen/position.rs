@@ -21,14 +21,14 @@ use crate::core::consts::{
 use crate::core::ids::{EdgeId, GraphId, NodeId};
 use crate::core::jmath::{self, ROUND};
 use crate::core::jutils::atof;
-use crate::dotgen::aspect::aspect_t;
+
 use crate::dotgen::cluster::mark_lowclusters;
 use crate::dotgen::dotinit::dot_root;
 use crate::dotgen::fastgr::{fast_edge, find_fast_edge, new_edge_pair, virtual_node};
 use crate::dotgen::flat::flat_edges;
 use crate::dotgen::mincross::{rank_node, rank_v};
 use crate::dotgen::rank::cluster;
-use crate::h::{EN_ratio_t, alloc_elist, elist, pointf};
+use crate::h::{alloc_elist, elist, pointf};
 
 /// `largeMinlen`: Smetana cannot lay out edges longer than 65535 points.
 fn largeMinlen(l: f64) -> f64 {
@@ -90,7 +90,7 @@ fn connectGraph(zz: &mut Globals, g: GraphId) {
 }
 
 /// `dot_position`: the coordinates of all nodes, and the bounding boxes of the graph and its clusters.
-pub fn dot_position(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+pub fn dot_position(zz: &mut Globals, g: GraphId) {
     if zz.gd(g).nlist.is_none() {
         return; // ignore empty graph
     }
@@ -111,7 +111,7 @@ pub fn dot_position(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
     }
     set_xcoords(zz, g);
     clampSkippedLabelVnodes(zz);
-    set_aspect(zz, g, asp);
+    set_aspect(zz, g);
     remove_aux_edges(zz, g); // must come after set_aspect since we now use GD_ln and GD_rn for bbox width.
 }
 
@@ -456,20 +456,13 @@ fn pos_clusters(zz: &mut Globals, g: GraphId) {
     }
 }
 
-/// `compress_graph`: only for `ratio=compress`, which PlantUML never sets.
-fn compress_graph(zz: &Globals, g: GraphId) {
-    if zz.gd(g).drawing.expect("GD_drawing").ratio_kind == EN_ratio_t::R_COMPRESS {
-        unimplemented!("ratio=compress");
-    }
-}
-
 /// `create_aux_edges`: the auxiliary graph.
 fn create_aux_edges(zz: &mut Globals, g: GraphId) {
     allocate_aux_edges(zz, g);
     make_LR_constraints(zz, g);
     make_edge_pairs(zz, g);
     pos_clusters(zz, g);
-    compress_graph(zz, g);
+    // compress_graph only acts on ratio=compress, which graph_init rejects.
 }
 
 /// `remove_aux_edges`: restores the fast graph's edge lists and drops the slack nodes.
@@ -812,17 +805,10 @@ fn rec_bb(zz: &mut Globals, g: GraphId, root: GraphId) {
     dot_compute_bb(zz, g, root);
 }
 
-/// `set_aspect`: the bounding boxes. Scaling to a `ratio` and aspect-driven layout are not supported.
-fn set_aspect(zz: &mut Globals, g: GraphId, asp: Option<&aspect_t>) {
+/// `set_aspect`: the bounding boxes. Its scaling to a `ratio` and aspect-driven layout never happen: `graph_init`
+/// rejects `ratio` and `setAspect` rejects `aspect`.
+fn set_aspect(zz: &mut Globals, g: GraphId) {
     rec_bb(zz, g, g);
-    if zz.gd(g).maxrank > 0
-        && zz.gd(g).drawing.expect("GD_drawing").ratio_kind != EN_ratio_t::R_NONE
-    {
-        unimplemented!("ratio");
-    }
-    if asp.is_some() {
-        unimplemented!("adjustAspectRatio");
-    }
 }
 
 /// `make_leafslots`: makes room for the leaf nodes of each rank. Leaf sets are not supported, so this only

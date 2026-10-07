@@ -139,7 +139,6 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
         Some(c @ ('t' | 'b')) => c as i32,
         _ => 'c' as i32,
     };
-    zz.textlabels[label].valign = valign;
 
     let isBox = sides == 4 && (ROUND(orientation) % 90) == 0 && distortion == 0.0 && skew == 0.0;
     if isBox {
