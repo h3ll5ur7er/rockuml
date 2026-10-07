@@ -1,7 +1,8 @@
 //! Lays out every Smetana trace's graph phase by phase and compares the state after each phase with Java's
 //! trace: `phase rank` (each graph's and cluster's rank range, then every real node's rank), `phase mincross`
-//! (each rank's nodes left to right) and `phase position` (every node's coordinates and size, each graph's
-//! bounding box).
+//! (each rank's nodes left to right), `phase position` (every node's coordinates and size, each graph's
+//! bounding box), `phase splines` (every edge's splines and labels) and, for the whole layout with
+//! post-processing, `phase final`.
 
 mod trace;
 
@@ -19,9 +20,12 @@ use smetana::core::consts::{ET_SPLINE, VIRTUAL};
 use smetana::core::ids::{GraphId, NodeId, TextlabelId};
 use smetana::dotgen::aspect::{aspect_t, setAspect};
 use smetana::dotgen::dotinit::{dot_init_node_edge, dot_init_subg};
+use smetana::dotgen::dotsplines::dot_splines;
 use smetana::dotgen::mincross::dot_mincross;
 use smetana::dotgen::position::dot_position;
 use smetana::dotgen::rank::dot_rank;
+use smetana::dotgen::sameport::dot_sameports;
+use smetana::gvc::gvlayout::gvLayoutJobs;
 use trace::Replay;
 
 /// `gvLayoutJobs` → `dot_layout` → `doDot` → `dotLayout`, up to `dot_rank`.
@@ -437,5 +441,106 @@ fn label_sizes_match_java() {
             dump_label_sizes(r)
         },
         expected_label_sizes,
+    );
+}
+
+/// Every edge's splines and labels, as the Java tracer writes the `phase splines` and `phase final` sections.
+fn dump_edges(r: &Replay, out: &mut String) {
+    let zz = &r.zz;
+    for (i, &e) in r.edges.iter().enumerate() {
+        let reference = format!("edge e{}", i + 1);
+        let info = zz.ed(e);
+        match info.spl {
+            None => writeln!(out, "{reference} spl none").unwrap(),
+            Some(spl) => {
+                let spl = zz.splines[spl];
+                for j in 0..spl.size {
+                    let bz = zz.beziers.get(spl.list.expect("beziers"), j);
+                    write!(
+                        out,
+                        "{reference} bezier {j} sflag {} eflag {} sp {:?} {:?} ep {:?} {:?} points {}",
+                        bz.sflag, bz.eflag, bz.sp.x, bz.sp.y, bz.ep.x, bz.ep.y, bz.size
+                    )
+                    .unwrap();
+                    for k in 0..bz.size {
+                        let p = zz.pointfs.get(bz.list.expect("points"), k);
+                        write!(out, " {:?} {:?}", p.x, p.y).unwrap();
+                    }
+                    out.push('\n');
+                }
+            }
+        }
+        dump_label(zz, out, &reference, "label", info.label);
+        dump_label(zz, out, &reference, "head_label", info.head_label);
+        dump_label(zz, out, &reference, "tail_label", info.tail_label);
+        dump_label(zz, out, &reference, "xlabel", info.xlabel);
+    }
+}
+
+/// A Java phase section with its doubles (the tokens with a point or an exponent) written as Rust writes them.
+fn expected_section(trace: &trace::Trace, phase: &str) -> String {
+    let (_, lines) = trace
+        .phases
+        .iter()
+        .find(|(p, _)| p == phase)
+        .unwrap_or_else(|| panic!("phase {phase}"));
+    lines.iter().fold(String::new(), |mut out, l| {
+        let tokens: Vec<String> = l
+            .split(' ')
+            .map(|t| match t.parse::<f64>() {
+                Ok(x) if t.contains(['.', 'E']) => format!("{x:?}"),
+                _ => t.to_owned(),
+            })
+            .collect();
+        out.push_str(&tokens.join(" "));
+        out.push('\n');
+        out
+    })
+}
+
+#[test]
+fn splines_match_java() {
+    check_all(
+        |r| {
+            layout_until_mincross(r);
+            dot_position(&mut r.zz, r.root, None);
+            dot_sameports(&mut r.zz, r.root);
+            dot_splines(&mut r.zz, r.root);
+            let mut out = String::new();
+            dump_edges(r, &mut out);
+            out
+        },
+        |t| expected_section(t, "splines"),
+    );
+}
+
+/// The `phase final` section as the Java tracer writes it: what PlantUML reads back.
+fn dump_final(r: &mut Replay) -> String {
+    let mut out = String::new();
+    dump_graph_boxes(&r.zz, r.root, &mut out);
+    let mut n = agfstnode(&mut r.zz, r.root);
+    while let Some(nn) = n {
+        let name = trace::quote(&agnameof(&r.zz, nn).expect("node name"));
+        let i = r.zz.nd(nn);
+        writeln!(
+            out,
+            "node {name} coord {:?} {:?} width {:?} height {:?} lw {:?} rw {:?} ht {:?}",
+            i.coord.x, i.coord.y, i.width, i.height, i.lw, i.rw, i.ht
+        )
+        .unwrap();
+        n = agnxtnode(&mut r.zz, r.root, nn);
+    }
+    dump_edges(r, &mut out);
+    out
+}
+
+#[test]
+fn whole_layouts_match_java() {
+    check_all(
+        |r| {
+            gvLayoutJobs(&mut r.zz, r.root);
+            dump_final(r)
+        },
+        |t| expected_section(t, "final"),
     );
 }
