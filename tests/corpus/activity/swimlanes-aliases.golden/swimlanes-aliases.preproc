@@ -1,0 +1,13 @@
+@startuml
+swimlane dev as Development team
+swimlane ops as Operations team
+|dev|
+start
+:Write the code;
+:Open a pull request;
+|ops|
+:Deploy the release;
+|dev|
+:Monitor the feedback;
+stop
+@enduml

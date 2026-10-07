@@ -1,0 +1,164 @@
+DPI: 96
+dimension: [ 294.7386 ; 252.0000 ]
+scaleFactor: 1.0000
+seed: -914597671908526235
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 135.8693 ; 15.0000 ]
+  pt2: [ 155.8693 ; 35.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 67.2756 ; 55.0000 ]
+  pt2: [ 224.4631 ; 87.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Größe prüfen
+  position: [ 77.2756 ; 74.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 107.0000 ]
+  pt2: [ 275.7386 ; 139.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Café ouvert à 8 h
+  position: [ 26.0000 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 37.5087 ; 159.0000 ]
+  pt2: [ 254.2299 ; 191.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Ñandú corre rápido
+  position: [ 47.5087 ; 178.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 134.8693 ; 211.0000 ]
+  pt2: [ 156.8693 ; 233.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 139.8693 ; 216.0000 ]
+  pt2: [ 151.8693 ; 228.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 145.8693 ; 35.0000 ]
+  pt2: [ 145.8693 ; 55.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 141.8693 ; 45.0000 ]
+   - [ 145.8693 ; 55.0000 ]
+   - [ 149.8693 ; 45.0000 ]
+   - [ 145.8693 ; 49.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 145.8693 ; 87.0000 ]
+  pt2: [ 145.8693 ; 107.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 141.8693 ; 97.0000 ]
+   - [ 145.8693 ; 107.0000 ]
+   - [ 149.8693 ; 97.0000 ]
+   - [ 145.8693 ; 101.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 145.8693 ; 139.0000 ]
+  pt2: [ 145.8693 ; 159.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 141.8693 ; 149.0000 ]
+   - [ 145.8693 ; 159.0000 ]
+   - [ 149.8693 ; 149.0000 ]
+   - [ 145.8693 ; 153.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 145.8693 ; 191.0000 ]
+  pt2: [ 145.8693 ; 211.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 141.8693 ; 201.0000 ]
+   - [ 145.8693 ; 211.0000 ]
+   - [ 149.8693 ; 201.0000 ]
+   - [ 145.8693 ; 205.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

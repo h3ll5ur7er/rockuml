@@ -1,0 +1,15 @@
+@startuml
+start
+:**bold** and //italic// text;
+:""monospaced"" and --struck-- and __underlined__;
+:<color:red>red</color> and <back:yellow>highlighted</back>;
+:<size:18>big</size> and <size:9>small</size>;
+:A list:
+* first item
+* second item
+** nested item;
+:Title
+----
+Body below a line;
+stop
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+start
+package "Data layer" {
+  :Open the connection;
+}
+rectangle "Business layer" {
+  :Validate the rules;
+}
+card "Presentation layer" {
+  :Render the view;
+}
+stop
+@enduml

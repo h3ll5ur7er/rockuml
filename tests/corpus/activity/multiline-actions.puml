@@ -1,0 +1,11 @@
+@startuml
+start
+:This action is written
+on several lines
+of source;
+:This one uses\nescaped newlines\nin a single line;
+:Mixed
+long line followed by
+short;
+stop
+@enduml

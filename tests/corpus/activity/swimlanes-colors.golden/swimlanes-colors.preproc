@@ -1,0 +1,13 @@
+@startuml
+|#pink|Customer|
+start
+:Place the order;
+|#lightblue|Shop|
+:Check the stock;
+:Pack the parcel;
+|#lightgreen|Courier|
+:Deliver the parcel;
+|Customer|
+:Receive the parcel;
+stop
+@enduml

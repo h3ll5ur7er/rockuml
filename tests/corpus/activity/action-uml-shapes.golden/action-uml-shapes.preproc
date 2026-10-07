@@ -1,0 +1,10 @@
+@startuml
+start
+:Order; <<object>>
+:Order placed; <<objectSignal>>
+:Payment received; <<acceptEvent>>
+:Notify the warehouse; <<sendSignal>>
+:Timer fires; <<trigger>>
+:Every hour; <<timeEvent>>
+stop
+@enduml

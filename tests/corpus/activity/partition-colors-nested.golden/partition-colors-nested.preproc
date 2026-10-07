@@ -1,0 +1,11 @@
+@startuml
+start
+partition #lightblue "Order handling" {
+  :Receive the order;
+  partition #lightyellow Payment {
+    :Charge the card;
+  }
+  :Ship the order;
+}
+stop
+@enduml

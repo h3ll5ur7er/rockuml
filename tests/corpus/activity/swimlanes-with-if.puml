@@ -1,0 +1,16 @@
+@startuml
+|Author|
+start
+:Write the draft;
+|Reviewer|
+:Review the draft;
+if (Approved?) then (yes)
+  |Publisher|
+  :Publish the article;
+else (no)
+  |Author|
+  :Revise the draft;
+endif
+|Publisher|
+stop
+@enduml

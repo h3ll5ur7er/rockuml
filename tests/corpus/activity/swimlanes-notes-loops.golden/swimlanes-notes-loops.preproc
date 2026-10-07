@@ -1,0 +1,12 @@
+@startuml
+|Client|
+start
+repeat
+  :Send a request;
+  |Server|
+  :Handle the request;
+  note right: May fail
+  |Client|
+repeat while (Retry?) is (yes)
+stop
+@enduml

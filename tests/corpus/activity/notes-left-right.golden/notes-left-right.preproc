@@ -1,0 +1,13 @@
+@startuml
+start
+:Validate the input;
+note right: Checks types and ranges
+:Transform the data;
+note left: Pure function
+:Store the result;
+note right
+  Writes to the
+  primary database
+end note
+stop
+@enduml
