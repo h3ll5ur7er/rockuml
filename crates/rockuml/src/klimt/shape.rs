@@ -1,4 +1,7 @@
 use std::rc::Rc;
+use std::sync::LazyLock;
+
+use regex::Regex;
 
 use super::font::{FontConfiguration, UFont};
 use super::geom::XDimension2D;
@@ -20,6 +23,7 @@ pub enum UShape {
     /// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
     Path(Vec<USegment>),
     Image(UImage),
+    ImageSvg(UImageSvg),
     /// A letter centred on the current position, as in a stereotype's spot.
     CenteredCharacter(UCenteredCharacter),
     /// Takes up space without drawing anything.
@@ -42,6 +46,7 @@ impl UShape {
             Self::Path(_) => "UPath",
             Self::Empty(_) => "UEmpty",
             Self::Image(_) => "UImage",
+            Self::ImageSvg(_) => "UImageSvg",
             Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
             Self::SpecialText => "SpecialText",
@@ -211,6 +216,105 @@ impl UImage {
     }
 }
 
+/// An SVG document drawn as an image at a scale (PlantUML's `UImageSvg`). Only SVG output draws it.
+#[derive(Clone, Debug, PartialEq)]
+pub struct UImageSvg {
+    svg: String,
+    scale: f64,
+    /// The size the document declares, before scaling.
+    data_width: u32,
+    data_height: u32,
+}
+
+impl UImageSvg {
+    pub(crate) fn new(svg: String, scale: f64) -> Self {
+        Self {
+            data_width: declared_size(&svg, "width"),
+            data_height: declared_size(&svg, "height"),
+            svg,
+            scale,
+        }
+    }
+
+    pub(crate) fn contains_xlink(&self) -> bool {
+        self.svg
+            .contains("xmlns:xlink=\"http://www.w3.org/1999/xlink\"")
+    }
+
+    /// The document starting with a bare `<svg>`, ready for another root element: without its XML
+    /// declaration and root attributes, a background its root's style gives painted by a rectangle
+    /// (`getSvg(false)`).
+    pub(crate) fn svg(&self) -> String {
+        static STYLE: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r#"(?i)<svg[^>]+style="([^">]+)""#).unwrap());
+        static BACKGROUND: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"background:([^;]+)").unwrap());
+
+        let mut result = self.svg.as_str();
+        if result.starts_with("<?xml")
+            && let Some(start) = result.find("<svg")
+        {
+            result = &result[start..];
+        }
+        let mut result = match result.find('>') {
+            Some(end) if result.starts_with("<svg") => format!("<svg>{}", &result[end + 1..]),
+            _ => result.to_owned(),
+        };
+        if let Some(style) = STYLE
+            .captures(&self.svg)
+            .map(|captures| captures[1].to_owned())
+            && let Some(background) = BACKGROUND.captures(&style)
+        {
+            let rect = format!(
+                "<g><rect fill=\"{}\" style=\"{style}\" width=\"{}\" height=\"{}\"/> ",
+                &background[1], self.data_width, self.data_height
+            );
+            result = result.replacen("<g>", &rect, 1);
+        }
+        result
+    }
+
+    pub(crate) fn data_width(&self) -> u32 {
+        self.data_width
+    }
+
+    pub(crate) fn data_height(&self) -> u32 {
+        self.data_height
+    }
+
+    pub(crate) fn width(&self) -> f64 {
+        f64::from(self.data_width) * self.scale
+    }
+
+    pub(crate) fn height(&self) -> f64 {
+        f64::from(self.data_height) * self.scale
+    }
+
+    pub(crate) fn scale(&self) -> f64 {
+        self.scale
+    }
+}
+
+/// The viewBox's size rounded up, else the root's `width` or `height` attribute. A document declaring
+/// neither, which PlantUML refuses, takes no room.
+fn declared_size(svg: &str, name: &str) -> u32 {
+    static VIEWBOX: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r#"viewBox[= "']+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)[\s,]+([0-9.]+)"#)
+            .unwrap()
+    });
+    if let Some(captures) = VIEWBOX.captures(svg) {
+        let group = if name == "width" { 3 } else { 4 };
+        return captures[group]
+            .parse::<f64>()
+            .map_or(0, |size| size.ceil() as u32);
+    }
+    Regex::new(&format!(r"(?i)<svg[^>]+{name}\W+(\d+)"))
+        .unwrap()
+        .captures(svg)
+        .and_then(|captures| captures[1].parse().ok())
+        .unwrap_or(0)
+}
+
 fn gray_scale(rgb: u32) -> u32 {
     XColor::from_rgb(rgb).gray_scale()
 }
@@ -240,5 +344,27 @@ impl URectangle {
             ry: corner,
             ..self
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn svg_images_measure_their_view_box_rounded_up_or_else_their_size_attributes() {
+        let image = UImageSvg::new(r#"<svg viewBox="0 0 10.5 7" width="99">"#.to_owned(), 2.0);
+        assert_eq!((image.width(), image.height()), (22.0, 14.0));
+        let image = UImageSvg::new(r#"<svg width="30px" height="20px">"#.to_owned(), 1.0);
+        assert_eq!((image.data_width(), image.data_height()), (30, 20));
+    }
+
+    #[test]
+    fn embedded_svg_loses_its_declaration_and_root_attributes() {
+        let image = UImageSvg::new(
+            r#"<?xml version="1.0"?><svg width="1" height="1"><g/></svg>"#.to_owned(),
+            1.0,
+        );
+        assert_eq!(image.svg(), "<svg><g/></svg>");
     }
 }

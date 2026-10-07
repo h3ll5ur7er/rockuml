@@ -16,6 +16,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::sprite::{Sprite, SpriteContainer};
@@ -35,24 +36,32 @@ pub(crate) struct SkinParam {
     sprites: HashMap<String, Rc<dyn Sprite>>,
     /// The base64 data of the PNGs the source refers to by MD5.
     md5_map: HashMap<String, String>,
+    /// The files and URLs the source's `<img>`s name, by name.
+    image_files: HashMap<String, Vec<u8>>,
 }
 
 impl SpriteContainer for SkinParam {
     fn get_sprite(&self, name: &str) -> Option<Rc<dyn Sprite>> {
         self.sprites.get(name).cloned()
     }
+
+    fn get_from_md5(&self, md5: &str) -> Option<&str> {
+        self.md5_map.get(md5).map(String::as_str)
+    }
+
+    fn image_file(&self, src: &str) -> Option<&[u8]> {
+        self.image_files.get(src).map(Vec::as_slice)
+    }
 }
 
 impl SkinParam {
-    pub(crate) fn with_md5_map(md5_map: HashMap<String, String>) -> Self {
+    /// With the images of `source`.
+    pub(crate) fn new(source: &UmlSource) -> Self {
         Self {
-            md5_map,
+            md5_map: source.md5_map().clone(),
+            image_files: source.image_files().clone(),
             ..Self::default()
         }
-    }
-
-    pub(crate) fn get_from_md5(&self, md5: &str) -> Option<&str> {
-        self.md5_map.get(md5).map(String::as_str)
     }
 
     pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {

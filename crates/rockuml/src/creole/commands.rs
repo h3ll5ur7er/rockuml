@@ -10,6 +10,7 @@ use crate::color::HColor;
 use crate::klimt::font::{FontPosition, FontStyle};
 use crate::klimt::url::Url;
 use crate::pattern::{java_regex, plantuml_regex};
+use crate::text::unquoted;
 use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
 pub(super) trait CreoleCommand: Send + Sync {
@@ -78,6 +79,7 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
         ),
         PositionCommand::boxed(FontPosition::Exposant, "sup"),
         PositionCommand::boxed(FontPosition::Indice, "sub"),
+        RegexCommand::boxed(&["<i"], &format!("^({IMG})"), 1, image),
         RegexCommand::boxed(
             &["<#", "<&"],
             &format!(r"^(\<(#\w+)?&([-\w]+){SCALE_OR_COLOR}\>)"),
@@ -112,6 +114,8 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
 const COLOR: &str = r"\<color[\s:]+(#[0-9a-fA-F]{1,6}|#?\w+)[%s]*\>";
 const FONT: &str = r"\<font(?:[%s]+size[%s]*=[%s]*[%g]?(\d+)[%g]?|[%s]+color[%s]*=[%s]*[%g]?(#[0-9a-fA-F]{6}|\w+)[%g]?)+[%s]*\>";
 const FAMILY: &str = r"\<font[\s:]+([^>]+)/?\>";
+/// `<img:file.png>`, `<img src="file.png">` or `<img:file.png{scale=2}>`; the source is group 1.
+const IMG: &str = r"\<img[\s:]+([^>{}]+)(\{scale=(?:[0-9.]+)\})?\>";
 const SCALE_OR_COLOR: &str =
     r"([\{,]?(?:(?:scale=|\*)[0-9.]+)?(?:,?color[= :](?:#[0-9a-fA-F]{1,8}|\w+))?\}?)?";
 
@@ -395,6 +399,30 @@ fn sprite(captures: &Captures, stripe: &mut StripeBuilder) {
     stripe.add_sprite(&captures[3], scale, color);
 }
 
+fn image(captures: &Captures, stripe: &mut StripeBuilder) {
+    stripe.add_image(
+        image_source(&captures[2]),
+        get_scale(group(captures, 3), 1.0),
+    );
+}
+
+/// The sources of the `<img>`s in a line, as the image command reads them.
+pub(crate) fn image_sources(line: &str) -> impl Iterator<Item = &str> {
+    static IMAGE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(IMG));
+    IMAGE
+        .captures_iter(line)
+        .map(|captures| image_source(captures.get(1).expect("the source group").as_str()))
+}
+
+/// Without `src=` and the quotes around the name.
+fn image_source(written: &str) -> &str {
+    let src = match written.get(..4) {
+        Some(prefix) if prefix.eq_ignore_ascii_case("src=") => &written[4..],
+        _ => written,
+    };
+    unquoted(src)
+}
+
 fn get_scale(scale_or_color: Option<&str>, default: f64) -> f64 {
     static SCALE: LazyLock<Regex> = LazyLock::new(|| java_regex(r"(?:scale=|\*)([0-9.]+)", false));
     scale_or_color
@@ -462,6 +490,15 @@ mod tests {
         assert_eq!(applying("<b>a</b>"), 2);
         assert_eq!(applying("<b>a"), 1);
         assert_eq!(applying("<font color=red size=3>a</font>"), 4);
+    }
+
+    #[test]
+    fn image_sources_lose_src_and_quotes() {
+        let line = r#"a <img:x.png> b <img src="y z.png"{scale=2}> <img SRC=w.gif>"#;
+        assert_eq!(
+            image_sources(line).collect::<Vec<_>>(),
+            ["x.png", "y z.png", "w.gif"]
+        );
     }
 
     #[test]

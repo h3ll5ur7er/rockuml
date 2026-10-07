@@ -252,7 +252,10 @@ impl UGraphicBackend for UGraphicDebug {
                 ),
                 String::new(),
             ]),
-            UShape::HorizontalLine | UShape::Image(_) | UShape::SpecialText => {
+            UShape::HorizontalLine
+            | UShape::Image(_)
+            | UShape::ImageSvg(_)
+            | UShape::SpecialText => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",
                     shape.java_class_name(),

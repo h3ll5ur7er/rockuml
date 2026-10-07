@@ -1,0 +1,9 @@
+@startuml
+title <img:icon.png> Images in a title
+Alice -> Bob : <img:alpha.png> translucent
+Bob -> Alice : <img src="palette.gif"> and <img src=alpha.png{scale=0.5}>
+note right of Bob
+  <img:alpha.png{scale=1.5}>
+  <img:palette.gif{scale=2}>
+end note
+@enduml

@@ -3,6 +3,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::atom_img::AtomImg;
 use super::atom_text::AtomText;
 use super::atoms::{AtomEmoji, AtomOpenIconic, AtomSprite, AtomWithMargin, Bullet, HorizontalLine};
 use super::code::{self, AtomCode};
@@ -494,6 +495,10 @@ impl<'a> StripeBuilder<'a> {
     pub(super) fn add_url(&mut self, url: Url) {
         self.atoms
             .push(Rc::new(AtomText::link(url, self.font.hyperlink())));
+    }
+
+    pub(super) fn add_image(&mut self, src: &str, scale: f64) {
+        self.atoms.push(AtomImg::create(self.sprites, src, scale));
     }
 
     /// An unknown icon is left out.

@@ -16,7 +16,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::color::HColor;
-use crate::host::Host;
+use crate::host::{Host, IsolatedHost};
 use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
@@ -101,8 +101,13 @@ impl ExportSettings {
     }
 }
 
-pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorted> {
-    let (diagram_type, source) = prepare(block);
+/// The diagram of a block. `host` supplies the files and URLs its images name.
+pub fn create(
+    block: &PreprocessedBlock,
+    host: &dyn Host,
+) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    let (diagram_type, mut source) = prepare(block);
+    source.read_image_files(block.directory(), host);
     match diagram_type {
         Some(DiagramType::Creole) => Ok(CreoleDiagram::create(source)),
         Some(DiagramType::Salt) => Ok(salt::SaltDiagram::create(source)),
@@ -113,7 +118,8 @@ pub fn create(block: &PreprocessedBlock) -> Result<Box<dyn Diagram>, NotYetPorte
 
 /// The diagram's source encoded as in a PlantUML server URL.
 pub fn encoded_url(block: &PreprocessedBlock) -> String {
-    let source = match create(block) {
+    // The URL encodes the source alone, so no image is read.
+    let source = match create(block, &IsolatedHost) {
         Ok(diagram) => diagram.source().plain_string(),
         Err(_) => prepare(block).1.plain_string(),
     };
@@ -182,7 +188,7 @@ pub fn export(
         let ug = UGraphic::new(backend, string_bounder.clone(), default_background);
         text_block.draw_u(&ug.translated(margin.left, margin.top));
     };
-    let svg = || {
+    let svg = |rasterized: bool| {
         let option = SvgOption {
             min_dim: dimension,
             backcolor: backcolor.clone(),
@@ -200,6 +206,7 @@ pub fn export(
             option,
             string_bounder.clone(),
             (format != ImageFormat::DeterministicSvg).then(|| fonts.clone()),
+            rasterized,
         )));
         draw(output.clone(), backcolor.clone());
         let metadata = crate::url_code::encode(&diagram.source().metadata());
@@ -223,11 +230,11 @@ pub fn export(
                 })
                 .into_bytes()
         }
-        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg().into_bytes(),
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg(false).into_bytes(),
         ImageFormat::Png => {
             let limit = image_size_limit(host);
             png::rasterize(
-                &svg(),
+                &svg(true),
                 (
                     ((dimension.width * scale_factor) as u32).min(limit),
                     ((dimension.height * scale_factor) as u32).min(limit),

@@ -1,12 +1,11 @@
 //! What every diagram with a skin shares: skinparams and styles, and the title drawn around it
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
-use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
-use super::{DEFAULT_DPI, ExportSettings, parse_digits};
+use super::{DEFAULT_DPI, ExportSettings, UmlSource, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
 
@@ -115,14 +114,14 @@ pub(super) trait TitledDiagram {
 }
 
 impl Titled {
-    /// `md5_map` gives back the PNGs the source refers to by MD5.
+    /// The skin draws the images of `source`.
     pub(super) fn new(
         diagram_style: SName,
         diagram_type: &'static str,
-        md5_map: HashMap<String, String>,
+        source: &UmlSource,
     ) -> Self {
         Self {
-            skin: SkinParam::with_md5_map(md5_map),
+            skin: SkinParam::new(source),
             pragma: Pragma::default(),
             diagram_style,
             diagram_type,

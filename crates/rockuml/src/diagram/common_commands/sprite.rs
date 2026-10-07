@@ -12,7 +12,9 @@ use crate::command::{
 };
 use crate::diagram::titled::TitledDiagram;
 use crate::klimt::image::PortableImage;
-use crate::klimt::sprite::{Sprite, SpriteColorBuilder4096, SpriteGrayLevel, SpriteImage};
+use crate::klimt::sprite::{
+    Sprite, SpriteColorBuilder4096, SpriteContainer, SpriteGrayLevel, SpriteImage,
+};
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::text::{LineLocation, StringLocated};
 

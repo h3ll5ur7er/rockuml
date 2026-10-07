@@ -1,0 +1,4 @@
+@startuml
+Alice -> Bob : <img:photo.jpg> a photo
+Bob -> Alice : <img src=photo.jpg{scale=0.5}>
+@enduml
