@@ -216,3 +216,12 @@ never draws, boxes `checkpath` must repair) and the corpus cases that use Smetan
 state of the nodes and edges it reads (only where it changed since the last call) and is followed by its results
 and the state it changed; `crates/smetana/tests/routing.rs` rebuilds that state, makes the same call and compares
 bit for bit.
+
+## Entity diagram unit oracles
+
+`cuca-unit/` holds harnesses that draw single pieces of PlantUML's entity diagrams with the golden-model jar; their
+fixtures are in `crates/rockuml/tests/data` and the matching tests next to the Rust code they check.
+
+```bash
+bash tools/oracle/cuca-unit/extremity.sh   # extremity.txt: every link decoration, as debug shapes and SVG arcs
+```

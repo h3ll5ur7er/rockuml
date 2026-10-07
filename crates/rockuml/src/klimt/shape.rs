@@ -128,15 +128,31 @@ pub struct UCenteredCharacter {
     pub font: UFont,
 }
 
+/// A whole ellipse, or only its arc from `start` over `extend` degrees when either is non-zero.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct UEllipse {
     pub width: f64,
     pub height: f64,
+    pub start: f64,
+    pub extend: f64,
 }
 
 impl UEllipse {
     pub const fn new(width: f64, height: f64) -> Self {
-        Self { width, height }
+        Self::arc(width, height, 0.0, 0.0)
+    }
+
+    pub const fn arc(width: f64, height: f64, start: f64, extend: f64) -> Self {
+        Self {
+            width,
+            height,
+            start,
+            extend,
+        }
+    }
+
+    pub(crate) fn is_arc(&self) -> bool {
+        self.start != 0.0 || self.extend != 0.0
     }
 }
 
