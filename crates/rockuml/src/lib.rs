@@ -7,6 +7,7 @@ mod command;
 mod creole;
 mod decoration;
 mod deflate;
+mod direction;
 pub mod diagram;
 mod emoji;
 mod file_policy;

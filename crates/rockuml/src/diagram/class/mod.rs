@@ -149,6 +149,12 @@ impl TitledDiagram for ClassDiagram {
     }
 }
 
+impl super::cuca::AbstractEntityDiagram for ClassDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.diagram.cuca
+    }
+}
+
 impl Diagram for ClassDiagram {
     fn source(&self) -> &UmlSource {
         &self.source

@@ -1,6 +1,7 @@
 //! Stereotypes like `<< Generated >>` or `<< (C,#ADD1B2) Testable >>`: labels shown in guillemets, and
 //! an optional spot, a letter in a coloured circle (PlantUML's `Stereotype` and `StereotypeDecoration`).
 
+use std::borrow::Cow;
 use std::fmt::Write;
 use std::sync::LazyLock;
 
@@ -30,11 +31,20 @@ pub(crate) struct Spot {
     pub color: Option<HColor>,
 }
 
+/// A sprite drawn in place of the labels, like `<<$archimate/business-actor>>`.
+#[derive(Clone, Debug, PartialEq)]
+pub(crate) struct StereotypeSprite {
+    pub name: String,
+    pub scale: f64,
+    pub color: HColor,
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct Stereotype {
     /// The labels, each in `<<` and `>>`, without the spot.
     label: String,
     spot: Option<Spot>,
+    sprite: Option<StereotypeSprite>,
 }
 
 impl Stereotype {
@@ -43,10 +53,12 @@ impl Stereotype {
         Self {
             label: label.to_owned(),
             spot: None,
+            sprite: None,
         }
     }
 
-    /// A stereotype whose `(C,color)` parts become a spot (`Stereotype.build` with a circled font).
+    /// A stereotype whose `(C,color)` parts become a spot and whose `$name` parts a sprite (`Stereotype.build`
+    /// with a circled font).
     pub(crate) fn with_spot(full: &str) -> Result<Self, NoSuchColor> {
         static CIRCLE_CHAR: LazyLock<Regex> = LazyLock::new(|| {
             java_regex(
@@ -54,9 +66,40 @@ impl Stereotype {
                 false,
             )
         });
+        static CIRCLE_SPRITE: LazyLock<Regex> = LazyLock::new(|| {
+            java_regex(
+                r"^\<\<[ \t]*\(?\$([-\p{L}0-9_/]+)((?:\{scale=|\*)([0-9.]+)\}?)?[ \t]*(?:,[ \t]*(#[0-9a-fA-F]{6}|\w+))?[ \t]*(?:[),](.*?))?\>\>$",
+                false,
+            )
+        });
         let mut label = String::new();
         let mut spot = None;
+        let mut sprite = None;
         for name in cut_labels(full) {
+            if let Some(captures) = CIRCLE_SPRITE.captures(&name) {
+                let color = captures
+                    .get(4)
+                    .map(|color| {
+                        HColor::parse(color.as_str())
+                            .ok()
+                            .flatten()
+                            .ok_or_else(|| NoSuchColor(color.as_str().to_owned()))
+                    })
+                    .transpose()?;
+                sprite = Some(StereotypeSprite {
+                    name: captures[1].to_owned(),
+                    scale: captures
+                        .get(3)
+                        .and_then(|scale| scale.as_str().parse().ok())
+                        .unwrap_or(1.0),
+                    color: color.unwrap_or(HColor::BLACK),
+                });
+                spot = None;
+                if let Some(rest) = captures.get(5).filter(|rest| !is_blank(rest.as_str())) {
+                    let _ = write!(label, "<<{}>>", rest.as_str());
+                }
+                continue;
+            }
             match CIRCLE_CHAR.captures(&name) {
                 Some(captures) => {
                     let color = captures
@@ -77,29 +120,45 @@ impl Stereotype {
                 None => label.push_str(&name),
             }
         }
-        Ok(Self { label, spot })
+        Ok(Self {
+            label,
+            spot,
+            sprite,
+        })
     }
 
     pub(crate) fn spot(&self) -> Option<&Spot> {
         self.spot.as_ref()
     }
 
+    pub(crate) fn sprite(&self) -> Option<&StereotypeSprite> {
+        self.sprite.as_ref()
+    }
+
     /// The labels as shown, in guillemets (`getLabels(Guillemet.GUILLEMET)`).
     pub(crate) fn labels(&self) -> Vec<String> {
-        cut_labels(&self.label)
+        cut_labels(&self.label_double_comparator())
             .iter()
             .map(|label| guillemets(label))
             .collect()
     }
 
-    /// The labels as written, like `<<a>><<b>>` (`getLabel(Guillemet.DOUBLE_COMPARATOR)`).
-    pub(crate) fn label_double_comparator(&self) -> &str {
-        &self.label
+    /// The labels as written, like `<<a>><<b>>` (`getLabel(Guillemet.DOUBLE_COMPARATOR)`); an archimate
+    /// sprite is labelled by its name.
+    pub(crate) fn label_double_comparator(&self) -> Cow<'_, str> {
+        match self
+            .sprite
+            .as_ref()
+            .and_then(|sprite| sprite.name.strip_prefix("archimate/"))
+        {
+            Some(archimate) => Cow::Owned(format!("<<{archimate}>>")),
+            None => Cow::Borrowed(&self.label),
+        }
     }
 
     /// Each label as written, like `<<a>>` (`getLabels(Guillemet.DOUBLE_COMPARATOR)`).
     pub(crate) fn labels_double_comparator(&self) -> Vec<String> {
-        cut_labels(&self.label)
+        cut_labels(&self.label_double_comparator())
     }
 
     /// Each label's text, without brackets or the space next to them.
@@ -114,10 +173,18 @@ impl Stereotype {
 
     /// The names style rules can select the stereotype by.
     pub(crate) fn style_names(&self) -> Vec<String> {
-        cut_labels(&self.label)
+        let mut names: Vec<String> = cut_labels(&self.label)
             .iter()
             .map(|label| without_brackets(label).to_owned())
-            .collect()
+            .collect();
+        if let Some((_, last)) = self
+            .sprite
+            .as_ref()
+            .and_then(|sprite| sprite.name.rsplit_once('/'))
+        {
+            names.push(last.to_owned());
+        }
+        names
     }
 }
 

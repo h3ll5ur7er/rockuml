@@ -1,12 +1,17 @@
 //! Usecase, component, deployment and archimate diagrams (PlantUML's `descdiagram` package).
 
 mod commands;
+#[cfg(test)]
+mod tests;
 
 use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
-use super::cuca::CucaDiagram;
+use super::cuca::{AbstractEntityDiagram, CucaDiagram};
+use crate::abel::LeafType;
+use crate::decoration::symbol::USymbols;
+use crate::java;
 use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
@@ -97,9 +102,55 @@ fn code_for_description() -> RegexTree {
     )
 }
 
+impl AbstractEntityDiagram for DescriptionDiagram {
+    fn cuca(&mut self) -> &mut CucaDiagram {
+        &mut self.cuca
+    }
+
+    /// Also `()x`, `:x:/` and `(x)/`, the notations of interfaces and business actors and use cases.
+    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
+        let id = id.strip_prefix("()").map_or(id, java::trim);
+        if let Some(name) = id
+            .strip_prefix(':')
+            .and_then(|rest| rest.strip_suffix(":/"))
+            .or_else(|| id.strip_prefix('(').and_then(|rest| rest.strip_suffix(")/")))
+        {
+            return name;
+        }
+        CucaDiagram::clean_id(id)
+    }
+}
+
+impl DescriptionDiagram {
+    /// Whether some leaf is a use case or an actor of the diagram's actor style.
+    fn is_usecase(&self) -> bool {
+        let actor = self.cuca.skin().actor_style().to_u_symbol();
+        self.cuca.leafs().into_iter().any(|leaf| {
+            let leaf = self.cuca.entity(leaf);
+            leaf.get_leaf_type() == Some(LeafType::Usecase) || leaf.get_u_symbol() == Some(actor)
+        })
+    }
+}
+
 impl AbstractDiagram for DescriptionDiagram {
     fn starting_pass(&mut self, _pass: ParserPass) {
         self.cuca.starting_pass();
+    }
+
+    /// Names only links mention are actors in use case diagrams, and interfaces elsewhere.
+    fn make_diagram_ready(&mut self) {
+        let default_symbol = if self.is_usecase() {
+            self.cuca.skin().actor_style().to_u_symbol()
+        } else {
+            USymbols::INTERFACE
+        };
+        for leaf in self.cuca.leafs() {
+            let leaf = self.cuca.entity_mut(leaf);
+            if leaf.get_leaf_type() == Some(LeafType::StillUnknown) {
+                leaf.mute_to_type(LeafType::Description);
+                leaf.set_u_symbol(Some(default_symbol));
+            }
+        }
     }
 
     fn check_final_error(&mut self) -> Option<String> {

@@ -10,6 +10,7 @@ use super::{
 };
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
@@ -39,6 +40,7 @@ pub(crate) struct Entity {
     style_builder: Option<Rc<StyleBuilder>>,
     raw_layout: i32,
     leaf_or_group: EntityType,
+    symbol: Option<USymbol>,
     pub display: Display,
     pub stereotype: Option<Stereotype>,
     pub url: Option<Url>,
@@ -78,6 +80,7 @@ impl Entity {
             style_builder,
             raw_layout,
             leaf_or_group: entity_type,
+            symbol: None,
             display: Display::default(),
             stereotype: None,
             url: None,
@@ -172,6 +175,20 @@ impl Entity {
         true
     }
 
+    /// The shape the entity is drawn with; use cases and circles always have theirs.
+    pub(crate) fn get_u_symbol(&self) -> Option<USymbol> {
+        match self.get_leaf_type() {
+            Some(LeafType::Usecase) => Some(USymbols::USECASE),
+            Some(LeafType::UsecaseBusiness) => Some(USymbols::USECASE_BUSINESS),
+            Some(LeafType::Circle) => Some(USymbols::INTERFACE),
+            _ => self.symbol,
+        }
+    }
+
+    pub(crate) fn set_u_symbol(&mut self, symbol: Option<USymbol>) {
+        self.symbol = symbol;
+    }
+
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {
         self.leaf_or_group = EntityType::Group(new_type);
     }
@@ -217,7 +234,7 @@ impl Entity {
                 .stereotype
                 .as_ref()
                 .map_or(EntityPosition::Normal, |stereotype| {
-                    EntityPosition::from_stereotype(stereotype.label_double_comparator())
+                    EntityPosition::from_stereotype(&stereotype.label_double_comparator())
                 }),
             _ => EntityPosition::Normal,
         }

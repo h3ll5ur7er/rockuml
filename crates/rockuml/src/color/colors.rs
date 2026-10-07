@@ -2,6 +2,8 @@
 //! (PlantUML's `Colors` and `ColorParser`).
 
 use super::HColor;
+use crate::decoration::LinkStyle;
+use crate::klimt::ugraphic::UStroke;
 use crate::pattern::RegexTree;
 
 /// Which part of an element a colour paints.
@@ -45,6 +47,8 @@ pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Colors {
     colors: Vec<(ColorType, HColor)>,
+    /// `line.dashed`, `line.dotted` or `line.bold`.
+    line_style: Option<LinkStyle>,
 }
 
 impl Colors {
@@ -72,7 +76,24 @@ impl Colors {
                 }
             }
         }
+        result.line_style = [
+            ("line.dashed", LinkStyle::DASHED),
+            ("line.dotted", LinkStyle::DOTTED),
+            ("line.bold", LinkStyle::BOLD),
+        ]
+        .into_iter()
+        .find(|(name, _)| data.contains(name))
+        .map(|(_, style)| style);
         Ok(result)
+    }
+
+    pub(crate) fn get_line_style(&self) -> Option<LinkStyle> {
+        self.line_style
+    }
+
+    /// The stroke `line.dashed` and the like ask for, if any.
+    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
+        self.line_style.map(LinkStyle::get_stroke3)
     }
 
     fn put(&mut self, kind: ColorType, color: HColor) {

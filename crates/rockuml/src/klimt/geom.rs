@@ -173,3 +173,11 @@ pub(crate) fn rotate(x: f64, y: f64, angle: f64) -> (f64, f64) {
     let (sin, cos) = angle.sin_cos();
     (cos * x + -sin * y, sin * x + cos * y)
 }
+
+/// Which way the ranks of a laid-out graph follow each other (PlantUML's `Rankdir`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Rankdir {
+    #[default]
+    TopToBottom,
+    LeftToRight,
+}

@@ -296,7 +296,7 @@ impl USymbols {
     pub(crate) const USECASE_BUSINESS: USymbol = USymbol::Usecase { business: true };
 
     /// The symbol a code like `CLOUD` names, once upper-cased (PlantUML's `all` map).
-    fn by_code(code: &str) -> Option<USymbol> {
+    pub(crate) fn by_code(code: &str) -> Option<USymbol> {
         Some(match code {
             "ACTION" => Self::ACTION,
             "ACTOR_AWESOME" => Self::ACTOR_AWESOME,
