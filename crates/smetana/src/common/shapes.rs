@@ -207,7 +207,7 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
     let outp = if peripheries < 1 { 1 } else { peripheries };
     let vertices;
     if sides < 3 {
-        // Ellipses.
+        // An ellipse is stored as two opposite corners of its box.
         sides = 2;
         vertices = zz.pointfs.ALLOC(outp * sides);
         let P = pointf {
@@ -239,13 +239,11 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
             R.x += sidelength * cos(angle);
             R.y += sidelength * sin(angle);
 
-            // Distort and skew.
             let mut P = pointf {
                 x: R.x * (skewdist + R.y * gdistortion) + R.y * gskew,
                 y: R.y,
             };
 
-            // Orient P.
             let alpha = RADIANS(orientation) + atan2(P.y, P.x);
             let (sinx, cosx) = (sin(alpha), cos(alpha));
             P.x = hypot(P.x, P.y);
@@ -253,11 +251,9 @@ pub fn poly_init(zz: &mut Globals, n: NodeId) {
             P.x *= cosx;
             P.y *= sinx;
 
-            // Scale for the label.
             P.x *= bb.x;
             P.y *= bb.y;
 
-            // The bounding box.
             xmax = max(P.x.abs(), xmax);
             ymax = max(P.y.abs(), ymax);
 

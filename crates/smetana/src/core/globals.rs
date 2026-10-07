@@ -107,8 +107,8 @@ pub struct Globals {
     pub E_tailclip: Option<SymId>,
     pub E_headclip: Option<SymId>,
 
-    // The dot phases' statics, as declared in Globals.java. Modules with private scratch state (pathplan,
-    // routespl, shapes, xlabels) add theirs below.
+    // The dot phases' statics, as declared in Globals.java, and PlantUML's own. The scratch state of shapes.c and
+    // pathplan follows.
     pub CL_type: i32,
     pub Concentrate: bool,
     pub MaxIter: i32,

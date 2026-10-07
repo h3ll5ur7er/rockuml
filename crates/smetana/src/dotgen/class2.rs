@@ -108,7 +108,6 @@ fn interclrep(zz: &mut Globals, g: GraphId, e: EdgeId) {
         }
         make_chain(zz, g, t, h, e);
 
-        // Mark as cluster edge.
         let mut ve = zz.ed(e).to_virt;
         while let Some(v) = ve
             && zz.nd(aghead(zz, v)).rank <= zz.nd(h).rank

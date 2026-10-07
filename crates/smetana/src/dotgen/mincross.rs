@@ -988,7 +988,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
     let (minrank, maxrank) = (zz.gd(g).minrank, zz.gd(g).maxrank);
 
     let (first, last, dir) = if pass % 2 == 0 {
-        // Down pass.
+        // Downwards, each rank follows the one above, which the root's top rank does not have.
         let first = if minrank > zz.gd(root).minrank {
             minrank
         } else {
@@ -996,7 +996,7 @@ fn mincross_step(zz: &mut Globals, g: GraphId, pass: i32) {
         };
         (first, maxrank, 1)
     } else {
-        // Up pass.
+        // Upwards, each rank follows the one below, which the root's bottom rank does not have.
         let first = if maxrank < zz.gd(root).maxrank {
             maxrank
         } else {
@@ -1230,7 +1230,6 @@ pub(crate) fn virtual_weight(zz: &mut Globals, e: EdgeId) {
 
 /// `mincross_options`.
 fn mincross_options(zz: &mut Globals, g: GraphId) {
-    // Set the default values.
     zz.MinQuit = 8;
     zz.MaxIter = 24;
     zz.Convergence = 0.995;

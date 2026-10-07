@@ -79,9 +79,9 @@ fn connectGraph(zz: &mut Globals, g: GraphId) {
 /// `dot_position`: the coordinates of all nodes, and the bounding boxes of the graph and its clusters.
 pub fn dot_position(zz: &mut Globals, g: GraphId) {
     if zz.gd(g).nlist.is_none() {
-        return; // ignore empty graph
+        return;
     }
-    mark_lowclusters(zz, g); // we could remove from splines.c now
+    mark_lowclusters(zz, g);
     set_ycoords(zz, g);
     if zz.Concentrate {
         unimplemented!("dot_concentrate");
@@ -92,8 +92,9 @@ pub fn dot_position(zz: &mut Globals, g: GraphId) {
     }
     create_aux_edges(zz, g);
     let maxiter = nsiter2(zz, g);
+    // Balance mode 2 is LR_balance, the one for x coordinates. A non-zero result means network simplex found the
+    // auxiliary graph disconnected.
     if rank(zz, g, 2, maxiter) != 0 {
-        // LR balance == 2
         connectGraph(zz, g);
     }
     set_xcoords(zz, g);
@@ -168,7 +169,8 @@ fn make_LR_constraints(zz: &mut Globals, g: GraphId) {
         let v_list = rank_v(zz, g, i);
         for j in 0..zz.rank(g, i).n {
             let u = zz.node_lists.get(v_list, j).expect("node in rank");
-            zz.nd_mut(u).mval = zz.nd(u).rw; // keep it somewhere safe
+            // The width without self loops, which dot_splines restores.
+            zz.nd_mut(u).mval = zz.nd(u).rw;
             if zz.nd(u).other.size > 0 {
                 // Compute self size. Dot assumes all self loops go to the right.
                 let mut sw = 0;
@@ -177,7 +179,7 @@ fn make_LR_constraints(zz: &mut Globals, g: GraphId) {
                         sw += selfRightSpace(zz, e);
                     }
                 }
-                zz.nd_mut(u).rw += f64::from(sw); // increment to include self edges
+                zz.nd_mut(u).rw += f64::from(sw);
             }
             if let Some(v) = zz.node_lists.get(v_list, j + 1) {
                 let width = zz.nd(u).rw + zz.nd(v).lw + f64::from(nodesep);
@@ -303,7 +305,7 @@ fn contain_clustnodes(zz: &mut Globals, g: GraphId) {
         contain_nodes(zz, g);
         let (ln, rn) = boundary_nodes(zz, g);
         match find_fast_edge(zz, ln, rn) {
-            // maybe from lrvn()?
+            // make_lrvn already joins the boundary nodes of a labeled cluster: strengthen that edge instead.
             Some(e) => zz.ed_mut(e).weight += 128,
             None => {
                 make_aux_edge(zz, ln, rn, 1.0, 128); // clust compaction edge
@@ -496,6 +498,8 @@ fn set_xcoords(zz: &mut Globals, g: GraphId) {
 /// `clampSkippedLabelVnodes` (PlantUML's): moves a label node that lost a constraint in `make_LR_constraints`
 /// back between the ends of its edge, so that the edge can be routed.
 fn clampSkippedLabelVnodes(zz: &mut Globals) {
+    // Java iterates an IdentityHashMap, whose order differs from run to run. Any order gives the same result:
+    // each clamp reads only the ends of its own label node's edges, which are not label nodes.
     for lu in zz.skippedConstraintLabelVnodes.clone() {
         let save_out = zz.nd(lu).save_out;
         let (Some(e0), Some(e1)) = (
@@ -591,7 +595,7 @@ fn adjustRanks(zz: &mut Globals, g: GraphId, margin_total: i32) {
         }
     }
 
-    // Update the global ranks.
+    // The root's ranks must hold the cluster's top and bottom margins too.
     if g != root {
         let (minr, maxr) = (zz.gd(g).minrank, zz.gd(g).maxrank);
         let (ht1, ht2) = (zz.gd(g).ht1, zz.gd(g).ht2);
@@ -638,7 +642,7 @@ fn clust_ht(zz: &mut Globals, g: GraphId) -> bool {
     zz.gd_mut(g).ht1 = ht1;
     zz.gd_mut(g).ht2 = ht2;
 
-    // Update the global ranks.
+    // The root's ranks must hold the cluster's top and bottom margins too.
     if g != root {
         let (minr, maxr) = (zz.gd(g).minrank, zz.gd(g).maxrank);
         zz.rank_mut(root, minr).ht2 = jmath::max(zz.rank(root, minr).ht2, ht2);
@@ -649,7 +653,6 @@ fn clust_ht(zz: &mut Globals, g: GraphId) -> bool {
 
 /// `set_ycoords`: the y coordinate of every rank, from the heights of its nodes, self loop labels and clusters.
 fn set_ycoords(zz: &mut Globals, g: GraphId) {
-    // Scan ranks for tallest nodes.
     for r in zz.gd(g).minrank..=zz.gd(g).maxrank {
         for i in 0..zz.rank(g, r).n {
             let n = rank_node(zz, g, r, i);
@@ -711,8 +714,8 @@ fn set_ycoords(zz: &mut Globals, g: GraphId) {
         let d0 = below.pht2 + here.pht1 + f64::from(zz.gd(g).ranksep); // prim node sep
         let d1 = below.ht2 + here.ht1 + f64::from(CL_OFFSET); // cluster sep
         let delta = jmath::max(d0, d1);
+        // Graphviz suspects that an empty rank reflects a problem elsewhere, and leaves it without a coordinate.
         if here.n > 0 {
-            // this may reflect some problem
             let y = zz.nd(rank_node(zz, g, r + 1, 0)).coord.y + delta;
             let n = rank_node(zz, g, r, 0);
             zz.nd_mut(n).coord.y = y;

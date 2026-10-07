@@ -460,7 +460,8 @@ fn rerank(zz: &mut Globals, v: NodeId, delta: i32) {
 /// `update`: exchanges tree edge `e` for `f`, re-ranking the smaller side and updating cut values.
 fn update(zz: &mut Globals, e: EdgeId, f: EdgeId) {
     let delta = SLACK(zz, f);
-    // "for (v = in nodes in tail side of e) do ND_rank(v) -= delta;"
+    // Without e the tree falls in two. Moving one part by f's slack makes f tight; the part moved is a lone
+    // leaf if either end is one, else the subtree below e (the end with the smaller lim).
     if delta > 0 {
         let (tail, head) = (agtail(zz, e), aghead(zz, e));
         let s = zz.nd(tail).tree_in.size + zz.nd(tail).tree_out.size;

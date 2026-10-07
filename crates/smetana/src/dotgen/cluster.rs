@@ -435,7 +435,6 @@ pub fn mark_lowclusters(zz: &mut Globals, root: GraphId) {
         n = agnxtnode(zz, root, nn);
     }
 
-    // Do the recursion.
     mark_lowcluster_basic(zz, root);
 }
 
