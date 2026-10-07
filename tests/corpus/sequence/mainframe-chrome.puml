@@ -1,0 +1,16 @@
+@startuml
+skinparam ParticipantPadding 20
+skinparam padding 0
+skinparam participantpadding 20
+skinparam handwritten false
+header page header
+title The title
+mainframe: sd **frame**\nsecond line
+legend top left
+a legend
+endlegend
+caption a caption
+footer the footer
+Alice->Bob : Hello
+Bob-->Alice : ok
+@enduml

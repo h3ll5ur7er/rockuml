@@ -70,6 +70,32 @@ impl MinMax {
         }
     }
 
+    /// A box holding no point yet, which the first point added replaces (`MinMax.getEmpty(false)`).
+    pub(crate) const fn empty() -> Self {
+        Self {
+            min_x: f64::MAX,
+            min_y: f64::MAX,
+            max_x: -f64::MAX,
+            max_y: -f64::MAX,
+        }
+    }
+
+    pub(crate) fn min_x(self) -> f64 {
+        self.min_x
+    }
+
+    pub(crate) fn min_y(self) -> f64 {
+        self.min_y
+    }
+
+    pub(crate) fn max_x(self) -> f64 {
+        self.max_x
+    }
+
+    pub(crate) fn max_y(self) -> f64 {
+        self.max_y
+    }
+
     #[must_use]
     pub(crate) fn add_point(self, x: f64, y: f64) -> Self {
         Self {
@@ -119,6 +145,14 @@ impl ClockwiseTopRightBottomLeft {
             right: value,
             bottom: value,
             left: value,
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn inc_top(self, delta: f64) -> Self {
+        Self {
+            top: self.top + delta,
+            ..self
         }
     }
 }

@@ -20,6 +20,8 @@ pub enum UShape {
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
     HorizontalLine,
+    /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
+    SpecialText,
 }
 
 impl UShape {
@@ -35,6 +37,7 @@ impl UShape {
             Self::Empty(_) => "UEmpty",
             Self::Image(_) => "UImage",
             Self::HorizontalLine => "UHorizontalLine",
+            Self::SpecialText => "SpecialText",
         }
     }
 }

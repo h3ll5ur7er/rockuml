@@ -1,6 +1,9 @@
 //! What every diagram with a skin shares: skinparams and styles, and the title drawn around it
 //! (PlantUML's `TitledDiagram` and `DiagramChromeFactory`).
 
+use std::rc::Rc;
+
+use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
@@ -9,6 +12,7 @@ use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, T
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
 
+use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
@@ -26,7 +30,10 @@ pub(super) struct Titled {
     legend: Option<(Positioned, VerticalAlignment)>,
     header: Option<Positioned>,
     footer: Option<Positioned>,
+    mainframe: Option<Display>,
     scale: Option<Scale>,
+    /// Without repeats, in the order they came.
+    warnings: Vec<Warning>,
 }
 
 /// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
@@ -117,8 +124,20 @@ impl Titled {
             legend: None,
             header: None,
             footer: None,
+            mainframe: None,
             scale: None,
+            warnings: Vec::new(),
         }
+    }
+
+    pub(super) fn add_warning(&mut self, warning: Warning) {
+        if !self.warnings.contains(&warning) {
+            self.warnings.push(warning);
+        }
+    }
+
+    pub(super) fn set_mainframe(&mut self, label: Display) {
+        self.mainframe = Some(label);
     }
 
     pub(super) fn set_scale(&mut self, scale: Scale) {
@@ -168,22 +187,36 @@ impl Titled {
             .expect("the skin styles the document")
     }
 
-    /// The diagram's drawing with its legend, title, caption, header and footer around it, added in
-    /// PlantUML's order.
+    /// The diagram's drawing with its warnings, mainframe, legend, title, caption, header and footer around
+    /// it, added in PlantUML's order. `string_bounder` measures the drawing for its mainframe.
     pub(super) fn add_chrome<'a>(
         &'a self,
         drawing: Box<dyn TextBlock + 'a>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Box<dyn TextBlock + 'a> {
-        self.add_chrome_titled(drawing, self.title.as_ref())
+        self.add_chrome_titled(drawing, string_bounder, self.title.as_ref())
     }
 
     /// Like [`Self::add_chrome`], with another title, as the pages of sequence diagrams have.
     pub(super) fn add_chrome_titled<'a>(
         &'a self,
         drawing: Box<dyn TextBlock + 'a>,
+        string_bounder: &Rc<dyn StringBounder>,
         title: Option<&'a Positioned>,
     ) -> Box<dyn TextBlock + 'a> {
         let mut result = drawing;
+        if !self.warnings.is_empty() {
+            result = Box::new(WithWarnings::new(result, &self.warnings));
+        }
+        if let Some(label) = &self.mainframe {
+            let style = self.document_style(Some(SName::Mainframe));
+            result = Box::new(MainFrame::new(
+                result,
+                label,
+                &style,
+                string_bounder.clone(),
+            ));
+        }
         if let Some((legend, vertical)) = &self.legend {
             let style = self.style(&[
                 SName::Root,

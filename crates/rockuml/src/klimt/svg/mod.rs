@@ -174,6 +174,10 @@ fn apply_stroke(svg: &mut SvgGraphics, stroke: UStroke) {
 }
 
 impl UGraphicBackend for UGraphicSvg {
+    fn draws_special_text(&self) -> bool {
+        true
+    }
+
     /// Clips as PlantUML's SVG drivers do: straight lines and rectangles are cut to the clip, other shapes
     /// are dropped unless inside.
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
@@ -251,7 +255,7 @@ impl UGraphicBackend for UGraphicSvg {
                     self.draw_image(image, at);
                 }
             }
-            UShape::Empty(_) | UShape::HorizontalLine => {}
+            UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
         }
     }
 

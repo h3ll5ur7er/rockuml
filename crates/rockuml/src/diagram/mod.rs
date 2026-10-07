@@ -1,5 +1,6 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+mod chrome;
 mod common_commands;
 mod creole;
 mod diagram_type;

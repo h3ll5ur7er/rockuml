@@ -97,6 +97,8 @@ debug sequence/incoming-outgoing.puml
 debug sequence/lifeline-solid.puml
 debug sequence/links.puml
 debug sequence/long-messages.puml
+debug sequence/mainframe-chrome.puml
+debug sequence/mainframe.puml
 debug sequence/message-align-right.puml
 debug sequence/message-align.puml
 debug sequence/message-below-arrow.puml
@@ -129,6 +131,7 @@ debug sequence/secondary-group.puml
 debug sequence/self-messages.puml
 debug sequence/short-arrows.puml
 debug sequence/skinparam-colors.puml
+debug sequence/skinparam-padding.puml
 debug sequence/slanted.puml
 debug sequence/spacing.puml
 debug sequence/strictuml.puml
@@ -234,6 +237,8 @@ dsvg sequence/incoming-outgoing.puml
 dsvg sequence/lifeline-solid.puml
 dsvg sequence/links.puml
 dsvg sequence/long-messages.puml
+dsvg sequence/mainframe-chrome.puml
+dsvg sequence/mainframe.puml
 dsvg sequence/message-align-right.puml
 dsvg sequence/message-align.puml
 dsvg sequence/message-below-arrow.puml
@@ -265,6 +270,7 @@ dsvg sequence/secondary-group.puml
 dsvg sequence/self-messages.puml
 dsvg sequence/short-arrows.puml
 dsvg sequence/skinparam-colors.puml
+dsvg sequence/skinparam-padding.puml
 dsvg sequence/slanted.puml
 dsvg sequence/spacing.puml
 dsvg sequence/strictuml.puml
@@ -371,6 +377,8 @@ png sequence/incoming-outgoing.puml
 png sequence/lifeline-solid.puml
 png sequence/links.puml
 png sequence/long-messages.puml
+png sequence/mainframe-chrome.puml
+png sequence/mainframe.puml
 png sequence/message-align-right.puml
 png sequence/message-align.puml
 png sequence/message-below-arrow.puml
@@ -402,6 +410,7 @@ png sequence/secondary-group.puml
 png sequence/self-messages.puml
 png sequence/short-arrows.puml
 png sequence/skinparam-colors.puml
+png sequence/skinparam-padding.puml
 png sequence/slanted.puml
 png sequence/spacing.puml
 png sequence/strictuml.puml
@@ -528,6 +537,7 @@ preproc sequence/incoming-outgoing.puml
 preproc sequence/lifeline-solid.puml
 preproc sequence/links.puml
 preproc sequence/long-messages.puml
+preproc sequence/mainframe-chrome.puml
 preproc sequence/mainframe.puml
 preproc sequence/message-align-right.puml
 preproc sequence/message-align.puml
@@ -670,6 +680,8 @@ svg sequence/incoming-outgoing.puml
 svg sequence/lifeline-solid.puml
 svg sequence/links.puml
 svg sequence/long-messages.puml
+svg sequence/mainframe-chrome.puml
+svg sequence/mainframe.puml
 svg sequence/message-align-right.puml
 svg sequence/message-align.puml
 svg sequence/message-below-arrow.puml
@@ -701,6 +713,7 @@ svg sequence/secondary-group.puml
 svg sequence/self-messages.puml
 svg sequence/short-arrows.puml
 svg sequence/skinparam-colors.puml
+svg sequence/skinparam-padding.puml
 svg sequence/slanted.puml
 svg sequence/spacing.puml
 svg sequence/strictuml.puml
@@ -827,6 +840,7 @@ url sequence/incoming-outgoing.puml
 url sequence/lifeline-solid.puml
 url sequence/links.puml
 url sequence/long-messages.puml
+url sequence/mainframe-chrome.puml
 url sequence/mainframe.puml
 url sequence/message-align-right.puml
 url sequence/message-align.puml
