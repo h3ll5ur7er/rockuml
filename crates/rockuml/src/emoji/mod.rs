@@ -5,7 +5,7 @@ mod ugraphic_with_scale;
 
 use std::collections::HashMap;
 use std::io::Read;
-use std::sync::LazyLock;
+use std::sync::{LazyLock, OnceLock};
 
 pub(crate) use color_resolver::ColorResolver;
 pub(crate) use ugraphic_with_scale::UGraphicWithScale;
@@ -24,13 +24,26 @@ static TWEMOJI: LazyLock<String> = LazyLock::new(|| {
     text
 });
 
-/// The pictures by code point (`1f600`) and by shortcut (`grinning`).
-static ALL: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
+/// Each emoji, with its names: a code point (`1f600`) and maybe a shortcut (`grinning`).
+static EMOJIS: LazyLock<Vec<(&'static str, Emoji)>> = LazyLock::new(|| {
+    TWEMOJI
+        .lines()
+        .map(|line| {
+            let (names, svg) = line.split_once(' ').expect("a name and a picture");
+            let emoji = Emoji {
+                svg,
+                parser: OnceLock::new(),
+            };
+            (names, emoji)
+        })
+        .collect()
+});
+
+static ALL: LazyLock<HashMap<&'static str, &'static Emoji>> = LazyLock::new(|| {
     let mut all = HashMap::new();
-    for line in TWEMOJI.lines() {
-        let (names, svg) = line.split_once(' ').expect("a name and a picture");
+    for (names, emoji) in EMOJIS.iter() {
         for name in names.split(';') {
-            all.insert(name, svg);
+            all.insert(name, emoji);
         }
     }
     all
@@ -38,17 +51,19 @@ static ALL: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {
 
 pub(crate) struct Emoji {
     svg: &'static str,
+    /// Read when the emoji is first drawn, as PlantUML does.
+    parser: OnceLock<SvgNanoParser>,
 }
 
 impl Emoji {
-    pub(crate) fn retrieve(name: &str) -> Option<Self> {
-        ALL.get(name.to_lowercase().as_str())
-            .map(|&svg| Self { svg })
+    pub(crate) fn retrieve(name: &str) -> Option<&'static Self> {
+        ALL.get(name.to_lowercase().as_str()).copied()
     }
 
     /// Draws the picture, 36 units square, at `scale`; a colour turns it into shades of that colour.
     pub(crate) fn draw_u(&self, ug: &UGraphic, scale: f64, color_for_monochrome: Option<&HColor>) {
-        SvgNanoParser::new(self.svg).draw_u(
+        let parser = self.parser.get_or_init(|| SvgNanoParser::new(self.svg));
+        parser.draw_u(
             ug,
             scale,
             color_for_monochrome.cloned(),

@@ -1,6 +1,5 @@
 //! Images in creole text: `<img:...>` (PlantUML's `AtomImg` and `AtomImgSvg`).
 
-use std::path::Path;
 use std::rc::Rc;
 
 use base64::Engine;
@@ -19,11 +18,9 @@ use crate::klimt::ugraphic::UGraphic;
 
 const DATA_IMAGE_SVG_BASE64: &str = "data:image/svg+xml;base64,";
 
-/// A raster image.
 pub(super) struct AtomImg {
-    /// The pixels drawn, scaled.
     image: UImage,
-    /// The unrounded scaled size, which the scaled pixels round.
+    /// PlantUML measures the unrounded scaled size, not the scaled pixels.
     dimension: XDimension2D,
 }
 
@@ -123,10 +120,12 @@ fn svg_image(svg: String, scale: f64) -> Rc<dyn Atom> {
 }
 
 /// PlantUML tells SVGs from raster images by their name.
+#[allow(
+    clippy::case_sensitive_file_extension_comparisons,
+    reason = "PlantUML takes `.SVG` files for raster images"
+)]
 fn is_svg(src: &str) -> bool {
-    Path::new(src)
-        .extension()
-        .is_some_and(|extension| extension == "svg")
+    src.ends_with(".svg")
 }
 
 /// Files and URLs, unlike data URIs, go through an AWT image first (`SecurityUtils.readRasterImage`).

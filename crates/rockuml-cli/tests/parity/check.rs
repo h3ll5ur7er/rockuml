@@ -155,6 +155,8 @@ fn embedded_pngs_as_pixels(text: &str) -> String {
         .into_owned()
 }
 
+/// Decodes the PNG itself rather than with the engine's `PortableImage`, which is internal to the engine, so
+/// that the check does not depend on the code it checks.
 fn pixels_description(png: &[u8]) -> Option<String> {
     let mut decoder = png::Decoder::new(Cursor::new(png));
     decoder.set_transformations(png::Transformations::normalize_to_color8());

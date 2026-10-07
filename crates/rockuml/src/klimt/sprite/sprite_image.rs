@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::Read;
 use std::rc::Rc;
@@ -61,6 +62,19 @@ impl SpriteImage {
 
     /// One of PlantUML's built-in sprites, such as `archimate/actor`: an SVG one if there is, else a PNG.
     pub(crate) fn from_internal(name: &str) -> Option<Rc<dyn Sprite>> {
+        // Per thread, as sprites are `Rc`s.
+        thread_local! {
+            static LOADED: RefCell<HashMap<String, Option<Rc<dyn Sprite>>>> = RefCell::default();
+        }
+        if let Some(loaded) = LOADED.with_borrow(|loaded| loaded.get(name).cloned()) {
+            return loaded;
+        }
+        let sprite = Self::load_internal(name);
+        LOADED.with_borrow_mut(|loaded| loaded.insert(name.to_owned(), sprite.clone()));
+        sprite
+    }
+
+    fn load_internal(name: &str) -> Option<Rc<dyn Sprite>> {
         if let Some(svg) = INTERNAL_SPRITE_FILES.get(format!("{name}.svg").as_str()) {
             let svg = std::str::from_utf8(svg).expect("the bundled SVG sprites are UTF-8");
             return Some(Rc::new(SvgNanoParser::new(svg)));

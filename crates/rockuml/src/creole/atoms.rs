@@ -186,7 +186,7 @@ impl Atom for AtomOpenIconic {
 
 /// An emoji (`<:smile:>`), sized to the font.
 pub(super) struct AtomEmoji {
-    emoji: Emoji,
+    emoji: &'static Emoji,
     factor: f64,
     color: Option<HColor>,
 }
@@ -195,7 +195,12 @@ impl AtomEmoji {
     /// The font size at which an emoji is drawn 36 units square.
     const MAGIC: f64 = 24.0;
 
-    pub(super) fn new(emoji: Emoji, scale: f64, size_2d: f64, color: Option<HColor>) -> Self {
+    pub(super) fn new(
+        emoji: &'static Emoji,
+        scale: f64,
+        size_2d: f64,
+        color: Option<HColor>,
+    ) -> Self {
         Self {
             emoji,
             factor: scale * size_2d / Self::MAGIC,
