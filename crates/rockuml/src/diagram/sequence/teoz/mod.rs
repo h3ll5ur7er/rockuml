@@ -10,6 +10,7 @@ mod else_tile;
 mod grouping_tile;
 mod key;
 mod life_event;
+mod link_anchor;
 mod living_space;
 mod note_tiles;
 mod playing_space;
