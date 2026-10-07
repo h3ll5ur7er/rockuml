@@ -1,0 +1,137 @@
+DPI: 96
+dimension: [ 105.4246 ; 150.0000 ]
+scaleFactor: 1.0000
+seed: 2152454501747984366
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Web
+POLYGON:
+  points:
+   - [ 10.0000 ; 22.0000 ]
+   - [ 20.0000 ; 12.0000 ]
+   - [ 89.9521 ; 12.0000 ]
+   - [ 89.9521 ; 46.0000 ]
+   - [ 79.9521 ; 56.0000 ]
+   - [ 10.0000 ; 56.0000 ]
+   - [ 10.0000 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff808000
+  backcolor: ffffffe0
+
+LINE:
+  pt1: [ 79.9521 ; 22.0000 ]
+  pt2: [ 89.9521 ; 12.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff808000
+
+LINE:
+  pt1: [ 10.0000 ; 22.0000 ]
+  pt2: [ 79.9521 ; 22.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff808000
+
+LINE:
+  pt1: [ 79.9521 ; 22.0000 ]
+  pt2: [ 79.9521 ; 56.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff808000
+
+EMPTY:
+  pt1: [ 10.0000 ; 56.0000 ]
+  pt2: [ 20.0000 ; 66.0000 ]
+
+TEXT:
+  text: Web
+  position: [ 25.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity Store
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 0.0000 ]
+     pt2: [ 40.2123 ; 0.0000 ]
+     pt3: [ 40.2123 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 0.0000 ]
+     pt2: [ 80.4246 ; 0.0000 ]
+     pt3: [ 80.4246 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 80.4246 ; 33.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 80.4246 ; 43.0000 ]
+     pt2: [ 40.2123 ; 43.0000 ]
+     pt3: [ 40.2123 ; 43.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 43.0000 ]
+     pt2: [ 0.0000 ; 43.0000 ]
+     pt3: [ 0.0000 ; 33.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd8e6
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 20.0000 ]
+     pt2: [ 40.2123 ; 20.0000 ]
+     pt3: [ 40.2123 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.2123 ; 20.0000 ]
+     pt2: [ 80.4246 ; 20.0000 ]
+     pt3: [ 80.4246 ; 10.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 90.4246 ; 135.0000 ]
+  pt2: [ 100.4246 ; 145.0000 ]
+
+TEXT:
+  text: Store
+  position: [ 20.0000 ; 126.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 50.0000 ; 91.8841 ]
+   - [ 54.0000 ; 82.8841 ]
+   - [ 50.0000 ; 86.8841 ]
+   - [ 46.0000 ; 82.8841 ]
+   - [ 50.0000 ; 91.8841 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff800000
+  backcolor: ff800000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 40.0000 ; 50.1772 ]
+   - type: SEG_CUBICTO
+     pt1: [ 40.0000 ; 61.2918 ]
+     pt2: [ 40.0000 ; 69.8536 ]
+     pt3: [ 40.0000 ; 80.8841 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff800000
+  backcolor: NULL_COLOR
+

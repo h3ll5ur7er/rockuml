@@ -1,0 +1,55 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 2
+subgraph "cluster6" parent "g" seq 1 nodes "sh0014" "sh0019"
+subgraph "cluster10" parent "cluster6" seq 2 nodes "sh0014"
+subgraph "cluster15" parent "cluster6" seq 3 nodes "sh0019"
+subgraph "cluster20" parent "g" seq 4 nodes "sh0024"
+graph ids "g" "cluster6" "cluster10" "cluster15" "cluster20"
+node ids "sh0014" "sh0019" "sh0024"
+in "g" node "sh0014" out e2> e1> in edges e2> e1> degree 0 2
+in "g" node "sh0019" out in e2< edges e2< degree 1 0
+in "g" node "sh0024" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0014" out in edges degree 0 0
+in "cluster6" node "sh0019" out in edges degree 0 0
+in "cluster10" node "sh0014" out in edges degree 0 0
+in "cluster15" node "sh0019" out in edges degree 0 0
+in "cluster20" node "sh0024" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+induce "cluster6" e2>
+in "cluster6" node "sh0014" out e2> in edges e2> degree 0 1
+in "cluster6" node "sh0019" out in e2< edges e2< degree 1 0
+induce "cluster10"
+in "cluster10" node "sh0014" out in edges degree 0 0
+induce "cluster15"
+in "cluster15" node "sh0019" out in edges degree 0 0
+induce "cluster20"
+in "cluster20" node "sh0024" out in edges degree 0 0
+contains "cluster6" 1 1 0 0 1
+contains "cluster10" 1 0 0 0 0
+contains "cluster15" 0 1 0 0 0
+contains "cluster20" 0 0 1 0 0
+attr "g" "margin" "16"
+attr "cluster6" "label" "_dim_132_22_"
+attr "cluster6" "margin" "20"
+attr "cluster10" "label" "_dim_85_22_"
+attr "cluster10" "margin" "20"
+attr "sh0014" "shape" "box"
+attr "sh0014" "width" "2.485166420939024"
+attr "sh0014" "height" "0.5138888888888888"
+attr "cluster15" "label" "_dim_70_17_"
+attr "cluster15" "margin" "16"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "1.698985474057837"
+attr "sh0019" "height" "0.4722222222222222"
+attr "cluster20" "label" "_dim_103_17_"
+attr "cluster20" "margin" "16"
+attr "sh0024" "shape" "box"
+attr "sh0024" "width" "2.287824619990349"
+attr "sh0024" "height" "0.5972222222222222"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"

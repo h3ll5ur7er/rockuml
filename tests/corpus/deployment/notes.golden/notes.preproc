@@ -1,0 +1,10 @@
+@startuml
+node Gateway
+database Cache
+Gateway --> Cache
+note right of Gateway : rate limited
+note bottom of Cache
+  evicts after
+  10 minutes
+end note
+@enduml

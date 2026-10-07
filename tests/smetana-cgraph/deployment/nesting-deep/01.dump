@@ -1,0 +1,44 @@
+cgraph-dump 1
+graph "g" nodes 2 edges 1
+subgraph "cluster6" parent "g" seq 1 nodes "sh0018" "sh0019"
+subgraph "cluster10" parent "cluster6" seq 2 nodes "sh0018" "sh0019"
+subgraph "cluster14" parent "cluster10" seq 3 nodes "sh0018" "sh0019"
+graph ids "g" "cluster6" "cluster10" "cluster14"
+node ids "sh0018" "sh0019"
+in "g" node "sh0018" out e1> in edges e1> degree 0 1
+in "g" node "sh0019" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0018" out in edges degree 0 0
+in "cluster6" node "sh0019" out in edges degree 0 0
+in "cluster10" node "sh0018" out in edges degree 0 0
+in "cluster10" node "sh0019" out in edges degree 0 0
+in "cluster14" node "sh0018" out in edges degree 0 0
+in "cluster14" node "sh0019" out in edges degree 0 0
+find e1> forward e1< backward none
+induce "cluster6" e1>
+in "cluster6" node "sh0018" out e1> in edges e1> degree 0 1
+in "cluster6" node "sh0019" out in e1< edges e1< degree 1 0
+induce "cluster10" e1>
+in "cluster10" node "sh0018" out e1> in edges e1> degree 0 1
+in "cluster10" node "sh0019" out in e1< edges e1< degree 1 0
+induce "cluster14" e1>
+in "cluster14" node "sh0018" out e1> in edges e1> degree 0 1
+in "cluster14" node "sh0019" out in e1< edges e1< degree 1 0
+contains "cluster6" 1 1 1
+contains "cluster10" 1 1 1
+contains "cluster14" 1 1 1
+attr "g" "margin" "16"
+attr "cluster6" "label" "_dim_73_17_"
+attr "cluster6" "margin" "16"
+attr "cluster10" "label" "_dim_57_17_"
+attr "cluster10" "margin" "16"
+attr "cluster14" "label" "_dim_129_22_"
+attr "cluster14" "margin" "20"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "1.393437458240385"
+attr "sh0018" "height" "0.2777777777777778"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "1.3933851935142547"
+attr "sh0019" "height" "0.2777777777777778"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"

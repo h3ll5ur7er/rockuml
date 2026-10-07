@@ -1,0 +1,10 @@
+@startuml
+node Client
+node Server
+database Db
+queue Bus
+Client --> Server : HTTPS 443
+Server --> Db : JDBC
+Server ..> Bus : publish
+Bus ..> Client : push
+@enduml

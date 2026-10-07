@@ -1,0 +1,13 @@
+@startuml
+node web
+artifact "app.war" as war
+database db
+queue jobs
+storage disk
+cloud cdn
+web --> war
+war --> db
+war --> jobs
+jobs --> disk
+cdn --> web
+@enduml

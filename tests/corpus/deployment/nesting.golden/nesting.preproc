@@ -1,0 +1,15 @@
+@startuml
+node "Host" {
+  node "VM" {
+    artifact "service.jar"
+  }
+  storage "Volume" {
+    file "data.bin"
+  }
+}
+cloud "Provider" {
+  database "Managed DB"
+}
+"service.jar" --> "Managed DB"
+"service.jar" --> "data.bin"
+@enduml

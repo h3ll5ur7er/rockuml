@@ -1,0 +1,11 @@
+@startuml
+frame Region {
+  folder Zone {
+    node Rack {
+      card Blade1
+      card Blade2
+    }
+  }
+}
+Blade1 --> Blade2
+@enduml
