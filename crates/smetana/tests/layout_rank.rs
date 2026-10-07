@@ -117,6 +117,61 @@ fn expected_sizes(trace: &trace::Trace) -> String {
         })
 }
 
+/// Label sizes as the `phase final` section has them: the labels of clusters, then of edges.
+fn dump_label_sizes(r: &mut Replay) -> String {
+    let zz = &r.zz;
+    let mut out = String::new();
+    let mut graphs = vec![r.root];
+    while let Some(g) = graphs.pop() {
+        let info = zz.gd(g);
+        if let Some(l) = info.label {
+            let name = trace::quote(&agnameof(zz, g).expect("graph name"));
+            let d = zz.textlabels[l].dimen;
+            writeln!(out, "graph {name} label dimen {:?} {:?}", d.x, d.y).unwrap();
+        }
+        for c in (1..=info.n_cluster).rev() {
+            graphs.push(
+                zz.graph_lists
+                    .get(info.clust.expect("clusters"), c)
+                    .expect("cluster"),
+            );
+        }
+    }
+    for (i, &e) in r.edges.iter().enumerate() {
+        let info = zz.ed(e);
+        for (kind, label) in [
+            ("label", info.label),
+            ("head_label", info.head_label),
+            ("tail_label", info.tail_label),
+        ] {
+            if let Some(l) = label {
+                let d = zz.textlabels[l].dimen;
+                writeln!(out, "edge e{} {kind} dimen {:?} {:?}", i + 1, d.x, d.y).unwrap();
+            }
+        }
+    }
+    out
+}
+
+/// The label sizes of Java's `phase final` section.
+fn expected_label_sizes(trace: &trace::Trace) -> String {
+    let (_, lines) = trace
+        .phases
+        .iter()
+        .find(|(phase, _)| phase == "final")
+        .expect("phase final");
+    lines
+        .iter()
+        .filter_map(|l| {
+            let (head, rest) = l.split_once(" pos ")?;
+            let (_, dimen) = rest.split_once(" dimen ")?;
+            let mut d = dimen.split(' ').map(|s| s.parse::<f64>().expect("number"));
+            let (w, h) = (d.next()?, d.next()?);
+            Some(format!("{head} dimen {w:?} {h:?}\n"))
+        })
+        .collect()
+}
+
 /// Lays out every trace's graph with `layout`, then compares `dump`'s text with `expected`'s.
 fn check_all(
     layout: fn(&mut Replay),
@@ -167,4 +222,9 @@ fn ranks_match_java() {
 #[test]
 fn node_sizes_match_java() {
     check_all(layout_until_rank, dump_sizes, expected_sizes);
+}
+
+#[test]
+fn label_sizes_match_java() {
+    check_all(layout_until_rank, dump_label_sizes, expected_label_sizes);
 }
