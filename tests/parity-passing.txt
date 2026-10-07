@@ -21,6 +21,8 @@ debug class/association-class.puml
 debug class/association-diamond.puml
 debug class/basic.puml
 debug class/colors-inline.puml
+debug class/empty-packages-styled.puml
+debug class/empty-packages.puml
 debug class/enum-values.puml
 debug class/extends-implements.puml
 debug class/generics.puml
@@ -39,6 +41,7 @@ debug class/layout-multi-edges.puml
 debug class/layout-nested-packages.puml
 debug class/layout-self-loops.puml
 debug class/left-to-right-packages.puml
+debug class/link-label-visibility.puml
 debug class/lollipop.puml
 debug class/member-links.puml
 debug class/members-fields-methods.puml
@@ -53,6 +56,7 @@ debug class/notes-multiline.puml
 debug class/notes-on-class.puml
 debug class/notes-on-link.puml
 debug class/notes-on-member.puml
+debug class/package-figure-stereotypes.puml
 debug class/packages-basic.puml
 debug class/packages-skinparam-style.puml
 debug class/packages-styles.puml
@@ -90,10 +94,12 @@ debug component/component-description.puml
 debug component/components-syntax.puml
 debug component/containers.puml
 debug component/directions.puml
+debug component/empty-packages.puml
 debug component/hide-unlinked.puml
 debug component/interfaces-syntax.puml
 debug component/left-to-right.puml
 debug component/link-cardinality.puml
+debug component/link-label-visibility.puml
 debug component/link-labels.puml
 debug component/links-arrows.puml
 debug component/lollipop-links.puml
@@ -335,6 +341,7 @@ debug state/hide-empty-description.puml
 debug state/history-states.puml
 debug state/history.puml
 debug state/left-to-right.puml
+debug state/link-label-visibility.puml
 debug state/long-names.puml
 debug state/notes-composite.puml
 debug state/notes-floating.puml
@@ -389,6 +396,8 @@ dsvg class/association-class.puml
 dsvg class/association-diamond.puml
 dsvg class/basic.puml
 dsvg class/colors-inline.puml
+dsvg class/empty-packages-styled.puml
+dsvg class/empty-packages.puml
 dsvg class/enum-values.puml
 dsvg class/extends-implements.puml
 dsvg class/generics.puml
@@ -407,6 +416,7 @@ dsvg class/layout-multi-edges.puml
 dsvg class/layout-nested-packages.puml
 dsvg class/layout-self-loops.puml
 dsvg class/left-to-right-packages.puml
+dsvg class/link-label-visibility.puml
 dsvg class/lollipop.puml
 dsvg class/member-links.puml
 dsvg class/members-fields-methods.puml
@@ -421,6 +431,7 @@ dsvg class/notes-multiline.puml
 dsvg class/notes-on-class.puml
 dsvg class/notes-on-link.puml
 dsvg class/notes-on-member.puml
+dsvg class/package-figure-stereotypes.puml
 dsvg class/packages-basic.puml
 dsvg class/packages-skinparam-style.puml
 dsvg class/packages-styles.puml
@@ -458,10 +469,12 @@ dsvg component/component-description.puml
 dsvg component/components-syntax.puml
 dsvg component/containers.puml
 dsvg component/directions.puml
+dsvg component/empty-packages.puml
 dsvg component/hide-unlinked.puml
 dsvg component/interfaces-syntax.puml
 dsvg component/left-to-right.puml
 dsvg component/link-cardinality.puml
+dsvg component/link-label-visibility.puml
 dsvg component/link-labels.puml
 dsvg component/links-arrows.puml
 dsvg component/lollipop-links.puml
@@ -700,6 +713,7 @@ dsvg state/hide-empty-description.puml
 dsvg state/history-states.puml
 dsvg state/history.puml
 dsvg state/left-to-right.puml
+dsvg state/link-label-visibility.puml
 dsvg state/long-names.puml
 dsvg state/notes-composite.puml
 dsvg state/notes-floating.puml
@@ -754,6 +768,8 @@ png class/association-class.puml
 png class/association-diamond.puml
 png class/basic.puml
 png class/colors-inline.puml
+png class/empty-packages-styled.puml
+png class/empty-packages.puml
 png class/enum-values.puml
 png class/extends-implements.puml
 png class/generics.puml
@@ -772,6 +788,7 @@ png class/layout-multi-edges.puml
 png class/layout-nested-packages.puml
 png class/layout-self-loops.puml
 png class/left-to-right-packages.puml
+png class/link-label-visibility.puml
 png class/lollipop.puml
 png class/member-links.puml
 png class/members-fields-methods.puml
@@ -786,6 +803,7 @@ png class/notes-multiline.puml
 png class/notes-on-class.puml
 png class/notes-on-link.puml
 png class/notes-on-member.puml
+png class/package-figure-stereotypes.puml
 png class/packages-basic.puml
 png class/packages-skinparam-style.puml
 png class/packages-styles.puml
@@ -823,10 +841,12 @@ png component/component-description.puml
 png component/components-syntax.puml
 png component/containers.puml
 png component/directions.puml
+png component/empty-packages.puml
 png component/hide-unlinked.puml
 png component/interfaces-syntax.puml
 png component/left-to-right.puml
 png component/link-cardinality.puml
+png component/link-label-visibility.puml
 png component/link-labels.puml
 png component/links-arrows.puml
 png component/lollipop-links.puml
@@ -1067,6 +1087,7 @@ png state/hide-empty-description.puml
 png state/history-states.puml
 png state/history.puml
 png state/left-to-right.puml
+png state/link-label-visibility.puml
 png state/long-names.puml
 png state/notes-composite.puml
 png state/notes-floating.puml
@@ -1124,6 +1145,8 @@ preproc class/association-class.puml
 preproc class/association-diamond.puml
 preproc class/basic.puml
 preproc class/colors-inline.puml
+preproc class/empty-packages-styled.puml
+preproc class/empty-packages.puml
 preproc class/enum-values.puml
 preproc class/extends-implements.puml
 preproc class/generics.puml
@@ -1142,6 +1165,7 @@ preproc class/layout-multi-edges.puml
 preproc class/layout-nested-packages.puml
 preproc class/layout-self-loops.puml
 preproc class/left-to-right-packages.puml
+preproc class/link-label-visibility.puml
 preproc class/lollipop.puml
 preproc class/member-links.puml
 preproc class/members-fields-methods.puml
@@ -1156,6 +1180,7 @@ preproc class/notes-multiline.puml
 preproc class/notes-on-class.puml
 preproc class/notes-on-link.puml
 preproc class/notes-on-member.puml
+preproc class/package-figure-stereotypes.puml
 preproc class/packages-basic.puml
 preproc class/packages-skinparam-style.puml
 preproc class/packages-styles.puml
@@ -1193,10 +1218,12 @@ preproc component/component-description.puml
 preproc component/components-syntax.puml
 preproc component/containers.puml
 preproc component/directions.puml
+preproc component/empty-packages.puml
 preproc component/hide-unlinked.puml
 preproc component/interfaces-syntax.puml
 preproc component/left-to-right.puml
 preproc component/link-cardinality.puml
+preproc component/link-label-visibility.puml
 preproc component/link-labels.puml
 preproc component/links-arrows.puml
 preproc component/lollipop-links.puml
@@ -1446,6 +1473,7 @@ preproc state/hide-empty-description.puml
 preproc state/history-states.puml
 preproc state/history.puml
 preproc state/left-to-right.puml
+preproc state/link-label-visibility.puml
 preproc state/long-names.puml
 preproc state/notes-composite.puml
 preproc state/notes-floating.puml
@@ -1513,10 +1541,12 @@ svg component/component-description.puml
 svg component/components-syntax.puml
 svg component/containers.puml
 svg component/directions.puml
+svg component/empty-packages.puml
 svg component/hide-unlinked.puml
 svg component/interfaces-syntax.puml
 svg component/left-to-right.puml
 svg component/link-cardinality.puml
+svg component/link-label-visibility.puml
 svg component/link-labels.puml
 svg component/links-arrows.puml
 svg component/lollipop-links.puml
@@ -1752,6 +1782,7 @@ svg state/hide-empty-description.puml
 svg state/history-states.puml
 svg state/history.puml
 svg state/left-to-right.puml
+svg state/link-label-visibility.puml
 svg state/long-names.puml
 svg state/notes-composite.puml
 svg state/notes-floating.puml
@@ -1809,6 +1840,8 @@ url class/association-class.puml
 url class/association-diamond.puml
 url class/basic.puml
 url class/colors-inline.puml
+url class/empty-packages-styled.puml
+url class/empty-packages.puml
 url class/enum-values.puml
 url class/extends-implements.puml
 url class/generics.puml
@@ -1827,6 +1860,7 @@ url class/layout-multi-edges.puml
 url class/layout-nested-packages.puml
 url class/layout-self-loops.puml
 url class/left-to-right-packages.puml
+url class/link-label-visibility.puml
 url class/lollipop.puml
 url class/member-links.puml
 url class/members-fields-methods.puml
@@ -1841,6 +1875,7 @@ url class/notes-multiline.puml
 url class/notes-on-class.puml
 url class/notes-on-link.puml
 url class/notes-on-member.puml
+url class/package-figure-stereotypes.puml
 url class/packages-basic.puml
 url class/packages-skinparam-style.puml
 url class/packages-styles.puml
@@ -1878,10 +1913,12 @@ url component/component-description.puml
 url component/components-syntax.puml
 url component/containers.puml
 url component/directions.puml
+url component/empty-packages.puml
 url component/hide-unlinked.puml
 url component/interfaces-syntax.puml
 url component/left-to-right.puml
 url component/link-cardinality.puml
+url component/link-label-visibility.puml
 url component/link-labels.puml
 url component/links-arrows.puml
 url component/lollipop-links.puml
@@ -2131,6 +2168,7 @@ url state/hide-empty-description.puml
 url state/history-states.puml
 url state/history.puml
 url state/left-to-right.puml
+url state/link-label-visibility.puml
 url state/long-names.puml
 url state/notes-composite.puml
 url state/notes-floating.puml
