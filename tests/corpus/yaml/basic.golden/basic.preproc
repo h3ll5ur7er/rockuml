@@ -1,0 +1,11 @@
+@startyaml
+name: rockuml
+targets:
+  - wasm
+  - native
+build:
+  profile: release
+  features:
+    layout: smetana
+    fonts: [liberation, user]
+@endyaml

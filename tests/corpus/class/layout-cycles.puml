@@ -1,0 +1,19 @@
+@startuml
+class A
+class B
+class C
+class D
+class E
+class F
+A --> B
+B --> C
+C --> A
+A --> D
+B --> D
+C --> E
+D --> E
+E --> A
+D --> F
+F --> B
+E --> F
+@enduml

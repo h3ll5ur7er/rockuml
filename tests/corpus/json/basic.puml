@@ -1,0 +1,17 @@
+@startjson
+{
+  "name": "rockuml",
+  "version": 1.5,
+  "active": true,
+  "tags": ["layout", "smetana", "dot"],
+  "owner": {
+    "login": "someone",
+    "roles": [
+      { "role": "admin", "since": 2020 },
+      { "role": "dev" }
+    ]
+  },
+  "empty": {},
+  "none": null
+}
+@endjson

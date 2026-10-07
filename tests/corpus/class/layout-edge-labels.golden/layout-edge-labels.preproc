@@ -1,0 +1,11 @@
+@startuml
+class Customer
+class Order
+class Item
+class Invoice
+Customer "1" --> "0..*" Order : places >
+Order "1" *-- "1..*" Item : contains
+Order "owner" -- "invoice" Invoice
+Customer - Invoice : pays
+Item "*" - "1" Invoice : billed on
+@enduml

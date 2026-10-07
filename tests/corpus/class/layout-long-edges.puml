@@ -1,0 +1,16 @@
+@startuml
+class A
+class B
+class C
+class D
+class E
+class F
+A --> B
+B --> C
+C --> D
+D --> E
+A ----> E : long
+A -----> F
+B ---> F : skip
+F <-- C
+@enduml
