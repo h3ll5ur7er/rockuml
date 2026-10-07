@@ -3,6 +3,7 @@
 use super::StateDiagram;
 use crate::abel::{EntityId, GroupType, LeafType, LinkArg};
 use crate::color::{self, ColorType, Colors, HColor, NoSuchColor};
+use crate::command::unported::NotPortedCommands;
 use crate::command::{
     Command, CommandError, CommandResult, ParserPass, SingleLine, SingleLineCommand,
 };
@@ -344,7 +345,13 @@ fn execute_link(
             LinkDecor::None
         },
     );
-    let label = arg.get("LABEL", 0).map(Display::with_newlines);
+    let label = arg.get("LABEL", 0);
+    if label.is_some_and(|label| !label.trim().is_empty()) && use_node_style(diagram, arg) {
+        // PlantUML names the node it draws the label in after the current time, so no output could match.
+        diagram.command_not_ported("EntityImageTransitionLabel");
+        return Ok(());
+    }
+    let label = label.map(Display::with_newlines);
     let cuca = &mut diagram.cuca;
     let link_arg = LinkArg::build_managing(
         label,
@@ -362,6 +369,17 @@ fn execute_link(
     }
     cuca.add_link(link);
     Ok(())
+}
+
+/// Whether the label goes in a node of its own, as `-[node]->` or the skin asks (`shouldUseNodeStyle`).
+fn use_node_style(diagram: &StateDiagram, arg: &RegexResult) -> bool {
+    arg.get_lazzy("ARROW_STYLE", 0)
+        .is_some_and(|style| style.to_lowercase().contains("node"))
+        || diagram
+            .cuca
+            .skin()
+            .value("statediagramedgelabelstyle")
+            .is_some_and(|style| style.eq_ignore_ascii_case("node"))
 }
 
 /// The state `code` names in a transition, created if needed; `None` when it may not be used here.

@@ -266,6 +266,20 @@ fn set_separator_none_keeps_dotted_names_whole() {
 }
 
 #[test]
+fn labelled_transitions_drawn_as_nodes_are_not_ported() {
+    let not_ported = |lines: &[&str]| parse(lines).unwrap().cuca.titled.not_ported_part();
+    assert!(not_ported(&["A -[node]-> B"]).is_none());
+    assert!(not_ported(&["A -[#red,node]-> B : hello"]).is_some());
+    assert!(
+        not_ported(&[
+            "skinparam stateDiagramEdgeLabelStyle node",
+            "A --> B : hello"
+        ])
+        .is_some()
+    );
+}
+
+#[test]
 fn transition_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
     let label = |icon_size: &str| {
         let diagram = parse(&[

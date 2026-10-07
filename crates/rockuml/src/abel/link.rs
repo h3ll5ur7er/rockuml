@@ -215,7 +215,6 @@ pub(crate) struct Link {
     /// `hidden` in the arrow's style.
     hidden: bool,
     single: bool,
-    use_node_style: bool,
     colors: Colors,
     /// The colours of the parallel lines after the first.
     supplementary: Vec<Colors>,
@@ -267,7 +266,6 @@ impl Link {
             port2: None,
             hidden: false,
             single: false,
-            use_node_style: false,
             colors: Colors::default(),
             supplementary: Vec::new(),
             note: None,
@@ -576,14 +574,6 @@ impl Link {
         self.single
     }
 
-    pub(crate) fn go_node_style(&mut self) {
-        self.use_node_style = true;
-    }
-
-    pub(crate) fn use_node_style(&self) -> bool {
-        self.use_node_style
-    }
-
     /// `dashed,#red;bold`: the style in brackets in an arrow, `;` separating parallel lines.
     pub(crate) fn apply_style(&mut self, arrow_style: Option<&str>) {
         let Some(arrow_style) = arrow_style else {
@@ -609,7 +599,7 @@ impl Link {
             } else if s.eq_ignore_ascii_case("plain") {
                 // A plain line is the default.
             } else if s.eq_ignore_ascii_case("node") {
-                self.go_node_style();
+                // Only the state command reads it, from the arrow itself.
             } else if s.eq_ignore_ascii_case("norank") {
                 self.go_norank();
             } else if let Some(thickness) = s.strip_prefix("thickness=") {
