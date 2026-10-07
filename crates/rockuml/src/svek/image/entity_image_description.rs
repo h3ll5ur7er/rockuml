@@ -14,14 +14,14 @@ use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::group::UGroup;
 use crate::klimt::shape::UShape;
-use crate::klimt::sprite::{Sprite, SpriteContainer};
+use crate::klimt::sprite::SpriteContainer;
 use crate::klimt::stencil::RectangleStencil;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::body::enhanced_text;
 use crate::skin::component::{TextBlockEmpty, creole_text};
-use crate::stereo::{Stereotype, StereotypeSprite};
+use crate::stereo::Stereotype;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
 
@@ -128,18 +128,16 @@ impl EntityImageDescription {
             ))
         };
 
-        let stereo: Block = match (stereotype, stereotype.and_then(Stereotype::sprite)) {
-            (_, Some(sprite)) if skin.get_sprite(&sprite.name).is_some() => {
-                Rc::new(StereotypeSpriteBlock::new(sprite, skin))
-            }
-            (Some(_), _) => match diagram.get_visible_stereotype_labels(entity.id()) {
+        let stereo: Block = match (stereotype, stereotype.and_then(|s| s.get_sprite(skin))) {
+            (_, Some(sprite)) => Rc::from(sprite),
+            (Some(_), None) => match diagram.get_visible_stereotype_labels(entity.id()) {
                 Some(labels) if !labels.is_empty() => Rc::new(TextBlockMarged::new(
                     creole_text(&labels, fc_stereo, HorizontalAlignment::Center, 0.0, skin),
                     ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 1.0, 0.0, 1.0),
                 )),
                 _ => Rc::new(TextBlockEmpty::default()),
             },
-            (None, _) => Rc::new(TextBlockEmpty::default()),
+            (None, None) => Rc::new(TextBlockEmpty::default()),
         };
 
         let name_block: Block = Rc::new(name_block(
@@ -273,35 +271,3 @@ fn name_block(
     )
 }
 
-/// A stereotype's sprite, drawn in the stereotype's colour at its scale.
-struct StereotypeSpriteBlock {
-    sprite: Rc<dyn Sprite>,
-    color: HColor,
-    scale: f64,
-}
-
-impl StereotypeSpriteBlock {
-    fn new(sprite: &StereotypeSprite, sprites: &dyn SpriteContainer) -> Self {
-        Self {
-            sprite: sprites
-                .get_sprite(&sprite.name)
-                .expect("only sprites that exist are drawn"),
-            color: sprite.color.clone(),
-            scale: sprite.scale,
-        }
-    }
-}
-
-impl TextBlock for StereotypeSpriteBlock {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        self.sprite
-            .as_text_block(&self.color, None, self.scale, None)
-            .calculate_dimension(string_bounder)
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        self.sprite
-            .as_text_block(&self.color, None, self.scale, None)
-            .draw_u(ug);
-    }
-}

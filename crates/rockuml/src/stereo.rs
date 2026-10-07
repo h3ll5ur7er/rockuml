@@ -3,11 +3,17 @@
 
 use std::borrow::Cow;
 use std::fmt::Write;
+use std::rc::Rc;
 use std::sync::LazyLock;
 
 use regex::Regex;
 
 use crate::color::{HColor, NoSuchColor};
+use crate::klimt::TextBlock;
+use crate::klimt::font::StringBounder;
+use crate::klimt::geom::XDimension2D;
+use crate::klimt::sprite::{Sprite, SpriteContainer};
+use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexTree, java_regex};
 
 /// The pattern stereotypes are written with, as an optional part of a command.
@@ -33,10 +39,31 @@ pub(crate) struct Spot {
 
 /// A sprite drawn in place of the labels, like `<<$archimate/business-actor>>`.
 #[derive(Clone, Debug, PartialEq)]
-pub(crate) struct StereotypeSprite {
-    pub name: String,
-    pub scale: f64,
-    pub color: HColor,
+struct StereotypeSprite {
+    name: String,
+    scale: f64,
+    color: HColor,
+}
+
+/// A stereotype's sprite, drawn in the stereotype's colour at its scale.
+struct SpriteBlock {
+    sprite: Rc<dyn Sprite>,
+    color: HColor,
+    scale: f64,
+}
+
+impl TextBlock for SpriteBlock {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.sprite
+            .as_text_block(&self.color, None, self.scale, None)
+            .calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.sprite
+            .as_text_block(&self.color, None, self.scale, None)
+            .draw_u(ug);
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -131,8 +158,14 @@ impl Stereotype {
         self.spot.as_ref()
     }
 
-    pub(crate) fn sprite(&self) -> Option<&StereotypeSprite> {
-        self.sprite.as_ref()
+    /// The sprite the stereotype names, drawn in its colour at its scale, if `container` has it.
+    pub(crate) fn get_sprite(&self, container: &dyn SpriteContainer) -> Option<Box<dyn TextBlock>> {
+        let sprite = self.sprite.as_ref()?;
+        Some(Box::new(SpriteBlock {
+            sprite: container.get_sprite(&sprite.name)?,
+            color: sprite.color.clone(),
+            scale: sprite.scale,
+        }))
     }
 
     /// The labels as shown, in guillemets (`getLabels(Guillemet.GUILLEMET)`).
