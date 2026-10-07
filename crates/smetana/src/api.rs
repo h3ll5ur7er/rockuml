@@ -103,6 +103,42 @@ pub struct Graph {
     nodes: Registry<NodeId, Node>,
     edges: Registry<EdgeId, Edge>,
     has_context: bool,
+    /// The calls made so far, as Smetana traces write their input, when asked for by [`Graph::traced`].
+    trace: Option<Trace>,
+}
+
+/// The names of the objects made so far, which trace lines refer to them by.
+struct Trace {
+    calls: Vec<String>,
+    subgraphs: Vec<String>,
+    nodes: Vec<String>,
+}
+
+impl Trace {
+    fn object(&self, obj: Object) -> String {
+        match obj {
+            Object::Subgraph(g) => format!("graph {}", quote(&self.subgraphs[g.0])),
+            Object::Node(n) => format!("node {}", quote(&self.nodes[n.0])),
+            Object::Edge(e) => format!("edge e{}", e.0 + 1),
+        }
+    }
+}
+
+/// A string as traces write it: in quotes, with quotes, backslashes and control characters escaped.
+fn quote(text: &str) -> String {
+    let mut quoted = String::from('"');
+    for c in text.chars() {
+        match c {
+            '"' => quoted.push_str("\\\""),
+            '\\' => quoted.push_str("\\\\"),
+            '\n' => quoted.push_str("\\n"),
+            '\r' => quoted.push_str("\\r"),
+            '\t' => quoted.push_str("\\t"),
+            c => quoted.push(c),
+        }
+    }
+    quoted.push('"');
+    quoted
 }
 
 impl Default for Graph {
@@ -124,6 +160,33 @@ impl Graph {
             nodes: Registry::new(),
             edges: Registry::new(),
             has_context: false,
+            trace: None,
+        }
+    }
+
+    /// A graph that records its calls in the format of the input section of Smetana traces
+    /// (`tools/oracle/smetana-trace`), from `agopen` on, so that callers can check they build the graph
+    /// PlantUML builds.
+    pub fn traced() -> Self {
+        Self {
+            trace: Some(Trace {
+                calls: vec!["agopen \"g\"".to_owned()],
+                subgraphs: vec!["g".to_owned()],
+                nodes: Vec::new(),
+            }),
+            ..Self::new()
+        }
+    }
+
+    /// The calls a [`Graph::traced`] graph recorded, one trace line each.
+    pub fn trace(&self) -> Option<&[String]> {
+        self.trace.as_ref().map(|trace| trace.calls.as_slice())
+    }
+
+    fn record(&mut self, line: impl FnOnce(&Trace) -> String) {
+        if let Some(trace) = &mut self.trace {
+            let line = line(trace);
+            trace.calls.push(line);
         }
     }
 
@@ -134,20 +197,43 @@ impl Graph {
 
     /// `agsubg(zz, parent, name, true)`: the subgraph of `parent` named `name`, made if new.
     pub fn subgraph(&mut self, parent: Subgraph, name: &str) -> Subgraph {
+        let parent_object = Object::Subgraph(parent);
         let parent = self.subgraphs.ids[parent.0];
         let g = agsubg(&mut self.zz, parent, Some(name), true).expect("agsubg creates");
-        self.subgraphs.handle(g, Subgraph)
+        let made = self.subgraphs.handle(g, Subgraph);
+        self.record(|trace| format!("agsubg {} {}", trace.object(parent_object), quote(name)));
+        if let Some(trace) = &mut self.trace
+            && trace.subgraphs.len() == made.0
+        {
+            trace.subgraphs.push(name.to_owned());
+        }
+        made
     }
 
     /// `agnode(zz, g, name, true)`: the node named `name`, made in `g` if new.
     pub fn node(&mut self, g: Subgraph, name: &str) -> Node {
+        self.record(|trace| format!("agnode {} {}", trace.object(g.into()), quote(name)));
         let g = self.subgraphs.ids[g.0];
         let n = agnode(&mut self.zz, g, Some(name), true).expect("agnode creates");
-        self.nodes.handle(n, Node)
+        let made = self.nodes.handle(n, Node);
+        if let Some(trace) = &mut self.trace
+            && trace.nodes.len() == made.0
+        {
+            trace.nodes.push(name.to_owned());
+        }
+        made
     }
 
     /// `agedge(zz, g, tail, head, null, true)`: a new edge in `g`.
     pub fn edge(&mut self, g: Subgraph, tail: Node, head: Node) -> Edge {
+        self.record(|trace| {
+            format!(
+                "agedge {} {} {}",
+                trace.object(g.into()),
+                trace.object(tail.into()),
+                trace.object(head.into())
+            )
+        });
         let g = self.subgraphs.ids[g.0];
         let (t, h) = (self.nodes.ids[tail.0], self.nodes.ids[head.0]);
         let e = agedge(&mut self.zz, g, t, h, None, true).expect("agedge creates");
@@ -168,7 +254,24 @@ impl Graph {
         value: &str,
         default: &str,
     ) {
-        let obj = self.agobj(obj.into());
+        let obj = obj.into();
+        self.record(|trace| {
+            let value = match value
+                .strip_prefix("_dim_")
+                .and_then(|dim| dim.strip_suffix('_'))
+                .and_then(|dim| dim.split_once('_'))
+            {
+                Some((w, h)) => format!("dim({w},{h})"),
+                None => quote(value),
+            };
+            format!(
+                "agsafeset {} {} {value} {}",
+                trace.object(obj),
+                quote(name),
+                quote(default)
+            )
+        });
+        let obj = self.agobj(obj);
         agsafeset(&mut self.zz, obj, name, value, default);
     }
 
@@ -183,6 +286,7 @@ impl Graph {
     /// attributes between it and the layout; [`Graph::layout`] calls it if it has not been called.
     pub fn gv_context(&mut self) {
         assert!(!self.has_context, "gvContext called twice");
+        self.record(|_| "gvContext".to_owned());
         agattr(&mut self.zz, None, AGNODE, "label", Some("\\N"));
         self.has_context = true;
     }
@@ -470,6 +574,37 @@ mod tests {
         graph.set(e, "tailport", "P1");
         let error = graph.layout().unwrap_err();
         assert!(error.to_string().contains("local_cross"), "{error}");
+    }
+
+    #[test]
+    fn a_traced_graph_records_its_calls_as_traces_write_them() {
+        let mut graph = Graph::traced();
+        let root = graph.root();
+        graph.set(root, "margin", "16");
+        let cluster = graph.subgraph(root, "cluster6");
+        graph.set_label_size(cluster, "label", 61.5, 17.9);
+        let a = graph.node(cluster, "sh0010");
+        let b = graph.node(root, "say \"hi\"");
+        let e = graph.edge(root, a, b);
+        graph.set(e, "minlen", "1");
+        graph.gv_context();
+        graph.set_with_default(root, "rankdir", "LR", "LR");
+        assert_eq!(
+            graph.trace().unwrap(),
+            [
+                r#"agopen "g""#,
+                r#"agsafeset graph "g" "margin" "16" """#,
+                r#"agsubg graph "g" "cluster6""#,
+                r#"agsafeset graph "cluster6" "label" dim(61,17) """#,
+                r#"agnode graph "cluster6" "sh0010""#,
+                r#"agnode graph "g" "say \"hi\"""#,
+                r#"agedge graph "g" node "sh0010" node "say \"hi\"""#,
+                r#"agsafeset edge e1 "minlen" "1" """#,
+                "gvContext",
+                r#"agsafeset graph "g" "rankdir" "LR" "LR""#,
+            ]
+        );
+        assert_eq!(Graph::new().trace(), None);
     }
 
     #[test]

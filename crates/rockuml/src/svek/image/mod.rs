@@ -1,5 +1,6 @@
 //! The drawings of single entities, which the layout places as nodes (PlantUML's `svek.image` package).
 
+mod chen;
 mod circle_end;
 mod circle_start;
 mod entity_image_branch;
@@ -17,10 +18,16 @@ mod entity_image_synchro_bar;
 mod entity_image_tips;
 mod opale;
 
+pub(crate) use chen::{
+    EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
+    EntityImageChenRelationship,
+};
 pub(crate) use entity_image_branch::EntityImageBranch;
 pub(crate) use entity_image_circle_end::EntityImageCircleEnd;
 pub(crate) use entity_image_circle_start::EntityImageCircleStart;
-pub(crate) use entity_image_note::{EntityImageNote, OpaleLink};
+pub(crate) use entity_image_note::EntityImageNote;
+#[cfg(test)]
+pub(crate) use entity_image_note::OpaleLink;
 pub(crate) use entity_image_note_link::EntityImageNoteLink;
 pub(crate) use entity_image_pseudo_state::EntityImagePseudoState;
 pub(crate) use entity_image_state::EntityImageState;

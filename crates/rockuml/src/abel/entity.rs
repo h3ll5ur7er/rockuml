@@ -45,6 +45,8 @@ pub(crate) struct Entity {
     pub display: Display,
     pub stereotype: Option<Stereotype>,
     pub bodier: Bodier,
+    /// The style names a stereotype gives as `<<<name>>>` (`Stereostyles`).
+    pub stereostyles: Vec<String>,
     pub url: Option<Url>,
     pub generic: Option<String>,
     /// A legend drawn inside a group.
@@ -87,6 +89,7 @@ impl Entity {
             display: Display::default(),
             stereotype: None,
             bodier: Bodier::default(),
+            stereostyles: Vec::new(),
             url: None,
             generic: None,
             legend: None,
@@ -182,6 +185,12 @@ impl Entity {
 
     pub(crate) fn mute_to_group_type(&mut self, new_type: GroupType) {
         self.leaf_or_group = EntityType::Group(new_type);
+    }
+
+    /// The stereotype written `stereo`, and the style names it gives (`setStereotype` and `setStereostyle`).
+    pub(crate) fn set_stereotype_and_stereostyle(&mut self, stereo: &str) {
+        self.stereotype = Some(Stereotype::new(stereo));
+        self.stereostyles = crate::stereo::stereostyles(stereo);
     }
 
     /// Use cases and circles are always drawn as their symbol.

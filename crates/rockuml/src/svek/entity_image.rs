@@ -1,6 +1,9 @@
 //! The drawing of one entity as a node of the layout (PlantUML's `IEntityImage` and `AbstractEntityImage`).
 
-#![cfg_attr(test, allow(dead_code, reason = "drawn by the Smetana bridge"))]
+#![allow(
+    dead_code,
+    reason = "the images of the class, description, state and note families read the rest"
+)]
 
 use std::rc::Rc;
 

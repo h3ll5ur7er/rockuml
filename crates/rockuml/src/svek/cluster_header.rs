@@ -85,10 +85,12 @@ impl ClusterHeader {
 }
 
 fn get_style(g: &Entity, diagram: &CucaDiagram) -> Style {
-    get_signature(g, diagram).get_merged_style_with(
-        &diagram.skin().current_style_builder(),
-        g.stereotype.as_ref(),
-    )
+    get_signature(g, diagram)
+        .with_stereostyles(&g.stereostyles)
+        .get_merged_style_with(
+            &diagram.skin().current_style_builder(),
+            g.stereotype.as_ref(),
+        )
 }
 
 fn get_signature(g: &Entity, diagram: &CucaDiagram) -> StyleSignature {

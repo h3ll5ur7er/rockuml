@@ -1,7 +1,8 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
 use super::image::{
-    EntityImageBranch, EntityImageCircleEnd, EntityImageCircleStart, EntityImageNote,
+    EntityImageBranch, EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
+    EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageNote,
     EntityImagePseudoState, EntityImageState, EntityImageState2, EntityImageStateBorder,
     EntityImageStateEmptyDescription, EntityImageSynchroBar, EntityImageTips,
 };
@@ -69,10 +70,12 @@ pub(crate) fn create_entity_image_block(
             entity, diagram,
         ))),
         LeafType::Tips => Ok(Box::new(EntityImageTips::new(entity, diagram))),
-        LeafType::ChenEntity => not_ported("EntityImageChenEntity"),
-        LeafType::ChenRelationship => not_ported("EntityImageChenRelationship"),
-        LeafType::ChenAttribute => not_ported("EntityImageChenAttribute"),
-        LeafType::ChenCircle => not_ported("EntityImageChenCircle"),
+        LeafType::ChenEntity => Ok(Box::new(EntityImageChenEntity::new(entity, diagram))),
+        LeafType::ChenRelationship => {
+            Ok(Box::new(EntityImageChenRelationship::new(entity, diagram)))
+        }
+        LeafType::ChenAttribute => Ok(Box::new(EntityImageChenAttribute::new(entity, diagram))),
+        LeafType::ChenCircle => Ok(Box::new(EntityImageChenCircle::new(entity, diagram))),
         LeafType::Domain | LeafType::Requirement => not_ported("EntityImageDomain"),
         // PlantUML has no image for the other kinds and fails.
         _ => not_ported("GeneralImageBuilder"),
