@@ -146,7 +146,7 @@ impl AtomOpenIconic {
     ) -> Self {
         Self {
             open_iconic,
-            factor: scale * font.font().size_2d() / 12.0,
+            factor: scale * font.size_2d() / 12.0,
             color: new_color.unwrap_or_else(|| font.color().clone()),
         }
     }

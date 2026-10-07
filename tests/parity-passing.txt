@@ -24,6 +24,7 @@ debug creole/font-changes.puml
 debug creole/initial-noise.puml
 debug creole/inline-styles.puml
 debug creole/links.puml
+debug creole/openiconic-sup-sub.puml
 debug creole/openiconic.puml
 debug creole/plain.puml
 debug creole/styles-advanced.puml
@@ -179,6 +180,7 @@ dsvg creole/font-changes.puml
 dsvg creole/initial-noise.puml
 dsvg creole/inline-styles.puml
 dsvg creole/links.puml
+dsvg creole/openiconic-sup-sub.puml
 dsvg creole/openiconic.puml
 dsvg creole/plain.puml
 dsvg creole/styles-advanced.puml
@@ -333,6 +335,7 @@ png creole/font-changes.puml
 png creole/initial-noise.puml
 png creole/inline-styles.puml
 png creole/links.puml
+png creole/openiconic-sup-sub.puml
 png creole/openiconic.puml
 png creole/plain.puml
 png creole/styles-advanced.puml
@@ -494,6 +497,7 @@ preproc creole/font-changes.puml
 preproc creole/initial-noise.puml
 preproc creole/inline-styles.puml
 preproc creole/links.puml
+preproc creole/openiconic-sup-sub.puml
 preproc creole/openiconic.puml
 preproc creole/plain.puml
 preproc creole/styles-advanced.puml
@@ -512,6 +516,15 @@ preproc images/emoji-note-title.puml
 preproc images/emoji-scale-color.puml
 preproc images/emoji-transforms.puml
 preproc images/emoji.puml
+preproc images/img-data-uri.puml
+preproc images/img-file.puml
+preproc images/img-svg.puml
+preproc images/sprite-archimate.puml
+preproc images/sprite-base64.puml
+preproc images/sprite-compressed.puml
+preproc images/sprite-gray-levels.puml
+preproc images/sprite-scale-color.puml
+preproc images/sprite-svg.puml
 preproc mindmap/basic.puml
 preproc preprocessor/builtins-color.puml
 preproc preprocessor/builtins-date.puml
@@ -663,6 +676,7 @@ svg creole/font-changes.puml
 svg creole/initial-noise.puml
 svg creole/inline-styles.puml
 svg creole/links.puml
+svg creole/openiconic-sup-sub.puml
 svg creole/openiconic.puml
 svg creole/plain.puml
 svg creole/styles-advanced.puml
@@ -822,6 +836,7 @@ url creole/font-changes.puml
 url creole/initial-noise.puml
 url creole/inline-styles.puml
 url creole/links.puml
+url creole/openiconic-sup-sub.puml
 url creole/openiconic.puml
 url creole/plain.puml
 url creole/styles-advanced.puml
@@ -840,6 +855,13 @@ url images/emoji-note-title.puml
 url images/emoji-scale-color.puml
 url images/emoji-transforms.puml
 url images/emoji.puml
+url images/img-file.puml
+url images/img-svg.puml
+url images/sprite-archimate.puml
+url images/sprite-compressed.puml
+url images/sprite-gray-levels.puml
+url images/sprite-scale-color.puml
+url images/sprite-svg.puml
 url mindmap/basic.puml
 url preprocessor/builtins-color.puml
 url preprocessor/builtins-date.puml
