@@ -160,10 +160,6 @@ impl SvgGraphics {
             .map(|(visible, space)| format!("{},{}", self.length(visible), self.length(space)));
     }
 
-    pub(super) fn add_comment(&mut self, comment: &str) {
-        self.current_group().append_comment(comment);
-    }
-
     fn current_group(&mut self) -> &mut XmlNode {
         self.open_elements.last_mut().unwrap_or(&mut self.g_root)
     }
@@ -534,6 +530,10 @@ impl SvgGraphics {
             )
             .into_owned();
         Some(scaled)
+    }
+
+    pub(super) fn add_comment(&mut self, comment: &str) {
+        self.current_group().append_comment(comment);
     }
 
     pub(super) fn start_group(&mut self, group: &UGroup) {

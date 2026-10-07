@@ -200,6 +200,7 @@ impl LinkArg {
     clippy::struct_excessive_bools,
     reason = "PlantUML's fields, each an independent setting"
 )]
+#[derive(Clone)]
 pub(crate) struct Link {
     id: LinkId,
     uid: String,

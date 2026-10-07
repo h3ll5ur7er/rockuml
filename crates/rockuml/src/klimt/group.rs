@@ -5,6 +5,7 @@ use crate::text::LineLocation;
 /// In Java's declaration order, which is the order the attributes are written in.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum UGroupType {
+    /// Not written: SVG takes element ids from [`UGroupType::DataUid`].
     Id,
     Class,
     /// A tooltip, which SVG writes as a `<title>` child rather than an attribute.
@@ -13,12 +14,8 @@ pub enum UGroupType {
     DataQualifiedName,
     DataEntity1,
     DataEntity2,
-    DataEntityUid,
     DataEntity1Uid,
     DataEntity2Uid,
-    DataParticipant,
-    DataParticipant1,
-    DataParticipant2,
     DataUid,
     DataSourceLine,
     DataVisibilityModifier,
@@ -34,18 +31,14 @@ impl UGroupType {
             Self::DataQualifiedName => Some("data-qualified-name"),
             // PlantUML writes the uid as the id, for now.
             Self::DataUid => Some("id"),
-            Self::DataParticipant1 | Self::DataEntity1Uid => Some("data-entity-1"),
-            Self::DataParticipant2 | Self::DataEntity2Uid => Some("data-entity-2"),
+            Self::DataEntity1Uid => Some("data-entity-1"),
+            Self::DataEntity2Uid => Some("data-entity-2"),
             Self::DataSourceLine => Some("data-source-line"),
-            Self::DataEntityUid => Some("data-entity-uid"),
             Self::DataVisibilityModifier => Some("data-visibility-modifier"),
             Self::DataLinkType => Some("data-link-type"),
-            Self::Id
-            | Self::Title
-            | Self::DataEntity
-            | Self::DataEntity1
-            | Self::DataEntity2
-            | Self::DataParticipant => None,
+            Self::Id | Self::Title | Self::DataEntity | Self::DataEntity1 | Self::DataEntity2 => {
+                None
+            }
         }
     }
 }

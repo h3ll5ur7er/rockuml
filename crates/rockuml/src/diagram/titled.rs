@@ -22,6 +22,7 @@ use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::text::LineLocation;
 
+#[derive(Clone)]
 pub(super) struct Titled {
     pub skin: SkinParam,
     pub pragma: Pragma,
@@ -43,7 +44,7 @@ pub(super) struct Titled {
 }
 
 /// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(super) struct Pragma {
     values: Vec<(PragmaKey, Option<String>)>,
 }

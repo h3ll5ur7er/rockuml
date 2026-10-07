@@ -1,9 +1,13 @@
+use super::{CreoleMode, CreoleParser, SheetBlock1, SheetBlock2};
 use crate::java;
 use crate::jaws::{
     BLOCK_E1_BREAKLINE, BLOCK_E1_NEWLINE, BLOCK_E1_NEWLINE_LEFT_ALIGN,
     BLOCK_E1_NEWLINE_RIGHT_ALIGN, BLOCK_E1_REAL_BACKSLASH,
 };
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::font::FontConfiguration;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::sprite::SpriteContainer;
 use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 
@@ -192,6 +196,24 @@ impl Display {
 
     pub(crate) fn natural_alignment(&self) -> Option<HorizontalAlignment> {
         self.natural_alignment
+    }
+
+    /// The display drawn in `font`, its lines wrapping beyond `max_width` unless it is 0 (`Display.create0`;
+    /// `create`, `create7` and `create8` call it).
+    pub(crate) fn create0(
+        &self,
+        font: &FontConfiguration,
+        alignment: HorizontalAlignment,
+        sprites: &dyn SpriteContainer,
+        max_width: f64,
+        mode: CreoleMode,
+    ) -> SheetBlock2 {
+        let alignment = self.natural_alignment.unwrap_or(alignment);
+        let sheet = CreoleParser::with_mode(font.clone(), alignment, mode, sprites)
+            .create_display_sheet(self, font);
+        SheetBlock2::new(
+            SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
+        )
     }
 
     pub(crate) fn is_single_empty_line(&self) -> bool {

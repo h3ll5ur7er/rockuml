@@ -24,9 +24,9 @@ use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::java;
 use crate::json::JsonValue;
-use crate::klimt::geom::Rankdir;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::skin::Rankdir;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated};
 use crate::{color, stereo};
@@ -101,7 +101,7 @@ pub(super) fn footbox_ignored<D: 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
-/// PlantUML's `CommandRankDir`: `left to right direction`.
+/// PlantUML's `CommandRankDir`: `left to right direction` lays the diagram out sideways.
 pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -112,8 +112,8 @@ pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
             RegexTree::end(),
         ]),
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
-            let direction = arg.get("DIRECTION", 0).unwrap_or_default().to_lowercase();
-            let rankdir = if direction.starts_with("left") {
+            let direction = arg.get("DIRECTION", 0).unwrap_or_default();
+            let rankdir = if direction.to_ascii_lowercase().starts_with("left") {
                 Rankdir::LeftToRight
             } else {
                 Rankdir::TopToBottom

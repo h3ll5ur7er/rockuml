@@ -14,6 +14,7 @@ use crate::klimt::url::Url;
 use crate::pattern::java_regex;
 use crate::skin::visibility_modifier::VisibilityModifier;
 
+#[derive(Clone)]
 pub(crate) enum Bodier {
     /// `BodierLikeClassOrObject`: members, read as fields or methods.
     LikeClassOrObject {
