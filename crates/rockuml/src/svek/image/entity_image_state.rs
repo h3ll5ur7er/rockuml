@@ -104,10 +104,7 @@ impl TextBlock for EntityImageState {
         let string_bounder = ug.string_bounder();
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_name = common.name.calculate_dimension(string_bounder);
-        let stroke = common
-            .colors
-            .get_specific_line_stroke()
-            .unwrap_or_else(|| common.style_state.stroke());
+        let stroke = common.style_state.stroke_with(&common.colors);
         let inner = common
             .apply_color(ug, &common.style_state)
             .with_stroke(stroke);

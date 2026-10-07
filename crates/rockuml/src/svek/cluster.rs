@@ -365,10 +365,7 @@ impl Cluster {
         if rectangle_area.get_width() == 0.0 {
             return;
         }
-        let stroke = group
-            .colors
-            .get_specific_line_stroke()
-            .unwrap_or_else(|| style_state.stroke());
+        let stroke = style_state.stroke_with(&group.colors);
         let margin = f64::from(MARGIN);
         let description_height =
             attribute_height + if attribute_height > 0.0 { margin } else { 0.0 };

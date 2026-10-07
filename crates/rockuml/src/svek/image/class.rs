@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use super::entity_group;
 use crate::abel::{Entity, EntityPortion, LeafType};
-use crate::color::{ColorType, Colors, HColor};
+use crate::color::{ColorType, HColor};
 use crate::creole::{CreoleMode, Display};
 use crate::cucadiagram::BodyContext;
 use crate::diagram::cuca::CucaDiagram;
@@ -89,7 +89,7 @@ impl EntityImageClass {
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
-            stroke: get_stroke(&style, colors),
+            stroke: style.stroke_with(colors),
         }
     }
 
@@ -200,13 +200,6 @@ fn entity_style_builder(entity: &Entity, skin: &SkinParam) -> Rc<crate::style::S
         .style_builder()
         .cloned()
         .unwrap_or_else(|| skin.current_style_builder())
-}
-
-/// `Style.getStroke(colors)`: the element's own line style wins.
-pub(super) fn get_stroke(style: &Style, colors: &Colors) -> UStroke {
-    colors
-        .get_specific_line_stroke()
-        .unwrap_or_else(|| style.stroke())
 }
 
 /// `EntityImageClassHeader`.

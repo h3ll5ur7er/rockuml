@@ -51,10 +51,7 @@ impl TextBlock for EntityImageStateEmptyDescription {
         let string_bounder = ug.string_bounder();
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_header = common.name.calculate_dimension(string_bounder);
-        let stroke = common
-            .colors
-            .get_specific_line_stroke()
-            .unwrap_or_else(|| common.style_state.stroke());
+        let stroke = common.style_state.stroke_with(&common.colors);
         let inner = common
             .apply_color(ug, &self.style_state_name)
             .with_stroke(stroke);
