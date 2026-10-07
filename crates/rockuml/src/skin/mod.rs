@@ -111,6 +111,14 @@ impl SkinParam {
         crate::style::max_width(&value.unwrap_or_default())
     }
 
+    /// `BoxPadding`: the room each side of a box around participants, or 0 unless a plain decimal.
+    pub(crate) fn box_padding(&self) -> f64 {
+        self.value("boxPadding")
+            .filter(|value| is_int_or_decimal(value))
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(0.0)
+    }
+
     pub(crate) fn value(&self, key: &str) -> Option<String> {
         if let Some(known) = self.looked_up.borrow().get(key) {
             return known.clone();
@@ -123,6 +131,15 @@ impl SkinParam {
             .borrow_mut()
             .insert(key.to_owned(), found.clone());
         found
+    }
+}
+
+/// `\d+(\.\d+)?`.
+fn is_int_or_decimal(value: &str) -> bool {
+    let is_digits = |part: &str| !part.is_empty() && part.bytes().all(|b| b.is_ascii_digit());
+    match value.split_once('.') {
+        Some((int, decimals)) => is_digits(int) && is_digits(decimals),
+        None => is_digits(value),
     }
 }
 
@@ -189,6 +206,21 @@ mod tests {
             "#ABCDEF"
         );
         assert_eq!(skin.value("backgroundcolor").as_deref(), Some("#ABCDEF"));
+    }
+
+    #[test]
+    fn box_padding_is_a_plain_decimal() {
+        let padding = |value: Option<&str>| {
+            let mut skin = SkinParam::default();
+            if let Some(value) = value {
+                skin.set_param("BoxPadding", value);
+            }
+            skin.box_padding()
+        };
+        assert_eq!(padding(None), 0.0);
+        assert_eq!(padding(Some("12.5")), 12.5);
+        assert_eq!(padding(Some("-3")), 0.0);
+        assert_eq!(padding(Some("1e3")), 0.0);
     }
 
     #[test]

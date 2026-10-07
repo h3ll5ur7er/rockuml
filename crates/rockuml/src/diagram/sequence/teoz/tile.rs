@@ -5,6 +5,7 @@ use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::communication::CommunicationTile;
+use super::communication_exo::CommunicationExoTile;
 use super::life_event::LifeEventTile;
 use super::living_space::{LivingSpace, LivingSpaces};
 use super::note_tiles::{
@@ -16,7 +17,9 @@ use super::span_tiles::{DelayTile, DividerTile, HSpaceTile, NewpageTile, Referen
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::SequenceDiagram;
-use crate::diagram::sequence::model::{Event, EventId, Message, NotePosition, ParticipantId};
+use crate::diagram::sequence::model::{
+    Event, EventId, Message, MessageExo, NotePosition, ParticipantId,
+};
 use crate::klimt::font::StringBounder;
 use crate::klimt::ugraphic::UGraphic;
 use crate::real::Real;
@@ -154,7 +157,7 @@ pub(super) fn build_one<'a>(
     let diagram = arguments.diagram;
     Ok(Some(match diagram.event(event) {
         Event::Message(message) => message_tile(arguments, event, message, current_y)?,
-        Event::MessageExo(_) => return Err(NotYetPorted("messages from the border")),
+        Event::MessageExo(exo) => exo_tile(arguments, event, exo, current_y),
         Event::Note(note) => Box::new(NoteTile::new(arguments.clone(), event, note, current_y)),
         Event::Notes(notes) => Box::new(NotesTile::new(arguments.clone(), event, notes, current_y)),
         Event::Divider(divider) => Box::new(DividerTile::new(
@@ -192,6 +195,39 @@ pub(super) fn build_one<'a>(
             current_y,
         )),
     }))
+}
+
+/// A message from or to the border, wrapped by a tile per note on it; PlantUML places every note where
+/// the first one goes.
+fn exo_tile<'a>(
+    arguments: &Rc<TileArguments<'a>>,
+    event: EventId,
+    exo: &'a MessageExo,
+    current_y: &YGauge,
+) -> Box<dyn Tile<'a> + 'a> {
+    let mut result: Box<dyn Tile<'a> + 'a> = Box::new(CommunicationExoTile::new(
+        arguments.clone(),
+        event,
+        exo,
+        current_y,
+    ));
+    let notes = &exo.common.notes;
+    let side = match notes.first().map(|note| note.position) {
+        Some(NotePosition::Left) => Side::Left,
+        Some(NotePosition::Right) => Side::Right,
+        _ => return result,
+    };
+    for note in notes {
+        result = Box::new(CommunicationTileNoteSide::new(
+            arguments.clone(),
+            result,
+            note,
+            side,
+            exo.participant,
+            exo.common.is_create(),
+        ));
+    }
+    result
 }
 
 /// A message's tile, wrapped by a tile per note on it.
