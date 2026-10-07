@@ -1,0 +1,18 @@
+@startuml
+<style>
+.critical {
+  BackgroundColor #FFCCCC
+  LineColor #CC0000
+  FontStyle bold
+}
+.optional {
+  BackgroundColor #EEEEEE
+  LineThickness 2
+}
+</style>
+start
+:Back up the database; <<critical>>
+:Clean the temp folder; <<optional>>
+:Restart the service; <<critical>>
+stop
+@enduml

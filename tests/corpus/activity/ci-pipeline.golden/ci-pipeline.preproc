@@ -1,0 +1,27 @@
+@startuml
+start
+:Push to the repository;
+partition Build {
+  :Restore the cache;
+  :Compile;
+}
+partition Test {
+  fork
+    :Unit tests;
+  fork again
+    :Integration tests;
+  fork again
+    :Lint;
+  end fork
+}
+if (All green?) then (yes)
+  partition Deploy {
+    :Deploy to staging;
+    :Smoke tests;
+  }
+else (no)
+  :Notify the author;
+  end
+endif
+stop
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+start
+#pink:if (Alarm?) then (yes)
+  :Call the fire brigade;
+endif
+#palegreen:while (Readings left?)
+  :Store the reading;
+endwhile
+repeat
+  :Ping;
+repeat while (Timeout?)
+#gold:switch (Level)
+case (low)
+  :Ignore;
+case (high)
+  :Escalate;
+endswitch
+stop
+@enduml

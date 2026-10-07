@@ -1,0 +1,26 @@
+@startuml
+title Online shop
+|Customer|
+start
+:Browse the catalogue;
+repeat
+  :Add an item to the cart;
+repeat while (More items?) is (yes) not (no)
+:Check out;
+|#AntiqueWhite|Shop|
+if (Payment accepted?) then (yes)
+  fork
+    :Pack the items;
+  fork again
+    :Send the confirmation email;
+  end fork
+else (no)
+  |Customer|
+  :Choose another payment method;
+  stop
+endif
+|Warehouse|
+:Hand over to the courier;
+note right: Tracking number is emailed
+stop
+@enduml

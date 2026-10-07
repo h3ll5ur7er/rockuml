@@ -1,0 +1,16 @@
+@startuml
+skinparam ActivityBackgroundColor #EEEEFF
+skinparam ActivityBorderColor #3333AA
+skinparam ActivityFontName Monospaced
+skinparam ActivityFontSize 13
+skinparam ArrowColor #AA3333
+skinparam ActivityDiamondBackgroundColor #FFFFCC
+start
+:Prepare;
+if (Ready?) then (yes)
+  :Run;
+else (no)
+  :Wait;
+endif
+stop
+@enduml
