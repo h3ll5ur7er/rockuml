@@ -157,6 +157,23 @@ impl HorizontalAlignment {
         }
     }
 
+    /// Draws `block` aligned in `width`, `xpadding` from its side (`HorizontalAlignment.draw`).
+    pub(crate) fn draw(
+        self,
+        ug: &UGraphic,
+        block: &dyn TextBlock,
+        xpadding: f64,
+        ypadding: f64,
+        width: f64,
+    ) {
+        let x = match self {
+            Self::Left => xpadding,
+            Self::Right => width - block.calculate_dimension(ug.string_bounder()).width - xpadding,
+            Self::Center => (width - block.calculate_dimension(ug.string_bounder()).width) / 2.0,
+        };
+        block.draw_u(&ug.translated(x, ypadding));
+    }
+
     pub(crate) fn from_name(name: &str) -> Option<Self> {
         match name.to_ascii_lowercase().as_str() {
             "left" => Some(Self::Left),

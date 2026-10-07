@@ -65,6 +65,9 @@ pub enum HColor {
     /// Transparent, but SVG still fills shapes with it, at zero opacity, so that they catch the pointer
     /// (PlantUML's `transparent(WITH_FILL_OPACITY)`).
     TransparentFill,
+    /// Halfway between two colours, which PlantUML draws where antialiasing would blur a shape into the same
+    /// colour around it (`HColorMiddle`).
+    Middle(XColor, XColor),
 }
 
 /// A colour fading into another, like `red-blue`.
@@ -247,6 +250,11 @@ impl HColor {
             HColor::Gradient(gradient) => gradient.from,
             HColor::Automagic | HColor::Scheme => XColor::rgb(0, 0, 0),
             HColor::TransparentFill => HColor::NONE.as_xcolor(),
+            HColor::Middle(color1, color2) => XColor::rgb(
+                u8::midpoint(color1.red, color2.red),
+                u8::midpoint(color1.green, color2.green),
+                u8::midpoint(color1.blue, color2.blue),
+            ),
         }
     }
 
@@ -257,6 +265,7 @@ impl HColor {
             HColor::Automagic => "HColorAutomagic",
             HColor::Scheme => "HColorScheme",
             HColor::Gradient(_) => "HColorGradient",
+            HColor::Middle(..) => "HColorMiddle",
         }
     }
 

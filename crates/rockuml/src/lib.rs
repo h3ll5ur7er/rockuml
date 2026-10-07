@@ -5,6 +5,7 @@ mod assets;
 mod color;
 mod command;
 mod creole;
+mod cucadiagram;
 mod decoration;
 mod deflate;
 pub mod diagram;

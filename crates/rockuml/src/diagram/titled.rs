@@ -114,6 +114,9 @@ impl Pragma {
 /// A diagram built from commands that apply to every titled diagram.
 pub(super) trait TitledDiagram {
     fn titled(&mut self) -> &mut Titled;
+
+    /// `hide empty description`, which only state diagrams heed.
+    fn set_hide_empty_description(&mut self, _hide: bool) {}
 }
 
 impl<D: TitledDiagram> NotPortedCommands for D {

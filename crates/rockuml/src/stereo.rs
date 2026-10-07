@@ -6,7 +6,8 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::color::{HColor, NoSuchColor};
+use crate::abel::LeafType;
+use crate::color::{ColorType, Colors, HColor, NoSuchColor};
 use crate::pattern::{RegexTree, java_regex};
 
 /// The pattern stereotypes are written with, as an optional part of a command.
@@ -150,6 +151,86 @@ pub(crate) struct Stereotag {
     pub name: String,
 }
 
+/// The stereotypes written after a state or an activity, like `<<choice>>` or `<<#pink>>`, some of which
+/// change what the element is or how it is coloured (PlantUML's `Stereogroup`).
+pub(crate) struct Stereogroup {
+    definition: Option<String>,
+}
+
+impl Stereogroup {
+    /// `<<a>> <<b>>...`, captured under `STEREOGROUP`.
+    pub(crate) fn optional_pattern() -> RegexTree {
+        RegexTree::optional(RegexTree::named(
+            1,
+            "STEREOGROUP",
+            r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)",
+        ))
+    }
+
+    pub(crate) fn build(definition: Option<&str>) -> Self {
+        Self {
+            definition: definition.map(str::to_owned),
+        }
+    }
+
+    pub(crate) fn build_stereotype(&self) -> Option<Stereotype> {
+        self.definition.as_deref().map(Stereotype::new)
+    }
+
+    /// The text of each `<<label>>`, trimmed.
+    pub(crate) fn get_labels(&self) -> Vec<String> {
+        static LABEL: LazyLock<Regex> = LazyLock::new(|| java_regex("<<([^<>]+)>>", false));
+        let Some(definition) = &self.definition else {
+            return Vec::new();
+        };
+        LABEL
+            .captures_iter(definition)
+            .map(|captures| captures[1].trim().to_owned())
+            .collect()
+    }
+
+    /// The pseudo-state the first label makes of a state, like `<<choice>>` or `<<history*>>`.
+    pub(crate) fn get_leaf_type(&self) -> Option<LeafType> {
+        let labels = self.get_labels();
+        match labels.first()?.to_lowercase().as_str() {
+            "choice" => Some(LeafType::StateChoice),
+            "fork" | "join" => Some(LeafType::StateForkJoin),
+            "start" => Some(LeafType::CircleStart),
+            "end" => Some(LeafType::CircleEnd),
+            "history" => Some(LeafType::PseudoState),
+            "history*" => Some(LeafType::DeepHistory),
+            _ => None,
+        }
+    }
+
+    /// The colours labels like `<<#pink>>`, `<<##[dashed]blue>>` (line) or `<<###red>>` (text) set.
+    pub(crate) fn get_inner_colors(&self) -> Result<Colors, NoSuchColor> {
+        let mut colors = Colors::default();
+        for label in self.get_labels() {
+            if let Some(text) = label.strip_prefix("###") {
+                colors = colors.with(ColorType::Text, HColor::parse(text).ok().flatten());
+            } else if let Some(line) = label.strip_prefix("##") {
+                let mut line = line;
+                if let Some(styled) = line.strip_prefix('[') {
+                    line = match styled.split_once(']') {
+                        Some((style, rest)) => {
+                            colors = colors.add_legacy_stroke(style);
+                            rest
+                        }
+                        None => "",
+                    };
+                }
+                if !line.is_empty() {
+                    colors = colors.with(ColorType::Line, HColor::parse(line).ok().flatten());
+                }
+            } else if label.starts_with('#') {
+                colors = colors.merge_with(&Colors::parse(&label, ColorType::Back)?);
+            }
+        }
+        Ok(colors)
+    }
+}
+
 /// `StringUtils.isEmpty`: only spaces and tabs.
 fn is_blank(text: &str) -> bool {
     text.chars().all(|c| matches!(c, ' ' | '\t'))
@@ -224,6 +305,21 @@ mod tests {
         let only_spot = Stereotype::with_spot("<< (D,orchid) >>").unwrap();
         assert_eq!(only_spot.labels(), Vec::<String>::new());
         assert_eq!(only_spot.to_string(), "D ");
+    }
+
+    #[test]
+    fn a_stereogroup_names_pseudo_states_and_colours() {
+        let group =
+            Stereogroup::build(Some("<< History* >> <<#pink>><<##[dashed]blue>><<###red>>"));
+        assert_eq!(group.get_leaf_type(), Some(LeafType::DeepHistory));
+        let colors = group.get_inner_colors().unwrap();
+        let color = |name| HColor::parse(name).unwrap();
+        assert_eq!(colors.get(ColorType::Back), color("pink").as_ref());
+        assert_eq!(colors.get(ColorType::Line), color("blue").as_ref());
+        assert_eq!(colors.get(ColorType::Text), color("red").as_ref());
+        assert!(colors.get_specific_line_stroke().is_some());
+        assert_eq!(Stereogroup::build(Some("<<custom>>")).get_leaf_type(), None);
+        assert!(Stereogroup::build(None).build_stereotype().is_none());
     }
 
     #[test]

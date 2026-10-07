@@ -12,6 +12,7 @@ use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
 
 use super::cluster::get_default_style_definition;
+use super::image::get_state_description;
 
 pub(crate) struct ClusterHeader {
     title_and_attribute_width: i32,
@@ -36,7 +37,8 @@ impl ClusterHeader {
         let dim_label = dim_stereo.merge_top_bottom(dim_title);
         let (mut title_and_attribute_width, mut title_and_attribute_height) = (0, 0);
         if dim_label.width > 0.0 {
-            let dim_attribute = get_state_description().calculate_dimension(string_bounder);
+            let dim_attribute =
+                get_state_description(g, diagram).calculate_dimension(string_bounder);
             let attribute_height = dim_attribute.height;
             let attribute_width = dim_attribute.width;
             let margin_for_fields = if attribute_height > 0.0 {
@@ -80,12 +82,6 @@ impl ClusterHeader {
     pub(crate) fn get_title_horizontal_alignment(&self) -> HorizontalAlignment {
         self.title_horizontal_alignment
     }
-}
-
-/// `Entity.getStateDescription`: the body lines of a composite state. Groups carry none until bodies are
-/// ported with the state diagrams.
-fn get_state_description() -> TextBlockEmpty {
-    TextBlockEmpty::default()
 }
 
 fn get_style(g: &Entity, diagram: &CucaDiagram) -> Style {

@@ -10,6 +10,7 @@ use super::{
 };
 use crate::color::Colors;
 use crate::creole::Display;
+use crate::cucadiagram::Bodier;
 use crate::decoration::symbol::{PackageStyle, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::java::{JavaHashSet, string_hash_code};
@@ -43,6 +44,7 @@ pub(crate) struct Entity {
     leaf_or_group: EntityType,
     pub display: Display,
     pub stereotype: Option<Stereotype>,
+    pub bodier: Bodier,
     /// The style names a stereotype gives as `<<<name>>>` (`Stereostyles`).
     pub stereostyles: Vec<String>,
     pub url: Option<Url>,
@@ -86,6 +88,7 @@ impl Entity {
             leaf_or_group: entity_type,
             display: Display::default(),
             stereotype: None,
+            bodier: Bodier::default(),
             stereostyles: Vec::new(),
             url: None,
             generic: None,

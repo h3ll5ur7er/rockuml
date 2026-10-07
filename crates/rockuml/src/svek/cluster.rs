@@ -3,14 +3,17 @@
 
 use std::cell::Cell;
 
-use super::{ClusterDecoration, ClusterHeader, ColorSequence};
+use super::frontier_calculator::FrontierCalculator;
+use super::image::{EntityImageState, get_state_description, get_style_state};
+use super::rounded_container::RoundedContainer;
+use super::{Bibliotekon, ClusterDecoration, ClusterHeader, ColorSequence, MARGIN};
 use crate::abel::{Entity, EntityId, EntityPosition, GroupType};
 use crate::color::{ColorType, HColor};
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
-use crate::klimt::geom::{RectangleArea, UTranslate, XPoint2D};
+use crate::klimt::geom::{RectangleArea, UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::{UGraphic, UStroke};
@@ -33,6 +36,8 @@ pub(crate) struct Cluster {
     /// `None` for the root cluster, which has no title.
     header: Option<ClusterHeader>,
     rectangle_area: Cell<Option<RectangleArea>>,
+    /// Where the title goes, once the layout placed the cluster.
+    xy_title: Cell<Option<XPoint2D>>,
 }
 
 impl Cluster {
@@ -54,6 +59,7 @@ impl Cluster {
             color,
             header: cluster_header,
             rectangle_area: Cell::new(None),
+            xy_title: Cell::new(None),
         }
     }
 
@@ -98,6 +104,16 @@ impl Cluster {
         self.get_title_and_attribute_height() > 0 || self.get_title_and_attribute_width(diagram) > 0
     }
 
+    pub(crate) fn get_title_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.header()
+            .get_title()
+            .calculate_dimension(string_bounder)
+    }
+
+    pub(crate) fn set_title_position(&self, position: XPoint2D) {
+        self.xy_title.set(Some(position));
+    }
+
     /// The area between two opposite corners.
     pub(crate) fn set_position(&self, min: XPoint2D, max: XPoint2D) {
         self.rectangle_area
@@ -113,7 +129,7 @@ impl Cluster {
             .expect("the layout places clusters before they are drawn")
     }
 
-    pub(crate) fn draw_u(&self, ug: &UGraphic, diagram: &CucaDiagram) {
+    pub(crate) fn draw_u(&self, ug: &UGraphic, diagram: &CucaDiagram, bibliotekon: &Bibliotekon) {
         let group = diagram.entity(self.group);
         if group.is_hidden(diagram) {
             return;
@@ -152,7 +168,7 @@ impl Cluster {
             .iter()
             .any(|node| diagram.entity(*node).get_entity_position() != EntityPosition::Normal);
         if has_entry_exit_points {
-            self.manage_entry_exit_point(ug.string_bounder(), diagram);
+            self.manage_entry_exit_point(ug.string_bounder(), diagram, bibliotekon);
         }
         if diagram.get_style_name() == SName::StateDiagram && group.get_usymbol().is_none() {
             self.draw_u_state(ug, diagram, rounded);
@@ -318,13 +334,140 @@ fn get_back_color(
 
 /// What only state diagrams draw.
 impl Cluster {
-    /// `Cluster.drawUState`: a composite state is a rounded box with its name on top.
-    fn draw_u_state(&self, _ug: &UGraphic, _diagram: &CucaDiagram, _rounded: f64) {
-        unimplemented!("composite states are drawn once state diagrams are ported")
+    /// `Cluster.drawUState`: a composite state is a rounded box with its name and description on top.
+    fn draw_u_state(&self, ug: &UGraphic, diagram: &CucaDiagram, rounded: f64) {
+        let group = diagram.entity(self.group);
+        let builder = diagram.skin().current_style_builder();
+        let stereotype = group.stereotype.as_ref();
+        let style_state = get_style_state(None, stereotype, &builder);
+        let border_color = group
+            .colors
+            .get(ColorType::Line)
+            .cloned()
+            .unwrap_or_else(|| style_state.value(PName::LineColor).as_color());
+        let back = |part| {
+            get_style_state(Some(part), stereotype, &builder)
+                .value(PName::BackGroundColor)
+                .as_color()
+        };
+        let (north_backcolor, center_backcolor, south_backcolor) =
+            group.colors.get(ColorType::Back).map_or_else(
+                || {
+                    (
+                        back(SName::Name),
+                        back(SName::Description),
+                        back(SName::Body),
+                    )
+                },
+                |own| (own.clone(), own.clone(), own.clone()),
+            );
+        let string_bounder = ug.string_bounder();
+        let attribute = get_state_description(group, diagram);
+        let attribute_height = attribute.calculate_dimension(string_bounder).height;
+        let rectangle_area = self.get_rectangle_area();
+        if rectangle_area.get_width() == 0.0 {
+            return;
+        }
+        let stroke = group
+            .colors
+            .get_specific_line_stroke()
+            .unwrap_or_else(|| style_state.stroke());
+        let margin = f64::from(MARGIN);
+        let description_height =
+            attribute_height + if attribute_height > 0.0 { margin } else { 0.0 };
+        let header = self.header();
+        let name_height = header
+            .get_title()
+            .calculate_dimension(string_bounder)
+            .height
+            + margin;
+        let position = rectangle_area.get_position();
+        RoundedContainer {
+            dim: rectangle_area.get_dimension(),
+            name_height,
+            description_height,
+            border_color: border_color.clone(),
+            north_backcolor,
+            center_backcolor,
+            south_backcolor,
+            stroke,
+            rounded,
+        }
+        .draw_u(&ug.translated(position.dx, position.dy));
+        let title_y = self
+            .xy_title
+            .get()
+            .expect("the layout places the title with the cluster")
+            .y;
+        header.get_title_horizontal_alignment().draw(
+            &ug.translated(rectangle_area.get_min_x(), title_y),
+            header.get_title().as_ref(),
+            margin,
+            0.0,
+            rectangle_area.get_width(),
+        );
+        if attribute_height > 0.0 {
+            attribute.draw_u(&ug.translated(
+                rectangle_area.get_min_x() + margin,
+                rectangle_area.get_min_y() + name_height + margin / 2.0,
+            ));
+        }
+        let with_symbol = stereotype.is_some_and(|stereotype| {
+            stereotype
+                .label_double_comparator()
+                .eq_ignore_ascii_case("<<O-O>>")
+        });
+        if with_symbol {
+            EntityImageState::draw_symbol(
+                &ug.with_color(border_color),
+                rectangle_area.get_max_x(),
+                rectangle_area.get_max_y(),
+            );
+        }
     }
 
-    /// `Cluster.manageEntryExitPoint`: a group with entry or exit points on its border grows around them.
-    fn manage_entry_exit_point(&self, _string_bounder: &dyn StringBounder, _diagram: &CucaDiagram) {
-        unimplemented!("entry and exit points are placed once state diagrams are ported")
+    /// `Cluster.manageEntryExitPoint`: a group with entry or exit points on its border grows around them,
+    /// and its title is centred again.
+    fn manage_entry_exit_point(
+        &self,
+        string_bounder: &dyn StringBounder,
+        diagram: &CucaDiagram,
+        bibliotekon: &Bibliotekon,
+    ) {
+        let mut insides = Vec::new();
+        let mut points = Vec::new();
+        for leaf in &self.nodes {
+            let node = bibliotekon
+                .get_node(*leaf)
+                .expect("the nodes of a cluster are laid out");
+            if diagram.entity(*leaf).get_entity_position().is_normal() {
+                insides.push(node.get_rectangle_area());
+            } else {
+                points.push(node.get_rectangle_area().get_point_center());
+            }
+        }
+        // A sub-cluster is only placed once drawn, after its parent.
+        insides.extend(
+            bibliotekon
+                .get_children(self.group)
+                .filter_map(|child| child.rectangle_area.get()),
+        );
+        let mut frontier_calculator = FrontierCalculator::new(
+            self.get_rectangle_area(),
+            &insides,
+            &points,
+            diagram.skin().get_rankdir(),
+        );
+        let width = self.get_title_and_attribute_width(diagram);
+        if width > 0 && self.get_title_and_attribute_height() > 0 {
+            frontier_calculator.ensure_min_width(f64::from(width + 10));
+        }
+        let rectangle_area = frontier_calculator.get_suggested_position();
+        self.rectangle_area.set(Some(rectangle_area));
+        let width_title = self.get_title_dimension(string_bounder).width;
+        self.xy_title.set(Some(XPoint2D::new(
+            rectangle_area.get_min_x() + (rectangle_area.get_width() - width_title) / 2.0,
+            rectangle_area.get_min_y() + f64::from(MARGIN),
+        )));
     }
 }

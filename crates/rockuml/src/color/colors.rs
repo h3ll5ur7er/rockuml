@@ -2,7 +2,10 @@
 //! (PlantUML's `Colors` and `ColorParser`).
 
 use super::HColor;
+use crate::decoration::LinkStyle;
+use crate::klimt::ugraphic::UStroke;
 use crate::pattern::RegexTree;
+use crate::style::{PName, Style, ValueReading};
 
 /// Which part of an element a colour paints.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -45,6 +48,8 @@ pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Colors {
     colors: Vec<(ColorType, HColor)>,
+    /// `line.dashed`, `line.dotted` or `line.bold`.
+    line_style: Option<LinkStyle>,
 }
 
 impl Colors {
@@ -72,6 +77,14 @@ impl Colors {
                 }
             }
         }
+        result.line_style = [
+            ("line.dashed", LinkStyle::DASHED),
+            ("line.dotted", LinkStyle::DOTTED),
+            ("line.bold", LinkStyle::BOLD),
+        ]
+        .into_iter()
+        .find(|(name, _)| data.contains(name))
+        .map(|(_, style)| style);
         Ok(result)
     }
 
@@ -93,6 +106,43 @@ impl Colors {
             result.put(kind, color);
         }
         result
+    }
+
+    /// These colours, overridden by those `other` sets.
+    #[must_use]
+    pub(crate) fn merge_with(&self, other: &Self) -> Self {
+        let mut result = self.clone();
+        for (kind, color) in &other.colors {
+            result.put(*kind, color.clone());
+        }
+        if other.line_style.is_some() {
+            result.line_style = other.line_style;
+        }
+        result
+    }
+
+    /// A line style named like `dashed`; other names make the line plain.
+    #[must_use]
+    pub(crate) fn add_legacy_stroke(&self, style: &str) -> Self {
+        Self {
+            line_style: Some(LinkStyle::from_string1(style)),
+            ..self.clone()
+        }
+    }
+
+    /// The stroke the colours' line style asks for, if any.
+    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
+        self.line_style.map(LinkStyle::get_stroke3)
+    }
+
+    /// The background or line colour set here, or else the style's (`getColor(Style, PName, HColorSet)`).
+    pub(crate) fn get_color_of(&self, style: &Style, name: PName) -> HColor {
+        let own = match name {
+            PName::BackGroundColor => self.get(ColorType::Back),
+            PName::LineColor => self.get(ColorType::Line),
+            _ => None,
+        };
+        own.cloned().unwrap_or_else(|| style.value(name).as_color())
     }
 
     pub(crate) fn get(&self, kind: ColorType) -> Option<&HColor> {
@@ -125,6 +175,25 @@ mod tests {
         assert_eq!(colors.get(ColorType::Back), Some(&color("pink")));
         assert_eq!(colors.get(ColorType::Line), Some(&color("red")));
         assert_eq!(colors.get(ColorType::Text), Some(&color("green")));
+        assert_eq!(
+            colors.get_specific_line_stroke(),
+            Some(LinkStyle::DASHED.get_stroke3())
+        );
+    }
+
+    #[test]
+    fn merging_keeps_the_other_colours_and_line_style() {
+        let base = Colors::parse("#pink;line:red", ColorType::Back).unwrap();
+        let other = Colors::parse("#blue", ColorType::Back)
+            .unwrap()
+            .add_legacy_stroke("dotted");
+        let merged = base.merge_with(&other);
+        assert_eq!(merged.get(ColorType::Back), Some(&color("blue")));
+        assert_eq!(merged.get(ColorType::Line), Some(&color("red")));
+        assert_eq!(
+            merged.get_specific_line_stroke(),
+            Some(LinkStyle::DOTTED.get_stroke3())
+        );
     }
 
     #[test]
