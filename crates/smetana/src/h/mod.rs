@@ -88,6 +88,13 @@ pub struct elist {
     pub list: Option<CArray<Option<EdgeId>>>,
 }
 
+impl elist {
+    /// `L.list[i]`; the list must be allocated, as Java would throw otherwise.
+    pub fn get(&self, lists: &CArrays<Option<EdgeId>>, i: i32) -> Option<EdgeId> {
+        lists.get(self.list.expect("elist without list"), i)
+    }
+}
+
 /// `elist_append`: appends `item`, keeping the list NULL-terminated.
 pub fn elist_append(lists: &mut CArrays<Option<EdgeId>>, item: EdgeId, L: &mut elist) {
     let list = lists.REALLOC(L.size + 2, L.list);
@@ -285,6 +292,23 @@ pub struct Agraphinfo_t {
     pub set_type: i32,
     pub label_pos: i32,
     pub exact_ranksep: i32,
+}
+
+impl Agraphinfo_t {
+    /// `GD_rankdir(g)`: the effective rank direction, in the low two bits of `rankdir`.
+    pub fn GD_rankdir(&self) -> i32 {
+        self.rankdir & 0x3
+    }
+
+    /// `GD_flip(g)`: whether ranks run left to right (or right to left).
+    pub fn GD_flip(&self) -> bool {
+        self.GD_rankdir() & 1 != 0
+    }
+
+    /// `GD_realflip(g)`: like `GD_flip` for the requested rank direction, stored in the next two bits.
+    pub fn GD_realflip(&self) -> bool {
+        (self.rankdir >> 2) & 1 != 0
+    }
 }
 
 /// `Agnodeinfo_t`, the dot record of a node (`ND_*`).

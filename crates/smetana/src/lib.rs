@@ -63,6 +63,10 @@
 
 mod cdt;
 pub mod cgraph;
+pub mod common;
 pub mod core;
+pub mod dotgen;
+pub mod gvc;
 pub mod h;
+pub mod pack;
 pub mod pathplan;
