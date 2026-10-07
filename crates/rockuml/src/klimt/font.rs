@@ -435,4 +435,8 @@ pub trait StringBounder {
     fn descent(&self, font: &UFont, _text: &str) -> f64 {
         font.size_2d() / 4.5
     }
+
+    /// The same measure, for a drawing surface to own: blocks measured by drawing them get only a borrowed
+    /// bounder.
+    fn shared(&self) -> Rc<dyn StringBounder>;
 }

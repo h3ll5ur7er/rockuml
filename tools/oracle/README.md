@@ -224,4 +224,10 @@ fixtures are in `crates/rockuml/tests/data` and the matching tests next to the R
 
 ```bash
 bash tools/oracle/cuca-unit/extremity.sh   # extremity.txt: every link decoration, as debug shapes and SVG arcs
+bash tools/oracle/cuca-unit/usymbol.sh     # usymbol.txt: every USymbol's asSmall and asBig, magnetic borders
 ```
+
+`USymbolDump` draws each symbol around a fixed set of labels (with and without stereotypes, with separators that
+the symbols' own line drawers handle) and at a fixed set of big sizes, alignments and corners;
+`crates/rockuml/src/decoration/symbol/tests.rs` rebuilds the same inputs from each case's header and compares the
+listing.

@@ -4,10 +4,14 @@ pub(crate) mod actor;
 pub(crate) mod arrow;
 pub(crate) mod body;
 pub(crate) mod component;
+pub(crate) mod component_style;
 pub(crate) mod rose;
 pub(crate) mod symbol;
 
 use actor::ActorStyle;
+use component_style::ComponentStyle;
+
+use crate::decoration::symbol::PackageStyle;
 
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
@@ -123,6 +127,34 @@ impl SkinParam {
 
     pub(crate) fn actor_style(&self) -> ActorStyle {
         ActorStyle::named(&self.value("actorstyle").unwrap_or_default())
+    }
+
+    /// Strict UML draws UML 2 components whatever `componentStyle` says.
+    pub(crate) fn component_style(&self) -> ComponentStyle {
+        if self.strict_uml_style() {
+            return ComponentStyle::Uml2;
+        }
+        let value = self.value("componentstyle").unwrap_or_default();
+        if value.eq_ignore_ascii_case("uml1") {
+            ComponentStyle::Uml1
+        } else if value.eq_ignore_ascii_case("rectangle") {
+            ComponentStyle::Rectangle
+        } else {
+            ComponentStyle::Uml2
+        }
+    }
+
+    #[cfg_attr(
+        not(test),
+        allow(
+            dead_code,
+            reason = "read by the package commands, which are ported next"
+        )
+    )]
+    pub(crate) fn package_style(&self) -> PackageStyle {
+        self.value("packageStyle")
+            .and_then(|value| PackageStyle::from_string(&value))
+            .unwrap_or(PackageStyle::Folder)
     }
 
     /// `noteTextAlignment`, then `defaultTextAlignment`, then `default`.
