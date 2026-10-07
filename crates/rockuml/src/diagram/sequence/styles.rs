@@ -23,9 +23,7 @@ pub(crate) fn sequence_signature2(name: SName, child: SName) -> StyleSignature {
 }
 
 pub(crate) fn merged(builder: &StyleBuilder, signature: &StyleSignature) -> Style {
-    builder
-        .merged_style(signature)
-        .expect("the default skin styles every sequence element")
+    signature.get_merged_style(builder)
 }
 
 /// The style of an element with a stereotype: the stereotype's rules for each of its labels, merged
@@ -35,30 +33,7 @@ pub(crate) fn merged_with_stereotype(
     signature: &StyleSignature,
     stereotype: Option<&Stereotype>,
 ) -> Style {
-    merged_for_labels(builder, signature, stereotype, None)
-}
-
-fn merged_for_labels(
-    builder: &StyleBuilder,
-    signature: &StyleSignature,
-    stereotype: Option<&Stereotype>,
-    extra: Option<SName>,
-) -> Style {
-    let labels = stereotype.map(Stereotype::style_names).unwrap_or_default();
-    if labels.is_empty() {
-        return merged(builder, signature);
-    }
-    labels
-        .iter()
-        .map(|label| {
-            let mut labelled = signature.with_stereotype(label);
-            if let Some(extra) = extra {
-                labelled = labelled.with_name(extra);
-            }
-            merged(builder, &labelled)
-        })
-        .reduce(|result, style| result.merge_keeping_stereotype_values(&style))
-        .expect("at least one label")
+    signature.get_merged_style_with(builder, stereotype)
 }
 
 fn participant_signature(kind: ParticipantType) -> StyleSignature {
@@ -87,7 +62,7 @@ pub(crate) fn participant_styles(participant: &Participant) -> (Style, Style) {
     let builder = &participant.style_builder;
     let style = merged_with_stereotype(builder, &signature, stereotype)
         .eventually_override_colors(&participant.colors);
-    let stereo = merged_for_labels(builder, &signature, stereotype, Some(SName::Stereotype));
+    let stereo = signature.get_merged_style_for_stereotype_itself(builder, stereotype);
     let stereo = style.merge_with(&stereo);
     (style, stereo)
 }

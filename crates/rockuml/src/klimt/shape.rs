@@ -33,6 +33,8 @@ pub enum UShape {
     HorizontalLine,
     /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
     SpecialText,
+    /// A note for readers of the output, which only SVG and the debug format keep.
+    Comment(String),
 }
 
 impl UShape {
@@ -51,6 +53,7 @@ impl UShape {
             Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
             Self::SpecialText => "SpecialText",
+            Self::Comment(_) => "UComment",
         }
     }
 }
