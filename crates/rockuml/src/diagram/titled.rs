@@ -16,6 +16,7 @@ use crate::text::LineLocation;
 
 pub(super) struct Titled {
     pub skin: SkinParam,
+    pub pragma: Pragma,
     /// The diagram's own style name, like `saltDiagram`, for the styles of its legend and background.
     diagram_style: SName,
     /// The name SVG documents announce the diagram type with, like `SALT`.
@@ -26,6 +27,63 @@ pub(super) struct Titled {
     header: Option<Positioned>,
     footer: Option<Positioned>,
     scale: Option<Scale>,
+}
+
+/// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
+#[derive(Default)]
+pub(super) struct Pragma {
+    values: Vec<(PragmaKey, Option<String>)>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) enum PragmaKey {
+    SequenceMessageSpan,
+    Teoz,
+}
+
+impl PragmaKey {
+    /// Names match ignoring case and anything but letters, as in PlantUML.
+    fn named(name: &str) -> Option<Self> {
+        let simplified: String = name
+            .chars()
+            .filter(char::is_ascii_alphabetic)
+            .map(|c| c.to_ascii_lowercase())
+            .collect();
+        match simplified.as_str() {
+            "sequencemessagespan" => Some(Self::SequenceMessageSpan),
+            "teoz" => Some(Self::Teoz),
+            _ => None,
+        }
+    }
+
+    /// The value of the pragma written without one.
+    fn default_value(self) -> Option<&'static str> {
+        match self {
+            Self::Teoz => Some("true"),
+            Self::SequenceMessageSpan => None,
+        }
+    }
+}
+
+impl Pragma {
+    pub(super) fn define(&mut self, name: &str, value: Option<&str>) {
+        let Some(key) = PragmaKey::named(name) else {
+            return;
+        };
+        let value = value.or(key.default_value()).map(str::to_owned);
+        self.values.retain(|(known, _)| *known != key);
+        self.values.push((key, value));
+    }
+
+    /// `true` or `on`.
+    pub(super) fn is_true(&self, key: PragmaKey) -> bool {
+        self.values.iter().any(|(known, value)| {
+            *known == key
+                && value.as_deref().is_some_and(|value| {
+                    value.eq_ignore_ascii_case("true") || value.eq_ignore_ascii_case("on")
+                })
+        })
+    }
 }
 
 /// A text around the diagram, where it goes, and the source line that wrote it (PlantUML's `DisplayPositioned`).
@@ -51,6 +109,7 @@ impl Titled {
     pub(super) fn new(diagram_style: SName, diagram_type: &'static str) -> Self {
         Self {
             skin: SkinParam::default(),
+            pragma: Pragma::default(),
             diagram_style,
             diagram_type,
             title: None,

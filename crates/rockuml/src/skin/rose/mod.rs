@@ -4,8 +4,10 @@ pub(crate) mod arrow;
 pub(crate) mod life;
 pub(crate) mod line;
 pub(crate) mod participant;
+pub(crate) mod self_arrow;
 
 use arrow::{ArrowParts, ComponentRoseArrow};
+use self_arrow::ComponentRoseSelfArrow;
 
 use super::SkinParam;
 use super::arrow::{ArrowConfiguration, ArrowDirection};
@@ -64,6 +66,32 @@ impl TextBlock for TextBlockHorizontal {
     }
 }
 
+/// The label and style every message arrow shares.
+fn arrow_parts(
+    style: &Style,
+    configuration: &ArrowConfiguration,
+    label: &MessageLabel<'_>,
+) -> ArrowParts {
+    let text = TextualPart::new(
+        message_text(label, style),
+        ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 7.0, 1.0, 7.0),
+    );
+    ArrowParts::new(text, style.clone(), configuration)
+}
+
+/// `Rose.createComponentArrow` for a message to the sender itself.
+pub(crate) fn create_component_self_arrow(
+    style: &Style,
+    configuration: &ArrowConfiguration,
+    skin: &SkinParam,
+    label: &MessageLabel<'_>,
+) -> ComponentRoseSelfArrow {
+    ComponentRoseSelfArrow::new(
+        arrow_parts(style, configuration, label),
+        !skin.strict_uml_style(),
+    )
+}
+
 /// `Rose.createComponentArrow`: where the label goes follows the arrow style's alignment, which can depend
 /// on the arrow's direction.
 pub(crate) fn create_component_arrow(
@@ -72,14 +100,15 @@ pub(crate) fn create_component_arrow(
     skin: &SkinParam,
     label: &MessageLabel<'_>,
 ) -> Box<dyn ArrowComponent> {
-    let text = TextualPart::new(
-        message_text(label, style),
-        ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 7.0, 1.0, 7.0),
-    );
-    let parts = ArrowParts::new(text, style.clone(), configuration);
     if configuration.arrow_direction() == ArrowDirection::SelfArrow {
-        todo!("self messages")
+        return Box::new(create_component_self_arrow(
+            style,
+            configuration,
+            skin,
+            label,
+        ));
     }
+    let parts = arrow_parts(style, configuration, label);
     let text_style = skin
         .merged_style(&StyleSignature::of(&[
             SName::Root,

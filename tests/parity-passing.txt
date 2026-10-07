@@ -59,6 +59,8 @@ debug salt/title.puml
 debug salt/tree-table.puml
 debug salt/tree.puml
 debug salt/widgets.puml
+debug sequence/activation-shortcuts-2.puml
+debug sequence/activation.puml
 debug sequence/arrow-colors.puml
 debug sequence/arrow-heads.puml
 debug sequence/autonumber-dotted.puml
@@ -67,9 +69,11 @@ debug sequence/autonumber-stop-resume.puml
 debug sequence/autonumber.puml
 debug sequence/basic.puml
 debug sequence/declared-order.puml
+debug sequence/destroy-activation.puml
 debug sequence/hide-footbox.puml
 debug sequence/hide-unlinked.puml
 debug sequence/ignore-newpage.puml
+debug sequence/lifeline-solid.puml
 debug sequence/long-messages.puml
 debug sequence/message-align-right.puml
 debug sequence/message-align.puml
@@ -78,7 +82,9 @@ debug sequence/message-creole.puml
 debug sequence/participant-quoted.puml
 debug sequence/return-without-activation.puml
 debug sequence/reverse-arrows.puml
+debug sequence/slanted.puml
 debug sequence/strictuml.puml
+debug sequence/teoz-parallel.puml
 debug sequence/title-header-footer.puml
 dsvg blocks/commented-header.puml
 dsvg blocks/continuation.puml
@@ -124,6 +130,7 @@ dsvg preprocessor/control-flow-nested.puml
 dsvg preprocessor/control-flow.puml
 dsvg preprocessor/functions.puml
 dsvg preprocessor/include-variants.puml
+dsvg preprocessor/theme.puml
 dsvg preprocessor/variables-advanced.puml
 dsvg preprocessor/variables.puml
 dsvg salt/grid-all.puml
@@ -139,6 +146,8 @@ dsvg salt/title.puml
 dsvg salt/tree-table.puml
 dsvg salt/tree.puml
 dsvg salt/widgets.puml
+dsvg sequence/activation-shortcuts-2.puml
+dsvg sequence/activation.puml
 dsvg sequence/arrow-colors.puml
 dsvg sequence/arrow-heads.puml
 dsvg sequence/autonumber-dotted.puml
@@ -147,9 +156,11 @@ dsvg sequence/autonumber-stop-resume.puml
 dsvg sequence/autonumber.puml
 dsvg sequence/basic.puml
 dsvg sequence/declared-order.puml
+dsvg sequence/destroy-activation.puml
 dsvg sequence/hide-footbox.puml
 dsvg sequence/hide-unlinked.puml
 dsvg sequence/ignore-newpage.puml
+dsvg sequence/lifeline-solid.puml
 dsvg sequence/long-messages.puml
 dsvg sequence/message-align-right.puml
 dsvg sequence/message-align.puml
@@ -158,7 +169,9 @@ dsvg sequence/message-creole.puml
 dsvg sequence/participant-quoted.puml
 dsvg sequence/return-without-activation.puml
 dsvg sequence/reverse-arrows.puml
+dsvg sequence/slanted.puml
 dsvg sequence/strictuml.puml
+dsvg sequence/teoz-parallel.puml
 dsvg sequence/title-header-footer.puml
 png blocks/commented-header.puml
 png blocks/continuation.puml
@@ -220,6 +233,9 @@ png salt/title.puml
 png salt/tree-table.puml
 png salt/tree.puml
 png salt/widgets.puml
+png sequence/activation-shortcuts-2.puml
+png sequence/activation.puml
+png sequence/anchors-duration.puml
 png sequence/arrow-colors.puml
 png sequence/arrow-heads.puml
 png sequence/autonumber-dotted.puml
@@ -228,9 +244,11 @@ png sequence/autonumber-stop-resume.puml
 png sequence/autonumber.puml
 png sequence/basic.puml
 png sequence/declared-order.puml
+png sequence/destroy-activation.puml
 png sequence/hide-footbox.puml
 png sequence/hide-unlinked.puml
 png sequence/ignore-newpage.puml
+png sequence/lifeline-solid.puml
 png sequence/long-messages.puml
 png sequence/message-align-right.puml
 png sequence/message-align.puml
@@ -240,7 +258,9 @@ png sequence/participant-multiline.puml
 png sequence/participant-quoted.puml
 png sequence/return-without-activation.puml
 png sequence/reverse-arrows.puml
+png sequence/slanted.puml
 png sequence/strictuml.puml
+png sequence/teoz-parallel.puml
 png sequence/title-header-footer.puml
 preproc activity/basic.puml
 preproc activity/swimlanes.puml
@@ -464,6 +484,8 @@ svg salt/title.puml
 svg salt/tree-table.puml
 svg salt/tree.puml
 svg salt/widgets.puml
+svg sequence/activation-shortcuts-2.puml
+svg sequence/activation.puml
 svg sequence/arrow-colors.puml
 svg sequence/arrow-heads.puml
 svg sequence/autonumber-dotted.puml
@@ -472,9 +494,11 @@ svg sequence/autonumber-stop-resume.puml
 svg sequence/autonumber.puml
 svg sequence/basic.puml
 svg sequence/declared-order.puml
+svg sequence/destroy-activation.puml
 svg sequence/hide-footbox.puml
 svg sequence/hide-unlinked.puml
 svg sequence/ignore-newpage.puml
+svg sequence/lifeline-solid.puml
 svg sequence/long-messages.puml
 svg sequence/message-align-right.puml
 svg sequence/message-align.puml
@@ -483,7 +507,9 @@ svg sequence/message-creole.puml
 svg sequence/participant-quoted.puml
 svg sequence/return-without-activation.puml
 svg sequence/reverse-arrows.puml
+svg sequence/slanted.puml
 svg sequence/strictuml.puml
+svg sequence/teoz-parallel.puml
 svg sequence/title-header-footer.puml
 url activity/basic.puml
 url activity/swimlanes.puml

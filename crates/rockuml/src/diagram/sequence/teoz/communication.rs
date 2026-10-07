@@ -162,6 +162,9 @@ impl<'a> Tile<'a> for CommunicationTile<'a> {
     }
 
     fn add_constraints(&self) {
+        if self.arguments.diagram.sequence_message_span() {
+            return;
+        }
         let width = self.arrow_width();
         let mut point1 = self.point1();
         let mut point2 = self.point2();

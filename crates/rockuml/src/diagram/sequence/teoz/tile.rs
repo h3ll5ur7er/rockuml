@@ -5,7 +5,9 @@ use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::communication::CommunicationTile;
+use super::life_event::LifeEventTile;
 use super::living_space::{LivingSpace, LivingSpaces};
+use super::self_tile::CommunicationTileSelf;
 use super::y_gauge::YGauge;
 use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::SequenceDiagram;
@@ -160,7 +162,12 @@ pub(super) fn build_one<'a>(
         Event::GroupingStart(_) | Event::GroupingLeaf(_) => {
             return Err(NotYetPorted("sequence groups"));
         }
-        Event::LifeEvent(_) => return Err(NotYetPorted("activations")),
+        Event::LifeEvent(life_event) => Box::new(LifeEventTile::new(
+            arguments.clone(),
+            event,
+            life_event,
+            current_y,
+        )),
         Event::Newpage(_) => return Err(NotYetPorted("newpage")),
         Event::Reference(_) => return Err(NotYetPorted("references")),
     }))

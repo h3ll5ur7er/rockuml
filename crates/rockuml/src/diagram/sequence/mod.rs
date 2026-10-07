@@ -529,6 +529,13 @@ impl SequenceDiagram {
         self.titled.skin.current_style_builder()
     }
 
+    /// `!pragma sequenceMessageSpan`: messages do not push participants apart.
+    pub(crate) fn sequence_message_span(&self) -> bool {
+        self.titled
+            .pragma
+            .is_true(super::titled::PragmaKey::SequenceMessageSpan)
+    }
+
     pub(crate) fn skin(&self) -> &crate::skin::SkinParam {
         &self.titled.skin
     }

@@ -4,8 +4,10 @@
 mod communication;
 mod components;
 mod key;
+mod life_event;
 mod living_space;
 mod playing_space;
+mod self_tile;
 mod tile;
 mod y_gauge;
 

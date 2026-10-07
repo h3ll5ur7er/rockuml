@@ -1,5 +1,7 @@
 //! Commands every diagram with a skin understands (PlantUML's `CommonCommands`).
 
+mod skin_block;
+
 use std::marker::PhantomData;
 use std::sync::LazyLock;
 
@@ -21,7 +23,9 @@ use crate::text::LineLocation;
 pub(super) fn common_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
         single(blank_line_pattern(), |_, _, _| {}),
+        single(pragma_pattern(), define_pragma),
         single(skinparam_pattern(), set_skinparam),
+        Box::new(skin_block::SkinParamBlock),
         Box::new(
             Multiline::new(
                 &plantuml_regex(r"^\<style\>$"),
@@ -293,6 +297,25 @@ fn skinparam_pattern() -> RegexTree {
         RegexTree::named(1, "VALUE", "([^{}]*)"),
         RegexTree::end(),
     ])
+}
+
+fn pragma_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("!pragma"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "NAME", "([A-Za-z_][A-Za-z_0-9]*)"),
+        RegexTree::optional(RegexTree::concat(vec![
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(1, "VALUE", "(.*)"),
+        ])),
+        RegexTree::end(),
+    ])
+}
+
+fn define_pragma<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
+    let name = arg.get("NAME", 0).unwrap_or_default();
+    diagram.titled().pragma.define(name, arg.get("VALUE", 0));
 }
 
 fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
