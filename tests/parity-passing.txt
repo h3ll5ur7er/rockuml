@@ -79,6 +79,11 @@ debug sequence/basic.puml
 debug sequence/create.puml
 debug sequence/declared-order.puml
 debug sequence/destroy-activation.puml
+debug sequence/group-unclosed.puml
+debug sequence/groups-and-notes.puml
+debug sequence/groups-colors.puml
+debug sequence/groups-keywords.puml
+debug sequence/groups.puml
 debug sequence/hide-footbox.puml
 debug sequence/hide-unlinked.puml
 debug sequence/ignore-newpage.puml
@@ -89,6 +94,8 @@ debug sequence/message-align-right.puml
 debug sequence/message-align.puml
 debug sequence/message-below-arrow.puml
 debug sequence/message-creole.puml
+debug sequence/messages-to-self-group.puml
+debug sequence/note-on-group.puml
 debug sequence/notes-across.puml
 debug sequence/notes-aligned.puml
 debug sequence/notes-on-messages.puml
@@ -105,6 +112,7 @@ debug sequence/participants.puml
 debug sequence/return-without-activation.puml
 debug sequence/return.puml
 debug sequence/reverse-arrows.puml
+debug sequence/secondary-group.puml
 debug sequence/self-messages.puml
 debug sequence/slanted.puml
 debug sequence/strictuml.puml
@@ -191,6 +199,11 @@ dsvg sequence/basic.puml
 dsvg sequence/create.puml
 dsvg sequence/declared-order.puml
 dsvg sequence/destroy-activation.puml
+dsvg sequence/group-unclosed.puml
+dsvg sequence/groups-and-notes.puml
+dsvg sequence/groups-colors.puml
+dsvg sequence/groups-keywords.puml
+dsvg sequence/groups.puml
 dsvg sequence/hide-footbox.puml
 dsvg sequence/hide-unlinked.puml
 dsvg sequence/ignore-newpage.puml
@@ -201,6 +214,8 @@ dsvg sequence/message-align-right.puml
 dsvg sequence/message-align.puml
 dsvg sequence/message-below-arrow.puml
 dsvg sequence/message-creole.puml
+dsvg sequence/messages-to-self-group.puml
+dsvg sequence/note-on-group.puml
 dsvg sequence/notes-across.puml
 dsvg sequence/notes-on-messages.puml
 dsvg sequence/notes-over.puml
@@ -216,6 +231,7 @@ dsvg sequence/participants.puml
 dsvg sequence/return-without-activation.puml
 dsvg sequence/return.puml
 dsvg sequence/reverse-arrows.puml
+dsvg sequence/secondary-group.puml
 dsvg sequence/self-messages.puml
 dsvg sequence/skinparam-colors.puml
 dsvg sequence/slanted.puml
@@ -304,6 +320,11 @@ png sequence/basic.puml
 png sequence/create.puml
 png sequence/declared-order.puml
 png sequence/destroy-activation.puml
+png sequence/group-unclosed.puml
+png sequence/groups-and-notes.puml
+png sequence/groups-colors.puml
+png sequence/groups-keywords.puml
+png sequence/groups.puml
 png sequence/hide-footbox.puml
 png sequence/hide-unlinked.puml
 png sequence/ignore-newpage.puml
@@ -314,6 +335,8 @@ png sequence/message-align-right.puml
 png sequence/message-align.puml
 png sequence/message-below-arrow.puml
 png sequence/message-creole.puml
+png sequence/messages-to-self-group.puml
+png sequence/note-on-group.puml
 png sequence/notes-across.puml
 png sequence/notes-on-messages.puml
 png sequence/notes-over.puml
@@ -330,6 +353,7 @@ png sequence/participants.puml
 png sequence/return-without-activation.puml
 png sequence/return.puml
 png sequence/reverse-arrows.puml
+png sequence/secondary-group.puml
 png sequence/self-messages.puml
 png sequence/slanted.puml
 png sequence/strictuml.puml
@@ -578,6 +602,11 @@ svg sequence/basic.puml
 svg sequence/create.puml
 svg sequence/declared-order.puml
 svg sequence/destroy-activation.puml
+svg sequence/group-unclosed.puml
+svg sequence/groups-and-notes.puml
+svg sequence/groups-colors.puml
+svg sequence/groups-keywords.puml
+svg sequence/groups.puml
 svg sequence/hide-footbox.puml
 svg sequence/hide-unlinked.puml
 svg sequence/ignore-newpage.puml
@@ -588,6 +617,8 @@ svg sequence/message-align-right.puml
 svg sequence/message-align.puml
 svg sequence/message-below-arrow.puml
 svg sequence/message-creole.puml
+svg sequence/messages-to-self-group.puml
+svg sequence/note-on-group.puml
 svg sequence/notes-across.puml
 svg sequence/notes-on-messages.puml
 svg sequence/notes-over.puml
@@ -603,6 +634,7 @@ svg sequence/participants.puml
 svg sequence/return-without-activation.puml
 svg sequence/return.puml
 svg sequence/reverse-arrows.puml
+svg sequence/secondary-group.puml
 svg sequence/self-messages.puml
 svg sequence/slanted.puml
 svg sequence/strictuml.puml

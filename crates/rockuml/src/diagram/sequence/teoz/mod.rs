@@ -1,8 +1,11 @@
 //! Teoz, PlantUML's sequence diagram layout engine: tiles stacked down the page, positioned by
 //! constraints that the `real` solver resolves.
 
+mod blotter;
 mod communication;
 mod components;
+mod else_tile;
+mod grouping_tile;
 mod key;
 mod life_event;
 mod living_space;

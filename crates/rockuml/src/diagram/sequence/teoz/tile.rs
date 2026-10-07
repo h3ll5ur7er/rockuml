@@ -5,6 +5,7 @@ use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::communication::CommunicationTile;
+use super::grouping_tile::GroupingTile;
 use super::life_event::LifeEventTile;
 use super::living_space::{LivingSpace, LivingSpaces};
 use super::note_tiles::{
@@ -83,6 +84,10 @@ pub(super) trait Tile<'a> {
     fn as_note(&self) -> Option<&NoteTile<'a>> {
         None
     }
+
+    fn as_grouping(&self) -> Option<&GroupingTile<'a>> {
+        None
+    }
 }
 
 /// What every tile is built with (PlantUML's `TileArguments`).
@@ -142,7 +147,7 @@ pub(super) fn build_several<'a>(
 
 pub(super) fn build_one<'a>(
     arguments: &Rc<TileArguments<'a>>,
-    _events: &mut std::iter::Peekable<impl Iterator<Item = EventId>>,
+    events: &mut std::iter::Peekable<impl Iterator<Item = EventId>>,
     event: EventId,
     current_y: &YGauge,
 ) -> Result<Option<Box<dyn Tile<'a> + 'a>>, NotYetPorted> {
@@ -155,9 +160,10 @@ pub(super) fn build_one<'a>(
         Event::Divider(_) => return Err(NotYetPorted("dividers")),
         Event::Delay(_) => return Err(NotYetPorted("delays")),
         Event::HSpace(_) => return Err(NotYetPorted("spacing")),
-        Event::GroupingStart(_) | Event::GroupingLeaf(_) => {
-            return Err(NotYetPorted("sequence groups"));
-        }
+        Event::GroupingStart(start) => Box::new(GroupingTile::new(
+            arguments, events, event, start, current_y,
+        )?),
+        Event::GroupingLeaf(_) => unreachable!("groups take their own else and end"),
         Event::LifeEvent(life_event) => Box::new(LifeEventTile::new(
             arguments.clone(),
             event,
