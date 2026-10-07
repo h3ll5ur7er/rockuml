@@ -371,6 +371,8 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - The svek glue (`EntityImage*`, clusters, `SvekEdge` label placement, extremities), the `sdot` driver
   (`CucaDiagramFileMakerSmetana`, composite-state recursion), `net/atmp/CucaDiagram`.
 - Class/object, description (usecase/component/deployment/archimate), state (multi-pass parser), chen ER.
+- The `@startuml` factory order and best-error selection (moved here from Phase 3), so that unknown syntax gives
+  PlantUML's error image.
 - `ExternalDot` engine (optional): port svek's DOT writer and colour-tag SVG back-parser. Selected with
   `!pragma layout dot`, or automatically when `dot` is on PATH if the user opts in via config. Smetana stays the default.
 - **Exit:** L1 ≥ 95% per type.
@@ -416,6 +418,5 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 2: regex/command framework, `PSystemBuilder`, style/skin, klimt core and the DEBUG backend, starting with
-   error diagrams (every unported diagram type currently fails) and `@startcreole`/`@startsalt`.
+1. Phase 2b: sprites, `<img>` and emoji, or Phase 4: Smetana, the layout engine every CucaDiagram type needs.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
