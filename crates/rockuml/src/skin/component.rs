@@ -85,7 +85,7 @@ pub(crate) trait ArrowComponent: Component {
 
 /// The text of a component and the padding around it (PlantUML's `AbstractTextualComponent`).
 pub(crate) struct TextualPart {
-    text_block: Box<dyn TextBlock>,
+    text_block: TextInPadding,
     padding: ClockwiseTopRightBottomLeft,
 }
 
@@ -95,13 +95,17 @@ impl TextualPart {
         padding: ClockwiseTopRightBottomLeft,
     ) -> Self {
         Self {
-            text_block,
+            text_block: TextInPadding {
+                block: text_block,
+                left: padding.left,
+                right: padding.right,
+            },
             padding,
         }
     }
 
     pub(crate) fn text_block(&self) -> &dyn TextBlock {
-        self.text_block.as_ref()
+        &self.text_block
     }
 
     pub(crate) fn pure_text_width(&self, string_bounder: &dyn StringBounder) -> f64 {
@@ -125,6 +129,23 @@ impl TextualPart {
 
     pub(crate) fn padding(&self) -> ClockwiseTopRightBottomLeft {
         self.padding
+    }
+}
+
+/// A component's text, whose separators span the component's padding as well.
+struct TextInPadding {
+    block: Box<dyn TextBlock>,
+    left: f64,
+    right: f64,
+}
+
+impl TextBlock for TextInPadding {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.block.calculate_dimension(string_bounder)
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        self.block.draw_in_padding(ug, self.left, self.right);
     }
 }
 
