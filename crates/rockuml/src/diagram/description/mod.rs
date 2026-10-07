@@ -1,6 +1,8 @@
 //! Usecase, component, deployment and archimate diagrams (PlantUML's `descdiagram` package).
 
 mod commands;
+
+pub(super) use commands::{arrow_style, style_colors_multiples};
 #[cfg(test)]
 mod tests;
 

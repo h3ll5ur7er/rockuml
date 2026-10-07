@@ -2,65 +2,36 @@
 
 use super::StateDiagram;
 use crate::abel::{EntityId, GroupType, LeafType, LinkArg};
-use crate::color::{self, ColorType, Colors, HColor, NoSuchColor};
+use crate::color;
 use crate::command::unported::NotPortedCommands;
 use crate::command::{
-    Command, CommandError, CommandResult, ParserPass, SingleLine, SingleLineCommand,
+    Command, CommandError, CommandResult, ParserPass, PatternCommand, SingleLine,
 };
 use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::EntityDiagram;
+use crate::diagram::cuca_commands::{add_tags, colors_with_line};
+use crate::diagram::description::arrow_style;
 use crate::direction::Direction;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree};
-use crate::stereo::{self, Stereogroup, Stereotag, Stereotype};
+use crate::stereo::{self, Stereogroup, Stereotype};
 use crate::text::LineLocation;
 
 const ALL_PASSES: &[ParserPass] = &[ParserPass::One, ParserPass::Two, ParserPass::Three];
 
 type Apply = fn(&mut StateDiagram, &LineLocation, &RegexResult) -> CommandResult;
 
-/// A single-line state command, run in some of the passes.
-struct StateCommand {
-    pattern: RegexTree,
-    passes: &'static [ParserPass],
-    apply: Apply,
-}
-
-impl SingleLineCommand<StateDiagram> for StateCommand {
-    fn pattern(&self) -> &RegexTree {
-        &self.pattern
-    }
-
-    fn execute_arg(
-        &self,
-        diagram: &mut StateDiagram,
-        location: &LineLocation,
-        arg: &RegexResult,
-    ) -> CommandResult {
-        (self.apply)(diagram, location, arg)
-    }
-
-    fn is_eligible_for(&self, pass: ParserPass) -> bool {
-        self.passes.contains(&pass)
-    }
-}
-
+/// A single-line state command, run in `passes`.
 fn command(
     pattern: RegexTree,
     passes: &'static [ParserPass],
     apply: Apply,
 ) -> Box<dyn Command<StateDiagram>> {
-    Box::new(SingleLine(StateCommand {
-        pattern,
-        passes,
-        apply,
-    }))
-}
-
-fn bad_color(_: NoSuchColor) -> CommandError {
-    CommandError::bad_color()
+    Box::new(SingleLine(
+        PatternCommand::new(pattern, apply).in_passes(passes),
+    ))
 }
 
 /// `##[dashed]blue`: a line style and colour.
@@ -70,38 +41,6 @@ fn line_color_pattern() -> RegexTree {
         "LINECOLOR",
         r"##(?:\[(dotted|dashed|bold)\])?(\w+)?",
     ))
-}
-
-/// The background colour, and the line colour and style `##` sets.
-fn colors(arg: &RegexResult) -> Result<Colors, CommandError> {
-    let mut colors = arg
-        .get("COLOR", 0)
-        .map(|color| Colors::parse(color, ColorType::Back))
-        .transpose()
-        .map_err(bad_color)?
-        .unwrap_or_default();
-    if let Some(line) = arg.get("LINECOLOR", 1) {
-        let color = HColor::parse(line)
-            .ok()
-            .flatten()
-            .ok_or_else(CommandError::bad_color)?;
-        colors = colors.with(ColorType::Line, Some(color));
-    }
-    if let Some(style) = arg.get("LINECOLOR", 0) {
-        colors = colors.add_legacy_stroke(style);
-    }
-    Ok(colors)
-}
-
-/// `$tag1 $tag2` (`CommandCreateClassMultilines.addTags`).
-fn add_tags(diagram: &mut StateDiagram, entity: EntityId, tags: Option<&str>) {
-    for tag in tags.into_iter().flat_map(|tags| tags.split(' ')) {
-        if let Some(name) = tag.strip_prefix('$') {
-            diagram.cuca.entity_mut(entity).add_stereotag(Stereotag {
-                name: name.to_owned(),
-            });
-        }
-    }
 }
 
 /// PlantUML's `CommandCreateState`: `state Name`, with a display, stereotypes, colours and a first
@@ -187,7 +126,7 @@ fn execute_create_state(
     if diagram.current_pass != ParserPass::One {
         return Ok(());
     }
-    let colors = colors(arg)?.merge_with(&stereogroup.get_inner_colors().map_err(bad_color)?);
+    let colors = colors_with_line(arg)?.merge_with(&stereogroup.get_inner_colors()?);
     let entity = diagram.cuca.entity_mut(ent);
     entity.display = Display::with_newlines(&display);
     entity.stereotype = stereogroup.build_stereotype();
@@ -198,7 +137,7 @@ fn execute_create_state(
     if let Some(field) = arg.get("ADDFIELD", 0) {
         entity.bodier.add_field_or_method(field);
     }
-    add_tags(diagram, ent, arg.get_lazzy("TAGS", 0));
+    add_tags(entity, arg.get_lazzy("TAGS", 0));
     let cuca = &diagram.cuca;
     let entity = cuca.entity(ent);
     let in_root = entity
@@ -216,14 +155,6 @@ fn state_pattern(name: &'static str) -> RegexTree {
         1,
         name,
         r"([%pLN_.:]+|[%pLN_.:]+\[H\*?\]|\[\*\]|\[H\*?\]|(?:==+)(?:[%pLN_.:]+)(?:==+))",
-    )
-}
-
-fn arrow_style_pattern(name: &'static str) -> RegexTree {
-    RegexTree::named(
-        1,
-        name,
-        r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?",
     )
 }
 
@@ -250,13 +181,13 @@ pub(super) fn link_state() -> Box<dyn Command<StateDiagram>> {
         RegexTree::concat(vec![
             RegexTree::named(1, "ARROW_CROSS_START", r"(x)?"),
             RegexTree::named(1, "ARROW_BODY1", r"(-+)"),
-            arrow_style_pattern("ARROW_STYLE1"),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
             RegexTree::named(
                 1,
                 "ARROW_DIRECTION",
                 r"(left|right|up|down|le?|ri?|up?|do?)?",
             ),
-            arrow_style_pattern("ARROW_STYLE2"),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(1, "ARROW_BODY2", r"(-*)"),
             RegexTree::leaf(r"\>"),
             RegexTree::named(1, "ARROW_CIRCLE_END", r"(o[%s]+)?"),
@@ -280,13 +211,13 @@ pub(super) fn link_state_reverse() -> Box<dyn Command<StateDiagram>> {
             RegexTree::named(1, "ARROW_CIRCLE_END", r"(o[%s]+)?"),
             RegexTree::leaf(r"\<"),
             RegexTree::named(1, "ARROW_BODY2", r"(-*)"),
-            arrow_style_pattern("ARROW_STYLE2"),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(
                 1,
                 "ARROW_DIRECTION",
                 r"(left|right|up|down|le?|ri?|up?|do?)?",
             ),
-            arrow_style_pattern("ARROW_STYLE1"),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
             RegexTree::named(1, "ARROW_BODY1", r"(-+)"),
             RegexTree::named(1, "ARROW_CROSS_START", r"(x)?"),
         ]),
@@ -512,7 +443,7 @@ fn execute_create_package_state(
         .cuca
         .goto_group(Some(location), quark, shown, GroupType::State);
     let stereogroup = Stereogroup::build(arg.get("STEREOGROUP", 0));
-    let colors = colors(arg)?.merge_with(&stereogroup.get_inner_colors().map_err(bad_color)?);
+    let colors = colors_with_line(arg)?.merge_with(&stereogroup.get_inner_colors()?);
     let group = diagram.cuca.get_current_group();
     let entity = diagram.cuca.entity_mut(group);
     if let Some(display) = display {
@@ -523,7 +454,7 @@ fn execute_create_package_state(
         entity.url = Some(url);
     }
     entity.colors = colors;
-    add_tags(diagram, group, arg.get_lazzy("TAGS", 0));
+    add_tags(entity, arg.get_lazzy("TAGS", 0));
     Ok(())
 }
 
@@ -564,7 +495,7 @@ fn execute_create_package2(
     diagram
         .cuca
         .goto_group(Some(location), quark, display, GroupType::Package);
-    let colors = colors(arg)?;
+    let colors = colors_with_line(arg)?;
     let group = diagram.cuca.get_current_group();
     let entity = diagram.cuca.entity_mut(group);
     entity.usymbol = Some(USymbols::FRAME);

@@ -7,6 +7,7 @@ use crate::command::{Command, CommandError, PatternCommand, SingleLine};
 use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
+use crate::diagram::cuca_commands::colors;
 use crate::java;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
@@ -363,12 +364,4 @@ fn add_link(
     }
     cuca.link_mut(link).set_colors(colors);
     cuca.add_link(link);
-}
-
-/// The colours a `COLOR` specification gives, the main one painting `main_type`.
-fn colors(arg: &RegexResult, main_type: ColorType) -> Result<Colors, CommandError> {
-    arg.get("COLOR", 0)
-        .map(|data| Colors::parse(data, main_type).map_err(|_| CommandError::bad_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
 }

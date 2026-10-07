@@ -18,19 +18,20 @@ use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::{
-    Labels, add_tags, back_color, colors, colors_with_line, display_or_name, stereotype,
-    unknown_symbol, url_of,
+    GENERIC, Labels, add_tags, back_color, char_encoding, colors, colors_with_line,
+    display_or_name, display_with_generic, is_bare_name, unknown_symbol, url_of,
 };
+use crate::diagram::description::arrow_style;
+use crate::direction::Direction;
 use crate::java;
 use crate::klimt::url::Url;
-use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
+use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::plasma::QuarkId;
 use crate::skin::visibility_modifier::VisibilityModifier;
+use crate::stereo::Stereotype;
 use crate::text::{LineLocation, unquoted, without_quotes_or_brackets};
 use crate::{color, stereo};
 
-/// `<...>`, nested up to five deep (`GenericRegexProducer.PATTERN`).
-const GENERIC: &str = r"[^\<\>/](?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<\>)*\>)*\>)*\>)*\>)*";
 /// Names separated by `.`, `::`, `\\` or other punctuation (`CommandLinkClass.getSeparator`).
 const CODES: &str = r"(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_$]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_$]+)*(?:\s*,\s*(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_$]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_$]+)*)*";
 
@@ -94,7 +95,7 @@ fn class_declaration(types: &'static str) -> Vec<RegexTree> {
 /// `"Display<Generic>" as Code`, `Code as "Display"`, `Code` or `"Code"`
 /// (`NameAndCodeParser.nameAndCodeForClassWithGeneric`).
 fn name_and_code_for_class_with_generic() -> RegexTree {
-    let display = format!(r"[%g](.+?)(?:\<({GENERIC})\>)?[%g]");
+    let display = display_with_generic();
     RegexTree::or(vec![
         RegexTree::concat(vec![
             RegexTree::named(2, "DISPLAY1", display.clone()),
@@ -185,7 +186,7 @@ fn create_class_entity(
     check_if_package_hierarchy_is_ok(cuca, quark)?;
     cuca.set_last_entity(Some(entity));
     let stereo = header.get("STEREO", 0);
-    let stereotype = stereo.map(stereotype).transpose()?;
+    let stereotype = stereo.map(Stereotype::with_spot).transpose()?;
     let colors = colors_with_line(header)?;
     let entity_mut = cuca.entity_mut(entity);
     entity_mut.visibility_modifier = visibility;
@@ -400,7 +401,7 @@ fn decorate_object(
     header: &RegexResult,
 ) -> CommandResult {
     if let Some(stereo) = header.get("STEREO", 0) {
-        cuca.entity_mut(entity).stereotype = Some(stereotype(stereo)?);
+        cuca.entity_mut(entity).stereotype = Some(Stereotype::with_spot(stereo)?);
     }
     let back = back_color(header)?;
     let entity = cuca.entity_mut(entity);
@@ -565,7 +566,7 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
             RegexTree::end(),
         ]),
     )
-    .forbidding(r"[\p{L}0-9_.]+")
+    .forbidding(is_bare_name)
     .boxed()
 }
 
@@ -671,7 +672,7 @@ impl SingleLineCommand<ClassDiagram> for Package {
                 VisibilityModifier::get_visibility_modifier(&format!("{visibility}FOO"), false);
         }
         if let Some(stereotype) = stereotype.filter(|_| usymbol.is_none()) {
-            entity.stereotype = Some(crate::stereo::Stereotype::new(stereotype));
+            entity.stereotype = Some(Stereotype::new(stereotype));
         }
         add_tags(entity, arg.get_lazzy("TAGS", 0));
         if let Some(url) = url_of(arg) {
@@ -772,21 +773,13 @@ struct CreateElementFull2 {
     pattern: RegexTree,
 }
 
-/// The first character of a name longer than two characters, which tells `(usecase)`, `:actor:` and
-/// `[component]` apart.
-fn char_encoding(code: Option<&str>) -> Option<char> {
-    code.filter(|code| code.encode_utf16().count() > 2)
-        .and_then(|code| code.chars().next())
-}
-
 impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
     fn pattern(&self) -> &RegexTree {
         &self.pattern
     }
 
     fn is_forbidden(&self, line: &str) -> bool {
-        static FORBIDDEN: LazyLock<Regex> = LazyLock::new(|| java_regex(r"^[\p{L}0-9_.]+$", false));
-        FORBIDDEN.is_match(line)
+        is_bare_name(line)
     }
 
     fn execute_arg(
@@ -841,7 +834,10 @@ impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
             cuca.entity_mut(entity).usymbol = usymbol;
             entity
         };
-        let stereotype = arg.get_lazzy("STEREOTYPE", 0).map(stereotype).transpose()?;
+        let stereotype = arg
+            .get_lazzy("STEREOTYPE", 0)
+            .map(Stereotype::with_spot)
+            .transpose()?;
         let back = back_color(arg)?;
         let entity = cuca.entity_mut(entity);
         entity.display = display;
@@ -877,7 +873,7 @@ fn goto_namespace(
         entity.usymbol = usymbol;
     }
     if let Some(stereotype) = arg.get("STEREOTYPE", 0).filter(|_| usymbol.is_none()) {
-        entity.stereotype = Some(crate::stereo::Stereotype::new(stereotype));
+        entity.stereotype = Some(Stereotype::new(stereotype));
     }
     if let Some(url) = url_of(arg) {
         entity.url = Some(url);
@@ -1009,7 +1005,7 @@ pub(super) fn stereotype_command() -> Box<dyn Command<ClassDiagram>> {
                     cuca.quark(quark).get_name()
                 )));
             };
-            let stereo = stereotype(arg.get("STEREO", 0).unwrap_or_default())?;
+            let stereo = Stereotype::with_spot(arg.get("STEREO", 0).unwrap_or_default())?;
             cuca.entity_mut(entity).stereotype = Some(stereo);
             Ok(())
         },
@@ -1020,7 +1016,6 @@ pub(super) fn stereotype_command() -> Box<dyn Command<ClassDiagram>> {
 const LINK_ENTITY: &str = r"((?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_$]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_$]+)*|[%g][^%g]+[%g])";
 /// `(A, B)`: the link between two classes, for an association class.
 const LINK_COUPLE: &str = r"\([%s]*((?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_]+)*|[%g](?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_]+)*[%g]))[%s]*,[%s]*((?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_]+)*|[%g](?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)?[%pLN_]+(?:(?:[^%pLN%s_$#\:{}<>%g]|[\\]{2}|::)[%pLN_]+)*[%g]))[%s]*\)";
-const ARROW_STYLE: &str = r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?";
 
 /// PlantUML's `CommandLinkClass`: `A "1" *-- "many" B : label`, and association classes `(A, B) .. C`.
 pub(super) fn link_class() -> Box<dyn Command<ClassDiagram>> {
@@ -1053,7 +1048,7 @@ pub(super) fn link_class() -> Box<dyn Command<ClassDiagram>> {
             RegexTree::concat(vec![
                 RegexTree::named(1, "ARROW_HEAD1", LinkDecor::get_regex_decors1()),
                 RegexTree::named(1, "ARROW_BODY1", r"([-=.]+)"),
-                RegexTree::named(1, "ARROW_STYLE1", ARROW_STYLE),
+                RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
                 RegexTree::named(
                     1,
                     "ARROW_DIRECTION",
@@ -1064,7 +1059,7 @@ pub(super) fn link_class() -> Box<dyn Command<ClassDiagram>> {
                     "INSIDE",
                     r"(0|\(0\)|\(0|0\))(?=[-=.~])",
                 )),
-                RegexTree::named(1, "ARROW_STYLE2", ARROW_STYLE),
+                RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
                 RegexTree::named(1, "ARROW_BODY2", r"([-=.]*)"),
                 RegexTree::named(1, "ARROW_HEAD2", LinkDecor::get_regex_decors2()),
             ]),
@@ -1102,15 +1097,6 @@ pub(super) fn link_class() -> Box<dyn Command<ClassDiagram>> {
         ]),
         execute_link_class,
     )))
-}
-
-/// Which way an arrow is drawn (PlantUML's `Direction`).
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Direction {
-    Right,
-    Left,
-    Down,
-    Up,
 }
 
 fn execute_link_class(
@@ -1317,31 +1303,7 @@ fn get_direction(arg: &RegexResult) -> Direction {
         .collect();
     let s = full.strip_prefix('o').unwrap_or(&full);
     let s = s.strip_suffix('o').unwrap_or(s);
-    get_queue_direction(s)
-}
-
-/// `StringUtils.getQueueDirection`: the direction a word in the arrow names, or else from its length.
-fn get_queue_direction(s: &str) -> Direction {
-    let s = s.to_lowercase();
-    for (word, direction) in [
-        ("left", Direction::Left),
-        ("right", Direction::Right),
-        ("up", Direction::Up),
-        ("down", Direction::Down),
-        ("l", Direction::Left),
-        ("r", Direction::Right),
-        ("u", Direction::Up),
-        ("d", Direction::Down),
-    ] {
-        if s.contains(word) {
-            return direction;
-        }
-    }
-    if s.encode_utf16().count() == 1 {
-        Direction::Right
-    } else {
-        Direction::Down
-    }
+    Direction::of_queue(s)
 }
 
 /// PlantUML's `CommandLinkLollipop`: `Foo ()- Bar` or `Foo -() Bar`, a lollipop interface named after the

@@ -1,10 +1,11 @@
 //! Messages from or to the diagram's border, like `[-> Alice` or `Alice ->]` (PlantUML's
 //! `CommandExoArrowLeft`, `CommandExoArrowRight` and `CommandExoArrowAny`).
 
-use super::arrow::{ANCHOR, apply_style, color_or_style_pattern};
+use super::arrow::{ANCHOR, apply_style};
 use super::{PARTICIPANT_CODE_OR_QUOTED, activate, color_named, optional_url, unquoted};
 use crate::command::{Command, CommandResult, SingleLine, SingleLineCommand};
 use crate::creole::Display;
+use crate::diagram::description::arrow_style;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
     Event, LifeEventType, MessageCommon, MessageExo, MessageExoType,
@@ -46,14 +47,14 @@ fn arrow_body() -> RegexTree {
         RegexTree::concat(vec![
             RegexTree::named(1, "ARROW_BOTHDRESSING", r"(<<?|//?|\\\\?)?"),
             RegexTree::named(1, "ARROW_BODYA1", r"(-+)"),
-            RegexTree::named(1, "ARROW_STYLE1", color_or_style_pattern()),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
             RegexTree::named(1, "ARROW_BODYB1", r"(-*)"),
             RegexTree::named(1, "ARROW_DRESSING1", r"(>>?|//?|\\\\?)"),
         ]),
         RegexTree::concat(vec![
             RegexTree::named(1, "ARROW_DRESSING2", r"(<<?|//?|\\\\?)"),
             RegexTree::named(1, "ARROW_BODYB2", r"(-*)"),
-            RegexTree::named(1, "ARROW_STYLE2", color_or_style_pattern()),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(1, "ARROW_BODYA2", r"(-+)"),
         ]),
     ])

@@ -5,8 +5,9 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::{back_color, colors};
 use crate::abel::{CucaNote, EntityId, LeafType, LinkArg, Position};
-use crate::color::{self, ColorType, Colors, HColor};
+use crate::color::{self, ColorType};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, ParserPass, PatternCommand,
     SingleLine,
@@ -24,7 +25,7 @@ static END_NOTE: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*end[%s
 static END_NOTE_ON_ENTITY: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^[%s]*(end[%s]?note)$"));
 static END_WITH_BRACKET: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"^(\})$"));
-/// Notes on links end without leading spaces.
+/// The last line of a note on a link (`CommandFactoryNoteOnLink.END`).
 pub(in crate::diagram) static END_NOTE_ON_LINK: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
 
@@ -60,15 +61,6 @@ fn multi_line<D: 'static>(
         })
         .in_passes(pass.alone()),
     )
-}
-
-/// The colours a `COLOR` specification gives, the main one painting the background
-/// (`ColorParser.simpleColor(ColorType.BACK).getColor`).
-fn colors(arg: &RegexResult) -> Result<Colors, CommandError> {
-    arg.get("COLOR", 0)
-        .map(|data| Colors::parse(data, ColorType::Back).map_err(|_| CommandError::bad_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
 }
 
 /// The side `POSITION` names, as the diagram's direction turns it.
@@ -145,15 +137,7 @@ fn create_note<D: EntityDiagram>(
         )));
     }
     let entity = cuca.really_create_leaf(location, quark, display, LeafType::Note);
-    let back = arg
-        .get("COLOR", 0)
-        .map(|color| {
-            HColor::parse(color)
-                .ok()
-                .flatten()
-                .ok_or_else(CommandError::bad_color)
-        })
-        .transpose()?;
+    let back = back_color(arg)?;
     let note = cuca.entity_mut(entity);
     note.colors = note.colors.with(ColorType::Back, back);
     if let Some(stereotype) = arg.get("STEREO", 0) {
@@ -272,7 +256,7 @@ fn add_note_on_entity<D: EntityDiagram>(
         }
     };
     let position = side(cuca, arg);
-    let colors = colors(arg)?;
+    let colors = colors(arg, ColorType::Back)?;
     let tmp = cuca.get_unique_sequence("GMN");
     let quark = cuca.quark_in_context(true, &tmp)?;
     let note = cuca.really_create_leaf(location, quark, display, LeafType::Note);
@@ -380,7 +364,7 @@ fn add_note_on_link(cuca: &mut CucaDiagram, arg: &RegexResult, display: Display)
         .get("POSITION", 0)
         .and_then(Position::from_string)
         .unwrap_or(Position::Bottom);
-    let colors = colors(arg)?;
+    let colors = colors(arg, ColorType::Back)?;
     cuca.link_mut(link).note = Some(CucaNote::build(display, position, colors));
     Ok(())
 }
@@ -447,7 +431,7 @@ fn add_tip(
     } else {
         create_tips(cuca, location, ident_tip, target, position)
     };
-    let colors = colors(arg)?;
+    let colors = colors(arg, ColorType::Back)?;
     let stereotype = arg.get("STEREO", 0).map(Stereotype::new);
     cuca.entity_mut(tips)
         .put_tip(member, display, colors, stereotype);

@@ -2,6 +2,7 @@
 
 use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
+use crate::diagram::description::arrow_style;
 use crate::pattern::{RegexTree, plantuml_regex};
 use crate::{color, stereo};
 
@@ -327,7 +328,7 @@ pub(super) fn time_message<D: NotPortedCommands + 'static>() -> Box<dyn Command<
             ])),
             RegexTree::spaces_zero_or_more(),
             RegexTree::named(1, "ARROW_BODY", r"(-+)"),
-            RegexTree::named(1, "ARROW_STYLE", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
+            RegexTree::named(1, "ARROW_STYLE", arrow_style()),
             RegexTree::named(0, "ARROW_HEAD", r"\>"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::named(1, "PART2", r"([\p{L}_][%pLN_.]*)"),
@@ -428,7 +429,7 @@ pub(super) fn constraint<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>
             RegexTree::spaces_zero_or_more(),
             RegexTree::leaf(r"\<"),
             RegexTree::counted(1, r"(-+)"),
-            RegexTree::named(1, "ARROW_STYLE1", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
             RegexTree::counted(1, r"(-*)"),
             RegexTree::leaf(r"\>"),
             RegexTree::spaces_zero_or_more(),

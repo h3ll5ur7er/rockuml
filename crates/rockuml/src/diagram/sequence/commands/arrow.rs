@@ -4,6 +4,7 @@ use super::{activate, color_named, optional_url};
 use crate::color::HColor;
 use crate::command::{Command, CommandError, CommandResult, SingleLine, SingleLineCommand};
 use crate::creole::Display;
+use crate::diagram::description::arrow_style;
 use crate::diagram::sequence::SequenceDiagram;
 use crate::diagram::sequence::model::{
     Event, LifeEventType, Message, MessageCommon, ParticipantId,
@@ -16,16 +17,6 @@ use crate::text::LineLocation;
 
 /// An anchor like `{start}` that `{start} <-> {end}` refers to.
 pub(super) const ANCHOR: &str = r"(\{([%pLN_]+)\}[%s]+)?";
-
-const LINE_STYLE: &str = concat!(
-    r"(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)",
-    r"(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*"
-);
-
-/// `[#red,dashed]` inside an arrow's body.
-pub(super) fn color_or_style_pattern() -> String {
-    format!(r"(?:\[({LINE_STYLE})\])?")
-}
 
 pub(super) fn command() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(SingleLine(CommandArrow(pattern())))
@@ -80,12 +71,12 @@ fn pattern() -> RegexTree {
         RegexTree::or(vec![
             RegexTree::concat(vec![
                 RegexTree::named(1, "ARROW_BODYA1", r"(-+)"),
-                RegexTree::named(1, "ARROW_STYLE1", color_or_style_pattern()),
+                RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
                 RegexTree::named(1, "ARROW_BODYB1", r"(-*)"),
             ]),
             RegexTree::concat(vec![
                 RegexTree::named(1, "ARROW_BODYA2", r"(-*)"),
-                RegexTree::named(1, "ARROW_STYLE2", color_or_style_pattern()),
+                RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
                 RegexTree::named(1, "ARROW_BODYB2", r"(-+)"),
             ]),
         ]),

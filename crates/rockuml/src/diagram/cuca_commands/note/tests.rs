@@ -1,5 +1,6 @@
 use super::*;
 use crate::abel::LinkId;
+use crate::color::HColor;
 use crate::command::{CommandControl, CommandError};
 use crate::diagram::UmlSource;
 use crate::diagram::titled::Titled;

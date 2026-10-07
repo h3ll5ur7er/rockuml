@@ -10,6 +10,8 @@ pub(crate) use bloc_lines::BlocLines;
 pub(crate) use multiline::Multiline;
 pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
 
+use crate::color::NoSuchColor;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum CommandControl {
     Ok,
@@ -60,6 +62,14 @@ impl CommandError {
     /// A colour name no colour has (`CommandExecutionResult.badColor`).
     pub(crate) fn bad_color() -> Self {
         Self::with_score("No such color", 10)
+    }
+}
+
+/// PlantUML's commands throw `NoSuchColorException` from anywhere; `ProtectedCommand` turns it into
+/// `badColor`.
+impl From<NoSuchColor> for CommandError {
+    fn from(_: NoSuchColor) -> Self {
+        Self::bad_color()
     }
 }
 

@@ -6,6 +6,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use super::*;
+use crate::color::{Colors, HColor};
 use crate::command::factory::{self, Created};
 use crate::diagram::UmlSource;
 use crate::diagram::builder::CommandFactory;

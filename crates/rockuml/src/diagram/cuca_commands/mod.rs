@@ -25,17 +25,12 @@ use crate::decoration::{LinkDecor, LinkType};
 use crate::java;
 use crate::json::JsonValue;
 use crate::klimt::url::Url;
-use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
 use crate::plasma::QuarkId;
 use crate::skin::Rankdir;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated, without_quotes_or_brackets};
 use crate::{color, stereo};
-
-/// A stereotype, whose spot colour must exist (`Stereotype.build` with the circled character font).
-pub(super) fn stereotype(stereo: &str) -> Result<Stereotype, CommandError> {
-    Stereotype::with_spot(stereo).map_err(|_| CommandError::bad_color())
-}
 
 /// The colours of `COLOR`, then the line colour and style of `##[style]color`.
 pub(super) fn colors_with_line(arg: &RegexResult) -> Result<Colors, CommandError> {
@@ -203,7 +198,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 let display = display_or_name(header.get("NAME", 0), name);
                 let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Map);
                 if let Some(stereo) = header.get("STEREO", 0) {
-                    cuca.entity_mut(entity).stereotype = Some(stereotype(stereo)?);
+                    cuca.entity_mut(entity).stereotype = Some(Stereotype::with_spot(stereo)?);
                 }
                 cuca.entity_mut(entity).colors = colors_with_line(&header)?;
                 for entry in lines.sub_extract(1, 1).iter() {
@@ -274,7 +269,7 @@ fn create_json_entity(
     }
     let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Json);
     if let Some(stereo) = header.get("STEREO", 0) {
-        cuca.entity_mut(entity).stereotype = Some(stereotype(stereo)?);
+        cuca.entity_mut(entity).stereotype = Some(Stereotype::with_spot(stereo)?);
     }
     let back = back_color(header)?;
     let entity_mut = cuca.entity_mut(entity);
@@ -586,6 +581,28 @@ pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
+/// `<...>`, nested up to five deep (`GenericRegexProducer.PATTERN`).
+pub(super) const GENERIC: &str = r"[^\<\>/](?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<\>)*\>)*\>)*\>)*\>)*";
+
+/// A quoted display that may end with a generic, like `"Map<K, V>"`.
+pub(super) fn display_with_generic() -> String {
+    format!(r"[%g](.+?)(?:\<({GENERIC})\>)?[%g]")
+}
+
+/// A bare name alone on a line, which the commands declaring description elements refuse
+/// (their `isForbidden`).
+pub(in crate::diagram) fn is_bare_name(line: &str) -> bool {
+    static BARE_NAME: LazyLock<Regex> = LazyLock::new(|| java_regex(r"^[\p{L}0-9_.]+$", false));
+    BARE_NAME.is_match(line)
+}
+
+/// The first character of a name longer than two characters, which tells `(usecase)`, `:actor:` and
+/// `[component]` apart (`getCharEncoding`).
+pub(super) fn char_encoding(code: Option<&str>) -> Option<char> {
+    code.filter(|code| code.encode_utf16().count() > 2)
+        .and_then(|code| code.chars().next())
+}
+
 /// The keywords that declare description elements, the longer of two that start alike first
 /// (`CommandCreateElementFull.ALL_TYPES`).
 pub(super) const ALL_TYPES: &str = "person|artifact|actor/|actor|folder|card|file|package|rectangle|hexagon|label|node|frame|cloud|action|process|database|queue|stack|storage|agent|usecase/|usecase|component|boundary|control|entity|interface|circle|collections|port|portin|portout";
@@ -637,7 +654,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
     start: fn() -> RegexTree,
     end: &Regex,
 ) -> Box<dyn Command<D>> {
-    let end_pattern = Regex::new(&format!("^(?:{})$", end.as_str())).expect("a valid pattern");
+    let end_pattern = end.clone();
     let start_pattern = start();
     Box::new(
         Multiline::starting_with_owned(start(), end, move |diagram: &mut D, lines: &BlocLines| {
@@ -700,8 +717,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
             }
             let entity = cuca.entity_mut(entity);
             if let Some(stereotype) = head.get("STEREO", 0) {
-                entity.stereotype =
-                    Some(Stereotype::with_spot(stereotype).map_err(|_| CommandError::bad_color())?);
+                entity.stereotype = Some(Stereotype::with_spot(stereotype)?);
             }
             if let Some(url) = head.get("URL", 0).and_then(Url::parse) {
                 entity.url = Some(url);
@@ -743,10 +759,10 @@ pub(super) fn add_tags(entity: &mut Entity, tags: Option<&str>) {
 
 /// The colours a `COLOR` specification gives, the main one painting `main_type`.
 pub(super) fn colors(arg: &RegexResult, main_type: ColorType) -> Result<Colors, CommandError> {
-    arg.get("COLOR", 0)
-        .map(|data| Colors::parse(data, main_type).map_err(|_| CommandError::bad_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
+    let colors = arg
+        .get("COLOR", 0)
+        .map(|data| Colors::parse(data, main_type));
+    Ok(colors.transpose()?.unwrap_or_default())
 }
 
 /// Whether the block holds JSON data, with or without the braces around it
