@@ -1,0 +1,6 @@
+@startuml
+participant Alice <<Generated>>
+participant Bob <<(C,#ADD1B2) Testable>>
+Alice -> Bob : hello
+hide stereotype
+@enduml

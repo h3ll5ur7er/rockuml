@@ -2,6 +2,7 @@
 
 use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
+use crate::diagram::description::arrow_style;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexTree, plantuml_regex};
 use crate::{color, stereo};
@@ -27,9 +28,9 @@ pub(super) fn link_long_activity<D: NotPortedCommands + 'static>() -> Box<dyn Co
             RegexTree::spaces_zero_or_more(),
             Url::optional_pattern(),
             RegexTree::named(1, "ARROW_BODY1", r"([-.]+)"),
-            RegexTree::named(1, "ARROW_STYLE1", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
             RegexTree::named(1, "ARROW_DIRECTION", r"(\*|left|right|up|down|le?|ri?|up?|do?)?"),
-            RegexTree::named(1, "ARROW_STYLE2", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(1, "ARROW_BODY2", r"([-.]*)"),
             RegexTree::leaf(r"\>"),
             RegexTree::spaces_zero_or_more(),
@@ -105,9 +106,13 @@ pub(super) fn link_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command
             RegexTree::spaces_zero_or_more(),
             Url::optional_pattern(),
             RegexTree::named(1, "ARROW_BODY1", r"([-.]+)"),
-            RegexTree::named(1, "ARROW_STYLE1", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
-            RegexTree::named(1, "ARROW_DIRECTION", r"(\*|left|right|up|down|le?|ri?|up?|do?)?"),
-            RegexTree::named(1, "ARROW_STYLE2", r"(?:\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)\])?"),
+            RegexTree::named(1, "ARROW_STYLE1", arrow_style()),
+            RegexTree::named(
+                1,
+                "ARROW_DIRECTION",
+                r"(\*|left|right|up|down|le?|ri?|up?|do?)?",
+            ),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(1, "ARROW_BODY2", r"([-.]*)"),
             RegexTree::leaf(r"\>"),
             RegexTree::spaces_zero_or_more(),
@@ -120,7 +125,11 @@ pub(super) fn link_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command
                     RegexTree::named(1, "OPENBRACKET2", r"(\{)"),
                     RegexTree::named(1, "CODE2", r"([%pLN][%pLN_.]*)"),
                     RegexTree::named(1, "BAR2", r"(?:==+)[%s]*([%pLN_.]+)[%s]*(?:==+)"),
-                    RegexTree::named(2, "QUOTED2", r"[%g]([^%g]+)[%g](?:[%s]+as[%s]+([%pLN][%pLN_.]*))?"),
+                    RegexTree::named(
+                        2,
+                        "QUOTED2",
+                        r"[%g]([^%g]+)[%g](?:[%s]+as[%s]+([%pLN][%pLN_.]*))?",
+                    ),
                     RegexTree::named(1, "QUOTED_INVISIBLE2", r"(\w.*?)"),
                 ],
             ),

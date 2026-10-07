@@ -251,52 +251,45 @@ fn single_line(
     }
 }
 
-/// Whether the whole line matches, like Java's `String.matches`.
-fn matches_whole(pattern: &str, line: &str) -> bool {
-    java_regex(&format!("^(?:{pattern})$"), false).is_match(line)
+/// A pattern the whole line must match, like Java's `String.matches`.
+fn whole_line(pattern: &str) -> Regex {
+    java_regex(&format!("^(?:{pattern})$"), false)
 }
 
 fn colors(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| matches_whole(r"colors?\s*(#?\w+)?\s*", line),
-        "the colors diagram",
-    )
+    static COLORS: LazyLock<Regex> = LazyLock::new(|| whole_line(r"colors?\s*(#?\w+)?\s*"));
+    single_line(source, |line| COLORS.is_match(line), "the colors diagram")
 }
 
 fn license(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| matches_whole(r"(?i)li[sc][ea]n[sc]e\s*", line),
-        "the license diagram",
-    )
+    static LICENSE: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)li[sc][ea]n[sc]e\s*"));
+    single_line(source, |line| LICENSE.is_match(line), "the license diagram")
 }
 
 fn version(source: &Rc<UmlSource>) -> Outcome {
+    static VERSION: LazyLock<Regex> = LazyLock::new(|| {
+        whole_line(
+            r"(?i)(authors?|about|version|stdlib|testdot|keydistributor|keygen|keyimport(\s+[0-9a-z]+)?|keycheck\s+([0-9a-z]+)\s+([0-9a-z]+))\s*",
+        )
+    });
     single_line(
         source,
-        |line| {
-            matches_whole(
-                r"(?i)(authors?|about|version|stdlib|testdot|keydistributor|keygen|keyimport(\s+[0-9a-z]+)?|keycheck\s+([0-9a-z]+)\s+([0-9a-z]+))\s*",
-                line,
-            )
-        },
+        |line| VERSION.is_match(line),
         "the version diagrams",
     )
 }
 
 fn donors(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| matches_whole(r"(?i)(donors)\s*", line),
-        "the donors diagram",
-    )
+    static DONORS: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)(donors)\s*"));
+    single_line(source, |line| DONORS.is_match(line), "the donors diagram")
 }
 
 fn skinparameter_list(source: &Rc<UmlSource>) -> Outcome {
+    static SKIN_PARAMETERS: LazyLock<Regex> =
+        LazyLock::new(|| whole_line(r"(?i)(skinparameters)\s*"));
     single_line(
         source,
-        |line| matches_whole(r"(?i)(skinparameters)\s*", line),
+        |line| SKIN_PARAMETERS.is_match(line),
         "the skin parameter list",
     )
 }

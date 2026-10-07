@@ -255,3 +255,45 @@ fn hide_empty_description_is_remembered() {
     let diagram = parse(&["hide empty description", "[*] --> A"]).unwrap();
     assert!(diagram.cuca.is_hide_empty_description_for_state());
 }
+
+#[test]
+fn set_separator_none_keeps_dotted_names_whole() {
+    let diagram = parse(&["set separator none", "state A.B", "[*] --> A.B"]).unwrap();
+    assert_eq!(
+        entities(&diagram),
+        ["ent0001 A.B STATE", "ent0002 *start* CIRCLE_START"]
+    );
+}
+
+#[test]
+fn labelled_transitions_drawn_as_nodes_are_not_ported() {
+    let not_ported = |lines: &[&str]| parse(lines).unwrap().cuca.titled.not_ported_part();
+    assert!(not_ported(&["A -[node]-> B"]).is_none());
+    assert!(not_ported(&["A -[#red,node]-> B : hello"]).is_some());
+    assert!(
+        not_ported(&[
+            "skinparam stateDiagramEdgeLabelStyle node",
+            "A --> B : hello"
+        ])
+        .is_some()
+    );
+}
+
+#[test]
+fn transition_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
+    let label = |icon_size: &str| {
+        let diagram = parse(&[
+            &format!("skinparam classAttributeIconSize {icon_size}"),
+            "A --> B : +start",
+        ])
+        .unwrap();
+        let cuca = &diagram.cuca;
+        let link = cuca.link(cuca.get_link_ids()[0]);
+        (
+            link.get_visibility_modifier().is_some(),
+            link.get_label().unwrap().lines().join("\n"),
+        )
+    };
+    assert_eq!(label("10"), (true, "start".to_owned()));
+    assert_eq!(label("0"), (false, "+start".to_owned()));
+}

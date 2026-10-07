@@ -2,6 +2,7 @@
 
 use crate::command::Command;
 use crate::command::unported::{self, NotPortedCommands};
+use crate::diagram::description::style_colors_multiples;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexTree, plantuml_regex};
 use crate::{color, stereo};
@@ -106,7 +107,7 @@ pub(super) fn arrow3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
             RegexTree::start(),
             RegexTree::or(vec![
                 RegexTree::leaf(r"->"),
-                RegexTree::named(1, "COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                RegexTree::named(1, "COLOR", style_colors_multiples()),
             ]),
             RegexTree::spaces_zero_or_more(),
             RegexTree::or(vec![
@@ -125,15 +126,15 @@ pub(super) fn arrow_long3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D
         unported::multi_line(
             "CommandArrowLong3",
             RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::or(vec![
-                RegexTree::leaf(r"->"),
-                RegexTree::named(1, "COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                RegexTree::start(),
+                RegexTree::or(vec![
+                    RegexTree::leaf(r"->"),
+                    RegexTree::named(1, "COLOR", style_colors_multiples()),
+                ]),
+                RegexTree::spaces_zero_or_more(),
+                RegexTree::named(1, "LABEL", r"(.*)"),
+                RegexTree::end(),
             ]),
-            RegexTree::spaces_zero_or_more(),
-            RegexTree::named(1, "LABEL", r"(.*)"),
-            RegexTree::end(),
-        ]),
             &plantuml_regex(r"^(.*);$"),
         )
         .skipping_quote_lines(),
@@ -326,7 +327,7 @@ pub(super) fn else_if3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> 
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "INCOMING_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "INCOMING_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "INCOMING", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -353,7 +354,7 @@ pub(super) fn else_if3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> 
                     RegexTree::leaf(r"\("),
                     RegexTree::optional(RegexTree::or(vec![
                         RegexTree::leaf(r"->"),
-                        RegexTree::named(1, "WHEN_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                        RegexTree::named(1, "WHEN_COLOR", style_colors_multiples()),
                     ])),
                     RegexTree::leaf(r"\)"),
                 ])),
@@ -377,7 +378,7 @@ pub(super) fn else_if2<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> 
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "INCOMING_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "INCOMING_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "INCOMING", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -398,7 +399,7 @@ pub(super) fn else_if2<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> 
                     RegexTree::leaf(r"\("),
                     RegexTree::optional(RegexTree::or(vec![
                         RegexTree::leaf(r"->"),
-                        RegexTree::named(1, "WHEN_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                        RegexTree::named(1, "WHEN_COLOR", style_colors_multiples()),
                     ])),
                     RegexTree::named(1, "WHEN", r"(.*?)"),
                     RegexTree::leaf(r"\)"),
@@ -406,7 +407,11 @@ pub(super) fn else_if2<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> 
             ])),
             RegexTree::leaf(r";?"),
             RegexTree::spaces_zero_or_more(),
-            RegexTree::optional(RegexTree::named(1, "STEREOGROUP", r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)")),
+            RegexTree::optional(RegexTree::named(
+                1,
+                "STEREOGROUP",
+                r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)",
+            )),
             RegexTree::end(),
         ]),
     )
@@ -425,7 +430,7 @@ pub(super) fn else3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "WHEN_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "WHEN_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "WHEN", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -450,7 +455,7 @@ pub(super) fn else3_multine<D: NotPortedCommands + 'static>() -> Box<dyn Command
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "WHEN_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "WHEN_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "WHEN", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -606,7 +611,7 @@ pub(super) fn repeat_while3<D: NotPortedCommands + 'static>() -> Box<dyn Command
             RegexTree::optional(RegexTree::concat(vec![
                 RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "XCOLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "XCOLOR", style_colors_multiples()),
                 ]),
                 RegexTree::spaces_zero_or_more(),
                 RegexTree::or(vec![
@@ -616,7 +621,11 @@ pub(super) fn repeat_while3<D: NotPortedCommands + 'static>() -> Box<dyn Command
             ])),
             RegexTree::leaf(r";?"),
             RegexTree::spaces_zero_or_more(),
-            RegexTree::optional(RegexTree::named(1, "STEREOGROUP", r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)")),
+            RegexTree::optional(RegexTree::named(
+                1,
+                "STEREOGROUP",
+                r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)",
+            )),
             RegexTree::end(),
         ]),
     )
@@ -660,7 +669,7 @@ pub(super) fn backward3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>>
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "INCOMING_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "INCOMING_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "INCOMING", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -672,13 +681,17 @@ pub(super) fn backward3<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>>
             RegexTree::named(1, "LABEL", r"(.*?)"),
             RegexTree::leaf(r";"),
             RegexTree::spaces_zero_or_more(),
-            RegexTree::optional(RegexTree::named(1, "STEREOGROUP", r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)")),
+            RegexTree::optional(RegexTree::named(
+                1,
+                "STEREOGROUP",
+                r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)",
+            )),
             RegexTree::spaces_zero_or_more(),
             RegexTree::optional(RegexTree::concat(vec![
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "OUTCOMING_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "OUTCOMING_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "OUTCOMING", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -1168,7 +1181,7 @@ pub(super) fn else_if2_multine<D: NotPortedCommands + 'static>() -> Box<dyn Comm
                 RegexTree::leaf(r"\("),
                 RegexTree::optional(RegexTree::or(vec![
                     RegexTree::leaf(r"->"),
-                    RegexTree::named(1, "INCOMING_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                    RegexTree::named(1, "INCOMING_COLOR", style_colors_multiples()),
                 ])),
                 RegexTree::named(1, "INCOMING", r"(.*?)"),
                 RegexTree::leaf(r"\)"),
@@ -1189,7 +1202,7 @@ pub(super) fn else_if2_multine<D: NotPortedCommands + 'static>() -> Box<dyn Comm
                     RegexTree::leaf(r"\("),
                     RegexTree::optional(RegexTree::or(vec![
                         RegexTree::leaf(r"->"),
-                        RegexTree::named(1, "WHEN_COLOR", r"-\[((?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*(?:(?:;(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*)*)*)\]->"),
+                        RegexTree::named(1, "WHEN_COLOR", style_colors_multiples()),
                     ])),
                     RegexTree::named(1, "WHEN", r"(.*?)"),
                     RegexTree::leaf(r"\)"),
@@ -1197,7 +1210,11 @@ pub(super) fn else_if2_multine<D: NotPortedCommands + 'static>() -> Box<dyn Comm
             ])),
             RegexTree::leaf(r";?"),
             RegexTree::spaces_zero_or_more(),
-            RegexTree::optional(RegexTree::named(1, "STEREOGROUP", r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)")),
+            RegexTree::optional(RegexTree::named(
+                1,
+                "STEREOGROUP",
+                r"(<<[^<>]+>>(?:[%s]*<<[^<>]+>>)*)",
+            )),
             RegexTree::end(),
         ]),
     )

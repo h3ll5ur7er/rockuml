@@ -5,15 +5,13 @@
 use std::rc::Rc;
 
 use super::{
-    CucaNote, DisplayPositioned, EntityPosition, GroupType, LeafType, Position, Tip, TogetherId,
-    is_pure_inner_link3,
+    DisplayPositioned, EntityPosition, GroupType, LeafType, Tip, TogetherId, is_pure_inner_link3,
 };
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::cucadiagram::Bodier;
 use crate::decoration::symbol::{PackageStyle, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
-use crate::java::{JavaHashSet, string_hash_code};
 use crate::klimt::VerticalAlignment;
 use crate::klimt::url::Url;
 use crate::plasma::QuarkId;
@@ -41,7 +39,6 @@ pub(crate) struct Entity {
     location: Option<LineLocation>,
     /// The style rules in force when the entity was declared; the root has none.
     style_builder: Option<Rc<StyleBuilder>>,
-    raw_layout: i32,
     leaf_or_group: EntityType,
     pub display: Display,
     pub stereotype: Option<Stereotype>,
@@ -53,8 +50,6 @@ pub(crate) struct Entity {
     /// A legend drawn inside a group.
     pub legend: Option<(DisplayPositioned, VerticalAlignment)>,
     tags: Vec<Stereotag>,
-    notes_top: Vec<CucaNote>,
-    notes_bottom: Vec<CucaNote>,
     pub together: Option<TogetherId>,
     packed: bool,
     pub is_static: bool,
@@ -63,7 +58,6 @@ pub(crate) struct Entity {
     pub usymbol: Option<USymbol>,
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
-    port_short_names: JavaHashSet<String>,
     pub visibility_modifier: Option<VisibilityModifier>,
     /// The character a state's concurrent regions were separated with, `--` or `||`.
     pub concurrent_separator: Option<char>,
@@ -77,7 +71,6 @@ impl Entity {
         uid: String,
         location: Option<LineLocation>,
         style_builder: Option<Rc<StyleBuilder>>,
-        raw_layout: i32,
         entity_type: EntityType,
     ) -> Self {
         Self {
@@ -86,7 +79,6 @@ impl Entity {
             uid,
             location,
             style_builder,
-            raw_layout,
             leaf_or_group: entity_type,
             display: Display::default(),
             stereotype: None,
@@ -95,15 +87,12 @@ impl Entity {
             generic: None,
             legend: None,
             tags: Vec::new(),
-            notes_top: Vec::new(),
-            notes_bottom: Vec::new(),
             together: None,
             packed: false,
             is_static: false,
             colors: Colors::default(),
             usymbol: None,
             tips: Vec::new(),
-            port_short_names: JavaHashSet::default(),
             bodier: match entity_type {
                 EntityType::Leaf(leaf_type) => Bodier::for_leaf(leaf_type),
                 EntityType::Group(_) => Bodier::for_group(),
@@ -134,10 +123,6 @@ impl Entity {
         self.style_builder.as_ref()
     }
 
-    pub(crate) fn get_raw_layout(&self) -> i32 {
-        self.raw_layout
-    }
-
     /// `None` for groups.
     pub(crate) fn get_leaf_type(&self) -> Option<LeafType> {
         match self.leaf_or_group {
@@ -165,8 +150,9 @@ impl Entity {
         self.leaf_or_group = EntityType::Leaf(new_type);
     }
 
-    /// Changes the type when both are class-like (or the old one is still unknown); an object can replace a
-    /// class. Whether the type is now `new_type` (PlantUML's `muteToType(LeafType, USymbol)`).
+    /// Changes the type when both are class-like (or the old one is still unknown), dropping the symbol; an
+    /// object can replace a class. Whether the type is now `new_type` (PlantUML's `muteToType(LeafType,
+    /// USymbol)`, which every caller gives no symbol).
     pub(crate) fn mute_to_type_if_compatible(&mut self, new_type: LeafType) -> bool {
         use LeafType::{
             AbstractClass, Annotation, Class, Dataclass, Enum, Interface, Object, Record,
@@ -188,6 +174,7 @@ impl Entity {
         }
         self.mute_class_to_object(new_type);
         self.leaf_or_group = EntityType::Leaf(new_type);
+        self.usymbol = None;
         true
     }
 
@@ -220,29 +207,6 @@ impl Entity {
     /// The style a stereotype like `<<Node>>` gives a package.
     pub(crate) fn get_package_style(&self) -> Option<PackageStyle> {
         PackageStyle::from_stereotype(&self.stereotype.as_ref()?.label_double_comparator())
-    }
-
-    pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {
-        match position {
-            Position::Top => self.notes_top.push(CucaNote::build(note, position, colors)),
-            Position::Bottom => self
-                .notes_bottom
-                .push(CucaNote::build(note, position, colors)),
-            Position::Left | Position::Right => {}
-        }
-    }
-
-    /// # Panics
-    ///
-    /// For sides other than top and bottom, which carry no notes.
-    pub(crate) fn get_notes(&self, position: Position) -> &[CucaNote] {
-        match position {
-            Position::Top => &self.notes_top,
-            Position::Bottom => &self.notes_bottom,
-            Position::Left | Position::Right => {
-                panic!("entities keep notes on top and bottom only")
-            }
-        }
     }
 
     pub(crate) fn add_stereotag(&mut self, tag: Stereotag) {
@@ -340,16 +304,6 @@ impl Entity {
         &self.tips
     }
 
-    /// In Java's `HashSet` order.
-    pub(crate) fn get_port_short_names(&self) -> impl Iterator<Item = &String> {
-        self.port_short_names.iter()
-    }
-
-    pub(crate) fn add_port_short_name(&mut self, port_short_name: String) {
-        let hash = string_hash_code(&port_short_name);
-        self.port_short_names.insert(port_short_name, hash);
-    }
-
     /// The group the entity is in; `None` for the root, or below a quark no entity holds yet.
     pub(crate) fn get_parent_container(&self, diagram: &CucaDiagram) -> Option<EntityId> {
         let parent = diagram.quark(self.quark).get_parent()?;
@@ -403,11 +357,7 @@ impl Entity {
     pub(crate) fn is_autarkic(&self, diagram: &CucaDiagram) -> bool {
         match self.get_group_type() {
             GroupType::Package => return false,
-            GroupType::InnerActivity
-            | GroupType::ConcurrentActivity
-            | GroupType::ConcurrentState => {
-                return true;
-            }
+            GroupType::ConcurrentState => return true,
             _ => {}
         }
         diagram
@@ -419,17 +369,17 @@ impl Entity {
                 .all(|leaf| diagram.entity(*leaf).get_entity_position() == EntityPosition::Normal)
     }
 
-    /// Whether the group only holds one group with something in it, and nothing links to it, so that the two
-    /// can show as one, named `outer.inner`.
-    pub(crate) fn can_be_packed(&self, diagram: &CucaDiagram) -> bool {
+    /// The one group inside, when the group holds nothing else, the child holds something and nothing links to
+    /// the group, so that the two can show as one, named `outer.inner` (`canBePacked`).
+    pub(crate) fn packable_child(&self, diagram: &CucaDiagram) -> Option<EntityId> {
         if self.packed || self.count_children(diagram) != 1 || !self.leafs(diagram).is_empty() {
-            return false;
+            return None;
         }
         if diagram.get_links().any(|link| link.contains(self.id)) {
-            return false;
+            return None;
         }
-        let child = self.groups(diagram)[0];
-        diagram.entity(child).count_children(diagram) != 0
+        let child = *self.groups(diagram).first()?;
+        (diagram.entity(child).count_children(diagram) != 0).then_some(child)
     }
 
     pub(crate) fn set_packed(&mut self) {

@@ -37,7 +37,7 @@ pub(super) fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
 }
 
 /// `CommandLinkElement.UBREX_LINE_STYLE`: the styles of a link, like `#red,dashed`.
-const LINE_STYLE: &str = "【 #〇+〴w ┇dotted┇dashed┇plain┇bold┇hidden┇norank┇single┇node┇thickness=〇+〴d】 〇*【 ,#〇+〴w ┇,dotted┇,dashed┇,plain┇,bold┇,hidden┇,norank┇,single┇,node┇,thickness=〇+〴d】";
+const UBREX_LINE_STYLE: &str = "【 #〇+〴w ┇dotted┇dashed┇plain┇bold┇hidden┇norank┇single┇node┇thickness=〇+〴d】 〇*【 ,#〇+〴w ┇,dotted┇,dashed┇,plain┇,bold┇,hidden┇,norank┇,single┇,node┇,thickness=〇+〴d】";
 
 /// PlantUML's `UBrexCommandFootboxIgnored`.
 fn footbox_ignored<D: NotPortedCommands>() -> Box<dyn Command<D>> {
@@ -125,12 +125,16 @@ fn if_command<D: NotPortedCommands>() -> Box<dyn Command<D>> {
             UBrexPart::space_zero_or_more(),
             UBrexPart::optional(UBrexPart::concat(vec![
                 UBrexPart::named("ARROW_BODY1", UBrexPart::leaf("〇+「-.」")),
-                UBrexPart::leaf(&format!("〇?〘 [ 〶$ARROW_STYLE1=〘{LINE_STYLE}〙] 〙")),
+                UBrexPart::leaf(&format!(
+                    "〇?〘 [ 〶$ARROW_STYLE1=〘{UBREX_LINE_STYLE}〙] 〙"
+                )),
                 UBrexPart::named(
                     "ARROW_DIRECTION",
                     UBrexPart::leaf("〇?【 *┇left┇right┇up┇down┇l〇?e┇r〇?i┇u〇?p┇d〇?o】"),
                 ),
-                UBrexPart::leaf(&format!("〇?〘 [  〶$ARROW_STYLE2=〘{LINE_STYLE}〙] 〙")),
+                UBrexPart::leaf(&format!(
+                    "〇?〘 [  〶$ARROW_STYLE2=〘{UBREX_LINE_STYLE}〙] 〙"
+                )),
                 UBrexPart::named("ARROW_BODY2", UBrexPart::leaf("〇*「-.」")),
                 UBrexPart::leaf(">"),
             ])),

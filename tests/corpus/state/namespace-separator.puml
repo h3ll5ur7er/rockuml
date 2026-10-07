@@ -1,0 +1,7 @@
+@startuml
+set separator none
+state Order.New
+state Order.Paid
+[*] --> Order.New
+Order.New --> Order.Paid
+@enduml

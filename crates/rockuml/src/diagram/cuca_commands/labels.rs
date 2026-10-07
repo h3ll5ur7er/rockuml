@@ -6,10 +6,9 @@ use std::sync::LazyLock;
 use regex::Regex;
 
 use crate::abel::LinkArrow;
-use crate::diagram::cuca::CucaDiagram;
 use crate::java;
 use crate::pattern::{RegexResult, plantuml_regex};
-use crate::text::unquoted;
+use crate::text::{unquoted, without_quotes_or_brackets};
 
 pub(crate) struct Labels {
     first_label: Option<String>,
@@ -46,7 +45,8 @@ impl Labels {
             LazyLock::new(|| plantuml_regex("^[%g]([^%g]+)[%g]([^%g]+)$"));
         static SECOND_LABEL_ONLY: LazyLock<Regex> =
             LazyLock::new(|| plantuml_regex("^([^%g]+)[%g]([^%g]+)[%g]$"));
-        let middle = |text: &str| java::trim(CucaDiagram::clean_id(java::trim(text))).to_owned();
+        let middle =
+            |text: &str| java::trim(without_quotes_or_brackets(java::trim(text))).to_owned();
         if self.first_label.is_none() && self.second_label.is_none() {
             if let Some(m) = BOTH_LABELS.captures(label_link) {
                 self.first_label = Some(m[1].to_owned());

@@ -6,7 +6,8 @@ use crate::color::{self, ColorType, Colors};
 use crate::command::{Command, CommandError, PatternCommand, SingleLine};
 use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
+use crate::diagram::cuca_commands::colors;
 use crate::java;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
@@ -42,7 +43,7 @@ pub(super) fn create_entity() -> Box<dyn Command<ChenEerDiagram>> {
             };
             let cuca = &mut diagram.cuca;
             let id_short = arg.get("CODE", 0).unwrap_or_default();
-            let quark = cuca.quark_in_context(true, CucaDiagram::clean_id(id_short));
+            let quark = cuca.quark_in_context(true, ChenEerDiagram::clean_id(id_short))?;
             let entity = if let Some(entity) = cuca.quark(quark).get_data() {
                 if !cuca
                     .entity_mut(entity)
@@ -104,10 +105,10 @@ pub(super) fn create_attribute() -> Box<dyn Command<ChenEerDiagram>> {
             };
             let cuca = &mut diagram.cuca;
             let id_short =
-                CucaDiagram::clean_id(java::trim(arg.get("CODE", 0).unwrap_or_default()))
+                ChenEerDiagram::clean_id(java::trim(arg.get("CODE", 0).unwrap_or_default()))
                     .to_owned();
             let id = format!("{}/{id_short}", cuca.entity(owner).get_name(cuca));
-            let quark = cuca.quark_in_context(true, &id);
+            let quark = cuca.quark_in_context(true, &id)?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new("Attribute already exists"));
             }
@@ -179,7 +180,6 @@ pub(super) fn associate() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(cardinality, 3),
                 colors,
-                true,
             );
             Ok(())
         },
@@ -241,7 +241,6 @@ pub(super) fn simple_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(None, 3),
                 colors,
-                true,
             );
             Ok(())
         },
@@ -272,12 +271,12 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
         |diagram: &mut ChenEerDiagram, location: &LineLocation, arg: &RegexResult| {
             let cuca = &mut diagram.cuca;
             let superclass =
-                CucaDiagram::clean_id(arg.get("SUPERCLASS", 0).unwrap_or_default()).to_owned();
+                ChenEerDiagram::clean_id(arg.get("SUPERCLASS", 0).unwrap_or_default()).to_owned();
             let subclasses = arg.get("SUBCLASSES", 0).unwrap_or_default();
             let symbol = arg.get("SYMBOL", 0).unwrap_or_default();
             let colors = colors(arg, ColorType::Back)?;
             let center_quark =
-                cuca.quark_in_context(false, &format!("{superclass}/{symbol}{subclasses}/center"));
+                cuca.quark_in_context(false, &format!("{superclass}/{symbol}{subclasses}/center"))?;
             if cuca.quark(center_quark).get_data().is_some() {
                 return Err(CommandError::new("Subclasses already exist"));
             }
@@ -303,11 +302,10 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                 link_type,
                 LinkArg::build(None, 2),
                 colors.clone(),
-                true,
             );
             for subclass in java::split(subclasses, ",") {
                 let subclass_entity =
-                    existing_entity(cuca, CucaDiagram::clean_id(java::trim(&subclass)))?;
+                    existing_entity(cuca, ChenEerDiagram::clean_id(java::trim(&subclass)))?;
                 let mut subclass_link_type = LinkType::new(LinkDecor::None, LinkDecor::None);
                 if symbol != "U" {
                     subclass_link_type = subclass_link_type.with_middle_superset();
@@ -319,7 +317,6 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                     subclass_link_type,
                     LinkArg::build(None, 3),
                     colors.clone(),
-                    false,
                 );
             }
             Ok(())
@@ -329,8 +326,8 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
 
 /// The entity a name written in a link means, which must exist.
 fn existing_entity(cuca: &mut CucaDiagram, name: &str) -> Result<EntityId, CommandError> {
-    let name = CucaDiagram::clean_id(name).to_owned();
-    let quark = cuca.quark_in_context(true, &name);
+    let name = ChenEerDiagram::clean_id(name).to_owned();
+    let quark = cuca.quark_in_context(true, &name)?;
     cuca.quark(quark)
         .get_data()
         .ok_or_else(|| CommandError::new(format!("No such entity: {name}")))
@@ -341,8 +338,7 @@ fn is_double(arg: &RegexResult) -> bool {
     arg.get("PARTICIPATION", 0) == Some("=")
 }
 
-/// Adds a link between two entities in `colors`; `with_ports` reads ports from their names, as links
-/// written between two names do.
+/// Adds a link between two entities in `colors`.
 fn add_link(
     cuca: &mut CucaDiagram,
     location: &LineLocation,
@@ -350,25 +346,8 @@ fn add_link(
     link_type: LinkType,
     link_arg: LinkArg,
     colors: Colors,
-    with_ports: bool,
 ) {
     let link = cuca.new_link(Some(location), entity1, entity2, link_type, link_arg);
-    if with_ports {
-        let port = |entity: EntityId, cuca: &CucaDiagram| {
-            cuca.get_port_id(cuca.entity(entity).get_name(cuca))
-                .map(str::to_owned)
-        };
-        let (port1, port2) = (port(entity1, cuca), port(entity2, cuca));
-        cuca.set_port_members(link, port1, port2);
-    }
     cuca.link_mut(link).set_colors(colors);
     cuca.add_link(link);
-}
-
-/// The colours a `COLOR` specification gives, the main one painting `main_type`.
-fn colors(arg: &RegexResult, main_type: ColorType) -> Result<Colors, CommandError> {
-    arg.get("COLOR", 0)
-        .map(|data| Colors::parse(data, main_type).map_err(|_| CommandError::bad_color()))
-        .transpose()
-        .map(Option::unwrap_or_default)
 }

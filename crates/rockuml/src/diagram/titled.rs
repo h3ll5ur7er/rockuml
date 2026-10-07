@@ -16,6 +16,8 @@ use crate::klimt::group::{UGroup, UGroupType};
 use crate::klimt::sprite::SpriteContainer;
 
 use super::cuca::CucaDiagram;
+use super::description::DescriptionDiagram;
+use super::sequence::SequenceDiagram;
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
@@ -126,8 +128,22 @@ pub(super) trait TitledDiagram {
         self.class_or_object_diagram()
     }
 
+    /// A description diagram, which applies `hide` and `show` by gender its own way.
+    fn description_diagram(&mut self) -> Option<&mut DescriptionDiagram> {
+        None
+    }
+
+    /// A sequence diagram, whose participants `hide stereotype` applies to.
+    fn sequence_diagram(&mut self) -> Option<&mut SequenceDiagram> {
+        None
+    }
+
     /// `hide empty description`, which only state diagrams heed.
     fn set_hide_empty_description(&mut self, _hide: bool) {}
+
+    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
+        self.titled().set_legend(legend, vertical);
+    }
 }
 
 impl<D: TitledDiagram> NotPortedCommands for D {
@@ -268,30 +284,23 @@ impl Titled {
                 self.diagram_style,
                 SName::Legend,
             ]);
-            let decoration = Some(legend.decoration("legend", &style, &self.skin));
-            result = match vertical {
-                VerticalAlignment::Top => {
-                    Box::new(DecorateEntityImage::new(result, decoration, None))
-                }
-                VerticalAlignment::Bottom => {
-                    Box::new(DecorateEntityImage::new(result, None, decoration))
-                }
-            };
+            let decoration = legend.decoration("legend", &style, &self.skin);
+            result = Box::new(DecorateEntityImage::add(result, decoration, *vertical));
         }
         if let Some(title) = title {
             let style = self.document_style(Some(SName::Title));
-            result = Box::new(DecorateEntityImage::new(
+            result = Box::new(DecorateEntityImage::add(
                 result,
-                Some(title.decoration("title", &style, &self.skin)),
-                None,
+                title.decoration("title", &style, &self.skin),
+                VerticalAlignment::Top,
             ));
         }
         if let Some(caption) = &self.caption {
             let style = self.document_style(Some(SName::Caption));
-            result = Box::new(DecorateEntityImage::new(
+            result = Box::new(DecorateEntityImage::add(
                 result,
-                None,
-                Some(caption.decoration("caption", &style, &self.skin)),
+                caption.decoration("caption", &style, &self.skin),
+                VerticalAlignment::Bottom,
             ));
         }
         let ribbon = |part: &Option<DisplayPositioned>, name, class| {
@@ -365,9 +374,26 @@ impl DisplayPositioned {
         Decoration {
             block: bordered_text(&self.display, style, sprites),
             alignment: self.alignment,
-            group,
+            group: Some(group),
         }
     }
+}
+
+/// PlantUML's `EntityImageLegend`: a legend a group shows in its header, styled like the diagram's legend.
+pub(crate) fn entity_image_legend(
+    note: &Display,
+    skin: &SkinParam,
+    diagram_style: SName,
+) -> Box<dyn TextBlock> {
+    let style = skin
+        .merged_style(&StyleSignature::of(&[
+            SName::Root,
+            SName::Document,
+            diagram_style,
+            SName::Legend,
+        ]))
+        .expect("the skin styles legends");
+    bordered_text(note, &style, skin)
 }
 
 /// `Style.createTextBlockBordered`: the text in the style's font, padded, bordered, then given margins.

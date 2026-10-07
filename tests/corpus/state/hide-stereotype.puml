@@ -1,0 +1,7 @@
+@startuml
+state Waiting <<input>>
+state Done <<output>>
+[*] --> Waiting
+Waiting --> Done
+hide stereotype
+@enduml

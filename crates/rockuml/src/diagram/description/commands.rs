@@ -11,22 +11,42 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
+use crate::diagram::cuca::EntityDiagram;
 use crate::diagram::cuca_commands::labels::Labels;
-use crate::diagram::cuca_commands::{ALL_TYPES, add_tags, colors, exists_with_bad_type3};
+use crate::diagram::cuca_commands::{
+    ALL_TYPES, add_tags, char_encoding, colors, display_with_generic, exists_with_bad_type3,
+    is_bare_name, unknown_symbol,
+};
 use crate::direction::Direction;
 use crate::java;
 use crate::klimt::url::Url;
-use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
+use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::skin::SkinParam;
 use crate::skin::actor::ActorStyle;
 use crate::stereo::{self, Stereotype};
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 /// What `[x]`, `(x)`, `:x:` and `"x"` may name an element as, at either end of a link.
 const LINK_END: &str = r"([%pLN_.]+|[%g][^%g]+[%g]|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|(?!\[\*\])\[[^\[\]]+\]|\((?!\*\))[^)]+\)/?)";
 
-/// The keys of the style an arrow may give in brackets, like `-[#red,dashed]->`.
+/// The keys of the style an arrow may give in brackets, like `-[#red,dashed]->`
+/// (`CommandLinkElement.LINE_STYLE`).
 const LINE_STYLE: &str = r"(?:#\w+|dotted|dashed|plain|bold|hidden|norank|single|node|thickness=\d+)(?:,#\w+|,dotted|,dashed|,plain|,bold|,hidden|,norank|,single|,node|,thickness=\d+)*";
+
+/// Line styles for parallel lines, separated by `;` (`LINE_STYLE_MULTIPLES`).
+fn line_style_multiples() -> String {
+    format!("{LINE_STYLE}(?:(?:;{LINE_STYLE})*)")
+}
+
+/// The style in brackets inside an arrow's body, as most link commands write it.
+pub(in crate::diagram) fn arrow_style() -> String {
+    format!(r"(?:\[({LINE_STYLE})\])?")
+}
+
+/// The style of an activity arrow, like `-[#red;#blue]->` (`STYLE_COLORS_MULTIPLES`).
+pub(in crate::diagram) fn style_colors_multiples() -> String {
+    format!(r"-\[({}*)\]->", line_style_multiples())
+}
 
 /// PlantUML's `CommandLinkElement`: `A --> B`, creating the ends it names as their notation says.
 pub(super) fn link_element() -> Box<dyn Command<DescriptionDiagram>> {
@@ -42,7 +62,7 @@ pub(super) fn link_element() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::named(
                 1,
                 "ARROW_STYLE1",
-                format!(r"(?:\[({LINE_STYLE}(?:(?:;{LINE_STYLE})*))\])?"),
+                format!(r"(?:\[({})\])?", line_style_multiples()),
             ),
             RegexTree::optional(RegexTree::named(
                 1,
@@ -54,7 +74,7 @@ pub(super) fn link_element() -> Box<dyn Command<DescriptionDiagram>> {
                 "INSIDE",
                 r"(0|\(0\)|\(0|0\))(?=[-=.~])",
             )),
-            RegexTree::named(1, "ARROW_STYLE2", format!(r"(?:\[({LINE_STYLE})\])?")),
+            RegexTree::named(1, "ARROW_STYLE2", arrow_style()),
             RegexTree::named(1, "BODY2", r"([-=.~]*)"),
             RegexTree::named(1, "HEAD2", LinkDecor::get_regex_decors2()),
             RegexTree::spaces_zero_or_more(),
@@ -92,7 +112,10 @@ fn execute_link_element(
     };
     let labels = Labels::new(arg);
     let link_colors = colors(arg, ColorType::Line)?;
-    let (ent1_clean, ent2_clean) = (diagram.clean_id(ent1), diagram.clean_id(ent2));
+    let (ent1_clean, ent2_clean) = (
+        DescriptionDiagram::clean_id(ent1),
+        DescriptionDiagram::clean_id(ent2),
+    );
     let (cl1, cl2) = match (
         diagram.cuca.is_group(ent1_clean),
         diagram.cuca.is_group(ent2_clean),
@@ -102,14 +125,15 @@ fn execute_link_element(
             diagram.cuca.get_group(ent2_clean).expect("a group"),
         ),
         _ => (
-            get_dummy(location, diagram, ent1),
-            get_dummy(location, diagram, ent2),
+            get_dummy(location, diagram, ent1)?,
+            get_dummy(location, diagram, ent2)?,
         ),
     };
     let cuca = &mut diagram.cuca;
-    let link_arg = LinkArg::build(
+    let link_arg = LinkArg::build_managing(
         labels.get_label_link().map(Display::with_newlines),
         i32::try_from(length).expect("an arrow fits a line"),
+        cuca.skin().class_attribute_icon_size() > 0,
     )
     .with_quantifier(labels.get_first_label(), labels.get_second_label());
     let mut link = cuca.new_link(Some(location), cl1, cl2, link_type, link_arg);
@@ -155,23 +179,27 @@ fn link_type(arg: &RegexResult, queue: &str) -> LinkType {
 /// The entity a link end names, created as its notation says if new: `()x` an interface, `(x)` a use case,
 /// `:x:` an actor, `[x]` a component, a trailing `/` the business variant; a plain name stays unknown
 /// until the diagram is complete.
-fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &str) -> EntityId {
+fn get_dummy(
+    location: &LineLocation,
+    diagram: &mut DescriptionDiagram,
+    ident: &str,
+) -> Result<EntityId, CommandError> {
     if ident.starts_with("()") {
-        let ident = diagram.clean_id(ident);
+        let ident = DescriptionDiagram::clean_id(ident);
         let cuca = &mut diagram.cuca;
-        let quark = cuca.quark_in_context(true, ident);
+        let quark = cuca.quark_in_context(true, ident)?;
         if let Some(existing) = cuca.quark(quark).get_data() {
-            return existing;
+            return Ok(existing);
         }
         let display = Display::with_newlines(cuca.quark(quark).get_name());
-        return create_leaf(
+        return Ok(create_leaf(
             diagram,
             location,
             quark,
             display,
             LeafType::Description,
             Some(USymbols::INTERFACE),
-        );
+        ));
     }
     let code_char = if ident.chars().count() > 2 {
         ident.chars().next()
@@ -179,11 +207,11 @@ fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &
         None
     };
     let end_with_slash = ident.ends_with('/');
-    let ident = diagram.clean_id(ident);
+    let ident = DescriptionDiagram::clean_id(ident);
     let cuca = &mut diagram.cuca;
-    let quark = cuca.quark_in_context(true, ident);
+    let quark = cuca.quark_in_context(true, ident)?;
     if let Some(existing) = cuca.quark(quark).get_data() {
-        return existing;
+        return Ok(existing);
     }
     let display = Display::with_newlines(cuca.quark(quark).get_name());
     let (leaf_type, usymbol) = match code_char {
@@ -205,7 +233,9 @@ fn get_dummy(location: &LineLocation, diagram: &mut DescriptionDiagram, ident: &
         ),
         _ => (LeafType::StillUnknown, None),
     };
-    create_leaf(diagram, location, quark, display, leaf_type, usymbol)
+    Ok(create_leaf(
+        diagram, location, quark, display, leaf_type, usymbol,
+    ))
 }
 
 /// `reallyCreateLeaf` with a symbol.
@@ -276,7 +306,6 @@ fn code_and_display(stereotype: fn(&'static str) -> RegexTree) -> RegexTree {
 /// `:Actor:`...
 struct CreateElementFull {
     pattern: RegexTree,
-    forbidden: regex::Regex,
 }
 
 pub(super) fn create_element_full() -> Box<dyn Command<DescriptionDiagram>> {
@@ -297,7 +326,6 @@ pub(super) fn create_element_full() -> Box<dyn Command<DescriptionDiagram>> {
             color::optional_pattern("COLOR"),
             RegexTree::end(),
         ]),
-        forbidden: java_regex(r"^[\p{L}0-9_.]+$", false),
     }))
 }
 
@@ -306,9 +334,8 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         &self.pattern
     }
 
-    /// A bare name alone on a line declares nothing.
     fn is_forbidden(&self, line: &str) -> bool {
-        self.forbidden.is_match(line)
+        is_bare_name(line)
     }
 
     fn execute_arg(
@@ -319,16 +346,12 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
     ) -> CommandResult {
         let mut code_raw = arg.get_lazzy("CODE", 0).unwrap_or_default();
         let mut display_raw = arg.get_lazzy("DISPLAY", 0);
-        let char_encoding = |raw: Option<&str>| {
-            raw.filter(|raw| raw.chars().count() > 2)
-                .and_then(|raw| raw.chars().next())
-        };
         let code_char = char_encoding(Some(code_raw));
         let code_display = char_encoding(display_raw);
         let symbol_arg = arg.get("SYMBOL", 0);
         let business = symbol_arg.is_some_and(|symbol| symbol.ends_with('/'));
         let symbol = if let Some(interface) = code_raw.strip_prefix("()") {
-            code_raw = CucaDiagram::clean_id(java::trim(interface));
+            code_raw = without_quotes_or_brackets(java::trim(interface));
             Some("interface")
         } else if code_char == Some('(') || code_display == Some('(') {
             Some(business_variant(
@@ -353,33 +376,16 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         } else {
             symbol_arg
         };
-        let skin = diagram.cuca.skin();
-        let (leaf_type, usymbol) = match symbol.map(str::to_ascii_lowercase).as_deref() {
-            None => (
-                LeafType::Description,
-                Some(skin.actor_style().to_u_symbol()),
-            ),
-            Some("portin" | "port") => (LeafType::Portin, None),
-            Some("portout") => (LeafType::Portout, None),
-            Some("usecase") => (LeafType::Usecase, None),
-            Some("usecase/") => (LeafType::UsecaseBusiness, None),
-            Some("circle") => (LeafType::Circle, None),
-            Some(other) => (
-                LeafType::Description,
-                Some(
-                    USymbols::from_string_skin_param(other, skin)
-                        .unwrap_or_else(|| panic!("{other} names a symbol")),
-                ),
-            ),
-        };
-        let code = diagram.clean_id(code_raw).to_owned();
+        let (leaf_type, usymbol) = leaf_type_and_symbol(symbol, diagram.cuca.skin())?;
+        let code = DescriptionDiagram::clean_id(code_raw).to_owned();
         let cuca = &mut diagram.cuca;
-        let quark = cuca.quark_in_context(false, &code);
+        let quark = cuca.quark_in_context(false, &code)?;
         let name = cuca.quark(quark).get_name().to_owned();
         if cuca.is_group_quark(quark) {
             return Err(already_defined(&name));
         }
-        let display = Display::with_newlines(CucaDiagram::clean_id(display_raw.unwrap_or(&name)));
+        let display =
+            Display::with_newlines(without_quotes_or_brackets(display_raw.unwrap_or(&name)));
         if cuca
             .quark(quark)
             .get_data()
@@ -409,7 +415,7 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         let entity = diagram.cuca.entity_mut(entity);
         entity.display = display;
         if let Some(stereotype) = arg.get_lazzy("STEREOTYPE", 0) {
-            entity.stereotype = Some(stereotype_with_spot(stereotype)?);
+            entity.stereotype = Some(Stereotype::with_spot(stereotype)?);
         }
         add_tags(entity, arg.get_lazzy("TAGS", 0));
         if let Some(url) = arg.get("URL", 0).and_then(Url::parse) {
@@ -418,6 +424,32 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         entity.colors = colors;
         Ok(())
     }
+}
+
+/// The type and symbol of the element a keyword like `node`, or the notation standing for one, declares;
+/// no keyword means an actor.
+fn leaf_type_and_symbol(
+    symbol: Option<&str>,
+    skin: &SkinParam,
+) -> Result<(LeafType, Option<USymbol>), CommandError> {
+    Ok(match symbol.map(str::to_ascii_lowercase).as_deref() {
+        None => (
+            LeafType::Description,
+            Some(skin.actor_style().to_u_symbol()),
+        ),
+        Some("portin" | "port") => (LeafType::Portin, None),
+        Some("portout") => (LeafType::Portout, None),
+        Some("usecase") => (LeafType::Usecase, None),
+        Some("usecase/") => (LeafType::UsecaseBusiness, None),
+        Some("circle") => (LeafType::Circle, None),
+        Some(other) => (
+            LeafType::Description,
+            Some(
+                USymbols::from_string_skin_param(other, skin)
+                    .ok_or_else(|| unknown_symbol(other))?,
+            ),
+        ),
+    })
 }
 
 /// Which of a use case or actor notation's two symbols the line declares; a trailing `/` on the display
@@ -448,10 +480,6 @@ fn already_defined(name: &str) -> CommandError {
     CommandError::new(format!("This element ({name}) is already defined"))
 }
 
-fn stereotype_with_spot(stereotype: &str) -> Result<Stereotype, CommandError> {
-    Stereotype::with_spot(stereotype).map_err(|_| CommandError::bad_color())
-}
-
 /// The stereotype of an archimate element: one word naming its icon (`StereotypePattern.optionalArchimate`).
 fn optional_archimate(name: &'static str) -> RegexTree {
     RegexTree::concat(vec![
@@ -469,7 +497,7 @@ fn archimate_stereotype(arg: &RegexResult) -> Result<Option<Stereotype>, Command
                 .strip_prefix("<<")
                 .and_then(|icon| icon.strip_suffix(">>"))
                 .unwrap_or(stereotype);
-            stereotype_with_spot(&format!("<<$archimate/{icon}>>"))
+            Ok(Stereotype::with_spot(&format!("<<$archimate/{icon}>>"))?)
         })
         .transpose()
 }
@@ -488,14 +516,13 @@ pub(super) fn archimate() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::end(),
         ]),
         |diagram: &mut DescriptionDiagram, location: &LineLocation, arg: &RegexResult| {
-            let code = diagram
-                .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
+            let code = DescriptionDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
-            let quark = diagram.cuca.quark_in_context(true, &code);
-            let display = Display::with_newlines(
-                arg.get_lazzy("DISPLAY", 0)
-                    .map_or(diagram.cuca.quark(quark).get_name(), CucaDiagram::clean_id),
-            );
+            let quark = diagram.cuca.quark_in_context(true, &code)?;
+            let display = Display::with_newlines(arg.get_lazzy("DISPLAY", 0).map_or(
+                diagram.cuca.quark(quark).get_name(),
+                without_quotes_or_brackets,
+            ));
             let entity = match diagram.cuca.quark(quark).get_data() {
                 Some(existing) => existing,
                 None => create_leaf(
@@ -552,11 +579,11 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                 let head = start_pattern
                     .matcher(first.text())
                     .expect("the first line matched");
-                let code = diagram
-                    .clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
-                    .to_owned();
+                let code =
+                    DescriptionDiagram::clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
+                        .to_owned();
                 let cuca = &mut diagram.cuca;
-                let quark = cuca.quark_in_context(false, &code);
+                let quark = cuca.quark_in_context(false, &code)?;
                 if cuca.quark(quark).get_data().is_some() {
                     return Err(CommandError::new(format!(
                         "Already exists {}",
@@ -603,14 +630,13 @@ pub(super) fn archimate_package() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::end(),
         ]),
         |diagram: &mut DescriptionDiagram, location: &LineLocation, arg: &RegexResult| {
-            let code = diagram
-                .clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
+            let code = DescriptionDiagram::clean_id(arg.get_lazzy("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = &mut diagram.cuca;
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             let display = Display::with_newlines(
                 arg.get_lazzy("DISPLAY", 0)
-                    .map_or(cuca.quark(quark).get_name(), CucaDiagram::clean_id),
+                    .map_or(cuca.quark(quark).get_name(), without_quotes_or_brackets),
             );
             cuca.goto_group(Some(location), quark, display.clone(), GroupType::Package);
             let stereotype = archimate_stereotype(arg)?;
@@ -635,11 +661,7 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             RegexTree::start(),
             RegexTree::named(1, "TYPE", r"(requirement|domain)"),
             RegexTree::spaces_one_or_more(),
-            RegexTree::named(
-                2,
-                "DISPLAY",
-                r"[%g](.+?)(?:\<([^\<\>/](?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<(?:[^\<\>/]|\<\>)*\>)*\>)*\>)*\>)*)\>)?[%g]",
-            ),
+            RegexTree::named(2, "DISPLAY", display_with_generic()),
             RegexTree::spaces_one_or_more(),
             RegexTree::leaf(r"as"),
             RegexTree::spaces_one_or_more(),
@@ -659,9 +681,9 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             } else {
                 (GroupType::Requirement, LeafType::Requirement)
             };
-            let code = diagram.clean_id(code_string).to_owned();
+            let code = DescriptionDiagram::clean_id(code_string).to_owned();
             let cuca = &mut diagram.cuca;
-            let quark = cuca.quark_in_context(true, &code);
+            let quark = cuca.quark_in_context(true, &code)?;
             if cuca.quark(quark).get_data().is_some() {
                 return Err(CommandError::new(format!(
                     "Object already exists : {code_string}"
@@ -677,7 +699,7 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             };
             if let Some(stereotype) = stereotype {
                 diagram.cuca.entity_mut(entity).stereotype =
-                    Some(stereotype_with_spot(stereotype)?);
+                    Some(Stereotype::with_spot(stereotype)?);
             }
             Ok(())
         },

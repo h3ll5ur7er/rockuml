@@ -1,0 +1,25 @@
+cgraph-dump 1
+graph "g" nodes 3 edges 2
+graph ids "g"
+node ids "sh0006" "sh0007" "sh0008"
+in "g" node "sh0006" out e2> in e1< edges e2> e1< degree 1 1
+in "g" node "sh0007" out in e2< edges e2< degree 1 0
+in "g" node "sh0008" out e1> in edges e1> degree 0 1
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+attr "g" "margin" "16"
+attr "sh0006" "shape" "box"
+attr "sh0006" "width" "2.184467431492514"
+attr "sh0006" "height" "0.6944444444444444"
+attr "sh0007" "shape" "box"
+attr "sh0007" "width" "2.3354471240014827"
+attr "sh0007" "height" "0.6944444444444444"
+attr "sh0008" "shape" "box"
+attr "sh0008" "width" "0.2777777777777778"
+attr "sh0008" "height" "0.2777777777777778"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"

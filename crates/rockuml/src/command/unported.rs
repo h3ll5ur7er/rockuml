@@ -8,7 +8,7 @@ use super::{
     BlocLines, Command, CommandControl, CommandResult, Multiline, ParserPass, SingleLine,
     SingleLineCommand,
 };
-use crate::pattern::{RegexResult, RegexTree, java_regex};
+use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
 use crate::ubrex::UnicodeBracketedExpression;
 
@@ -22,7 +22,7 @@ pub(crate) trait NotPortedCommands {
 pub(crate) struct Unported {
     name: &'static str,
     pattern: RegexTree,
-    forbidden: Option<Regex>,
+    forbidden: Option<fn(&str) -> bool>,
 }
 
 pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
@@ -34,11 +34,11 @@ pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
 }
 
 impl Unported {
-    /// Lines matching `forbidden` as a whole are accepted, and fail as syntax errors when executed.
+    /// Lines `forbidden` holds for are accepted, and fail as syntax errors when executed.
     #[must_use]
-    pub(crate) fn forbidding(self, forbidden: &str) -> Self {
+    pub(crate) fn forbidding(self, forbidden: fn(&str) -> bool) -> Self {
         Self {
-            forbidden: Some(java_regex(&format!("^(?:{forbidden})$"), false)),
+            forbidden: Some(forbidden),
             ..self
         }
     }
@@ -68,9 +68,7 @@ impl<D: NotPortedCommands> SingleLineCommand<D> for Unported {
     }
 
     fn is_forbidden(&self, line: &str) -> bool {
-        self.forbidden
-            .as_ref()
-            .is_some_and(|forbidden| forbidden.is_match(line))
+        self.forbidden.is_some_and(|forbidden| forbidden(line))
     }
 }
 

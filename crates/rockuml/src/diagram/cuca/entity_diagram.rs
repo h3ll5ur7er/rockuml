@@ -9,7 +9,7 @@ use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::titled::Titled;
 use crate::klimt::VerticalAlignment;
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 
 impl CucaDiagram {
     /// A package holding nothing but one package with something in it shows as one, named `outer.inner`.
@@ -18,11 +18,11 @@ impl CucaDiagram {
         loop {
             let mut changed = false;
             for group in self.groups() {
-                if !self.entity(group).can_be_packed(self) {
+                let Some(child) = self.entity(group).packable_child(self) else {
                     continue;
-                }
-                let child = self.entity(group).groups(self)[0];
-                let appended = format!("{}{separator}", self.entity(group).display.lines()[0]);
+                };
+                let outer = self.entity(group).display.lines().first();
+                let appended = format!("{}{separator}", outer.map_or("", String::as_str));
                 let child = self.entity_mut(child);
                 child.display = child.display.append_first_line(&appended);
                 self.entity_mut(group).set_packed();
@@ -63,50 +63,6 @@ impl AbstractClassOrObjectDiagram {
             cuca,
             associations: Vec::new(),
         }
-    }
-
-    /// Cuts the latest link between `entity1` and `entity2` in two at `node`; whether there was one.
-    pub(crate) fn insert_between(
-        &mut self,
-        location: Option<&LineLocation>,
-        entity1: EntityId,
-        entity2: EntityId,
-        node: EntityId,
-    ) -> bool {
-        let Some(link) = self.found_link(entity1, entity2) else {
-            return false;
-        };
-        let existing = self.cuca.link(link);
-        let link_type = existing.get_type();
-        let label = existing.get_label().cloned();
-        let length = existing.get_length();
-        let quantifiers = (
-            existing.get_quantifier1().map(str::to_owned),
-            existing.get_quantifier2().map(str::to_owned),
-        );
-        let distance_angle = distance_angle(existing.get_link_arg());
-        let l1 = self.cuca.new_link(
-            location,
-            entity1,
-            node,
-            link_type,
-            LinkArg::build(label.clone(), length)
-                .with_quantifier(quantifiers.0, None)
-                .with_distance_angle(distance_angle.0.clone(), distance_angle.1.clone()),
-        );
-        let l2 = self.cuca.new_link(
-            location,
-            node,
-            entity2,
-            link_type,
-            LinkArg::build(label, length)
-                .with_quantifier(None, quantifiers.1)
-                .with_distance_angle(distance_angle.0, distance_angle.1),
-        );
-        self.cuca.add_link(l1);
-        self.cuca.add_link(l2);
-        self.cuca.remove_link(link);
-        true
     }
 
     /// The latest link between the two entities, either way round.
@@ -197,22 +153,13 @@ impl AbstractClassOrObjectDiagram {
             .with_quantifier(existing.get_quantifier1().map(str::to_owned), None);
         let second = LinkArg::no_display(length)
             .with_quantifier(None, existing.get_quantifier2().map(str::to_owned));
-        let (distance, angle) = distance_angle(existing.get_link_arg());
-        let entity1_to_point = self.cuca.new_link(
-            location,
-            entity1real,
-            point1,
-            link_type.get_part2(),
-            first.with_distance_angle(distance.clone(), angle.clone()),
-        );
+        let entity1_to_point =
+            self.cuca
+                .new_link(location, entity1real, point1, link_type.get_part2(), first);
         self.cuca.link_mut(entity1_to_point).link_arrow = link_arrow;
-        let point_to_entity2 = self.cuca.new_link(
-            location,
-            point1,
-            entity2real,
-            link_type.get_part1(),
-            second.with_distance_angle(distance, angle),
-        );
+        let point_to_entity2 =
+            self.cuca
+                .new_link(location, point1, entity2real, link_type.get_part1(), second);
         self.cuca.add_link(entity1_to_point);
         self.cuca.add_link(point_to_entity2);
     }
@@ -242,7 +189,7 @@ impl AbstractClassOrObjectDiagram {
 
     /// `(A, B) .. C`: links a point on the link between `entity1` and `entity2` to `associed`, from the point
     /// in `mode` 1 and to it otherwise. A second association class on the same pair gets a point of its own;
-    /// there is no third. Whether the association could be made.
+    /// there is no third.
     #[expect(clippy::too_many_arguments, reason = "PlantUML's method")]
     pub(crate) fn association_class(
         &mut self,
@@ -253,24 +200,23 @@ impl AbstractClassOrObjectDiagram {
         associed: EntityId,
         link_type: LinkType,
         label: Option<Display>,
-    ) -> bool {
+    ) -> CommandResult {
         let same = self.get_existing_associated_points(entity1, entity2);
         match same.as_slice() {
             [] => {
-                let mut association = self.new_association(location, entity1, entity2, associed);
+                let mut association = self.new_association(location, entity1, entity2, associed)?;
                 self.create_new(&mut association, location, mode, link_type, label);
                 self.associations.push(association);
-                true
             }
             [first] => {
-                let association = self.create_second_association(location, *first, associed);
+                let association = self.create_second_association(location, *first, associed)?;
                 let index = self.associations.len();
                 self.associations.push(association);
                 self.create_in_second(index, location, link_type, label);
-                true
             }
-            _ => false,
+            _ => return Err(CommandError::new("Cannot have more than 2 assocications")),
         }
+        Ok(())
     }
 
     fn get_existing_associated_points(&self, entity1: EntityId, entity2: EntityId) -> Vec<usize> {
@@ -285,7 +231,7 @@ impl AbstractClassOrObjectDiagram {
         entity1: EntityId,
         entity2: EntityId,
         associed: EntityId,
-    ) -> Association {
+    ) -> Result<Association, CommandError> {
         let id_short = self.cuca.get_unique_sequence("apoint");
         let parent1 = self
             .cuca
@@ -299,7 +245,7 @@ impl AbstractClassOrObjectDiagram {
             Some(parent) if parent1 == parent2 => self.cuca.child(parent, &id_short),
             _ => self
                 .cuca
-                .quark_in_context(true, CucaDiagram::clean_id(&id_short)),
+                .quark_in_context(true, without_quotes_or_brackets(&id_short))?,
         };
         let point = self.cuca.really_create_leaf(
             location,
@@ -307,7 +253,7 @@ impl AbstractClassOrObjectDiagram {
             Display::with_newlines(""),
             LeafType::PointForAssociation,
         );
-        Association {
+        Ok(Association {
             entity1,
             entity2,
             associed,
@@ -317,7 +263,7 @@ impl AbstractClassOrObjectDiagram {
             point_to_entity2: None,
             point_to_associed: None,
             other: None,
-        }
+        })
     }
 
     fn create_second_association(
@@ -325,12 +271,12 @@ impl AbstractClassOrObjectDiagram {
         location: Option<&LineLocation>,
         first: usize,
         associed2: EntityId,
-    ) -> Association {
+    ) -> Result<Association, CommandError> {
         let (entity1, entity2) = (
             self.associations[first].entity1,
             self.associations[first].entity2,
         );
-        let mut result = self.new_association(location, entity1, entity2, associed2);
+        let mut result = self.new_association(location, entity1, entity2, associed2)?;
         let existing = &self.associations[first];
         result.existing_link = existing.existing_link;
         result.other = Some(first);
@@ -349,7 +295,7 @@ impl AbstractClassOrObjectDiagram {
                 }
             }
         }
-        result
+        Ok(result)
     }
 
     fn create_new(
@@ -372,14 +318,13 @@ impl AbstractClassOrObjectDiagram {
             .with_quantifier(existing.get_quantifier1().map(str::to_owned), None);
         let second = LinkArg::no_display(existing_length)
             .with_quantifier(None, existing.get_quantifier2().map(str::to_owned));
-        let (distance, angle) = distance_angle(existing.get_link_arg());
         let point = association.point;
         let entity1_to_point = self.cuca.new_link(
             location,
             entity1real,
             point,
             existing_type.get_part2(),
-            first.with_distance_angle(distance.clone(), angle.clone()),
+            first,
         );
         self.cuca.link_mut(entity1_to_point).link_arrow = link_arrow;
         let point_to_entity2 = self.cuca.new_link(
@@ -387,7 +332,7 @@ impl AbstractClassOrObjectDiagram {
             point,
             entity2real,
             existing_type.get_part1(),
-            second.with_distance_angle(distance, angle),
+            second,
         );
         let length = if (existing_length == 1 && entity1 != entity2)
             || (existing_length == 2 && entity1 == entity2)
@@ -455,21 +400,12 @@ impl AbstractClassOrObjectDiagram {
             .with_quantifier(existing.get_quantifier1().map(str::to_owned), None);
         let second = LinkArg::no_display(2)
             .with_quantifier(None, existing.get_quantifier2().map(str::to_owned));
-        let (distance, angle) = distance_angle(existing.get_link_arg());
-        let entity1_to_point = self.cuca.new_link(
-            location,
-            entity1,
-            point,
-            existing_type.get_part2(),
-            first.with_distance_angle(distance.clone(), angle.clone()),
-        );
-        let point_to_entity2 = self.cuca.new_link(
-            location,
-            point,
-            entity2,
-            existing_type.get_part1(),
-            second.with_distance_angle(distance, angle),
-        );
+        let entity1_to_point =
+            self.cuca
+                .new_link(location, entity1, point, existing_type.get_part2(), first);
+        let point_to_entity2 =
+            self.cuca
+                .new_link(location, point, entity2, existing_type.get_part1(), second);
         self.cuca.add_link(entity1_to_point);
         self.cuca.add_link(point_to_entity2);
         let other_point_to_associed = self.associations[other]
@@ -527,11 +463,4 @@ impl Association {
         (self.entity1 == entity1 && self.entity2 == entity2)
             || (self.entity1 == entity2 && self.entity2 == entity1)
     }
-}
-
-fn distance_angle(link_arg: &LinkArg) -> (Option<String>, Option<String>) {
-    (
-        link_arg.get_labeldistance().map(str::to_owned),
-        link_arg.get_labelangle().map(str::to_owned),
-    )
 }

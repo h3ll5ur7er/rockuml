@@ -140,6 +140,19 @@ pub(crate) fn unquoted(text: &str) -> &str {
     }
 }
 
+/// A name without the quotes, parentheses, brackets or colons around it
+/// (`eventuallyRemoveStartingAndEndingDoubleQuote` with its default format).
+pub(crate) fn without_quotes_or_brackets(text: &str) -> &str {
+    let unquoted = unquoted(text);
+    if unquoted.len() != text.len() {
+        return unquoted;
+    }
+    [('(', ')'), ('[', ']'), (':', ':')]
+        .into_iter()
+        .find_map(|(start, end)| text.strip_prefix(start)?.strip_suffix(end))
+        .unwrap_or(text)
+}
+
 pub(crate) fn ends_with_backslash(s: &str) -> bool {
     s.ends_with('\\') && !s.ends_with("\\\\")
 }
@@ -167,6 +180,16 @@ mod tests {
     fn locations_count_lines_from_zero() {
         let location = LineLocation::new("file", None);
         assert_eq!(location.one_line_read().one_line_read().position(), 1);
+    }
+
+    #[test]
+    fn names_lose_quotes_and_brackets() {
+        assert_eq!(without_quotes_or_brackets("\"A B\""), "A B");
+        assert_eq!(without_quotes_or_brackets("(use)"), "use");
+        assert_eq!(without_quotes_or_brackets("[comp]"), "comp");
+        assert_eq!(without_quotes_or_brackets(":actor:"), "actor");
+        assert_eq!(without_quotes_or_brackets(":"), ":");
+        assert_eq!(without_quotes_or_brackets("plain"), "plain");
     }
 
     #[test]

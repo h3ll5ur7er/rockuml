@@ -16,6 +16,7 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexTree, java_regex};
+use crate::style::parse_single_line;
 
 /// The pattern stereotypes are written with, as an optional part of a command.
 pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
@@ -308,7 +309,8 @@ impl Stereogroup {
         }
     }
 
-    /// The colours labels like `<<#pink>>`, `<<##[dashed]blue>>` (line) or `<<###red>>` (text) set.
+    /// The colours labels like `<<#pink>>`, `<<##[dashed]blue>>` (line), `<<###red>>` (text) or
+    /// `<<BackGroundColor:pink;LineColor:red>>` set; a style PlantUML cannot parse is ignored.
     pub(crate) fn get_inner_colors(&self) -> Result<Colors, NoSuchColor> {
         let mut colors = Colors::default();
         for label in self.get_labels() {
@@ -330,6 +332,11 @@ impl Stereogroup {
                 }
             } else if label.starts_with('#') {
                 colors = colors.merge_with(&Colors::parse(&label, ColorType::Back)?);
+            } else if label.contains(':')
+                && label.contains(';')
+                && let Ok(style) = parse_single_line(&label)
+            {
+                colors = colors.apply_style(&style);
             }
         }
         Ok(colors)
@@ -425,6 +432,19 @@ mod tests {
         assert!(colors.get_specific_line_stroke().is_some());
         assert_eq!(Stereogroup::build(Some("<<custom>>")).get_leaf_type(), None);
         assert!(Stereogroup::build(None).build_stereotype().is_none());
+    }
+
+    #[test]
+    fn a_stereogroup_label_may_be_an_inline_style() {
+        let colors = Stereogroup::build(Some("<<BackGroundColor:pink;LineColor:red>>"))
+            .get_inner_colors()
+            .unwrap();
+        let color = |name| HColor::parse(name).unwrap();
+        assert_eq!(colors.get(ColorType::Back), color("pink").as_ref());
+        assert_eq!(colors.get(ColorType::Line), color("red").as_ref());
+        assert_eq!(colors.get(ColorType::Arrow), color("red").as_ref());
+        // Like PlantUML, a colour the style does not set reads as black.
+        assert_eq!(colors.get(ColorType::Text), Some(&HColor::BLACK));
     }
 
     #[test]

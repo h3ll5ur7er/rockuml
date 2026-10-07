@@ -1594,6 +1594,76 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== usecase/hide-stereotype.puml
+leaf ent0001 "Customer" DESCRIPTION ACTOR_STICKMAN display="Customer" stereo="<<human>>"
+leaf ent0002 "Checkout" USECASE USECASE display="Checkout" stereo="<<main>>"
+link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0001 EntityImageDescription
+dimension: 107.6315421996173 74.0
+COMMENT: entity Customer
+ELLIPSE:
+  pt1: [ 45.8158 ; 0.5000 ]
+  pt2: [ 61.8158 ; 16.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Customer
+  position: [ 0.0000 ; 70.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0002 EntityImageDescription
+dimension: 147.27844028798143 34.25568805759629
+COMMENT: entity Checkout
+ELLIPSE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 147.2784 ; 34.2557 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Checkout
+  position: [ 12.2804 ; 20.6278 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === usecase/left-to-right.puml
 leaf ent0001 "Driver" DESCRIPTION ACTOR_STICKMAN display="Driver"
 leaf ent0002 "Mechanic" DESCRIPTION ACTOR_STICKMAN display="Mechanic"
@@ -1751,6 +1821,77 @@ ELLIPSE:
 TEXT:
   text: Repair
   position: [ 15.2762 ; 17.7063 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== usecase/link-label-visibility.puml
+leaf ent0001 "User" DESCRIPTION ACTOR_STICKMAN display="User"
+leaf ent0002 "Run" USECASE USECASE display="Run"
+link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="start" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk4 ent0002 ent0001 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="stop «event»" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0001 EntityImageDescription
+dimension: 47.96778518689069 74.0
+COMMENT: entity User
+ELLIPSE:
+  pt1: [ 15.9839 ; 0.5000 ]
+  pt2: [ 31.9839 ; 16.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: User
+  position: [ 0.0000 ; 70.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0002 EntityImageDescription
+dimension: 72.34028304233496 25.79898987322333
+COMMENT: entity Run
+ELLIPSE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 72.3403 ; 25.7990 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Run
+  position: [ 12.7153 ; 16.3995 ]
   orientation: 0
   font: SansSerif.plain/14 []
   color: ff000000
@@ -6289,6 +6430,168 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== component/namespace-separator.puml
+leaf ent0001 "app::core" DESCRIPTION COMPONENT2 display="core"
+leaf ent0002 "app::ui" DESCRIPTION COMPONENT2 display="ui"
+leaf ent0004 "lib" DESCRIPTION COMPONENT2 display="lib"
+link lnk3 ent0001 ent0002 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk5 ent0002 ent0004 ARROW NONE NONE 0.0-0.0-1.0 length=2 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0001 EntityImageDescription
+dimension: 110.43558869997057 44.0
+COMMENT: entity core
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 110.4356 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 90.4356 ; 5.0000 ]
+  pt2: [ 105.4356 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 88.4356 ; 7.0000 ]
+  pt2: [ 92.4356 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 88.4356 ; 11.0000 ]
+  pt2: [ 92.4356 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: core
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0002 EntityImageDescription
+dimension: 69.42465322993064 44.0
+COMMENT: entity ui
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 69.4247 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 49.4247 ; 5.0000 ]
+  pt2: [ 64.4247 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 47.4247 ; 7.0000 ]
+  pt2: [ 51.4247 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 47.4247 ; 11.0000 ]
+  pt2: [ 51.4247 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: ui
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0004 EntityImageDescription
+dimension: 77.67594580678912 44.0
+COMMENT: entity lib
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 77.6759 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 57.6759 ; 5.0000 ]
+  pt2: [ 72.6759 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.6759 ; 7.0000 ]
+  pt2: [ 59.6759 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 55.6759 ; 11.0000 ]
+  pt2: [ 59.6759 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: lib
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === component/nested-containers.puml
 group ent0001 "Cloud" PACKAGE CLOUD display="Cloud"
 group ent0002 "CloudCluster" PACKAGE NODE display="Cluster"
@@ -6450,6 +6753,86 @@ RECTANGLE:
 
 TEXT:
   text: Users
+  position: [ 15.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== component/note-on-interface.puml
+leaf ent0001 "Api" DESCRIPTION INTERFACE display="Api"
+leaf ent0002 "Server" DESCRIPTION COMPONENT2 display="Server"
+leaf ent0005 "GMN4" NOTE null display="the public face"
+link lnk3 ent0002 ent0001 NONE NONE NONE 0.0-0.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+link lnk6 ent0001 ent0005 NONE NONE NONE 7.0-7.0-1.0 length=1 label="" q1=null q2=null NONE_OR_SEVERAL stereo=null
+image ent0001 EntityImageDescription
+dimension: 18.0 18.0
+COMMENT: entity Api
+ELLIPSE:
+  pt1: [ 1.0000 ; 1.0000 ]
+  pt2: [ 17.0000 ; 17.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Api
+  position: [ -9.7207 ; 36.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+image ent0002 EntityImageDescription
+dimension: 140.43786877856627 44.0
+COMMENT: entity Server
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 140.4379 ; 44.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 120.4379 ; 5.0000 ]
+  pt2: [ 135.4379 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 118.4379 ; 7.0000 ]
+  pt2: [ 122.4379 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 118.4379 ; 11.0000 ]
+  pt2: [ 122.4379 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Server
   position: [ 15.0000 ; 30.8889 ]
   orientation: 0
   font: SansSerif.plain/14 []

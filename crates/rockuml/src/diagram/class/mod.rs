@@ -19,9 +19,11 @@ use super::cuca_commands::{self, note};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use crate::abel::DisplayPositioned;
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, ParserPass};
 use crate::klimt::TextBlock;
+use crate::klimt::VerticalAlignment;
 use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
@@ -157,6 +159,10 @@ impl TitledDiagram for ClassDiagram {
 
     fn class_or_object_diagram(&mut self) -> Option<&mut CucaDiagram> {
         Some(&mut self.diagram.cuca)
+    }
+
+    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
+        self.diagram.set_legend(legend, vertical);
     }
 }
 

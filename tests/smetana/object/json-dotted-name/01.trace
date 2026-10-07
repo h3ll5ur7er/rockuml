@@ -1,0 +1,44 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agsubg graph "g" "cluster6"
+agsafeset graph "cluster6" "label" dim(103,17) ""
+agsafeset graph "cluster6" "margin" "16" ""
+agnode graph "cluster6" "sh0010"
+agsafeset node "sh0010" "shape" "box" ""
+agsafeset node "sh0010" "width" "2.3665882420770568" ""
+agsafeset node "sh0010" "height" "0.75" ""
+agsubg graph "g" "cluster11"
+agsafeset graph "cluster11" "label" dim(68,17) ""
+agsafeset graph "cluster11" "margin" "16" ""
+agnode graph "cluster11" "sh0015"
+agsafeset node "sh0015" "shape" "box" ""
+agsafeset node "sh0015" "width" "1.962592345848329" ""
+agsafeset node "sh0015" "height" "0.5" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 0
+graph "cluster6" minrank 0 maxrank 0
+graph "cluster11" minrank 0 maxrank 0
+node "sh0010" rank 0
+node "sh0015" rank 0
+phase mincross
+rank 0 "sh0010" "sh0015"
+phase position
+node "sh0010" rank 0 coord 117.0 43.0 lw 85.0 rw 85.0 ht 54.0
+node "sh0015" rank 0 coord 321.0 43.0 lw 70.5 rw 70.5 ht 36.0
+graph "g" bb 8.0 -8.0 416.0 119.0
+graph "cluster6" bb 16.0 0.0 218.0 111.0
+graph "cluster6" label pos 0.0 0.0 dimen 103.0 17.0 set 0
+graph "cluster11" bb 234.0 9.0 408.0 102.0
+graph "cluster11" label pos 0.0 0.0 dimen 68.0 17.0 set 0
+phase splines
+phase final
+graph "g" bb 0.0 0.0 408.0 127.0
+graph "cluster6" bb 8.0 8.0 210.0 119.0
+graph "cluster6" label pos 109.0 106.5 dimen 103.0 17.0 set 1
+graph "cluster11" bb 226.0 17.0 400.0 110.0
+graph "cluster11" label pos 313.0 97.5 dimen 68.0 17.0 set 1
+node "sh0010" coord 109.0 51.0 width 2.361111111111111 height 0.75 lw 85.0 rw 85.0 ht 54.0
+node "sh0015" coord 313.0 51.0 width 1.9583333333333333 height 0.5 lw 70.5 rw 70.5 ht 36.0

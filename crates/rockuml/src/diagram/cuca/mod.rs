@@ -2,19 +2,6 @@
 //! links between them, and what `hide`, `show` and `remove` say about them (PlantUML's `net.atmp.CucaDiagram`).
 //! Each family's diagram embeds a `CucaDiagram`.
 
-#![cfg_attr(
-    not(test),
-    expect(dead_code, reason = "used by the Phase 5 family commands")
-)]
-#![cfg_attr(
-    test,
-    allow(
-        dead_code,
-        unused_imports,
-        reason = "used by the Phase 5 family commands"
-    )
-)]
-
 mod entity_diagram;
 mod hide_or_show;
 mod magma;
@@ -29,8 +16,9 @@ use super::NotYetPorted;
 use super::titled::Titled;
 use crate::abel::{
     Bag, Entity, EntityGender, EntityId, EntityPortion, EntityType, GroupType, LeafType, Link,
-    LinkArg, LinkId, Together, TogetherId, is_pure_inner_link12,
+    LinkArg, LinkId, TogetherId, is_pure_inner_link12,
 };
+use crate::command::CommandError;
 use crate::creole::Display;
 use crate::decoration::LinkType;
 use crate::klimt::TextBlock;
@@ -43,15 +31,8 @@ use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 use crate::style::{SName, StyleBuilder};
 use crate::svek::IEntityImage;
-use crate::text::LineLocation;
+use crate::text::{LineLocation, without_quotes_or_brackets};
 use hide_or_show::HideOrShow;
-
-/// A quark name a command cannot use, and how sure PlantUML is that the line was meant for that command.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Failure {
-    pub error: String,
-    pub score: i32,
-}
 
 /// A diagram of entities and links, which the commands class, description and state diagrams share work on
 /// (in PlantUML, the subclasses of `CucaDiagram`).
@@ -59,8 +40,8 @@ pub(crate) trait EntityDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram;
 
     /// The name an element written like `"Name"` is known by (`cleanId`).
-    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
-        CucaDiagram::clean_id(id)
+    fn clean_id(id: &str) -> &str {
+        without_quotes_or_brackets(id)
     }
 }
 
@@ -83,7 +64,8 @@ pub(crate) struct CucaDiagram {
     links: Vec<Link>,
     /// The diagram's links, in the order they were added.
     link_order: Vec<LinkId>,
-    togethers: Vec<Together>,
+    /// How many `together` blocks were opened, which numbers the next.
+    together_count: usize,
     /// The groups and `together` blocks the commands are inside, innermost last; the root at the bottom.
     stacks: Vec<Bag>,
     hide_or_shows: Vec<EntityHideOrShow>,
@@ -95,7 +77,6 @@ pub(crate) struct CucaDiagram {
     cpt1: i32,
     /// Numbers names afresh on every parsing pass.
     cpt2: i32,
-    raw_layout: i32,
     last_entity: Option<EntityId>,
     /// `hide empty description`: states without description show their name alone.
     hide_empty_description_for_state: bool,
@@ -113,7 +94,7 @@ impl CucaDiagram {
             entities: Vec::new(),
             links: Vec::new(),
             link_order: Vec::new(),
-            togethers: Vec::new(),
+            together_count: 0,
             stacks: Vec::new(),
             hide_or_shows: Vec::new(),
             hides2: Vec::new(),
@@ -121,7 +102,6 @@ impl CucaDiagram {
             hide_visibility_modifier: Vec::new(),
             cpt1: 0,
             cpt2: 0,
-            raw_layout: 0,
             last_entity: None,
             hide_empty_description_for_state: false,
             svek_images: Vec::new(),
@@ -170,10 +150,6 @@ impl CucaDiagram {
         self.namespace.child(parent, full)
     }
 
-    pub(crate) fn child_if_exists(&self, parent: QuarkId, name: &str) -> Option<QuarkId> {
-        self.namespace.child_if_exists(parent, name)
-    }
-
     /// `None` keeps names whole, which `set namespaceSeparator none` asks for.
     pub(crate) fn set_namespace_separator(&mut self, namespace_separator: Option<&str>) {
         self.namespace_separator = namespace_separator.map(str::to_owned);
@@ -191,28 +167,12 @@ impl CucaDiagram {
         self.stacks.truncate(1);
     }
 
-    /// The part after the last `::` of `ent_string`, when it starts with the name of `ident`.
-    pub(crate) fn get_port_for(&self, ent_string: &str, ident: QuarkId) -> Option<String> {
-        let x = ent_string.rfind("::")?;
-        ent_string
-            .starts_with(self.quark(ident).get_name())
-            .then(|| ent_string[x + 2..].to_owned())
-    }
-
     /// `id` without its `::port`, unless `::` separates namespaces.
     pub(crate) fn remove_port_id<'a>(&self, id: &'a str) -> &'a str {
         if self.get_namespace_separator() == Some("::") {
             return id;
         }
         id.rfind("::").map_or(id, |x| &id[..x])
-    }
-
-    /// The `port` of `id::port`, unless `::` separates namespaces.
-    pub(crate) fn get_port_id<'a>(&self, id: &'a str) -> Option<&'a str> {
-        if self.get_namespace_separator() == Some("::") {
-            return None;
-        }
-        id.rfind("::").map(|x| &id[x + 2..])
     }
 
     /// The innermost group the commands are in.
@@ -233,25 +193,6 @@ impl CucaDiagram {
             Some(Bag::Together(together)) => Some(*together),
             _ => None,
         }
-    }
-
-    pub(crate) fn get_together(&self, id: TogetherId) -> &Together {
-        &self.togethers[id.0]
-    }
-
-    /// A name without the quotes, parentheses, brackets or colons around it.
-    pub(crate) fn clean_id(id: &str) -> &str {
-        if id.chars().count() < 2 {
-            return id;
-        }
-        let unquoted = crate::text::unquoted(id);
-        if unquoted.len() != id.len() {
-            return unquoted;
-        }
-        [('(', ')'), ('[', ']'), (':', ':')]
-            .into_iter()
-            .find_map(|(start, end)| id.strip_prefix(start)?.strip_suffix(end))
-            .unwrap_or(id)
     }
 
     pub(crate) fn set_last_entity(&mut self, last: Option<EntityId>) {
@@ -281,7 +222,6 @@ impl CucaDiagram {
             uid,
             location.cloned(),
             style_builder,
-            self.raw_layout,
             entity_type,
         ));
         self.namespace.set_data(quark, id);
@@ -314,19 +254,14 @@ impl CucaDiagram {
         result
     }
 
-    pub(crate) fn quark_in_context(&mut self, reuse_existing_child: bool, full: &str) -> QuarkId {
-        self.quark_in_context_safe(reuse_existing_child, full)
-            .unwrap_or_else(|failure| panic!("{}", failure.error))
-    }
-
-    /// The quark a name written in the current group means. With a separator, `.a.b` starts from the root,
-    /// `a.b` too when `a` is a package below the root, and a plain name already used once elsewhere may
-    /// mean that one.
-    pub(crate) fn quark_in_context_safe(
+    /// The quark a name written in the current group means (`quarkInContextSafe`). With a separator, `.a.b`
+    /// starts from the root, `a.b` too when `a` is a package below the root, and a plain name already used
+    /// once elsewhere may mean that one. The score of a bad name weighs it against other diagram types.
+    pub(crate) fn quark_in_context(
         &mut self,
         reuse_existing_child: bool,
         full: &str,
-    ) -> Result<QuarkId, Failure> {
+    ) -> Result<QuarkId, CommandError> {
         let Some(sep) = self.namespace_separator.clone() else {
             if let Some(result) = self.namespace.first_with_name(full) {
                 return Ok(result);
@@ -335,10 +270,10 @@ impl CucaDiagram {
             return Ok(self.namespace.child(current, full));
         };
         if full.ends_with(&sep) || full.contains(&format!("{sep}{sep}")) {
-            return Err(Failure {
-                error: format!("Bad name since {sep} is a separator"),
-                score: 3,
-            });
+            return Err(CommandError::with_score(
+                format!("Bad name since {sep} is a separator"),
+                3,
+            ));
         }
         let current_quark = self.entity(self.get_current_group()).get_quark();
         let root = QuarkId::ROOT;
@@ -362,10 +297,7 @@ impl CucaDiagram {
                 .get_data()
                 .is_some_and(|data| !self.entity(data).is_group())
             {
-                return Err(Failure {
-                    error: format!("Not a package: {}", &full[..x]),
-                    score: 0,
-                });
+                return Err(CommandError::new(format!("Not a package: {}", &full[..x])));
             }
             return Ok(self.namespace.child(root, full));
         }
@@ -390,10 +322,8 @@ impl CucaDiagram {
     }
 
     pub(crate) fn goto_together(&mut self) {
-        let together = TogetherId(self.togethers.len());
-        self.togethers.push(Together {
-            parent: self.current_together(),
-        });
+        let together = TogetherId(self.together_count);
+        self.together_count += 1;
         self.stacks.push(Bag::Together(together));
     }
 
@@ -421,6 +351,8 @@ impl CucaDiagram {
 
     /// Leaves the innermost group or `together` block; whether there was one. The root is never left.
     pub(crate) fn end_group(&mut self) -> bool {
+        // PlantUML pops the root too, after which any command needing the current group crashes; a stray
+        // `}` is an error here instead.
         if self.stacks.len() > 1 {
             self.stacks.pop();
             true
@@ -728,10 +660,6 @@ impl CucaDiagram {
             .collect()
     }
 
-    pub(crate) fn inc_raw_layout(&mut self) {
-        self.raw_layout += 1;
-    }
-
     /// The diagram's links, in the order they were added.
     pub(crate) fn get_links(&self) -> impl Iterator<Item = &Link> + '_ {
         self.link_order.iter().map(|id| self.link(*id))
@@ -755,7 +683,6 @@ impl CucaDiagram {
         let id = LinkId(self.links.len());
         let style_builder = self.skin().current_style_builder();
         self.links.push(Link::new(
-            id,
             uid,
             location.cloned(),
             style_builder,
@@ -771,26 +698,9 @@ impl CucaDiagram {
     pub(crate) fn get_inv(&mut self, link: LinkId) -> LinkId {
         let uid = self.get_unique_sequence("lnk");
         let id = LinkId(self.links.len());
-        let inv = self.link(link).get_inv(id, uid);
+        let inv = self.link(link).get_inv(uid);
         self.links.push(inv);
         id
-    }
-
-    /// Ports of the link's entities, which they learn the names of.
-    pub(crate) fn set_port_members(
-        &mut self,
-        link: LinkId,
-        port1: Option<String>,
-        port2: Option<String>,
-    ) {
-        let (cl1, cl2) = (self.link(link).get_entity1(), self.link(link).get_entity2());
-        if let Some(port1) = &port1 {
-            self.entity_mut(cl1).add_port_short_name(port1.clone());
-        }
-        if let Some(port2) = &port2 {
-            self.entity_mut(cl2).add_port_short_name(port2.clone());
-        }
-        self.link_mut(link).set_ports(port1, port2);
     }
 
     /// Adds the link, unless it is `single` and the same two entities are linked already.
@@ -818,21 +728,12 @@ impl CucaDiagram {
         self.link_order.remove(index);
     }
 
-    /// Every quark, the root first, in creation order.
-    pub(crate) fn quarks(&self) -> impl Iterator<Item = QuarkId> + use<> {
-        self.namespace.quarks()
-    }
-
     pub(crate) fn get_root_group(&self) -> EntityId {
         self.entities[0].id()
     }
 
     pub(crate) fn first_with_name(&self, full: &str) -> Option<QuarkId> {
         self.namespace.first_with_name(full)
-    }
-
-    pub(crate) fn count_by_name(&self, full: &str) -> usize {
-        self.namespace.count_by_name(full)
     }
 
     pub(crate) fn set_hide_empty_description_for_state(&mut self, hide: bool) {

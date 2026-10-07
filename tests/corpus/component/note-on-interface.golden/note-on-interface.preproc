@@ -1,0 +1,5 @@
+@startuml
+() Api
+[Server] - Api
+note right of () Api : the public face
+@enduml

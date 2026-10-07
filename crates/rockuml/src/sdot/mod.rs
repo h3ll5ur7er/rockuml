@@ -645,7 +645,7 @@ fn add_visibility_modifier(
     link: &Link,
     skin: &SkinParam,
 ) -> Box<dyn TextBlock> {
-    let Some(modifier) = link.get_link_arg().get_visibility_modifier() else {
+    let Some(modifier) = link.get_visibility_modifier() else {
         return Box::new(with_margin(block, 1.0));
     };
     let visibility = modifier.get_u_block(

@@ -1,6 +1,8 @@
 //! Usecase, component, deployment and archimate diagrams (PlantUML's `descdiagram` package).
 
 mod commands;
+
+pub(super) use commands::{arrow_style, style_colors_multiples};
 #[cfg(test)]
 mod tests;
 
@@ -22,6 +24,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::pattern::RegexTree;
 use crate::style::SName;
+use crate::text::without_quotes_or_brackets;
 
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
@@ -104,7 +107,7 @@ impl EntityDiagram for DescriptionDiagram {
     }
 
     /// Also `()x`, `:x:/` and `(x)/`, the notations of interfaces and business actors and use cases.
-    fn clean_id<'a>(&self, id: &'a str) -> &'a str {
+    fn clean_id(id: &str) -> &str {
         let id = id.strip_prefix("()").map_or(id, java::trim);
         if let Some(name) = id
             .strip_prefix(':')
@@ -116,7 +119,7 @@ impl EntityDiagram for DescriptionDiagram {
         {
             return name;
         }
-        CucaDiagram::clean_id(id)
+        without_quotes_or_brackets(id)
     }
 }
 
@@ -169,6 +172,14 @@ impl AbstractDiagram for DescriptionDiagram {
 impl TitledDiagram for DescriptionDiagram {
     fn titled(&mut self) -> &mut Titled {
         &mut self.cuca.titled
+    }
+
+    fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
+        Some(&mut self.cuca)
+    }
+
+    fn description_diagram(&mut self) -> Option<&mut DescriptionDiagram> {
+        Some(self)
     }
 }
 

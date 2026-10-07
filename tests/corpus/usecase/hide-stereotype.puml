@@ -1,0 +1,6 @@
+@startuml
+actor Customer <<human>>
+usecase (Checkout) <<main>>
+Customer --> (Checkout)
+hide stereotype
+@enduml

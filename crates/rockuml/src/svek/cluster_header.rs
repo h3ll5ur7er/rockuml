@@ -6,6 +6,8 @@ use crate::abel::{Entity, GroupType};
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::symbol::{Block, USymbol};
 use crate::diagram::cuca::CucaDiagram;
+use crate::diagram::entity_image_legend;
+use crate::klimt::blocks::{DecorateEntityImage, Decoration};
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::component::TextBlockEmpty;
@@ -121,12 +123,36 @@ fn get_title_block(g: &Entity, diagram: &CucaDiagram, style: &Style) -> Block {
     )
 }
 
+/// The stereotype, with the legend written inside the group above or below it.
 fn get_stereo_block(
     g: &Entity,
     diagram: &CucaDiagram,
     title_horizontal_alignment: HorizontalAlignment,
 ) -> Block {
-    let empty = || -> Block { Rc::new(TextBlockEmpty::default()) };
+    let stereo = get_stereo_block_without_legend(g, diagram, title_horizontal_alignment);
+    let Some((legend, vertical)) = &g.legend else {
+        return Rc::from(stereo);
+    };
+    let legend_block =
+        entity_image_legend(&legend.display, diagram.skin(), diagram.get_style_name());
+    let decoration = Decoration {
+        block: stereo,
+        alignment: legend.alignment,
+        group: None,
+    };
+    Rc::new(DecorateEntityImage::add(
+        legend_block,
+        decoration,
+        *vertical,
+    ))
+}
+
+fn get_stereo_block_without_legend(
+    g: &Entity,
+    diagram: &CucaDiagram,
+    title_horizontal_alignment: HorizontalAlignment,
+) -> Box<dyn TextBlock> {
+    let empty = || -> Box<dyn TextBlock> { Box::new(TextBlockEmpty::default()) };
     let Some(stereotype) = &g.stereotype else {
         return empty();
     };
@@ -135,7 +161,7 @@ fn get_stereo_block(
         return empty();
     }
     if let Some(sprite) = stereotype.get_sprite(diagram.skin()) {
-        return Rc::from(sprite);
+        return sprite;
     }
     let visible_stereotypes = diagram
         .get_visible_stereotype_labels(g.id())
@@ -152,7 +178,7 @@ fn get_stereo_block(
         &diagram.skin().current_style_builder(),
         Some(stereotype),
     );
-    Rc::new(Display::create(visible_stereotypes).create0(
+    Box::new(Display::create(visible_stereotypes).create0(
         &style.font_configuration(),
         title_horizontal_alignment,
         diagram.skin(),

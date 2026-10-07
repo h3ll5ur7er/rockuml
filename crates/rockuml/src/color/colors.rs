@@ -135,6 +135,23 @@ impl Colors {
         result
     }
 
+    /// The style's background, line (for lines and arrows) and font colours, which read as black when the
+    /// style sets none (`applyStyle`).
+    #[must_use]
+    pub(crate) fn apply_style(&self, style: &Style) -> Self {
+        let line = style.value(PName::LineColor).as_color();
+        self.with(
+            ColorType::Back,
+            Some(style.value(PName::BackGroundColor).as_color()),
+        )
+        .with(ColorType::Line, Some(line.clone()))
+        .with(ColorType::Arrow, Some(line))
+        .with(
+            ColorType::Text,
+            Some(style.value(PName::FontColor).as_color()),
+        )
+    }
+
     /// The background or line colour set here, or else the style's (`getColor(Style, PName, HColorSet)`).
     pub(crate) fn get_color_of(&self, style: &Style, name: PName) -> HColor {
         let own = match name {

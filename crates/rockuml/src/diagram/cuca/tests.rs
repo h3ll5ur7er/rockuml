@@ -1,5 +1,5 @@
 use super::*;
-use crate::abel::{EntityGender, LinkArrow, Position};
+use crate::abel::{EntityGender, LinkArrow};
 use crate::color::{ColorType, Colors, HColor};
 use crate::decoration::LinkDecor;
 use crate::diagram::UmlSource;
@@ -14,7 +14,7 @@ fn diagram(separator: Option<&str>) -> CucaDiagram {
 
 /// Declares a leaf the way commands do: its quark resolved in the current group.
 fn leaf(diagram: &mut CucaDiagram, name: &str, leaf_type: LeafType) -> EntityId {
-    let quark = diagram.quark_in_context(false, name);
+    let quark = diagram.quark_in_context(false, name).unwrap();
     diagram.really_create_leaf(None, quark, Display::create([name]), leaf_type)
 }
 
@@ -30,7 +30,7 @@ fn link(diagram: &mut CucaDiagram, from: EntityId, to: EntityId) -> LinkId {
 }
 
 fn enter_package(diagram: &mut CucaDiagram, name: &str) -> EntityId {
-    let quark = diagram.quark_in_context(false, name);
+    let quark = diagram.quark_in_context(false, name).unwrap();
     diagram.goto_group(None, quark, Display::create([name]), GroupType::Package);
     diagram.get_current_group()
 }
@@ -53,95 +53,73 @@ fn uids(diagram: &CucaDiagram, entities: &[EntityId]) -> Vec<String> {
 #[test]
 fn without_separator_a_name_is_found_anywhere() {
     let mut diagram = diagram(None);
-    let dotted = diagram.quark_in_context_safe(true, "a.b").unwrap();
+    let dotted = diagram.quark_in_context(true, "a.b").unwrap();
     assert_eq!(diagram.quark(dotted).get_name(), "a.b");
-    assert_eq!(
-        diagram.quark(dotted).get_parent(),
-        Some(diagram.quarks().next().unwrap())
-    );
+    assert_eq!(diagram.quark(dotted).get_parent(), Some(QuarkId::ROOT));
     enter_package(&mut diagram, "P");
-    let inner = diagram.quark_in_context_safe(false, "x").unwrap();
+    let inner = diagram.quark_in_context(false, "x").unwrap();
     assert_eq!(qualified(&diagram, inner), "P\u{1}x");
     diagram.end_group();
-    assert_eq!(diagram.quark_in_context_safe(false, "x"), Ok(inner));
-    assert_eq!(diagram.quark_in_context_safe(false, "a.b"), Ok(dotted));
+    assert_eq!(diagram.quark_in_context(false, "x"), Ok(inner));
+    assert_eq!(diagram.quark_in_context(false, "a.b"), Ok(dotted));
 }
 
 #[test]
 fn with_a_separator_names_resolve_from_the_current_group_or_the_root() {
     let mut diagram = diagram(Some("."));
-    let deep = diagram.quark_in_context_safe(false, "a.b.C").unwrap();
+    let deep = diagram.quark_in_context(false, "a.b.C").unwrap();
     assert_eq!(qualified(&diagram, deep), "a.b.C");
     enter_package(&mut diagram, "a");
-    let relative = diagram.quark_in_context_safe(false, "C2").unwrap();
+    let relative = diagram.quark_in_context(false, "C2").unwrap();
     assert_eq!(qualified(&diagram, relative), "a.C2");
-    let absolute = diagram.quark_in_context_safe(false, ".D").unwrap();
+    let absolute = diagram.quark_in_context(false, ".D").unwrap();
     assert_eq!(qualified(&diagram, absolute), "D");
-    let known_root_package = diagram.quark_in_context_safe(false, "a.b.E").unwrap();
+    let known_root_package = diagram.quark_in_context(false, "a.b.E").unwrap();
     assert_eq!(qualified(&diagram, known_root_package), "a.b.E");
-    let unknown_package = diagram.quark_in_context_safe(false, "z.Y").unwrap();
+    let unknown_package = diagram.quark_in_context(false, "z.Y").unwrap();
     assert_eq!(qualified(&diagram, unknown_package), "a.z.Y");
 }
 
 #[test]
 fn a_name_used_once_elsewhere_is_reused_when_asked() {
     let mut diagram = diagram(Some("."));
-    let elsewhere = diagram.quark_in_context_safe(false, "q.Target").unwrap();
+    let elsewhere = diagram.quark_in_context(false, "q.Target").unwrap();
     enter_package(&mut diagram, "p");
-    assert_eq!(diagram.quark_in_context_safe(true, "Target"), Ok(elsewhere));
-    let own = diagram.quark_in_context_safe(false, "Target").unwrap();
+    assert_eq!(diagram.quark_in_context(true, "Target"), Ok(elsewhere));
+    let own = diagram.quark_in_context(false, "Target").unwrap();
     assert_eq!(qualified(&diagram, own), "p.Target");
     // Now that two quarks bear the name, none is reused.
-    let quark = diagram.quark_in_context_safe(true, "Target").unwrap();
+    let quark = diagram.quark_in_context(true, "Target").unwrap();
     assert_eq!(quark, own);
 }
 
 #[test]
 fn double_colons_separate_like_dots() {
     let mut diagram = diagram(Some("::"));
-    let quark = diagram
-        .quark_in_context_safe(false, "ns::sub::Klass")
-        .unwrap();
+    let quark = diagram.quark_in_context(false, "ns::sub::Klass").unwrap();
     assert_eq!(qualified(&diagram, quark), "ns::sub::Klass");
     assert_eq!(diagram.remove_port_id("A::port"), "A::port");
-    assert_eq!(diagram.get_port_id("A::port"), None);
     let dotted = self::diagram(Some("."));
     assert_eq!(dotted.remove_port_id("A::port"), "A");
-    assert_eq!(dotted.get_port_id("A::port"), Some("port"));
 }
 
 #[test]
 fn bad_names_and_leaves_used_as_packages_are_errors() {
     let mut diagram = diagram(Some("."));
-    let bad = |error: &str, score| {
-        Err(Failure {
-            error: error.to_owned(),
-            score,
-        })
-    };
+    let bad = |error: &str, score| Err(CommandError::with_score(error, score));
     assert_eq!(
-        diagram.quark_in_context_safe(false, "a."),
+        diagram.quark_in_context(false, "a."),
         bad("Bad name since . is a separator", 3)
     );
     assert_eq!(
-        diagram.quark_in_context_safe(false, "a..b"),
+        diagram.quark_in_context(false, "a..b"),
         bad("Bad name since . is a separator", 3)
     );
     class(&mut diagram, "Foo");
     assert_eq!(
-        diagram.quark_in_context_safe(false, "Foo.bar"),
+        diagram.quark_in_context(false, "Foo.bar"),
         bad("Not a package: Foo", 0)
     );
-}
-
-#[test]
-fn names_lose_quotes_and_brackets() {
-    assert_eq!(CucaDiagram::clean_id("\"A B\""), "A B");
-    assert_eq!(CucaDiagram::clean_id("(use)"), "use");
-    assert_eq!(CucaDiagram::clean_id("[comp]"), "comp");
-    assert_eq!(CucaDiagram::clean_id(":actor:"), "actor");
-    assert_eq!(CucaDiagram::clean_id(":"), ":");
-    assert_eq!(CucaDiagram::clean_id("plain"), "plain");
 }
 
 #[test]
@@ -220,11 +198,7 @@ fn groups_are_entered_left_and_listed_in_name_order() {
     let z = class(&mut diagram, "Z");
     assert_eq!(qualified(&diagram, diagram.entity(x).get_quark()), "p.X");
     assert_eq!(diagram.entity(x).together, None);
-    let together = diagram
-        .entity(y)
-        .together
-        .expect("Y is in a together block");
-    assert_eq!(diagram.get_together(together).parent, None);
+    assert!(diagram.entity(y).together.is_some());
     assert_eq!(diagram.leafs(), [x, y, z]);
     assert_eq!(diagram.groups(), [p]);
     assert_eq!(diagram.groups_and_root(), [diagram.get_root_group(), p]);
@@ -239,7 +213,7 @@ fn reentering_a_group_keeps_it_and_its_type() {
     let mut diagram = diagram(Some("."));
     let first = enter_package(&mut diagram, "s");
     diagram.end_group();
-    let quark = diagram.quark_in_context(false, "s");
+    let quark = diagram.quark_in_context(false, "s").unwrap();
     diagram.goto_group(None, quark, Display::create(["other"]), GroupType::State);
     assert_eq!(diagram.get_current_group(), first);
     assert_eq!(diagram.entity(first).get_group_type(), GroupType::State);
@@ -273,7 +247,6 @@ fn inverted_links_swap_their_ends() {
         .with_quantifier(Some("1".to_owned()), Some("*".to_owned()));
     let link = diagram.new_link(None, a, b, link_type, arg);
     diagram.link_mut(link).link_arrow = LinkArrow::DirectNormal;
-    diagram.set_port_members(link, Some("p1".to_owned()), None);
     let inv = diagram.get_inv(link);
     let inv = diagram.link(inv);
     assert_eq!((inv.get_entity1(), inv.get_entity2()), (b, a));
@@ -286,14 +259,6 @@ fn inverted_links_swap_their_ends() {
     assert_eq!(inv.get_label().unwrap().lines(), ["uses"]);
     assert!(inv.is_inverted());
     assert_eq!(inv.get_link_arrow(), LinkArrow::Backward);
-    assert_eq!(
-        (inv.get_port_name1(), inv.get_port_name2()),
-        (None, Some("p1"))
-    );
-    assert_eq!(
-        diagram.entity(a).get_port_short_names().collect::<Vec<_>>(),
-        ["p1"]
-    );
 }
 
 #[test]
@@ -307,12 +272,8 @@ fn arrow_styles_set_colours_lines_and_flags() {
         .apply_style(Some("#red,dashed;#blue,norank"));
     let styled = diagram.link(id);
     assert_eq!(
-        styled.get_specific_color(),
+        styled.get_colors().get(ColorType::Line),
         Some(&HColor::parse("red").unwrap().unwrap())
-    );
-    assert_eq!(
-        styled.get_supplementary_colors()[0].get(ColorType::Line),
-        Some(&HColor::parse("blue").unwrap().unwrap())
     );
     assert_eq!(
         styled.get_type().get_stroke3(None).to_string(),
@@ -549,6 +510,16 @@ fn packages_holding_only_a_package_are_shown_as_one() {
 }
 
 #[test]
+fn a_package_holding_only_a_name_without_an_entity_is_not_packed() {
+    let mut diagram = diagram(Some("."));
+    let package = enter_package(&mut diagram, "P");
+    diagram.end_group();
+    diagram.quark_in_context(false, "P.unused").unwrap();
+    diagram.pack_some_package();
+    assert!(!diagram.entity(package).is_packed());
+}
+
+#[test]
 fn linked_packages_are_not_packed() {
     let mut diagram = diagram(Some("."));
     let a = enter_package(&mut diagram, "a");
@@ -557,7 +528,7 @@ fn linked_packages_are_not_packed() {
     diagram.end_group();
     diagram.end_group();
     link(&mut diagram, a, c);
-    assert!(!diagram.entity(a).can_be_packed(&diagram));
+    assert_eq!(diagram.entity(a).packable_child(&diagram), None);
 }
 
 #[test]
@@ -583,7 +554,6 @@ fn groups_whose_links_stay_inside_or_outside_are_autarkic() {
     diagram.remove_link(crossing);
     diagram.entity_mut(inner2).stereotype = Some(Stereotype::new("<<exitPoint>>"));
     assert!(!diagram.entity(s).is_autarkic(&diagram));
-    assert!(diagram.link(inside).has_entry_point(&diagram));
 }
 
 #[test]
@@ -632,12 +602,10 @@ fn types_mute_between_class_like_ones_only() {
 }
 
 #[test]
-fn notes_and_tips_hang_on_entities() {
+fn tips_hang_on_entities_one_per_member() {
     let mut diagram = diagram(None);
     let a = class(&mut diagram, "A");
     let entity = diagram.entity_mut(a);
-    entity.add_note(Display::create(["top"]), Position::Top, Colors::default());
-    entity.add_note(Display::create(["left"]), Position::Left, Colors::default());
     entity.put_tip(
         "m".to_owned(),
         Display::create(["1"]),
@@ -656,8 +624,6 @@ fn notes_and_tips_hang_on_entities() {
         Colors::default(),
         None,
     );
-    assert_eq!(entity.get_notes(Position::Top).len(), 1);
-    assert_eq!(entity.get_notes(Position::Bottom), []);
     let tips: Vec<(&str, &[String])> = entity
         .get_tips()
         .iter()
@@ -732,9 +698,11 @@ fn association_classes_cut_the_link_at_a_point() {
     let c = class(diagram, "C");
     let d = class(diagram, "D");
     let dotted = LinkType::new(LinkDecor::None, LinkDecor::None).go_dotted();
-    assert!(class_diagram.association_class(None, 1, a, b, c, dotted, None));
-    assert!(class_diagram.association_class(None, 1, a, b, d, dotted, None));
-    assert!(!class_diagram.association_class(None, 1, a, b, c, dotted, None));
+    let mut associate =
+        |associed| class_diagram.association_class(None, 1, a, b, associed, dotted, None);
+    assert!(associate(c).is_ok());
+    assert!(associate(d).is_ok());
+    assert!(associate(c).is_err());
     let diagram = &class_diagram.cuca;
     let points: Vec<EntityId> = diagram
         .leafs()
@@ -772,36 +740,4 @@ fn association_classes_cut_the_link_at_a_point() {
     assert_eq!(first.get_type().get_decor2(), LinkDecor::Arrow);
     assert_eq!(second.get_type().get_decor1(), LinkDecor::Aggregation);
     assert!(diagram.get_links().last().unwrap().is_invis());
-}
-
-#[test]
-fn links_are_cut_at_a_node_inserted_between() {
-    let mut class_diagram = class_diagram();
-    let diagram = &mut class_diagram.cuca;
-    let a = class(diagram, "A");
-    let b = class(diagram, "B");
-    let node = leaf(diagram, "N", LeafType::Association);
-    let arg = LinkArg::build(Some(Display::create(["l"])), 2)
-        .with_quantifier(Some("1".to_owned()), Some("2".to_owned()));
-    let link_type = LinkType::new(LinkDecor::None, LinkDecor::Arrow);
-    let ab = diagram.new_link(None, a, b, link_type, arg);
-    diagram.add_link(ab);
-    assert!(class_diagram.insert_between(None, b, a, node));
-    assert!(!class_diagram.insert_between(None, a, b, node));
-    let diagram = &class_diagram.cuca;
-    let halves: Vec<(EntityId, EntityId, Option<&str>, Option<&str>)> = diagram
-        .get_links()
-        .map(|link| {
-            (
-                link.get_entity1(),
-                link.get_entity2(),
-                link.get_quantifier1(),
-                link.get_quantifier2(),
-            )
-        })
-        .collect();
-    assert_eq!(
-        halves,
-        [(b, node, Some("1"), None), (node, a, None, Some("2"))]
-    );
 }
