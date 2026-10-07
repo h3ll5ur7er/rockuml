@@ -40,22 +40,22 @@ use crate::style::{SName, StyleBuilder};
 use crate::text::LineLocation;
 use hide_or_show::HideOrShow;
 
-/// A diagram of entities and links, which the commands such diagrams share act on (PlantUML's
-/// `AbstractEntityDiagram`).
-pub(crate) trait AbstractEntityDiagram {
+/// A quark name a command cannot use, and how sure PlantUML is that the line was meant for that command.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct Failure {
+    pub error: String,
+    pub score: i32,
+}
+
+/// A diagram of entities and links, which the commands class, description and state diagrams share work on
+/// (in PlantUML, the subclasses of `CucaDiagram`).
+pub(crate) trait EntityDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram;
 
     /// The name an element written like `"Name"` is known by (`cleanId`).
     fn clean_id<'a>(&self, id: &'a str) -> &'a str {
         CucaDiagram::clean_id(id)
     }
-}
-
-/// A quark name a command cannot use, and how sure PlantUML is that the line was meant for that command.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Failure {
-    pub error: String,
-    pub score: i32,
 }
 
 /// `hide` or `show` of a portion of the entities of a gender.

@@ -149,7 +149,7 @@ impl TitledDiagram for ClassDiagram {
     }
 }
 
-impl super::cuca::AbstractEntityDiagram for ClassDiagram {
+impl super::cuca::EntityDiagram for ClassDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram {
         &mut self.diagram.cuca
     }

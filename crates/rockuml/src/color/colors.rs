@@ -87,15 +87,6 @@ impl Colors {
         Ok(result)
     }
 
-    pub(crate) fn get_line_style(&self) -> Option<LinkStyle> {
-        self.line_style
-    }
-
-    /// The stroke `line.dashed` and the like ask for, if any.
-    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
-        self.line_style.map(LinkStyle::get_stroke3)
-    }
-
     fn put(&mut self, kind: ColorType, color: HColor) {
         match self
             .colors
@@ -114,6 +105,11 @@ impl Colors {
             result.put(kind, color);
         }
         result
+    }
+
+    /// The stroke the colours' line style asks for, if any.
+    pub(crate) fn get_specific_line_stroke(&self) -> Option<UStroke> {
+        self.line_style.map(LinkStyle::get_stroke3)
     }
 
     pub(crate) fn get(&self, kind: ColorType) -> Option<&HColor> {

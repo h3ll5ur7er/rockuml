@@ -6,7 +6,7 @@ pub(super) mod note;
 
 use regex::Regex;
 
-use super::cuca::{AbstractEntityDiagram, CucaDiagram};
+use super::cuca::{EntityDiagram, CucaDiagram};
 use super::titled::TitledDiagram;
 use crate::abel::{Entity, GroupType, LeafType};
 use crate::color::{ColorType, Colors};
@@ -15,7 +15,7 @@ use crate::command::{BlocLines, CommandControl, CommandError, Multiline};
 use crate::command::{Command, PatternCommand, SingleLine};
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
-use crate::klimt::geom::Rankdir;
+use crate::skin::Rankdir;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{Stereotag, Stereotype};
@@ -206,7 +206,7 @@ pub(super) fn create_json_single_line<D: NotPortedCommands + 'static>() -> Box<d
 }
 
 /// PlantUML's `CommandEndPackage`: `}` leaves the innermost group or `together` block.
-pub(super) fn end_package<D: AbstractEntityDiagram + 'static>() -> Box<dyn Command<D>> {
+pub(super) fn end_package<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
@@ -224,7 +224,7 @@ pub(super) fn end_package<D: AbstractEntityDiagram + 'static>() -> Box<dyn Comma
 }
 
 /// PlantUML's `CommandPackageWithUSymbol`: `node "Name" as N {` opens a group drawn as the symbol.
-pub(super) fn package_with_usymbol<D: AbstractEntityDiagram + 'static>() -> Box<dyn Command<D>> {
+pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
@@ -323,7 +323,7 @@ pub(super) fn package_with_usymbol<D: AbstractEntityDiagram + 'static>() -> Box<
 }
 
 /// PlantUML's `CommandTogether`: `together {` keeps the elements up to its `}` close in the layout.
-pub(super) fn together<D: AbstractEntityDiagram + 'static>() -> Box<dyn Command<D>> {
+pub(super) fn together<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
@@ -340,7 +340,7 @@ pub(super) fn together<D: AbstractEntityDiagram + 'static>() -> Box<dyn Command<
 }
 
 /// PlantUML's `CommandUrl`: `url of A is [[...]]`.
-pub(super) fn url<D: AbstractEntityDiagram + 'static>() -> Box<dyn Command<D>> {
+pub(super) fn url<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
@@ -379,7 +379,7 @@ pub(super) const ALL_TYPES: &str = "person|artifact|actor/|actor|folder|card|fil
 
 /// PlantUML's `CommandCreateElementMultilines` of type 0: `node N as "` with a description up to the
 /// closing quote.
-pub(super) fn create_element_multilines_type0<D: AbstractEntityDiagram + 'static>()
+pub(super) fn create_element_multilines_type0<D: EntityDiagram + 'static>()
 -> Box<dyn Command<D>> {
     fn start() -> RegexTree {
         RegexTree::concat(vec![
@@ -402,7 +402,7 @@ pub(super) fn create_element_multilines_type0<D: AbstractEntityDiagram + 'static
 }
 
 /// PlantUML's `CommandCreateElementMultilines` of type 1: `node N [` with a description up to `]`.
-pub(super) fn create_element_multilines_type1<D: AbstractEntityDiagram + 'static>()
+pub(super) fn create_element_multilines_type1<D: EntityDiagram + 'static>()
 -> Box<dyn Command<D>> {
     fn start() -> RegexTree {
         RegexTree::concat(vec![
@@ -422,7 +422,7 @@ pub(super) fn create_element_multilines_type1<D: AbstractEntityDiagram + 'static
     create_element_multilines(start, &plantuml_regex(r"^([^\[\]]*)\]$"))
 }
 
-fn create_element_multilines<D: AbstractEntityDiagram + 'static>(
+fn create_element_multilines<D: EntityDiagram + 'static>(
     start: fn() -> RegexTree,
     end: &Regex,
 ) -> Box<dyn Command<D>> {

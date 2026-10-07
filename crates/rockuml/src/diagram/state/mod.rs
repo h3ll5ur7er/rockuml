@@ -134,7 +134,7 @@ impl TitledDiagram for StateDiagram {
     }
 }
 
-impl super::cuca::AbstractEntityDiagram for StateDiagram {
+impl super::cuca::EntityDiagram for StateDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram {
         &mut self.cuca
     }

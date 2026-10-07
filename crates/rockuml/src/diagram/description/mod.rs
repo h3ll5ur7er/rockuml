@@ -8,7 +8,7 @@ use std::rc::Rc;
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
-use super::cuca::{AbstractEntityDiagram, CucaDiagram};
+use super::cuca::{EntityDiagram, CucaDiagram};
 use crate::abel::LeafType;
 use crate::decoration::symbol::USymbols;
 use crate::java;
@@ -102,7 +102,7 @@ fn code_for_description() -> RegexTree {
     )
 }
 
-impl AbstractEntityDiagram for DescriptionDiagram {
+impl EntityDiagram for DescriptionDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram {
         &mut self.cuca
     }

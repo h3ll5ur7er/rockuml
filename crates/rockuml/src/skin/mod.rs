@@ -24,7 +24,6 @@ use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
-use crate::klimt::geom::Rankdir;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::pattern::java_regex;
 use crate::style::{
@@ -46,8 +45,15 @@ pub(crate) struct SkinParam {
     md5_map: HashMap<String, String>,
     /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
     image_files: HashMap<String, Option<Vec<u8>>>,
-    /// Set by `left to right direction`, not by a `skinparam`.
     rankdir: Rankdir,
+}
+
+/// Which way graphs are laid out: ranks top to bottom, or left to right (PlantUML's `Rankdir`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) enum Rankdir {
+    #[default]
+    TopToBottom,
+    LeftToRight,
 }
 
 impl SpriteContainer for SkinParam {
@@ -75,6 +81,14 @@ impl SkinParam {
             image_files: source.image_files().clone(),
             ..Self::default()
         }
+    }
+
+    pub(crate) fn get_rankdir(&self) -> Rankdir {
+        self.rankdir
+    }
+
+    pub(crate) fn set_rankdir(&mut self, rankdir: Rankdir) {
+        self.rankdir = rankdir;
     }
 
     pub(crate) fn add_sprite(&mut self, name: String, sprite: Rc<dyn Sprite>) {
@@ -139,14 +153,6 @@ impl SkinParam {
                 .value(PName::BackGroundColor)
                 .as_color(),
         }
-    }
-
-    pub(crate) fn get_rankdir(&self) -> Rankdir {
-        self.rankdir
-    }
-
-    pub(crate) fn set_rankdir(&mut self, rankdir: Rankdir) {
-        self.rankdir = rankdir;
     }
 
     pub(crate) fn strict_uml_style(&self) -> bool {

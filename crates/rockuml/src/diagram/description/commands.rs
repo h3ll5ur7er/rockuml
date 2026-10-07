@@ -11,7 +11,7 @@ use crate::command::{
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
-use crate::diagram::cuca::{AbstractEntityDiagram, CucaDiagram};
+use crate::diagram::cuca::{EntityDiagram, CucaDiagram};
 use crate::diagram::cuca_commands::labels::Labels;
 use crate::diagram::cuca_commands::{ALL_TYPES, add_tags, colors, exists_with_bad_type3};
 use crate::direction::Direction;

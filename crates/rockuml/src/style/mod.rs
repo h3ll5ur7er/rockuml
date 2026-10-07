@@ -10,6 +10,7 @@ mod value;
 
 use std::collections::BTreeMap;
 
+use crate::stereo::Stereotype;
 use from_skinparam::skinparam_styles;
 pub(crate) use names::{PName, SName};
 use parser::StyleParser;
@@ -211,6 +212,51 @@ impl StyleBuilder {
                 None => Some(style.clone()),
                 Some(merged) => Some(merged.merge_with(style)),
             })
+    }
+
+    /// The style of an element with a stereotype: the stereotype's rules for each of its labels, merged
+    /// (`withTOBECHANGED` and `StyleSignatures.getMergedStyle`).
+    pub(crate) fn merged_style_with_stereotype(
+        &self,
+        signature: &StyleSignature,
+        stereotype: Option<&Stereotype>,
+    ) -> Option<Style> {
+        self.merged_style_for_labels(signature, stereotype, None)
+    }
+
+    /// The style of an element's stereotype itself (`forStereotypeItself`).
+    pub(crate) fn merged_style_for_stereotype_itself(
+        &self,
+        signature: &StyleSignature,
+        stereotype: Option<&Stereotype>,
+    ) -> Option<Style> {
+        self.merged_style_for_labels(signature, stereotype, Some(SName::Stereotype))
+    }
+
+    fn merged_style_for_labels(
+        &self,
+        signature: &StyleSignature,
+        stereotype: Option<&Stereotype>,
+        extra: Option<SName>,
+    ) -> Option<Style> {
+        let labels = stereotype.map(Stereotype::style_names).unwrap_or_default();
+        if labels.is_empty() {
+            return self.merged_style(signature);
+        }
+        labels
+            .iter()
+            .map(|label| {
+                let mut labelled = signature.with_stereotype(label);
+                if let Some(extra) = extra {
+                    labelled = labelled.with_name(extra);
+                }
+                self.merged_style(&labelled)
+            })
+            .reduce(|result, style| match (result, style) {
+                (Some(result), Some(style)) => Some(result.merge_keeping_stereotype_values(&style)),
+                (result, style) => result.or(style),
+            })
+            .flatten()
     }
 }
 
