@@ -1,3 +1,6 @@
+use std::rc::Rc;
+
+use super::fission::{Neutron, NeutronType};
 use super::{Atom, char_hidder};
 use crate::jaws::BLOCK_E1_REAL_TABULATION;
 use crate::klimt::font::{FontConfiguration, StringBounder};
@@ -149,6 +152,38 @@ impl AtomText {
 impl Atom for AtomText {
     fn starting_altitude(&self, _string_bounder: &dyn StringBounder) -> f64 {
         f64::from(self.font.space())
+    }
+
+    /// Runs of whitespace and of other characters, and single CJK characters.
+    fn neutrons(&self) -> Option<Vec<Neutron>> {
+        let mut result = Vec::new();
+        let mut pending = String::new();
+        for c in self.text.chars() {
+            if let Some(first) = pending.chars().next() {
+                let pending_type = NeutronType::of_char(first);
+                if pending_type != NeutronType::of_char(c)
+                    || pending_type == NeutronType::CjkIdeograph
+                {
+                    self.add_pending(&mut result, std::mem::take(&mut pending));
+                }
+            }
+            pending.push(c);
+        }
+        if !pending.is_empty() {
+            self.add_pending(&mut result, pending);
+        }
+        Some(result)
+    }
+}
+
+impl AtomText {
+    fn add_pending(&self, result: &mut Vec<Neutron>, text: String) {
+        let first = text.chars().next().expect("pending text is never empty");
+        let piece = Rc::new(Self {
+            text,
+            ..self.clone()
+        });
+        Neutron::add_breakable(result, Neutron::text(first, piece));
     }
 }
 

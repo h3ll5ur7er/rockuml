@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -95,14 +96,14 @@ impl CreoleParser {
     }
 
     /// What a list item starts with.
-    fn header(&self, style: StripeStyle, list_numbers: &mut ListNumbers) -> Option<Box<dyn Atom>> {
+    fn header(&self, style: StripeStyle, list_numbers: &mut ListNumbers) -> Option<Rc<dyn Atom>> {
         match style.kind {
             StripeStyleType::ListWithoutNumber => {
-                Some(Box::new(Bullet::new(self.font.clone(), style.order)))
+                Some(Rc::new(Bullet::new(self.font.clone(), style.order)))
             }
             StripeStyleType::ListWithNumber => {
                 let number = list_numbers.next(style.order);
-                Some(Box::new(AtomText::list_number(
+                Some(Rc::new(AtomText::list_number(
                     self.font.clone(),
                     style.order,
                     number,
@@ -142,12 +143,13 @@ impl MultilineBlock {
 
     /// Aligned like the sheet, as not being a line of text.
     fn into_stripe(self, alignment: HorizontalAlignment) -> Stripe {
-        let atom: Box<dyn Atom> = match self {
-            Self::Table(table) => Box::new(AtomWithMargin::new(table, Self::MARGIN, Self::MARGIN)),
-            Self::Tree(tree) => Box::new(AtomWithMargin::new(tree, Self::MARGIN, Self::MARGIN)),
-            Self::Code(code) => Box::new(code),
+        let atom: Rc<dyn Atom> = match self {
+            Self::Table(table) => Rc::new(AtomWithMargin::new(table, Self::MARGIN, Self::MARGIN)),
+            Self::Tree(tree) => Rc::new(AtomWithMargin::new(tree, Self::MARGIN, Self::MARGIN)),
+            Self::Code(code) => Rc::new(code),
         };
         Stripe {
+            header: None,
             atoms: vec![atom],
             cell_alignment: alignment,
         }
@@ -322,7 +324,8 @@ pub(super) struct StripeBuilder {
     font: FontConfiguration,
     style: StripeStyle,
     alignment: HorizontalAlignment,
-    atoms: Vec<Box<dyn Atom>>,
+    header: Option<Rc<dyn Atom>>,
+    atoms: Vec<Rc<dyn Atom>>,
     mode: CreoleMode,
 }
 
@@ -331,14 +334,15 @@ impl StripeBuilder {
         font: FontConfiguration,
         style: StripeStyle,
         alignment: HorizontalAlignment,
-        header: Option<Box<dyn Atom>>,
+        header: Option<Rc<dyn Atom>>,
         mode: CreoleMode,
     ) -> Self {
         Self {
             font,
             style,
             alignment,
-            atoms: header.into_iter().collect(),
+            atoms: header.iter().cloned().collect(),
+            header,
             mode,
         }
     }
@@ -367,7 +371,7 @@ impl StripeBuilder {
                     CreoleParser::new(self.font.clone(), HorizontalAlignment::Left)
                         .create_sheet(Display::with_newlines(&line).lines())
                 });
-                self.atoms.push(Box::new(HorizontalLine::new(style, title)));
+                self.atoms.push(Rc::new(HorizontalLine::new(style, title)));
             }
             _ => self.modify_stripe(&line),
         }
@@ -413,19 +417,19 @@ impl StripeBuilder {
         if !pending.is_empty() {
             let text = std::mem::take(pending);
             self.atoms
-                .push(Box::new(AtomText::legacy(&text, self.font.clone())));
+                .push(Rc::new(AtomText::legacy(&text, self.font.clone())));
         }
     }
 
     pub(super) fn add_url(&mut self, url: Url) {
         self.atoms
-            .push(Box::new(AtomText::link(url, self.font.hyperlink())));
+            .push(Rc::new(AtomText::link(url, self.font.hyperlink())));
     }
 
     /// An unknown icon is left out.
     pub(super) fn add_open_icon(&mut self, src: &str, scale: f64, color: Option<HColor>) {
         if let Some(open_iconic) = OpenIconic::retrieve(src) {
-            self.atoms.push(Box::new(AtomOpenIconic::new(
+            self.atoms.push(Rc::new(AtomOpenIconic::new(
                 color,
                 scale,
                 open_iconic,
@@ -449,9 +453,10 @@ impl StripeBuilder {
     pub(super) fn build(mut self) -> Stripe {
         if self.atoms.is_empty() {
             self.atoms
-                .push(Box::new(AtomText::legacy(" ", self.font.clone())));
+                .push(Rc::new(AtomText::legacy(" ", self.font.clone())));
         }
         Stripe {
+            header: self.header,
             atoms: self.atoms,
             cell_alignment: self.alignment,
         }

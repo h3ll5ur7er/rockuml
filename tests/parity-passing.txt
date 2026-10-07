@@ -128,6 +128,7 @@ debug sequence/reverse-arrows.puml
 debug sequence/secondary-group.puml
 debug sequence/self-messages.puml
 debug sequence/short-arrows.puml
+debug sequence/skinparam-basic.puml
 debug sequence/skinparam-colors.puml
 debug sequence/slanted.puml
 debug sequence/spacing.puml
@@ -136,6 +137,7 @@ debug sequence/style-block.puml
 debug sequence/teoz-delays-dividers.puml
 debug sequence/teoz-parallel.puml
 debug sequence/title-header-footer.puml
+debug sequence/wrap-width.puml
 dsvg blocks/commented-header.puml
 dsvg blocks/continuation.puml
 dsvg blocks/crlf-bom.puml
@@ -264,6 +266,7 @@ dsvg sequence/reverse-arrows.puml
 dsvg sequence/secondary-group.puml
 dsvg sequence/self-messages.puml
 dsvg sequence/short-arrows.puml
+dsvg sequence/skinparam-basic.puml
 dsvg sequence/skinparam-colors.puml
 dsvg sequence/slanted.puml
 dsvg sequence/spacing.puml
@@ -272,6 +275,7 @@ dsvg sequence/style-block.puml
 dsvg sequence/teoz-delays-dividers.puml
 dsvg sequence/teoz-parallel.puml
 dsvg sequence/title-header-footer.puml
+dsvg sequence/wrap-width.puml
 png blocks/commented-header.puml
 png blocks/continuation.puml
 png blocks/crlf-bom.puml
@@ -401,6 +405,7 @@ png sequence/reverse-arrows.puml
 png sequence/secondary-group.puml
 png sequence/self-messages.puml
 png sequence/short-arrows.puml
+png sequence/skinparam-basic.puml
 png sequence/skinparam-colors.puml
 png sequence/slanted.puml
 png sequence/spacing.puml
@@ -409,6 +414,7 @@ png sequence/style-block.puml
 png sequence/teoz-delays-dividers.puml
 png sequence/teoz-parallel.puml
 png sequence/title-header-footer.puml
+png sequence/wrap-width.puml
 preproc activity/basic.puml
 preproc activity/swimlanes.puml
 preproc blocks/commented-header.puml
@@ -572,6 +578,7 @@ preproc sequence/style-stereotype.puml
 preproc sequence/teoz-delays-dividers.puml
 preproc sequence/teoz-parallel.puml
 preproc sequence/title-header-footer.puml
+preproc sequence/wrap-width.puml
 preproc state/basic.puml
 preproc usecase/basic.puml
 svg blocks/commented-header.puml
@@ -700,6 +707,7 @@ svg sequence/reverse-arrows.puml
 svg sequence/secondary-group.puml
 svg sequence/self-messages.puml
 svg sequence/short-arrows.puml
+svg sequence/skinparam-basic.puml
 svg sequence/skinparam-colors.puml
 svg sequence/slanted.puml
 svg sequence/spacing.puml
@@ -708,6 +716,7 @@ svg sequence/style-block.puml
 svg sequence/teoz-delays-dividers.puml
 svg sequence/teoz-parallel.puml
 svg sequence/title-header-footer.puml
+svg sequence/wrap-width.puml
 url activity/basic.puml
 url activity/swimlanes.puml
 url blocks/commented-header.puml
@@ -871,5 +880,6 @@ url sequence/style-stereotype.puml
 url sequence/teoz-delays-dividers.puml
 url sequence/teoz-parallel.puml
 url sequence/title-header-footer.puml
+url sequence/wrap-width.puml
 url state/basic.puml
 url usecase/basic.puml

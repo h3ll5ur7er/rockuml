@@ -155,6 +155,7 @@ pub(crate) fn component_text(
     display: &Display,
     font: FontConfiguration,
     style: &Style,
+    max_width: f64,
 ) -> Box<dyn TextBlock> {
     if display.lines().len() == 1 && display.lines()[0].is_empty() {
         return Box::new(TextBlockEmpty::default());
@@ -163,19 +164,20 @@ pub(crate) fn component_text(
         .natural_alignment()
         .or_else(|| style.horizontal_alignment())
         .unwrap_or_default();
-    creole_text(display.lines(), font, alignment)
+    creole_text(display.lines(), font, alignment, max_width)
 }
 
+/// Creole text whose lines wrap beyond `max_width`, unless it is 0.
 pub(crate) fn creole_text(
     lines: &[String],
     font: FontConfiguration,
     alignment: HorizontalAlignment,
+    max_width: f64,
 ) -> Box<dyn TextBlock> {
     let sheet = CreoleParser::new(font, alignment).create_sheet(lines);
-    Box::new(SheetBlock2::new(SheetBlock1::new(
-        sheet,
-        ClockwiseTopRightBottomLeft::none(),
-    )))
+    Box::new(SheetBlock2::new(
+        SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
+    ))
 }
 
 /// Takes room but draws nothing (`TextBlockEmpty`).

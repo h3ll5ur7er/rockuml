@@ -595,6 +595,7 @@ impl<'a> PartitionHeader<'a> {
             display.lines(),
             header.font_configuration(),
             HorizontalAlignment::Left,
+            0.0,
         );
         Self {
             arguments,

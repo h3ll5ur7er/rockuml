@@ -55,7 +55,7 @@ pub(super) fn participant_component(
     let model = diagram.participant(participant);
     let (style, _stereo) = participant_styles(model);
     let display = participant_display(diagram, participant);
-    let text_block = component_text(&display, style.font_configuration(), &style);
+    let text_block = component_text(&display, style.font_configuration(), &style, 0.0);
     let fashion = style.symbol_context(&Colors::default());
     match model.kind {
         ParticipantType::Participant | ParticipantType::Collections => {
@@ -185,7 +185,7 @@ pub(super) fn englober(diagram: &SequenceDiagram, englober: usize) -> ComponentR
     let model = diagram.englober(englober);
     let style = englober_style(&diagram.style_builder(), model);
     let text = TextualPart::new(
-        component_text(&model.title, style.font_configuration(), &style),
+        component_text(&model.title, style.font_configuration(), &style, 0.0),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 3.0, 1.0, 3.0),
     );
     ComponentRoseEnglober::new(
@@ -245,7 +245,7 @@ pub(super) fn divider(divider: &Labelled) -> Box<dyn Component> {
     let empty = display.lines().first().is_none_or(String::is_empty);
     Box::new(ComponentRoseDivider::new(
         TextualPart::new(
-            component_text(display, style.font_configuration(), &style),
+            component_text(display, style.font_configuration(), &style, 0.0),
             ClockwiseTopRightBottomLeft::same(4.0),
         ),
         style.value(PName::BackGroundColor).as_color(),
@@ -262,7 +262,7 @@ pub(super) fn delay_text(delay: &Labelled) -> Box<dyn Component> {
         &sequence_signature2(SName::LifeLine, SName::Delay),
     );
     Box::new(ComponentRoseDelayText::new(TextualPart::new(
-        component_text(&delay.display, style.font_configuration(), &style),
+        component_text(&delay.display, style.font_configuration(), &style, 0.0),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(4.0, 0.0, 4.0, 0.0),
     )))
 }
@@ -282,10 +282,11 @@ pub(super) fn reference(reference: &Reference) -> Box<dyn Component> {
         &["ref".to_owned()],
         header_style.font_configuration(),
         HorizontalAlignment::Left,
+        0.0,
     );
     Box::new(ComponentRoseReference::new(
         TextualPart::new(
-            component_text(&reference.display, style.font_configuration(), &style),
+            component_text(&reference.display, style.font_configuration(), &style, 0.0),
             ClockwiseTopRightBottomLeft::same(4.0),
         ),
         header,
@@ -305,7 +306,7 @@ pub(super) fn grouping_header(start: &GroupingStart) -> Box<dyn Component> {
     };
     let title = Display::with_newlines(title.unwrap_or_default());
     let text = TextualPart::new(
-        component_text(&title, header.font_configuration(), &header),
+        component_text(&title, header.font_configuration(), &header, 0.0),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 30.0, 1.0, 15.0),
     );
     let comment = comment.map(|comment| {
@@ -316,6 +317,7 @@ pub(super) fn grouping_header(start: &GroupingStart) -> Box<dyn Component> {
             display
                 .natural_alignment()
                 .unwrap_or(HorizontalAlignment::Left),
+            0.0,
         )
     });
     Box::new(ComponentRoseGroupingHeader::new(
@@ -341,6 +343,7 @@ pub(super) fn grouping_else(leaf: &GroupingLeaf) -> Box<dyn Component> {
             &Display::with_newlines(&label),
             style.font_configuration(),
             &style,
+            0.0,
         ),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 5.0, 1.0, 5.0),
     );

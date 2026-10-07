@@ -25,12 +25,18 @@ pub(crate) fn enhanced_text(
     style: &Style,
 ) -> Box<dyn TextBlock> {
     let thickness = style.value(PName::LineThickness).as_double();
+    let max_width = style.wrap_width();
     let mut blocks: Vec<Box<dyn TextBlock>> = Vec::new();
     let mut separator: Option<(char, Option<Box<dyn TextBlock>>)> = None;
     let mut lines: Vec<String> = Vec::new();
     for line in display.lines() {
         if is_block_separator(line) {
-            let block = creole_text(&std::mem::take(&mut lines), font.clone(), alignment);
+            let block = creole_text(
+                &std::mem::take(&mut lines),
+                font.clone(),
+                alignment,
+                max_width,
+            );
             blocks.push(decorate(block, separator.take(), thickness));
             let title = title(line, &font);
             separator = Some((
@@ -41,7 +47,7 @@ pub(crate) fn enhanced_text(
             lines.push(line.clone());
         }
     }
-    let block = creole_text(&lines, font, alignment);
+    let block = creole_text(&lines, font, alignment, max_width);
     blocks.push(decorate(block, separator, thickness));
     if blocks.len() == 1 {
         return blocks.remove(0);
@@ -64,6 +70,7 @@ fn title(line: &str, font: &FontConfiguration) -> Option<Box<dyn TextBlock>> {
         display.lines(),
         font.clone(),
         HorizontalAlignment::Left,
+        0.0,
     ))
 }
 

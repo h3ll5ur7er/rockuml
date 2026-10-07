@@ -1,0 +1,20 @@
+@startuml
+skinparam maxMessageSize 80
+<style>
+note {
+  MaximumWidth 70
+}
+</style>
+autonumber
+Alice -> Bob : a fairly long message that has to wrap over several lines
+Bob -> Bob : talking to myself for quite a while here
+Bob -> Alice : Supercalifragilisticexpialidocious is too long
+note left of Alice : a note that is wrapped by its style width
+note over Bob
+  * first bullet that goes on and on
+  * second
+  ----
+  after the separator, more text to wrap
+end note
+Alice -> Bob : **bold words** and //italic words// mixed together
+@enduml

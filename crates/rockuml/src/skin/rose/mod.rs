@@ -33,10 +33,10 @@ pub(crate) struct MessageLabel<'a> {
 }
 
 /// `Display.create0` for a message label: a number goes left of the text, both centred vertically.
-fn message_text(label: &MessageLabel<'_>, style: &Style) -> Box<dyn TextBlock> {
+fn message_text(label: &MessageLabel<'_>, style: &Style, max_width: f64) -> Box<dyn TextBlock> {
     let font = style.font_configuration();
     let Some(number) = label.number else {
-        return component_text(label.display, font, style);
+        return component_text(label.display, font, style, max_width);
     };
     // Only a whole label of one empty line takes no room; the text after a number is always creole.
     let alignment = label
@@ -44,13 +44,13 @@ fn message_text(label: &MessageLabel<'_>, style: &Style) -> Box<dyn TextBlock> {
         .natural_alignment()
         .or_else(|| style.horizontal_alignment())
         .unwrap_or_default();
-    let number = creole_text(&[number.to_owned()], font.clone(), alignment);
+    let number = creole_text(&[number.to_owned()], font.clone(), alignment, max_width);
     Box::new(TextBlockHorizontal {
         left: with_margin(
             number,
             ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 4.0, 0.0, 0.0),
         ),
-        right: creole_text(label.display.lines(), font, alignment),
+        right: creole_text(label.display.lines(), font, alignment, max_width),
     })
 }
 
@@ -78,14 +78,19 @@ impl TextBlock for TextBlockHorizontal {
     }
 }
 
-/// The label and style every message arrow shares.
+/// The label and style every message arrow shares. The style's wrap width wins over `maxMessageSize`.
 fn arrow_parts(
     style: &Style,
     configuration: &ArrowConfiguration,
+    skin: &SkinParam,
     label: &MessageLabel<'_>,
 ) -> ArrowParts {
+    let max_width = match style.wrap_width() {
+        0.0 => skin.max_message_size(),
+        style_width => style_width,
+    };
     let text = TextualPart::new(
-        message_text(label, style),
+        message_text(label, style, max_width),
         ClockwiseTopRightBottomLeft::top_right_bottom_left(1.0, 7.0, 1.0, 7.0),
     );
     ArrowParts::new(text, style.clone(), configuration)
@@ -99,7 +104,7 @@ pub(crate) fn create_component_self_arrow(
     label: &MessageLabel<'_>,
 ) -> ComponentRoseSelfArrow {
     ComponentRoseSelfArrow::new(
-        arrow_parts(style, configuration, label),
+        arrow_parts(style, configuration, skin, label),
         !skin.strict_uml_style(),
     )
 }
@@ -120,7 +125,7 @@ pub(crate) fn create_component_arrow(
             label,
         ));
     }
-    let parts = arrow_parts(style, configuration, label);
+    let parts = arrow_parts(style, configuration, skin, label);
     let text_style = skin
         .merged_style(&StyleSignature::of(&[
             SName::Root,
@@ -225,14 +230,14 @@ pub(crate) fn create_component_note(
         }
         NoteShape::Hexagonal => Box::new(ComponentRoseNoteHexagonal::new(
             TextualPart::new(
-                component_text(display, font, style),
+                component_text(display, font, style, style.wrap_width()),
                 margin(4.0, 12.0, 4.0, 12.0),
             ),
             fashion,
         )),
         NoteShape::Box => Box::new(ComponentRoseNoteBox::new(
             TextualPart::new(
-                component_text(display, font, style),
+                component_text(display, font, style, style.wrap_width()),
                 margin(4.0, 4.0, 4.0, 4.0),
             ),
             fashion,
