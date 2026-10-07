@@ -10,6 +10,7 @@ mod cluster_manager;
 mod color_sequence;
 mod entity_image;
 mod general_image_builder;
+mod image;
 mod margins;
 mod shape_type;
 mod svek_node;
@@ -28,3 +29,5 @@ pub(crate) use svek_node::SvekNode;
 
 /// Room around the text of entity images (`IEntityImage.MARGIN`).
 pub(crate) const MARGIN: i32 = 5;
+/// Room between the outline of entity images and their text (`IEntityImage.MARGIN_LINE`).
+pub(crate) const MARGIN_LINE: i32 = 5;

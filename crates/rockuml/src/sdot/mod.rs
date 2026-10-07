@@ -240,6 +240,33 @@ impl CucaDiagramFileMakerSmetana {
         mut self,
         string_bounder: &dyn StringBounder,
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
+        self.print(string_bounder)?;
+        let mut graph = Graph::new();
+        let Some(smetana) = self.export_graph(string_bounder, &mut graph) else {
+            return Ok(Box::new(TextBlockEmpty::default()));
+        };
+        let layout = graph
+            .layout()
+            .map_err(|_| NotYetPorted("graphs Smetana cannot lay out"))?;
+        // A group laid out on its own is padded by the image around it.
+        let canvas_margin = if self.is_nested_layout() { 0.0 } else { 6.0 };
+        Ok(Box::new(Drawing::new(self, smetana, layout, canvas_margin)))
+    }
+
+    /// The cgraph calls the layout of the diagram makes, as Smetana traces write them, up to the layout.
+    #[cfg(test)]
+    pub(crate) fn smetana_calls(
+        mut self,
+        string_bounder: &dyn StringBounder,
+    ) -> Result<Vec<String>, NotYetPorted> {
+        self.print(string_bounder)?;
+        let mut graph = Graph::traced();
+        self.export_graph(string_bounder, &mut graph);
+        Ok(graph.trace().expect("a traced graph").to_vec())
+    }
+
+    /// Makes the image and node of every entity, the clusters around them, and lets notes take their link.
+    fn print(&mut self, string_bounder: &dyn StringBounder) -> Result<(), NotYetPorted> {
         self.print_all_subgroups(string_bounder, self.root)?;
         let unpackaged = self.get_unpackaged_entities();
         self.print_entities(string_bounder, &unpackaged)?;
@@ -269,41 +296,38 @@ impl CucaDiagramFileMakerSmetana {
                 self.diagram.link_mut(link).opale = true;
             }
         }
-        self.get_text_block_internal(string_bounder)
+        Ok(())
     }
 
-    fn get_text_block_internal(
-        self,
+    /// Makes the graph to lay out in `graph`, which is new; `None` when there is nothing to lay out
+    /// (`getTextBlockInternal` up to the layout).
+    fn export_graph(
+        &self,
         string_bounder: &dyn StringBounder,
-    ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
-        let mut graph = Graph::new();
+        graph: &mut Graph,
+    ) -> Option<SmetanaGraph> {
         let g = graph.root();
         // The gap between top-level clusters comes from the margin of the graph holding them.
         graph.set(g, "margin", "16");
         let mut smetana = SmetanaGraph::default();
-        self.export_entities(&mut graph, &mut smetana, g, &self.get_unpackaged_entities());
-        self.export_groups(&mut graph, &mut smetana, g, self.root);
+        self.export_entities(graph, &mut smetana, g, &self.get_unpackaged_entities());
+        self.export_groups(graph, &mut smetana, g, self.root);
         for link in self.get_local_links() {
             if self.diagram.link(link).is_removed(&self.diagram) {
                 continue;
             }
-            if let Some(e) = self.create_edge(string_bounder, &mut graph, &mut smetana, link) {
+            if let Some(e) = self.create_edge(string_bounder, graph, &mut smetana, link) {
                 smetana.edges.push((link, e));
             }
         }
         if smetana.nodes.is_empty() && smetana.clusters.is_empty() {
-            return Ok(Box::new(TextBlockEmpty::default()));
+            return None;
         }
         graph.gv_context();
         if self.rankdir == Rankdir::LeftToRight {
             graph.set_with_default(g, "rankdir", "LR", "LR");
         }
-        let layout = graph
-            .layout()
-            .map_err(|_| NotYetPorted("graphs Smetana cannot lay out"))?;
-        // A group laid out on its own is padded by the image around it.
-        let canvas_margin = if self.is_nested_layout() { 0.0 } else { 6.0 };
-        Ok(Box::new(Drawing::new(self, smetana, layout, canvas_margin)))
+        Some(smetana)
     }
 
     fn export_entities(
