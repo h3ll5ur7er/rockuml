@@ -12,7 +12,7 @@ use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
 use crate::klimt::fashion::Fashion;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, UTranslate, XDimension2D, XPoint2D};
-use crate::klimt::group::{UGroup, UGroupType};
+use crate::klimt::group::UGroup;
 use crate::klimt::shape::UShape;
 use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::klimt::stencil::RectangleStencil;
@@ -24,7 +24,8 @@ use crate::skin::component::{TextBlockEmpty, creole_text};
 use crate::stereo::{Stereotype, StereotypeSprite};
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::svek::{AbstractEntityImage, IEntityImage, ShapeType};
-use crate::text::LineLocation;
+
+use super::entity_group;
 
 pub(crate) struct EntityImageDescription {
     base: AbstractEntityImage,
@@ -35,10 +36,8 @@ pub(crate) struct EntityImageDescription {
     stereo: Block,
     /// Interfaces draw their circle alone, their name below and their stereotype above it.
     hide_text: bool,
-    name: String,
-    uid: String,
-    qualified_name: String,
-    location: Option<LineLocation>,
+    comment: String,
+    group: UGroup,
 }
 
 impl EntityImageDescription {
@@ -172,13 +171,8 @@ impl EntityImageDescription {
             desc,
             stereo,
             hide_text,
-            name: name.to_owned(),
-            uid: entity.get_uid().to_owned(),
-            qualified_name: diagram
-                .quark(entity.get_quark())
-                .get_qualified_name()
-                .to_owned(),
-            location: entity.get_location().cloned(),
+            comment: format!("entity {name}"),
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
         }
     }
 }
@@ -189,14 +183,8 @@ impl TextBlock for EntityImageDescription {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        ug.draw(&UShape::Comment(format!("entity {}", self.name)));
-        let mut group = UGroup::at(self.location.as_ref());
-        group.put(UGroupType::Class, "entity");
-        group.put(UGroupType::Id, &format!("entity_{}", self.name));
-        group.put(UGroupType::DataEntity, &self.name);
-        group.put(UGroupType::DataUid, &self.uid);
-        group.put(UGroupType::DataQualifiedName, &self.qualified_name);
-        ug.start_group(&group);
+        ug.draw(&UShape::Comment(self.comment.clone()));
+        ug.start_group(&self.group);
         if let Some(url) = &self.url {
             ug.start_url(url);
         }

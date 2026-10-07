@@ -15,7 +15,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::ugraphic::UGraphic;
 use crate::svek::IEntityImage;
-use crate::svek::image::EntityImageDescription;
+use crate::svek::image::{EntityImageDescription, EntityImagePort};
 use crate::command::factory::{Created, create_system};
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
@@ -254,16 +254,22 @@ fn dump_images(diagram: &DescriptionDiagram) -> String {
         if entity.is_removed(cuca) || entity.get_leaf_type() == Some(LeafType::Note) {
             continue;
         }
-        let image: Box<dyn IEntityImage> = match entity.get_leaf_type() {
+        let (class, image): (_, Box<dyn IEntityImage>) = match entity.get_leaf_type() {
             Some(
                 LeafType::Description
                 | LeafType::Usecase
                 | LeafType::UsecaseBusiness
                 | LeafType::Circle,
-            ) => Box::new(EntityImageDescription::new(entity, cuca)),
+            ) => (
+                "EntityImageDescription",
+                Box::new(EntityImageDescription::new(entity, cuca)),
+            ),
+            Some(LeafType::Portin | LeafType::Portout) => (
+                "EntityImagePort",
+                Box::new(EntityImagePort::new(entity, cuca)),
+            ),
             other => panic!("no image for {other:?}"),
         };
-        let class = "EntityImageDescription";
         writeln!(out, "image {} {class}", entity.get_uid()).unwrap();
         let dimension = image.calculate_dimension(&StringBounderDebug);
         writeln!(
@@ -302,13 +308,8 @@ fn the_images_draw_like_plantumls() {
     let cases = fixture_cases();
     let mut failures = Vec::new();
     for (case, (model, expected)) in &cases {
-        // The note commands are ported with the notes, ports with the clusters they sit on, `remove` with
-        // `hide` and `show`.
-        if model.contains(" NOTE ")
-            || model.contains(" PORTIN ")
-            || model.contains(" PORTOUT ")
-            || *case == "component/hide-unlinked.puml"
-        {
+        // The note commands are ported with the notes, `remove` with `hide` and `show`.
+        if model.contains(" NOTE ") || *case == "component/hide-unlinked.puml" {
             continue;
         }
         let actual = dump_images(&read(case));

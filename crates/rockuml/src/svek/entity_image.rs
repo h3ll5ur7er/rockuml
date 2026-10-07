@@ -26,6 +26,10 @@ pub(crate) trait IEntityImage: TextBlock {
     }
 
     fn is_hidden(&self) -> bool;
+
+    /// Images drawn on their composite state's border learn, once the layout placed both, where the
+    /// composite's centre and their node's top are.
+    fn place_on_border(&self, _cluster_center_y: f64, _node_min_y: f64) {}
 }
 
 /// What every entity's image knows of its entity, read when the image is made: images are made while the
