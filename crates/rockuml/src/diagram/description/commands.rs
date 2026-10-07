@@ -331,23 +331,23 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
             code_raw = CucaDiagram::clean_id(java::trim(interface));
             Some("interface")
         } else if code_char == Some('(') || code_display == Some('(') {
-            business_variant(
+            Some(business_variant(
                 business,
                 &mut display_raw,
                 &mut code_raw,
                 ")/",
                 "usecase/",
                 "usecase",
-            )
+            ))
         } else if code_char == Some(':') || code_display == Some(':') {
-            business_variant(
+            Some(business_variant(
                 business,
                 &mut display_raw,
                 &mut code_raw,
                 ":/",
                 "actor/",
                 "actor",
-            )
+            ))
         } else if code_char == Some('[') || code_display == Some('[') {
             Some("component")
         } else {
@@ -429,19 +429,19 @@ fn business_variant<'a>(
     business_end: &str,
     business: &'a str,
     plain: &'a str,
-) -> Option<&'a str> {
+) -> &'a str {
     if business_keyword {
-        return Some(business);
+        return business;
     }
     if let Some(display) = display_raw.filter(|display| display.ends_with(business_end)) {
         *display_raw = Some(&display[..display.len() - 1]);
-        return Some(business);
+        return business;
     }
     if code_raw.ends_with(business_end) {
         *code_raw = &code_raw[..code_raw.len() - 1];
-        return Some(business);
+        return business;
     }
-    Some(plain)
+    plain
 }
 
 fn already_defined(name: &str) -> CommandError {
@@ -549,11 +549,11 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                 let location = lines.first().map(|first| first.location().clone());
                 let lines = lines.trimmed();
                 let first = lines.first().expect("a block has a first line");
-                let line0 = start_pattern
+                let head = start_pattern
                     .matcher(first.text())
                     .expect("the first line matched");
                 let code = diagram
-                    .clean_id(line0.get_lazzy("CODE", 0).unwrap_or_default())
+                    .clean_id(head.get_lazzy("CODE", 0).unwrap_or_default())
                     .to_owned();
                 let cuca = &mut diagram.cuca;
                 let quark = cuca.quark_in_context(false, &code);
@@ -563,7 +563,7 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                         cuca.quark(quark).get_name()
                     )));
                 }
-                let stereotype = archimate_stereotype(&line0)?;
+                let stereotype = archimate_stereotype(&head)?;
                 let display = Display::with_newlines(cuca.quark(quark).get_name());
                 let entity = create_leaf(
                     diagram,
@@ -573,7 +573,7 @@ pub(super) fn archimate_multilines() -> Box<dyn Command<DescriptionDiagram>> {
                     LeafType::Description,
                     Some(USymbols::RECTANGLE),
                 );
-                let colors = colors(&line0, ColorType::Back)?;
+                let colors = colors(&head, ColorType::Back)?;
                 let entity = diagram.cuca.entity_mut(entity);
                 entity.display = lines.sub_extract(1, 1).to_display();
                 if stereotype.is_some() {

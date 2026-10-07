@@ -436,7 +436,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
             let location = lines.first().map(|first| first.location().clone());
             let lines = lines.trim_smart(1);
             let first = lines.first().expect("a block has a first line").trimmed();
-            let line0 = start_pattern
+            let head = start_pattern
                 .matcher(first.text())
                 .expect("the first line matched");
             let last = lines.last().expect("a block has a last line").trimmed();
@@ -445,7 +445,7 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                 .and_then(|captures| captures.get(1))
                 .map_or("", |matched| matched.as_str())
                 .to_owned();
-            let keyword = line0.get("TYPE", 0).unwrap_or_default();
+            let keyword = head.get("TYPE", 0).unwrap_or_default();
             let (leaf_type, usymbol) = if keyword.eq_ignore_ascii_case("usecase") {
                 (LeafType::Usecase, USymbols::USECASE)
             } else if keyword.eq_ignore_ascii_case("usecase/") {
@@ -466,27 +466,25 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                 .iter()
                 .map(|line| line.text().to_owned())
                 .collect();
-            if let Some(desc_start) = line0.get("DESC", 0).filter(|desc| !desc.is_empty()) {
+            if let Some(desc_start) = head.get("DESC", 0).filter(|desc| !desc.is_empty()) {
                 texts.insert(0, desc_start.to_owned());
             }
             if !line_last.is_empty() {
                 texts.push(line_last);
             }
             let display = Display::create(texts);
-            let colors = colors(&line0, ColorType::Back)?;
+            let colors = colors(&head, ColorType::Back)?;
             let code = diagram
-                .clean_id(line0.get("CODE", 0).unwrap_or_default())
+                .clean_id(head.get("CODE", 0).unwrap_or_default())
                 .to_owned();
             let cuca = diagram.cuca();
             let quark = cuca.quark_in_context(true, &code);
-            let entity = match cuca.quark(quark).get_data() {
-                Some(existing) => existing,
-                None => {
-                    let created =
-                        cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type);
-                    cuca.entity_mut(created).usymbol = Some(usymbol);
-                    created
-                }
+            let entity = if let Some(existing) = cuca.quark(quark).get_data() {
+                existing
+            } else {
+                let created = cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type);
+                cuca.entity_mut(created).usymbol = Some(usymbol);
+                created
             };
             if exists_with_bad_type3(cuca.entity(entity), leaf_type, Some(usymbol)) {
                 return Err(CommandError::new(format!(
@@ -495,11 +493,11 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
                 )));
             }
             let entity = cuca.entity_mut(entity);
-            if let Some(stereotype) = line0.get("STEREO", 0) {
+            if let Some(stereotype) = head.get("STEREO", 0) {
                 entity.stereotype =
                     Some(Stereotype::with_spot(stereotype).map_err(|_| CommandError::bad_color())?);
             }
-            if let Some(url) = line0.get("URL", 0).and_then(Url::parse) {
+            if let Some(url) = head.get("URL", 0).and_then(Url::parse) {
                 entity.url = Some(url);
             }
             entity.colors = colors;

@@ -6,7 +6,7 @@ use std::rc::Rc;
 use crate::abel::{Entity, LeafType};
 use crate::color::ColorType;
 use crate::creole::Display;
-use crate::decoration::symbol::{Block, USymbols};
+use crate::decoration::symbol::{Block, USymbol, USymbols};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
 use crate::klimt::fashion::Fashion;
@@ -45,12 +45,6 @@ impl EntityImageDescription {
         let symbol = entity
             .get_usymbol()
             .unwrap_or_else(|| skin.component_style().to_u_symbol());
-        let shape_type = match symbol {
-            USymbols::FOLDER | USymbols::PACKAGE => ShapeType::Folder,
-            USymbols::HEXAGON => ShapeType::Hexagon,
-            USymbols::USECASE | USymbols::USECASE_BUSINESS => ShapeType::Oval,
-            _ => ShapeType::Rectangle,
-        };
         let hide_text = symbol == USymbols::INTERFACE;
         let colors = &entity.colors;
         let style_name = diagram.get_style_name();
@@ -97,10 +91,6 @@ impl EntityImageDescription {
                 style_title.value(PName::RoundCorner).as_double(),
                 style_title.value(PName::DiagonalCorner).as_double(),
             );
-        let fc_title = style_title.font_configuration();
-        let fc_stereo = style_stereo.font_configuration();
-        let default_align = style_title.horizontal_alignment().unwrap_or_default();
-
         let name = entity.get_name(diagram);
         let code_display = Display::with_newlines(name);
         let display = &entity.display;
@@ -109,41 +99,22 @@ impl EntityImageDescription {
             Rc::new(TextBlockEmpty {
                 dimension: XDimension2D::new(style.value(PName::MinimumWidth).as_double(), 0.0),
             })
-        } else if is_code {
-            Rc::from(enhanced_text(
-                display,
-                fc_title.clone(),
-                default_align,
-                &style_title,
-                skin,
-            ))
         } else {
+            let desc_style = if is_code { &style_title } else { &style };
             Rc::from(enhanced_text(
                 display,
-                style.font_configuration(),
-                default_align,
-                &style,
+                desc_style.font_configuration(),
+                style_title.horizontal_alignment().unwrap_or_default(),
+                desc_style,
                 skin,
             ))
         };
-
-        let stereo: Block = match (stereotype, stereotype.and_then(|s| s.get_sprite(skin))) {
-            (_, Some(sprite)) => Rc::from(sprite),
-            (Some(_), None) => match diagram.get_visible_stereotype_labels(entity.id()) {
-                Some(labels) if !labels.is_empty() => Rc::new(TextBlockMarged::new(
-                    creole_text(&labels, fc_stereo, HorizontalAlignment::Center, 0.0, skin),
-                    ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 1.0, 0.0, 1.0),
-                )),
-                _ => Rc::new(TextBlockEmpty::default()),
-            },
-            (None, None) => Rc::new(TextBlockEmpty::default()),
-        };
-
+        let stereo = stereo_block(entity, diagram, &style_stereo.font_configuration());
         let name_block: Block = Rc::new(name_block(
             &code_display,
             entity,
             skin.get_default_text_alignment(HorizontalAlignment::Center),
-            style_title.font_configuration_with(colors),
+            &style_title.font_configuration_with(colors),
             &style_title,
             skin,
         ));
@@ -162,7 +133,7 @@ impl EntityImageDescription {
         };
         Self {
             base: AbstractEntityImage::new(entity, diagram),
-            shape_type,
+            shape_type: shape_type(symbol),
             url: entity.url.clone(),
             as_small,
             desc,
@@ -234,13 +205,47 @@ impl IEntityImage for EntityImageDescription {
     }
 }
 
+/// The outline links meet: package symbols are folders, use cases ovals.
+fn shape_type(symbol: USymbol) -> ShapeType {
+    match symbol {
+        USymbols::FOLDER | USymbols::PACKAGE => ShapeType::Folder,
+        USymbols::HEXAGON => ShapeType::Hexagon,
+        USymbols::USECASE | USymbols::USECASE_BUSINESS => ShapeType::Oval,
+        _ => ShapeType::Rectangle,
+    }
+}
+
+/// The stereotype's sprite, or else its visible labels in `font`.
+fn stereo_block(entity: &Entity, diagram: &CucaDiagram, font: &FontConfiguration) -> Block {
+    let skin = diagram.skin();
+    let Some(stereotype) = &entity.stereotype else {
+        return Rc::new(TextBlockEmpty::default());
+    };
+    if let Some(sprite) = stereotype.get_sprite(skin) {
+        return Rc::from(sprite);
+    }
+    match diagram.get_visible_stereotype_labels(entity.id()) {
+        Some(labels) if !labels.is_empty() => Rc::new(TextBlockMarged::new(
+            creole_text(
+                &labels,
+                font.clone(),
+                HorizontalAlignment::Center,
+                0.0,
+                skin,
+            ),
+            ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 1.0, 0.0, 1.0),
+        )),
+        _ => Rc::new(TextBlockEmpty::default()),
+    }
+}
+
 /// The entity's name as a class body draws it (`BodyEnhanced1` on a display with no members): each line
 /// centred on the widest, with room on both sides. Only package symbols show it.
 fn name_block(
     display: &Display,
     entity: &Entity,
     alignment: HorizontalAlignment,
-    font: FontConfiguration,
+    font: &FontConfiguration,
     style: &Style,
     sprites: &dyn SpriteContainer,
 ) -> impl TextBlock + 'static {
@@ -256,7 +261,7 @@ fn name_block(
         .iter()
         .map(|line| {
             creole_text(
-                &Display::with_newlines(line).lines().to_vec(),
+                Display::with_newlines(line).lines(),
                 font.clone(),
                 alignment,
                 style.wrap_width(),
