@@ -1,0 +1,12 @@
+@startuml
+package Shop {
+  class Cart
+  class Item
+  Cart --> Item
+  legend
+  Carts hold items
+  endlegend
+}
+class Customer
+Customer --> Cart
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+json config.server [1, 2]
+json "Display" as other.name {
+  "a": 1
+}
+@enduml
