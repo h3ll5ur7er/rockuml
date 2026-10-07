@@ -351,7 +351,7 @@ pub fn build_skeleton(zz: &mut Globals, g: GraphId, subg: GraphId) {
         info.clust = Some(subg);
         if let Some(prev) = prev {
             let e = virtual_edge(zz, prev, v, None);
-            zz.ed_mut(e).xpenalty *= CL_CROSS;
+            zz.ed_mut(e).xpenalty = zz.ed(e).xpenalty.wrapping_mul(CL_CROSS);
         }
         prev = Some(v);
     }

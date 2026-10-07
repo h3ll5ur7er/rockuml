@@ -306,7 +306,7 @@ fn contain_clustnodes(zz: &mut Globals, g: GraphId) {
         let (ln, rn) = boundary_nodes(zz, g);
         match find_fast_edge(zz, ln, rn) {
             // make_lrvn already joins the boundary nodes of a labeled cluster: strengthen that edge instead.
-            Some(e) => zz.ed_mut(e).weight += 128,
+            Some(e) => zz.ed_mut(e).weight = zz.ed(e).weight.wrapping_add(128),
             None => {
                 make_aux_edge(zz, ln, rn, 1.0, 128); // clust compaction edge
             }

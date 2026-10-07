@@ -257,10 +257,11 @@ fn closestSide(zz: &Globals, n: NodeId, other: NodeId, oldport: &port) -> Option
                 y: (b.LL.y + b.UR.y) as i32 / 2,
             },
         };
-        p.x += pt.x;
-        p.y += pt.y;
-        let dx = f64::from(p.x - opt.x);
-        let dy = f64::from(p.y - opt.y);
+        // Java's int arithmetic, which DIST2 only widens after subtracting.
+        p.x = p.x.wrapping_add(pt.x);
+        p.y = p.y.wrapping_add(pt.y);
+        let dx = f64::from(p.x.wrapping_sub(opt.x));
+        let dy = f64::from(p.y.wrapping_sub(opt.y));
         let d = (dx * dx + dy * dy) as i32;
         if rv.is_none() || d < mind {
             mind = d;

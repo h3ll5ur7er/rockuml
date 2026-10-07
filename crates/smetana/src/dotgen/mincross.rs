@@ -1225,7 +1225,7 @@ fn endpoint_class(zz: &Globals, n: NodeId) -> usize {
 /// `virtual_weight`: weighs a virtual edge by the classes of its ends, to straighten long edges.
 pub(crate) fn virtual_weight(zz: &mut Globals, e: EdgeId) {
     let t = table[endpoint_class(zz, agtail(zz, e))][endpoint_class(zz, aghead(zz, e))];
-    zz.ed_mut(e).weight *= t;
+    zz.ed_mut(e).weight = zz.ed(e).weight.wrapping_mul(t);
 }
 
 /// `mincross_options`.

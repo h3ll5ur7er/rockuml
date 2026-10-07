@@ -1330,8 +1330,8 @@ fn recover_slack(zz: &mut Globals, e: EdgeId, p: &path) {
 fn resize_vn(zz: &mut Globals, vn: NodeId, lx: i32, cx: i32, rx: i32) {
     let nd = zz.nd_mut(vn);
     nd.coord.x = f64::from(cx);
-    nd.lw = f64::from(cx - lx);
-    nd.rw = f64::from(rx - cx);
+    nd.lw = f64::from(cx.wrapping_sub(lx));
+    nd.rw = f64::from(rx.wrapping_sub(cx));
 }
 
 /// `top_bound`: the nearest out-edge of `e`'s tail on `side` of `e` that already has a spline.

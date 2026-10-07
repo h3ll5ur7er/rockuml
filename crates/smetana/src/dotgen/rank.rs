@@ -102,7 +102,7 @@ fn edgelabel_ranks(zz: &mut Globals, g: GraphId) {
         while let Some(nn) = n {
             let mut e = agfstout(zz, g, nn);
             while let Some(ee) = e {
-                zz.ed_mut(ee).minlen *= 2;
+                zz.ed_mut(ee).minlen = zz.ed(ee).minlen.wrapping_mul(2);
                 e = agnxtout(zz, g, ee);
             }
             n = agnxtnode(zz, g, nn);

@@ -423,11 +423,11 @@ fn treeupdate(zz: &mut Globals, mut v: NodeId, w: NodeId, cutvalue: i32, dir: bo
         let e = zz.nd(v).par.expect("tree parent");
         let (tail, head) = (agtail(zz, e), aghead(zz, e));
         let d = if v == tail { dir } else { !dir };
-        if d {
-            zz.ed_mut(e).cutvalue += cutvalue;
+        zz.ed_mut(e).cutvalue = if d {
+            zz.ed(e).cutvalue.wrapping_add(cutvalue)
         } else {
-            zz.ed_mut(e).cutvalue -= cutvalue;
-        }
+            zz.ed(e).cutvalue.wrapping_sub(cutvalue)
+        };
         v = if zz.nd(tail).lim > zz.nd(head).lim {
             tail
         } else {
@@ -485,7 +485,7 @@ fn update(zz: &mut Globals, e: EdgeId, f: EdgeId) {
         treeupdate(zz, fhead, ftail, cutvalue, false) == lca,
         "update: mismatched lca in treeupdates"
     );
-    zz.ed_mut(f).cutvalue = -cutvalue;
+    zz.ed_mut(f).cutvalue = cutvalue.wrapping_neg();
     zz.ed_mut(e).cutvalue = 0;
     exchange_tree_edges(zz, e, f);
     let (par, low) = (zz.nd(lca).par, zz.nd(lca).low);
@@ -563,18 +563,18 @@ fn TB_balance(zz: &mut Globals) {
         if zz.nd(nn).node_type != NORMAL {
             continue;
         }
-        let (mut inweight, mut outweight) = (0, 0);
+        let (mut inweight, mut outweight): (i32, i32) = (0, 0);
         let mut low = 0;
         let mut high = zz.Maxrank;
         let mut i = 0;
         while let Some(e) = in_edge(zz, nn, i) {
-            inweight += zz.ed(e).weight;
+            inweight = inweight.wrapping_add(zz.ed(e).weight);
             low = max(low, zz.nd(agtail(zz, e)).rank + zz.ed(e).minlen);
             i += 1;
         }
         let mut i = 0;
         while let Some(e) = out_edge(zz, nn, i) {
-            outweight += zz.ed(e).weight;
+            outweight = outweight.wrapping_add(zz.ed(e).weight);
             high = min(high, zz.nd(aghead(zz, e)).rank - zz.ed(e).minlen);
             i += 1;
         }
@@ -701,15 +701,15 @@ fn x_cutval(zz: &mut Globals, f: EdgeId) {
     } else {
         (head, -1)
     };
-    let mut sum = 0;
+    let mut sum: i32 = 0;
     let mut i = 0;
     while let Some(e) = out_edge(zz, v, i) {
-        sum += x_val(zz, e, v, dir);
+        sum = sum.wrapping_add(x_val(zz, e, v, dir));
         i += 1;
     }
     let mut i = 0;
     while let Some(e) = in_edge(zz, v, i) {
-        sum += x_val(zz, e, v, dir);
+        sum = sum.wrapping_add(x_val(zz, e, v, dir));
         i += 1;
     }
     zz.ed_mut(f).cutvalue = sum;
@@ -728,7 +728,7 @@ fn x_val(zz: &Globals, e: EdgeId, v: NodeId, dir: i32) -> i32 {
         } else {
             0
         };
-        rv -= zz.ed(e).weight;
+        rv = rv.wrapping_sub(zz.ed(e).weight);
     } else {
         f = true;
         rv = zz.ed(e).weight;
@@ -744,7 +744,7 @@ fn x_val(zz: &Globals, e: EdgeId, v: NodeId, dir: i32) -> i32 {
         d = -d;
     }
     if d < 0 {
-        rv = -rv;
+        rv = rv.wrapping_neg();
     }
     rv
 }

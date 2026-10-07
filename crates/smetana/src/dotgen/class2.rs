@@ -132,10 +132,10 @@ pub(crate) fn merge_chain(zz: &mut Globals, g: GraphId, e: EdgeId, f: EdgeId, fl
     while let Some(r) = rep {
         // Inter-cluster multi-edges are not counted now.
         if flag {
-            zz.ed_mut(r).count += zz.ed(e).count;
+            zz.ed_mut(r).count = zz.ed(r).count.wrapping_add(zz.ed(e).count);
         }
-        zz.ed_mut(r).xpenalty += zz.ed(e).xpenalty;
-        zz.ed_mut(r).weight += zz.ed(e).weight;
+        zz.ed_mut(r).xpenalty = zz.ed(r).xpenalty.wrapping_add(zz.ed(e).xpenalty);
+        zz.ed_mut(r).weight = zz.ed(r).weight.wrapping_add(zz.ed(e).weight);
         let head = aghead(zz, r);
         if zz.nd(head).rank == lastrank {
             break;

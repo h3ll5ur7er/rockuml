@@ -83,11 +83,12 @@ pub fn fast_edge(zz: &mut Globals, e: EdgeId) -> EdgeId {
     e
 }
 
-/// `zapinlist`: removes `e` from a list, moving the last edge into its slot.
+/// `zapinlist`: removes `e` from a list, moving the last edge into its slot. Like Java, it only reads the list
+/// while searching it, so an empty list may be unallocated.
 pub(crate) fn zapinlist(zz: &mut Globals, n: NodeId, which: EdgeList, e: EdgeId) {
     let l = *edge_list(zz, n, which);
-    let list = l.list.expect("edge list");
-    if let Some(i) = (0..l.size).find(|&i| zz.edge_lists.get(list, i) == Some(e)) {
+    if let Some(i) = (0..l.size).find(|&i| l.get(&zz.edge_lists, i) == Some(e)) {
+        let list = l.list.expect("edge list");
         let size = l.size - 1;
         edge_list(zz, n, which).size = size;
         let last = zz.edge_lists.get(list, size);
@@ -247,9 +248,9 @@ fn basic_merge(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     }
     let mut rep = Some(rep);
     while let Some(r) = rep {
-        zz.ed_mut(r).count += zz.ed(e).count;
-        zz.ed_mut(r).xpenalty += zz.ed(e).xpenalty;
-        zz.ed_mut(r).weight += zz.ed(e).weight;
+        zz.ed_mut(r).count = zz.ed(r).count.wrapping_add(zz.ed(e).count);
+        zz.ed_mut(r).xpenalty = zz.ed(r).xpenalty.wrapping_add(zz.ed(e).xpenalty);
+        zz.ed_mut(r).weight = zz.ed(r).weight.wrapping_add(zz.ed(e).weight);
         rep = zz.ed(r).to_virt;
     }
 }
@@ -261,4 +262,39 @@ pub fn merge_oneway(zz: &mut Globals, e: EdgeId, rep: EdgeId) {
     }
     zz.ed_mut(e).to_virt = Some(rep);
     basic_merge(zz, e, rep);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::cgraph::graph::agopen;
+    use crate::h::cgraph::Agdirected;
+
+    #[test]
+    fn zapinlist_leaves_an_unallocated_empty_list_alone() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let n = zz.new_agnode(g);
+        let e = zz.new_agedgepair();
+        assert_eq!(zz.nd(n).out.list, None);
+        zapinlist(&mut zz, n, EdgeList::Out, e);
+        assert_eq!(zz.nd(n).out, elist::default());
+    }
+
+    #[test]
+    fn zapinlist_moves_the_last_edge_into_the_gap() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let n = zz.new_agnode(g);
+        let edges = [
+            zz.new_agedgepair(),
+            zz.new_agedgepair(),
+            zz.new_agedgepair(),
+        ];
+        for e in edges {
+            append(&mut zz, e, n, EdgeList::Out);
+        }
+        zapinlist(&mut zz, n, EdgeList::Out, edges[0]);
+        assert_eq!(zz.nd(n).out.edges(&zz.edge_lists), [edges[2], edges[1]]);
+    }
 }
