@@ -143,7 +143,8 @@ fn objects_maps_and_json_get_their_bodies() {
     assert_eq!(members(&diagram, "user", true), [r#"name = "Dummy""#]);
     let cuca = &diagram.diagram.cuca;
     let map_link = cuca.get_links().next().unwrap();
-    assert_eq!(map_link.get_port_name1(), Some("USA"));
+    let city = cuca.entity(map_link.get_entity1());
+    assert_eq!(city.get_port_short_names().collect::<Vec<_>>(), ["USA"]);
     assert_eq!(map_link.get_length(), 1);
     assert_eq!(
         cuca.entity(entity(&diagram, "J")).get_leaf_type(),

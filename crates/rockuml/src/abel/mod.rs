@@ -1,12 +1,6 @@
 //! The elements of entity diagrams: entities, which are leaves or groups, the links between them, and what
 //! hangs on them (PlantUML's `abel` package).
 
-#![cfg_attr(
-    not(test),
-    expect(dead_code, reason = "used by the Phase 5 family commands")
-)]
-#![cfg_attr(test, allow(dead_code, reason = "used by the Phase 5 family commands"))]
-
 mod cuca_note;
 mod entity;
 mod entity_gender;
@@ -38,12 +32,6 @@ pub(crate) struct DisplayPositioned {
 /// A `together { ... }` block, by its place in the diagram's list of them.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct TogetherId(pub(crate) usize);
-
-/// Entities to lay out close together; blocks nest.
-#[derive(Clone)]
-pub(crate) struct Together {
-    pub parent: Option<TogetherId>,
-}
 
 /// What a diagram's commands are currently inside: a group, or a `together` block.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

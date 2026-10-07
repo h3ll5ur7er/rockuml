@@ -406,10 +406,10 @@ fn link_labels_show_a_visibility_as_an_icon_unless_icons_are_off() {
             "User --> (Run) : +start",
         ]);
         let cuca = &diagram.cuca;
-        let link_arg = cuca.link(cuca.get_link_ids()[0]).get_link_arg();
+        let link = cuca.link(cuca.get_link_ids()[0]);
         (
-            link_arg.get_visibility_modifier().is_some(),
-            link_arg.get_label().unwrap().lines().join("\n"),
+            link.get_visibility_modifier().is_some(),
+            link.get_label().unwrap().lines().join("\n"),
         )
     };
     assert_eq!(label("10"), (true, "start".to_owned()));

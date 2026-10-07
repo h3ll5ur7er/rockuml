@@ -3,7 +3,7 @@
 
 use std::rc::Rc;
 
-use super::{CucaNote, EntityId, EntityPosition, LeafType};
+use super::{CucaNote, EntityId, LeafType};
 use crate::color::{ColorType, Colors, HColor};
 use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType};
@@ -46,10 +46,6 @@ pub(crate) struct LinkArg {
     quantifier2: Option<String>,
     role1: Option<String>,
     role2: Option<String>,
-    labeldistance: Option<String>,
-    labelangle: Option<String>,
-    kal1: Option<String>,
-    kal2: Option<String>,
     /// A label starting with a visibility character shows it as an icon.
     visibility_modifier: Option<VisibilityModifier>,
     length: i32,
@@ -80,10 +76,6 @@ impl LinkArg {
             quantifier2: None,
             role1: None,
             role2: None,
-            labeldistance: None,
-            labelangle: None,
-            kal1: None,
-            kal2: None,
             length,
         }
     }
@@ -114,32 +106,12 @@ impl LinkArg {
         }
     }
 
-    #[must_use]
-    pub(crate) fn with_kal(self, kal1: Option<String>, kal2: Option<String>) -> Self {
-        Self { kal1, kal2, ..self }
-    }
-
-    #[must_use]
-    pub(crate) fn with_distance_angle(
-        self,
-        labeldistance: Option<String>,
-        labelangle: Option<String>,
-    ) -> Self {
-        Self {
-            labeldistance,
-            labelangle,
-            ..self
-        }
-    }
-
     /// The same words for the link drawn from its other end.
     #[must_use]
     pub(crate) fn get_inv(&self) -> Self {
         Self {
             quantifier1: self.quantifier2.clone(),
             quantifier2: self.quantifier1.clone(),
-            kal1: self.kal2.clone(),
-            kal2: self.kal1.clone(),
             role1: self.role2.clone(),
             role2: self.role1.clone(),
             ..self.clone()
@@ -166,24 +138,8 @@ impl LinkArg {
         self.quantifier2.as_deref()
     }
 
-    pub(crate) fn get_labeldistance(&self) -> Option<&str> {
-        self.labeldistance.as_deref()
-    }
-
-    pub(crate) fn get_labelangle(&self) -> Option<&str> {
-        self.labelangle.as_deref()
-    }
-
-    pub(crate) fn get_kal1(&self) -> Option<&str> {
-        self.kal1.as_deref()
-    }
-
     pub(crate) fn get_visibility_modifier(&self) -> Option<VisibilityModifier> {
         self.visibility_modifier
-    }
-
-    pub(crate) fn get_kal2(&self) -> Option<&str> {
-        self.kal2.as_deref()
     }
 
     pub(crate) fn get_role1(&self) -> Option<&str> {
@@ -202,7 +158,6 @@ impl LinkArg {
 )]
 #[derive(Clone)]
 pub(crate) struct Link {
-    id: LinkId,
     uid: String,
     location: Option<LineLocation>,
     style_builder: Rc<StyleBuilder>,
@@ -210,14 +165,10 @@ pub(crate) struct Link {
     cl2: EntityId,
     link_type: LinkType,
     link_arg: LinkArg,
-    port1: Option<String>,
-    port2: Option<String>,
     /// `hidden` in the arrow's style.
     hidden: bool,
     single: bool,
     colors: Colors,
-    /// The colours of the parallel lines after the first.
-    supplementary: Vec<Colors>,
     pub note: Option<CucaNote>,
     invis: bool,
     pub weight: f64,
@@ -238,9 +189,7 @@ impl Link {
     /// # Panics
     ///
     /// If the link is not at least one rank long.
-    #[expect(clippy::too_many_arguments, reason = "PlantUML's constructor")]
     pub(crate) fn new(
-        id: LinkId,
         uid: String,
         location: Option<LineLocation>,
         style_builder: Rc<StyleBuilder>,
@@ -254,7 +203,6 @@ impl Link {
             "links are at least one rank long"
         );
         Self {
-            id,
             uid,
             location,
             style_builder,
@@ -262,12 +210,9 @@ impl Link {
             cl2,
             link_type,
             link_arg,
-            port1: None,
-            port2: None,
             hidden: false,
             single: false,
             colors: Colors::default(),
-            supplementary: Vec::new(),
             note: None,
             invis: false,
             weight: 1.0,
@@ -283,10 +228,9 @@ impl Link {
         }
     }
 
-    /// The same link from the other end, under the next id and uid; the diagram numbers it.
-    pub(crate) fn get_inv(&self, id: LinkId, uid: String) -> Self {
+    /// The same link from the other end, under the next uid; the diagram numbers it.
+    pub(crate) fn get_inv(&self, uid: String) -> Self {
         let mut result = Self::new(
-            id,
             uid,
             self.location.clone(),
             self.style_builder.clone(),
@@ -296,25 +240,15 @@ impl Link {
             self.link_arg.get_inv(),
         );
         result.inverted = !self.inverted;
-        result.port1.clone_from(&self.port2);
-        result.port2.clone_from(&self.port1);
         result.url.clone_from(&self.url);
         result.stereotype.clone_from(&self.stereotype);
         result.link_arrow = self.link_arrow;
         result
     }
 
-    pub(crate) fn id(&self) -> LinkId {
-        self.id
-    }
-
     /// `lnk` and the diagram's counter, like `lnk12`.
     pub(crate) fn get_uid(&self) -> &str {
         &self.uid
-    }
-
-    pub(crate) fn get_location(&self) -> Option<&LineLocation> {
-        self.location.as_ref()
     }
 
     pub(crate) fn get_style_builder(&self) -> &Rc<StyleBuilder> {
@@ -329,42 +263,12 @@ impl Link {
         self.cl2
     }
 
-    pub(crate) fn get_port_name1(&self) -> Option<&str> {
-        self.port1.as_deref()
-    }
-
-    pub(crate) fn get_port_name2(&self) -> Option<&str> {
-        self.port2.as_deref()
-    }
-
-    /// Only the diagram sets ports, as the entities learn their names too.
-    pub(crate) fn set_ports(&mut self, port1: Option<String>, port2: Option<String>) {
-        self.port1 = port1;
-        self.port2 = port2;
-    }
-
     /// Opale links and links sharing a tail draw no decoration of their own.
     pub(crate) fn get_type(&self) -> LinkType {
         if self.opale || self.sametail.is_some() {
             return LinkType::new(LinkDecor::None, LinkDecor::None);
         }
         self.link_type
-    }
-
-    /// The type without the decorations at ends that are groups with something inside.
-    pub(crate) fn get_type_patch_cluster(&self, diagram: &CucaDiagram) -> LinkType {
-        let is_really_group = |id: EntityId| {
-            let entity = diagram.entity(id);
-            entity.is_group() && entity.groups(diagram).len() + entity.leafs(diagram).len() > 0
-        };
-        let mut result = self.get_type();
-        if is_really_group(self.cl1) {
-            result = result.without_decors2();
-        }
-        if is_really_group(self.cl2) {
-            result = result.without_decors1();
-        }
-        result
     }
 
     pub(crate) fn is_invis(&self) -> bool {
@@ -379,12 +283,17 @@ impl Link {
         (cl1 == self.cl1 && cl2 == self.cl2) || (cl1 == self.cl2 && cl2 == self.cl1)
     }
 
-    pub(crate) fn get_link_arg(&self) -> &LinkArg {
-        &self.link_arg
-    }
-
     pub(crate) fn get_label(&self) -> Option<&Display> {
         self.link_arg.get_label()
+    }
+
+    /// The visibility the label starts with, drawn as an icon before it.
+    #[allow(
+        dead_code,
+        reason = "the drawing of link labels reads it, which the parallel drawing work ports"
+    )]
+    pub(crate) fn get_visibility_modifier(&self) -> Option<VisibilityModifier> {
+        self.link_arg.get_visibility_modifier()
     }
 
     pub(crate) fn get_length(&self) -> i32 {
@@ -409,28 +318,6 @@ impl Link {
 
     pub(crate) fn get_role2(&self) -> Option<&str> {
         self.link_arg.get_role2()
-    }
-
-    pub(crate) fn get_labeldistance(&self) -> Option<&str> {
-        self.link_arg.get_labeldistance()
-    }
-
-    pub(crate) fn get_labelangle(&self) -> Option<&str> {
-        self.link_arg.get_labelangle()
-    }
-
-    pub(crate) fn has_kal1(&self) -> bool {
-        self.link_arg.get_kal1().is_some_and(|kal| !kal.is_empty())
-    }
-
-    pub(crate) fn has_kal2(&self) -> bool {
-        self.link_arg.get_kal2().is_some_and(|kal| !kal.is_empty())
-    }
-
-    pub(crate) fn is_auto_link_of_a_group(&self, diagram: &CucaDiagram) -> bool {
-        diagram.entity(self.cl1).is_group()
-            && diagram.entity(self.cl2).is_group()
-            && self.cl1 == self.cl2
     }
 
     pub(crate) fn contains_type(&self, leaf_type: LeafType, diagram: &CucaDiagram) -> bool {
@@ -468,23 +355,6 @@ impl Link {
         self.inverted
     }
 
-    pub(crate) fn has_entry_point(&self, diagram: &CucaDiagram) -> bool {
-        let on_border = |id: EntityId| {
-            let entity = diagram.entity(id);
-            !entity.is_group() && entity.get_entity_position() != EntityPosition::Normal
-        };
-        on_border(self.cl1) || on_border(self.cl2)
-    }
-
-    pub(crate) fn has_two_entry_points_same_container(&self, diagram: &CucaDiagram) -> bool {
-        let (entity1, entity2) = (diagram.entity(self.cl1), diagram.entity(self.cl2));
-        !entity1.is_group()
-            && !entity2.is_group()
-            && entity1.get_entity_position() != EntityPosition::Normal
-            && entity2.get_entity_position() != EntityPosition::Normal
-            && entity1.get_parent_container(diagram) == entity2.get_parent_container(diagram)
-    }
-
     pub(crate) fn is_hidden(&self, diagram: &CucaDiagram) -> bool {
         self.hidden
             || diagram.entity(self.cl1).is_hidden(diagram)
@@ -506,32 +376,14 @@ impl Link {
         self.is_between(other.cl1, other.cl2)
     }
 
-    pub(crate) fn does_touch(&self, other: &Link) -> bool {
-        self.contains(other.cl1) || self.contains(other.cl2)
-    }
-
-    pub(crate) fn is_autolink(&self) -> bool {
-        self.cl1 == self.cl2
-    }
-
     // What follows is PlantUML's `WithLinkType`.
 
-    pub(crate) fn get_specific_color(&self) -> Option<&HColor> {
-        self.colors.get(ColorType::Line)
-    }
-
-    /// The colour of the first line (`i` 0), or of one more parallel line.
+    /// The colour of the first line (`i` 0). Only Graphviz layouts draw the parallel lines later colours
+    /// ask for.
     pub(crate) fn set_specific_color(&mut self, specific_color: HColor, i: usize) {
-        let colors = self.colors.with(ColorType::Line, Some(specific_color));
         if i == 0 {
-            self.colors = colors;
-        } else {
-            self.supplementary.push(colors);
+            self.colors = self.colors.with(ColorType::Line, Some(specific_color));
         }
-    }
-
-    pub(crate) fn get_supplementary_colors(&self) -> &[Colors] {
-        &self.supplementary
     }
 
     pub(crate) fn get_colors(&self) -> &Colors {

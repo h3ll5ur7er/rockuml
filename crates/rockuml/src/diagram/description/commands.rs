@@ -20,6 +20,7 @@ use crate::direction::Direction;
 use crate::java;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
+use crate::skin::SkinParam;
 use crate::skin::actor::ActorStyle;
 use crate::stereo::{self, Stereotype};
 use crate::text::{LineLocation, without_quotes_or_brackets};
@@ -365,25 +366,7 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         } else {
             symbol_arg
         };
-        let skin = diagram.cuca.skin();
-        let (leaf_type, usymbol) = match symbol.map(str::to_ascii_lowercase).as_deref() {
-            None => (
-                LeafType::Description,
-                Some(skin.actor_style().to_u_symbol()),
-            ),
-            Some("portin" | "port") => (LeafType::Portin, None),
-            Some("portout") => (LeafType::Portout, None),
-            Some("usecase") => (LeafType::Usecase, None),
-            Some("usecase/") => (LeafType::UsecaseBusiness, None),
-            Some("circle") => (LeafType::Circle, None),
-            Some(other) => (
-                LeafType::Description,
-                Some(
-                    USymbols::from_string_skin_param(other, skin)
-                        .ok_or_else(|| unknown_symbol(other))?,
-                ),
-            ),
-        };
+        let (leaf_type, usymbol) = leaf_type_and_symbol(symbol, diagram.cuca.skin())?;
         let code = DescriptionDiagram::clean_id(code_raw).to_owned();
         let cuca = &mut diagram.cuca;
         let quark = cuca.quark_in_context(false, &code)?;
@@ -431,6 +414,32 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
         entity.colors = colors;
         Ok(())
     }
+}
+
+/// The type and symbol of the element a keyword like `node`, or the notation standing for one, declares;
+/// no keyword means an actor.
+fn leaf_type_and_symbol(
+    symbol: Option<&str>,
+    skin: &SkinParam,
+) -> Result<(LeafType, Option<USymbol>), CommandError> {
+    Ok(match symbol.map(str::to_ascii_lowercase).as_deref() {
+        None => (
+            LeafType::Description,
+            Some(skin.actor_style().to_u_symbol()),
+        ),
+        Some("portin" | "port") => (LeafType::Portin, None),
+        Some("portout") => (LeafType::Portout, None),
+        Some("usecase") => (LeafType::Usecase, None),
+        Some("usecase/") => (LeafType::UsecaseBusiness, None),
+        Some("circle") => (LeafType::Circle, None),
+        Some(other) => (
+            LeafType::Description,
+            Some(
+                USymbols::from_string_skin_param(other, skin)
+                    .ok_or_else(|| unknown_symbol(other))?,
+            ),
+        ),
+    })
 }
 
 /// Which of a use case or actor notation's two symbols the line declares; a trailing `/` on the display

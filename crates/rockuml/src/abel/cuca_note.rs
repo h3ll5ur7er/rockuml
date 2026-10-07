@@ -4,7 +4,6 @@
 use crate::color::Colors;
 use crate::creole::Display;
 use crate::direction::Direction;
-use crate::klimt::geom::XDimension2D;
 use crate::skin::Rankdir;
 use crate::stereo::Stereotype;
 
@@ -77,15 +76,7 @@ pub(crate) enum NoteLinkStrategy {
     HalfNotPrinted,
 }
 
-impl NoteLinkStrategy {
-    pub(crate) fn compute_dimension(self, width: f64, height: f64) -> XDimension2D {
-        match self {
-            Self::Normal => XDimension2D::new(width, height),
-            Self::HalfPrintedFull => XDimension2D::new(width / 2.0, height),
-            Self::HalfNotPrinted => XDimension2D::new(0.0, 0.0),
-        }
-    }
-}
+impl NoteLinkStrategy {}
 
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) struct CucaNote {
@@ -129,14 +120,6 @@ mod tests {
 
     #[test]
     fn halves_of_a_cut_link_share_its_note() {
-        assert_eq!(
-            NoteLinkStrategy::HalfPrintedFull.compute_dimension(40.0, 10.0),
-            XDimension2D::new(20.0, 10.0)
-        );
-        assert_eq!(
-            NoteLinkStrategy::HalfNotPrinted.compute_dimension(40.0, 10.0),
-            XDimension2D::new(0.0, 0.0)
-        );
         let note = CucaNote::build(Display::create(["n"]), Position::Top, Colors::default());
         assert_eq!(
             note.with_strategy(NoteLinkStrategy::HalfNotPrinted)

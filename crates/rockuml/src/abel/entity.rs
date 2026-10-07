@@ -5,8 +5,7 @@
 use std::rc::Rc;
 
 use super::{
-    CucaNote, DisplayPositioned, EntityPosition, GroupType, LeafType, Position, Tip, TogetherId,
-    is_pure_inner_link3,
+    DisplayPositioned, EntityPosition, GroupType, LeafType, Tip, TogetherId, is_pure_inner_link3,
 };
 use crate::color::Colors;
 use crate::creole::Display;
@@ -41,7 +40,6 @@ pub(crate) struct Entity {
     location: Option<LineLocation>,
     /// The style rules in force when the entity was declared; the root has none.
     style_builder: Option<Rc<StyleBuilder>>,
-    raw_layout: i32,
     leaf_or_group: EntityType,
     pub display: Display,
     pub stereotype: Option<Stereotype>,
@@ -53,8 +51,6 @@ pub(crate) struct Entity {
     /// A legend drawn inside a group.
     pub legend: Option<(DisplayPositioned, VerticalAlignment)>,
     tags: Vec<Stereotag>,
-    notes_top: Vec<CucaNote>,
-    notes_bottom: Vec<CucaNote>,
     pub together: Option<TogetherId>,
     packed: bool,
     pub is_static: bool,
@@ -77,7 +73,6 @@ impl Entity {
         uid: String,
         location: Option<LineLocation>,
         style_builder: Option<Rc<StyleBuilder>>,
-        raw_layout: i32,
         entity_type: EntityType,
     ) -> Self {
         Self {
@@ -86,7 +81,6 @@ impl Entity {
             uid,
             location,
             style_builder,
-            raw_layout,
             leaf_or_group: entity_type,
             display: Display::default(),
             stereotype: None,
@@ -95,8 +89,6 @@ impl Entity {
             generic: None,
             legend: None,
             tags: Vec::new(),
-            notes_top: Vec::new(),
-            notes_bottom: Vec::new(),
             together: None,
             packed: false,
             is_static: false,
@@ -132,10 +124,6 @@ impl Entity {
 
     pub(crate) fn style_builder(&self) -> Option<&Rc<StyleBuilder>> {
         self.style_builder.as_ref()
-    }
-
-    pub(crate) fn get_raw_layout(&self) -> i32 {
-        self.raw_layout
     }
 
     /// `None` for groups.
@@ -220,29 +208,6 @@ impl Entity {
     /// The style a stereotype like `<<Node>>` gives a package.
     pub(crate) fn get_package_style(&self) -> Option<PackageStyle> {
         PackageStyle::from_stereotype(&self.stereotype.as_ref()?.label_double_comparator())
-    }
-
-    pub(crate) fn add_note(&mut self, note: Display, position: Position, colors: Colors) {
-        match position {
-            Position::Top => self.notes_top.push(CucaNote::build(note, position, colors)),
-            Position::Bottom => self
-                .notes_bottom
-                .push(CucaNote::build(note, position, colors)),
-            Position::Left | Position::Right => {}
-        }
-    }
-
-    /// # Panics
-    ///
-    /// For sides other than top and bottom, which carry no notes.
-    pub(crate) fn get_notes(&self, position: Position) -> &[CucaNote] {
-        match position {
-            Position::Top => &self.notes_top,
-            Position::Bottom => &self.notes_bottom,
-            Position::Left | Position::Right => {
-                panic!("entities keep notes on top and bottom only")
-            }
-        }
     }
 
     pub(crate) fn add_stereotag(&mut self, tag: Stereotag) {
@@ -403,11 +368,7 @@ impl Entity {
     pub(crate) fn is_autarkic(&self, diagram: &CucaDiagram) -> bool {
         match self.get_group_type() {
             GroupType::Package => return false,
-            GroupType::InnerActivity
-            | GroupType::ConcurrentActivity
-            | GroupType::ConcurrentState => {
-                return true;
-            }
+            GroupType::ConcurrentState => return true,
             _ => {}
         }
         diagram

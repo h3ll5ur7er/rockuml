@@ -569,7 +569,7 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
     .boxed()
 }
 
-/// PlantUML's `CommandLayoutNewLine`.
+/// PlantUML's `CommandLayoutNewLine`, which counts rows that nothing lays out by.
 pub(super) fn layout_new_line() -> Box<dyn Command<ClassDiagram>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -577,10 +577,7 @@ pub(super) fn layout_new_line() -> Box<dyn Command<ClassDiagram>> {
             RegexTree::leaf(r"layout_new_line"),
             RegexTree::end(),
         ]),
-        |diagram: &mut ClassDiagram, _: &LineLocation, _: &RegexResult| {
-            diagram.cuca().inc_raw_layout();
-            Ok(())
-        },
+        |_: &mut ClassDiagram, _: &LineLocation, _: &RegexResult| Ok(()),
     )))
 }
 
@@ -1160,11 +1157,7 @@ fn execute_link_class(
     let label = labels.get_label_link().map(Display::with_newlines);
     let link_arg = LinkArg::build_managing(label, queue, manage_visibility)
         .with_quantifier(labels.get_first_label(), labels.get_second_label())
-        .with_role(labels.get_first_role(), labels.get_second_role())
-        .with_kal(
-            arg.get("QUALIFIER1", 0).map(str::to_owned),
-            arg.get("QUALIFIER2", 0).map(str::to_owned),
-        );
+        .with_role(labels.get_first_role(), labels.get_second_role());
     let mut link = cuca.new_link(Some(location), cl1, cl2, link_type, link_arg);
     cuca.link_mut(link).url = url_of(arg);
     cuca.set_port_members(link, port1, port2);

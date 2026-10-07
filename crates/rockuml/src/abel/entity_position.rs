@@ -28,20 +28,6 @@ impl EntityPosition {
         self == Self::Normal
     }
 
-    pub(crate) fn is_input(self) -> bool {
-        matches!(
-            self,
-            Self::EntryPoint | Self::InputPin | Self::ExpansionInput | Self::Portin
-        )
-    }
-
-    pub(crate) fn is_output(self) -> bool {
-        matches!(
-            self,
-            Self::ExitPoint | Self::OutputPin | Self::ExpansionOutput | Self::Portout
-        )
-    }
-
     /// # Panics
     ///
     /// For normal entities, which have no symbol of their own.
@@ -124,15 +110,6 @@ impl EntityPosition {
         .find(|(name, _)| label.eq_ignore_ascii_case(name))
         .map_or(Self::Normal, |(_, position)| position)
     }
-
-    pub(crate) fn is_port(self) -> bool {
-        matches!(self, Self::Portin | Self::Portout)
-    }
-
-    /// Whether links attach to the symbol itself rather than to a node's border.
-    pub(crate) fn use_port_p(self) -> bool {
-        self.is_port() || matches!(self, Self::ExitPoint | Self::EntryPoint)
-    }
 }
 
 fn draw_line(ug: &UGraphic, p1: XPoint2D, p2: XPoint2D) {
@@ -179,8 +156,6 @@ mod tests {
             EntityPosition::from_stereotype("<<choice>>"),
             EntityPosition::Normal
         );
-        assert!(EntityPosition::ExitPoint.use_port_p());
-        assert!(!EntityPosition::InputPin.use_port_p());
         assert_eq!(
             EntityPosition::EntryPoint.get_shape_type(),
             ShapeType::RectanglePort

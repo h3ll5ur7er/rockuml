@@ -1,5 +1,5 @@
 use super::*;
-use crate::abel::{EntityGender, LinkArrow, Position};
+use crate::abel::{EntityGender, LinkArrow};
 use crate::color::{ColorType, Colors, HColor};
 use crate::decoration::LinkDecor;
 use crate::diagram::UmlSource;
@@ -55,10 +55,7 @@ fn without_separator_a_name_is_found_anywhere() {
     let mut diagram = diagram(None);
     let dotted = diagram.quark_in_context(true, "a.b").unwrap();
     assert_eq!(diagram.quark(dotted).get_name(), "a.b");
-    assert_eq!(
-        diagram.quark(dotted).get_parent(),
-        Some(diagram.quarks().next().unwrap())
-    );
+    assert_eq!(diagram.quark(dotted).get_parent(), Some(QuarkId::ROOT));
     enter_package(&mut diagram, "P");
     let inner = diagram.quark_in_context(false, "x").unwrap();
     assert_eq!(qualified(&diagram, inner), "P\u{1}x");
@@ -203,11 +200,7 @@ fn groups_are_entered_left_and_listed_in_name_order() {
     let z = class(&mut diagram, "Z");
     assert_eq!(qualified(&diagram, diagram.entity(x).get_quark()), "p.X");
     assert_eq!(diagram.entity(x).together, None);
-    let together = diagram
-        .entity(y)
-        .together
-        .expect("Y is in a together block");
-    assert_eq!(diagram.get_together(together).parent, None);
+    assert!(diagram.entity(y).together.is_some());
     assert_eq!(diagram.leafs(), [x, y, z]);
     assert_eq!(diagram.groups(), [p]);
     assert_eq!(diagram.groups_and_root(), [diagram.get_root_group(), p]);
@@ -270,10 +263,6 @@ fn inverted_links_swap_their_ends() {
     assert!(inv.is_inverted());
     assert_eq!(inv.get_link_arrow(), LinkArrow::Backward);
     assert_eq!(
-        (inv.get_port_name1(), inv.get_port_name2()),
-        (None, Some("p1"))
-    );
-    assert_eq!(
         diagram.entity(a).get_port_short_names().collect::<Vec<_>>(),
         ["p1"]
     );
@@ -290,12 +279,8 @@ fn arrow_styles_set_colours_lines_and_flags() {
         .apply_style(Some("#red,dashed;#blue,norank"));
     let styled = diagram.link(id);
     assert_eq!(
-        styled.get_specific_color(),
+        styled.get_colors().get(ColorType::Line),
         Some(&HColor::parse("red").unwrap().unwrap())
-    );
-    assert_eq!(
-        styled.get_supplementary_colors()[0].get(ColorType::Line),
-        Some(&HColor::parse("blue").unwrap().unwrap())
     );
     assert_eq!(
         styled.get_type().get_stroke3(None).to_string(),
@@ -576,7 +561,6 @@ fn groups_whose_links_stay_inside_or_outside_are_autarkic() {
     diagram.remove_link(crossing);
     diagram.entity_mut(inner2).stereotype = Some(Stereotype::new("<<exitPoint>>"));
     assert!(!diagram.entity(s).is_autarkic(&diagram));
-    assert!(diagram.link(inside).has_entry_point(&diagram));
 }
 
 #[test]
@@ -633,12 +617,10 @@ fn types_mute_between_class_like_ones_only() {
 }
 
 #[test]
-fn notes_and_tips_hang_on_entities() {
+fn tips_hang_on_entities_one_per_member() {
     let mut diagram = diagram(None);
     let a = class(&mut diagram, "A");
     let entity = diagram.entity_mut(a);
-    entity.add_note(Display::create(["top"]), Position::Top, Colors::default());
-    entity.add_note(Display::create(["left"]), Position::Left, Colors::default());
     entity.put_tip(
         "m".to_owned(),
         Display::create(["1"]),
@@ -657,8 +639,6 @@ fn notes_and_tips_hang_on_entities() {
         Colors::default(),
         None,
     );
-    assert_eq!(entity.get_notes(Position::Top).len(), 1);
-    assert_eq!(entity.get_notes(Position::Bottom), []);
     let tips: Vec<(&str, &[String])> = entity
         .get_tips()
         .iter()
@@ -777,36 +757,4 @@ fn association_classes_cut_the_link_at_a_point() {
     assert_eq!(first.get_type().get_decor2(), LinkDecor::Arrow);
     assert_eq!(second.get_type().get_decor1(), LinkDecor::Aggregation);
     assert!(diagram.get_links().last().unwrap().is_invis());
-}
-
-#[test]
-fn links_are_cut_at_a_node_inserted_between() {
-    let mut class_diagram = class_diagram();
-    let diagram = &mut class_diagram.cuca;
-    let a = class(diagram, "A");
-    let b = class(diagram, "B");
-    let node = leaf(diagram, "N", LeafType::Association);
-    let arg = LinkArg::build(Some(Display::create(["l"])), 2)
-        .with_quantifier(Some("1".to_owned()), Some("2".to_owned()));
-    let link_type = LinkType::new(LinkDecor::None, LinkDecor::Arrow);
-    let ab = diagram.new_link(None, a, b, link_type, arg);
-    diagram.add_link(ab);
-    assert!(class_diagram.insert_between(None, b, a, node));
-    assert!(!class_diagram.insert_between(None, a, b, node));
-    let diagram = &class_diagram.cuca;
-    let halves: Vec<(EntityId, EntityId, Option<&str>, Option<&str>)> = diagram
-        .get_links()
-        .map(|link| {
-            (
-                link.get_entity1(),
-                link.get_entity2(),
-                link.get_quantifier1(),
-                link.get_quantifier2(),
-            )
-        })
-        .collect();
-    assert_eq!(
-        halves,
-        [(b, node, Some("1"), None), (node, a, None, Some("2"))]
-    );
 }
