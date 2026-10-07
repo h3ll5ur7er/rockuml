@@ -8,17 +8,17 @@ use regex::Regex;
 use super::body_enhanced::{body_enhanced1, is_block_separator};
 use super::methods_or_fields_area::{BodyLine, MethodsOrFieldsArea};
 use super::{BodyContext, Member};
-use crate::klimt::blocks::TextBlockVertical;
-use crate::klimt::{HorizontalAlignment, TextBlock};
-use crate::skin::component::TextBlockEmpty;
-use crate::style::{PName, ValueReading};
 use crate::abel::LeafType;
 use crate::creole::Display;
 use crate::java;
 use crate::json::JsonValue;
+use crate::klimt::blocks::TextBlockVertical;
 use crate::klimt::url::Url;
+use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::java_regex;
+use crate::skin::component::TextBlockEmpty;
 use crate::skin::visibility_modifier::VisibilityModifier;
+use crate::style::{PName, ValueReading};
 
 #[derive(Clone)]
 pub(crate) enum Bodier {

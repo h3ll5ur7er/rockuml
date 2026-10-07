@@ -34,7 +34,7 @@ fn entity(diagram: &ClassDiagram, name: &str) -> EntityId {
 
 fn members(diagram: &ClassDiagram, name: &str, fields: bool) -> Vec<String> {
     let cuca = &diagram.diagram.cuca;
-    let bodier = cuca.entity(entity(diagram, name)).get_bodier();
+    let bodier = &cuca.entity(entity(diagram, name)).bodier;
     let hidden = cuca.get_hides_visibility_modifier();
     let members = if fields {
         bodier.get_fields_to_display(hidden)

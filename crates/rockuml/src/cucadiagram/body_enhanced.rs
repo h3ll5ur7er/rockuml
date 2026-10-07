@@ -5,7 +5,9 @@ use super::methods_or_fields_area::{BodyLine, MethodsOrFieldsArea};
 use crate::color::Colors;
 use crate::creole::{CreoleMode, Display};
 use crate::java;
-use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged, TextBlockVertical, TitledSeparator};
+use crate::klimt::blocks::{
+    TextBlockLineBefore, TextBlockMarged, TextBlockVertical, TitledSeparator,
+};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;

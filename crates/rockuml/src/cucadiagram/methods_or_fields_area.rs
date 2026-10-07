@@ -65,7 +65,9 @@ impl MethodsOrFieldsArea {
             .iter()
             .map(|line| Row {
                 icon: match line {
-                    BodyLine::Member(member) if has_small_icon => u_block(member, icon_size, style_builder),
+                    BodyLine::Member(member) if has_small_icon => {
+                        u_block(member, icon_size, style_builder)
+                    }
                     _ => Box::new(NoIcon),
                 },
                 text: create_text_block(line, skin, style, colors, align),
@@ -77,8 +79,7 @@ impl MethodsOrFieldsArea {
             .collect();
         Self {
             rows,
-            small_icon: has_small_icon
-                .then(|| f64::from(skin.get_circled_character_radius() + 3)),
+            small_icon: has_small_icon.then(|| f64::from(skin.get_circled_character_radius() + 3)),
             align,
         }
     }
@@ -161,10 +162,7 @@ impl MethodsOrFieldsArea {
                     y += height;
                 }
                 None => {
-                    result.push((
-                        None,
-                        XPoint2D::new(self.align.offset(width, text.width), y),
-                    ));
+                    result.push((None, XPoint2D::new(self.align.offset(width, text.width), y)));
                     y += text.height;
                 }
             }
@@ -229,7 +227,9 @@ fn u_block(member: &Member, icon_size: i32, style_builder: &StyleBuilder) -> Box
     let Some(modifier) = member.get_visibility_modifier() else {
         return Box::new(NoIcon);
     };
-    let style = modifier.get_style_signature().get_merged_style(style_builder);
+    let style = modifier
+        .get_style_signature()
+        .get_merged_style(style_builder);
     let border = style.value(PName::LineColor).as_color();
     let back = (!modifier.is_field()).then(|| style.value(PName::BackGroundColor).as_color());
     let url = member.get_url();

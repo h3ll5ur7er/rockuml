@@ -46,7 +46,12 @@ pub(crate) struct EntityImageObject {
 }
 
 fn object_signature(more: &[SName]) -> StyleSignature {
-    let mut names = vec![SName::Root, SName::Element, SName::ObjectDiagram, SName::Object];
+    let mut names = vec![
+        SName::Root,
+        SName::Element,
+        SName::ObjectDiagram,
+        SName::Object,
+    ];
     names.extend_from_slice(more);
     StyleSignature::of(&names)
 }
@@ -87,7 +92,7 @@ impl EntityImageObject {
         let hidden = diagram.get_hides_visibility_modifier();
         let line_thickness = style.value(PName::LineThickness).as_double();
         let fields: Box<dyn TextBlock> =
-            if show_fields && entity.get_bodier().get_fields_to_display(hidden).is_empty() {
+            if show_fields && entity.bodier.get_fields_to_display(hidden).is_empty() {
                 Box::new(TextBlockLineBefore {
                     block: Box::new(TextBlockEmpty {
                         dimension: XDimension2D::new(10.0, 16.0),
@@ -105,7 +110,7 @@ impl EntityImageObject {
                     hidden,
                 };
                 entity
-                    .get_bodier()
+                    .bodier
                     .get_body(&context, false, show_fields)
                     .expect("objects always have a body")
             };
@@ -123,13 +128,12 @@ impl EntityImageObject {
             fields,
             show_fields,
             url: entity.url.clone(),
-            group: entity_group(entity, diagram),
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             round_corner: style.value(PName::RoundCorner).as_double(),
             minimum_width: style.value(PName::MinimumWidth).as_double(),
             border_color: style.value(PName::LineColor).as_color(),
             header_backcolor,
-            backcolor: backcolor
-                .unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
+            backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: style.stroke(),
             has_ports: entity.get_port_short_names().next().is_some(),
         }
@@ -147,8 +151,9 @@ pub(super) fn name_and_stereotype_dimension(
     string_bounder: &dyn StringBounder,
 ) -> XDimension2D {
     let name = name.calculate_dimension(string_bounder);
-    let stereo =
-        stereo.map_or_else(XDimension2D::default, |stereo| stereo.calculate_dimension(string_bounder));
+    let stereo = stereo.map_or_else(XDimension2D::default, |stereo| {
+        stereo.calculate_dimension(string_bounder)
+    });
     XDimension2D::new(name.width.max(stereo.width), name.height + stereo.height)
 }
 
@@ -215,7 +220,13 @@ impl TextBlock for EntityImageObject {
             header.push(stereo.as_ref());
         }
         header.push(self.name.as_ref());
-        draw_title(&ug, &header, total.width, title.height, HorizontalAlignment::Center);
+        draw_title(
+            &ug,
+            &header,
+            total.width,
+            title.height,
+            HorizontalAlignment::Center,
+        );
         let ug2 = ug.with_stencil_stroke(
             Rc::new(RectangleStencil { width: total.width }),
             self.stroke,

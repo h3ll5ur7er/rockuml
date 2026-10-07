@@ -39,11 +39,11 @@ impl EntityGender {
             Self::All => true,
             Self::ByClassName(class_name) => class_name == test.get_name(diagram),
             Self::EmptyMethods => test
-                .get_bodier()
+                .bodier
                 .get_methods_to_display(diagram.get_hides_visibility_modifier())
                 .is_empty(),
             Self::EmptyFields => test
-                .get_bodier()
+                .bodier
                 .get_fields_to_display(diagram.get_hides_visibility_modifier())
                 .is_empty(),
         }

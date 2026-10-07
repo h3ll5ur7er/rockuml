@@ -125,6 +125,9 @@ pub(super) trait TitledDiagram {
     fn entity_diagram(&mut self) -> Option<&mut CucaDiagram> {
         self.class_or_object_diagram()
     }
+
+    /// `hide empty description`, which only state diagrams heed.
+    fn set_hide_empty_description(&mut self, _hide: bool) {}
 }
 
 impl<D: TitledDiagram> NotPortedCommands for D {

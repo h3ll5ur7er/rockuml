@@ -78,7 +78,6 @@ fn side(cuca: &CucaDiagram, arg: &RegexResult) -> Position {
         .with_rankdir(cuca.skin().get_rankdir())
 }
 
-
 fn note_head(single_line: bool) -> Vec<RegexTree> {
     let mut pattern = vec![
         RegexTree::start(),

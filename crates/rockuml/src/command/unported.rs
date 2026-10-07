@@ -22,7 +22,6 @@ pub(crate) trait NotPortedCommands {
 pub(crate) struct Unported {
     name: &'static str,
     pattern: RegexTree,
-    passes: &'static [ParserPass],
     forbidden: Option<Regex>,
 }
 
@@ -30,17 +29,11 @@ pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
     Unported {
         name,
         pattern,
-        passes: &[ParserPass::One],
         forbidden: None,
     }
 }
 
 impl Unported {
-    #[must_use]
-    pub(crate) fn in_passes(self, passes: &'static [ParserPass]) -> Self {
-        Self { passes, ..self }
-    }
-
     /// Lines matching `forbidden` as a whole are accepted, and fail as syntax errors when executed.
     #[must_use]
     pub(crate) fn forbidding(self, forbidden: &str) -> Self {
@@ -78,10 +71,6 @@ impl<D: NotPortedCommands> SingleLineCommand<D> for Unported {
         self.forbidden
             .as_ref()
             .is_some_and(|forbidden| forbidden.is_match(line))
-    }
-
-    fn is_eligible_for(&self, pass: ParserPass) -> bool {
-        self.passes.contains(&pass)
     }
 }
 

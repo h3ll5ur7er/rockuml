@@ -48,7 +48,12 @@ impl FontParam {
 
 impl SkinParam {
     /// `<param><suffix><<stereotype>>`, then `<param><suffix>`.
-    fn font_value(&self, param: FontParam, suffix: &str, stereotype: Option<&Stereotype>) -> Option<String> {
+    fn font_value(
+        &self,
+        param: FontParam,
+        suffix: &str,
+        stereotype: Option<&Stereotype>,
+    ) -> Option<String> {
         stereotype
             .and_then(|stereotype| {
                 self.value(&format!(
@@ -71,7 +76,10 @@ impl SkinParam {
                     .then(|| self.value("defaultfontname"))
                     .flatten()
             })
-            .map_or_else(|| param.default_family().to_owned(), |name| unquoted(&name).to_owned());
+            .map_or_else(
+                || param.default_family().to_owned(),
+                |name| unquoted(&name).to_owned(),
+            );
         let face = self
             .font_value(param, "fontstyle", stereotype)
             .or_else(|| self.value("defaultfontstyle"))

@@ -15,6 +15,12 @@ impl XDimension2D {
         Self::new(self.width + dx, self.height + dy)
     }
 
+    /// At least `min_width` wide and `min_height` high.
+    #[must_use]
+    pub fn at_least(self, min_width: f64, min_height: f64) -> Self {
+        Self::new(self.width.max(min_width), self.height.max(min_height))
+    }
+
     /// The space for `self` with `below` stacked under it.
     #[must_use]
     pub fn merge_top_bottom(self, below: Self) -> Self {
@@ -273,12 +279,31 @@ impl RectangleArea {
         self.min_y
     }
 
+    pub(crate) fn get_max_x(self) -> f64 {
+        self.max_x
+    }
+
+    pub(crate) fn get_max_y(self) -> f64 {
+        self.max_y
+    }
+
     pub(crate) fn get_width(self) -> f64 {
         self.max_x - self.min_x
     }
 
     pub(crate) fn get_height(self) -> f64 {
         self.max_y - self.min_y
+    }
+
+    pub(crate) fn get_point_center(self) -> XPoint2D {
+        XPoint2D::new(
+            f64::midpoint(self.min_x, self.max_x),
+            f64::midpoint(self.min_y, self.max_y),
+        )
+    }
+
+    pub(crate) fn get_dimension(self) -> XDimension2D {
+        XDimension2D::new(self.get_width(), self.get_height())
     }
 
     pub(crate) fn get_position(self) -> UTranslate {

@@ -2,7 +2,11 @@
 //! drawing of the layout.
 
 mod box_info;
+mod cuca_diagram_simplifier_state_smetana;
+mod group_maker_state_smetana;
+mod padded_entity_image;
 mod smetana_edge;
+mod text_block_to_entity_image;
 mod y_mirror;
 
 use std::cell::OnceCell;
@@ -10,8 +14,10 @@ use std::cell::OnceCell;
 use smetana::{Edge, Graph, Node, Subgraph};
 
 use box_info::BoxInfo;
+pub(crate) use cuca_diagram_simplifier_state_smetana::CucaDiagramSimplifierStateSmetana;
 use smetana_edge::EdgeTexts;
 pub(crate) use smetana_edge::SmetanaEdge;
+use text_block_to_entity_image::TextBlockToEntityImage;
 use y_mirror::YMirror;
 
 use crate::abel::{EntityId, GroupType, LeafType, Link, LinkId, Position, is_pure_inner_link12};
@@ -30,8 +36,51 @@ use crate::skin::component::TextBlockEmpty;
 use crate::style::{SName, Style, StyleSignature};
 use crate::svek::image::EntityImageNoteLink;
 use crate::svek::{
-    Bibliotekon, ClusterHeader, ClusterManager, LayoutContext, create_entity_image_block,
+    Bibliotekon, ClusterHeader, ClusterManager, IEntityImage, LayoutContext,
+    create_entity_image_block,
 };
+
+/// A graph to lay out; tests that record graphs get traced ones.
+fn new_graph() -> Graph {
+    #[cfg(test)]
+    if recorded_graphs::is_recording() {
+        return Graph::traced();
+    }
+    Graph::new()
+}
+
+/// The graphs layouts made on this thread, in the order they were laid out, while tests record them.
+#[cfg(test)]
+pub(crate) mod recorded_graphs {
+    use std::cell::RefCell;
+
+    use smetana::Graph;
+
+    thread_local! {
+        static RECORDED: RefCell<Option<Vec<Vec<String>>>> = const { RefCell::new(None) };
+    }
+
+    pub(crate) fn start() {
+        RECORDED.with(|recorded| *recorded.borrow_mut() = Some(Vec::new()));
+    }
+
+    /// The cgraph calls of each graph since [`start`], as Smetana traces write them.
+    pub(crate) fn take() -> Vec<Vec<String>> {
+        RECORDED.with(|recorded| recorded.borrow_mut().take().unwrap_or_default())
+    }
+
+    pub(super) fn is_recording() -> bool {
+        RECORDED.with(|recorded| recorded.borrow().is_some())
+    }
+
+    pub(super) fn record(graph: &Graph) {
+        RECORDED.with(|recorded| {
+            if let (Some(graphs), Some(calls)) = (recorded.borrow_mut().as_mut(), graph.trace()) {
+                graphs.push(calls.to_vec());
+            }
+        });
+    }
+}
 
 /// Lays a diagram out with Smetana and draws the result (PlantUML's `CucaDiagramFileMakerSmetana` and its
 /// base `CucaDiagramFileMaker`). The maker owns the diagram it lays out: drawing changes it, as PlantUML
@@ -95,6 +144,15 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
         self.layout_and_get_text_block(string_bounder)
+    }
+
+    /// The layout of a group laid out on its own, as the image of that group (`getImage`).
+    pub(crate) fn get_image(
+        self,
+        string_bounder: &dyn StringBounder,
+    ) -> Result<Box<dyn IEntityImage>, NotYetPorted> {
+        let text_block = self.layout_and_get_text_block(string_bounder)?;
+        Ok(Box::new(TextBlockToEntityImage::new(text_block)))
     }
 
     fn is_nested_layout(&self) -> bool {
@@ -204,7 +262,10 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
         ent: EntityId,
     ) -> Result<(), NotYetPorted> {
-        let image = create_entity_image_block(ent, &self.diagram, &self.bibliotekon)?;
+        let image = match self.diagram.get_svek_image(ent) {
+            Some(image) => Box::new(image),
+            None => create_entity_image_block(ent, &self.diagram, &self.bibliotekon)?,
+        };
         self.cluster_manager.add_node(
             &mut self.bibliotekon,
             self.diagram.entity(ent),
@@ -242,10 +303,12 @@ impl CucaDiagramFileMakerSmetana {
         string_bounder: &dyn StringBounder,
     ) -> Result<Box<dyn TextBlock>, NotYetPorted> {
         self.print(string_bounder)?;
-        let mut graph = Graph::new();
+        let mut graph = new_graph();
         let Some(smetana) = self.export_graph(string_bounder, &mut graph) else {
             return Ok(Box::new(TextBlockEmpty::default()));
         };
+        #[cfg(test)]
+        recorded_graphs::record(&graph);
         let layout = graph
             .layout()
             .map_err(|_| NotYetPorted("graphs Smetana cannot lay out"))?;
@@ -739,7 +802,12 @@ impl Drawing {
             .get_cluster(group)
             .expect("clusters drawn have been opened");
         cluster.set_position(upper_right, lower_left);
-        cluster.draw_u(ug, &self.diagram);
+        let dim_title = cluster.get_title_dimension(ug.string_bounder());
+        cluster.set_title_position(XPoint2D::new(
+            f64::midpoint(upper_right.x, lower_left.x) - dim_title.width / 2.0,
+            upper_right.y.min(lower_left.y),
+        ));
+        cluster.draw_u(ug, &self.diagram, &self.bibliotekon);
     }
 }
 

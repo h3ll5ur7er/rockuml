@@ -47,8 +47,10 @@ fn margin(top: f64, right: f64, bottom: f64, left: f64) -> ClockwiseTopRightBott
 impl EntityImageClass {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let skin = diagram.skin();
-        let style = class_signature(&[])
-            .get_merged_style_with(&entity_style_builder(entity, skin), entity.stereotype.as_ref());
+        let style = class_signature(&[]).get_merged_style_with(
+            &entity_style_builder(entity, skin),
+            entity.stereotype.as_ref(),
+        );
         let builder = skin.current_style_builder();
         let style_header = class_signature(&[SName::Header])
             .get_merged_style_with(&builder, entity.stereotype.as_ref());
@@ -59,7 +61,7 @@ impl EntityImageClass {
             colors: &entity.colors,
             hidden: diagram.get_hides_visibility_modifier(),
         };
-        let body = entity.get_bodier().get_body(
+        let body = entity.bodier.get_body(
             &context,
             diagram.show_portion(EntityPortion::Method, entity.id()),
             diagram.show_portion(EntityPortion::Field, entity.id()),
@@ -76,7 +78,7 @@ impl EntityImageClass {
             body,
             header: header(entity, diagram, &style_header),
             url: entity.url.clone(),
-            group: entity_group(entity, diagram),
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             comment: format!("class {}", entity.get_name(diagram)),
             round_corner: style.value(PName::RoundCorner).as_double(),
             minimum_width: style.value(PName::MinimumWidth).as_double(),
@@ -85,8 +87,7 @@ impl EntityImageClass {
                 .cloned()
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             header_backcolor,
-            backcolor: backcolor
-                .unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
+            backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: get_stroke(&style, colors),
             has_ports: entity.get_port_short_names().next().is_some(),
         }
@@ -110,7 +111,10 @@ impl EntityImageClass {
             ug_header = ug_header.with_backcolor(self.header_backcolor.clone());
             ug_header
                 .with_stroke(self.stroke)
-                .draw(&UShape::Rectangle(URectangle::new(width, dim_header.height)));
+                .draw(&UShape::Rectangle(URectangle::new(
+                    width,
+                    dim_header.height,
+                )));
         } else {
             ug_stroke.draw(&rect);
             let rect2 = URectangle::new(width, dim_header.height).rounded(self.round_corner);
@@ -192,7 +196,12 @@ impl IEntityImage for EntityImageClass {
 
 /// `root element classDiagram class`, then `more`.
 fn class_signature(more: &[SName]) -> StyleSignature {
-    let mut names = vec![SName::Root, SName::Element, SName::ClassDiagram, SName::Class];
+    let mut names = vec![
+        SName::Root,
+        SName::Element,
+        SName::ClassDiagram,
+        SName::Class,
+    ];
     names.extend_from_slice(more);
     StyleSignature::of(&names)
 }
@@ -305,18 +314,20 @@ fn empty() -> Box<dyn TextBlock> {
 /// The spot: a letter for the kind of class, or the stereotype's own.
 fn circled_character(entity: &Entity, leaf_type: LeafType, skin: &SkinParam) -> CircledCharacter {
     let font = skin.get_font(FontParam::CircledCharacter, None);
-    let style = StyleSignature::of(&[SName::Root, SName::Element, SName::Spot, spot_name(leaf_type)])
-        .get_merged_style(&skin.current_style_builder());
+    let style = StyleSignature::of(&[
+        SName::Root,
+        SName::Element,
+        SName::Spot,
+        spot_name(leaf_type),
+    ])
+    .get_merged_style(&skin.current_style_builder());
     let spot_border = style.value(PName::LineColor).as_color();
     let spot_back = style.value(PName::BackGroundColor).as_color();
     let font_color = style.value(PName::FontColor).as_color();
     let radius = f64::from(skin.get_circled_character_radius());
     let stereotype = entity.stereotype.as_ref();
     let (character, back) = match stereotype.and_then(|stereotype| stereotype.spot()) {
-        Some(spot) => (
-            spot.character,
-            spot.color.clone().unwrap_or(spot_back),
-        ),
+        Some(spot) => (spot.character, spot.color.clone().unwrap_or(spot_back)),
         None => (
             stereotype
                 .and_then(|stereotype| skin.get_circled_character(stereotype))
@@ -429,7 +440,8 @@ impl HeaderLayout {
             .draw_u(&ug.translated(h1, (height - circle.height) / 2.0));
         let diff_height = height - stereo.height - name.height;
         let x_stereo = circle.width + (width_stereo_and_name - stereo.width) / 2.0 + h1 + h2;
-        self.stereo.draw_u(&ug.translated(x_stereo, diff_height / 2.0));
+        self.stereo
+            .draw_u(&ug.translated(x_stereo, diff_height / 2.0));
         let x_name = circle.width + (width_stereo_and_name - name.width) / 2.0 + h1 + h2;
         self.name
             .draw_u(&ug.translated(x_name, diff_height / 2.0 + stereo.height));

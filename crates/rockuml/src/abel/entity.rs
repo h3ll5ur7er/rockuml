@@ -45,6 +45,7 @@ pub(crate) struct Entity {
     leaf_or_group: EntityType,
     pub display: Display,
     pub stereotype: Option<Stereotype>,
+    pub bodier: Bodier,
     /// The style names a stereotype gives as `<<<name>>>` (`Stereostyles`).
     pub stereostyles: Vec<String>,
     pub url: Option<Url>,
@@ -63,7 +64,6 @@ pub(crate) struct Entity {
     /// By member, in the order members were first given a tip.
     tips: Vec<(String, Tip)>,
     port_short_names: JavaHashSet<String>,
-    bodier: Bodier,
     pub visibility_modifier: Option<VisibilityModifier>,
     /// The character a state's concurrent regions were separated with, `--` or `||`.
     pub concurrent_separator: Option<char>,
@@ -111,14 +111,6 @@ impl Entity {
             visibility_modifier: None,
             concurrent_separator: None,
         }
-    }
-
-    pub(crate) fn get_bodier(&self) -> &Bodier {
-        &self.bodier
-    }
-
-    pub(crate) fn get_bodier_mut(&mut self) -> &mut Bodier {
-        &mut self.bodier
     }
 
     pub(crate) fn id(&self) -> EntityId {

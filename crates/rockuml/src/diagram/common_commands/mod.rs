@@ -12,8 +12,8 @@ use regex::Regex;
 use super::chrome::Warning;
 use super::scale::Scale;
 use super::titled::TitledDiagram;
-use crate::command::unported::NotPortedCommands;
 use crate::abel::DisplayPositioned;
+use crate::command::unported::NotPortedCommands;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
@@ -132,7 +132,23 @@ pub(super) fn add_common_scale_commands<D: TitledDiagram + 'static>() -> Vec<Box
 /// Hiding parts of entities (`CommonCommands.addCommonHides`).
 pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
-        unported::hide_empty_description(),
+        single(
+            RegexTree::concat(vec![
+                RegexTree::start(),
+                RegexTree::named(1, "HIDE", r"(hide|show)"),
+                RegexTree::spaces_one_or_more(),
+                RegexTree::leaf(r"empty"),
+                RegexTree::spaces_one_or_more(),
+                RegexTree::leaf(r"description"),
+                RegexTree::end(),
+            ]),
+            |diagram, arg, _| {
+                let hide = arg
+                    .get("HIDE", 0)
+                    .is_some_and(|hide| hide.eq_ignore_ascii_case("hide"));
+                diagram.set_hide_empty_description(hide);
+            },
+        ),
         super::class::hide_show_by_visibility(),
         super::class::hide_show_by_gender(),
     ]

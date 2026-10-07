@@ -49,7 +49,7 @@ impl EntityImageLollipopInterface {
             image: AbstractEntityImage::new(entity, diagram),
             desc: Box::new(desc),
             url: entity.url.clone(),
-            group: entity_group(entity, diagram),
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             half: entity.get_leaf_type() == Some(LeafType::LollipopHalf),
             background_color: style.value(PName::BackGroundColor).as_color(),
             border_color: style.value(PName::LineColor).as_color(),

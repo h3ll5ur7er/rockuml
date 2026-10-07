@@ -539,7 +539,6 @@ impl TextBlock for TextBlockLineBefore<'_> {
     }
 }
 
-
 /// A block under a separator with a title, which leaves room for half the title above and below the line.
 pub(crate) struct TitledSeparator {
     pub block: Box<dyn TextBlock>,

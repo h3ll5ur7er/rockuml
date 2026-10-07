@@ -3,7 +3,9 @@
 
 use super::component::creole_text;
 use crate::creole::Display;
-use crate::klimt::blocks::{TextBlockLineBefore, TextBlockMarged, TextBlockVertical, TitledSeparator};
+use crate::klimt::blocks::{
+    TextBlockLineBefore, TextBlockMarged, TextBlockVertical, TitledSeparator,
+};
 use crate::klimt::font::FontConfiguration;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::SpriteContainer;

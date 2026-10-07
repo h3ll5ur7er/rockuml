@@ -7,11 +7,11 @@ use crate::color::HColor;
 use crate::cucadiagram::Bodier;
 use crate::diagram::cuca::CucaDiagram;
 use crate::json::JsonValue;
+use crate::klimt::TextBlock;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::UGraphic;
-use crate::klimt::TextBlock;
 use crate::skin::SkinParam;
 use crate::style::SName;
 use crate::svek::{IEntityImage, ShapeType};
@@ -27,7 +27,7 @@ pub(crate) struct EntityImageJson {
 impl EntityImageJson {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let data_box = DataBox::new(entity, diagram, SName::Json);
-        let Bodier::Json { json: Some(json) } = entity.get_bodier() else {
+        let Bodier::Json { json: Some(json) } = &entity.bodier else {
             unreachable!("JSON elements have their data")
         };
         let style = &data_box.style;
@@ -124,7 +124,10 @@ impl JsonBlock {
             Self::Text(block) => block.draw_u(ug),
             Self::Object(members) => {
                 let (width1, _, height) = object_dimension(members, string_bounder);
-                ug.translated(width1, 0.0).draw(&UShape::Line { dx: 0.0, dy: height });
+                ug.translated(width1, 0.0).draw(&UShape::Line {
+                    dx: 0.0,
+                    dy: height,
+                });
                 let mut y = 0.0;
                 for (name, value) in members {
                     let row = ug.translated(0.0, y);
@@ -157,13 +160,16 @@ fn object_dimension(
     members: &[(Box<dyn TextBlock>, JsonBlock)],
     string_bounder: &dyn StringBounder,
 ) -> (f64, f64, f64) {
-    members.iter().fold((0.0, 0.0, 0.0), |(width1, width2, height), (name, value)| {
-        let name = name.calculate_dimension(string_bounder);
-        let value = value.calculate_dimension(string_bounder);
-        (
-            f64::max(width1, name.width),
-            f64::max(width2, value.width),
-            height + name.height.max(value.height),
-        )
-    })
+    members.iter().fold(
+        (0.0, 0.0, 0.0),
+        |(width1, width2, height), (name, value)| {
+            let name = name.calculate_dimension(string_bounder);
+            let value = value.calculate_dimension(string_bounder);
+            (
+                f64::max(width1, name.width),
+                f64::max(width2, value.width),
+                height + name.height.max(value.height),
+            )
+        },
+    )
 }

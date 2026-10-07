@@ -18,8 +18,7 @@ use crate::decoration::symbol::USymbols;
 use crate::decoration::{LinkDecor, LinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::{
-    Labels, add_tags, back_color, colors, colors_with_line, display_or_name,
-    stereotype, url_of,
+    Labels, add_tags, back_color, colors, colors_with_line, display_or_name, stereotype, url_of,
 };
 use crate::java;
 use crate::klimt::url::Url;
@@ -58,9 +57,7 @@ pub(super) fn add_method() -> Box<dyn Command<ClassDiagram>> {
                 }
             };
             let field = arg.get("DATA", 0).unwrap_or_default();
-            cuca.entity_mut(entity)
-                .get_bodier_mut()
-                .add_field_or_method(field);
+            cuca.entity_mut(entity).bodier.add_field_or_method(field);
             Ok(())
         },
     )))
@@ -317,7 +314,7 @@ pub(super) fn create_class_multilines() -> Box<dyn Command<ClassDiagram>> {
                     true,
                 )?;
                 if lines.len() > 1 {
-                    let bodier = diagram.cuca().entity_mut(entity).get_bodier_mut();
+                    let bodier = &mut diagram.cuca().entity_mut(entity).bodier;
                     for line in lines.sub_extract(1, 1).iter() {
                         bodier.add_field_or_method(line.text());
                     }
@@ -465,7 +462,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                     }
                 };
                 decorate_object(cuca, entity, &header)?;
-                let bodier = cuca.entity_mut(entity).get_bodier_mut();
+                let bodier = &mut cuca.entity_mut(entity).bodier;
                 for line in &lines[1..lines.len() - 1] {
                     bodier.add_field_or_method(line.text());
                 }

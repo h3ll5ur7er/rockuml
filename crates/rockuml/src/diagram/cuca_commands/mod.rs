@@ -31,7 +31,6 @@ use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated};
 use crate::{color, stereo};
 
-
 /// A stereotype, whose spot colour must exist (`Stereotype.build` with the circled character font).
 pub(super) fn stereotype(stereo: &str) -> Result<Stereotype, CommandError> {
     Stereotype::with_spot(stereo).map_err(|_| CommandError::bad_color())
@@ -228,11 +227,7 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 cuca.entity_mut(entity).colors = colors_with_line(&header)?;
                 for entry in lines.sub_extract(1, 1).iter() {
                     let entry = entry.text();
-                    if !cuca
-                        .entity_mut(entity)
-                        .get_bodier_mut()
-                        .add_field_or_method(entry)
-                    {
+                    if !cuca.entity_mut(entity).bodier.add_field_or_method(entry) {
                         return Err(CommandError::new(
                             "Map definition should contains key => value",
                         ));
@@ -381,7 +376,7 @@ pub(super) fn create_json<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 let Some(json) = json_value(&lines) else {
                     return Err(CommandError::new("Bad data"));
                 };
-                cuca.entity_mut(entity).get_bodier_mut().set_json(json);
+                cuca.entity_mut(entity).bodier.set_json(json);
                 Ok(())
             },
         )
@@ -444,11 +439,7 @@ pub(super) fn create_json_single_line<D: EntityDiagram + 'static>() -> Box<dyn C
             let Ok(json) = crate::json::parse(arg.get_lazzy("DATA_", 0).unwrap_or_default()) else {
                 return Err(CommandError::new("Bad data"));
             };
-            diagram
-                .cuca()
-                .entity_mut(entity)
-                .get_bodier_mut()
-                .set_json(json);
+            diagram.cuca().entity_mut(entity).bodier.set_json(json);
             Ok(())
         },
     )))

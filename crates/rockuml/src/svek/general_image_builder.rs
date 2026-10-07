@@ -1,13 +1,16 @@
 //! The image each kind of leaf is drawn with (PlantUML's `GeneralImageBuilder`).
 
 use super::image::{
-    EntityImageAssociation, EntityImageAssociationPoint, EntityImageChenAttribute,
-    EntityImageChenCircle, EntityImageChenEntity, EntityImageChenRelationship, EntityImageClass,
+    EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
+    EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
+    EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
     EntityImageJson, EntityImageLollipopInterface, EntityImageMap, EntityImageNote,
-    EntityImageObject, EntityImageTips,
+    EntityImageObject, EntityImagePseudoState, EntityImageState, EntityImageState2,
+    EntityImageStateBorder, EntityImageStateEmptyDescription, EntityImageSynchroBar,
+    EntityImageTips,
 };
 use super::{Bibliotekon, IEntityImage};
-use crate::abel::{EntityId, LeafType};
+use crate::abel::{Entity, EntityId, LeafType};
 use crate::diagram::NotYetPorted;
 use crate::diagram::cuca::CucaDiagram;
 
@@ -35,13 +38,15 @@ pub(crate) fn create_entity_image_block(
         LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
         LeafType::Activity => not_ported("EntityImageActivity"),
         LeafType::Portin | LeafType::Portout => not_ported("EntityImagePort"),
-        LeafType::State => not_ported("EntityImageState"),
-        LeafType::CircleStart => not_ported("EntityImageCircleStart"),
-        LeafType::CircleEnd => not_ported("EntityImageCircleEnd"),
-        LeafType::Branch | LeafType::StateChoice => not_ported("EntityImageBranch"),
-        LeafType::LollipopFull | LeafType::LollipopHalf => Ok(Box::new(
-            EntityImageLollipopInterface::new(entity, diagram),
-        )),
+        LeafType::State => Ok(state_image(entity, diagram)),
+        LeafType::CircleStart => Ok(Box::new(EntityImageCircleStart::new(entity, diagram))),
+        LeafType::CircleEnd => Ok(Box::new(EntityImageCircleEnd::new(entity, diagram))),
+        LeafType::Branch | LeafType::StateChoice => {
+            Ok(Box::new(EntityImageBranch::new(entity, diagram)))
+        }
+        LeafType::LollipopFull | LeafType::LollipopHalf => {
+            Ok(Box::new(EntityImageLollipopInterface::new(entity, diagram)))
+        }
         LeafType::Object => Ok(Box::new(EntityImageObject::new(entity, diagram))),
         LeafType::Map => Ok(Box::new(EntityImageMap::new(entity, diagram))),
         LeafType::Json => Ok(Box::new(EntityImageJson::new(entity, diagram))),
@@ -53,7 +58,9 @@ pub(crate) fn create_entity_image_block(
         | LeafType::Description
         | LeafType::Usecase
         | LeafType::UsecaseBusiness => not_ported("EntityImageDescription"),
-        LeafType::SynchroBar | LeafType::StateForkJoin => not_ported("EntityImageSynchroBar"),
+        LeafType::SynchroBar | LeafType::StateForkJoin => {
+            Ok(Box::new(EntityImageSynchroBar::new(entity, diagram)))
+        }
         LeafType::ArcCircle => not_ported("EntityImageArcCircle"),
         LeafType::EmptyPackage => {
             if entity.get_usymbol().is_some() {
@@ -62,9 +69,11 @@ pub(crate) fn create_entity_image_block(
                 not_ported("EntityImageEmptyPackage")
             }
         }
-        LeafType::PseudoState => not_ported("EntityImagePseudoState"),
+        LeafType::PseudoState => Ok(Box::new(EntityImagePseudoState::new(entity, diagram))),
         LeafType::StateTransitionLabel => not_ported("EntityImageTransitionLabel"),
-        LeafType::DeepHistory => not_ported("EntityImageDeepHistory"),
+        LeafType::DeepHistory => Ok(Box::new(EntityImagePseudoState::deep_history(
+            entity, diagram,
+        ))),
         LeafType::Tips => Ok(Box::new(EntityImageTips::new(entity, diagram))),
         LeafType::ChenEntity => Ok(Box::new(EntityImageChenEntity::new(entity, diagram))),
         LeafType::ChenRelationship => {
@@ -76,4 +85,23 @@ pub(crate) fn create_entity_image_block(
         // PlantUML has no image for the other kinds and fails.
         _ => not_ported("GeneralImageBuilder"),
     }
+}
+
+/// A state on its composite's border, without description under `hide empty description`, framed for
+/// `<<sdlreceive>>`, or else a plain state.
+fn state_image(entity: &Entity, diagram: &CucaDiagram) -> Box<dyn IEntityImage> {
+    if !entity.get_entity_position().is_normal() {
+        return Box::new(EntityImageStateBorder::new(entity, diagram));
+    }
+    if diagram.is_hide_empty_description_for_state() && entity.bodier.get_raw_body().is_empty() {
+        return Box::new(EntityImageStateEmptyDescription::new(entity, diagram));
+    }
+    let sdl_receive = entity
+        .stereotype
+        .as_ref()
+        .is_some_and(|stereotype| stereotype.label_double_comparator() == "<<sdlreceive>>");
+    if sdl_receive {
+        return Box::new(EntityImageState2::new(entity, diagram));
+    }
+    Box::new(EntityImageState::new(entity, diagram))
 }

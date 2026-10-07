@@ -225,9 +225,16 @@ fixtures are in `crates/rockuml/tests/data` and the matching tests next to the R
 ```bash
 bash tools/oracle/cuca-unit/extremity.sh   # extremity.txt: every link decoration, as debug shapes and SVG arcs
 bash tools/oracle/cuca-unit/usymbol.sh     # usymbol.txt: every USymbol's asSmall and asBig, magnetic borders
+bash tools/oracle/cuca-unit/state-images.sh  # state-images.txt: the image of each leaf of small state diagrams
 ```
 
 `USymbolDump` draws each symbol around a fixed set of labels (with and without stereotypes, with separators that
 the symbols' own line drawers handle) and at a fixed set of big sizes, alignments and corners;
 `crates/rockuml/src/decoration/symbol/tests.rs` rebuilds the same inputs from each case's header and compares the
 listing.
+
+`StateImageDump` reads small state diagrams with PlantUML's own factory and draws each leaf's image as
+`GeneralImageBuilder` makes it; it writes the diagrams into the fixture, and
+`crates/rockuml/src/diagram/state/image_tests.rs` reads them with rockuml's factory and compares each leaf's
+dimension, shape type and drawing. Fonts other than Java's logical ones are left out, as their names depend on the
+fonts installed where Java runs.

@@ -119,20 +119,3 @@ pub(super) fn style_import<D: NotPortedCommands + 'static>() -> Box<dyn Command<
     )
     .boxed()
 }
-
-/// PlantUML's `CommandHideEmptyDescription`.
-pub(super) fn hide_empty_description<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandHideEmptyDescription",
-        RegexTree::concat(vec![
-            RegexTree::start(),
-            RegexTree::named(1, "HIDE", r"(hide|show)"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::leaf(r"empty"),
-            RegexTree::spaces_one_or_more(),
-            RegexTree::leaf(r"description"),
-            RegexTree::end(),
-        ]),
-    )
-    .boxed()
-}

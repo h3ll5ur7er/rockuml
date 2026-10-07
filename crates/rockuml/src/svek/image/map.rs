@@ -95,15 +95,14 @@ impl DataBox {
             name: Box::new(TextBlockMarged::new(name, margin(2.0, 2.0))),
             stereo,
             url: entity.url.clone(),
-            group: entity_group(entity, diagram),
+            group: entity_group(entity, diagram, "entity", entity.get_location()),
             round_corner: style.value(PName::RoundCorner).as_double(),
             minimum_width: style.value(PName::MinimumWidth).as_double(),
             border_color: line_color
                 .cloned()
                 .unwrap_or_else(|| style.value(PName::LineColor).as_color()),
             header_backcolor,
-            backcolor: backcolor
-                .unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
+            backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: style.stroke(),
             style,
         }
@@ -162,7 +161,13 @@ impl DataBox {
             blocks.push(stereo.as_ref());
         }
         blocks.push(self.name.as_ref());
-        draw_title(&ug, &blocks, total.width, title.height, HorizontalAlignment::Center);
+        draw_title(
+            &ug,
+            &blocks,
+            total.width,
+            title.height,
+            HorizontalAlignment::Center,
+        );
         let ug2 = ug.with_stencil_stroke(
             Rc::new(RectangleStencil { width: total.width }),
             self.stroke,
@@ -208,7 +213,7 @@ pub(crate) struct EntityImageMap {
 impl EntityImageMap {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let data_box = DataBox::new(entity, diagram, SName::Map);
-        let Bodier::Map { map } = entity.get_bodier() else {
+        let Bodier::Map { map } = &entity.bodier else {
             unreachable!("maps have map bodies")
         };
         let style = &data_box.style;
@@ -259,10 +264,11 @@ struct MapRow {
 
 impl MapRow {
     fn value_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        self.value.as_ref().map_or(
-            XDimension2D::new(POINT_DIAMETER, POINT_DIAMETER),
-            |value| value.calculate_dimension(string_bounder),
-        )
+        self.value
+            .as_ref()
+            .map_or(XDimension2D::new(POINT_DIAMETER, POINT_DIAMETER), |value| {
+                value.calculate_dimension(string_bounder)
+            })
     }
 
     fn height(&self, string_bounder: &dyn StringBounder) -> f64 {
