@@ -43,6 +43,34 @@ find e5> forward e5< backward none
 find e6> forward e6< backward none
 find e7> forward e7< backward none
 find e8> forward e8< backward none
+induce "cluster6" e1> e4> e2> e3> e8>
+in "cluster6" node "sh0010" out e1> e4> in edges e1> e4> degree 0 2
+in "cluster6" node "sh0015" out e2> in e1< edges e2> e1< degree 1 1
+in "cluster6" node "sh0020" out e3> in e2< edges e3> e2< degree 1 1
+in "cluster6" node "sh0021" out in e3< edges e3< degree 1 0
+in "cluster6" node "sh0026" out in e4< edges e4< degree 1 0
+in "cluster6" node "zent0005" out e8> in edges e8> degree 0 1
+in "cluster6" node "zent0008" out in e8< edges e8< degree 1 0
+induce "cluster11" e2> e3>
+in "cluster11" node "sh0015" out e2> in edges e2> degree 0 1
+in "cluster11" node "sh0020" out e3> in e2< edges e3> e2< degree 1 1
+in "cluster11" node "sh0021" out in e3< edges e3< degree 1 0
+in "cluster11" node "zent0005" out in edges degree 0 0
+induce "cluster16" e3>
+in "cluster16" node "sh0020" out e3> in edges e3> degree 0 1
+in "cluster16" node "sh0021" out in e3< edges e3< degree 1 0
+in "cluster16" node "zent0005" out in edges degree 0 0
+induce "cluster22"
+in "cluster22" node "sh0026" out in edges degree 0 0
+in "cluster22" node "zent0008" out in edges degree 0 0
+induce "cluster27"
+in "cluster27" node "sh0031" out in edges degree 0 0
+in "cluster27" node "zent0010" out in edges degree 0 0
+contains "cluster6" 0 1 1 1 1 1 0 0 1 1 1 1 1 1 0 0 0 1
+contains "cluster11" 0 0 1 1 1 0 0 0 1 0 0 1 1 0 0 0 0 0
+contains "cluster16" 0 0 0 1 1 0 0 0 1 0 0 0 1 0 0 0 0 0
+contains "cluster22" 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0
+contains "cluster27" 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0
 attr "g" "margin" "16"
 attr "sh0032" "shape" "box"
 attr "sh0032" "width" "0.630301534628363"

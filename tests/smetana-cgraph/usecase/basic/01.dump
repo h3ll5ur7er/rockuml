@@ -21,6 +21,16 @@ find e1> forward e1< backward none
 find e2> forward e2< backward none
 find e3> forward e3< backward none
 find e4> forward e4< backward none
+induce "cluster6"
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+induce "cluster12"
+in "cluster12" node "sh0016" out in edges degree 0 0
+in "cluster12" node "sh0017" out in edges degree 0 0
+in "cluster12" node "sh0018" out in edges degree 0 0
+in "cluster12" node "sh0019" out in edges degree 0 0
+contains "cluster6" 0 1 1 0 0 0 0 0 0 0 0
+contains "cluster12" 0 0 0 1 1 1 1 0 0 0 0
 attr "g" "margin" "16"
 attr "sh0020" "shape" "box"
 attr "sh0020" "width" "0.805807767240011"

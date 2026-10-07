@@ -1,7 +1,7 @@
 //! Replays the input section of every Smetana trace through the port's cgraph and checks the graph against the
 //! trace and against a dump of Java's cgraph after the same calls (`tests/smetana-cgraph`, made by
 //! `tools/oracle/cgraph-dumps.sh`): counts, the iteration orders of nodes, edges and subgraphs, the order of
-//! object ids, wildcard edge lookups and attribute values.
+//! object ids, wildcard edge lookups, edges induced into subgraphs, membership and attribute values.
 
 mod trace;
 
@@ -10,11 +10,12 @@ use std::path::Path;
 
 use smetana::cgraph::attr::agget;
 use smetana::cgraph::edge::{
-    agfindedge, agfstedge, agfstin, agfstout, agnxtedge, agnxtin, agnxtout,
+    agfindedge, agfstedge, agfstin, agfstout, agnxtedge, agnxtin, agnxtout, agsubedge,
 };
 use smetana::cgraph::graph::{agdegree, agnedges, agnnodes};
 use smetana::cgraph::id::agnameof;
 use smetana::cgraph::node::{agfstnode, agnxtnode};
+use smetana::cgraph::obj::agcontains;
 use smetana::cgraph::subg::{agfstsubg, agnxtsubg};
 use smetana::cgraph::{AGINEDGE, Agobj, aghead, agtail};
 use smetana::core::Globals;
@@ -142,6 +143,52 @@ fn dump(r: &mut Replay, input: &[Call]) -> String {
         )
         .unwrap();
     }
+    dump_membership(zz, root, &subs, &r.edges, &mut out);
+    dump_attributes(r, input, &mut out);
+    out
+}
+
+/// What rank's `node_induce` does to every subgraph, then which objects each contains.
+fn dump_membership(
+    zz: &mut Globals,
+    root: GraphId,
+    subs: &[GraphId],
+    edges: &[EdgeId],
+    out: &mut String,
+) {
+    for &s in subs {
+        write!(out, "induce {}", name(zz, s)).unwrap();
+        for n in nodes(zz, s) {
+            let mut e = agfstout(zz, root, n);
+            while let Some(ee) = e {
+                if agcontains(zz, s, aghead(zz, ee)) {
+                    let induced = agsubedge(zz, s, ee, true);
+                    write!(out, " {}", edge(zz, induced)).unwrap();
+                }
+                e = agnxtout(zz, root, ee);
+            }
+        }
+        out.push('\n');
+        for n in nodes(zz, s) {
+            let lists = edge_lists(zz, s, n);
+            writeln!(out, "in {} node {}{lists}", name(zz, s), name(zz, n)).unwrap();
+        }
+    }
+    for &s in subs {
+        write!(out, "contains {}", name(zz, s)).unwrap();
+        for n in nodes(zz, root) {
+            out.push_str(if agcontains(zz, s, n) { " 1" } else { " 0" });
+        }
+        for &e in edges {
+            out.push_str(if agcontains(zz, s, e) { " 1" } else { " 0" });
+        }
+        out.push('\n');
+    }
+}
+
+/// The final value of every attribute the input set, in the order first set.
+fn dump_attributes(r: &mut Replay, input: &[Call], out: &mut String) {
+    let zz = &mut r.zz;
     let mut seen: Vec<(&Object, &String)> = Vec::new();
     for c in input {
         if let Call::Agsafeset { object, name, .. } = c
@@ -164,7 +211,6 @@ fn dump(r: &mut Replay, input: &[Call]) -> String {
         };
         writeln!(out, "attr {label} {} {value}", trace::quote(attr)).unwrap();
     }
-    out
 }
 
 /// The trace's own record of the layout's input, independent of the Java dump: every real node in creation order

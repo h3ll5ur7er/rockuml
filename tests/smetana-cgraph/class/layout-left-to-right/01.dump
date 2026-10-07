@@ -15,6 +15,10 @@ find e2> forward e2< backward none
 find e3> forward e3< backward none
 find e4> forward e4< backward none
 find e5> forward e5< backward none
+induce "cluster6" e5>
+in "cluster6" node "sh0010" out e5> in edges e5> degree 0 1
+in "cluster6" node "sh0011" out in e5< edges e5< degree 1 0
+contains "cluster6" 0 0 0 1 1 0 0 0 0 1
 attr "g" "margin" "16"
 attr "sh0012" "shape" "box"
 attr "sh0012" "width" "2.0875869960698186"

@@ -27,6 +27,24 @@ find e2> forward e2< backward none
 find e3> forward e3< backward none
 find e4> forward e4< backward none
 find e5> forward e5< backward none
+induce "cluster6" e1>
+in "cluster6" node "sh0010" out e1> in edges e1> degree 0 1
+in "cluster6" node "sh0011" out in e1< edges e1< degree 1 0
+in "cluster6" node "sh0012" out in edges degree 0 0
+induce "cluster13" e2>
+in "cluster13" node "sh0017" out e2> in edges e2> degree 0 1
+in "cluster13" node "sh0018" out in e2< edges e2< degree 1 0
+induce "cluster19"
+in "cluster19" node "sh0023" out in edges degree 0 0
+induce "cluster24"
+in "cluster24" node "sh0032" out in edges degree 0 0
+induce "cluster28"
+in "cluster28" node "sh0032" out in edges degree 0 0
+contains "cluster6" 1 1 1 0 0 0 0 1 0 0 0 0
+contains "cluster13" 0 0 0 1 1 0 0 0 1 0 0 0
+contains "cluster19" 0 0 0 0 0 1 0 0 0 0 0 0
+contains "cluster24" 0 0 0 0 0 0 1 0 0 0 0 0
+contains "cluster28" 0 0 0 0 0 0 1 0 0 0 0 0
 attr "g" "margin" "16"
 attr "cluster6" "label" "_dim_176_17_"
 attr "cluster6" "margin" "16"

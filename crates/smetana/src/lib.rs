@@ -28,7 +28,10 @@
 //! | `GD_nodesep(g)` | `zz.gd(g).nodesep` |
 //! | `GD_rank(g)[r].n` | `zz.rank(g, r).n` / `zz.rank_mut(g, r).n` |
 //! | `agtail(e)`, `aghead(e)` | `agtail(zz, e)`, `aghead(zz, e)` |
+//! | `M_agtail(e, v)`, `MAKEFWDEDGE(new, old)` | `M_agtail(zz, e, v)`, `MAKEFWDEDGE(zz, new, old)` |
 //! | `AGSEQ(n)`, `n.tag.id` | `AGSEQ(zz, n)`, `zz.tag(n).id` |
+//! | `AGSEQ(e, s)`, `AGTYPE(e, t)` | `zz.tag_mut(e).seq = s`, `zz.tag_mut(e).objtype = t` |
+//! | `VIRTUAL`, `CL_OFFSET`... | [`core::consts`] |
 //!
 //! Rust evaluates the right side of an assignment first, so `zz.nd_mut(n).rank = zz.nd(m).rank + 1` compiles.
 //! Records are `Copy`; to hand one sub-struct and the context to a function, copy it out and write it back

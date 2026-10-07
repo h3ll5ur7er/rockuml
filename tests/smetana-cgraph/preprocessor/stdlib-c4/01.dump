@@ -10,6 +10,10 @@ in "cluster6" node "sh0010" out in edges degree 0 0
 in "cluster6" node "sh0011" out in edges degree 0 0
 find e1> forward e1< backward none
 find e2> forward e2< backward none
+induce "cluster6" e2>
+in "cluster6" node "sh0010" out e2> in edges e2> degree 0 1
+in "cluster6" node "sh0011" out in e2< edges e2< degree 1 0
+contains "cluster6" 0 1 1 0 1
 attr "g" "margin" "16"
 attr "sh0012" "shape" "box"
 attr "sh0012" "width" "1.8675641263497624"

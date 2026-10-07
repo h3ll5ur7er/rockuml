@@ -2,6 +2,7 @@
 //! C-style arrays, and Java's arithmetic and C-library replacements.
 
 pub mod carray;
+pub mod consts;
 mod globals;
 pub mod ids;
 pub mod jmath;

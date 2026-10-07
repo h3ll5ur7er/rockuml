@@ -8,6 +8,8 @@ import static gen.lib.cgraph.edge__c.agfstout;
 import static gen.lib.cgraph.edge__c.agnxtedge;
 import static gen.lib.cgraph.edge__c.agnxtin;
 import static gen.lib.cgraph.edge__c.agnxtout;
+import static gen.lib.cgraph.edge__c.agsubedge;
+import static gen.lib.cgraph.obj__c.agcontains;
 import static gen.lib.cgraph.edge__c.aghead;
 import static gen.lib.cgraph.edge__c.agtail;
 import static gen.lib.cgraph.graph__c.agdegree;
@@ -252,6 +254,25 @@ public class CgraphDump {
 			final ST_Agedge_s backward = agfindedge(zz, root, h, t);
 			out.append("find ").append(edge(e)).append(" forward ").append(edge(forward)).append(" backward ")
 					.append(edge(backward)).append('\n');
+		}
+		// What rank's node_induce does to every cluster, then membership.
+		for (ST_Agraph_s s : subs) {
+			out.append("induce ").append(name(s));
+			for (ST_Agnode_s n : nodes(s))
+				for (ST_Agedge_s e = agfstout(zz, root, n); e != null; e = agnxtout(zz, root, e))
+					if (agcontains(zz, s, aghead(e)))
+						out.append(' ').append(edge(agsubedge(zz, s, e, true)));
+			out.append('\n');
+			for (ST_Agnode_s n : nodes(s))
+				out.append("in ").append(name(s)).append(" node ").append(name(n)).append(edgeLists(s, n)).append('\n');
+		}
+		for (ST_Agraph_s s : subs) {
+			out.append("contains ").append(name(s));
+			for (ST_Agnode_s n : nodes(root))
+				out.append(agcontains(zz, s, n) ? " 1" : " 0");
+			for (ST_Agedge_s e : edges)
+				out.append(agcontains(zz, s, e) ? " 1" : " 0");
+			out.append('\n');
 		}
 		for (String[] a : attributes) {
 			final ST_Agobj_s obj = object(a[0], a[1]);

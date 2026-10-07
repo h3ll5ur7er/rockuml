@@ -140,3 +140,59 @@ pub fn M_aghead(zz: &mut Globals, e: EdgeId, v: NodeId) {
     let half = AGMKOUT(zz, e);
     zz.edge_mut(half).node = Some(v);
 }
+
+/// `MAKEFWDEDGE(new, old)`: turns `new`, the out-half of a scratch pair ([`Globals::new_agedgepair`]), into a
+/// virtual copy of `old` pointing the other way. The record is copied whole, so labels and splines stay shared.
+pub fn MAKEFWDEDGE(zz: &mut Globals, new: EdgeId, old: EdgeId) {
+    *zz.ed_mut(new) = *zz.ed(old);
+    *zz.edge_mut(new) = *zz.edge(old);
+    let (head, tail) = (aghead(zz, old), agtail(zz, old));
+    M_agtail(zz, new, head);
+    M_aghead(zz, new, tail);
+    let (tail_port, head_port) = (zz.ed(old).tail_port, zz.ed(old).head_port);
+    let info = zz.ed_mut(new);
+    info.tail_port = head_port;
+    info.head_port = tail_port;
+    info.edge_type = crate::core::consts::VIRTUAL;
+    info.to_orig = Some(old);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::attr::agsafeset;
+    use super::edge::agedge;
+    use super::graph::agopen;
+    use super::node::agnode;
+    use super::{MAKEFWDEDGE, aghead, agtail};
+    use crate::core::Globals;
+    use crate::core::consts::VIRTUAL;
+    use crate::h::cgraph::Agdirected;
+    use crate::h::{pointf, textlabel_t};
+
+    #[test]
+    fn makefwdedge_reverses_a_copy_and_shares_its_label() {
+        let mut zz = Globals::open();
+        let g = agopen(&mut zz, Some("g"), Agdirected);
+        let a = agnode(&mut zz, g, Some("a"), true).unwrap();
+        let b = agnode(&mut zz, g, Some("b"), true).unwrap();
+        let e = agedge(&mut zz, g, a, b, None, true).unwrap();
+        agsafeset(&mut zz, e, "minlen", "2", "");
+        let label = zz.textlabels.push(textlabel_t::default());
+        zz.ed_mut(e).label = Some(label);
+        zz.ed_mut(e).minlen = 2;
+        zz.ed_mut(e).tail_port.p = pointf { x: 1.0, y: 2.0 };
+
+        let fwd = zz.new_agedgepair();
+        MAKEFWDEDGE(&mut zz, fwd, e);
+        assert_eq!((agtail(&zz, fwd), aghead(&zz, fwd)), (b, a));
+        assert_eq!((agtail(&zz, e), aghead(&zz, e)), (a, b));
+        assert_eq!(zz.ed(fwd).head_port.p, pointf { x: 1.0, y: 2.0 });
+        assert_eq!(zz.ed(fwd).minlen, 2);
+        assert_eq!(zz.ed(fwd).edge_type, VIRTUAL);
+        assert_eq!(zz.ed(fwd).to_orig, Some(e));
+        assert_eq!(zz.tag(fwd).seq, zz.tag(e).seq);
+        let shared = zz.ed(fwd).label.unwrap();
+        zz.textlabels[shared].pos = pointf { x: 3.0, y: 4.0 };
+        assert_eq!(zz.textlabels[label].pos, pointf { x: 3.0, y: 4.0 });
+    }
+}
