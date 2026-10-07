@@ -11,6 +11,7 @@
 pub mod arrows;
 pub mod emit;
 pub mod geom;
+pub mod postproc;
 pub mod routespl;
 pub mod shapes_inside;
 pub mod splines;

@@ -66,4 +66,5 @@ pub mod cgraph;
 pub mod common;
 pub mod core;
 pub mod h;
+pub mod label;
 pub mod pathplan;
