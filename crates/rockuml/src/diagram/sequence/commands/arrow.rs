@@ -192,6 +192,109 @@ fn body_length(arg: &RegexResult) -> usize {
     a.len() + b.len()
 }
 
+fn has_dressing1_but_x(dressing1: &str) -> bool {
+    contains_any(dressing1, &["<", "\\", "/"])
+}
+
+fn has_dressing2_but_x(dressing2: &str) -> bool {
+    contains_any(dressing2, &[">", "\\", "/"])
+}
+
+/// Whether the arrow is written right to left, like `Bob <- Alice`.
+fn is_reverse_define(dressing1: &str, dressing2: &str) -> Result<bool, CommandError> {
+    let x_in_dressing1 = dressing1.contains('x');
+    let x_in_dressing2 = dressing2.contains('x');
+    if has_dressing2_but_x(dressing2) || (x_in_dressing1 && x_in_dressing2) {
+        Ok(false)
+    } else if has_dressing1_but_x(dressing1) {
+        Ok(true)
+    } else if x_in_dressing1 || x_in_dressing2 {
+        Ok(false)
+    } else {
+        Err(CommandError::new("Illegal sequence arrow"))
+    }
+}
+
+/// The sender and the receiver, created in the order they are written.
+fn participants(
+    diagram: &mut SequenceDiagram,
+    arg: &RegexResult,
+    reverse_define: bool,
+) -> (ParticipantId, ParticipantId) {
+    if reverse_define {
+        let p2 = get_or_create(diagram, arg, &PART1);
+        let p1 = get_or_create(diagram, arg, &PART2);
+        (p1, p2)
+    } else {
+        let p1 = get_or_create(diagram, arg, &PART1);
+        let p2 = get_or_create(diagram, arg, &PART2);
+        (p1, p2)
+    }
+}
+
+/// The arrow as its dressings, body and `[...]` style describe it.
+fn arrow_configuration(
+    arg: &RegexResult,
+    dressing1: &str,
+    dressing2: &str,
+    reverse_define: bool,
+) -> Result<ArrowConfiguration, CommandError> {
+    let in_participant_order = |end1: bool, end2: bool| {
+        if reverse_define {
+            (end2, end1)
+        } else {
+            (end1, end2)
+        }
+    };
+    let (circle_at_start, circle_at_end) =
+        in_participant_order(dressing1.contains('o'), dressing2.contains('o'));
+    let (sync1, sync2) = in_participant_order(
+        contains_any(dressing1, &["<<", "\\\\", "//"]),
+        contains_any(dressing2, &[">>", "\\\\", "//"]),
+    );
+    let (cross1, cross2) = in_participant_order(dressing1.contains('x'), dressing2.contains('x'));
+
+    let mut configuration = if has_dressing1_but_x(dressing1) && has_dressing2_but_x(dressing2) {
+        ArrowConfiguration::with_direction_both()
+    } else {
+        ArrowConfiguration::with_direction_normal()
+    };
+    if body_length(arg) > 1 {
+        configuration = configuration.with_body(ArrowBody::Dotted);
+    }
+    if sync1 {
+        configuration = configuration.with_head1(ArrowHead::Async);
+    }
+    if sync2 {
+        configuration = configuration.with_head2(ArrowHead::Async);
+    }
+    if dressing2.contains('\\') || dressing1.contains('/') {
+        configuration = configuration.with_part(ArrowPart::TopPart);
+    }
+    if dressing2.contains('/') || dressing1.contains('\\') {
+        configuration = configuration.with_part(ArrowPart::BottomPart);
+    }
+    if circle_at_end {
+        configuration = configuration.with_decoration2(ArrowDecoration::Circle);
+    }
+    if circle_at_start {
+        configuration = configuration.with_decoration1(ArrowDecoration::Circle);
+    }
+    if cross1 {
+        configuration = configuration.with_head1(ArrowHead::CrossX);
+    }
+    if cross2 {
+        configuration = configuration.with_head2(ArrowHead::CrossX);
+    }
+    if reverse_define {
+        configuration = configuration.reverse_define();
+    }
+    configuration = apply_style(arg.get_lazzy("ARROW_STYLE", 0), configuration)?;
+    let inclination1 = inclination(arg.get("ARROW_DRESSING1", 0));
+    let inclination2 = inclination(arg.get("ARROW_DRESSING2", 0));
+    Ok(configuration.with_inclination(inclination1 + inclination2))
+}
+
 impl SingleLineCommand<SequenceDiagram> for CommandArrow {
     fn pattern(&self) -> &RegexTree {
         &self.0
@@ -205,95 +308,13 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
     ) -> CommandResult {
         let dressing1 = dressing(arg, "ARROW_DRESSING1");
         let dressing2 = dressing(arg, "ARROW_DRESSING2");
-        let inclination1 = inclination(arg.get("ARROW_DRESSING1", 0));
-        let inclination2 = inclination(arg.get("ARROW_DRESSING2", 0));
-        let has_dressing1_but_x = contains_any(&dressing1, &["<", "\\", "/"]);
-        let x_in_dressing1 = dressing1.contains('x');
-        let has_dressing2_but_x = contains_any(&dressing2, &[">", "\\", "/"]);
-        let x_in_dressing2 = dressing2.contains('x');
-        let reverse_define = if has_dressing2_but_x || (x_in_dressing1 && x_in_dressing2) {
-            false
-        } else if has_dressing1_but_x {
-            true
-        } else if x_in_dressing1 || x_in_dressing2 {
-            false
-        } else {
-            return Err(CommandError::new("Illegal sequence arrow"));
-        };
-
-        let async_marks = ["<<", "\\\\", "//"];
-        let async_marks2 = [">>", "\\\\", "//"];
-        let (participant1, participant2, circle_at_start, circle_at_end, sync1, sync2) =
-            if reverse_define {
-                let p2 = get_or_create(diagram, arg, &PART1);
-                let p1 = get_or_create(diagram, arg, &PART2);
-                (
-                    p1,
-                    p2,
-                    dressing2.contains('o'),
-                    dressing1.contains('o'),
-                    contains_any(&dressing2, &async_marks2),
-                    contains_any(&dressing1, &async_marks),
-                )
-            } else {
-                let p1 = get_or_create(diagram, arg, &PART1);
-                let p2 = get_or_create(diagram, arg, &PART2);
-                (
-                    p1,
-                    p2,
-                    dressing1.contains('o'),
-                    dressing2.contains('o'),
-                    contains_any(&dressing1, &async_marks),
-                    contains_any(&dressing2, &async_marks2),
-                )
-            };
-
+        let reverse_define = is_reverse_define(&dressing1, &dressing2)?;
+        let (participant1, participant2) = participants(diagram, arg, reverse_define);
         let labels = match arg.get("MESSAGE", 0) {
             None => Display::create([""]),
             Some(message) => Display::with_newlines(message),
         };
-        let mut configuration = if has_dressing1_but_x && has_dressing2_but_x {
-            ArrowConfiguration::with_direction_both()
-        } else {
-            ArrowConfiguration::with_direction_normal()
-        };
-        if body_length(arg) > 1 {
-            configuration = configuration.with_body(ArrowBody::Dotted);
-        }
-        if sync1 {
-            configuration = configuration.with_head1(ArrowHead::Async);
-        }
-        if sync2 {
-            configuration = configuration.with_head2(ArrowHead::Async);
-        }
-        if dressing2.contains('\\') || dressing1.contains('/') {
-            configuration = configuration.with_part(ArrowPart::TopPart);
-        }
-        if dressing2.contains('/') || dressing1.contains('\\') {
-            configuration = configuration.with_part(ArrowPart::BottomPart);
-        }
-        if circle_at_end {
-            configuration = configuration.with_decoration2(ArrowDecoration::Circle);
-        }
-        if circle_at_start {
-            configuration = configuration.with_decoration1(ArrowDecoration::Circle);
-        }
-        let (cross1, cross2) = if reverse_define {
-            (x_in_dressing2, x_in_dressing1)
-        } else {
-            (x_in_dressing1, x_in_dressing2)
-        };
-        if cross1 {
-            configuration = configuration.with_head1(ArrowHead::CrossX);
-        }
-        if cross2 {
-            configuration = configuration.with_head2(ArrowHead::CrossX);
-        }
-        if reverse_define {
-            configuration = configuration.reverse_define();
-        }
-        configuration = apply_style(arg.get_lazzy("ARROW_STYLE", 0), configuration)?;
-        configuration = configuration.with_inclination(inclination1 + inclination2);
+        let configuration = arrow_configuration(arg, &dressing1, &dressing2, reverse_define)?;
 
         let activation_spec = arg.get("ACTIVATION", 0);
         if activation_spec.is_some_and(|spec| spec.starts_with('*')) {
@@ -302,7 +323,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
         }
         let message_number = diagram.next_message_number();
         let mut common = MessageCommon::new(
-            diagram.manage_variable(labels),
+            diagram.manage_variable(&labels),
             configuration.clone(),
             message_number,
             diagram.style_builder(),
@@ -323,7 +344,13 @@ impl SingleLineCommand<SequenceDiagram> for CommandArrow {
 
         let activation_color = arg.get("LIFECOLOR", 0).map(color_named).transpose()?;
         if let Some(spec) = activation_spec {
-            manage_activations(diagram, spec, participant1, participant2, activation_color);
+            manage_activations(
+                diagram,
+                spec,
+                participant1,
+                participant2,
+                activation_color.as_ref(),
+            );
             return Ok(());
         }
         if diagram.is_autoactivate()
@@ -351,7 +378,7 @@ fn manage_activations(
     spec: &str,
     participant1: ParticipantId,
     participant2: ParticipantId,
-    color: Option<HColor>,
+    color: Option<&HColor>,
 ) {
     let mut apply = |sign| {
         let _ = match sign {
@@ -359,7 +386,7 @@ fn manage_activations(
                 diagram,
                 participant2,
                 LifeEventType::Activate,
-                color.clone(),
+                color.cloned(),
             ),
             '-' => activate(diagram, participant1, LifeEventType::Deactivate, None),
             '!' => activate(diagram, participant2, LifeEventType::Destroy, None),

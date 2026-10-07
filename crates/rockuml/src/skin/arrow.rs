@@ -169,10 +169,10 @@ impl ArrowConfiguration {
     #[must_use]
     pub(crate) fn with_part(&self, part: ArrowPart) -> Self {
         let mut result = self.clone();
-        if self.dressing2.head != ArrowHead::None {
-            result.dressing2.part = part;
-        } else {
+        if self.dressing2.head == ArrowHead::None {
             result.dressing1.part = part;
+        } else {
+            result.dressing2.part = part;
         }
         result
     }
@@ -269,10 +269,10 @@ impl ArrowConfiguration {
 
     /// The head of the end that has one, the second end first.
     pub(crate) fn head(&self) -> ArrowHead {
-        if self.dressing2.head != ArrowHead::None {
-            self.dressing2.head
-        } else {
+        if self.dressing2.head == ArrowHead::None {
             self.dressing1.head
+        } else {
+            self.dressing2.head
         }
     }
 
@@ -285,10 +285,10 @@ impl ArrowConfiguration {
     }
 
     pub(crate) fn part(&self) -> ArrowPart {
-        if self.dressing2.head != ArrowHead::None {
-            self.dressing2.part
-        } else {
+        if self.dressing2.head == ArrowHead::None {
             self.dressing1.part
+        } else {
+            self.dressing2.part
         }
     }
 

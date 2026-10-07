@@ -1,6 +1,7 @@
 //! Stereotypes like `<< Generated >>` or `<< (C,#ADD1B2) Testable >>`: labels shown in guillemets, and
 //! an optional spot, a letter in a coloured circle (PlantUML's `Stereotype` and `StereotypeDecoration`).
 
+use std::fmt::Write;
 use std::sync::LazyLock;
 
 use regex::Regex;
@@ -65,7 +66,7 @@ impl Stereotype {
                     let character = captures[1].chars().next().expect("one character");
                     spot = Some(Spot { character, color });
                     if let Some(rest) = captures.get(3).filter(|rest| !is_blank(rest.as_str())) {
-                        label.push_str(&format!("<<{}>>", rest.as_str()));
+                        let _ = write!(label, "<<{}>>", rest.as_str());
                     }
                 }
                 None => label.push_str(&name),
@@ -163,7 +164,7 @@ mod tests {
         );
         assert_eq!(stereotype.labels(), ["\u{AB}Testable\u{BB}"]);
         let only_spot = Stereotype::with_spot("<< (D,orchid) >>").unwrap();
-        assert!(only_spot.labels().is_empty());
+        assert_eq!(only_spot.labels(), Vec::<String>::new());
         assert_eq!(only_spot.to_string(), "D ");
     }
 

@@ -159,8 +159,8 @@ impl SingleLineCommand<SequenceDiagram> for SingleLineNote {
         arg: &RegexResult,
     ) -> CommandResult {
         let display = Display::with_newlines(arg.get("NOTE", 0).unwrap_or_default());
-        let display = diagram.manage_variable(display);
-        execute(self.kind, diagram, arg, display)
+        let display = diagram.manage_variable(&display);
+        execute(self.kind, diagram, arg, &display)
     }
 }
 
@@ -225,8 +225,8 @@ fn multi(kind: Kind, diagram: &mut SequenceDiagram, lines: &BlocLines) -> Comman
         .matcher(first.text())
         .expect("the start pattern matched");
     let body = lines.sub_extract(1, 1).without_empty_columns();
-    let display = diagram.manage_variable(body.to_display());
-    execute(kind, diagram, &arg, display)
+    let display = diagram.manage_variable(&body.to_display());
+    execute(kind, diagram, &arg, &display)
 }
 
 fn stereotype(arg: &RegexResult) -> Option<Stereotype> {
@@ -244,7 +244,7 @@ fn execute(
     kind: Kind,
     diagram: &mut SequenceDiagram,
     arg: &RegexResult,
-    display: Display,
+    display: &Display,
 ) -> CommandResult {
     let style = NoteStyle::named(arg.get("STYLE", 0).unwrap_or_default());
     let style_builder = diagram.style_builder();

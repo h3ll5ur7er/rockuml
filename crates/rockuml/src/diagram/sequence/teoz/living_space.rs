@@ -555,14 +555,12 @@ impl<'a> LiveBoxes<'a> {
 
     fn activate_color(&self, event: EventId) -> Option<LiveColors> {
         let events = self.events();
-        if let Event::LifeEvent(life) = &events[event] {
-            if life.is_activate() {
-                return Some(life.colors.clone());
-            }
+        if let Event::LifeEvent(life) = &events[event]
+            && life.is_activate()
+        {
+            return Some(life.colors.clone());
         }
-        if events[event].message_common().is_none() {
-            return None;
-        }
+        events[event].message_common()?;
         for next in &events[event + 1..] {
             match next {
                 Event::Note(_) => {}

@@ -258,7 +258,7 @@ pub(super) fn grouping() -> Box<dyn Command<SequenceDiagram>> {
                     None | Some("") => comment = Some("group".to_owned()),
                     Some(text) => {
                         if let Some(captures) = TRAILING_BRACKET.captures(text) {
-                            kind_name = captures[1].to_owned();
+                            captures[1].clone_into(&mut kind_name);
                             comment = Some(captures[2].to_owned());
                         }
                     }

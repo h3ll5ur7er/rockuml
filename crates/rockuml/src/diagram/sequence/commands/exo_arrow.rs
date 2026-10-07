@@ -257,7 +257,6 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
             ),
             Some('-') => activate(diagram, participant, LifeEventType::Deactivate, None),
             Some('!') => activate(diagram, participant, LifeEventType::Destroy, None),
-            Some(_) => Ok(()),
             None if diagram.is_autoactivate()
                 && matches!(configuration.head(), ArrowHead::Normal | ArrowHead::Async) =>
             {
@@ -272,7 +271,7 @@ impl SingleLineCommand<SequenceDiagram> for CommandExoArrow {
                     )
                 }
             }
-            None => Ok(()),
+            Some(_) | None => Ok(()),
         };
         Ok(())
     }

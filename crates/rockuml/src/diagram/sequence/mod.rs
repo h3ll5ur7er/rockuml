@@ -26,6 +26,8 @@ use model::{
     LiveColors, Note, Participant, ParticipantEnglober, ParticipantId, ParticipantType,
 };
 
+// The flags are independent settings, each mirroring a field of PlantUML's `SequenceDiagram`.
+#[allow(clippy::struct_excessive_bools)]
 pub(crate) struct SequenceDiagram {
     source: UmlSource,
     titled: Titled,
@@ -447,7 +449,7 @@ impl SequenceDiagram {
     }
 
     /// `%autonumber%` in a label becomes the last message's number.
-    pub(crate) fn manage_variable(&self, display: Display) -> Display {
+    pub(crate) fn manage_variable(&self, display: &Display) -> Display {
         display.replace("%autonumber%", &self.autonumber.current_message_number())
     }
 
@@ -583,7 +585,7 @@ impl Diagram for SequenceDiagram {
         page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let drawing = teoz::SequenceDiagramFileMakerTeoz::new(self, string_bounder.clone(), page)?;
+        let drawing = teoz::SequenceDiagramFileMakerTeoz::new(self, string_bounder, page)?;
         if page == 0 {
             return Ok(self.titled.add_chrome(Box::new(drawing), string_bounder));
         }

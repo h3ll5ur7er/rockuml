@@ -196,8 +196,8 @@ fn write_outputs(
                 }
             }
         };
-        let names = namer.next_names(name_from_diagram.as_deref(), pages.len());
-        for (name, content) in names.into_iter().zip(pages) {
+        let output_names = namer.next_names(name_from_diagram.as_deref(), pages.len());
+        for (name, content) in output_names.into_iter().zip(pages) {
             let output = output_directory.join(name);
             fs::write(&output, content)
                 .map_err(|error| format!("cannot write {}: {error}", output.display()))?;

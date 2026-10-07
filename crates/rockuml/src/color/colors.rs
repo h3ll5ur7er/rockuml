@@ -55,8 +55,7 @@ impl Colors {
                         .ok_or_else(|| NoSuchColor(part.to_owned()))?;
                     result.put(main_type, color);
                 }
-                None => {}
-                Some(("shadowing", _)) => {}
+                None | Some(("shadowing", _)) => {}
                 Some((name, value)) => {
                     // PlantUML stores an unknown colour as missing rather than failing.
                     if let (Some(kind), Some(color)) =

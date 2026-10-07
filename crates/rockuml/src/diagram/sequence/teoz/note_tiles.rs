@@ -577,7 +577,10 @@ impl<'a> CommunicationTileNoteLevel<'a> {
     }
 
     fn middle_message(&self) -> f64 {
-        (self.tile.min_x().current_value() + self.tile.max_x().current_value()) / 2.0
+        f64::midpoint(
+            self.tile.min_x().current_value(),
+            self.tile.max_x().current_value(),
+        )
     }
 
     /// The dotted line from the message to its note.

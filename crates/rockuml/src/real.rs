@@ -115,7 +115,7 @@ impl Real {
             RealKind::LiveDelta { delegated, offset } => delegated.current_value() + offset(),
             RealKind::Max { all, cache } => Self::cached(cache, all, |value, best| value > best),
             RealKind::Min { all, cache } => Self::cached(cache, all, |value, best| value < best),
-            RealKind::Middle(p1, p2) => (p1.current_value() + p2.current_value()) / 2.0,
+            RealKind::Middle(p1, p2) => f64::midpoint(p1.current_value(), p2.current_value()),
         }
     }
 
@@ -169,7 +169,7 @@ impl Real {
                 self.add_force(other.clone(), self.clone(), 0.0);
             }
             RealKind::Delta { delegated, diff } => {
-                delegated.ensure_bigger_than(&other.add_fixed(-diff))
+                delegated.ensure_bigger_than(&other.add_fixed(-diff));
             }
             RealKind::LiveDelta { delegated, offset } => {
                 let offset = offset.clone();

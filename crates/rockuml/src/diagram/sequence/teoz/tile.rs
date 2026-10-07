@@ -62,7 +62,7 @@ pub(super) trait Tile<'a> {
     }
 
     fn middle_x(&self) -> f64 {
-        (self.min_x().current_value() + self.max_x().current_value()) / 2.0
+        f64::midpoint(self.min_x().current_value(), self.max_x().current_value())
     }
 
     fn draw_u(&self, ug: &UGraphic, context: Context2D);

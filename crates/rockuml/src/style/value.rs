@@ -93,7 +93,6 @@ impl Value {
     #[must_use]
     pub(crate) fn merge_with(&self, previous: Option<&Value>) -> Value {
         match (self, previous) {
-            (_, None) => self.clone(),
             (Self::Written(written), Some(Self::Written(previous))) => {
                 Self::Written(written.merge_with(previous))
             }

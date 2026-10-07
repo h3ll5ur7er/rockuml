@@ -121,7 +121,7 @@ impl ComponentRoseArrow {
                 }
             }
             ArrowHead::CrossX => {
-                draw_cross(&ug.with_stroke(UStroke::with_thickness(2.0)), SPACE_CROSS_X)
+                draw_cross(&ug.with_stroke(UStroke::with_thickness(2.0)), SPACE_CROSS_X);
             }
             ArrowHead::Normal => {
                 let points = rotate_all(polygon_reverse(part, self.nice_arrow), angle);
@@ -176,6 +176,84 @@ impl ComponentRoseArrow {
                     .draw(&UShape::Polygon(points));
             }
             ArrowHead::None => {}
+        }
+    }
+
+    /// Where the line starts and how long it is, once the circles, heads and crosses at its ends take their room.
+    fn line_after_dressings(&self, mut start: f64, mut len: f64) -> (f64, f64) {
+        let configuration = self.configuration();
+        let dressing1 = configuration.dressing1();
+        let dressing2 = configuration.dressing2();
+        if configuration.decoration2() == ArrowDecoration::Circle {
+            len -= if dressing2.head == ArrowHead::None {
+                DIAM_CIRCLE / 2.0
+            } else {
+                DIAM_CIRCLE / 2.0 + THIN_CIRCLE
+            };
+        }
+        if configuration.decoration1() == ArrowDecoration::Circle {
+            let shift = match dressing1.head {
+                ArrowHead::None => Some(DIAM_CIRCLE / 2.0),
+                ArrowHead::Async | ArrowHead::Normal => Some(DIAM_CIRCLE / 2.0 + THIN_CIRCLE),
+                ArrowHead::CrossX => None,
+            };
+            if let Some(shift) = shift {
+                start += shift;
+                len -= shift;
+            }
+        }
+        let half_head = (ARROW_DELTA_X / 2.0).trunc();
+        if dressing2.part == ArrowPart::Full && dressing2.head == ArrowHead::Normal {
+            len -= half_head;
+        }
+        if dressing1.part == ArrowPart::Full && dressing1.head == ArrowHead::Normal {
+            start += half_head;
+            len -= half_head;
+        }
+        if dressing2.head == ArrowHead::CrossX {
+            len -= 2.0 * SPACE_CROSS_X;
+        }
+        if dressing1.head == ArrowHead::CrossX {
+            start += 2.0 * SPACE_CROSS_X;
+            len -= 2.0 * SPACE_CROSS_X;
+        }
+        (start, len)
+    }
+
+    /// The label's x, before the area's text shift.
+    fn text_pos(&self, string_bounder: &dyn StringBounder, area: &Area) -> f64 {
+        let dimension = area.dimension;
+        let direction = self.direction();
+        let text = self.parts.text.text_block();
+        match self.message_position {
+            Some(HorizontalAlignment::Center) => {
+                let text_width = text.calculate_dimension(string_bounder).width;
+                (dimension.width - area.text_delta_x.abs() - text_width) / 2.0
+            }
+            Some(HorizontalAlignment::Right) => {
+                let text_width = text.calculate_dimension(string_bounder).width;
+                let head = if direction == ArrowDirection::LeftToRightNormal {
+                    ARROW_DELTA_X
+                } else {
+                    0.0
+                };
+                dimension.width
+                    - area.text_delta_x.abs()
+                    - text_width
+                    - self.parts.text.padding().right
+                    - head
+            }
+            _ => {
+                let head = if matches!(
+                    direction,
+                    ArrowDirection::RightToLeftReverse | ArrowDirection::BothDirection
+                ) {
+                    ARROW_DELTA_X
+                } else {
+                    0.0
+                };
+                self.parts.text.padding().left + head
+            }
         }
     }
 }
@@ -293,45 +371,13 @@ impl Component for ComponentRoseArrow {
         let dressing1 = configuration.dressing1();
         let dressing2 = configuration.dressing2();
 
-        let mut start = 0.0;
-        let mut len = dimension.width - 1.0;
+        let start = 0.0;
+        let len = dimension.width - 1.0;
         let len_full = dimension.width;
         let pos1 = start + 1.0;
         let pos2 = len - 1.0;
 
-        if configuration.decoration2() == ArrowDecoration::Circle {
-            len -= if dressing2.head == ArrowHead::None {
-                DIAM_CIRCLE / 2.0
-            } else {
-                DIAM_CIRCLE / 2.0 + THIN_CIRCLE
-            };
-        }
-        if configuration.decoration1() == ArrowDecoration::Circle {
-            let shift = match dressing1.head {
-                ArrowHead::None => Some(DIAM_CIRCLE / 2.0),
-                ArrowHead::Async | ArrowHead::Normal => Some(DIAM_CIRCLE / 2.0 + THIN_CIRCLE),
-                ArrowHead::CrossX => None,
-            };
-            if let Some(shift) = shift {
-                start += shift;
-                len -= shift;
-            }
-        }
-        let half_head = (ARROW_DELTA_X / 2.0).trunc();
-        if dressing2.part == ArrowPart::Full && dressing2.head == ArrowHead::Normal {
-            len -= half_head;
-        }
-        if dressing1.part == ArrowPart::Full && dressing1.head == ArrowHead::Normal {
-            start += half_head;
-            len -= half_head;
-        }
-        if dressing2.head == ArrowHead::CrossX {
-            len -= 2.0 * SPACE_CROSS_X;
-        }
-        if dressing1.head == ArrowHead::CrossX {
-            start += 2.0 * SPACE_CROSS_X;
-            len -= 2.0 * SPACE_CROSS_X;
-        }
+        let (start, len) = self.line_after_dressings(start, len);
 
         let (pos_arrow, y_text) = if self.is_below_for_response() {
             (0.0, self.parts.text.padding().top)
@@ -373,38 +419,8 @@ impl Component for ComponentRoseArrow {
             );
         }
 
-        let direction = self.direction();
+        let text_pos = self.text_pos(string_bounder, area);
         let text = self.parts.text.text_block();
-        let text_pos = match self.message_position {
-            Some(HorizontalAlignment::Center) => {
-                let text_width = text.calculate_dimension(string_bounder).width;
-                (dimension.width - area.text_delta_x.abs() - text_width) / 2.0
-            }
-            Some(HorizontalAlignment::Right) => {
-                let text_width = text.calculate_dimension(string_bounder).width;
-                let head = if direction == ArrowDirection::LeftToRightNormal {
-                    ARROW_DELTA_X
-                } else {
-                    0.0
-                };
-                dimension.width
-                    - area.text_delta_x.abs()
-                    - text_width
-                    - self.parts.text.padding().right
-                    - head
-            }
-            _ => {
-                let head = if matches!(
-                    direction,
-                    ArrowDirection::RightToLeftReverse | ArrowDirection::BothDirection
-                ) {
-                    ARROW_DELTA_X
-                } else {
-                    0.0
-                };
-                self.parts.text.padding().left + head
-            }
-        };
         text.draw_u(&ug.translated(text_pos + area.text_delta_x.max(0.0), y_text));
     }
 }

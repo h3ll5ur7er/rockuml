@@ -49,7 +49,7 @@ pub(super) struct SequenceDiagramFileMakerTeoz<'a> {
 impl<'a> SequenceDiagramFileMakerTeoz<'a> {
     pub(super) fn new(
         diagram: &'a SequenceDiagram,
-        string_bounder: Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
         page: usize,
     ) -> Result<Self, NotYetPorted> {
         let x_origin = Real::origin();

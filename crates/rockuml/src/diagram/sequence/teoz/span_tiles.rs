@@ -291,9 +291,8 @@ impl<'a> ReferenceTile<'a> {
         })
     }
 
-    fn note_width(note: &Option<Box<dyn Component>>, arguments: &TileArguments<'_>) -> Option<f64> {
-        note.as_ref()
-            .map(|note| note.preferred_width(arguments.string_bounder()))
+    fn note_width(note: Option<&dyn Component>, arguments: &TileArguments<'_>) -> Option<f64> {
+        note.map(|note| note.preferred_width(arguments.string_bounder()))
     }
 }
 
@@ -315,7 +314,7 @@ impl<'a> Tile<'a> for ReferenceTile<'a> {
 
     fn min_x(&self) -> Real {
         let first = &self.edges().0;
-        match Self::note_width(&self.note_left, &self.arguments) {
+        match Self::note_width(self.note_left.as_deref(), &self.arguments) {
             Some(width) => first.add_fixed(-width),
             None => first.clone(),
         }
@@ -323,7 +322,7 @@ impl<'a> Tile<'a> for ReferenceTile<'a> {
 
     fn max_x(&self) -> Real {
         let last = &self.edges().1;
-        match Self::note_width(&self.note_right, &self.arguments) {
+        match Self::note_width(self.note_right.as_deref(), &self.arguments) {
             Some(width) => last.add_fixed(width),
             None => last.clone(),
         }

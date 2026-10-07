@@ -251,6 +251,14 @@ impl ComponentRoseSelfArrow {
         if configuration.dressing2().head == ArrowHead::Async {
             x2 += 1.0;
         }
+        self.draw_left_side_heads(ug, text_height, width, x1, x2);
+    }
+
+    /// The heads or crosses at both ends of an arrow drawn to the left of its lifeline.
+    fn draw_left_side_heads(&self, ug: &UGraphic, text_height: f64, width: f64, x1: f64, x2: f64) {
+        let configuration = &self.parts.configuration;
+        let starting_cross = configuration.dressing1().head == ArrowHead::CrossX;
+        let final_cross = configuration.dressing2().head == ArrowHead::CrossX;
         if starting_cross {
             Self::cross(ug, width - x1 - SPACE_CROSS_X / 2.0, text_height);
         } else if configuration.dressing1().head == ArrowHead::Normal {

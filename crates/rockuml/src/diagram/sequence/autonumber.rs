@@ -116,9 +116,9 @@ impl DecimalFormat {
                     phase = 2;
                 }
                 if phase == 0 {
-                    prefix.push_str(&quoted)
+                    prefix.push_str(&quoted);
                 } else {
-                    suffix.push_str(&quoted)
+                    suffix.push_str(&quoted);
                 }
                 continue;
             }
@@ -167,7 +167,7 @@ impl DecimalFormat {
 fn group(digits: &str, size: usize) -> String {
     let mut result = String::new();
     for (index, digit) in digits.chars().enumerate() {
-        if index > 0 && (digits.len() - index) % size == 0 {
+        if index > 0 && (digits.len() - index).is_multiple_of(size) {
             result.push(',');
         }
         result.push(digit);

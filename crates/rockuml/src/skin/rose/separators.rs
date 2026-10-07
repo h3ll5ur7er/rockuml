@@ -62,6 +62,7 @@ impl Component for ComponentRoseDivider {
     }
 
     fn draw_internal(&self, ug: &UGraphic, area: &Area) {
+        const DELTA_X: f64 = 6.0;
         let dimension = area.dimension;
         let ug = ug.with_backcolor(self.background.clone());
         self.draw_separator(&ug.translated(0.0, dimension.height / 2.0), dimension.width);
@@ -71,7 +72,6 @@ impl Component for ComponentRoseDivider {
         let string_bounder = ug.string_bounder();
         let text_width = self.text.text_width(string_bounder);
         let text_height = self.text.text_height(string_bounder);
-        const DELTA_X: f64 = 6.0;
         let x = (dimension.width - text_width - DELTA_X) / 2.0;
         let y = (dimension.height - text_height) / 2.0;
         let ug = ug.with_color(self.border.clone()).with_stroke(self.stroke);
