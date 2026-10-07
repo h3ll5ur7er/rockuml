@@ -65,4 +65,5 @@ mod cdt;
 pub mod cgraph;
 pub mod core;
 pub mod h;
+pub mod label;
 pub mod pathplan;
