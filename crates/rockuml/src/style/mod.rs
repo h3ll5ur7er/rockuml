@@ -5,6 +5,7 @@ mod from_skinparam;
 mod names;
 mod parser;
 mod signature;
+mod style_values;
 mod value;
 
 use std::collections::BTreeMap;
@@ -14,6 +15,7 @@ pub(crate) use names::{PName, SName};
 use parser::StyleParser;
 pub(crate) use parser::StyleParsingError;
 pub(crate) use signature::StyleSignature;
+pub(crate) use style_values::max_width;
 pub(crate) use value::{Value, ValueReading};
 
 /// Raised for properties of stereotype rules, so that they beat plain rules.
@@ -44,6 +46,12 @@ impl Style {
 
     pub(crate) fn has_value(&self, name: PName) -> bool {
         self.properties.contains_key(&name)
+    }
+
+    fn with_value(&self, name: PName, value: Value) -> Style {
+        let mut properties = self.properties.clone();
+        properties.insert(name, value);
+        Style::new(self.signature.clone(), properties)
     }
 
     /// `other` declared over this style: its properties win unless declared with a lower priority.

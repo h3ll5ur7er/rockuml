@@ -1,9 +1,11 @@
 //! Colours as PlantUML parses and transforms them (`klimt.color`).
 
+mod colors;
 mod hsl;
 mod hsluv;
 mod named;
 
+pub(crate) use colors::{COLOR_REGEXP, COLORS_REGEXP, ColorType, Colors, NoSuchColor};
 pub(crate) use hsl::to_rgb as hsl_to_rgb;
 use named::NAMED_COLORS;
 

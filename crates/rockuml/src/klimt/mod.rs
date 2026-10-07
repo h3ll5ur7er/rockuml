@@ -2,6 +2,7 @@
 
 pub(crate) mod blocks;
 pub(crate) mod debug;
+pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
 pub(crate) mod group;

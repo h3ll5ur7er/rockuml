@@ -29,9 +29,15 @@ enum RealKind {
         offset: Rc<dyn Fn() -> f64>,
     },
     /// The largest of several points, remembered from the first time it is read (`RealMax`).
-    Max { all: Vec<Real>, cache: Cell<Option<f64>> },
+    Max {
+        all: Vec<Real>,
+        cache: Cell<Option<f64>>,
+    },
     /// The smallest of several points, remembered from the first time it is read (`RealMin`).
-    Min { all: Vec<Real>, cache: Cell<Option<f64>> },
+    Min {
+        all: Vec<Real>,
+        cache: Cell<Option<f64>>,
+    },
     /// Halfway between two points; moving it moves both (`RealMiddle2`).
     Middle(Real, Real),
 }
@@ -147,9 +153,9 @@ impl Real {
                 result
             }
             RealKind::Delta { delegated, diff } => delegated.add_at_least(delta).add_fixed(*diff),
-            RealKind::LiveDelta { delegated, offset } => {
-                delegated.add_at_least(delta).with_live_offset(offset.clone())
-            }
+            RealKind::LiveDelta { delegated, offset } => delegated
+                .add_at_least(delta)
+                .with_live_offset(offset.clone()),
             RealKind::Max { .. } | RealKind::Min { .. } | RealKind::Middle(..) => {
                 unreachable!("PlantUML has no point at least after a max, min or middle")
             }
@@ -162,7 +168,9 @@ impl Real {
             RealKind::Free(_) | RealKind::Middle(..) => {
                 self.add_force(other.clone(), self.clone(), 0.0);
             }
-            RealKind::Delta { delegated, diff } => delegated.ensure_bigger_than(&other.add_fixed(-diff)),
+            RealKind::Delta { delegated, diff } => {
+                delegated.ensure_bigger_than(&other.add_fixed(-diff))
+            }
             RealKind::LiveDelta { delegated, offset } => {
                 let offset = offset.clone();
                 delegated.ensure_bigger_than(&other.with_live_offset(Rc::new(move || -offset())));

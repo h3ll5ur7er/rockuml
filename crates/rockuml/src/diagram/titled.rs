@@ -5,10 +5,10 @@ use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, parse_digits};
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
-use crate::klimt::font::{FontConfiguration, UFont, UFontFace};
+
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
-use crate::klimt::ugraphic::UStroke;
+
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
@@ -166,7 +166,7 @@ impl Titled {
     pub(super) fn export_settings(&self, seed: i64, default_margin: f64) -> ExportSettings {
         let document = self.document_style(None);
         let margin = if document.has_value(PName::Margin) {
-            margin_of(&document, PName::Margin)
+            document.margin()
         } else {
             ClockwiseTopRightBottomLeft::same(default_margin)
         };
@@ -225,101 +225,15 @@ fn bordered_text<'a>(display: &Display, style: &Style) -> Box<dyn TextBlock + 'a
             .unwrap_or_default()
     });
     let sheet =
-        CreoleParser::new(font_configuration(style), alignment).create_sheet(display.lines());
+        CreoleParser::new(style.font_configuration(), alignment).create_sheet(display.lines());
     let text = SheetBlock2::new(SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()));
     let bordered = TextBlockBordered::new(
         text,
-        stroke(style),
+        style.stroke(),
         style.value(PName::LineColor).as_color(),
         style.value(PName::BackGroundColor).as_color(),
         f64::from(style.value(PName::RoundCorner).as_int()),
-        margin_of(style, PName::Padding),
+        style.padding(),
     );
-    Box::new(TextBlockMarged::new(
-        bordered,
-        margin_of(style, PName::Margin),
-    ))
-}
-
-/// `Style.getFontConfiguration`.
-pub(super) fn font_configuration(style: &Style) -> FontConfiguration {
-    let size = match style.value(PName::FontSize).as_int_or_minus_one() {
-        -1 => 14,
-        size => size,
-    };
-    let mut face = style.value(PName::FontStyle).as_font_face();
-    let weight = style.value(PName::FontWeight).as_font_face();
-    if weight.weight != 400 {
-        face = UFontFace {
-            weight: weight.weight,
-            ..face
-        };
-    }
-    let font = UFont::new(&style.value(PName::FontName).as_string(), face, size);
-    FontConfiguration::new(font, style.value(PName::FontColor).as_color(), 8).with_hyperlink_style(
-        style.value(PName::HyperLinkColor).as_color(),
-        stroke_of(
-            style,
-            PName::HyperlinkUnderlineThickness,
-            PName::HyperlinkUnderlineStyle,
-        ),
-    )
-}
-
-/// `Style.getStroke`: the line thickness, dashed by a `visible-space` line style.
-fn stroke(style: &Style) -> UStroke {
-    stroke_of(style, PName::LineThickness, PName::LineStyle)
-}
-
-fn stroke_of(style: &Style, thickness: PName, line_style: PName) -> UStroke {
-    let thickness = style.value(thickness).as_double();
-    let dash = style.value(line_style).as_string();
-    let mut lengths = dash
-        .split(['-', ';', ','])
-        .filter(|part| !part.is_empty())
-        .map(|part| crate::java::trim(part).parse::<f64>());
-    match lengths.next() {
-        Some(Ok(visible)) => {
-            let space = match lengths.next() {
-                Some(Ok(space)) => space,
-                Some(Err(_)) => return UStroke::with_thickness(thickness),
-                None => visible,
-            };
-            UStroke {
-                dash_visible: visible,
-                dash_space: space,
-                thickness,
-            }
-        }
-        _ => UStroke::with_thickness(thickness),
-    }
-}
-
-/// `ClockwiseTopRightBottomLeft.read`: one to four whole numbers, CSS-style; anything else is none.
-fn margin_of(style: &Style, property: PName) -> ClockwiseTopRightBottomLeft {
-    let text = style.value(property).as_string();
-    if text.is_empty() || !text.chars().all(|c| c.is_ascii_digit() || c == ' ') {
-        return ClockwiseTopRightBottomLeft::none();
-    }
-    let numbers: Result<Vec<f64>, _> = text
-        .split(' ')
-        .filter(|part| !part.is_empty())
-        .map(|part| part.parse::<i32>().map(f64::from))
-        .collect();
-    let Ok(numbers) = numbers else {
-        return ClockwiseTopRightBottomLeft::none();
-    };
-    let (top, right, bottom, left) = match numbers.as_slice() {
-        [all] => (*all, *all, *all, *all),
-        [vertical, horizontal] => (*vertical, *horizontal, *vertical, *horizontal),
-        [top, horizontal, bottom] => (*top, *horizontal, *bottom, *horizontal),
-        [top, right, bottom, left] => (*top, *right, *bottom, *left),
-        _ => return ClockwiseTopRightBottomLeft::none(),
-    };
-    ClockwiseTopRightBottomLeft {
-        top,
-        right,
-        bottom,
-        left,
-    }
+    Box::new(TextBlockMarged::new(bordered, style.margin()))
 }
