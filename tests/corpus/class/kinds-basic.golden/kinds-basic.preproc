@@ -1,0 +1,12 @@
+@startuml
+abstract Shape
+abstract class Widget
+class Button
+interface Clickable
+annotation Deprecated
+enum Color
+Shape <|-- Widget
+Widget <|-- Button
+Clickable <|.. Button
+Button ..> Color
+@enduml

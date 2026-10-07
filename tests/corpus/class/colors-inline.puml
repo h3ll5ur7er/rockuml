@@ -1,0 +1,11 @@
+@startuml
+class Red #pink
+class Dashed #lightblue ##[dashed]blue
+class Bold ##[bold]red
+class Mixed #back:palegreen;line:green;text:darkgreen
+class Gradient #white/lightgray
+Red --> Dashed
+Dashed --> Bold
+Bold --> Mixed
+Mixed --> Gradient
+@enduml

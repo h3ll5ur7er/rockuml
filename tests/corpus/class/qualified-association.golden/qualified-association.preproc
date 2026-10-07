@@ -1,0 +1,8 @@
+@startuml
+class Bank
+class Account
+class Directory
+class File
+Bank [accountNumber] --> "0..1" Account
+Directory [fileName] *-- "0..1" File
+@enduml

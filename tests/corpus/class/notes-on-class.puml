@@ -1,0 +1,9 @@
+@startuml
+class Server
+class Client
+Client --> Server
+note top of Server : listens on 8080
+note bottom of Server : stateless
+note left of Client : retries 3 times
+note right of Client #lightgreen : uses TLS
+@enduml

@@ -1,0 +1,225 @@
+DPI: 96
+dimension: [ 423.0000 ; 271.0000 ]
+scaleFactor: 1.0000
+seed: 7577578076675920366
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Repository
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 407.9698 ; 144.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 115.3422 ; 12.0000 ]
+  pt2: [ 141.3422 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 119.3422 ; 17.0000 ]
+  pt2: [ 141.3422 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffa9dcdf
+
+CENTERED_CHAR:
+  char: A
+  position: [ 130.3422 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 147.8422 ; 21.0000 ]
+  pt2: [ 298.6276 ; 35.0000 ]
+
+TEXT:
+  text: Repository
+  position: [ 150.8422 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 406.9698 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 237.4778 ; 80.0000 ]
+
+TEXT:
+  text: instances : int
+  position: [ 12.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: DEFAULT_SIZE : int
+  position: [ 12.0000 ; 72.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 80.0000 ]
+  pt2: [ 406.9698 ; 80.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 80.0000 ]
+  pt2: [ 407.9698 ; 144.0000 ]
+
+TEXT:
+  text: find(id : Long) : Entity
+  position: [ 12.0000 ; 94.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: save(e : Entity)
+  position: [ 12.0000 ; 108.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: create() : Repository
+  position: [ 12.0000 ; 122.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 [UNDERLINE]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: count() : int
+  position: [ 12.0000 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class JdbcRepository
+RECTANGLE:
+  pt1: [ 6.0000 ; 180.0000 ]
+  pt2: [ 407.9698 ; 256.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 85.0881 ; 180.0000 ]
+  pt2: [ 111.0881 ; 212.0000 ]
+
+ELLIPSE:
+  pt1: [ 89.0881 ; 185.0000 ]
+  pt2: [ 111.0881 ; 207.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 100.0881 ; 196.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 117.5881 ; 189.0000 ]
+  pt2: [ 328.8816 ; 203.0000 ]
+
+TEXT:
+  text: JdbcRepository
+  position: [ 120.5881 ; 199.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 212.0000 ]
+  pt2: [ 406.9698 ; 212.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 212.0000 ]
+  pt2: [ 18.0000 ; 220.0000 ]
+
+LINE:
+  pt1: [ 7.0000 ; 220.0000 ]
+  pt2: [ 406.9698 ; 220.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 220.0000 ]
+  pt2: [ 407.9698 ; 256.0000 ]
+
+TEXT:
+  text: find(id : Long) : Entity
+  position: [ 12.0000 ; 234.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: save(e : Entity)
+  position: [ 12.0000 ; 248.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 207.0000 ; 144.3628 ]
+   - [ 201.0000 ; 162.3628 ]
+   - [ 213.0000 ; 162.3628 ]
+   - [ 207.0000 ; 144.3628 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 201.0000 ; 156.3628 ]
+   - type: SEG_CUBICTO
+     pt1: [ 201.0000 ; 168.4846 ]
+     pt2: [ 201.0000 ; 162.7565 ]
+     pt3: [ 201.0000 ; 173.6765 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

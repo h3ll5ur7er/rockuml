@@ -1,0 +1,15 @@
+@startuml
+abstract class Animal {
+  name : String
+  {abstract} speak() : String
+  move()
+}
+class Dog {
+  speak() : String
+}
+class Cat {
+  speak() : String
+}
+Animal <|-- Dog
+Animal <|-- Cat
+@enduml

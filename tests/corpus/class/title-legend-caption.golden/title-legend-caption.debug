@@ -1,0 +1,361 @@
+DPI: 96
+dimension: [ 370.9994 ; 380.0000 ]
+scaleFactor: 1.0000
+seed: 2667249427248555227
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 316.4381 ; 0.0000 ]
+  pt2: [ 365.9994 ; 11.0000 ]
+
+TEXT:
+  text: draft
+  position: [ 316.4381 ; 7.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 85.3321 ; 11.0000 ]
+  pt2: [ 280.6673 ; 46.0000 ]
+
+TEXT:
+  text: Inventory Model
+  position: [ 95.3321 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class Warehouse
+RECTANGLE:
+  pt1: [ 101.4997 ; 58.0000 ]
+  pt2: [ 278.1385 ; 106.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 101.4997 ; 58.0000 ]
+  pt2: [ 127.4997 ; 90.0000 ]
+
+ELLIPSE:
+  pt1: [ 105.4997 ; 63.0000 ]
+  pt2: [ 127.4997 ; 85.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 116.4997 ; 74.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 127.4997 ; 67.0000 ]
+  pt2: [ 278.1385 ; 81.0000 ]
+
+TEXT:
+  text: Warehouse
+  position: [ 130.4997 ; 77.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 102.4997 ; 90.0000 ]
+  pt2: [ 277.1385 ; 90.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 101.4997 ; 90.0000 ]
+  pt2: [ 113.4997 ; 98.0000 ]
+
+LINE:
+  pt1: [ 102.4997 ; 98.0000 ]
+  pt2: [ 277.1385 ; 98.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 101.4997 ; 98.0000 ]
+  pt2: [ 113.4997 ; 106.0000 ]
+
+COMMENT: class Shelf
+RECTANGLE:
+  pt1: [ 83.4997 ; 142.0000 ]
+  pt2: [ 206.0494 ; 190.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 83.4997 ; 142.0000 ]
+  pt2: [ 109.4997 ; 174.0000 ]
+
+ELLIPSE:
+  pt1: [ 87.4997 ; 147.0000 ]
+  pt2: [ 109.4997 ; 169.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 98.4997 ; 158.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 109.4997 ; 151.0000 ]
+  pt2: [ 206.0494 ; 165.0000 ]
+
+TEXT:
+  text: Shelf
+  position: [ 112.4997 ; 161.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 84.4997 ; 174.0000 ]
+  pt2: [ 205.0494 ; 174.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 83.4997 ; 174.0000 ]
+  pt2: [ 95.4997 ; 182.0000 ]
+
+LINE:
+  pt1: [ 84.4997 ; 182.0000 ]
+  pt2: [ 205.0494 ; 182.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 83.4997 ; 182.0000 ]
+  pt2: [ 95.4997 ; 190.0000 ]
+
+COMMENT: class Item
+RECTANGLE:
+  pt1: [ 151.4997 ; 226.0000 ]
+  pt2: [ 228.8994 ; 274.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 151.4997 ; 226.0000 ]
+  pt2: [ 177.4997 ; 258.0000 ]
+
+ELLIPSE:
+  pt1: [ 155.4997 ; 231.0000 ]
+  pt2: [ 177.4997 ; 253.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 166.4997 ; 242.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 177.4997 ; 235.0000 ]
+  pt2: [ 228.8994 ; 249.0000 ]
+
+TEXT:
+  text: Item
+  position: [ 180.4997 ; 245.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 152.4997 ; 258.0000 ]
+  pt2: [ 227.8994 ; 258.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 151.4997 ; 258.0000 ]
+  pt2: [ 163.4997 ; 266.0000 ]
+
+LINE:
+  pt1: [ 152.4997 ; 266.0000 ]
+  pt2: [ 227.8994 ; 266.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 151.4997 ; 266.0000 ]
+  pt2: [ 163.4997 ; 274.0000 ]
+
+POLYGON:
+  points:
+   - [ 177.2249 ; 106.2786 ]
+   - [ 170.8316 ; 109.6142 ]
+   - [ 171.4517 ; 116.7986 ]
+   - [ 177.8449 ; 113.4630 ]
+   - [ 177.2249 ; 106.2786 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 87.9520 ; 64.7986 ]
+   - type: SEG_CUBICTO
+     pt1: [ 81.8197 ; 75.9730 ]
+     pt2: [ 80.2671 ; 78.8021 ]
+     pt3: [ 74.1510 ; 89.9470 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 157.7745 ; 190.2786 ]
+   - [ 157.1544 ; 197.4630 ]
+   - [ 163.5477 ; 200.7986 ]
+   - [ 164.1678 ; 193.6142 ]
+   - [ 157.7745 ; 190.2786 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 80.0480 ; 148.7986 ]
+   - type: SEG_CUBICTO
+     pt1: [ 86.1803 ; 159.9730 ]
+     pt2: [ 87.7329 ; 162.8021 ]
+     pt3: [ 93.8490 ; 173.9470 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 202.8347 ; 106.0757 ]
+   - [ 203.1976 ; 115.9178 ]
+   - [ 205.0324 ; 110.5668 ]
+   - [ 210.3834 ; 112.4016 ]
+   - [ 202.8347 ; 106.0757 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 119.3350 ; 173.9243 ]
+   - type: SEG_CUBICTO
+     pt1: [ 124.5225 ; 163.3233 ]
+     pt2: [ 129.8937 ; 150.3773 ]
+     pt3: [ 132.5000 ; 138.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 136.8957 ; 117.1245 ]
+     pt2: [ 136.8957 ; 110.8755 ]
+     pt3: [ 132.5000 ; 90.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 129.8937 ; 77.6227 ]
+     pt2: [ 126.7201 ; 69.1679 ]
+     pt3: [ 121.5327 ; 58.5668 ]
+  stroke: 7.0-7.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 18.9886 ; 284.0000 ]
+  pt2: [ 347.0107 ; 347.0000 ]
+
+RECTANGLE:
+  pt1: [ 30.9886 ; 296.0000 ]
+  pt2: [ 334.0107 ; 334.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Solid: ownership
+  position: [ 35.9886 ; 311.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Dashed: dependency
+  position: [ 35.9886 ; 325.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 0.0000 ; 347.0000 ]
+  pt2: [ 365.9994 ; 364.0000 ]
+
+TEXT:
+  text: Figure 1. Inventory classes
+  position: [ 1.0000 ; 358.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 149.1216 ; 364.0000 ]
+  pt2: [ 216.8778 ; 375.0000 ]
+
+TEXT:
+  text: page 1
+  position: [ 149.1216 ; 371.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

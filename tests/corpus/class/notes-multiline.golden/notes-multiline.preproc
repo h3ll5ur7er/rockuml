@@ -1,0 +1,16 @@
+@startuml
+class Parser
+note right of Parser
+  Reads **tokens** and
+  builds an //AST//.
+  ----
+  * recursive descent
+  * one token lookahead
+end note
+class Lexer
+Lexer --> Parser
+note as Remark
+  This note floats
+  free of any class
+end note
+@enduml

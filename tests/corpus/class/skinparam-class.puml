@@ -1,0 +1,16 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor PaleGreen
+  ArrowColor SeaGreen
+  BorderColor SpringGreen
+  FontStyle bold
+}
+skinparam stereotypeCBackgroundColor YellowGreen
+class Tree {
+  - height : int
+  + grow()
+}
+class Leaf <<Green>>
+Tree *-- Leaf
+@enduml

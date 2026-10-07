@@ -1,0 +1,404 @@
+DPI: 96
+dimension: [ 537.0000 ; 281.0000 ]
+scaleFactor: 1.0000
+seed: 4355234184565104902
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Customer
+RECTANGLE:
+  pt1: [ 94.0000 ; 214.0000 ]
+  pt2: [ 233.6315 ; 266.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 94.0000 ; 216.0000 ]
+  pt2: [ 120.0000 ; 248.0000 ]
+
+ELLIPSE:
+  pt1: [ 98.0000 ; 221.0000 ]
+  pt2: [ 120.0000 ; 243.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 109.0000 ; 232.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 123.6321 ; 219.0000 ]
+  pt2: [ 229.9995 ; 231.0000 ]
+
+TEXT:
+  text: «Entity»
+  position: [ 124.6321 ; 228.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 120.0000 ; 231.0000 ]
+  pt2: [ 233.6315 ; 245.0000 ]
+
+TEXT:
+  text: Customer
+  position: [ 123.0000 ; 241.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 95.0000 ; 250.0000 ]
+  pt2: [ 232.6315 ; 250.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 94.0000 ; 250.0000 ]
+  pt2: [ 106.0000 ; 258.0000 ]
+
+LINE:
+  pt1: [ 95.0000 ; 258.0000 ]
+  pt2: [ 232.6315 ; 258.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 94.0000 ; 258.0000 ]
+  pt2: [ 106.0000 ; 266.0000 ]
+
+COMMENT: class CustomerService
+RECTANGLE:
+  pt1: [ 187.5000 ; 12.0000 ]
+  pt2: [ 406.5647 ; 76.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 187.5000 ; 20.0000 ]
+  pt2: [ 213.5000 ; 52.0000 ]
+
+ELLIPSE:
+  pt1: [ 191.5000 ; 25.0000 ]
+  pt2: [ 213.5000 ; 47.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 202.5000 ; 36.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 216.1734 ; 17.0000 ]
+  pt2: [ 403.8912 ; 41.0000 ]
+
+TEXT:
+  text: «Service»
+  position: [ 264.5817 ; 26.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: «Transactional»
+  position: [ 217.1734 ; 38.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 213.5000 ; 41.0000 ]
+  pt2: [ 406.5647 ; 55.0000 ]
+
+TEXT:
+  text: CustomerService
+  position: [ 216.5000 ; 51.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 188.5000 ; 60.0000 ]
+  pt2: [ 405.5647 ; 60.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 187.5000 ; 60.0000 ]
+  pt2: [ 199.5000 ; 68.0000 ]
+
+LINE:
+  pt1: [ 188.5000 ; 68.0000 ]
+  pt2: [ 405.5647 ; 68.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 187.5000 ; 68.0000 ]
+  pt2: [ 199.5000 ; 76.0000 ]
+
+COMMENT: class CustomerRepository
+RECTANGLE:
+  pt1: [ 6.0000 ; 119.0000 ]
+  pt2: [ 321.9412 ; 171.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 6.0000 ; 121.0000 ]
+  pt2: [ 32.0000 ; 153.0000 ]
+
+ELLIPSE:
+  pt1: [ 10.0000 ; 126.0000 ]
+  pt2: [ 32.0000 ; 148.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffb4a7e5
+
+CENTERED_CHAR:
+  char: I
+  position: [ 21.0000 ; 137.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 82.6479 ; 124.0000 ]
+  pt2: [ 271.2933 ; 136.0000 ]
+
+TEXT:
+  text: «Repository»
+  position: [ 83.6479 ; 133.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 32.0000 ; 136.0000 ]
+  pt2: [ 321.9412 ; 150.0000 ]
+
+TEXT:
+  text: CustomerRepository
+  position: [ 35.0000 ; 146.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 155.0000 ]
+  pt2: [ 320.9412 ; 155.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 155.0000 ]
+  pt2: [ 18.0000 ; 163.0000 ]
+
+LINE:
+  pt1: [ 7.0000 ; 163.0000 ]
+  pt2: [ 320.9412 ; 163.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 163.0000 ]
+  pt2: [ 18.0000 ; 171.0000 ]
+
+COMMENT: class CustomerDto
+RECTANGLE:
+  pt1: [ 340.0000 ; 112.0000 ]
+  pt2: [ 522.3539 ; 178.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 340.9031 ; 114.0000 ]
+  pt2: [ 366.9031 ; 146.0000 ]
+
+ELLIPSE:
+  pt1: [ 344.9031 ; 119.0000 ]
+  pt2: [ 366.9031 ; 141.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 355.9031 ; 130.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 408.9893 ; 117.0000 ]
+  pt2: [ 479.5652 ; 129.0000 ]
+
+TEXT:
+  text: «DTO»
+  position: [ 409.9893 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.italic/12 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 367.1038 ; 129.0000 ]
+  pt2: [ 521.4508 ; 143.0000 ]
+
+TEXT:
+  text: CustomerDto
+  position: [ 370.1038 ; 139.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 341.0000 ; 148.0000 ]
+  pt2: [ 521.3539 ; 148.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 340.0000 ; 148.0000 ]
+  pt2: [ 522.3539 ; 170.0000 ]
+
+TEXT:
+  text: name : String
+  position: [ 346.0000 ; 162.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 341.0000 ; 170.0000 ]
+  pt2: [ 521.3539 ; 170.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 340.0000 ; 170.0000 ]
+  pt2: [ 352.0000 ; 178.0000 ]
+
+POLYGON:
+  points:
+   - [ 198.0013 ; 118.6908 ]
+   - [ 207.6092 ; 116.5255 ]
+   - [ 202.0121 ; 115.7053 ]
+   - [ 202.8324 ; 110.1082 ]
+   - [ 198.0013 ; 118.6908 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 249.2829 ; 70.0526 ]
+   - type: SEG_CUBICTO
+     pt1: [ 230.8471 ; 83.7754 ]
+     pt2: [ 213.4568 ; 96.7201 ]
+     pt3: [ 196.0121 ; 109.7053 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 164.0000 ; 213.9401 ]
+   - [ 168.0000 ; 204.9401 ]
+   - [ 164.0000 ; 208.9401 ]
+   - [ 160.0000 ; 204.9401 ]
+   - [ 164.0000 ; 213.9401 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 158.0000 ; 165.4127 ]
+   - type: SEG_CUBICTO
+     pt1: [ 158.0000 ; 178.6426 ]
+     pt2: [ 158.0000 ; 189.7620 ]
+     pt3: [ 158.0000 ; 202.9401 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 387.2683 ; 111.6907 ]
+   - [ 382.4064 ; 103.1255 ]
+   - [ 383.2468 ; 108.7196 ]
+   - [ 377.6527 ; 109.5599 ]
+   - [ 387.2683 ; 111.6907 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 333.0308 ; 70.0526 ]
+   - type: SEG_CUBICTO
+     pt1: [ 348.3815 ; 81.3938 ]
+     pt2: [ 361.7513 ; 91.2715 ]
+     pt3: [ 377.2468 ; 102.7196 ]
+  stroke: 7.0-7.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

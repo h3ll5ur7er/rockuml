@@ -1,0 +1,11 @@
+@startuml
+class Foo <<keep>>
+class Bar <<drop>>
+class Baz
+class Lonely
+Foo --> Baz
+Bar --> Baz
+hide <<drop>> stereotype
+hide stereotype
+remove @unlinked
+@enduml

@@ -1,0 +1,16 @@
+@startuml
+dataclass Money {
+  amount : Decimal
+  currency : String
+}
+record Range {
+  start : int
+  end : int
+}
+static class Utils
+circle Hub
+diamond Choice
+Money --> Range
+Utils --> Hub
+Hub --> Choice
+@enduml

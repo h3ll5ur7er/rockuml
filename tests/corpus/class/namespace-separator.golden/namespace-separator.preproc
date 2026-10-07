@@ -1,0 +1,8 @@
+@startuml
+set separator ::
+class App::Core::Kernel
+class App::Core::Module
+class App::Ui::Window
+App::Core::Kernel o-- App::Core::Module
+App::Ui::Window --> App::Core::Kernel
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+class Producer
+class Consumer
+Producer --> Consumer
+note "Shared by both" as N1
+Producer .. N1
+N1 .. Consumer
+note "Standalone note" as N2
+@enduml

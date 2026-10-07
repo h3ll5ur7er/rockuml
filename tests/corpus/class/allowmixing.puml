@@ -1,0 +1,10 @@
+@startuml
+allowmixing
+actor Admin
+usecase "Manage users" as UC
+component Backend
+class User
+Admin --> UC
+UC --> Backend
+Backend --> User
+@enduml

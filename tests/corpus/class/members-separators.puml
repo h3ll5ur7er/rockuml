@@ -1,0 +1,19 @@
+@startuml
+class Order {
+  id : Long
+  ..
+  created : Date
+  -- totals --
+  net : Money
+  gross : Money
+  == behaviour ==
+  submit()
+  __ private __
+  - recalc()
+}
+class Simple {
+  a : int
+  --
+  b()
+}
+@enduml
