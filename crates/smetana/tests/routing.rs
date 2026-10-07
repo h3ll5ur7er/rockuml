@@ -25,6 +25,7 @@ use smetana::common::shapes::{bind_shape, portfn};
 use smetana::common::splines::{beginpath, clip_and_install, endpath, makeSelfEdge};
 use smetana::core::Globals;
 use smetana::core::ids::{EdgeId, FieldId, GraphId, NodeId, SymId};
+use smetana::dotgen::dotsplines::{spline_merge, swap_ends_p};
 use smetana::h::cgraph::Agdirected;
 use smetana::h::{
     SHAPE_INFO, bezier, boxf, field_t, path, pathend_t, pointf, polygon_t, port, splineInfo,
@@ -263,24 +264,6 @@ fn bezier_text(zz: &Globals, bz: &bezier) -> String {
 }
 
 // ---------------------------------------------------------------- the replayed layouts
-
-/// `swap_ends_p` of dotsplines.c.
-fn swap_ends_p(zz: &Globals, mut e: EdgeId) -> bool {
-    while let Some(orig) = zz.ed(e).to_orig {
-        e = orig;
-    }
-    let (h, t) = (zz.nd(aghead(zz, e)), zz.nd(agtail(zz, e)));
-    if h.rank != t.rank {
-        return h.rank < t.rank;
-    }
-    h.order < t.order
-}
-
-/// `spline_merge` of dotsplines.c.
-fn spline_merge(zz: &Globals, n: NodeId) -> bool {
-    let nd = zz.nd(n);
-    nd.node_type == 1 && (nd.in_.size > 1 || nd.out.size > 1)
-}
 
 fn sinfo(t: &mut Tokens) -> splineInfo {
     splineInfo {

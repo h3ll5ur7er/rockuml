@@ -2,6 +2,11 @@
 //! grouped; each group becomes self loops, flat edges (between nodes of one rank) or regular edges (down the
 //! ranks, through their chains of virtual nodes), drawn through a corridor of boxes around the nodes in the way.
 
+#![allow(
+    clippy::manual_midpoint,
+    reason = "f64::midpoint may round differently from Java's (a + b) / 2"
+)]
+
 use crate::cgraph::edge::{agfstout, agnxtout};
 use crate::cgraph::node::{agfstnode, agnxtnode};
 use crate::cgraph::obj::agraphof;
@@ -60,7 +65,10 @@ fn boxfof(llx: f64, lly: f64, urx: f64, ury: f64) -> boxf {
 }
 
 fn out0(zz: &Globals, n: NodeId) -> EdgeId {
-    zz.nd(n).out.get(&zz.edge_lists, 0).expect("node without out-edge")
+    zz.nd(n)
+        .out
+        .get(&zz.edge_lists, 0)
+        .expect("node without out-edge")
 }
 
 fn in0(zz: &Globals, n: NodeId) -> Option<EdgeId> {
@@ -179,14 +187,11 @@ fn edge_normalize(zz: &mut Globals, g: GraphId) {
     }
 }
 
-/// `dot_splines`.
-pub fn dot_splines(zz: &mut Globals, g: GraphId) {
-    _dot_splines(zz, g, true);
-}
-
-/// `_dot_splines`: routes all edges of `g`; with `normalize`, then turns the splines to run tail to head.
+/// `dot_splines`, that is `_dot_splines(g, 1)`: routes all edges of `g`, then turns the splines to run tail to
+/// head. C skips that normalization only for the auxiliary graph of flat edges with ports, which Smetana does not
+/// support.
 #[allow(clippy::too_many_lines, reason = "Graphviz's function")]
-fn _dot_splines(zz: &mut Globals, g: GraphId, normalize: bool) {
+pub fn dot_splines(zz: &mut Globals, g: GraphId) {
     let et = zz.gd(g).flags & (7 << 1);
     if et == ET_NONE {
         return;
@@ -369,10 +374,7 @@ fn _dot_splines(zz: &mut Globals, g: GraphId, normalize: bool) {
 
     place_vnlabels(zz, g, true);
 
-    // Normalize splines so they always go from tail to head.
-    if normalize {
-        edge_normalize(zz, g);
-    }
+    edge_normalize(zz, g);
     if (zz.E_headlabel.is_some() || zz.E_taillabel.is_some())
         && (zz.E_labelangle.is_some() || zz.E_labeldistance.is_some())
     {
@@ -463,8 +465,8 @@ fn setflags(zz: &mut Globals, e: EdgeId, hint1: i32, hint2: i32, f3: i32) {
 /// `edgecmp`: orders edges by kind, rank span, x span, real edge (so equivalent edges are contiguous), ports,
 /// graph and creation order.
 fn edgecmp(zz: &Globals, e0: EdgeId, e1: EdgeId) -> i32 {
-    let et0 = zz.ed(e0).tree_index & 15;
-    let et1 = zz.ed(e1).tree_index & 15;
+    let et0 = zz.ed(e0).tree_index & EDGETYPEMASK;
+    let et1 = zz.ed(e1).tree_index & EDGETYPEMASK;
     if et0 != et1 {
         return et1 - et0;
     }
@@ -512,8 +514,8 @@ fn edgecmp(zz: &Globals, e0: EdgeId, e1: EdgeId) -> i32 {
     if rv != 0 {
         return rv;
     }
-    let et0 = zz.ed(e0).tree_index & 192;
-    let et1 = zz.ed(e1).tree_index & 192;
+    let et0 = zz.ed(e0).tree_index & (MAINGRAPH | AUXGRAPH);
+    let et1 = zz.ed(e1).tree_index & (MAINGRAPH | AUXGRAPH);
     if et0 != et1 {
         return et0 - et1;
     }
@@ -532,10 +534,8 @@ fn edgelblcmpfn(zz: &Globals, e0: EdgeId, e1: EdgeId) -> i32 {
                 1
             } else if sz0.y > sz1.y {
                 -1
-            } else if sz0.y < sz1.y {
-                1
             } else {
-                0
+                i32::from(sz0.y < sz1.y)
             }
         }
         (Some(_), None) => -1,
@@ -747,10 +747,7 @@ fn make_flat_adj_edges(
 ) {
     let (tn, hn) = (agtail(zz, e0), aghead(zz, e0));
     let class = &edges[ind..ind + cnt as usize];
-    let labels = class
-        .iter()
-        .filter(|&&e| zz.ed(e).label.is_some())
-        .count() as i32;
+    let labels = class.iter().filter(|&&e| zz.ed(e).label.is_some()).count() as i32;
     let ports = class
         .iter()
         .any(|&e| zz.ed(e).tail_port.defined || zz.ed(e).head_port.defined);
@@ -765,6 +762,7 @@ fn make_flat_adj_edges(
 }
 
 /// `makeFlatEnd`: the end boxes at node `n` of a flat edge leaving by the top.
+#[allow(clippy::too_many_arguments, reason = "Graphviz's signature")]
 fn makeFlatEnd(
     zz: &mut Globals,
     g: GraphId,
@@ -808,10 +806,20 @@ fn findLabelVnodeByAlg(zz: &Globals, g: GraphId, e: EdgeId) -> Option<NodeId> {
 }
 
 /// `make_flat_labeled_edge`: a flat edge routed over its label node in the rank above.
-fn make_flat_labeled_edge(zz: &mut Globals, g: GraphId, sp: &spline_info_t, P: &mut path, e: EdgeId, et: i32) {
+fn make_flat_labeled_edge(
+    zz: &mut Globals,
+    g: GraphId,
+    sp: &spline_info_t,
+    P: &mut path,
+    e: EdgeId,
+    et: i32,
+) {
     let (tn, hn) = (agtail(zz, e), aghead(zz, e));
     let ln = findLabelVnodeByAlg(zz, g, e).unwrap_or_else(|| {
-        let mut f = zz.ed(e).to_virt.expect("labeled flat edge without label node");
+        let mut f = zz
+            .ed(e)
+            .to_virt
+            .expect("labeled flat edge without label node");
         while let Some(v) = zz.ed(f).to_virt {
             f = v;
         }
@@ -1035,11 +1043,9 @@ fn make_regular_edge(
         tend.boxes[tend.boxn as usize] = b;
         tend.boxn += 1;
     }
-    let mut longedge = 0;
     let mut smode = false;
     let mut si = -1;
     while zz.nd(hn).node_type == VIRTUAL && !spline_merge(zz, hn) {
-        longedge = 1;
         boxes.push(rank_box(zz, sp, g, zz.nd(tn).rank));
         if !smode {
             sl = straight_len(zz, hn);
@@ -1074,7 +1080,7 @@ fn make_regular_edge(
         }
         P.end.theta = M_PI / 2.0;
         P.end.constrained = true;
-        completeregularpath(zz, P, segfirst, e, &tend, &hend, &boxes, 1);
+        completeregularpath(zz, P, segfirst, e, &tend, &hend, &boxes);
         if !splines {
             unimplemented!("polyline through a straight run");
         }
@@ -1103,7 +1109,14 @@ fn make_regular_edge(
     let mut b = maximal_bbox(zz, g, sp, hn, Some(e), None);
     hend.nb = b;
     let merge = spline_merge(zz, aghead(zz, e));
-    endpath(zz, P, if hackflag { fwdedgeb } else { e }, REGULAREDGE, &mut hend, merge);
+    endpath(
+        zz,
+        P,
+        if hackflag { fwdedgeb } else { e },
+        REGULAREDGE,
+        &mut hend,
+        merge,
+    );
     let last = hend.boxes[(hend.boxn - 1) as usize];
     b.UR.y = last.UR.y;
     b.LL.y = last.LL.y;
@@ -1112,7 +1125,7 @@ fn make_regular_edge(
         hend.boxes[hend.boxn as usize] = b;
         hend.boxn += 1;
     }
-    completeregularpath(zz, P, segfirst, e, &tend, &hend, &boxes, longedge);
+    completeregularpath(zz, P, segfirst, e, &tend, &hend, &boxes);
     let Some(ps) = route(zz, P, splines) else {
         return;
     };
@@ -1164,7 +1177,6 @@ fn completeregularpath(
     tendp: &pathend_t,
     hendp: &pathend_t,
     boxes: &[boxf],
-    _flag: i32,
 ) {
     let neighbours = [
         top_bound(zz, first, -1),
@@ -1203,7 +1215,7 @@ fn makeregularend(b: boxf, side: i32, y: f64) -> boxf {
 /// `adjustregularpath`: widens the boxes `fb - 1..=lb` to at least `MINW` and makes consecutive boxes overlap by
 /// that much.
 fn adjustregularpath(P: &mut path, fb: i32, lb: i32) {
-    for i in fb - 1..lb + 1 {
+    for i in fb - 1..=lb {
         let bp1 = &mut P.boxes[i as usize];
         let narrow = if (i - fb) % 2 == 0 {
             bp1.LL.x >= bp1.UR.x
@@ -1261,7 +1273,10 @@ fn straight_len(zz: &Globals, n: NodeId) -> i32 {
     loop {
         v = aghead(zz, out0(zz, v));
         let nd = zz.nd(v);
-        if nd.node_type != VIRTUAL || nd.out.size != 1 || nd.in_.size != 1 || nd.coord.x != coord(zz, n).x
+        if nd.node_type != VIRTUAL
+            || nd.out.size != 1
+            || nd.in_.size != 1
+            || nd.coord.x != coord(zz, n).x
         {
             break;
         }
@@ -1377,7 +1392,10 @@ fn cl_vninside(zz: &Globals, cl: GraphId, n: NodeId) -> bool {
 /// `cl_bound`: the cluster neighbour `adj` of `n` belongs to, if `n`'s edge does not belong to it too.
 fn cl_bound(zz: &Globals, g: GraphId, n: NodeId, adj: NodeId) -> Option<GraphId> {
     let real_ends = |v: NodeId| {
-        let orig = zz.ed(out0(zz, v)).to_orig.expect("virtual edge without original");
+        let orig = zz
+            .ed(out0(zz, v))
+            .to_orig
+            .expect("virtual edge without original");
         (agtail(zz, orig), aghead(zz, orig))
     };
     let (tcl, hcl) = if zz.nd(n).node_type == NORMAL {
@@ -1505,7 +1523,13 @@ fn neighbor(
 }
 
 /// `pathscross`: whether the chains through `n0` and `n1` cross within two ranks up or down.
-fn pathscross(zz: &Globals, n0: NodeId, n1: NodeId, ie1: Option<EdgeId>, oe1: Option<EdgeId>) -> bool {
+fn pathscross(
+    zz: &Globals,
+    n0: NodeId,
+    n1: NodeId,
+    ie1: Option<EdgeId>,
+    oe1: Option<EdgeId>,
+) -> bool {
     let order = zz.nd(n0).order > zz.nd(n1).order;
     if zz.nd(n0).out.size != 1 && zz.nd(n0).out.size != 1 {
         return false;
