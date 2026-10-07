@@ -240,13 +240,11 @@ fn routes_like_smetana() {
     assert!(splines > 200, "only {splines} splines checked");
 }
 
-/// Unlike the routes, the roots themselves cannot all match: Java's `Math.pow` and `Math.cos` are `HotSpot` intrinsics
-/// that `libm` misses by an ulp now and then (see solvers.rs). So the roots must be close, and most of them exact.
+/// The roots, bit for bit: `jmath`'s correctly rounded `cos` and `pow` agree with Java's intrinsics on these.
 #[test]
 fn solves_cubics_like_smetana() {
     let mut failures = Vec::new();
     let mut count = 0;
-    let mut bit_exact = 0;
     for (index, text) in FIXTURE.lines().enumerate() {
         let Some(rest) = text.strip_prefix("solve3 ") else {
             continue;
@@ -260,19 +258,11 @@ fn solves_cubics_like_smetana() {
         let mut solved = [0.0; 3];
         let rootn = solve3(&coeff, &mut solved);
         let actual = if rootn < 4 { &solved[..rootn] } else { &[] };
-        if actual
+        let exact = actual
             .iter()
             .map(|r| r.to_bits())
-            .eq(expected.iter().map(|r| r.to_bits()))
-        {
-            bit_exact += 1;
-        }
-        let close = actual.len() == expected.len()
-            && actual
-                .iter()
-                .zip(&expected)
-                .all(|(a, e)| (a - e).abs() <= 1e-12 * e.abs().max(1.0));
-        if rootn != expected_rootn || !close {
+            .eq(expected.iter().map(|r| r.to_bits()));
+        if rootn != expected_rootn || !exact {
             failures.push(format!(
                 "line {}: {rootn} {actual:?} != {expected_rootn} {expected:?}",
                 index + 1
@@ -285,9 +275,5 @@ fn solves_cubics_like_smetana() {
         "{} of {count} cubics differ:\n{}",
         failures.len(),
         failures.join("\n")
-    );
-    assert!(
-        bit_exact * 5 >= count * 4,
-        "only {bit_exact} of {count} cubics are bit-exact"
     );
 }

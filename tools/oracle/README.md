@@ -162,3 +162,22 @@ edge lookups (`agfindedge`) and attribute values. Each `tests/smetana/**/NN.trac
 `tests/smetana-cgraph/**/NN.dump`; the hand-written inputs in `tests/smetana-cgraph/synthetic/*.trace` (same format)
 get their dump next to them. `crates/smetana/tests/cgraph_replay.rs` makes the same calls and compares. Rerun the
 script after regenerating the traces.
+
+## Smetana unit oracles
+
+`smetana-unit/` holds harnesses that run single Smetana functions against the golden-model jar; their fixtures are
+in `crates/smetana/tests/data` and the matching Rust tests in `crates/smetana/tests`.
+
+```bash
+bash tools/oracle/smetana-unit/pathplan.sh   # pathplan.txt: Pshortestpath, Proutespline, solve3
+bash tools/oracle/smetana-unit/routing.sh    # routing-*.txt: spline clipping, end boxes, routesplines, ports
+```
+
+`routing.sh` patches copies of `splines__c`, `routespl__c` and `shapes__c` (`smetana-unit/routing-hooks.patch`)
+to call `RoutingDump` around `clip_and_install`, `beginpath`/`endpath`, `_routesplines`, `simpleSplineRoute`,
+`makeSelfEdge` and the port functions, and puts them before the jar on the class path. It then lays out random
+graphs (seeds 1-100, 200 and 241 by default; others as arguments), synthetic graphs and corridors (arrows PlantUML
+never draws, boxes `checkpath` must repair) and the corpus cases that use Smetana. Each recorded call comes with the
+state of the nodes and edges it reads (only where it changed since the last call) and is followed by its results
+and the state it changed; `crates/smetana/tests/routing.rs` rebuilds that state, makes the same call and compares
+bit for bit.

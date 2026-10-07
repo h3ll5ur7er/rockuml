@@ -9,7 +9,7 @@
 use std::collections::HashMap;
 
 use crate::cdt::{Dicts, JStr};
-use crate::core::carray::CArrays;
+use crate::core::carray::{CArray, CArrays};
 use crate::core::ids::{
     AdjmatrixId, Arena, ArenaId, ClosId, EdgeId, FieldId, GraphId, NodeId, PolygonId, ShapeDescId,
     SplinesId, StrId, SubnodeId, SymId, TextlabelId,
@@ -21,6 +21,7 @@ use crate::h::{
     Agedgeinfo_t, Agnodeinfo_t, Agraphinfo_t, adjmatrix_t, bezier, elist, field_t, nlist_t, pointf,
     polygon_t, rank_t, shape_desc, shape_functions, splines, textlabel_t, textspan_t,
 };
+use crate::pathplan::PathplanContext;
 
 pub struct Globals {
     // cgraph's objects.
@@ -168,6 +169,21 @@ pub struct Globals {
     pub C: i32,
     pub G_ns: Option<GraphId>,
     pub G_decomp: Option<GraphId>,
+
+    // shapes.c: `poly_inside`'s cache of the last node it tested.
+    pub lastn: Option<NodeId>,
+    pub last: i32,
+    pub outp: i32,
+    pub sides: i32,
+    pub vertex: Option<CArray<pointf>>,
+    pub xsize: f64,
+    pub ysize: f64,
+    pub scalex: f64,
+    pub scaley: f64,
+    pub box_URx: f64,
+    pub box_URy: f64,
+    /// The path planner's scratch arrays, shared by all routes of a layout.
+    pub pathplan: PathplanContext,
 }
 
 impl Globals {
@@ -329,6 +345,18 @@ impl Globals {
             C: 0,
             G_ns: None,
             G_decomp: None,
+            lastn: None,
+            last: 0,
+            outp: 0,
+            sides: 0,
+            vertex: None,
+            xsize: 0.0,
+            ysize: 0.0,
+            scalex: 0.0,
+            scaley: 0.0,
+            box_URx: 0.0,
+            box_URy: 0.0,
+            pathplan: PathplanContext::default(),
         }
     }
 
