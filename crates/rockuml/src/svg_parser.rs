@@ -120,7 +120,7 @@ impl Sprite for SvgNanoParser {
         forced_color: Option<&HColor>,
         scale: f64,
     ) -> Box<dyn TextBlock + '_> {
-        let data = UImageSvg::new(self.svg.as_ref(), scale);
+        let data = UImageSvg::new(self.svg.to_string(), scale);
         Box::new(SpriteBlock {
             parser: self,
             font_color: font_color.clone(),

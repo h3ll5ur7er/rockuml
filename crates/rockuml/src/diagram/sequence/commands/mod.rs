@@ -13,6 +13,7 @@ use crate::command::{Command, CommandError, CommandResult};
 use crate::diagram::common_commands::common_commands;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree};
+use crate::text::unquoted;
 
 pub(super) fn commands() -> Vec<Box<dyn Command<SequenceDiagram>>> {
     let mut commands = common_commands();
@@ -86,19 +87,6 @@ fn colors(arg: &RegexResult) -> Result<Colors, CommandError> {
         .map(|data| Colors::parse(data, ColorType::Back).map_err(|_| no_such_color()))
         .transpose()
         .map(Option::unwrap_or_default)
-}
-
-/// A name written between any of PlantUML's double quotes loses them
-/// (`eventuallyRemoveStartingAndEndingDoubleQuote`).
-fn unquoted(text: &str) -> &str {
-    let is_double_quote = |c| matches!(c, '"' | '\u{201C}' | '\u{201D}' | '\u{AB}' | '\u{BB}');
-    let mut chars = text.chars();
-    match (chars.next(), chars.next_back()) {
-        (Some(first), Some(last)) if is_double_quote(first) && is_double_quote(last) => {
-            &text[first.len_utf8()..text.len() - last.len_utf8()]
-        }
-        _ => text,
-    }
 }
 
 /// The diagram's `activate`, turning its refusal into a command error.

@@ -14,7 +14,7 @@ use crate::color::{Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::UGroup;
-use crate::klimt::shape::USegment;
+use crate::klimt::shape::{UImageSvg, USegment};
 use crate::klimt::typeface::GlyphSegment;
 
 const DEFAULT_FONT_FAMILY: &str = "sans-serif";
@@ -447,6 +447,60 @@ impl SvgGraphics {
         self.current_group().append_child(element);
         self.ensure_visible(x, y);
         self.ensure_visible(x + width, y + height);
+    }
+
+    /// An SVG document embedded as a data URI, under a root element of its scaled size.
+    pub(super) fn svg_image(&mut self, image: &UImageSvg, x: f64, y: f64) {
+        let mut element = XmlNode::new("image");
+        element.set_attribute("width", self.length(image.width()));
+        element.set_attribute("height", self.length(image.height()));
+        element.set_attribute("x", self.length(x));
+        element.set_attribute("y", self.length(y));
+        let xlink = if image.contains_xlink() {
+            " xmlns:xlink=\"http://www.w3.org/1999/xlink\""
+        } else {
+            ""
+        };
+        let header = format!(
+            "<svg height=\"{}\" width=\"{}\"{xlink} xmlns=\"http://www.w3.org/2000/svg\" >",
+            (image.height() * self.option.scale) as i32,
+            (image.width() * self.option.scale) as i32,
+        );
+        let svg = self.manage_scale(image);
+        let svg = format!("{header}{}", svg.strip_prefix("<svg>").unwrap_or(&svg));
+        element.set_attribute(
+            "xlink:href",
+            format!("data:image/svg+xml;base64,{}", BASE64_STANDARD.encode(svg)),
+        );
+        self.current_group().append_child(element);
+        self.ensure_visible(x, y);
+        self.ensure_visible(
+            x + f64::from(image.data_width()),
+            y + f64::from(image.data_height()),
+        );
+    }
+
+    /// The document with its first group scaled, wrapping its content in a group if it has none.
+    fn manage_scale(&self, image: &UImageSvg) -> String {
+        static FIRST_GROUP: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<g\b").unwrap());
+
+        let mut svg = image.svg();
+        if image.scale() * self.option.scale == 1.0 {
+            return svg;
+        }
+        let on_one_line = svg.replace(['\n', '\r'], " ");
+        if !on_one_line.contains("<g ") && !on_one_line.contains("<g>") {
+            svg = svg
+                .replacen("<svg>", "<svg><g>", 1)
+                .replacen("</svg>", "</g></svg>", 1);
+        }
+        let factor = self.length(image.scale());
+        FIRST_GROUP
+            .replace(
+                &svg,
+                format!("<g transform=\"scale({factor},{factor})\" ").as_str(),
+            )
+            .into_owned()
     }
 
     pub(super) fn start_group(&mut self, group: &UGroup) {

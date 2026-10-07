@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob : <img:styled.svg> styled
+Bob -> Alice : <img:styled.svg{scale=1.5}>
+Alice -> Bob : <img:data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAuNSAxMC4yIj48Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iNCIgZmlsbD0iIzAwQUEwMCIvPjwvc3ZnPg==> inline
+note over Alice : <img:data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMTAuNSAxMC4yIj48Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iNCIgZmlsbD0iIzAwQUEwMCIvPjwvc3ZnPg=={scale=3}>
+@enduml

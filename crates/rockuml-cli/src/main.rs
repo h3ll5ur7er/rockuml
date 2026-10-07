@@ -218,7 +218,7 @@ fn render(
     format: ImageFormat,
     fonts: &Arc<FontRegistry>,
 ) -> Result<Rendered, NotYetPorted> {
-    let diagram = rockuml::diagram::create(block)?;
+    let diagram = rockuml::diagram::create(block, &SystemHost)?;
     let pages = (0..diagram.page_count())
         .map(|page| rockuml::diagram::export(diagram.as_ref(), page, format, fonts, &SystemHost))
         .collect::<Result<_, _>>()?;

@@ -1,5 +1,7 @@
 use std::collections::HashMap;
+use std::path::Path;
 
+use crate::host::Host;
 use crate::java;
 use crate::preproc::start_utils;
 use crate::text::{StringLocated, ends_with_backslash};
@@ -11,6 +13,8 @@ pub struct UmlSource {
     raw_lines: Vec<String>,
     /// The base64 data of the PNGs `patch_base64` took out, by their MD5.
     md5_map: HashMap<String, String>,
+    /// What `read_image_files` read, by the name the source gives it.
+    image_files: HashMap<String, Vec<u8>>,
 }
 
 impl UmlSource {
@@ -19,6 +23,7 @@ impl UmlSource {
             lines,
             raw_lines,
             md5_map: HashMap::new(),
+            image_files: HashMap::new(),
         }
     }
 
@@ -39,6 +44,7 @@ impl UmlSource {
             lines: joined,
             raw_lines,
             md5_map: HashMap::new(),
+            image_files: HashMap::new(),
         }
     }
 
@@ -122,6 +128,35 @@ impl UmlSource {
 
     pub(crate) fn md5_map(&self) -> &HashMap<String, String> {
         &self.md5_map
+    }
+
+    /// Reads the files and URLs `<img>`s name, which creole cannot read itself as it draws. Relative paths
+    /// resolve against `directory`, the diagram file's, as PlantUML's `FileSystem` does. What cannot be read
+    /// is left out, and its `<img>` draws as undecodable.
+    pub(crate) fn read_image_files(&mut self, directory: &Path, host: &dyn Host) {
+        for line in &self.lines {
+            for src in crate::creole::image_sources(line.text()) {
+                if self.image_files.contains_key(src) || src.starts_with("data:") {
+                    continue;
+                }
+                let content = if src.starts_with("http:") || src.starts_with("https:") {
+                    if crate::url_policy::is_forbidden(src) {
+                        None
+                    } else {
+                        host.read_url(src)
+                    }
+                } else {
+                    host.read_file(&directory.join(src))
+                };
+                if let Some(content) = content {
+                    self.image_files.insert(src.to_owned(), content);
+                }
+            }
+        }
+    }
+
+    pub(crate) fn image_files(&self) -> &HashMap<String, Vec<u8>> {
+        &self.image_files
     }
 }
 

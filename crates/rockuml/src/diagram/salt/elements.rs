@@ -46,6 +46,14 @@ impl SpriteContainer for SaltDictionary {
     fn get_sprite(&self, _name: &str) -> Option<Rc<dyn Sprite>> {
         None
     }
+
+    fn get_from_md5(&self, _md5: &str) -> Option<&str> {
+        None
+    }
+
+    fn image_file(&self, _src: &str) -> Option<&[u8]> {
+        None
+    }
 }
 
 pub(super) fn text_block(lines: &[String], font: &FontConfiguration) -> SheetBlock1 {

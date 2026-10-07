@@ -24,6 +24,8 @@ pub(crate) struct UGraphicSvg {
     /// The fonts whose glyph outlines draw centred characters; deterministic SVG has none and writes them as
     /// text.
     glyph_fonts: Option<Arc<FontRegistry>>,
+    /// The document becomes a PNG, whose `Graphics2D` driver in PlantUML draws no SVG images.
+    rasterized: bool,
 }
 
 impl UGraphicSvg {
@@ -32,11 +34,13 @@ impl UGraphicSvg {
         option: SvgOption,
         string_bounder: Rc<dyn StringBounder>,
         glyph_fonts: Option<Arc<FontRegistry>>,
+        rasterized: bool,
     ) -> Self {
         Self {
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
             glyph_fonts,
+            rasterized,
         }
     }
 
@@ -309,6 +313,11 @@ impl UGraphicBackend for UGraphicSvg {
             UShape::Image(image) => {
                 if inside(at.dx, at.dy) && inside(at.dx + image.width(), at.dy + image.height()) {
                     self.draw_image(image, at);
+                }
+            }
+            UShape::ImageSvg(image) => {
+                if !self.rasterized {
+                    self.svg().svg_image(image, at.dx, at.dy);
                 }
             }
             UShape::CenteredCharacter(centered) => {

@@ -10,7 +10,7 @@ use regex::Regex;
 
 use reader::{ReadFilterMergeLines, ReadLine, ReadLineReader, UncommentReadLine};
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use crate::host::Host;
 use crate::java;
@@ -36,6 +36,8 @@ pub struct PreprocessedBlock {
     /// The block as written, before preprocessing.
     raw_lines: Vec<String>,
     failed: bool,
+    /// The source's directory, which relative image paths resolve against.
+    directory: PathBuf,
 }
 
 impl PreprocessedBlock {
@@ -45,6 +47,10 @@ impl PreprocessedBlock {
 
     pub(crate) fn raw_lines(&self) -> &[String] {
         &self.raw_lines
+    }
+
+    pub(crate) fn directory(&self) -> &Path {
+        &self.directory
     }
 
     pub fn lines(&self) -> impl Iterator<Item = &str> {
@@ -190,6 +196,7 @@ pub fn preprocess(source: &Source, host: &dyn Host) -> Vec<PreprocessedBlock> {
             lines: preprocessed.lines,
             raw_lines: lines.iter().map(|line| line.text().to_owned()).collect(),
             failed: preprocessed.failed,
+            directory: source.directory.clone(),
         });
     }
     blocks

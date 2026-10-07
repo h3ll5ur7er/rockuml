@@ -127,6 +127,19 @@ impl StringLocated {
     }
 }
 
+/// A name written between any of PlantUML's double quotes loses them
+/// (`eventuallyRemoveStartingAndEndingDoubleQuote`).
+pub(crate) fn unquoted(text: &str) -> &str {
+    let is_double_quote = |c| matches!(c, '"' | '\u{201C}' | '\u{201D}' | '\u{AB}' | '\u{BB}');
+    let mut chars = text.chars();
+    match (chars.next(), chars.next_back()) {
+        (Some(first), Some(last)) if is_double_quote(first) && is_double_quote(last) => {
+            &text[first.len_utf8()..text.len() - last.len_utf8()]
+        }
+        _ => text,
+    }
+}
+
 pub(crate) fn ends_with_backslash(s: &str) -> bool {
     s.ends_with('\\') && !s.ends_with("\\\\")
 }

@@ -5,6 +5,7 @@
 
 use std::rc::Rc;
 
+mod atom_img;
 mod atom_text;
 mod atoms;
 mod char_hidder;
@@ -17,6 +18,7 @@ mod sheet_block;
 mod table;
 mod tree;
 
+pub(crate) use commands::image_sources;
 pub(crate) use display::Display;
 use fission::Neutron;
 pub(crate) use parser::CreoleParser;
