@@ -42,7 +42,8 @@
 //! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
 //!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
 //!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
-//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does.
+//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does. Until then the query
+//!   `swimlane_kept` in `vcompact/ftile_with_note_opale.rs` answers that no layer keeps one lane.
 //! - The compression layer and its slot finder, in `klimt::compress`.
 //! - The delegators' own methods, each in its file under `vcompact/`.
 
@@ -58,6 +59,8 @@ mod ftile_factory;
 mod ftile_factory_delegator;
 mod ftile_geometry;
 mod ftile_geometry_merger;
+mod ftile_height_fixed_centered;
+mod ftile_height_fixed_marged;
 mod ftile_killed;
 mod ftile_marged;
 mod ftile_marged_west;
@@ -93,6 +96,8 @@ pub(crate) use ftile_factory::FtileFactory;
 pub(crate) use ftile_factory_delegator::FtileFactoryDelegator;
 pub(crate) use ftile_geometry::FtileGeometry;
 pub(crate) use ftile_geometry_merger::FtileGeometryMerger;
+pub(crate) use ftile_height_fixed_centered::FtileHeightFixedCentered;
+pub(crate) use ftile_height_fixed_marged::FtileHeightFixedMarged;
 pub(crate) use ftile_killed::FtileKilled;
 pub(crate) use ftile_marged::{FtileMarged, FtileMargedRight, FtileMargedVertically};
 pub(crate) use ftile_marged_west::FtileMargedWest;

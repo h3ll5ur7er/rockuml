@@ -1,12 +1,11 @@
 //! An `if` with one branch below the diamond and the other going round it, or ending at once in a stop
 //! beside it (PlantUML's `FtileIfDown`).
-//!
-//! A note on the diamond (the opale) is not ported: it takes no room.
 
 use std::rc::Rc;
 
+use super::cond::create_opale;
 use crate::decoration::Rainbow;
-use crate::diagram::activity3::{SwimlaneId, SwimlaneSet};
+use crate::diagram::activity3::{PositionedNote, SwimlaneId, SwimlaneSet};
 use crate::direction::Direction;
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
 use crate::ftile::vertical::{FtileDiamond, FtileDiamondInside};
@@ -14,12 +13,14 @@ use crate::ftile::{
     AbstractConnection, AbstractFtile, Connection, ConnectionTranslatable, Ftile, FtileEmpty,
     FtileFactory, FtileGeometry, MergeStrategy, Snake, Swimable, downcast, ftile_utils, same,
 };
+use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::shape::{UPolygon, UShape};
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::SkinParam;
 use crate::svek::ConditionEndStyle;
+use crate::svek::image::Opale;
 
 pub(crate) struct FtileIfDown {
     base: AbstractFtile,
@@ -28,6 +29,8 @@ pub(crate) struct FtileIfDown {
     diamond2: Rc<dyn Ftile>,
     optional_stop: Option<Rc<dyn Ftile>>,
     condition_end_style: ConditionEndStyle,
+    /// A note left of the diamond, when the `if` has exactly one.
+    opale: Option<Opale<'static>>,
 }
 
 impl FtileIfDown {
@@ -44,7 +47,12 @@ impl FtileIfDown {
         ftile_factory: &dyn FtileFactory,
         optional_stop: Option<Rc<dyn Ftile>>,
         else_color: &Rainbow,
+        notes: &[PositionedNote],
     ) -> Rc<dyn Ftile> {
+        let opale = match notes {
+            [note] => Some(create_opale(note, then_block.skin_param())),
+            _ => None,
+        };
         let else_color = else_color.with_default(arrow_color);
         let diamond2 = if optional_stop.is_some() {
             Rc::new(FtileEmpty::new(Rc::clone(ftile_factory.skin_param()), None))
@@ -59,6 +67,7 @@ impl FtileIfDown {
             diamond2,
             optional_stop,
             condition_end_style,
+            opale,
         });
         let in_color = result
             .then_block
@@ -153,7 +162,17 @@ impl FtileIfDown {
         stop_width.max(val1 + stop_width / 2.0)
     }
 
+    /// The size of the note, none without one.
+    fn dim_opale(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.opale
+            .as_ref()
+            .map_or_else(XDimension2D::default, |opale| {
+                opale.calculate_dimension(string_bounder)
+            })
+    }
+
     fn calculate_dimension_ftile(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
+        let dim_opale = self.dim_opale(string_bounder);
         let geo_diamond1 = self.diamond1.calculate_dimension(string_bounder);
         let geo_then = self.then_block.calculate_dimension(string_bounder);
         let geo_diamond2 = self.diamond2.calculate_dimension(string_bounder);
@@ -162,17 +181,28 @@ impl FtileIfDown {
             .append_bottom(geo_diamond2);
         let height = geo.get_height()
             + 3.0 * HEXAGON_HALF_SIZE
-            + HEXAGON_HALF_SIZE.max(self.get_south_label_height(string_bounder));
-        let mut width = geo.get_width() + HEXAGON_HALF_SIZE;
+            + HEXAGON_HALF_SIZE.max(self.get_south_label_height(string_bounder))
+            + dim_opale.height;
+        let supp = if dim_opale.width > geo.get_left() {
+            dim_opale.width - geo.get_left()
+        } else {
+            0.0
+        };
+        let mut width = supp + geo.get_width() + HEXAGON_HALF_SIZE;
         if let Some(stop) = &self.optional_stop {
             width += stop.calculate_dimension(string_bounder).get_width()
                 + self.get_additional_width(stop.as_ref(), string_bounder);
         }
+        let left = if supp > 0.0 {
+            dim_opale.width + geo_diamond1.get_left()
+        } else {
+            geo.get_left()
+        };
         let result = FtileGeometry::with_out(
             width,
             height,
-            geo.get_left(),
-            geo_diamond1.get_in_y(),
+            left,
+            geo_diamond1.get_in_y() + dim_opale.height,
             height,
         );
         if !geo_then.has_point_out() && self.optional_stop.is_some() {
@@ -186,8 +216,11 @@ impl FtileIfDown {
         let dim_diamond2 = self.diamond2.calculate_dimension(string_bounder);
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_then = self.then_block.calculate_dimension(string_bounder);
-        let y = dim_diamond1.get_height()
+        let opale_height = self.dim_opale(string_bounder).height;
+        let y = opale_height
+            + dim_diamond1.get_height()
             + (dim_total.get_height()
+                - opale_height
                 - dim_diamond1.get_height()
                 - dim_diamond2.get_height()
                 - dim_then.get_height())
@@ -199,7 +232,10 @@ impl FtileIfDown {
     fn get_translate_diamond1(&self, string_bounder: &dyn StringBounder) -> UTranslate {
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_diamond1 = self.diamond1.calculate_dimension(string_bounder);
-        UTranslate::new(dim_total.get_left() - dim_diamond1.get_left(), 0.0)
+        UTranslate::new(
+            dim_total.get_left() - dim_diamond1.get_left(),
+            self.dim_opale(string_bounder).height,
+        )
     }
 
     fn get_translate_optional_stop(
@@ -312,6 +348,11 @@ impl Ftile for FtileIfDown {
 
     fn draw_u(&self, ug: &UGraphic) {
         let string_bounder = ug.string_bounder();
+        if let Some(opale) = &self.opale {
+            let x_opale = self.get_translate_diamond1(string_bounder).dx
+                - opale.calculate_dimension(string_bounder).width;
+            opale.draw_u(&ug.apply(UTranslate::new(x_opale, 0.0)));
+        }
         ug.apply(self.get_translate_for_then(string_bounder))
             .draw(&self.then_block);
         ug.apply(self.get_translate_diamond1(string_bounder))

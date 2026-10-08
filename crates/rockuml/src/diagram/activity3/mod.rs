@@ -23,8 +23,10 @@ use std::rc::Rc;
 pub(crate) use self::branch::BranchFtile;
 use self::branch::{InstructionIf, InstructionSwitch};
 use self::group::InstructionGroup;
-use self::instruction::{Instruction, MonoSwimable, NoteType};
-pub(crate) use self::instruction::{InstructionId, Instructions, PositionedNote, SwimlaneSet};
+use self::instruction::{Instruction, MonoSwimable};
+pub(crate) use self::instruction::{
+    InstructionId, Instructions, NoteType, PositionedNote, SwimlaneSet,
+};
 use self::leaves::{
     InstructionBreak, InstructionEnd, InstructionGoto, InstructionLabel, InstructionSimple,
     InstructionSpot, InstructionStart, InstructionStop,
@@ -48,7 +50,7 @@ use crate::command::{Command, CommandError, CommandResult};
 use crate::creole::Display;
 use crate::decoration::Rainbow;
 use crate::decoration::symbol::USymbol;
-use crate::diagram::sequence::model::NotePosition;
+pub(crate) use crate::diagram::sequence::model::NotePosition;
 use crate::ftile::BoxStyle;
 use crate::klimt::TextBlock;
 use crate::klimt::compress::{CompressionMode, CompressionXorYBuilder};
@@ -167,9 +169,6 @@ impl Diagram for ActivityDiagram3 {
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         if self.swimlanes.swimlanes().len() > 1 {
             return Err(NotYetPorted("activity diagrams with swimlanes (track E2)"));
-        }
-        if let Some(not_ported) = self.swimlanes.instructions.unported_part() {
-            return Err(not_ported);
         }
         let swimlanes = SwimlanesDrawing::new(
             &self.swimlanes,

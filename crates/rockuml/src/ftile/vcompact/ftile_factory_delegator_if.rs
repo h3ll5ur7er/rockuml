@@ -34,7 +34,6 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorIf {
         self.factory.as_ref()
     }
 
-    /// Notes on the diamond are not ported: `notes` is passed over.
     fn create_if(
         &self,
         instructions: &Instructions,
@@ -44,7 +43,7 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorIf {
         out_color: &LinkRendering,
         top_inlink_rendering: &LinkRendering,
         url: Option<&Url>,
-        _notes: &[PositionedNote],
+        notes: &[PositionedNote],
         stereotype: Option<&Stereotype>,
         current_style_builder: &Rc<StyleBuilder>,
     ) -> Rc<dyn Ftile> {
@@ -99,6 +98,7 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorIf {
             url,
             &style_arrow,
             style_diamond,
+            notes,
         )
     }
 }

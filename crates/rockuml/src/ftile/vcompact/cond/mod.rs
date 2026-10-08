@@ -8,3 +8,4 @@ pub(super) mod ftile_switch_with_one_link;
 
 pub(crate) use conditional_builder::ConditionalBuilder;
 pub(crate) use ftile_if_with_links::FtileIfWithLinks;
+pub(super) use ftile_if_with_links::create_opale;

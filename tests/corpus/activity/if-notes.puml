@@ -1,0 +1,24 @@
+@startuml
+start
+if (Ready to go?) then (yes)
+  note left: A rather long note on the left of the test
+  note right: Right
+  :Launch;
+else (no)
+  :Wait;
+endif
+if (Again?) then (yes)
+  :Repeat;
+endif
+note left
+  A note on
+  a simple if
+end note
+if (Last?) then (yes)
+  :One;
+else (no)
+  :Two;
+endif
+note right: After the endif
+stop
+@enduml

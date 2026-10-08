@@ -11,6 +11,7 @@ use crate::text::unquoted;
 pub(crate) enum FontParam {
     CircledCharacter,
     ClassStereotype,
+    Note,
     ObjectStereotype,
     PackageStereotype,
 }
@@ -21,6 +22,7 @@ impl FontParam {
         match self {
             Self::CircledCharacter => "CIRCLED_CHARACTER",
             Self::ClassStereotype => "CLASS_STEREOTYPE",
+            Self::Note => "NOTE",
             Self::ObjectStereotype => "OBJECT_STEREOTYPE",
             Self::PackageStereotype => "PACKAGE_STEREOTYPE",
         }
@@ -30,6 +32,7 @@ impl FontParam {
         match self {
             Self::CircledCharacter => 17,
             Self::ClassStereotype | Self::ObjectStereotype => 12,
+            Self::Note => 13,
             Self::PackageStereotype => 14,
         }
     }
@@ -37,6 +40,7 @@ impl FontParam {
     fn default_face(self) -> UFontFace {
         match self {
             Self::CircledCharacter => UFontFace::BOLD,
+            Self::Note => UFontFace::NORMAL,
             Self::ClassStereotype | Self::ObjectStereotype | Self::PackageStereotype => {
                 UFontFace::ITALIC
             }
@@ -46,7 +50,10 @@ impl FontParam {
     fn default_family(self) -> &'static str {
         match self {
             Self::CircledCharacter => "Monospaced",
-            Self::ClassStereotype | Self::ObjectStereotype | Self::PackageStereotype => "SansSerif",
+            Self::ClassStereotype
+            | Self::Note
+            | Self::ObjectStereotype
+            | Self::PackageStereotype => "SansSerif",
         }
     }
 }

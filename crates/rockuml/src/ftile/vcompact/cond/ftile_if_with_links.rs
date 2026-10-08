@@ -1,15 +1,16 @@
 //! An `if` with an `else`, both branches side by side between two diamonds (PlantUML's `FtileIfWithLinks`,
 //! with its bases `FtileIfWithDiamonds` and `FtileIfNude`, which nothing else builds).
-//!
-//! Notes on the diamond (`FtileIfWithDiamonds`' opales) are not ported: their offsets are 0.
 
 use std::cell::OnceCell;
 use std::rc::Rc;
 
 use crate::decoration::Rainbow;
-use crate::diagram::activity3::{BranchFtile, SwimlaneId, SwimlaneSet};
+use crate::diagram::activity3::{
+    BranchFtile, NotePosition, PositionedNote, SwimlaneId, SwimlaneSet,
+};
 use crate::direction::Direction;
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
+use crate::ftile::vcompact::note_sheet::NoteSheet;
 use crate::ftile::vcompact::one_swimlane::hline_extent;
 use crate::ftile::vertical::FtileDiamond;
 use crate::ftile::{
@@ -20,8 +21,11 @@ use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::shape::UPolygon;
 use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
+use crate::style::{PName, SName, StyleSignature, ValueReading};
 use crate::svek::ConditionEndStyle;
+use crate::svek::image::Opale;
 
 /// Room beside the first diamond.
 const SUPP_WIDTH: f64 = 20.0;
@@ -35,11 +39,46 @@ pub(crate) struct FtileIfWithLinks {
     diamond1: Rc<dyn Ftile>,
     diamond2: Rc<dyn Ftile>,
     in_: Option<SwimlaneId>,
+    /// The first note on the left of the diamond, and the first on its right.
+    opale_left: Option<Opale<'static>>,
+    opale_right: Option<Opale<'static>>,
+    /// The room the notes take: left of the tile, above it, right of it.
+    x_delta_note: f64,
+    y_delta_note: f64,
+    supp_width_node: f64,
     arrow_color: Rainbow,
     condition_end_style: ConditionEndStyle,
 }
 
+/// A note on a condition, in the activity note style, its own colours over it
+/// (`FtileIfWithDiamonds.createOpale`).
+pub(crate) fn create_opale(note: &PositionedNote, skin_param: &SkinParam) -> Opale<'static> {
+    let style = StyleSignature::of(&[
+        SName::Root,
+        SName::Element,
+        SName::ActivityDiagram,
+        SName::Note,
+    ])
+    .get_merged_style(&skin_param.current_style_builder())
+    .eventually_override_colors(&note.colors);
+    let text = NoteSheet::new(
+        &note.display,
+        &style.font_configuration(),
+        skin_param.note_text_alignment(HorizontalAlignment::Left),
+        style.wrap_width(),
+        skin_param,
+    );
+    Opale::new(
+        style.value(PName::LineColor).as_color(),
+        style.value(PName::BackGroundColor).as_color(),
+        Box::new(text),
+        style.stroke(),
+        0.0,
+    )
+}
+
 impl FtileIfWithLinks {
+    /// The tile, with room for the first note of `notes` left of the diamond and the first right of it.
     #[allow(clippy::too_many_arguments, reason = "PlantUML's constructor")]
     pub(crate) fn new(
         skin_param: Rc<SkinParam>,
@@ -50,8 +89,10 @@ impl FtileIfWithLinks {
         in_: Option<SwimlaneId>,
         arrow_color: Rainbow,
         condition_end_style: ConditionEndStyle,
+        string_bounder: &dyn StringBounder,
+        notes: &[PositionedNote],
     ) -> Self {
-        Self {
+        let mut result = Self {
             base: AbstractFtile::new(skin_param),
             dimension_internal: OnceCell::new(),
             tile1,
@@ -59,9 +100,50 @@ impl FtileIfWithLinks {
             diamond1,
             diamond2,
             in_,
+            opale_left: None,
+            opale_right: None,
+            x_delta_note: 0.0,
+            y_delta_note: 0.0,
+            supp_width_node: 0.0,
             arrow_color,
             condition_end_style,
+        };
+        for note in notes {
+            match note.note_position {
+                NotePosition::Left if result.opale_left.is_none() => {
+                    let opale = create_opale(note, result.skin_param());
+                    let pos1 = result.get_translate_diamond1(string_bounder).dx;
+                    let dim_opale = opale.calculate_dimension(string_bounder);
+                    if dim_opale.width > pos1 {
+                        result.x_delta_note = dim_opale.width - pos1;
+                    }
+                    result.y_delta_note = result.y_delta_note.max(dim_opale.height);
+                    result.opale_left = Some(opale);
+                }
+                NotePosition::Right if result.opale_right.is_none() => {
+                    let opale = create_opale(note, result.skin_param());
+                    let dim_opale = opale.calculate_dimension(string_bounder);
+                    let pos1 = result.get_translate_diamond1(string_bounder).dx
+                        + result
+                            .diamond1
+                            .calculate_dimension(string_bounder)
+                            .get_width()
+                        + dim_opale.width;
+                    let pos2 = result
+                        .calculate_dimension_internal_slow(string_bounder)
+                        .get_width();
+                    if pos1 > pos2 {
+                        result.supp_width_node = pos1 - pos2;
+                    }
+                    result.y_delta_note = result.y_delta_note.max(dim_opale.height);
+                    result.opale_right = Some(opale);
+                }
+                NotePosition::Left | NotePosition::Right => continue,
+                _ => {}
+            }
+            result.dimension_internal.take();
         }
+        result
     }
 
     fn has_two_branches(&self, string_bounder: &dyn StringBounder) -> bool {
@@ -124,7 +206,7 @@ impl FtileIfWithLinks {
         let delta_height = self.get_ydelta1a()
             + self.get_ydelta1b(string_bounder)
             + self.get_ydelta_for_labels(string_bounder);
-        all.add_dim(0.0, delta_height)
+        all.add_dim(0.0, delta_height).inc_in_y(self.y_delta_note)
     }
 
     /// The branches side by side (`FtileIfNude.calculateDimensionInternalSlow`).
@@ -132,20 +214,27 @@ impl FtileIfWithLinks {
         let dim1 = self.tile1.calculate_dimension(string_bounder);
         let dim2 = self.tile2.calculate_dimension(string_bounder);
         let inner_margin = self.width_inner(string_bounder);
-        let width = dim1.get_left() + inner_margin + (dim2.get_width() - dim2.get_left());
-        let height = dim1.dimension().merge_lr(dim2.dimension()).height;
+        let width = self.x_delta_note
+            + dim1.get_left()
+            + inner_margin
+            + (dim2.get_width() - dim2.get_left())
+            + self.supp_width_node;
+        let height = self.y_delta_note + dim1.dimension().merge_lr(dim2.dimension()).height;
         FtileGeometry::with_out(
             width,
             height,
-            dim1.get_left() + inner_margin / 2.0,
-            0.0,
+            self.x_delta_note + dim1.get_left() + inner_margin / 2.0,
+            self.y_delta_note,
             height,
         )
     }
 
     fn get_translate_branch1(&self, string_bounder: &dyn StringBounder) -> UTranslate {
         let dim_diamond1 = self.diamond1.calculate_dimension(string_bounder);
-        UTranslate::new(0.0, dim_diamond1.get_height() + self.get_ydelta1a())
+        UTranslate::new(self.x_delta_note, self.y_delta_note).compose(UTranslate::new(
+            0.0,
+            dim_diamond1.get_height() + self.get_ydelta1a(),
+        ))
     }
 
     fn get_translate_branch2(&self, string_bounder: &dyn StringBounder) -> UTranslate {
@@ -153,15 +242,22 @@ impl FtileIfWithLinks {
         let dim2 = self.tile2.calculate_dimension(string_bounder);
         let dim_diamond1 = self.diamond1.calculate_dimension(string_bounder);
         UTranslate::new(
-            dim_total.get_width() - dim2.get_width(),
-            dim_diamond1.get_height() + self.get_ydelta1a(),
+            dim_total.get_width() - dim2.get_width() - self.supp_width_node,
+            self.y_delta_note,
         )
+        .compose(UTranslate::new(
+            0.0,
+            dim_diamond1.get_height() + self.get_ydelta1a(),
+        ))
     }
 
     fn get_translate_diamond1(&self, string_bounder: &dyn StringBounder) -> UTranslate {
         let dim_total = self.calculate_dimension_internal(string_bounder);
         let dim_diamond1 = self.diamond1.calculate_dimension(string_bounder);
-        UTranslate::new(dim_total.get_left() - dim_diamond1.get_left(), 0.0)
+        UTranslate::new(
+            dim_total.get_left() - dim_diamond1.get_left(),
+            self.y_delta_note,
+        )
     }
 
     fn get_translate_diamond2(&self, string_bounder: &dyn StringBounder) -> UTranslate {
@@ -353,8 +449,20 @@ impl Ftile for FtileIfWithLinks {
 
     fn draw_u(&self, ug: &UGraphic) {
         let string_bounder = ug.string_bounder();
-        ug.apply(self.get_translate_diamond1(string_bounder))
-            .draw(&self.diamond1);
+        let translate_diamond1 = self.get_translate_diamond1(string_bounder);
+        if let Some(opale) = &self.opale_left {
+            let x_opale = translate_diamond1.dx - opale.calculate_dimension(string_bounder).width;
+            opale.draw_u(&ug.apply(UTranslate::new(x_opale, 0.0)));
+        }
+        if let Some(opale) = &self.opale_right {
+            let x_opale = translate_diamond1.dx
+                + self
+                    .diamond1
+                    .calculate_dimension(string_bounder)
+                    .get_width();
+            opale.draw_u(&ug.apply(UTranslate::new(x_opale, 0.0)));
+        }
+        ug.apply(translate_diamond1).draw(&self.diamond1);
         ug.apply(self.get_translate_branch1(string_bounder))
             .draw(&self.tile1);
         ug.apply(self.get_translate_branch2(string_bounder))

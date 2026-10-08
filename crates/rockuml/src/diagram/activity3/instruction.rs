@@ -17,7 +17,6 @@ use super::swimlanes::SwimlaneId;
 use crate::color::Colors;
 use crate::command::{CommandError, CommandResult};
 use crate::creole::Display;
-use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::model::NotePosition;
 use crate::stereo::Stereotype;
 
@@ -387,19 +386,6 @@ impl Instructions {
         }
     }
 
-    /// The first kind of instruction whose tiles are not drawn yet; each track removes its own as it lands.
-    pub(crate) fn unported_part(&self) -> Option<NotYetPorted> {
-        self.all.iter().find_map(|instruction| {
-            let what = match instruction {
-                Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
-                Instruction::Group(_) => "activity partitions and groups (track F)",
-                _ if instruction.has_notes() => "activity notes (track F)",
-                _ => return None,
-            };
-            Some(NotYetPorted(what))
-        })
-    }
-
     fn mono(&self, id: InstructionId) -> &MonoSwimable {
         match self.get(id) {
             Instruction::Simple(ins) => &ins.mono,
@@ -412,25 +398,6 @@ impl Instructions {
             Instruction::Label(ins) => &ins.mono,
             _ => unreachable!("only single instructions are in one lane"),
         }
-    }
-}
-
-impl Instruction {
-    /// Whether notes are attached to the instruction itself, if it holds no others.
-    fn has_notes(&self) -> bool {
-        let notes = match self {
-            Instruction::List(list) => &list.notes,
-            Instruction::Simple(ins) => &ins.mono.notes,
-            Instruction::Spot(ins) => &ins.mono.notes,
-            Instruction::Start(ins) => &ins.mono.notes,
-            Instruction::Stop(ins) => &ins.mono.notes,
-            Instruction::End(ins) => &ins.mono.notes,
-            Instruction::Break(ins) => &ins.mono.notes,
-            Instruction::Goto(ins) => &ins.mono.notes,
-            Instruction::Label(ins) => &ins.mono.notes,
-            _ => return false,
-        };
-        !notes.notes.is_empty()
     }
 }
 

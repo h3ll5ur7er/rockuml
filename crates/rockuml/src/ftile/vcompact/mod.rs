@@ -1,6 +1,7 @@
 //! The tiles of compound instructions and the factories building them (PlantUML's
 //! `activitydiagram3.ftile.vcompact`).
 
+mod abstract_parallel_ftiles_builder;
 mod cond;
 mod connection_vertical_down;
 mod ftile_factory_delegator_add_note;
@@ -12,12 +13,21 @@ mod ftile_factory_delegator_if;
 mod ftile_factory_delegator_repeat;
 mod ftile_factory_delegator_switch;
 mod ftile_factory_delegator_while;
+mod ftile_fork_inner;
+mod ftile_group;
 mod ftile_if_down;
 mod ftile_if_long_horizontal;
 mod ftile_if_long_vertical;
+mod ftile_note_alone;
 mod ftile_repeat;
 mod ftile_while;
+mod ftile_with_note_opale;
+mod ftile_with_notes;
+mod note_sheet;
 pub(crate) mod one_swimlane;
+mod parallel_builder_fork;
+mod parallel_builder_merge;
+mod parallel_builder_split;
 mod v_compact_factory;
 
 pub(crate) use connection_vertical_down::ConnectionVerticalDown;
@@ -30,9 +40,14 @@ pub(crate) use ftile_factory_delegator_if::FtileFactoryDelegatorIf;
 pub(crate) use ftile_factory_delegator_repeat::FtileFactoryDelegatorRepeat;
 pub(crate) use ftile_factory_delegator_switch::FtileFactoryDelegatorSwitch;
 pub(crate) use ftile_factory_delegator_while::FtileFactoryDelegatorWhile;
+pub(crate) use ftile_fork_inner::FtileForkInner;
+pub(crate) use ftile_group::FtileGroup;
 pub(crate) use ftile_if_down::FtileIfDown;
 pub(crate) use ftile_if_long_horizontal::FtileIfLongHorizontal;
 pub(crate) use ftile_if_long_vertical::FtileIfLongVertical;
+pub(crate) use ftile_note_alone::FtileNoteAlone;
+pub(crate) use ftile_with_note_opale::FtileWithNoteOpale;
+pub(crate) use ftile_with_notes::FtileWithNotes;
 pub(crate) use v_compact_factory::VCompactFactory;
 
 use std::rc::Rc;

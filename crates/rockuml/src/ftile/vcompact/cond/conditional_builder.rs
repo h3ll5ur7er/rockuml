@@ -7,7 +7,7 @@ use super::FtileIfWithLinks;
 use crate::color::HColor;
 use crate::creole::{CreoleMode, CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::decoration::Rainbow;
-use crate::diagram::activity3::{BranchFtile, Instructions, SwimlaneId};
+use crate::diagram::activity3::{BranchFtile, Instructions, PositionedNote, SwimlaneId};
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
 use crate::ftile::vcompact::{FtileIfDown, create0_or_empty};
 use crate::ftile::vertical::{FtileDiamond, FtileDiamondInside, FtileDiamondSquare};
@@ -42,6 +42,7 @@ pub(crate) struct ConditionalBuilder<'a> {
     tile2: Rc<dyn Ftile>,
     url: Option<&'a Url>,
     style_diamond: Style,
+    notes: &'a [PositionedNote],
 }
 
 impl<'a> ConditionalBuilder<'a> {
@@ -60,6 +61,7 @@ impl<'a> ConditionalBuilder<'a> {
         url: Option<&'a Url>,
         style_arrow: &Style,
         style_diamond: Style,
+        notes: &'a [PositionedNote],
     ) -> Rc<dyn Ftile> {
         let skin_param = Rc::clone(ftile_factory.skin_param());
         let builder = Self {
@@ -82,6 +84,7 @@ impl<'a> ConditionalBuilder<'a> {
             skin_param,
             url,
             style_diamond,
+            notes,
         };
         let empty_or_stop1 = builder.is_empty_or_only_single_stop_or_spot(branch1);
         let empty_or_stop2 = builder.is_empty_or_only_single_stop_or_spot(branch2);
@@ -132,6 +135,7 @@ impl<'a> ConditionalBuilder<'a> {
             self.ftile_factory,
             optional_stop,
             &branch2.branch.get_out(),
+            self.notes,
         )
     }
 
@@ -153,6 +157,8 @@ impl<'a> ConditionalBuilder<'a> {
             self.swimlane,
             self.arrow_color.clone(),
             self.condition_end_style,
+            string_bounder,
+            self.notes,
         ));
         let label1 = self
             .get_label_positive(self.branch1)

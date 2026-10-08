@@ -1,4 +1,5 @@
 mod arrows;
+mod parallel;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -7,9 +8,10 @@ use super::*;
 use crate::color::{Colors, HColor};
 use crate::creole::Display;
 use crate::decoration::Rainbow;
-use crate::decoration::symbol::USymbol;
+use crate::decoration::symbol::{USymbol, USymbols};
 use crate::diagram::activity3::{
-    BranchFtile, ForkStyle, InstructionId, Instructions, PositionedNote, SwimlaneId, SwimlaneSet,
+    BranchFtile, ForkStyle, InstructionId, Instructions, NotePosition, NoteType, PositionedNote,
+    SwimlaneId, SwimlaneSet,
 };
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::shape::{URectangle, UShape};
@@ -17,7 +19,7 @@ use crate::klimt::ugraphic::tests::recording;
 use crate::klimt::url::Url;
 use crate::klimt::{UDrawable, VerticalAlignment};
 use crate::stereo::{Stereogroup, Stereotype};
-use crate::style::{Style, StyleBuilder};
+use crate::style::{SName, Style, StyleBuilder, StyleSignature};
 use crate::svek::UGraphicForSnake;
 
 /// A box with children below it, joined to each by an arrow.
@@ -338,4 +340,61 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
         ]
     );
     assert!(Rc::ptr_eq(factory.skin_param(), &innermost.skin_param));
+}
+
+#[test]
+fn notes_and_groups_are_built_by_their_own_delegators() {
+    let innermost = Rc::new(Innermost::default());
+    let factory = vcompact::delegator_chain(Box::new(innermost.clone()), false);
+    let note = |type_| PositionedNote {
+        display: Display::create(["note"]),
+        note_position: NotePosition::Right,
+        type_,
+        colors: Colors::default(),
+        swimlane_note: None,
+        stereotype: None,
+    };
+    let string_bounder = StringBounderDebug;
+
+    // Alone, only the first note shows.
+    let floating_alone = factory.add_note(
+        None,
+        Some(SwimlaneId(1)),
+        &[note(NoteType::FloatingNote), note(NoteType::Note)],
+        VerticalAlignment::Center,
+    );
+    assert!(
+        !floating_alone
+            .calculate_dimension(&string_bounder)
+            .has_point_out()
+    );
+    assert_eq!(floating_alone.get_swimlane_in(), Some(SwimlaneId(1)));
+
+    let tile = Tile::create(5.0, vec![]);
+    let with_note = factory.add_note(
+        Some(tile.clone()),
+        None,
+        &[note(NoteType::Note)],
+        VerticalAlignment::Center,
+    );
+    assert!(same(with_note.get_my_children()[0].as_ref(), tile.as_ref()));
+
+    let style = StyleSignature::of(&[
+        SName::Root,
+        SName::Element,
+        SName::ActivityDiagram,
+        SName::Partition,
+        SName::Composite,
+    ])
+    .get_merged_style(&factory.skin_param().current_style_builder());
+    let group = factory.create_group(
+        tile.clone(),
+        &Display::create(["group"]),
+        None,
+        None,
+        USymbols::PARTITION,
+        &style,
+    );
+    assert!(same(group.get_my_children()[0].as_ref(), tile.as_ref()));
+    assert!(innermost.calls.borrow().is_empty());
 }
