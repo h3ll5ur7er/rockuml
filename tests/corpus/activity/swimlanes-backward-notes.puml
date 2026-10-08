@@ -1,0 +1,31 @@
+@startuml
+|Author|
+start
+:Draft;
+note left: first try
+repeat
+  |Editor|
+  -[#blue]-> to edit;
+  :Edit the text;
+  note right
+    marks **typos**
+  end note
+  |Author|
+  backward :Rewrite;
+repeat while (Accepted?) is (no) not (yes)
+|#lightyellow|Printer|
+while (Copies left?) is (yes)
+  :Print a copy;
+  if (Jammed?) then (yes)
+    |Author|
+    :Call support;
+  endif
+  |Printer|
+endwhile (none)
+-[#red,dashed]-> finished;
+|Author|
+partition Wrap-up {
+  :Archive;
+}
+kill
+@enduml

@@ -335,6 +335,27 @@ impl SkinParam {
             .unwrap_or(0.0)
     }
 
+    /// `swimlaneWidth`: the least width of a swimlane when written in digits,
+    /// [`Self::SWIMLANE_WIDTH_SAME`] for `same`, else 0.
+    pub(crate) fn swimlane_width(&self) -> f64 {
+        let value = self.value("swimlanewidth").unwrap_or_default();
+        if value.eq_ignore_ascii_case("same") {
+            return Self::SWIMLANE_WIDTH_SAME;
+        }
+        if is_digits(&value) {
+            return value.parse().unwrap_or(0.0);
+        }
+        0.0
+    }
+
+    /// `swimlaneWidth same`: every lane as wide as the widest.
+    pub(crate) const SWIMLANE_WIDTH_SAME: f64 = -1.0;
+
+    /// `swimlaneWrapTitleWidth`: how wide a swimlane title may grow before it wraps, a number or `auto`.
+    pub(crate) fn swimlane_wrap_title_width(&self) -> Option<String> {
+        self.value("swimlanewraptitlewidth")
+    }
+
     pub(crate) fn value(&self, key: &str) -> Option<String> {
         if let Some(known) = self.looked_up.borrow().get(key) {
             return known.clone();

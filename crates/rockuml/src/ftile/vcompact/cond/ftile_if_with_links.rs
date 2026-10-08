@@ -10,8 +10,8 @@ use crate::diagram::activity3::{
 };
 use crate::direction::Direction;
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
+use crate::ftile::vcompact::connection_hline::hline_extent;
 use crate::ftile::vcompact::note_sheet::NoteSheet;
-use crate::ftile::vcompact::one_swimlane::hline_extent;
 use crate::ftile::vertical::FtileDiamond;
 use crate::ftile::{
     AbstractConnection, AbstractFtile, Connection, ConnectionTranslatable, Ftile, FtileGeometry,

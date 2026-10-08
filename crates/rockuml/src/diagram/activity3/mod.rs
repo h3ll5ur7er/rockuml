@@ -1,12 +1,6 @@
 //! Activity diagrams (PlantUML's `activitydiagram3` package): the commands build a tree of instructions,
 //! which the tiles of `ftile` draw.
 
-// The instructions keep what their tiles are drawn from, which the other tracks of Phase 6 read.
-#![expect(
-    dead_code,
-    reason = "the tiles of the other Phase 6 tracks read the rest of the model"
-)]
-
 mod branch;
 mod commands;
 mod create_ftile;
@@ -170,9 +164,6 @@ impl Diagram for ActivityDiagram3 {
         _page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        if self.swimlanes.swimlanes().len() > 1 {
-            return Err(NotYetPorted("activity diagrams with swimlanes (track E2)"));
-        }
         let swimlanes = SwimlanesDrawing::new(
             &self.swimlanes,
             Rc::new(self.titled.skin.clone()),

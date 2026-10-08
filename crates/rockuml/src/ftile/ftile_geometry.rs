@@ -211,24 +211,6 @@ impl FtileGeometry {
     }
 
     #[must_use]
-    pub(crate) fn add_margin_x(&self, marginx: f64) -> Self {
-        Self {
-            width: self.width + 2.0 * marginx,
-            left: self.left + marginx,
-            ..*self
-        }
-    }
-
-    #[must_use]
-    pub(crate) fn add_margin_x2(&self, margin1: f64, margin2: f64) -> Self {
-        Self {
-            width: self.width + margin1 + margin2,
-            left: self.left + margin1,
-            ..*self
-        }
-    }
-
-    #[must_use]
     pub(crate) fn fixed_height(&self, fixed_height: f64) -> Self {
         Self {
             height: fixed_height,
@@ -240,14 +222,6 @@ impl FtileGeometry {
     #[must_use]
     pub(crate) fn append_bottom(&self, other: Self) -> Self {
         FtileGeometryMerger::new(*self, other).get_result()
-    }
-
-    #[must_use]
-    pub(crate) fn ensure_height(&self, new_height: f64) -> Self {
-        if self.height > new_height {
-            return *self;
-        }
-        self.fixed_height(new_height)
     }
 }
 
@@ -265,8 +239,6 @@ mod tests {
             stop.inc_vertically(3.0, 4.0),
             stop.inc_height(1.0),
             stop.translate(UTranslate::new(2.0, 3.0)),
-            stop.add_margin_x(5.0),
-            stop.ensure_height(40.0),
         ] {
             assert!(!changed.has_point_out(), "{changed:?}");
         }

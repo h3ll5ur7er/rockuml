@@ -83,7 +83,6 @@ impl Rainbow {
         }
     }
 
-    #[allow(dead_code, reason = "used by activity tiles, Phase 6")]
     pub(crate) fn is_invisible(&self) -> bool {
         self.colors
             .iter()
@@ -97,12 +96,6 @@ impl Rainbow {
     /// The first colour; a rainbow without colours has none, and PlantUML fails on asking.
     pub(crate) fn get_color(&self) -> &HColor {
         self.colors[0].get_arrow_color()
-    }
-
-    /// The first colour's arrowhead colour; see [`Self::get_color`].
-    #[allow(dead_code, reason = "used by activity tiles, Phase 6")]
-    pub(crate) fn get_arrow_head_color(&self) -> &HColor {
-        self.colors[0].get_arrow_head_color()
     }
 
     pub(crate) fn get_color_arrow_separation_space(&self) -> i32 {
@@ -162,6 +155,6 @@ mod tests {
         assert_eq!(Rainbow::none().with_default(&red), red);
         let blue = Rainbow::from_color(Some(color("blue")), Some(color("green")));
         assert_eq!(blue.with_default(&red), blue);
-        assert_eq!(blue.get_arrow_head_color(), &color("green"));
+        assert_eq!(blue.get_colors()[0].get_arrow_head_color(), &color("green"));
     }
 }

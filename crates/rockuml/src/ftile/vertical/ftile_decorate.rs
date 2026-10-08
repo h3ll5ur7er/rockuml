@@ -5,7 +5,7 @@
 use std::rc::Rc;
 
 use crate::diagram::activity3::{LinkRendering, SwimlaneId, SwimlaneSet};
-use crate::ftile::{Connection, Ftile, FtileGeometry, Swimable, same};
+use crate::ftile::{Ftile, FtileGeometry, Swimable, same};
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D};
@@ -34,10 +34,6 @@ pub(crate) trait FtileDecorate: 'static {
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
         self.get_ftile_delegated()
             .calculate_dimension(string_bounder)
-    }
-
-    fn get_inner_connections(&self) -> Vec<Rc<dyn Connection>> {
-        self.get_ftile_delegated().get_inner_connections()
     }
 
     fn get_swimlanes(&self) -> SwimlaneSet {
@@ -111,10 +107,6 @@ impl<T: FtileDecorate> Ftile for T {
 
     fn get_my_children(&self) -> Vec<Rc<dyn Ftile>> {
         vec![self.get_ftile_delegated().clone()]
-    }
-
-    fn get_inner_connections(&self) -> Vec<Rc<dyn Connection>> {
-        FtileDecorate::get_inner_connections(self)
     }
 
     fn get_welding_points(&self) -> Vec<Rc<dyn Ftile>> {

@@ -12,11 +12,6 @@ pub mod diagram;
 mod direction;
 mod emoji;
 mod file_policy;
-#[allow(
-    dead_code,
-    unused_imports,
-    reason = "Phase 6 scaffolding: the tiles land in stages before activity diagrams draw"
-)]
 mod ftile;
 /// The fonts text is measured with: embedded ones, and any the embedding application registers.
 pub mod fonts {

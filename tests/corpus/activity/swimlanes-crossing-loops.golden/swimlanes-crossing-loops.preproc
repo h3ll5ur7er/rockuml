@@ -1,0 +1,23 @@
+@startuml
+|Client|
+start
+:Open the session;
+|Server|
+while (Requests left?) is (yes)
+  |Worker|
+  :Process the request;
+  |Server|
+  :Log the result;
+endwhile (no)
+|Client|
+repeat
+  |Worker|
+  :Poll the queue;
+  |Client|
+  :Wait a little;
+repeat while (Queue empty?) is (yes) not (no)
+-> done;
+|Server|
+:Close the session;
+stop
+@enduml

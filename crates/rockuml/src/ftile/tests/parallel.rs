@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use super::{Innermost, Tile};
+use super::{Innermost, Tile, drawn_across_lanes};
 use crate::color::Colors;
 use crate::diagram::activity3::{ForkStyle, SwimlaneId};
 use crate::ftile::vcompact::{FtileFactoryDelegatorCreateParallel, FtileForkInner};
@@ -110,18 +110,20 @@ fn arrows_into_a_join_bar_from_another_lane_go_down_across_and_down() {
         None,
         &Colors::default(),
     );
-    let connections = fork.get_inner_connections();
+    let connections = drawn_across_lanes(
+        fork.as_ref(),
+        UTranslate::new(0.0, 0.0),
+        UTranslate::new(100.0, 50.0),
+    );
     assert_eq!(connections.len(), 2);
-    let (ug, recorder) = recording();
-    connections[1]
-        .as_translatable()
-        .expect("arrows out of fork flows cross lanes")
-        .draw_translate(&ug, UTranslate::new(0.0, 0.0), UTranslate::new(100.0, 50.0));
+    let lines = connections[1]
+        .as_ref()
+        .expect("arrows out of fork flows cross lanes");
     // The second flow, 38 wide once marged, is left 38 + 19 across; it ends 25 down its 45-high slot,
     // below the 6-high bar. The join bar is 6 + 5 down (bar and flows), 50 more in the other lane, and
     // the arrow turns 14 above it.
     assert_eq!(
-        recorder.borrow().lines[..3],
+        lines[..3],
         ["line 57,31 0,16", "line 57,47 100,0", "line 157,47 0,14"]
     );
 }

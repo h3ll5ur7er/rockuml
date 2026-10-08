@@ -1,0 +1,23 @@
+@startuml
+skinparam swimlaneWidth same
+|A very long title for a narrow lane|
+start
+:a;
+|#lightblue|Wide|
+:A much wider action than the others;
+|C|
+fork
+  :c1;
+fork again
+  |Wide|
+  :w1;
+end merge
+split
+  |C|
+  :c2;
+split again
+  |A very long title for a narrow lane|
+  :a2;
+end split
+stop
+@enduml
