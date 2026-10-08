@@ -72,11 +72,8 @@ fn apply(geometry: FtileGeometry, operation: &str) -> FtileGeometry {
         "withoutPointOut" => geometry.without_point_out(),
         "translate" => geometry.translate(UTranslate::new(a(), b())),
         "addDim" => geometry.add_dim(a(), b()),
-        "addMarginX" => geometry.add_margin_x(a()),
-        "addMarginX2" => geometry.add_margin_x2(a(), b()),
         "fixedHeight" => geometry.fixed_height(a()),
         "appendBottom" => geometry.append_bottom(self::geometry(&words[1..])),
-        "ensureHeight" => geometry.ensure_height(a()),
         other => panic!("unknown operation {other}"),
     }
 }

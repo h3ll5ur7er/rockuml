@@ -259,120 +259,6 @@ impl Instructions {
         }
     }
 
-    pub(crate) fn get_swimlanes(&self, id: InstructionId) -> SwimlaneSet {
-        match self.get(id) {
-            Instruction::List(list) => self.list_swimlanes(list),
-            Instruction::If(ins) => {
-                let mut result = self.lists_swimlanes(
-                    ins.thens
-                        .iter()
-                        .chain(&ins.else_branch)
-                        .map(|branch| &branch.list),
-                );
-                if ins.swimlane.is_some() {
-                    result.insert(ins.swimlane);
-                }
-                result
-            }
-            Instruction::Switch(ins) => {
-                let mut result =
-                    self.lists_swimlanes(ins.switches.iter().map(|branch| &branch.list));
-                if ins.swimlane.is_some() {
-                    result.insert(ins.swimlane);
-                }
-                result
-            }
-            Instruction::While(ins) => self.list_swimlanes(&ins.repeat_list),
-            Instruction::Repeat(ins) => self.list_swimlanes(&ins.repeat_list),
-            Instruction::Fork(ins) => {
-                let mut result = self.lists_swimlanes(&ins.forks);
-                result.insert(ins.swimlane_in);
-                result.insert(ins.swimlane_out);
-                result
-            }
-            Instruction::Split(ins) => self.lists_swimlanes(&ins.splits),
-            Instruction::Group(ins) => self.list_swimlanes(&ins.list),
-            Instruction::Simple(_)
-            | Instruction::Spot(_)
-            | Instruction::Start(_)
-            | Instruction::Stop(_)
-            | Instruction::End(_)
-            | Instruction::Break(_)
-            | Instruction::Goto(_)
-            | Instruction::Label(_) => self.mono(id).get_swimlanes(),
-        }
-    }
-
-    /// The lanes of the instructions in the list (`getSwimlanes2`).
-    pub(crate) fn list_swimlanes(&self, list: &InstructionList) -> SwimlaneSet {
-        list.all
-            .iter()
-            .flat_map(|ins| self.get_swimlanes(*ins))
-            .collect()
-    }
-
-    fn lists_swimlanes<'a>(
-        &self,
-        lists: impl IntoIterator<Item = &'a InstructionList>,
-    ) -> SwimlaneSet {
-        lists
-            .into_iter()
-            .flat_map(|list| self.list_swimlanes(list))
-            .collect()
-    }
-
-    pub(crate) fn get_swimlane_in(&self, id: InstructionId) -> Option<SwimlaneId> {
-        match self.get(id) {
-            Instruction::List(list) => list.get_swimlane_in(),
-            Instruction::If(ins) => ins.swimlane,
-            Instruction::Switch(ins) => ins.swimlane,
-            Instruction::While(ins) => self.get_swimlane_in(ins.parent),
-            Instruction::Repeat(ins) => self.get_swimlane_out(ins.parent),
-            Instruction::Fork(ins) => ins.swimlane_in,
-            Instruction::Split(ins) => self.get_swimlane_out(ins.parent),
-            Instruction::Group(ins) => ins.list.get_swimlane_in(),
-            Instruction::Simple(_)
-            | Instruction::Spot(_)
-            | Instruction::Start(_)
-            | Instruction::Stop(_)
-            | Instruction::End(_)
-            | Instruction::Break(_)
-            | Instruction::Goto(_)
-            | Instruction::Label(_) => self.mono(id).swimlane,
-        }
-    }
-
-    pub(crate) fn get_swimlane_out(&self, id: InstructionId) -> Option<SwimlaneId> {
-        match self.get(id) {
-            Instruction::List(list) => self.list_swimlane_out(list),
-            Instruction::If(ins) => ins.swimlane,
-            Instruction::Switch(ins) => ins.swimlane,
-            Instruction::While(ins) => self.get_swimlane_out(ins.parent),
-            Instruction::Repeat(ins) => self.get_swimlane_out(ins.parent),
-            Instruction::Fork(ins) => ins.swimlane_out,
-            Instruction::Split(ins) => ins.swimlane_out,
-            Instruction::Group(ins) => self.list_swimlane_out(&ins.list),
-            Instruction::Simple(_)
-            | Instruction::Spot(_)
-            | Instruction::Start(_)
-            | Instruction::Stop(_)
-            | Instruction::End(_)
-            | Instruction::Break(_)
-            | Instruction::Goto(_)
-            | Instruction::Label(_) => self.mono(id).swimlane,
-        }
-    }
-
-    /// The only lane the list spans, or else the lane its last instruction ends in.
-    pub(crate) fn list_swimlane_out(&self, list: &InstructionList) -> Option<SwimlaneId> {
-        let swimlanes = self.list_swimlanes(list);
-        match (swimlanes.len(), list.get_last()) {
-            (1, _) => swimlanes.into_iter().next().flatten(),
-            (0, _) | (_, None) => None,
-            (_, Some(last_instruction)) => self.get_swimlane_out(last_instruction),
-        }
-    }
-
     /// The last instruction of one that holds others in a row (`InstructionCollection.getLast`); none for
     /// the others.
     pub(crate) fn get_last(&self, id: InstructionId) -> Option<InstructionId> {
@@ -383,20 +269,6 @@ impl Instructions {
             Instruction::While(ins) => ins.repeat_list.get_last(),
             Instruction::Group(ins) => ins.list.get_last(),
             _ => None,
-        }
-    }
-
-    fn mono(&self, id: InstructionId) -> &MonoSwimable {
-        match self.get(id) {
-            Instruction::Simple(ins) => &ins.mono,
-            Instruction::Spot(ins) => &ins.mono,
-            Instruction::Start(ins) => &ins.mono,
-            Instruction::Stop(ins) => &ins.mono,
-            Instruction::End(ins) => &ins.mono,
-            Instruction::Break(ins) => &ins.mono,
-            Instruction::Goto(ins) => &ins.mono,
-            Instruction::Label(ins) => &ins.mono,
-            _ => unreachable!("only single instructions are in one lane"),
         }
     }
 }
@@ -479,10 +351,6 @@ impl MonoSwimable {
             swimlane,
             notes: WithNote::default(),
         }
-    }
-
-    pub(crate) fn get_swimlanes(&self) -> SwimlaneSet {
-        self.swimlane.map(Some).into_iter().collect()
     }
 }
 

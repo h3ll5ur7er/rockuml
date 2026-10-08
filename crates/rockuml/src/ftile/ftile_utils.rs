@@ -25,11 +25,6 @@ pub(crate) fn add_connections(
     Rc::new(FtileWithConnection::new(ftile, connections))
 }
 
-pub(crate) fn with_swimlane_out(ftile: Rc<dyn Ftile>, out: Option<SwimlaneId>) -> Rc<dyn Ftile> {
-    let in_ = ftile.get_swimlane_in();
-    Rc::new(FtileWithSwimlanes::new(ftile, in_, out))
-}
-
 pub(crate) fn with_swimlane_in(ftile: Rc<dyn Ftile>, in_: Option<SwimlaneId>) -> Rc<dyn Ftile> {
     let out = ftile.get_swimlane_out();
     Rc::new(FtileWithSwimlanes::new(ftile, in_, out))

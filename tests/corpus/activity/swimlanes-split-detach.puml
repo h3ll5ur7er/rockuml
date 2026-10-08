@@ -1,0 +1,23 @@
+@startuml
+|Desk|
+start
+:Open the ticket;
+|Team|
+split
+  :Plan;
+split again
+  |Board|
+  :Approve;
+end split
+|Desk|
+fork
+  :Report;
+fork again
+  |Board|
+  :Review;
+  detach
+end fork
+|Team|
+:Close the ticket;
+stop
+@enduml

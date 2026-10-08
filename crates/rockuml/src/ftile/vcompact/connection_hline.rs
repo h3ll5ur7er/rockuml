@@ -1,28 +1,14 @@
-//! What a tile learns when it is drawn one swimlane at a time (PlantUML's `ug instanceof
-//! UGraphicInterceptorOneSwimlane`, then `getSwimlane()` and `getOrderedListOfAllSwimlanes()`), and the line
-//! joining the arrows out of a conditional, which depends on it.
+//! The line joining the arrows out of a conditional (PlantUML's `ConnectionHline`, in `FtileIfWithLinks`
+//! and `FtileIfLongHorizontal`); drawn one swimlane at a time, it spans only the lanes those arrows end in.
 
 use std::rc::Rc;
 
+use super::UGraphicInterceptorOneSwimlane;
 use crate::diagram::activity3::SwimlaneId;
 use crate::ftile::Ftile;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::UTranslate;
 use crate::klimt::ugraphic::UGraphic;
-
-/// The lane being drawn, among all lanes in order.
-pub(crate) struct OneSwimlane {
-    pub(crate) swimlane: SwimlaneId,
-    pub(crate) ordered_list_of_all_swimlanes: Vec<SwimlaneId>,
-}
-
-/// The lane `ug` draws, when it draws one.
-///
-/// PLACEHOLDER until the swimlane layers are ported: it must answer from
-/// `ug.layer::<UGraphicInterceptorOneSwimlane>()`; until then no surface draws a single lane.
-pub(crate) fn one_swimlane(_ug: &UGraphic) -> Option<OneSwimlane> {
-    None
-}
 
 /// From where to where the horizontal line joining the arrows out of `all_tiles` runs, `width` being the
 /// width of the conditional; `None` where it draws no line (PlantUML's `ConnectionHline.getMinmax` and
@@ -35,11 +21,13 @@ pub(super) fn hline_extent(
     get_translate_for: impl Fn(&dyn Ftile, &dyn StringBounder) -> UTranslate,
 ) -> Option<(f64, f64)> {
     let string_bounder = ug.string_bounder();
-    let lane = one_swimlane(ug);
-    let (mut min_x, mut max_x) = match &lane {
-        Some(lane) => {
-            let all = &lane.ordered_list_of_all_swimlanes;
-            let current = all.iter().position(|other| *other == lane.swimlane)?;
+    let interceptor = ug.layer::<UGraphicInterceptorOneSwimlane>();
+    let (mut min_x, mut max_x) = match interceptor {
+        Some(interceptor) => {
+            let all = interceptor.get_ordered_list_of_all_swimlanes();
+            let current = all
+                .iter()
+                .position(|other| *other == interceptor.get_swimlane())?;
             let has_out_in = |into: SwimlaneId| {
                 all_tiles
                     .iter()
@@ -65,8 +53,8 @@ pub(super) fn hline_extent(
         if !has_point_out(tile, string_bounder) {
             continue;
         }
-        if let Some(lane) = &lane
-            && !outcome_in(tile, lane.swimlane)
+        if let Some(interceptor) = interceptor
+            && !outcome_in(tile, interceptor.get_swimlane())
         {
             continue;
         }

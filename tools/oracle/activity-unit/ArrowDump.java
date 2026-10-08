@@ -159,7 +159,7 @@ public class ArrowDump {
 		for (int i = 0; i < 6; i++) {
 			final double a = amount();
 			final double b = amount();
-			final int op = random.nextInt(15);
+			final int op = random.nextInt(12);
 			final String args;
 			switch (op) {
 			case 0:
@@ -206,26 +206,14 @@ public class ArrowDump {
 				break;
 			}
 			case 10:
-				geometry = geometry.addMarginX(a);
-				args = "addMarginX " + hex(a);
-				break;
-			case 11:
-				geometry = geometry.addMarginX(a, b);
-				args = "addMarginX2 " + hex(a) + " " + hex(b);
-				break;
-			case 12:
 				geometry = geometry.fixedHeight(a);
 				args = "fixedHeight " + hex(a);
 				break;
-			case 13: {
+			default: {
 				final FtileGeometry other = randomGeometry();
 				geometry = geometry.appendBottom(other);
 				args = "appendBottom " + describe(other);
-				break;
 			}
-			default:
-				geometry = geometry.ensureHeight(a);
-				args = "ensureHeight " + hex(a);
 			}
 			out.println(args);
 			out.println("= " + describe(geometry));

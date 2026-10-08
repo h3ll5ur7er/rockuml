@@ -16,6 +16,7 @@ use crate::diagram::activity3::{
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::ugraphic::tests::recording;
+use crate::klimt::ugraphic::{AnyShape, UChange, UGraphicLayer};
 use crate::klimt::url::Url;
 use crate::klimt::{UDrawable, VerticalAlignment};
 use crate::stereo::{Stereogroup, Stereotype};
@@ -151,6 +152,56 @@ fn tiles_find_their_children_by_identity() {
     );
     assert!(same(child.as_ref(), parent.get_my_children()[1].as_ref()));
     assert!(!same(child.as_ref(), twin.as_ref()));
+}
+
+/// The connections `tile` draws itself (not those of the tiles inside it), in order, each drawn from one
+/// lane into another as `ConnectionCross` draws it, its start moved by `translate1` and its end by
+/// `translate2`: the lines it draws, or `None` for a connection that cannot cross lanes.
+pub(crate) fn drawn_across_lanes(
+    tile: &dyn Ftile,
+    translate1: UTranslate,
+    translate2: UTranslate,
+) -> Vec<Option<Vec<String>>> {
+    let (ug, _) = recording();
+    let drawn = Rc::new(RefCell::new(Vec::new()));
+    tile.draw_u(&UGraphic::from_layer(CrossingRecorder {
+        ug,
+        translates: (translate1, translate2),
+        drawn: drawn.clone(),
+    }));
+    drawn.take()
+}
+
+struct CrossingRecorder {
+    ug: UGraphic,
+    translates: (UTranslate, UTranslate),
+    drawn: Rc<RefCell<Vec<Option<Vec<String>>>>>,
+}
+
+impl UGraphicLayer for CrossingRecorder {
+    fn ug(&self) -> &UGraphic {
+        &self.ug
+    }
+
+    fn apply(&self, change: UChange) -> UGraphic {
+        UGraphic::from_layer(Self {
+            ug: self.ug.apply(change),
+            translates: self.translates,
+            drawn: self.drawn.clone(),
+        })
+    }
+
+    fn draw(&self, _this: &UGraphic, shape: AnyShape<'_>) {
+        if let AnyShape::Connection(connection) = shape {
+            let lines = connection.as_translatable().map(|connection| {
+                let (ug, recorder) = recording();
+                let (translate1, translate2) = self.translates;
+                connection.draw_translate(&ug, translate1, translate2);
+                recorder.take().lines
+            });
+            self.drawn.borrow_mut().push(lines);
+        }
+    }
 }
 
 /// Builds plain tiles and counts what it was asked.

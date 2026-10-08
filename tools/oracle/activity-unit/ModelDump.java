@@ -93,19 +93,7 @@ public class ModelDump {
 		out.println(sb.append(text));
 	}
 
-	/** The swimlanes an instruction says it starts in, ends in and spans, those ordered as declared. */
-	private void swimlanes(Instruction ins, int depth) {
-		final List<Swimlane> all = new ArrayList<>(ins.getSwimlanes());
-		all.sort((a, b) -> a == null ? (b == null ? 0 : -1) : b == null ? 1 : a.compareTo(b));
-		final List<String> names = new ArrayList<>();
-		for (Swimlane lane : all)
-			names.add(lane(lane));
-		line(depth, "sw in=" + lane(ins.getSwimlaneIn()) + " out=" + lane(ins.getSwimlaneOut()) + " all=["
-				+ String.join(",", names) + "]");
-	}
-
 	private void list(String name, InstructionList list, int depth) throws Exception {
-		swimlanes(list, depth);
 		line(depth, name + " lane=" + lane((Swimlane) field(list, "defaultSwimlane")) + " out="
 				+ link((LinkRendering) field(list, "outlinkRendering")));
 		notes(list.getPositionedNotes(), depth + 1);
@@ -126,7 +114,6 @@ public class ModelDump {
 	}
 
 	private void instruction(Instruction ins, int depth) throws Exception {
-		swimlanes(ins, depth);
 		if (ins instanceof InstructionSimple) {
 			final InstructionSimple simple = (InstructionSimple) ins;
 			line(depth, "simple " + display((Display) field(ins, "label")) + " lane=" + lane(simple.getSwimlaneIn())

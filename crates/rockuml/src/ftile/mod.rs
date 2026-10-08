@@ -18,8 +18,10 @@
 //!   are, for `goto`. [`TextBlockInterceptorUDrawable`] draws the tree through it on a diagram without
 //!   swimlanes.
 //! - `UGraphicDispatchDrawable` (in `klimt`) does the same without labels, to measure a group's inside.
-//! - The swimlane interceptors draw the tree once per lane, keeping what lies in that lane, then once more
-//!   for the arrows crossing lanes (still to come, see below).
+//! - On a diagram with several swimlanes, [`vcompact::UGraphicInterceptorAllSwimlanes`] measures every
+//!   lane in one walk of the tree, [`vcompact::UGraphicInterceptorOneSwimlane`] draws the tree once per
+//!   lane, keeping what lies in that lane, and the `Cross` layer of `Swimlanes` draws it once more for the
+//!   connections from one lane into another ([`ConnectionCross`]).
 //! - The compression layer squeezes empty space out across, then down; `SlotFinder` and `LimitFinder` are
 //!   surfaces that measure.
 //!
@@ -36,22 +38,13 @@
 //!
 //! [`vcompact::delegator_chain`] wraps the innermost factory, `VCompactFactory`, in PlantUML's chain of
 //! [`FtileFactoryDelegator`]s; each delegator overrides the methods it changes and passes the others on.
-//!
-//! # Still to come
-//!
-//! - `Swimlanes`' drawing of several lanes, with its `Cross` layer.
-//! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
-//!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
-//!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
-//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does. Until then the query
-//!   `swimlane_kept` in `vcompact/ftile_with_note_opale.rs` answers that no layer keeps one lane.
-//! - The If and Switch delegators' methods, in their files under `vcompact/`, and the tiles they build.
 
 mod abstract_connection;
 mod abstract_ftile;
 mod arrows;
 mod box_style;
 mod connection;
+mod connection_cross;
 mod ftile_assembly_simple;
 mod ftile_decorate_welding;
 mod ftile_empty;
@@ -71,6 +64,7 @@ mod ftile_with_swimlanes;
 mod ftile_with_url;
 mod genealogy;
 pub(crate) mod hexagon;
+mod lane_divider;
 mod merge_strategy;
 mod snake;
 mod swimable;
@@ -89,6 +83,7 @@ pub(crate) use abstract_ftile::AbstractFtile;
 pub(crate) use arrows::Arrows;
 pub(crate) use box_style::BoxStyle;
 pub(crate) use connection::{Connection, ConnectionTranslatable};
+pub(crate) use connection_cross::ConnectionCross;
 pub(crate) use ftile_assembly_simple::FtileAssemblySimple;
 pub(crate) use ftile_decorate_welding::FtileDecorateWelding;
 pub(crate) use ftile_empty::{FtileBreak, FtileEmpty, FtileGoto, FtileLabel};
@@ -106,6 +101,7 @@ pub(crate) use ftile_with_connection::FtileWithConnection;
 pub(crate) use ftile_with_swimlanes::FtileWithSwimlanes;
 pub(crate) use ftile_with_url::FtileWithUrl;
 pub(crate) use genealogy::Genealogy;
+pub(crate) use lane_divider::LaneDivider;
 pub(crate) use merge_strategy::MergeStrategy;
 pub(crate) use snake::Snake;
 pub(crate) use swimable::Swimable;
@@ -156,10 +152,6 @@ pub(crate) trait Ftile: Swimable + Any {
     }
 
     fn get_my_children(&self) -> Vec<Rc<dyn Ftile>> {
-        Vec::new()
-    }
-
-    fn get_inner_connections(&self) -> Vec<Rc<dyn Connection>> {
         Vec::new()
     }
 
