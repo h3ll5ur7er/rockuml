@@ -20,6 +20,7 @@ mod scale;
 mod sequence;
 mod source;
 mod state;
+mod timing;
 mod titled;
 mod unported;
 mod wbs;
