@@ -32,6 +32,7 @@ use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
 use crate::stereo::Stereotype;
+use crate::svek::{ConditionEndStyle, ConditionStyle};
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
 };
@@ -270,6 +271,20 @@ impl SkinParam {
         self.value("arrowMessageAlignment")
             .and_then(|value| HorizontalAlignment::from_name(&value))
             .unwrap_or(HorizontalAlignment::Left)
+    }
+
+    /// `skinparam conditionStyle`, a hexagon by default (`getConditionStyle`).
+    pub(crate) fn get_condition_style(&self) -> ConditionStyle {
+        self.value("conditionStyle")
+            .and_then(|value| ConditionStyle::from_string(&value))
+            .unwrap_or(ConditionStyle::InsideHexagon)
+    }
+
+    /// `skinparam conditionEndStyle`, a diamond by default (`getConditionEndStyle`).
+    pub(crate) fn get_condition_end_style(&self) -> ConditionEndStyle {
+        self.value("conditionEndStyle")
+            .and_then(|value| ConditionEndStyle::from_string(&value))
+            .unwrap_or(ConditionEndStyle::Diamond)
     }
 
     /// The direction `left to right direction` and `top to bottom direction` set.

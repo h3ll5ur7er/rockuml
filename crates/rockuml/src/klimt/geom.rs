@@ -21,6 +21,12 @@ impl XDimension2D {
         Self::new(self.width.max(min_width), self.height.max(min_height))
     }
 
+    /// The space for `self` with `right` beside it (`mergeLR`).
+    #[must_use]
+    pub fn merge_lr(self, right: Self) -> Self {
+        Self::new(self.width + right.width, self.height.max(right.height))
+    }
+
     /// The space for `self` with `below` stacked under it.
     #[must_use]
     pub fn merge_top_bottom(self, below: Self) -> Self {
