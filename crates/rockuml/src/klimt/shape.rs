@@ -99,7 +99,6 @@ impl UPolygon {
         self.min_max
     }
 
-    #[allow(dead_code, reason = "read by SlotFinder, Phase 6 stage E1")]
     pub(crate) fn get_compression_mode(&self) -> Option<CompressionMode> {
         self.compression_mode
     }
@@ -515,7 +514,6 @@ impl URectangle {
         }
     }
 
-    #[allow(dead_code, reason = "read by SlotFinder, Phase 6 stage E1")]
     pub(crate) fn is_ignore_for_compression_on(self, mode: CompressionMode) -> bool {
         match mode {
             CompressionMode::OnX => self.ignore_for_compression_on_x,
@@ -524,14 +522,12 @@ impl URectangle {
     }
 
     /// The same rectangle `width` wide, as compressing across makes it (`withWidth`).
-    #[allow(dead_code, reason = "used by UGraphicCompressOnXorY, Phase 6 stage E1")]
     #[must_use]
     pub(crate) const fn with_width(self, width: f64) -> Self {
         Self { width, ..self }
     }
 
     /// The same rectangle `height` high, as compressing down makes it (`withHeight`).
-    #[allow(dead_code, reason = "used by UGraphicCompressOnXorY, Phase 6 stage E1")]
     #[must_use]
     pub(crate) const fn with_height(self, height: f64) -> Self {
         Self { height, ..self }
