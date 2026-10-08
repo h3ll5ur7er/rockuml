@@ -17,6 +17,7 @@ use super::swimlanes::SwimlaneId;
 use crate::color::Colors;
 use crate::command::{CommandError, CommandResult};
 use crate::creole::Display;
+use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::model::NotePosition;
 use crate::stereo::Stereotype;
 
@@ -369,6 +370,21 @@ impl Instructions {
             Instruction::Group(ins) => ins.list.get_last(),
             _ => None,
         }
+    }
+
+    /// The first kind of instruction whose tiles are not drawn yet; each track removes its own as it lands.
+    pub(crate) fn unported_part(&self) -> Option<NotYetPorted> {
+        self.all.iter().find_map(|instruction| {
+            let what = match instruction {
+                Instruction::If(_) => "activity if (track C1)",
+                Instruction::Switch(_) => "activity switch (track C1)",
+                Instruction::While(_) => "activity while (track C2)",
+                Instruction::Repeat(_) => "activity repeat (track C2)",
+                Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
+                _ => return None,
+            };
+            Some(NotYetPorted(what))
+        })
     }
 
     fn mono(&self, id: InstructionId) -> &MonoSwimable {

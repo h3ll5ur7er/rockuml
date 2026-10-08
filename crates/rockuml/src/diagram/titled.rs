@@ -56,6 +56,7 @@ pub(super) enum PragmaKey {
     SequenceMessageSpan,
     Teoz,
     UseIntermediatePackages,
+    UseVerticalIf,
 }
 
 impl PragmaKey {
@@ -70,6 +71,7 @@ impl PragmaKey {
             "sequencemessagespan" => Some(Self::SequenceMessageSpan),
             "teoz" => Some(Self::Teoz),
             "useintermediatepackages" => Some(Self::UseIntermediatePackages),
+            "useverticalif" => Some(Self::UseVerticalIf),
             _ => None,
         }
     }
@@ -78,7 +80,7 @@ impl PragmaKey {
     fn default_value(self) -> Option<&'static str> {
         match self {
             Self::Teoz => Some("true"),
-            Self::SequenceMessageSpan | Self::UseIntermediatePackages => None,
+            Self::SequenceMessageSpan | Self::UseIntermediatePackages | Self::UseVerticalIf => None,
         }
     }
 }

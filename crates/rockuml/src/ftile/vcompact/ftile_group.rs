@@ -8,7 +8,7 @@ use crate::color::HColor;
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::symbol::USymbol;
 use crate::diagram::activity3::{LinkRendering, SwimlaneId, SwimlaneSet};
-use crate::ftile::{Ftile, FtileGeometry, FtileMarged, Swimable};
+use crate::ftile::{Ftile, FtileGeometry, Swimable, ftile_utils};
 use crate::klimt::fashion::Fashion;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{MinMax, UTranslate};
@@ -58,7 +58,7 @@ impl FtileGroup {
             CreoleMode::Full,
         );
         Self {
-            inner: Rc::new(FtileMarged::new(inner, MARGIN, MARGIN)),
+            inner: ftile_utils::add_horizontal_margin(inner, MARGIN, MARGIN),
             name: Rc::new(name),
             border_color: style.value(PName::LineColor).as_color(),
             back_color: back_color
