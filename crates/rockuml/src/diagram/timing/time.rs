@@ -4,6 +4,8 @@
 use std::cmp::Ordering;
 use std::fmt;
 
+use crate::local_date::{LocalDate, LocalDateTime};
+
 /// A decimal number as `java.math.BigDecimal` keeps it: its digits and how many of them are decimals, so
 /// that `1.50` prints back as `1.50`.
 #[derive(Clone, Copy, Debug)]
@@ -148,51 +150,28 @@ impl TimingFormat {
                 format!("{h}:{m:02}:{s:02}")
             }
             Self::Date => {
-                let (_, month, day) = civil_from_days(time.div_euclid(SECONDS_PER_DAY));
-                format!("{month:02}/{day:02}")
+                let date = LocalDateTime::of_epoch_second(time).to_local_date();
+                format!("{:02}/{:02}", date.month_value(), date.day_of_month())
             }
             Self::SimpleDate(pattern) => simple_date_format(pattern, time),
         }
     }
 
-    /// `createDate`: midnight GMT of the day, in seconds.
+    /// `createDate`: midnight GMT of the day, in seconds. Like Java's lenient calendar, a month or day out
+    /// of range runs over into the next ones.
     pub(super) fn create_date(year: i64, month: i64, day: i64, format: Self) -> TimeTick {
+        let first_of_month = LocalDate::of(
+            year + (month - 1).div_euclid(12),
+            (month - 1).rem_euclid(12) + 1,
+            1,
+        )
+        .expect("the first of a month exists");
+        let date = first_of_month.plus_days(day - 1);
         TimeTick::new(
-            BigDecimal::from_long(days_from_civil(year, month, day) * SECONDS_PER_DAY),
+            BigDecimal::from_long(date.at_start_of_day().epoch_second()),
             format,
         )
     }
-}
-
-const SECONDS_PER_DAY: i64 = 86_400;
-
-/// Days since 1970-01-01 of a date in the proleptic Gregorian calendar.
-fn days_from_civil(year: i64, month: i64, day: i64) -> i64 {
-    let year = if month <= 2 { year - 1 } else { year };
-    let era = year.div_euclid(400);
-    let year_of_era = year - era * 400;
-    let month_from_march = (month + 9) % 12;
-    let day_of_year = (153 * month_from_march + 2) / 5 + day - 1;
-    let day_of_era = year_of_era * 365 + year_of_era / 4 - year_of_era / 100 + day_of_year;
-    era * 146_097 + day_of_era - 719_468
-}
-
-/// The year, month and day of a day since 1970-01-01.
-fn civil_from_days(days: i64) -> (i64, i64, i64) {
-    let days = days + 719_468;
-    let era = days.div_euclid(146_097);
-    let day_of_era = days - era * 146_097;
-    let year_of_era =
-        (day_of_era - day_of_era / 1460 + day_of_era / 36_524 - day_of_era / 146_096) / 365;
-    let day_of_year = day_of_era - (365 * year_of_era + year_of_era / 4 - year_of_era / 100);
-    let month_from_march = (5 * day_of_year + 2) / 153;
-    let day = day_of_year - (153 * month_from_march + 2) / 5 + 1;
-    let month = if month_from_march < 10 {
-        month_from_march + 3
-    } else {
-        month_from_march - 9
-    };
-    (year_of_era + era * 400 + i64::from(month <= 2), month, day)
 }
 
 const MONTHS: [&str; 12] = [
@@ -211,13 +190,13 @@ const MONTHS: [&str; 12] = [
 ];
 
 const WEEKDAYS: [&str; 7] = [
-    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
+    "Sunday",
 ];
 
 /// Whether `SimpleDateFormat` would accept the pattern, as far as rockuml formats patterns.
@@ -263,11 +242,11 @@ fn pattern_pieces(pattern: &str) -> Option<Vec<PatternPiece>> {
 /// `SimpleDateFormat.format` in US English. PlantUML formats in the JVM's time zone; rockuml in UTC, as the
 /// dates themselves are read.
 fn simple_date_format(pattern: &str, seconds: i64) -> String {
-    let days = seconds.div_euclid(SECONDS_PER_DAY);
-    let second_of_day = seconds.rem_euclid(SECONDS_PER_DAY);
-    let (year, month, day) = civil_from_days(days);
-    let weekday = (days + 4).rem_euclid(7);
-    let hour = second_of_day / 3600;
+    let time = LocalDateTime::of_epoch_second(seconds);
+    let date = time.to_local_date();
+    let year = date.year();
+    let month = date.month_value();
+    let hour = time.hour();
     let mut result = String::new();
     for piece in pattern_pieces(pattern).unwrap_or_default() {
         match piece {
@@ -277,11 +256,7 @@ fn simple_date_format(pattern: &str, seconds: i64) -> String {
                 let text = match letter {
                     'G' => "AD".to_owned(),
                     'y' | 'Y' => {
-                        let year = if letter == 'Y' {
-                            week_year(days, year)
-                        } else {
-                            year
-                        };
+                        let year = if letter == 'Y' { week_year(date) } else { year };
                         if count == 2 {
                             format!("{:02}", year.rem_euclid(100))
                         } else {
@@ -289,16 +264,16 @@ fn simple_date_format(pattern: &str, seconds: i64) -> String {
                         }
                     }
                     'M' | 'L' => text_or_number(MONTHS[(month - 1) as usize], count, month),
-                    'd' => number(day),
-                    'D' => number(days - days_from_civil(year, 1, 1) + 1),
-                    'E' => text_or_name(WEEKDAYS[weekday as usize], count),
-                    'u' => number(if weekday == 0 { 7 } else { weekday }),
+                    'd' => number(date.day_of_month()),
+                    'D' => number(date.day_of_year()),
+                    'E' => text_or_name(WEEKDAYS[date.day_of_week().ordinal()], count),
+                    'u' => number(date.day_of_week().value()),
                     'H' => number(hour),
                     'k' => number(if hour == 0 { 24 } else { hour }),
                     'K' => number(hour % 12),
                     'h' => number(if hour % 12 == 0 { 12 } else { hour % 12 }),
-                    'm' => number(second_of_day / 60 % 60),
-                    's' => number(second_of_day % 60),
+                    'm' => number(time.minute()),
+                    's' => number(time.second()),
                     'S' => number(0),
                     'a' => if hour < 12 { "AM" } else { "PM" }.to_owned(),
                     _ => unreachable!("pattern_pieces keeps known letters"),
@@ -329,10 +304,11 @@ fn text_or_name(name: &str, count: usize) -> String {
 }
 
 /// The year the US week of the day belongs to: weeks start on Sunday and the first holds January 1.
-fn week_year(days: i64, year: i64) -> i64 {
-    let next_new_year = days_from_civil(year + 1, 1, 1);
-    let first_week_start = next_new_year - (next_new_year + 4).rem_euclid(7);
-    if days >= first_week_start {
+fn week_year(date: LocalDate) -> i64 {
+    let year = date.year();
+    let next_new_year = LocalDate::of(year + 1, 1, 1).expect("January 1 exists");
+    let days_since_sunday = next_new_year.day_of_week().value() % 7;
+    if date >= next_new_year.plus_days(-days_since_sunday) {
         year + 1
     } else {
         year

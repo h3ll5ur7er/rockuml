@@ -22,6 +22,7 @@ use crate::color::{ColorType, Colors, HColor};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, CommandError, CommandResult, ParserPass};
 use crate::creole::{CreoleMode, Display};
+use crate::decoration::{LinkDecor, LinkType, WithLinkType};
 use crate::klimt::blocks::TextBlockMarged;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D};
@@ -488,24 +489,32 @@ impl TimingDiagram {
     }
 }
 
-/// The colour an arrow's `[...]` style gives a message: the last colour before any `;`
-/// (`WithLinkType.applyStyle`).
+/// What a message's arrow style changes; only the colour of its line shows (`WithLinkType`).
+struct MessageStyle {
+    link_type: LinkType,
+    color: Option<HColor>,
+}
+
+impl WithLinkType for MessageStyle {
+    fn link_type_mut(&mut self) -> &mut LinkType {
+        &mut self.link_type
+    }
+
+    fn set_specific_color(&mut self, color: HColor, i: usize) {
+        if i == 0 {
+            self.color = Some(color);
+        }
+    }
+}
+
+/// The colour an arrow's `[...]` style gives a message.
 fn message_color(arrow_style: &str) -> Option<HColor> {
-    const KEYWORDS: [&str; 8] = [
-        "dashed", "bold", "dotted", "hidden", "single", "plain", "node", "norank",
-    ];
-    arrow_style
-        .split(';')
-        .find(|style| !style.is_empty())?
-        .split(',')
-        .rfind(|token| {
-            !token.is_empty()
-                && !token.starts_with("thickness=")
-                && !KEYWORDS
-                    .iter()
-                    .any(|keyword| token.eq_ignore_ascii_case(keyword))
-        })
-        .map(HColor::parse_or_white)
+    let mut style = MessageStyle {
+        link_type: LinkType::new(LinkDecor::None, LinkDecor::None),
+        color: None,
+    };
+    style.apply_style(Some(arrow_style));
+    style.color
 }
 
 /// The colour an arrow's `[...]` style gives a constraint: its last colour (`CommandArrow.applyStyle`).

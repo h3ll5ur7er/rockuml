@@ -15,7 +15,7 @@ use crate::command::{
 };
 use crate::creole::Display;
 use crate::decoration::symbol::USymbols;
-use crate::decoration::{LinkDecor, LinkType};
+use crate::decoration::{LinkDecor, LinkType, WithLinkType};
 use crate::diagram::cuca::{CucaDiagram, EntityDiagram};
 use crate::diagram::cuca_commands::{
     GENERIC, Labels, add_tags, back_color, char_encoding, colors, colors_with_line,

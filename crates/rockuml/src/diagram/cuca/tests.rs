@@ -1,7 +1,7 @@
 use super::*;
 use crate::abel::{EntityGender, LinkArrow};
 use crate::color::{ColorType, Colors, HColor};
-use crate::decoration::LinkDecor;
+use crate::decoration::{LinkDecor, WithLinkType};
 use crate::diagram::UmlSource;
 use crate::svek::AbstractEntityImage;
 

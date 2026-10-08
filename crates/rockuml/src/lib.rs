@@ -22,6 +22,7 @@ mod java;
 mod jaws;
 pub mod json;
 mod klimt;
+mod local_date;
 pub mod metadata;
 mod openiconic;
 mod pattern;
