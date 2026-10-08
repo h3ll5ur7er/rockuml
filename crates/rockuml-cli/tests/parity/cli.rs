@@ -55,12 +55,19 @@ fn rockuml_runs_every_cli_scenario_like_the_golden_model() {
 
 fn check(scenario: &Path) -> Result<(), String> {
     let work = tempfile::tempdir().unwrap();
+    // macOS keeps temporary directories behind a link (/var is /private/var), which the absolute paths
+    // rockuml reports resolve; Windows' canonical paths would gain a \\?\ prefix instead.
+    let root = if cfg!(windows) {
+        work.path().to_path_buf()
+    } else {
+        work.path().canonicalize().unwrap()
+    };
     let input = scenario.join("input");
     if input.is_dir() {
-        copy_tree(&input, work.path());
+        copy_tree(&input, &root);
     }
-    let workdir = work.path().to_string_lossy().into_owned();
-    let output = run(scenario, work.path(), &workdir);
+    let workdir = root.to_string_lossy().into_owned();
+    let output = run(scenario, &root, &workdir);
 
     let expected = scenario.join("expected");
     let expected_status: i32 = fs::read_to_string(expected.join("status"))
@@ -84,7 +91,7 @@ fn check(scenario: &Path) -> Result<(), String> {
         )?;
     }
     let expected_files = files_in(&expected.join("files"), None);
-    let produced_files = files_in(work.path(), Some(&input));
+    let produced_files = files_in(&root, Some(&input));
     let expected_names: Vec<_> = expected_files.keys().collect();
     let produced_names: Vec<_> = produced_files.keys().collect();
     if expected_names != produced_names {
