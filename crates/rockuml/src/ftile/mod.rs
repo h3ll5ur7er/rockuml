@@ -7,7 +7,7 @@
 //! tree, which is rebuilt every time it is measured or drawn, so building must not change the model.
 //! Tiles draw their children with `ug.draw(&child)`, their [`Connection`]s with `ug.draw(&connection)`
 //! and arrows ([`Snake`]) with `ug.draw(&snake)`, never by calling `draw_u` themselves: the
-//! [`UGraphic`](crate::klimt::ugraphic::UGraphic) they draw on is a stack of
+//! [`UGraphic`] they draw on is a stack of
 //! [layers](crate::klimt::ugraphic::UGraphicLayer) deciding what is drawn where.
 //!
 //! - `UGraphicForSnake` (in `svek`) collects arrows, merges those that continue each other, and draws
@@ -37,9 +37,12 @@
 //!
 //! # Still to come
 //!
-//! - `VCompactFactory` and the tiles it builds; `Swimlanes` with its `Cross` layer.
+//! - `VCompactFactory` and the tiles it builds; building tiles from instructions (`createFtile`);
+//!   `Swimlanes`' drawing with its `Cross` layer.
 //! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
-//!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer).
+//!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
+//!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
+//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does.
 //! - The compression layer and its slot finder, in `klimt::compress`.
 //! - The delegators' own methods, each in its file under `vcompact/`.
 
