@@ -207,11 +207,8 @@ mod tests {
 
     #[test]
     fn diagrams_that_are_not_ported_say_so() {
-        let (status, message, page_count) = render_text(
-            "@startditaa\n+--+\n|A |\n+--+\n@endditaa",
-            Format::Svg,
-            0,
-        );
+        let (status, message, page_count) =
+            render_text("@startditaa\n+--+\n|A |\n+--+\n@endditaa", Format::Svg, 0);
         assert_eq!((status, page_count), (Status::NotPorted, 1));
         assert_eq!(message, "this diagram type is not ported yet");
     }
