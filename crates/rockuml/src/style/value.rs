@@ -79,12 +79,12 @@ impl Value {
     pub(crate) fn with_added_priority(&self, delta: i32) -> Self {
         match self {
             Self::Written(written) => Self::Written(DarkString {
-                priority: written.priority + delta,
+                priority: written.priority.wrapping_add(delta),
                 ..written.clone()
             }),
             Self::Color { color, priority } => Self::Color {
                 color: color.clone(),
-                priority: priority + delta,
+                priority: priority.wrapping_add(delta),
             },
         }
     }

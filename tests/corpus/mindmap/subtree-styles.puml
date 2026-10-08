@@ -1,0 +1,25 @@
+@startmindmap
+<style>
+mindmapDiagram {
+  .green * {
+    BackgroundColor lightgreen
+    FontColor darkgreen
+  }
+  .red * {
+    BackgroundColor pink
+  }
+  :depth(2) {
+    BackgroundColor lightblue
+  }
+}
+</style>
+* root
+** branch A <<green>>
+*** a1
+**** a11 <<red>>
+***** a111
+*** a2
+** branch B
+*** b1 <<red>>
+**** b11
+@endmindmap

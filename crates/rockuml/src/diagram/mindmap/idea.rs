@@ -8,9 +8,6 @@ use crate::creole::Display;
 use crate::stereo::Stereotype;
 use crate::style::{SName, Style, StyleBuilder, StyleSignature};
 
-/// How deep a rule inherited from an ancestor weighs, per generation (`WElement.STEP_BY_PARENT`).
-pub(crate) const STEP_BY_PARENT: i32 = 1000;
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum IdeaShape {
     Box,
@@ -108,28 +105,14 @@ impl Branch {
         result
     }
 
-    /// The idea's style: its own rules, then those its ancestors pass down with `*`, the nearer the
-    /// weightier (`getStyle`).
+    /// The idea's style, with the rules its ancestors pass down (`getStyle`).
     pub(super) fn style(&self, id: IdeaId) -> Style {
         let idea = &self.ideas[id];
-        let mut delta_priority = STEP_BY_PARENT * 1000;
-        let mut result = idea
-            .style_builder
-            .merged_style_special(&self.style_signature(id, idea.level), delta_priority)
-            .expect("the default skin styles mind map nodes");
-        let mut up = idea.parent;
-        while let Some(ancestor) = up {
-            let signature = self.style_signature(ancestor, idea.level).with_star();
-            delta_priority -= STEP_BY_PARENT;
-            if let Some(style) = idea
-                .style_builder
-                .merged_style_special(&signature, delta_priority)
-            {
-                result = result.merge_with(&style);
-            }
-            up = self.ideas[ancestor].parent;
-        }
-        result
+        let ancestors = std::iter::successors(idea.parent, |&ancestor| self.ideas[ancestor].parent)
+            .map(|ancestor| self.style_signature(ancestor, idea.level));
+        idea.style_builder
+            .merged_style_of_tree_node(&self.style_signature(id, idea.level), ancestors)
+            .expect("the default skin styles mind map nodes")
     }
 
     /// The style of the links to the idea's children (`getStyleArrow`).
