@@ -151,6 +151,28 @@ impl CliOptions {
         self.is_true(CliFlag::FailFast) || self.is_true(CliFlag::FailFast2)
     }
 
+    /// `--http-server[:port[:address]][:stop]`: the port, 8080 unless given (`getPicowebPort`).
+    pub(crate) fn picoweb_port(&self) -> Result<u16, String> {
+        match self.flags.get_list(CliFlag::Picoweb).next() {
+            None => Ok(8080),
+            Some(port) => port
+                .parse()
+                .map_err(|_| format!("--http-server: not a port: {port}")),
+        }
+    }
+
+    /// The address to listen on, every interface unless given (`getPicowebBindAddress`).
+    pub(crate) fn picoweb_bind_address(&self) -> Option<&str> {
+        self.flags.get_list(CliFlag::Picoweb).nth(1)
+    }
+
+    /// Whether `/stopserver` stops the server (`getPicowebEnableStop`).
+    pub(crate) fn picoweb_enable_stop(&self) -> bool {
+        self.flags
+            .get_list(CliFlag::Picoweb)
+            .any(|part| part.eq_ignore_ascii_case("stop"))
+    }
+
     pub(crate) fn fonts(&self) -> Vec<PathBuf> {
         self.flags
             .get_list(CliFlag::Font)

@@ -9,6 +9,7 @@ mod file_format;
 mod file_group;
 mod fonts;
 mod help_print;
+mod pico_web_server;
 mod pipe;
 mod run;
 mod source_file_reader;

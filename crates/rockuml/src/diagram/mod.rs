@@ -246,6 +246,30 @@ pub fn export_with(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<Vec<u8>, NotYetPorted> {
+    export_image(diagram, page, format, metadata, fonts, host).map(|image| image.data)
+}
+
+/// An exported image and the size PlantUML reports for it (`ImageData`): the drawing with its margins,
+/// before any scale, truncated to whole pixels.
+pub struct ExportedImage {
+    pub data: Vec<u8>,
+    pub width: i32,
+    pub height: i32,
+}
+
+/// Like [`export_with`], with the image's size.
+///
+/// # Panics
+///
+/// If `page` is not below the diagram's page count, like an index out of bounds.
+pub fn export_image(
+    diagram: &dyn Diagram,
+    page: usize,
+    format: ImageFormat,
+    metadata: Metadata,
+    fonts: &Arc<FontRegistry>,
+    host: &dyn Host,
+) -> Result<ExportedImage, NotYetPorted> {
     let source_metadata = (metadata == Metadata::Embedded).then(|| diagram.source().metadata());
     let settings = diagram.export_settings();
     let string_bounder: Rc<dyn StringBounder> = match format {
@@ -298,7 +322,7 @@ pub fn export_with(
         output.borrow_mut().take_document(encoded.as_deref())
     };
 
-    Ok(match format {
+    let data = match format {
         ImageFormat::Debug => {
             let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
             let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
@@ -334,6 +358,11 @@ pub fn export_with(
                 source_metadata.as_deref(),
             )
         }
+    };
+    Ok(ExportedImage {
+        data,
+        width: dimension.width as i32,
+        height: dimension.height as i32,
     })
 }
 

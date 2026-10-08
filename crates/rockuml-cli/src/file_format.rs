@@ -106,6 +106,15 @@ impl FileFormat {
     }
 
     /// The image format the engine exports, for formats that draw.
+    /// The content type of the format's output (`getMimeType`).
+    pub(crate) fn mime_type(self) -> &'static str {
+        match self {
+            Self::Png => "image/png",
+            Self::Svg | Self::DeterministicSvg => "image/svg+xml",
+            Self::Debug | Self::Preproc | Self::Null => "text/plain",
+        }
+    }
+
     pub(crate) fn image_format(self) -> Option<ImageFormat> {
         match self {
             Self::Png => Some(ImageFormat::Png),
