@@ -7,7 +7,7 @@
 //! tree, which is rebuilt every time it is measured or drawn, so building must not change the model.
 //! Tiles draw their children with `ug.draw(&child)`, their [`Connection`]s with `ug.draw(&connection)`
 //! and arrows ([`Snake`]) with `ug.draw(&snake)`, never by calling `draw_u` themselves: the
-//! [`UGraphic`](crate::klimt::ugraphic::UGraphic) they draw on is a stack of
+//! [`UGraphic`] they draw on is a stack of
 //! [layers](crate::klimt::ugraphic::UGraphicLayer) deciding what is drawn where.
 //!
 //! - `UGraphicForSnake` (in `svek`) collects arrows, merges those that continue each other, and draws
