@@ -13,6 +13,8 @@ pub(crate) enum IdeaShape {
     Box,
     /// `_`: the text alone.
     None,
+    /// `_` without a label in a work breakdown: a node that takes no room.
+    Pseudo,
 }
 
 impl IdeaShape {

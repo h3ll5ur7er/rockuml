@@ -1,0 +1,16 @@
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    Width auto
+  }
+}
+</style>
+* Root
+** A
+** much longer B
+*** x
+*** much much longer y
+***_ boxless
+** C
+@endwbs

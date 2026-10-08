@@ -1,6 +1,7 @@
 //! A node of a mind map or a work breakdown: its text in a box, outlined as its style says (PlantUML's
 //! `FtileBoxOld`, which only those diagrams still use, as a text block).
 
+use std::cell::Cell;
 use std::rc::Rc;
 
 use crate::color::{Colors, HColor};
@@ -19,7 +20,8 @@ pub(crate) struct FtileBoxOld {
     sheet: Rc<SheetBlock1>,
     round_corner: f64,
     horizontal_alignment: Option<HorizontalAlignment>,
-    minimum_width: f64,
+    /// Shared with the stencil; a work breakdown widens boxes to match their siblings'.
+    minimum_width: Rc<Cell<f64>>,
     box_style: BoxStyle,
     border_color: HColor,
     back_color: HColor,
@@ -37,6 +39,21 @@ impl FtileBoxOld {
         Self::new(skin_param, label, BoxStyle::Plain, style, colors)
     }
 
+    pub(crate) fn create_wbs(
+        style: &Style,
+        skin_param: &SkinParam,
+        colors: &Colors,
+        label: &Display,
+    ) -> Self {
+        Self::new(skin_param, label, BoxStyle::Plain, style, colors)
+    }
+
+    /// The box at least `minimum_width` wide (`setMinimumWidth`).
+    pub(crate) fn set_minimum_width(&self, minimum_width: f64) {
+        self.minimum_width
+            .set(self.minimum_width.get().max(minimum_width));
+    }
+
     fn new(
         skin_param: &SkinParam,
         label: &Display,
@@ -47,7 +64,7 @@ impl FtileBoxOld {
         let style = style.eventually_override_colors(colors);
         let fc = style.font_configuration();
         let horizontal_alignment = style.horizontal_alignment();
-        let minimum_width = style.value(PName::MinimumWidth).as_double();
+        let minimum_width = Rc::new(Cell::new(style.value(PName::MinimumWidth).as_double()));
         let sheet = CreoleParser::with_mode(
             fc.clone(),
             horizontal_alignment.unwrap_or(HorizontalAlignment::Left),
@@ -59,7 +76,7 @@ impl FtileBoxOld {
             Rc::new(SheetBlock1::new(sheet, style.padding()).wrapped_at(style.wrap_width()));
         let stencil = Rc::new(BoxStencil {
             sheet: sheet.clone(),
-            minimum_width,
+            minimum_width: minimum_width.clone(),
         });
         Self {
             tb: SheetBlock2::with_stencil(sheet.clone(), stencil, UStroke::with_thickness(1.0)),
@@ -76,6 +93,7 @@ impl FtileBoxOld {
 
     fn tb_width(&self, string_bounder: &dyn StringBounder) -> f64 {
         self.minimum_width
+            .get()
             .max(self.tb.calculate_dimension(string_bounder).width)
     }
 }
@@ -84,7 +102,7 @@ impl FtileBoxOld {
 /// width.
 struct BoxStencil {
     sheet: Rc<SheetBlock1>,
-    minimum_width: f64,
+    minimum_width: Rc<Cell<f64>>,
 }
 
 impl Stencil for BoxStencil {
@@ -96,7 +114,7 @@ impl Stencil for BoxStencil {
         self.sheet
             .calculate_dimension(string_bounder)
             .width
-            .max(self.minimum_width)
+            .max(self.minimum_width.get())
     }
 }
 
@@ -105,7 +123,7 @@ impl TextBlock for FtileBoxOld {
         let dim_raw = self
             .sheet
             .calculate_dimension(string_bounder)
-            .at_least(self.minimum_width, 0.0);
+            .at_least(self.minimum_width.get(), 0.0);
         XDimension2D::new(dim_raw.width + self.box_style.get_shield(), dim_raw.height)
     }
 

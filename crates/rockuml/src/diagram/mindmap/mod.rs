@@ -8,7 +8,8 @@ mod tetris;
 use std::rc::Rc;
 
 use finger::FingerImpl;
-use idea::{Branch, IdeaShape, IdeaSpec};
+pub(super) use idea::IdeaShape;
+use idea::{Branch, IdeaSpec};
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;

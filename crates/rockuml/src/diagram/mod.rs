@@ -20,6 +20,7 @@ mod source;
 mod state;
 mod titled;
 mod unported;
+mod wbs;
 
 pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
 pub(crate) use titled::entity_image_legend;
@@ -162,6 +163,7 @@ pub fn create(
         Some(DiagramType::Uml) => builder::create_uml,
         Some(DiagramType::ChenEer) => |source, _| builder::create_chen(source),
         Some(DiagramType::MindMap) => |source, _| builder::create_mindmap(source),
+        Some(DiagramType::Wbs) => |source, _| builder::create_wbs(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_image_files(block.directory(), host);
