@@ -1,0 +1,29 @@
+@startnwdiag
+nwdiag {
+  network Network {
+    Actor [shape = actor]
+    Agent [shape = agent]
+    Artifact [shape = artifact]
+    Boundary [shape = boundary]
+    Card [shape = card]
+    Cloud [shape = cloud]
+    Collections [shape = collections]
+    Component [shape = component]
+  }
+  network Other {
+    Control [shape = control]
+    Database [shape = database]
+    Entity [shape = entity]
+    File [shape = file]
+    Folder [shape = folder]
+    Frame [shape = frame]
+    Hexagon [shape = hexagon]
+    Node [shape = node]
+    Package [shape = package]
+    Queue [shape = queue]
+    Rectangle [shape = rectangle]
+    Stack [shape = stack]
+    Storage [shape = storage]
+  }
+}
+@endnwdiag

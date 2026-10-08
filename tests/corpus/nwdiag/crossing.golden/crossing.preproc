@@ -1,0 +1,19 @@
+@startnwdiag
+nwdiag {
+  network Network1 {
+    a;
+    b;
+    c;
+  }
+  network Network2 {
+    b;
+    d;
+  }
+  network Network3 {
+    a;
+    c;
+    d;
+    e;
+  }
+}
+@endnwdiag

@@ -1,0 +1,206 @@
+DPI: 96
+dimension: [ 267.4030 ; 330.5000 ]
+scaleFactor: 1.0000
+seed: 8380497619071808479
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text:  
+  position: [ 5.0000 ; 14.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 5.0000 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 21.3706 ; 222.5000 ]
+  pt2: [ 261.4030 ; 227.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 77.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 112.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 112.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 147.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 179.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 214.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 219.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 249.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 219.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 249.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 8.8872 ; 9.3812 ]
+   - type: SEG_CUBICTO
+     pt1: [ 11.6504 ; 2.2137 ]
+     pt2: [ 16.8238 ; 0.2422 ]
+     pt3: [ 22.9506 ; 5.6065 ]
+   - type: SEG_CUBICTO
+     pt1: [ 26.2009 ; -1.4605 ]
+     pt2: [ 33.7016 ; -3.1290 ]
+     pt3: [ 38.6215 ; 3.7273 ]
+   - type: SEG_CUBICTO
+     pt1: [ 44.1998 ; -1.8280 ]
+     pt2: [ 50.4685 ; -1.0217 ]
+     pt3: [ 52.9433 ; 7.0007 ]
+   - type: SEG_CUBICTO
+     pt1: [ 57.0573 ; 0.9832 ]
+     pt2: [ 63.6118 ; 1.0520 ]
+     pt3: [ 66.4529 ; 8.2973 ]
+   - type: SEG_CUBICTO
+     pt1: [ 73.0505 ; 11.4795 ]
+     pt2: [ 75.1507 ; 15.7436 ]
+     pt3: [ 69.2885 ; 21.5848 ]
+   - type: SEG_CUBICTO
+     pt1: [ 74.8399 ; 26.5837 ]
+     pt2: [ 73.7760 ; 32.0864 ]
+     pt3: [ 66.8970 ; 34.8433 ]
+   - type: SEG_CUBICTO
+     pt1: [ 63.1449 ; 42.7456 ]
+     pt2: [ 57.0075 ; 42.9269 ]
+     pt3: [ 52.1466 ; 35.9418 ]
+   - type: SEG_CUBICTO
+     pt1: [ 47.8083 ; 42.2306 ]
+     pt2: [ 42.6779 ; 43.4665 ]
+     pt3: [ 37.6015 ; 36.7686 ]
+   - type: SEG_CUBICTO
+     pt1: [ 33.0231 ; 44.0741 ]
+     pt2: [ 27.9341 ; 43.6282 ]
+     pt3: [ 23.7777 ; 36.3681 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.7227 ; 43.1336 ]
+     pt2: [ 12.9378 ; 42.1935 ]
+     pt3: [ 9.8092 ; 35.4128 ]
+   - type: SEG_CUBICTO
+     pt1: [ 2.2511 ; 33.2577 ]
+     pt2: [ 2.0132 ; 26.3279 ]
+     pt3: [ 7.2306 ; 21.7600 ]
+   - type: SEG_CUBICTO
+     pt1: [ 1.0677 ; 17.2809 ]
+     pt2: [ 3.0312 ; 12.2520 ]
+     pt3: [ 8.8872 ; 9.3812 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: inet
+  position: [ 60.6397 ; 67.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 36.3706 ; 155.5000 ]
+  pt2: [ 128.1031 ; 187.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: router
+  position: [ 46.3706 ; 174.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 38.0855 ; 257.5000 ]
+  pt2: [ 126.3882 ; 289.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: web01
+  position: [ 48.0855 ; 276.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 158.1031 ; 257.5000 ]
+  pt2: [ 246.4030 ; 289.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: web02
+  position: [ 168.1031 ; 276.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 266.4030 ; 329.5000 ]
+  pt2: [ 267.4030 ; 330.5000 ]
+

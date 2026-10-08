@@ -52,6 +52,7 @@ Add `:stop` to let `GET /stopserver` stop it.
   (`(*) --> "action"`) is not ported yet.
 - Mind maps (`@startmindmap`) and work breakdown structures (`@startwbs`).
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
+- Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in
