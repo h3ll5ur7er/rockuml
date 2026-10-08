@@ -54,8 +54,23 @@ jobs:
           name: rockuml-macos-universal
           path: rockuml-macos-universal
 
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: bash tools/build-wasm.sh
+      - run: node --test web/rockuml.test.mjs
+      - run: cd web && zip ../rockuml-web.zip index.html rockuml.js rockuml.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-web.zip
+          path: rockuml-web.zip
+
   publish:
-    needs: [windows, linux, macos]
+    needs: [windows, linux, macos, web]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
