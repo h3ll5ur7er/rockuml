@@ -68,9 +68,7 @@ fn connection(
 fn add_ingoing_arrows(parent: &Rc<FtileSwitchWithDiamonds>, conns: &mut Vec<Rc<dyn Connection>>) {
     let tiles = &parent.tiles;
     let labels = &parent.text_block_positives;
-    let (Some(first), Some(last)) = (tiles.first(), tiles.last()) else {
-        return;
-    };
+    let (first, last) = (&tiles[0], &tiles[tiles.len() - 1]);
     let diamond1 = &parent.diamond1;
     conns.push(connection(
         parent,

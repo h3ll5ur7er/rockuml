@@ -113,7 +113,6 @@ impl<'a> ConditionalBuilder<'a> {
     }
 
     /// `branch1` below the diamond, `branch2` going round it or, when it is a lone stop, beside it.
-    /// `branch1` is never empty here: of an empty branch and a lone stop, the stop is `branch2`.
     fn create_down(&self, branch1: &BranchFtile<'_>, branch2: &BranchFtile<'_>) -> Rc<dyn Ftile> {
         let tile1: Rc<dyn Ftile> =
             Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch1.ftile), 30.0));

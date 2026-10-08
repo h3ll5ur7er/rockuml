@@ -354,7 +354,7 @@ impl FtileFactory for Rc<Innermost> {
         _top_inlink_rendering: &LinkRendering,
         _label_test: Option<&Display>,
         _colors: &Colors,
-        _end_colors: Option<&Colors>,
+        _end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         self.tile("create_switch")
     }

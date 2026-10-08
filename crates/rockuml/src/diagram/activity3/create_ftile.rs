@@ -234,7 +234,7 @@ impl Instructions {
             &ins.top_inlink_rendering,
             ins.label_test.as_ref(),
             &ins.colors,
-            Some(&end_colors),
+            &end_colors,
         );
         eventually_add_note(
             factory,
