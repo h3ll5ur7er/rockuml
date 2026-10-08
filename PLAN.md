@@ -550,6 +550,13 @@ nwdiag, timing and gantt.
   - Deviations: `/stopserver` really stops the server; ASCII-art formats and `/language` answer 501; a source without
     a diagram posted to `/render` answers 400; the description, title, donation and quote headers are left out.
 
+### Phase 11 — Network diagrams
+- **Status: done.** Every corpus case (12 nwdiag) passes L1, L2, L3, PNG size, URL and preprocessor outputs.
+  - Ported: `@startnwdiag` networks (`address`, `color`, `width = full`, `description`), servers with their
+    addresses, shapes, colors and descriptions, servers on several networks, peer links (`a -- b`), groups inside
+    and outside networks, laid out in PlantUML's `NTetris` columns and drawn on its grid with the `nwdiag` styles.
+  - Deviations: an unnamed network (`network {`) with an address shows only the address (PlantUML prints `null`).
+
 ---
 
 ## 8. Known risks and mitigations
@@ -578,5 +585,5 @@ nwdiag, timing and gantt.
 ---
 
 ## 10. Immediate next steps
-1. Phase 11: nwdiag, then timing and gantt.
+1. Phase 12: timing, then gantt.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
