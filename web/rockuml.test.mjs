@@ -92,9 +92,18 @@ describe('reports what it cannot render', () => {
   });
 
   test('the standard library is left out like a library that does not exist', async () => {
-    const including = (library) => rockuml.render(`@startuml\n!include <${library}>\nA -> B\n@enduml`);
-    const missing = await including('nosuchlibrary/file').catch((error) => error);
-    await assert.rejects(including('C4/C4_Container'), { message: missing.message });
+    const including = async (library) => {
+      const { data, isError } = await rockuml.render(`@startuml\n!include <${library}>\nA -> B\n@enduml`, {
+        format: 'debug',
+      });
+      // The seed comes from the source, so only the texts are compared.
+      const texts = data.split('\n').filter((line) => line.includes('text:'));
+      return { isError, texts: texts.join('\n').replace(library, '<library>') };
+    };
+    const missing = await including('nosuchlibrary/file');
+    assert.equal(missing.isError, true);
+    assert.match(missing.texts, /Fatal parsing error/);
+    assert.deepEqual(await including('C4/C4_Container'), missing);
   });
 
   test('emoji are left out, so they show as unknown emoji do', async () => {
