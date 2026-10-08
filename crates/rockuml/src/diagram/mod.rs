@@ -43,6 +43,7 @@ use crate::preproc::PreprocessedBlock;
 use crate::text::StringLocated;
 use creole::CreoleDiagram;
 use diagram_type::DiagramType;
+use error::ErrorDiagram;
 use scale::Scale;
 pub use source::UmlSource;
 
@@ -138,6 +139,21 @@ pub fn create(
     host: &dyn Host,
 ) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let (diagram_type, mut source) = prepare(block);
+    if block.failed() {
+        // PlantUML's PSystemErrorPreprocessor: its source is what was read up to the error.
+        let lines = block.located_lines();
+        let read = lines.iter().map(|line| line.text().to_owned()).collect();
+        let message = lines
+            .last()
+            .and_then(StringLocated::preprocessor_error)
+            .unwrap_or_default();
+        return Ok(Box::new(ErrorDiagram::new(
+            uml_source(diagram_type, lines, read),
+            lines.to_vec(),
+            message,
+            None,
+        )));
+    }
     // Known first, so that diagrams rockuml cannot draw read no images.
     let create: Create = match diagram_type {
         Some(DiagramType::Creole) => |source, _| Ok(CreoleDiagram::create(source)),
@@ -164,13 +180,21 @@ fn prepare(block: &PreprocessedBlock) -> (Option<DiagramType>, UmlSource) {
     let lines = block.located_lines();
     let raw_lines = block.raw_lines().to_vec();
     let diagram_type = DiagramType::of_start_line(lines.first().map_or("", StringLocated::text));
+    (diagram_type, uml_source(diagram_type, lines, raw_lines))
+}
+
+fn uml_source(
+    diagram_type: Option<DiagramType>,
+    lines: &[StringLocated],
+    raw_lines: Vec<String>,
+) -> UmlSource {
     let mut source = if diagram_type == Some(DiagramType::Uml) {
         UmlSource::with_continuations_joined(lines, raw_lines)
     } else {
         UmlSource::new(lines.to_vec(), raw_lines)
     };
     source.patch_base64();
-    (diagram_type, source)
+    source
 }
 
 /// The image formats diagrams are exported to.

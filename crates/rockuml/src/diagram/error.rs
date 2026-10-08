@@ -277,4 +277,15 @@ mod tests {
         );
         assert_eq!(error_of("@startuml\nAlice -> Bob\n@enduml"), None);
     }
+
+    #[test]
+    fn preprocessor_errors_make_error_images() {
+        assert_eq!(
+            error_of("@startuml\n!assert 0 : \"boom\"\nA -> B\n@enduml"),
+            Some(DiagramError {
+                line: 1,
+                message: "Assertion error : boom".to_owned()
+            })
+        );
+    }
 }

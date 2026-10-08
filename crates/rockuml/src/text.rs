@@ -71,6 +71,11 @@ impl StringLocated {
         &self.location
     }
 
+    /// Why preprocessing stopped at this line.
+    pub fn preprocessor_error(&self) -> Option<&str> {
+        self.preprocessor_error.as_deref()
+    }
+
     #[must_use]
     pub fn with_preprocessor_error(&self, error: impl Into<String>) -> Self {
         Self {
