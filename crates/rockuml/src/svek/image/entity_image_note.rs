@@ -165,7 +165,7 @@ impl EntityImageNote {
             self.stroke,
             self.round_corner,
         );
-        opale.draw_u(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
+        opale.draw_opale(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
     }
 }
 

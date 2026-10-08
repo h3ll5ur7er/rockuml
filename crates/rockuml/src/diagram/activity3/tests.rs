@@ -28,6 +28,8 @@ use crate::klimt::url::Url;
 use crate::preproc::{PreprocessorEnvironment, Source, preprocess};
 use crate::stereo::{Stereogroup, Stereotype};
 
+mod notes_groups;
+
 const FIXTURE: &str = include_str!("../../../tests/data/activity-model.txt");
 
 const CORPUS: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/../../tests/corpus");

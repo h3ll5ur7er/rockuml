@@ -10,6 +10,11 @@ mod ftile_factory_delegator_if;
 mod ftile_factory_delegator_repeat;
 mod ftile_factory_delegator_switch;
 mod ftile_factory_delegator_while;
+mod ftile_group;
+mod ftile_note_alone;
+mod ftile_with_note_opale;
+mod ftile_with_notes;
+mod note_sheet;
 
 pub(crate) use ftile_factory_delegator_add_note::FtileFactoryDelegatorAddNote;
 pub(crate) use ftile_factory_delegator_add_url::FtileFactoryDelegatorAddUrl;
@@ -20,6 +25,10 @@ pub(crate) use ftile_factory_delegator_if::FtileFactoryDelegatorIf;
 pub(crate) use ftile_factory_delegator_repeat::FtileFactoryDelegatorRepeat;
 pub(crate) use ftile_factory_delegator_switch::FtileFactoryDelegatorSwitch;
 pub(crate) use ftile_factory_delegator_while::FtileFactoryDelegatorWhile;
+pub(crate) use ftile_group::FtileGroup;
+pub(crate) use ftile_note_alone::FtileNoteAlone;
+pub(crate) use ftile_with_note_opale::FtileWithNoteOpale;
+pub(crate) use ftile_with_notes::FtileWithNotes;
 
 use super::FtileFactory;
 

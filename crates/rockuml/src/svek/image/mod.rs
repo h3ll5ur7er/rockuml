@@ -57,7 +57,7 @@ pub(crate) use json::EntityImageJson;
 pub(crate) use lollipop::EntityImageLollipopInterface;
 pub(crate) use map::EntityImageMap;
 pub(crate) use object::EntityImageObject;
-pub(crate) use opale::{get_corner, get_polygon_normal};
+pub(crate) use opale::{MARGIN_X1, MARGIN_X2, Opale, get_corner, get_polygon_normal};
 
 use crate::abel::Entity;
 use crate::diagram::cuca::CucaDiagram;

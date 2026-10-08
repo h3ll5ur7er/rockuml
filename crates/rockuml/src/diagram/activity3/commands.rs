@@ -245,7 +245,7 @@ fn execute_partition3(
 }
 
 /// The style of a group drawn as `symbol` (`FtileGroup.getStyleSignature`).
-fn group_style_signature(symbol: USymbol) -> StyleSignature {
+pub(super) fn group_style_signature(symbol: USymbol) -> StyleSignature {
     let mut names = vec![SName::Root, SName::Element, SName::ActivityDiagram];
     names.extend(symbol.get_s_names());
     names.push(SName::Composite);

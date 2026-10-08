@@ -108,7 +108,7 @@ impl EntityImageTips {
             }
             let y = position_other.y - position_me.y - height + member_position.get_center_y();
             let pp2 = XPoint2D::new(x, y);
-            opale.draw_u(
+            opale.draw_opale(
                 &ug.with_stencil(Rc::new(RectangleStencil { width: dim.width })),
                 direction,
                 pp1,
