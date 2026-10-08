@@ -35,19 +35,17 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorCreateGroup {
         type_: USymbol,
         style: &Style,
     ) -> Rc<dyn Ftile> {
-        let skin_param = FtileFactoryDelegator::skin_param(self);
         let result: Rc<dyn Ftile> = Rc::new(FtileGroup::new(
             list,
             name,
             back_color,
-            skin_param.clone(),
+            FtileFactoryDelegator::skin_param(self),
             type_,
             style,
         ));
         match note {
             Some(note) => Rc::new(FtileWithNotes::new(
                 result,
-                skin_param.clone(),
                 std::slice::from_ref(note),
                 VerticalAlignment::Center,
             )),

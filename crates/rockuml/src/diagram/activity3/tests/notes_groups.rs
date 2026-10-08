@@ -272,14 +272,12 @@ fn build(case: &[&str]) -> Rc<dyn Ftile> {
             }
             "opale" => FtileWithNoteOpale::create(
                 inner(),
-                skin_param.clone(),
                 &std::mem::take(&mut notes),
                 true,
                 vertical_alignment(words[1]),
             ),
             "notes" => Rc::new(FtileWithNotes::new(
                 inner(),
-                skin_param.clone(),
                 &std::mem::take(&mut notes),
                 vertical_alignment(words[1]),
             )),
@@ -301,7 +299,7 @@ fn build(case: &[&str]) -> Rc<dyn Ftile> {
                     inner(),
                     &Display::with_newlines(rest),
                     colors(words[2]).get(ColorType::Back).cloned(),
-                    skin_param.clone(),
+                    &skin_param,
                     symbol,
                     &style,
                 ))

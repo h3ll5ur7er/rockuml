@@ -8,7 +8,7 @@ use crate::color::HColor;
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::symbol::USymbol;
 use crate::diagram::activity3::{LinkRendering, SwimlaneId, SwimlaneSet};
-use crate::ftile::{AbstractFtile, Ftile, FtileGeometry, FtileMarged, Swimable};
+use crate::ftile::{Ftile, FtileGeometry, FtileMarged, Swimable};
 use crate::klimt::fashion::Fashion;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{MinMax, UTranslate};
@@ -27,7 +27,6 @@ const DIFF_YY2: f64 = 20.0;
 const MARGIN: f64 = 10.0;
 
 pub(crate) struct FtileGroup {
-    base: AbstractFtile,
     inner: Rc<dyn Ftile>,
     name: Rc<dyn TextBlock>,
     border_color: HColor,
@@ -36,16 +35,17 @@ pub(crate) struct FtileGroup {
     type_: USymbol,
     round_corner: f64,
     cached_inner_dimension: OnceCell<FtileGeometry>,
+    cached_geometry: OnceCell<FtileGeometry>,
 }
 
 impl FtileGroup {
-    /// `inner` framed as `type_` says, which must have a big form; `skin_param` is the one `inner` is
-    /// drawn with.
+    /// `inner` framed as `type_` says, which must have a big form; its title draws the sprites of
+    /// `skin_param`.
     pub(crate) fn new(
         inner: Rc<dyn Ftile>,
         title: &Display,
         back_color: Option<HColor>,
-        skin_param: Rc<SkinParam>,
+        skin_param: &SkinParam,
         type_: USymbol,
         style: &Style,
     ) -> Self {
@@ -53,13 +53,12 @@ impl FtileGroup {
         let name = title.create0(
             &font_configuration,
             HorizontalAlignment::Left,
-            skin_param.as_ref(),
+            skin_param,
             0.0,
             CreoleMode::Full,
         );
         Self {
-            inner: Rc::new(FtileMarged::new(inner, skin_param.clone(), MARGIN, MARGIN)),
-            base: AbstractFtile::new(skin_param),
+            inner: Rc::new(FtileMarged::new(inner, MARGIN, MARGIN)),
             name: Rc::new(name),
             border_color: style.value(PName::LineColor).as_color(),
             back_color: back_color
@@ -68,6 +67,7 @@ impl FtileGroup {
             type_,
             round_corner: style.value(PName::RoundCorner).as_double(),
             cached_inner_dimension: OnceCell::new(),
+            cached_geometry: OnceCell::new(),
         }
     }
 
@@ -135,7 +135,7 @@ impl Swimable for FtileGroup {
 
 impl Ftile for FtileGroup {
     fn skin_param(&self) -> &SkinParam {
-        self.base.skin_param()
+        self.inner.skin_param()
     }
 
     fn get_in_link_rendering(&self) -> LinkRendering {
@@ -143,7 +143,7 @@ impl Ftile for FtileGroup {
     }
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
-        self.base.calculate_dimension(|| {
+        *self.cached_geometry.get_or_init(|| {
             let orig = self.get_inner_dimension(string_bounder);
             let supp_width = self.supp_width(string_bounder);
             let width = orig.get_width() + supp_width;

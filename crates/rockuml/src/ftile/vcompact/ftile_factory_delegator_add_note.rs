@@ -30,19 +30,18 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorAddNote {
         notes: &[PositionedNote],
         vertical_alignment: VerticalAlignment,
     ) -> Rc<dyn Ftile> {
-        let skin_param = FtileFactoryDelegator::skin_param(self).clone();
         let Some(ftile) = ftile else {
             let note = notes
                 .first()
                 .expect("a tile gets notes only when it has some");
             return Rc::new(FtileNoteAlone::new(
                 &note.display,
-                skin_param,
+                FtileFactoryDelegator::skin_param(self).clone(),
                 &note.colors,
                 note.type_ == NoteType::Note,
                 swimlane,
             ));
         };
-        FtileWithNoteOpale::create(ftile, skin_param, notes, true, vertical_alignment)
+        FtileWithNoteOpale::create(ftile, notes, true, vertical_alignment)
     }
 }

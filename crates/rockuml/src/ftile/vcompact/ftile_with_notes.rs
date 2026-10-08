@@ -1,12 +1,13 @@
 //! A tile with notes left and right of it, pointing at nothing (PlantUML's `FtileWithNotes`).
 
+use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::note_sheet::NoteSheet;
 use crate::diagram::activity3::{
     LinkRendering, NotePosition, PositionedNote, SwimlaneId, SwimlaneSet,
 };
-use crate::ftile::{AbstractFtile, Ftile, FtileGeometry, Swimable};
+use crate::ftile::{Ftile, FtileGeometry, Swimable};
 use crate::klimt::blocks::{TextBlockMarged, TextBlockVertical};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, UTranslate, XDimension2D};
@@ -21,21 +22,21 @@ use crate::svek::image::Opale;
 const NOTE_MARGIN: f64 = 10.0;
 
 pub(crate) struct FtileWithNotes {
-    base: AbstractFtile,
     tile: Rc<dyn Ftile>,
     left: Box<dyn TextBlock>,
     right: Box<dyn TextBlock>,
     vertical_alignment: VerticalAlignment,
+    cached_geometry: OnceCell<FtileGeometry>,
 }
 
 impl FtileWithNotes {
-    /// `tile` with `notes` stacked on their side; `skin_param` is the one `tile` is drawn with.
+    /// `tile` with `notes` stacked on their side.
     pub(crate) fn new(
         tile: Rc<dyn Ftile>,
-        skin_param: Rc<SkinParam>,
         notes: &[PositionedNote],
         vertical_alignment: VerticalAlignment,
     ) -> Self {
+        let skin_param = tile.skin_param();
         let mut left: Option<Box<dyn TextBlock>> = None;
         let mut right: Option<Box<dyn TextBlock>> = None;
         for note in notes {
@@ -52,7 +53,7 @@ impl FtileWithNotes {
                 &style.font_configuration(),
                 skin_param.get_default_text_alignment(HorizontalAlignment::Left),
                 style.wrap_width(),
-                &skin_param,
+                skin_param,
             );
             let opale = Opale::new(
                 style.value(PName::LineColor).as_color(),
@@ -82,11 +83,11 @@ impl FtileWithNotes {
             side.unwrap_or_else(|| Box::new(TextBlockEmpty::default()))
         };
         Self {
-            base: AbstractFtile::new(skin_param),
-            tile,
             left: or_empty(left),
             right: or_empty(right),
+            tile,
             vertical_alignment,
+            cached_geometry: OnceCell::new(),
         }
     }
 
@@ -149,7 +150,7 @@ impl Swimable for FtileWithNotes {
 
 impl Ftile for FtileWithNotes {
     fn skin_param(&self) -> &SkinParam {
-        self.base.skin_param()
+        self.tile.skin_param()
     }
 
     fn get_in_link_rendering(&self) -> LinkRendering {
@@ -157,7 +158,7 @@ impl Ftile for FtileWithNotes {
     }
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
-        self.base.calculate_dimension(|| {
+        *self.cached_geometry.get_or_init(|| {
             let dim_total = self.calculate_dimension_internal(string_bounder);
             let orig = self.tile.calculate_dimension(string_bounder);
             let translate = self.get_translate(string_bounder);

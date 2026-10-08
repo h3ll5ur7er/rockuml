@@ -1,34 +1,30 @@
 //! A tile with room left and right of it (PlantUML's `FtileMarged`).
 
+use std::cell::OnceCell;
 use std::rc::Rc;
 
-use super::{AbstractFtile, Ftile, FtileGeometry, Swimable, same};
+use super::{Ftile, FtileGeometry, Swimable, same};
 use crate::diagram::activity3::{LinkRendering, SwimlaneId, SwimlaneSet};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::UTranslate;
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::SkinParam;
 
+/// `margin1` left of the tile and `margin2` right of it.
 pub(crate) struct FtileMarged {
-    base: AbstractFtile,
     tile: Rc<dyn Ftile>,
     margin1: f64,
     margin2: f64,
+    cached_geometry: OnceCell<FtileGeometry>,
 }
 
 impl FtileMarged {
-    /// `margin1` left of `tile` and `margin2` right of it; `skin_param` is the one `tile` is drawn with.
-    pub(crate) fn new(
-        tile: Rc<dyn Ftile>,
-        skin_param: Rc<SkinParam>,
-        margin1: f64,
-        margin2: f64,
-    ) -> Self {
+    pub(crate) fn new(tile: Rc<dyn Ftile>, margin1: f64, margin2: f64) -> Self {
         Self {
-            base: AbstractFtile::new(skin_param),
             tile,
             margin1,
             margin2,
+            cached_geometry: OnceCell::new(),
         }
     }
 
@@ -53,7 +49,7 @@ impl Swimable for FtileMarged {
 
 impl Ftile for FtileMarged {
     fn skin_param(&self) -> &SkinParam {
-        self.base.skin_param()
+        self.tile.skin_param()
     }
 
     fn get_in_link_rendering(&self) -> LinkRendering {
@@ -65,7 +61,7 @@ impl Ftile for FtileMarged {
     }
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
-        self.base.calculate_dimension(|| {
+        *self.cached_geometry.get_or_init(|| {
             let orig = self.tile.calculate_dimension(string_bounder);
             FtileGeometry::with_out(
                 orig.get_width() + self.margin1 + self.margin2,

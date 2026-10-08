@@ -1,5 +1,6 @@
 //! A tile with one note beside it, pointing at it (PlantUML's `FtileWithNoteOpale`).
 
+use std::cell::OnceCell;
 use std::rc::Rc;
 
 use super::FtileWithNotes;
@@ -8,7 +9,7 @@ use crate::diagram::activity3::{
     LinkRendering, NotePosition, NoteType, PositionedNote, SwimlaneId, SwimlaneSet,
 };
 use crate::direction::Direction;
-use crate::ftile::{AbstractFtile, Ftile, FtileGeometry, Swimable};
+use crate::ftile::{Ftile, FtileGeometry, Swimable};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
@@ -21,7 +22,6 @@ use crate::svek::image::Opale;
 const SUPP_SPACE: f64 = 20.0;
 
 pub(crate) struct FtileWithNoteOpale {
-    base: AbstractFtile,
     tile: Rc<dyn Ftile>,
     opale: Opale<'static>,
     /// Floating notes point at nothing.
@@ -29,47 +29,36 @@ pub(crate) struct FtileWithNoteOpale {
     vertical_alignment: VerticalAlignment,
     note_position: NotePosition,
     swimlane_note: Option<SwimlaneId>,
+    cached_geometry: OnceCell<FtileGeometry>,
 }
 
 impl FtileWithNoteOpale {
     /// `tile` with `notes` beside it: one note pointing at it, more notes as [`FtileWithNotes`].
-    /// `skin_param` is the one `tile` is drawn with.
     ///
     /// # Panics
     ///
     /// Without notes, as PlantUML fails.
     pub(crate) fn create(
         tile: Rc<dyn Ftile>,
-        skin_param: Rc<SkinParam>,
         notes: &[PositionedNote],
         with_link: bool,
         vertical_alignment: VerticalAlignment,
     ) -> Rc<dyn Ftile> {
         match notes {
             [] => panic!("a tile gets notes only when it has some"),
-            [note] => Rc::new(Self::new(
-                tile,
-                skin_param,
-                note,
-                with_link,
-                vertical_alignment,
-            )),
-            _ => Rc::new(FtileWithNotes::new(
-                tile,
-                skin_param,
-                notes,
-                vertical_alignment,
-            )),
+            [note] => Rc::new(Self::new(tile, note, with_link, vertical_alignment)),
+            _ => Rc::new(FtileWithNotes::new(tile, notes, vertical_alignment)),
         }
     }
 
+    /// The note's own colours colour only the note: the tile keeps its skin.
     fn new(
         tile: Rc<dyn Ftile>,
-        skin_param: Rc<SkinParam>,
         note: &PositionedNote,
         with_link: bool,
         vertical_alignment: VerticalAlignment,
     ) -> Self {
+        let skin_param = tile.skin_param();
         let style = StyleSignature::of(&[
             SName::Root,
             SName::Element,
@@ -88,7 +77,7 @@ impl FtileWithNoteOpale {
             &font_configuration,
             alignment,
             style.wrap_width(),
-            &skin_param,
+            skin_param,
         );
         let opale = Opale::new(
             style.value(PName::LineColor).as_color(),
@@ -98,13 +87,13 @@ impl FtileWithNoteOpale {
             0.0,
         );
         Self {
-            base: AbstractFtile::new(skin_param),
             tile,
             opale,
             with_link: with_link && note.type_ != NoteType::FloatingNote,
             vertical_alignment,
             note_position: note.note_position,
             swimlane_note: note.swimlane_note,
+            cached_geometry: OnceCell::new(),
         }
     }
 
@@ -199,7 +188,7 @@ impl Swimable for FtileWithNoteOpale {
 
 impl Ftile for FtileWithNoteOpale {
     fn skin_param(&self) -> &SkinParam {
-        self.base.skin_param()
+        self.tile.skin_param()
     }
 
     fn get_in_link_rendering(&self) -> LinkRendering {
@@ -207,7 +196,7 @@ impl Ftile for FtileWithNoteOpale {
     }
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
-        self.base.calculate_dimension(|| {
+        *self.cached_geometry.get_or_init(|| {
             let dim_total = self.calculate_dimension_internal(string_bounder);
             let orig = self.tile.calculate_dimension(string_bounder);
             let translate = self.get_translate(string_bounder);
