@@ -952,6 +952,32 @@ root lane=null out=null
       list lane=null out=null
         simple "Discard" lane=null box=null in=(null [])
   stop lane=null in=(null [])
+=== activity/skinparam-reversecolor-dark.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "Read" lane=null box=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    note RIGHT NOTE "Reversed note" lane=null
+    then test="Valid?" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "Write;\nelse (no)\n  #lightblue:Discard" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+  stop lane=null in=(null [])
+=== activity/skinparam-reversecolor-order.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "Read" lane=null box=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    note RIGHT NOTE "Reversed note" lane=null
+    then test="Valid?" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "Write;\nelse (no)\n  #lightblue:Discard" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+  stop lane=null in=(null [])
 === activity/split-basic.puml
 next=(null []) current=InstructionList
 root lane=null out=null
