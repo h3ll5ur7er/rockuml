@@ -37,9 +37,12 @@
 //!
 //! # Still to come
 //!
-//! - `VCompactFactory` and the tiles it builds; `Swimlanes` with its `Cross` layer.
+//! - `VCompactFactory` and the tiles it builds; building tiles from instructions (`createFtile`);
+//!   `Swimlanes`' drawing with its `Cross` layer.
 //! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
-//!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer).
+//!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
+//!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
+//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does.
 //! - The compression layer and its slot finder, in `klimt::compress`.
 //! - The delegators' own methods, each in its file under `vcompact/`.
 
