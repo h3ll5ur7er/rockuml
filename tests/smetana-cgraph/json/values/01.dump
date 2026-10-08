@@ -1,0 +1,49 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 4
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4"
+in "g" node "N0" out e1> e4> in edges e1> e4> degree 0 2
+in "g" node "N1" out in e1< edges e1< degree 1 0
+in "g" node "N2" out e3> in e4< edges e3> e4< degree 1 1
+in "g" node "N3" out e2> in e3< edges e2> e3< degree 1 1
+in "g" node "N4" out in e2< edges e2< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "5.339998689920318"
+attr "N0" "width" "1.0"
+attr "N0" "label" "{_dim_72.0_111.16035094519836_|{<P0>_dim_18.0_257.3195547290646_|<P1>_dim_18.0_257.3195547290646_|<P2>_dim_18.0_257.3195547290646_|<P3>_dim_18.0_257.3195547290646_}}"
+attr "N1" "shape" "record"
+attr "N1" "height" "0.9956411177367281"
+attr "N1" "width" "1.0"
+attr "N1" "label" "<P0>_dim_18.0_63.686160477044425_|<P1>_dim_18.0_63.686160477044425_|<P2>_dim_18.0_63.686160477044425_|<P3>_dim_18.0_63.686160477044425_"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P2"
+attr "N2" "shape" "record"
+attr "N2" "height" "2.3747407266668525"
+attr "N2" "width" "0.25"
+attr "N2" "label" "{_dim_18.0_102.22113517592436_|{<P0>_dim_18.0_52.76019714408902_}}"
+attr "N3" "shape" "record"
+attr "N3" "height" "2.1707502727756443"
+attr "N3" "width" "0.25"
+attr "N3" "label" "{_dim_18.0_87.53382249575739_|{<P0>_dim_18.0_52.76019714408902_}}"
+attr "N4" "shape" "record"
+attr "N4" "height" "1.9767972591930283"
+attr "N4" "width" "0.25"
+attr "N4" "label" "{_dim_18.0_49.98692184211976_|{<P0>_dim_18.0_76.34248081977826_}}"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P0"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P0"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P3"

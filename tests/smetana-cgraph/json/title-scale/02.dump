@@ -1,0 +1,19 @@
+cgraph-dump 1
+graph "g" nodes 2 edges 1
+graph ids "g"
+node ids "N0" "N1"
+in "g" node "N0" out e1> in edges e1> degree 0 1
+in "g" node "N1" out in e1< edges e1< degree 1 0
+find e1> forward e1< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "1.9207283113741838"
+attr "N0" "width" "0.5"
+attr "N0" "label" "{_dim_36.0_56.99191432470717_|{<P0>_dim_18.0_65.30052409423405_|<P1>_dim_18.0_65.30052409423405_}}"
+attr "N1" "shape" "record"
+attr "N1" "height" "0.32476339775073626"
+attr "N1" "width" "0.5"
+attr "N1" "label" "<P0>_dim_18.0_15.38296463805301_|<P1>_dim_18.0_15.38296463805301_"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P1"

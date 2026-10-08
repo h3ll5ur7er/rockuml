@@ -4,7 +4,6 @@
 mod activity;
 mod help;
 mod list_sprite;
-mod timing;
 
 use std::rc::Rc;
 
@@ -12,7 +11,6 @@ use super::builder::CommandFactory;
 use super::common_commands::{
     add_common_commands1, add_common_commands2, add_common_scale_commands,
 };
-use super::cuca_commands;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
@@ -103,48 +101,6 @@ impl CommandFactory for ListSpriteDiagramFactory {
         commands.extend(add_common_commands2());
         commands.extend(add_common_scale_commands());
         commands.push(list_sprite::list_sprite());
-        commands
-    }
-}
-
-/// Reads timing diagrams (PlantUML's `TimingDiagramFactory`).
-pub(super) struct TimingDiagramFactory;
-
-impl CommandFactory for TimingDiagramFactory {
-    type Diagram = UnportedDiagram;
-
-    const DIAGRAM_TYPE: DiagramType = DiagramType::Timing;
-
-    fn create_empty_diagram(source: &Rc<UmlSource>) -> UnportedDiagram {
-        UnportedDiagram::new(source, SName::TimingDiagram, "timing diagrams")
-    }
-
-    fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
-        let mut commands = add_common_commands1();
-        commands.extend([
-            cuca_commands::footbox_ignored(),
-            timing::robust_concise(),
-            timing::clock(),
-            timing::analog(),
-            timing::binary(),
-            timing::define_state_short(),
-            timing::define_state_long(),
-            timing::change_state_by_player_code(),
-            timing::change_state_by_time(),
-            timing::at_time(),
-            timing::at_player(),
-            timing::time_message(),
-            timing::note(),
-            timing::note_long(),
-            timing::constraint(),
-            timing::scale_pixel(),
-            timing::hide_time_axis(),
-            timing::highlight(),
-            timing::mode_compact(),
-            timing::ticks(),
-            timing::pixel_height(),
-            timing::use_date_format(),
-        ]);
         commands
     }
 }

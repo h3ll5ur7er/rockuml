@@ -14,6 +14,7 @@ pub(crate) enum FontParam {
     Note,
     ObjectStereotype,
     PackageStereotype,
+    Timing,
 }
 
 impl FontParam {
@@ -25,13 +26,14 @@ impl FontParam {
             Self::Note => "NOTE",
             Self::ObjectStereotype => "OBJECT_STEREOTYPE",
             Self::PackageStereotype => "PACKAGE_STEREOTYPE",
+            Self::Timing => "TIMING",
         }
     }
 
     fn default_size(self) -> i32 {
         match self {
             Self::CircledCharacter => 17,
-            Self::ClassStereotype | Self::ObjectStereotype => 12,
+            Self::ClassStereotype | Self::ObjectStereotype | Self::Timing => 12,
             Self::Note => 13,
             Self::PackageStereotype => 14,
         }
@@ -40,7 +42,7 @@ impl FontParam {
     fn default_face(self) -> UFontFace {
         match self {
             Self::CircledCharacter => UFontFace::BOLD,
-            Self::Note => UFontFace::NORMAL,
+            Self::Note | Self::Timing => UFontFace::NORMAL,
             Self::ClassStereotype | Self::ObjectStereotype | Self::PackageStereotype => {
                 UFontFace::ITALIC
             }
@@ -53,7 +55,8 @@ impl FontParam {
             Self::ClassStereotype
             | Self::Note
             | Self::ObjectStereotype
-            | Self::PackageStereotype => "SansSerif",
+            | Self::PackageStereotype
+            | Self::Timing => "SansSerif",
         }
     }
 }

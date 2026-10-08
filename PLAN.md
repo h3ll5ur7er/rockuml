@@ -557,6 +557,18 @@ nwdiag, timing and gantt.
     and outside networks, laid out in PlantUML's `NTetris` columns and drawn on its grid with the `nwdiag` styles.
   - Deviations: an unnamed network (`network {`) with an address shows only the address (PlantUML prints `null`).
 
+### Phase 12 — Timing diagrams
+- **Status: done.** Every corpus case (20 timing) passes L1, L2, L3, PNG size, URL and preprocessor outputs.
+  - Ported: robust, concise, rectangle, clock (period, pulse, offset), binary and analog players (bounds, ticks,
+    height); states by time or by player, defined and long state labels, `{-}`, `{hidden}`, `{...}` and two states at
+    once, colours and comments; messages, constraints, notes, highlights; `@` times, relative times, anchors
+    (`as :name`), hours, dates, clock ticks; `scale … as … pixels`, `mode compact`, `hide`/`manual time-axis`,
+    `use date format`.
+  - Deviations: dates print in UTC (PlantUML uses the JVM's time zone); `use date format` knows the
+    `SimpleDateFormat` letters `G y Y M L d D E u H k K h m s S a` and refuses others; a manual time axis labels a
+    time with the name of any anchor at that time (PlantUML only the anchor's own); states given to a clock, or
+    defined for a binary or analog player, are ignored (PlantUML fails).
+
 ---
 
 ## 8. Known risks and mitigations
@@ -585,5 +597,5 @@ nwdiag, timing and gantt.
 ---
 
 ## 10. Immediate next steps
-1. Phase 12: timing, then gantt.
+1. Phase 13: gantt.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

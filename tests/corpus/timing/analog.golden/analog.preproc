@@ -1,0 +1,17 @@
+@startuml
+analog "Analog" between -4.5 and 6.5 as A
+A ticks num on multiple 3
+A is 200 pixels height
+
+@0
+A is 1.5
+
+@100
+A is -3
+
+@200
+A is 4
+
+@300
+A is 0
+@enduml

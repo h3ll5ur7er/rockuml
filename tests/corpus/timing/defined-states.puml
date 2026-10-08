@@ -1,0 +1,17 @@
+@startuml
+robust "Web Browser" as WB
+concise "Web User" as WU
+WB has Idle,Running,Waiting,Processing
+WU has "Long label" as LL
+
+@0
+WU is LL
+WB is Idle
+
+@100
+WU is Waiting
+WB is Running
+
+@300
+WB is Waiting
+@enduml

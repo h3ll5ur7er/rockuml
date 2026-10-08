@@ -1,0 +1,430 @@
+DPI: 96
+dimension: [ 480.1399 ; 188.0000 ]
+scaleFactor: 1.0000
+seed: 2299772165641432232
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 470.1399 ; 178.0000 ]
+
+LINE:
+  pt1: [ 20.0000 ; 20.0000 ]
+  pt2: [ 20.0000 ; 157.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 460.1399 ; 20.0000 ]
+  pt2: [ 460.1399 ; 157.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+RECTANGLE:
+  pt1: [ 255.1399 ; 20.0000 ]
+  pt2: [ 380.1399 ; 157.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffd700
+
+RECTANGLE:
+  pt1: [ 455.1399 ; 20.0000 ]
+  pt2: [ 505.1399 ; 157.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffeeeeee
+
+LINE:
+  pt1: [ 155.1399 ; 20.0000 ]
+  pt2: [ 155.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 205.1399 ; 20.0000 ]
+  pt2: [ 205.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 255.1399 ; 20.0000 ]
+  pt2: [ 255.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 305.1399 ; 20.0000 ]
+  pt2: [ 305.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 355.1399 ; 20.0000 ]
+  pt2: [ 355.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 405.1399 ; 20.0000 ]
+  pt2: [ 405.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 455.1399 ; 20.0000 ]
+  pt2: [ 455.1399 ; 157.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 20.0000 ; 20.0000 ]
+  pt2: [ 460.1399 ; 20.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: Web Browser
+  position: [ 25.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 20.0000 ; 35.0000 ]
+  pt2: [ 205.3706 ; 35.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 205.3706 ; 35.0000 ]
+  pt2: [ 215.3706 ; 20.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: Idle
+  position: [ 25.0000 ; 89.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Processing
+  position: [ 25.0000 ; 69.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Waiting
+  position: [ 25.0000 ; 49.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 155.1399 ; 85.0000 ]
+  pt2: [ 205.1399 ; 85.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 205.1399 ; 65.0000 ]
+  pt2: [ 305.1399 ; 65.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 305.1399 ; 45.0000 ]
+  pt2: [ 455.1399 ; 45.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 205.1399 ; 65.0000 ]
+  pt2: [ 205.1399 ; 85.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 305.1399 ; 45.0000 ]
+  pt2: [ 305.1399 ; 65.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 20.0000 ; 103.0000 ]
+  pt2: [ 460.1399 ; 103.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: Web User
+  position: [ 25.0000 ; 113.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 20.0000 ; 118.0000 ]
+  pt2: [ 126.5478 ; 118.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 126.5478 ; 118.0000 ]
+  pt2: [ 136.5478 ; 103.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff333333
+
+POLYGON:
+  points:
+   - [ 167.1399 ; 123.0000 ]
+   - [ 193.1399 ; 123.0000 ]
+   - [ 205.1399 ; 135.0000 ]
+   - [ 193.1399 ; 147.0000 ]
+   - [ 167.1399 ; 147.0000 ]
+   - [ 155.1399 ; 135.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+POLYGON:
+  points:
+   - [ 217.1399 ; 123.0000 ]
+   - [ 393.1399 ; 123.0000 ]
+   - [ 405.1399 ; 135.0000 ]
+   - [ 393.1399 ; 147.0000 ]
+   - [ 217.1399 ; 147.0000 ]
+   - [ 205.1399 ; 135.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+POLYGON:
+  points:
+   - [ 417.1399 ; 123.0000 ]
+   - [ 455.1399 ; 123.0000 ]
+   - [ 455.1399 ; 147.0000 ]
+   - [ 417.1399 ; 147.0000 ]
+   - [ 405.1399 ; 135.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffe2e2f0
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 50.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 24.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 50.0000 ; 24.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Idle
+  position: [ 151.7004 ; 138.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Waiting
+  position: [ 263.8761 ; 138.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ok
+  position: [ 417.1399 ; 138.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 155.1399 ; 157.0000 ]
+  pt2: [ 155.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 205.1399 ; 157.0000 ]
+  pt2: [ 205.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 255.1399 ; 157.0000 ]
+  pt2: [ 255.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 305.1399 ; 157.0000 ]
+  pt2: [ 305.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 355.1399 ; 157.0000 ]
+  pt2: [ 355.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 405.1399 ; 157.0000 ]
+  pt2: [ 405.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 455.1399 ; 157.0000 ]
+  pt2: [ 455.1399 ; 162.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 155.1399 ; 157.0000 ]
+  pt2: [ 455.1399 ; 157.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: 0
+  position: [ 149.9402 ; 171.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 100
+  position: [ 188.8596 ; 171.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 300
+  position: [ 287.4392 ; 171.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 500
+  position: [ 389.8595 ; 171.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 255.1399 ; 20.0000 ]
+  pt2: [ 255.1399 ; 157.0000 ]
+  stroke: 4.0-4.0-2.0
+  shadow: 0
+  color: ff696969
+
+LINE:
+  pt1: [ 380.1399 ; 20.0000 ]
+  pt2: [ 380.1399 ; 157.0000 ]
+  stroke: 4.0-4.0-2.0
+  shadow: 0
+  color: ff696969
+
+TEXT:
+  text: This is my caption
+  position: [ 258.1399 ; 31.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 455.1399 ; 20.0000 ]
+  pt2: [ 455.1399 ; 157.0000 ]
+  stroke: 4.0-4.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 505.1399 ; 20.0000 ]
+  pt2: [ 505.1399 ; 157.0000 ]
+  stroke: 4.0-4.0-2.0
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: This is another
+  position: [ 458.1399 ; 31.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: highlight
+  position: [ 458.1399 ; 43.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

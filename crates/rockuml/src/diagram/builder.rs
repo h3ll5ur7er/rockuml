@@ -20,10 +20,9 @@ use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
+use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
-use super::unported::{
-    ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory, TimingDiagramFactory,
-};
+use super::unported::{ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory};
 use super::wbs::WbsDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
@@ -427,7 +426,7 @@ mod tests {
                 "W is Idle",
                 "@enduml"
             ]),
-            "timing diagrams"
+            "TIMING"
         );
         assert_eq!(
             read_as(&["@startuml", "license", "@enduml"]),

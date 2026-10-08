@@ -1,0 +1,16 @@
+@startuml
+robust "Signal" as S
+S has Low,Mid,High
+
+@0
+S is Low
+
+@100
+S is {Low,High}
+
+@200
+S is High
+
+@300
+S is Mid
+@enduml
