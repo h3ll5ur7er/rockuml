@@ -312,9 +312,12 @@ impl UGraphicBackend for UGraphicSvg {
                 apply_stroke(svg, param.stroke);
                 svg.line(x1, y1, x2, y2);
             }
-            UShape::Polygon(points) => {
-                let points: Vec<(f64, f64)> =
-                    points.iter().map(|(x, y)| (at.dx + x, at.dy + y)).collect();
+            UShape::Polygon(polygon) => {
+                let points: Vec<(f64, f64)> = polygon
+                    .points()
+                    .iter()
+                    .map(|(x, y)| (at.dx + x, at.dy + y))
+                    .collect();
                 if !points.iter().all(|&(x, y)| inside(x, y)) {
                     return;
                 }
@@ -350,7 +353,10 @@ impl UGraphicBackend for UGraphicSvg {
                 self.draw_centered_character(centered, at, param);
             }
             UShape::Comment(comment) => self.svg().add_comment(comment),
-            UShape::Empty(_) | UShape::HorizontalLine | UShape::SpecialText => {}
+            UShape::Empty(_)
+            | UShape::HorizontalLine
+            | UShape::SpecialText
+            | UShape::CenteredText(_) => {}
         }
     }
 

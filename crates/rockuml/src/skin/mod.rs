@@ -264,6 +264,14 @@ impl SkinParam {
             .unwrap_or(default)
     }
 
+    /// Where activity diagrams put arrow labels: `skinparam arrowMessageAlignment`, left when it names no
+    /// alignment (`getHorizontalAlignment(arrowMessageAlignment, null, false, null)`).
+    pub(crate) fn arrow_message_alignment(&self) -> HorizontalAlignment {
+        self.value("arrowMessageAlignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Left)
+    }
+
     /// The direction `left to right direction` and `top to bottom direction` set.
     pub(crate) fn get_rankdir(&self) -> Rankdir {
         self.rankdir

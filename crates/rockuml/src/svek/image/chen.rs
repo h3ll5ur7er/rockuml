@@ -172,7 +172,7 @@ impl EntityImageChenRelationship {
 /// A diamond touching the middle of each side of the box.
 fn diamond(dim: XDimension2D) -> UShape {
     let (width, height) = (dim.width, dim.height);
-    UShape::Polygon(vec![
+    UShape::polygon(vec![
         (0.0, height / 2.0),
         (width / 2.0, 0.0),
         (width, height / 2.0),

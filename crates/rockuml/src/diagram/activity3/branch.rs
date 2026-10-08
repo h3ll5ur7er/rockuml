@@ -8,6 +8,7 @@ use super::link_rendering::LinkRendering;
 use super::swimlanes::SwimlaneId;
 use crate::color::{Colors, HColor};
 use crate::creole::Display;
+use crate::ftile::Ftile;
 use crate::klimt::url::Url;
 use crate::stereo::Stereotype;
 use crate::style::StyleBuilder;
@@ -65,6 +66,13 @@ impl Branch {
         self.special = Some(link);
         self.special_colors = colors;
     }
+}
+
+/// A branch with the tile built for it, as factories get it (PlantUML's `Branch` once `updateFtile` set its
+/// `ftile`). The tile is the branch's list, decorated with the branch's arrow out.
+pub(crate) struct BranchFtile<'a> {
+    pub(crate) branch: &'a Branch,
+    pub(crate) ftile: Rc<dyn Ftile>,
 }
 
 pub(crate) struct InstructionIf {

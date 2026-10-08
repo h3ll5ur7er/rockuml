@@ -46,7 +46,7 @@ impl TextBlock for EntityImageAssociation {
 
     fn draw_u(&self, ug: &UGraphic) {
         let size = Self::SIZE;
-        let diamond = UShape::Polygon(vec![
+        let diamond = UShape::polygon(vec![
             (size, 0.0),
             (size * 2.0, size),
             (size, size * 2.0),

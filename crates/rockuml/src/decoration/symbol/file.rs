@@ -12,7 +12,7 @@ const CORNERSIZE: f64 = 10.0;
 
 fn draw_file(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
     if round_corner == 0.0 {
-        ug.draw(&UShape::Polygon(vec![
+        ug.draw(&UShape::polygon(vec![
             (0.0, 0.0),
             (0.0, height),
             (width, height),

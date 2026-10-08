@@ -26,7 +26,7 @@ fn draw_artifact(ug: &UGraphic, width_total: f64, height_total: f64, round_corne
     let x_symbol = width_total - WIDTH_SYMBOL - 5.0;
     let y_symbol = 5.0;
     ug.translated(x_symbol, y_symbol)
-        .draw(&UShape::Polygon(sheet));
+        .draw(&UShape::polygon(sheet));
     ug.translated(x_symbol + WIDTH_SYMBOL - CORNERSIZE, y_symbol)
         .draw(&UShape::Line {
             dx: 0.0,

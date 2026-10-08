@@ -1,19 +1,21 @@
-//! The colours of an arrow, one line per colour, each with its own line style (PlantUML's `Rainbow` and
-//! `HtmlColorAndStyle`).
+//! The colours of an arrow (PlantUML's `Rainbow`): none, one, or several drawn side by side, each with its
+//! own line style and arrowhead colour.
 
-use super::LinkStyle;
+use super::HtmlColorAndStyle;
 use crate::color::{HColor, NoSuchColor};
 use crate::java;
 use crate::skin::SkinParam;
-use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
+use crate::style::{PName, Style, ValueReading};
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct Rainbow {
     colors: Vec<HtmlColorAndStyle>,
+    /// The gap between the lines of a multi-colour arrow; with none, they are drawn thicker instead.
     color_arrow_separation_space: i32,
 }
 
 impl Rainbow {
+    /// No colour: whoever draws the arrow picks its default.
     pub(crate) const fn none() -> Self {
         Self {
             colors: Vec::new(),
@@ -21,26 +23,32 @@ impl Rainbow {
         }
     }
 
-    /// No colour makes no rainbow.
+    /// One colour, its arrowhead in `arrow_head_color` or else the same; no colour without `arrow_color`
+    /// (`fromColor`).
     pub(crate) fn from_color(
         arrow_color: Option<HColor>,
         arrow_head_color: Option<HColor>,
     ) -> Self {
         match arrow_color {
-            Some(arrow_color) => Self::build(HtmlColorAndStyle::new(
-                arrow_color,
-                LinkStyle::NORMAL,
-                arrow_head_color,
-            )),
             None => Self::none(),
+            Some(arrow_color) => Self::build(HtmlColorAndStyle::new(arrow_color, arrow_head_color)),
         }
     }
 
-    /// The line colour a style gives arrows.
+    /// The line colour a style gives arrows, and its head colour, which defaults to the line colour
+    /// (`build(Style, HColorSet)`).
     pub(crate) fn build_from_style(style: &Style) -> Self {
-        Self::from_color(Some(style.value(PName::LineColor).as_color()), None)
+        let color = style.value(PName::LineColor).as_color();
+        let head = style.value(PName::HeadColor);
+        let color_head = if head.is_none() {
+            color.clone()
+        } else {
+            head.as_color()
+        };
+        Self::from_color(Some(color), Some(color_head))
     }
 
+    /// One colour (`build(HtmlColorAndStyle)`).
     pub(crate) fn build(color: HtmlColorAndStyle) -> Self {
         Self {
             colors: vec![color],
@@ -48,15 +56,16 @@ impl Rainbow {
         }
     }
 
-    /// The colours of an arrow written like `#red;#blue,dashed`: one per `;`, each painted over the style's.
+    /// The colours of an arrow's specification, such as `#red;#blue,dashed`: one per `;`, each read by
+    /// [`HtmlColorAndStyle::build`] (`build(ISkinParam, String, int)`).
     pub(crate) fn build_from_definition(
-        skin: &SkinParam,
+        skin_param: &SkinParam,
         color_string: &str,
         color_arrow_separation_space: i32,
     ) -> Result<Self, NoSuchColor> {
         let colors = java::split(color_string, ";")
             .iter()
-            .map(|definition| HtmlColorAndStyle::build(skin, definition))
+            .map(|definition| HtmlColorAndStyle::build(skin_param, definition))
             .collect::<Result<_, _>>()?;
         Ok(Self {
             colors,
@@ -64,13 +73,40 @@ impl Rainbow {
         })
     }
 
-    /// The first colour.
-    ///
-    /// # Panics
-    ///
-    /// On a rainbow without colours, as PlantUML fails.
+    /// These colours, or `default_color` when there are none (`withDefault`).
+    #[must_use]
+    pub(crate) fn with_default(&self, default_color: &Self) -> Self {
+        if self.size() == 0 {
+            default_color.clone()
+        } else {
+            self.clone()
+        }
+    }
+
+    #[allow(dead_code, reason = "used by activity tiles, Phase 6")]
+    pub(crate) fn is_invisible(&self) -> bool {
+        self.colors
+            .iter()
+            .any(|color| color.get_style().is_invisible())
+    }
+
+    pub(crate) fn get_colors(&self) -> &[HtmlColorAndStyle] {
+        &self.colors
+    }
+
+    /// The first colour; a rainbow without colours has none, and PlantUML fails on asking.
     pub(crate) fn get_color(&self) -> &HColor {
-        &self.colors[0].arrow_color
+        self.colors[0].get_arrow_color()
+    }
+
+    /// The first colour's arrowhead colour; see [`Self::get_color`].
+    #[allow(dead_code, reason = "used by activity tiles, Phase 6")]
+    pub(crate) fn get_arrow_head_color(&self) -> &HColor {
+        self.colors[0].get_arrow_head_color()
+    }
+
+    pub(crate) fn get_color_arrow_separation_space(&self) -> i32 {
+        self.color_arrow_separation_space
     }
 
     pub(crate) fn size(&self) -> usize {
@@ -78,83 +114,54 @@ impl Rainbow {
     }
 }
 
-#[cfg_attr(
-    not(test),
-    expect(dead_code, reason = "activity arrows are not drawn yet")
-)]
-impl Rainbow {
-    pub(crate) fn get_colors(&self) -> &[HtmlColorAndStyle] {
-        &self.colors
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::decoration::LinkStyle;
+
+    fn color(name: &str) -> HColor {
+        HColor::parse(name).unwrap().unwrap()
     }
 
-    pub(crate) fn get_color_arrow_separation_space(&self) -> i32 {
-        self.color_arrow_separation_space
-    }
-}
-
-/// One colour of an arrow, with the colour of its head and the style of its line.
-#[derive(Clone, Debug, PartialEq)]
-pub(crate) struct HtmlColorAndStyle {
-    arrow_head_color: HColor,
-    arrow_color: HColor,
-    style: LinkStyle,
-}
-
-impl HtmlColorAndStyle {
-    /// The head takes the arrow's colour unless it has its own.
-    pub(crate) fn new(
-        arrow_color: HColor,
-        style: LinkStyle,
-        arrow_head_color: Option<HColor>,
-    ) -> Self {
-        Self {
-            arrow_head_color: arrow_head_color.unwrap_or_else(|| arrow_color.clone()),
-            arrow_color,
-            style,
-        }
+    #[test]
+    fn a_specification_gives_one_colour_per_semicolon_with_its_line_style() {
+        let skin = SkinParam::default();
+        let rainbow = Rainbow::build_from_definition(&skin, "#red;#blue,dashed;bold", 2).unwrap();
+        assert_eq!(rainbow.size(), 3);
+        assert_eq!(rainbow.get_color_arrow_separation_space(), 2);
+        let colors = rainbow.get_colors();
+        assert_eq!(colors[0].get_arrow_color(), &color("red"));
+        assert_eq!(colors[0].get_arrow_head_color(), &color("red"));
+        assert!(colors[0].get_style().is_normal());
+        assert_eq!(colors[1].get_arrow_color(), &color("blue"));
+        assert_eq!(colors[1].get_style(), LinkStyle::DASHED);
+        // A style alone keeps the arrow colour of the activity diagram's style.
+        assert_eq!(colors[2].get_arrow_color(), &color("#181818"));
+        assert_eq!(colors[2].get_style(), LinkStyle::BOLD);
+        assert!(!rainbow.is_invisible());
     }
 
-    /// A definition like `#red,dashed`: a line style or a colour per `,`, over the activity arrows' style
-    /// read from `skin` now.
-    fn build(skin: &SkinParam, definition: &str) -> Result<Self, NoSuchColor> {
-        let style = StyleSignature::of(&[
-            SName::Root,
-            SName::Element,
-            SName::ActivityDiagram,
-            SName::Arrow,
-        ])
-        .get_merged_style(&skin.current_style_builder());
-        let mut arrow_color = style.value(PName::LineColor).as_color();
-        let mut link_style = LinkStyle::NORMAL;
-        for part in java::split(definition, ",") {
-            let part_style = LinkStyle::from_string1(&part);
-            if !part_style.is_normal() {
-                link_style = part_style;
-                continue;
-            }
-            arrow_color = HColor::parse(&part)
-                .ok()
-                .flatten()
-                .ok_or(NoSuchColor(part))?;
-        }
-        Ok(Self::new(arrow_color, link_style, None))
-    }
-}
-
-#[cfg_attr(
-    not(test),
-    expect(dead_code, reason = "activity arrows are not drawn yet")
-)]
-impl HtmlColorAndStyle {
-    pub(crate) fn get_arrow_color(&self) -> &HColor {
-        &self.arrow_color
+    #[test]
+    fn hidden_colours_make_the_arrow_invisible_and_unknown_ones_fail() {
+        let skin = SkinParam::default();
+        assert!(
+            Rainbow::build_from_definition(&skin, "#red;hidden", 0)
+                .unwrap()
+                .is_invisible()
+        );
+        assert!(Rainbow::build_from_definition(&skin, "#nosuchcolor", 0).is_err());
     }
 
-    pub(crate) fn get_arrow_head_color(&self) -> &HColor {
-        &self.arrow_head_color
-    }
-
-    pub(crate) fn get_style(&self) -> LinkStyle {
-        self.style
+    #[test]
+    fn missing_colours_fall_back_to_the_default() {
+        let red = Rainbow::from_color(Some(color("red")), None);
+        assert_eq!(
+            Rainbow::from_color(None, Some(color("blue"))),
+            Rainbow::none()
+        );
+        assert_eq!(Rainbow::none().with_default(&red), red);
+        let blue = Rainbow::from_color(Some(color("blue")), Some(color("green")));
+        assert_eq!(blue.with_default(&red), blue);
+        assert_eq!(blue.get_arrow_head_color(), &color("green"));
     }
 }

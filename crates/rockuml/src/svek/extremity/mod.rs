@@ -154,5 +154,5 @@ fn rotated_polygon(points: &[(f64, f64)], theta: f64, to: XPoint2D) -> UShape {
         .map(|&point| rotate.map_or(point, |rotate| rotate.transform(point)))
         .map(|(x, y)| (x + to.x, y + to.y))
         .collect();
-    UShape::Polygon(points)
+    UShape::polygon(points)
 }

@@ -18,19 +18,21 @@ mod tests;
 
 use std::rc::Rc;
 
+pub(crate) use self::branch::BranchFtile;
 use self::branch::{InstructionIf, InstructionSwitch};
 use self::group::InstructionGroup;
-use self::instruction::{
-    Instruction, InstructionId, Instructions, MonoSwimable, NoteType, PositionedNote,
-};
+use self::instruction::{Instruction, MonoSwimable, NoteType};
+pub(crate) use self::instruction::{InstructionId, Instructions, PositionedNote, SwimlaneSet};
 use self::leaves::{
     InstructionBreak, InstructionEnd, InstructionGoto, InstructionLabel, InstructionSimple,
     InstructionSpot, InstructionStart, InstructionStop,
 };
-use self::link_rendering::LinkRendering;
+pub(crate) use self::link_rendering::LinkRendering;
 use self::loops::{InstructionRepeat, InstructionWhile};
-use self::parallel::{ForkStyle, InstructionFork, InstructionSplit};
-use self::swimlanes::{SwimlaneId, Swimlanes};
+pub(crate) use self::parallel::ForkStyle;
+use self::parallel::{InstructionFork, InstructionSplit};
+pub(crate) use self::swimlanes::SwimlaneId;
+use self::swimlanes::Swimlanes;
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
 use super::cuca_commands;

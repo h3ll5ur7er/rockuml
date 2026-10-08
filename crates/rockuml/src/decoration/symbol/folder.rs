@@ -28,7 +28,7 @@ fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, 
     let wtitle = get_w_title(width, dim_title);
     let htitle = get_h_title(dim_title);
     if round_corner == 0.0 {
-        ug.draw(&UShape::Polygon(vec![
+        ug.draw(&UShape::polygon(vec![
             (0.0, 0.0),
             (wtitle, 0.0),
             (wtitle + MARGIN_TITLE_X3, htitle),

@@ -60,29 +60,6 @@ impl LimitFinder {
             self.min_max = self.min_max.add_point(x, y);
         }
     }
-
-    /// The bounding box of points, empty ones adding nothing.
-    fn add_bounds(
-        &mut self,
-        x: f64,
-        y: f64,
-        points: impl IntoIterator<Item = (f64, f64)>,
-        extra_x: f64,
-    ) {
-        let mut bounds: Option<(f64, f64, f64, f64)> = None;
-        for (px, py) in points {
-            bounds = Some(match bounds {
-                None => (px, py, px, py),
-                Some((min_x, min_y, max_x, max_y)) => {
-                    (min_x.min(px), min_y.min(py), max_x.max(px), max_y.max(py))
-                }
-            });
-        }
-        if let Some((min_x, min_y, max_x, max_y)) = bounds {
-            self.add_point(x + min_x - extra_x, y + min_y);
-            self.add_point(x + max_x + extra_x, y + max_y);
-        }
-    }
 }
 
 impl UGraphicBackend for LimitFinder {
@@ -112,8 +89,12 @@ impl UGraphicBackend for LimitFinder {
                 self.add_point(x - 1.0, y - 1.0);
                 self.add_point(x + rectangle.width - 1.0, y + rectangle.height - 1.0);
             }
-            UShape::Polygon(points) => {
-                self.add_bounds(x, y, points.iter().copied(), HACK_X_FOR_POLYGON);
+            UShape::Polygon(polygon) => {
+                if !polygon.points().is_empty() {
+                    let bounds = polygon.min_max();
+                    self.add_point(x + bounds.min_x() - HACK_X_FOR_POLYGON, y + bounds.min_y());
+                    self.add_point(x + bounds.max_x() + HACK_X_FOR_POLYGON, y + bounds.max_y());
+                }
             }
             UShape::Path(segments) => {
                 if let Some((min_x, min_y, max_x, max_y)) = path_bounds(segments) {
@@ -136,6 +117,7 @@ impl UGraphicBackend for LimitFinder {
             // The circle around a centred character already bounds it.
             UShape::HorizontalLine
             | UShape::SpecialText
+            | UShape::CenteredText(_)
             | UShape::CenteredCharacter(_)
             | UShape::Comment(_) => {}
         }

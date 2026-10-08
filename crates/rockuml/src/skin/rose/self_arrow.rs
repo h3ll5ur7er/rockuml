@@ -140,7 +140,7 @@ impl ComponentRoseSelfArrow {
             let polygon = translate(self.polygon(), 0.0, text_height);
             ug.with_backcolor(self.parts.foreground.clone())
                 .translated(x1, 0.0)
-                .draw(&UShape::Polygon(polygon));
+                .draw(&UShape::polygon(polygon));
         }
         if final_cross {
             Self::cross(ug, SPACE_CROSS_X, text_height + ARROW_ONLY_HEIGHT);
@@ -156,7 +156,7 @@ impl ComponentRoseSelfArrow {
             let polygon = translate(self.polygon(), 0.0, text_height + ARROW_ONLY_HEIGHT);
             ug.with_backcolor(self.parts.foreground.clone())
                 .translated(x2, 0.0)
-                .draw(&UShape::Polygon(polygon));
+                .draw(&UShape::polygon(polygon));
         }
     }
 
@@ -265,7 +265,7 @@ impl ComponentRoseSelfArrow {
             let polygon = translate(self.polygon(), width - x1, text_height);
             ug.with_backcolor(self.parts.foreground.clone())
                 .translated(x1, 0.0)
-                .draw(&UShape::Polygon(polygon));
+                .draw(&UShape::polygon(polygon));
         }
         if final_cross {
             Self::cross(
@@ -285,7 +285,7 @@ impl ComponentRoseSelfArrow {
             let polygon = translate(self.polygon(), 0.0, text_height + ARROW_ONLY_HEIGHT);
             ug.with_backcolor(self.parts.foreground.clone())
                 .translated(width - x2, 0.0)
-                .draw(&UShape::Polygon(polygon));
+                .draw(&UShape::polygon(polygon));
         }
     }
 

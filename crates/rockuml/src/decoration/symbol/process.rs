@@ -10,7 +10,7 @@ use crate::klimt::ugraphic::UGraphic;
 pub(super) struct USymbolProcess;
 
 fn draw_process(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::Polygon(vec![
+    ug.draw(&UShape::polygon(vec![
         (0.0, 0.0),
         (width - 10.0, 0.0),
         (width, height / 2.0),
