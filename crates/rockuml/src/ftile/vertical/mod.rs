@@ -3,6 +3,7 @@
 
 mod ftile_black_block;
 mod ftile_box;
+mod ftile_box_emoji;
 mod ftile_circles;
 mod ftile_decorate;
 mod ftile_diamond;
@@ -14,6 +15,7 @@ mod ftile_thin_split;
 
 pub(crate) use ftile_black_block::FtileBlackBlock;
 pub(crate) use ftile_box::FtileBox;
+pub(crate) use ftile_box_emoji::FtileBoxEmoji;
 pub(crate) use ftile_circles::{
     FtileCircleEndCross, FtileCircleSpot, FtileCircleStart, FtileCircleStop,
 };

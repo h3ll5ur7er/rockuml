@@ -325,8 +325,7 @@ fn dump(case: &[&str]) -> String {
     );
     let debug = Rc::new(RefCell::new(UGraphicDebug::new("DATE".to_owned())));
     let ug = UGraphic::new(debug.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
-    TextBlockInterceptorUDrawable::new(tile, HColor::BLACK, false)
-        .draw_u(&UGraphicForSnake::create(ug));
+    TextBlockInterceptorUDrawable::new(tile, HColor::BLACK).draw_u(&UGraphicForSnake::create(ug));
     let document = debug.borrow().document(&DebugHeader {
         dimension: geometry.dimension(),
         scale_factor: 1.0,

@@ -12,15 +12,13 @@ use crate::klimt::ugraphic::UGraphic;
 pub(crate) struct TextBlockInterceptorUDrawable {
     text_block: Rc<dyn Ftile>,
     goto_color: HColor,
-    is_debug: bool,
 }
 
 impl TextBlockInterceptorUDrawable {
-    pub(crate) fn new(text_block: Rc<dyn Ftile>, goto_color: HColor, is_debug: bool) -> Self {
+    pub(crate) fn new(text_block: Rc<dyn Ftile>, goto_color: HColor) -> Self {
         Self {
             text_block,
             goto_color,
-            is_debug,
         }
     }
 }
@@ -33,7 +31,6 @@ impl UDrawable for TextBlockInterceptorUDrawable {
             ug.clone(),
             Rc::new(RefCell::new(HashMap::new())),
             self.goto_color.clone(),
-            self.is_debug,
         )
         .draw(&self.text_block);
         ug.flush_ug();

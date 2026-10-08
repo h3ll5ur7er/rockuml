@@ -1,8 +1,11 @@
 //! Activity diagrams (PlantUML's `activitydiagram3` package): the commands build a tree of instructions,
 //! which the tiles of `ftile` draw.
 
-// The instructions keep what their tiles are drawn from, which the rendering will read once ported.
-#![expect(dead_code, reason = "the ftile rendering is not ported yet")]
+// The instructions keep what their tiles are drawn from, which the other tracks of Phase 6 read.
+#![expect(
+    dead_code,
+    reason = "the tiles of the other Phase 6 tracks read the rest of the model"
+)]
 
 mod branch;
 mod commands;
