@@ -38,12 +38,25 @@ impl Worm {
     /// The same points, `dx` and `dy` further (`move`).
     #[must_use]
     pub(crate) fn move_by(&self, dx: f64, dy: f64) -> Self {
-        let step = UTranslate::new(dx, dy);
         Self {
             points: self.points.clone(),
-            tr: Some(self.tr.map_or(step, |tr| tr.compose(step))),
+            tr: Some(self.moved_tr(dx, dy)),
             ..self.clone_empty()
         }
+    }
+
+    fn moved_tr(&self, dx: f64, dy: f64) -> UTranslate {
+        let step = UTranslate::new(dx, dy);
+        self.tr.map_or(step, |tr| tr.compose(step))
+    }
+
+    /// The first and last points of [`Self::move_by`], without the copy.
+    pub(crate) fn get_ends_moved_by(&self, dx: f64, dy: f64) -> (XPoint2D, XPoint2D) {
+        let tr = self.moved_tr(dx, dy);
+        (
+            tr.get_translated(self.points[0]),
+            tr.get_translated(self.points[self.size() - 1]),
+        )
     }
 
     pub(crate) fn is_pure_horizontal(&self) -> bool {

@@ -48,6 +48,13 @@ impl PendingSnake {
 
     /// This arrow and `new_item` as one, kept where this one was drawn.
     fn merge(&self, new_item: &Self) -> Option<Self> {
+        // Only arrows sharing an end merge. Checking that before moving copies of both keeps a long diagram,
+        // which tries every pair, from copying arrows quadratically often.
+        let (first1, last1) = self.snake.get_ends_moved_by(self.dx, self.dy);
+        let (first2, last2) = new_item.snake.get_ends_moved_by(new_item.dx, new_item.dy);
+        if !Snake::same(last1, first2) && !Snake::same(first1, last2) {
+            return None;
+        }
         let s1 = self.snake.move_by(self.dx, self.dy);
         let s2 = new_item.snake.move_by(new_item.dx, new_item.dy);
         let merge = s1.merge(&s2, self.ug.string_bounder())?;
