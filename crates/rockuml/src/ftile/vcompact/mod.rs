@@ -1,6 +1,7 @@
 //! The tiles of compound instructions and the factories building them (PlantUML's
 //! `activitydiagram3.ftile.vcompact`).
 
+mod connection_vertical_down;
 mod ftile_factory_delegator_add_note;
 mod ftile_factory_delegator_add_url;
 mod ftile_factory_delegator_assembly;
@@ -10,7 +11,9 @@ mod ftile_factory_delegator_if;
 mod ftile_factory_delegator_repeat;
 mod ftile_factory_delegator_switch;
 mod ftile_factory_delegator_while;
+mod v_compact_factory;
 
+pub(crate) use connection_vertical_down::ConnectionVerticalDown;
 pub(crate) use ftile_factory_delegator_add_note::FtileFactoryDelegatorAddNote;
 pub(crate) use ftile_factory_delegator_add_url::FtileFactoryDelegatorAddUrl;
 pub(crate) use ftile_factory_delegator_assembly::FtileFactoryDelegatorAssembly;
@@ -20,6 +23,7 @@ pub(crate) use ftile_factory_delegator_if::FtileFactoryDelegatorIf;
 pub(crate) use ftile_factory_delegator_repeat::FtileFactoryDelegatorRepeat;
 pub(crate) use ftile_factory_delegator_switch::FtileFactoryDelegatorSwitch;
 pub(crate) use ftile_factory_delegator_while::FtileFactoryDelegatorWhile;
+pub(crate) use v_compact_factory::VCompactFactory;
 
 use super::FtileFactory;
 

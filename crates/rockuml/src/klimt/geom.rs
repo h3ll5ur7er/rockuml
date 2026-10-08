@@ -159,6 +159,16 @@ impl MinMax {
     pub(crate) fn dimension(self) -> XDimension2D {
         XDimension2D::new(self.max_x - self.min_x, self.max_y - self.min_y)
     }
+
+    /// The box grown `dx` to the right and `dy` down.
+    #[must_use]
+    pub(crate) fn enlarge(self, dx: f64, dy: f64) -> Self {
+        Self {
+            max_x: self.max_x + dx,
+            max_y: self.max_y + dy,
+            ..self
+        }
+    }
 }
 
 /// Space around something, in PlantUML's clockwise order.
