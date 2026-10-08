@@ -184,6 +184,18 @@ impl HColor {
         alpha: 0,
     });
 
+    /// `HColors.unlinear`: `color1` at 0% completion, `color2` at 100%, blended between for simple colours.
+    pub(crate) fn unlinear(color1: &HColor, color2: &HColor, completion: i32) -> HColor {
+        match (completion, color1, color2) {
+            (0, _, _) => color1.clone(),
+            (100, _, _) => color2.clone(),
+            (_, HColor::Simple(c1), HColor::Simple(c2)) => {
+                HColor::Simple(hsl::unlinear(*c1, *c2, completion))
+            }
+            _ => color1.clone(),
+        }
+    }
+
     pub fn is_transparent(&self) -> bool {
         matches!(self, HColor::Simple(color) if color.alpha == 0)
             || *self == HColor::TransparentFill

@@ -569,6 +569,19 @@ nwdiag, timing and gantt.
     time with the name of any anchor at that time (PlantUML only the anchor's own); states given to a clock, or
     defined for a binary or analog player, are ignored (PlantUML fails).
 
+### Phase 13 — Gantt charts
+- **Status: done.** Every corpus case (22 gantt) passes L1, L2, L3, PNG size, URL and preprocessor outputs.
+  - Ported: the sentence language (`[Task] starts at [Other]'s end and lasts 2 weeks`, `then`, `it`, aliases,
+    stereotypes, resources with percentages, `they`), PlantUML's workload model (piecewise constant calendars
+    integrated over time, with its caching), milestones, groups, separators, constraints and arrow styles, notes,
+    colours and completion, pauses, closed, opened, coloured and named days, resources' days off, `today`, the task
+    table and its columns, daily, weekly, monthly, quarterly and yearly scales with zoom and week numbering,
+    `print between`, `hide closed`, `hide footbox`, `hide resources names|footbox`, `language`.
+  - Deviations: `today` without a date is the host's current day in UTC (PlantUML uses the JVM's time zone); a task
+    whose calendar never opens gives up after 100 000 days (PlantUML loops forever).
+  - Not ported: working hours (`from 9:00 to 17:00 are working hours`, reported as not ported); the ASCII-art
+    table of txt output (Tier 3).
+
 ---
 
 ## 8. Known risks and mitigations
@@ -597,5 +610,5 @@ nwdiag, timing and gantt.
 ---
 
 ## 10. Immediate next steps
-1. Phase 13: gantt.
+1. Remaining Tier 2: PDF output (svg2pdf), then `-pipe`, `-o` and directory globbing parity checks.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

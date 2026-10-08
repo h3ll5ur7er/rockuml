@@ -1,0 +1,6 @@
+@startgantt
+hide footbox
+hide resources names
+[Task1] on {Alice} lasts 4 days
+then [Task2] on {Bob} lasts 3 days
+@endgantt

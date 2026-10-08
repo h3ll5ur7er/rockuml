@@ -10,7 +10,7 @@ use crate::command::{
 };
 use crate::creole::Display;
 use crate::decoration::symbol::{USymbol, USymbols};
-use crate::decoration::{LinkDecor, LinkType};
+use crate::decoration::{LinkDecor, LinkType, WithLinkType};
 use crate::diagram::cuca::EntityDiagram;
 use crate::diagram::cuca_commands::labels::Labels;
 use crate::diagram::cuca_commands::{

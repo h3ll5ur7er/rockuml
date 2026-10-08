@@ -1,0 +1,10 @@
+@startgantt
+project starts 2021-01-01
+saturday are closed
+sunday are closed
+2021-01-11 is closed
+2021-01-14 to 2021-01-18 are closed
+[Prototype design] lasts 14 days
+[Test prototype] lasts 4 days
+[Test prototype] starts at [Prototype design]'s end
+@endgantt

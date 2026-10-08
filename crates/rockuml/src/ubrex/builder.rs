@@ -53,6 +53,27 @@ impl UBrexPart {
         Self(Challenge::Optional(Box::new(part.0)))
     }
 
+    /// `UBrexZeroOrMore`.
+    pub(crate) fn zero_or_more(part: UBrexPart) -> Self {
+        Self(Challenge::ZeroOrMore(Box::new(part.0)))
+    }
+
+    /// `UBrexOneOrMore`.
+    pub(crate) fn one_or_more(part: UBrexPart) -> Self {
+        Self(Challenge::OneOrMore(Box::new(part.0)))
+    }
+
+    /// `UBrexUpto`: `what` repeated up to where `stop` matches, then `stop`.
+    pub(crate) fn upto(what: UBrexPart, stop: UBrexPart) -> Self {
+        Self(Challenge::List(vec![
+            Challenge::OneOrMoreUpTo {
+                origin: Box::new(what.0),
+                stop_condition: Box::new(stop.0.clone()),
+            },
+            stop.0,
+        ]))
+    }
+
     /// `UnicodeBracketedExpression.from`.
     pub(crate) fn build(self) -> UnicodeBracketedExpression {
         UnicodeBracketedExpression { challenge: self.0 }

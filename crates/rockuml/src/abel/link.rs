@@ -6,7 +6,7 @@ use std::rc::Rc;
 use super::{CucaNote, EntityId, LeafType};
 use crate::color::{ColorType, Colors, HColor};
 use crate::creole::Display;
-use crate::decoration::{LinkDecor, LinkType};
+use crate::decoration::{LinkDecor, LinkType, WithLinkType};
 use crate::diagram::cuca::CucaDiagram;
 use crate::klimt::url::Url;
 use crate::skin::visibility_modifier::VisibilityModifier;
@@ -372,16 +372,6 @@ impl Link {
         self.is_between(other.cl1, other.cl2)
     }
 
-    // What follows is PlantUML's `WithLinkType`.
-
-    /// The colour of the first line (`i` 0). Only Graphviz layouts draw the parallel lines later colours
-    /// ask for.
-    pub(crate) fn set_specific_color(&mut self, specific_color: HColor, i: usize) {
-        if i == 0 {
-            self.colors = self.colors.with(ColorType::Line, Some(specific_color));
-        }
-    }
-
     pub(crate) fn get_colors(&self) -> &Colors {
         &self.colors
     }
@@ -390,76 +380,32 @@ impl Link {
         self.colors = colors;
     }
 
-    pub(crate) fn go_dashed(&mut self) {
-        self.link_type = self.link_type.go_dashed();
-    }
-
-    pub(crate) fn go_dotted(&mut self) {
-        self.link_type = self.link_type.go_dotted();
-    }
-
-    pub(crate) fn go_thickness(&mut self, thickness: f64) {
-        self.link_type = self.link_type.go_thickness(thickness);
-    }
-
-    pub(crate) fn go_bold(&mut self) {
-        self.link_type = self.link_type.go_bold();
-    }
-
-    pub(crate) fn go_hidden(&mut self) {
-        self.hidden = true;
-    }
-
-    pub(crate) fn go_norank(&mut self) {
-        self.constraint = false;
-    }
-
-    pub(crate) fn go_single(&mut self) {
-        self.single = true;
-    }
-
     pub(crate) fn is_single(&self) -> bool {
         self.single
     }
-
-    /// `dashed,#red;bold`: the style in brackets in an arrow, `;` separating parallel lines.
-    pub(crate) fn apply_style(&mut self, arrow_style: Option<&str>) {
-        let Some(arrow_style) = arrow_style else {
-            return;
-        };
-        for (i, style) in tokens(arrow_style, ';').enumerate() {
-            self.apply_one_style(style, i);
-        }
-    }
-
-    fn apply_one_style(&mut self, arrow_style: &str, i: usize) {
-        for s in tokens(arrow_style, ',') {
-            if s.eq_ignore_ascii_case("dashed") {
-                self.go_dashed();
-            } else if s.eq_ignore_ascii_case("bold") {
-                self.go_bold();
-            } else if s.eq_ignore_ascii_case("dotted") {
-                self.go_dotted();
-            } else if s.eq_ignore_ascii_case("hidden") {
-                self.go_hidden();
-            } else if s.eq_ignore_ascii_case("single") {
-                self.go_single();
-            } else if s.eq_ignore_ascii_case("plain") {
-                // A plain line is the default.
-            } else if s.eq_ignore_ascii_case("node") {
-                // Only the state command reads it, from the arrow itself.
-            } else if s.eq_ignore_ascii_case("norank") {
-                self.go_norank();
-            } else if let Some(thickness) = s.strip_prefix("thickness=") {
-                self.go_thickness(thickness.parse().unwrap_or_default());
-            } else {
-                self.set_specific_color(HColor::parse_or_white(s), i);
-            }
-        }
-    }
 }
 
-/// `StringTokenizer`: the non-empty pieces between delimiters.
-fn tokens(text: &str, delimiter: char) -> impl Iterator<Item = &str> {
-    text.split(delimiter).filter(|token| !token.is_empty())
+impl WithLinkType for Link {
+    fn link_type_mut(&mut self) -> &mut LinkType {
+        &mut self.link_type
+    }
+
+    /// Only Graphviz layouts draw the parallel lines later colours ask for.
+    fn set_specific_color(&mut self, color: HColor, i: usize) {
+        if i == 0 {
+            self.colors = self.colors.with(ColorType::Line, Some(color));
+        }
+    }
+
+    fn go_hidden(&mut self) {
+        self.hidden = true;
+    }
+
+    fn go_single(&mut self) {
+        self.single = true;
+    }
+
+    fn go_norank(&mut self) {
+        self.constraint = false;
+    }
 }

@@ -208,7 +208,7 @@ mod tests {
     #[test]
     fn diagrams_that_are_not_ported_say_so() {
         let (status, message, page_count) = render_text(
-            "@startgantt\n[Task] lasts 2 days\n@endgantt",
+            "@startditaa\n+--+\n|A |\n+--+\n@endditaa",
             Format::Svg,
             0,
         );
