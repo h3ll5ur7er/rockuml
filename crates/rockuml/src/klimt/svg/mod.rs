@@ -364,7 +364,7 @@ impl UGraphicBackend for UGraphicSvg {
             UShape::Comment(comment) => self.svg().add_comment(comment),
             UShape::Empty(_)
             | UShape::HorizontalLine
-            | UShape::SpecialText
+            | UShape::SpecialText { .. }
             | UShape::CenteredText(_) => {}
         }
     }

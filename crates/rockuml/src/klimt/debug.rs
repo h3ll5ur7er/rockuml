@@ -261,7 +261,7 @@ impl UGraphicBackend for UGraphicDebug {
             UShape::HorizontalLine
             | UShape::Image(_)
             | UShape::ImageSvg(_)
-            | UShape::SpecialText
+            | UShape::SpecialText { .. }
             | UShape::CenteredText(_) => {
                 let undescribed = format!(
                     "UGraphicDebug {} {}",

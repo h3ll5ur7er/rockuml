@@ -101,12 +101,16 @@ impl UGraphicBackend for SlotFinder {
             UShape::Empty(dimension) => {
                 self.add_slot((x, x + dimension.width), (y, y + dimension.height));
             }
+            // PlantUML's `SpecialText.drawWhenCompressed` marks a 1x1 empty just past the title.
+            UShape::SpecialText { title_width } => {
+                let after = x + title_width;
+                self.add_slot((after, after + 1.0), (y, y + 1.0));
+            }
             UShape::Line { .. }
             | UShape::Image(_)
             | UShape::ImageSvg(_)
             | UShape::CenteredCharacter(_)
             | UShape::HorizontalLine
-            | UShape::SpecialText
             | UShape::Comment(_)
             | UShape::CenteredText(_) => {}
         }

@@ -87,7 +87,7 @@ impl UGraphicBackend for Footprint {
             | UShape::Polygon(_)
             | UShape::ImageSvg(_)
             | UShape::CenteredCharacter(_)
-            | UShape::SpecialText
+            | UShape::SpecialText { .. }
             | UShape::CenteredText(_)
             | UShape::Comment(_) => {}
         }

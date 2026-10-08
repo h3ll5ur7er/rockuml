@@ -462,7 +462,8 @@ impl UGraphic {
                     if surface.backend.borrow().draws_special_text() {
                         block.draw_u(self);
                     } else {
-                        surface.draw(&UShape::SpecialText);
+                        let title_width = block.calculate_dimension(self.string_bounder()).width;
+                        surface.draw(&UShape::SpecialText { title_width });
                     }
                 }
                 AnyShape::HorizontalLine(line) => surface.draw_horizontal_line(line),
