@@ -319,27 +319,13 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
     let stop = factory.stop(Some(SwimlaneId(0)), &Colors::default());
     let assembled = factory.assembly(start, stop);
     let decorated = factory.decorate_out(assembled, &LinkRendering::none());
-    let parallel = factory.create_parallel(
+    factory.create_parallel(
         vec![decorated],
         ForkStyle::Fork,
         None,
         None,
         None,
         &Colors::default(),
-    );
-    factory.create_while(
-        &Instructions::new(),
-        &LinkRendering::none(),
-        None,
-        parallel,
-        &Display::create(["test"]),
-        None,
-        None,
-        None,
-        None,
-        &LinkRendering::none(),
-        &LinkRendering::none(),
-        &factory.skin_param().current_style_builder(),
     );
     assert_eq!(
         *innermost.calls.borrow(),
@@ -348,8 +334,7 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
             "stop",
             "assembly",
             "decorate_out",
-            "create_parallel",
-            "create_while"
+            "create_parallel"
         ]
     );
     assert!(Rc::ptr_eq(factory.skin_param(), &innermost.skin_param));

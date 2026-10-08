@@ -32,6 +32,8 @@ pub(crate) use chen::{
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
     EntityImageChenRelationship,
 };
+pub(crate) use circle_end::CircleEnd;
+pub(crate) use circle_start::CircleStart;
 pub(crate) use class::EntityImageClass;
 pub(crate) use entity_image_branch::EntityImageBranch;
 pub(crate) use entity_image_circle_end::EntityImageCircleEnd;

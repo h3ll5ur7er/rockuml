@@ -171,7 +171,7 @@ impl FtileWhile {
                 after_endwhile_color: out_color.rainbow.clone(),
             }));
         }
-        ftile_utils::add_connection(result, conns)
+        ftile_utils::add_connections(result, conns)
     }
 
     fn add_connections_in_and_back(

@@ -152,7 +152,7 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorRepeat {
                 swimlane,
             ));
             result = self.assembly(
-                ftile_utils::add_horizontal_margin(result, skin_param.clone(), 10.0, 0.0),
+                ftile_utils::add_horizontal_margin(result, 10.0, 0.0),
                 diamond_break.clone(),
             );
             let genealogy = Rc::new(Genealogy::new(&result));
@@ -170,7 +170,7 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorRepeat {
                     }) as Rc<dyn Connection>
                 })
                 .collect();
-            result = ftile_utils::add_connection(result, connections);
+            result = ftile_utils::add_connections(result, connections);
         }
         result
     }

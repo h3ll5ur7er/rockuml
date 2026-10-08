@@ -131,7 +131,7 @@ impl FtileRepeat {
         });
         let conns =
             result.create_connections(style, (swimlane, swimlane_out), incoming1, incoming2);
-        ftile_utils::add_connection(result, conns)
+        ftile_utils::add_connections(result, conns)
     }
 
     /// The arrows in, back and out; which way back depends on the lanes of the entry (`swimlane`) and

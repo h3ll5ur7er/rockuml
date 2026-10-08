@@ -6,11 +6,6 @@
 //! side, becomes a [`compression_transform::CompressionTransform`], and the block is drawn through an
 //! [`ugraphic_compress_on_x_or_y::UGraphicCompressOnXorY`] layer that moves every position back by the free
 //! space before it.
-#![allow(
-    dead_code,
-    unused_imports,
-    reason = "ActivityDiagram3::text_block compresses its swimlanes once activity diagrams draw, Phase 6 stage B"
-)]
 
 mod compression_transform;
 mod compression_x_or_y_builder;
