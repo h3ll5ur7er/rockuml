@@ -21,14 +21,14 @@ use crate::style::{Style, StyleBuilder};
 use crate::svek::UGraphicForSnake;
 
 /// A box with children below it, joined to each by an arrow.
-struct Tile {
+pub(super) struct Tile {
     base: AbstractFtile,
     height: f64,
     children: Vec<Rc<dyn Ftile>>,
 }
 
 impl Tile {
-    fn create(height: f64, children: Vec<Rc<dyn Ftile>>) -> Rc<dyn Ftile> {
+    pub(super) fn create(height: f64, children: Vec<Rc<dyn Ftile>>) -> Rc<dyn Ftile> {
         Rc::new(Self {
             base: AbstractFtile::new(Rc::new(SkinParam::default())),
             height,
@@ -133,7 +133,7 @@ fn tiles_find_their_children_by_identity() {
 
 /// Builds plain tiles and counts what it was asked.
 #[derive(Default)]
-struct Innermost {
+pub(super) struct Innermost {
     skin_param: Rc<SkinParam>,
     calls: RefCell<Vec<&'static str>>,
 }

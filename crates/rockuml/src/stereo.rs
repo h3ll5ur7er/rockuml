@@ -17,7 +17,7 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexTree, java_regex};
-use crate::style::parse_single_line;
+use crate::style::{PName, StyleBuilder, StyleSignature, parse_single_line};
 
 /// The pattern stereotypes are written with, as an optional part of a command.
 pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
@@ -281,6 +281,11 @@ impl Stereogroup {
         }
     }
 
+    /// No stereotype written at all.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.definition.is_none()
+    }
+
     pub(crate) fn build_stereotype(&self) -> Option<Stereotype> {
         self.definition.as_deref().map(Stereotype::new)
     }
@@ -318,6 +323,21 @@ impl Stereogroup {
             "history*" => Some(LeafType::DeepHistory),
             _ => None,
         }
+    }
+
+    /// The `name` colour of an element styled `signature` with these stereotypes: the one a label sets,
+    /// or else the stereotypes' style's (`getHColor`). A colour PlantUML cannot read sets none.
+    pub(crate) fn get_hcolor(
+        &self,
+        signature: &StyleSignature,
+        name: PName,
+        style_builder: &StyleBuilder,
+    ) -> HColor {
+        let style =
+            signature.get_merged_style_with(style_builder, self.build_stereotype().as_ref());
+        self.get_inner_colors()
+            .unwrap_or_default()
+            .get_color_of(&style, name)
     }
 
     /// The colours labels like `<<#pink>>`, `<<##[dashed]blue>>` (line), `<<###red>>` (text) or
