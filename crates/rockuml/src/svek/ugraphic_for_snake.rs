@@ -114,6 +114,7 @@ impl UGraphicLayer for UGraphicForSnake {
     fn draw(&self, _this: &UGraphic, shape: AnyShape<'_>) {
         match shape {
             AnyShape::Snake(snake) => {
+                // PlantUML fails on merging an arrow without points; such an arrow draws nothing anyway.
                 if !snake.is_empty() {
                     self.add_pending_snake(snake);
                 }
