@@ -10,3 +10,6 @@
 
 # Isolated checkouts of agents working in parallel
 /.claude/worktrees/
+
+# Built by tools/build-wasm.sh
+/web/rockuml.wasm

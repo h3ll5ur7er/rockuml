@@ -1,0 +1,82 @@
+name: Release
+
+# Pushing a tag such as v0.1.0 builds the self-contained binaries and publishes them as a GitHub release.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release -p rockuml-cli
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml.exe
+          path: target/release/rockuml.exe
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+      # musl links statically, so the binary runs on any distribution; ring's C code needs musl-gcc.
+      - run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: cargo build --release -p rockuml-cli --target x86_64-unknown-linux-musl
+      - run: cp target/x86_64-unknown-linux-musl/release/rockuml rockuml-linux-x86_64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-linux-x86_64
+          path: rockuml-linux-x86_64
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - run: cargo build --release -p rockuml-cli --target aarch64-apple-darwin
+      - run: cargo build --release -p rockuml-cli --target x86_64-apple-darwin
+      - run: >
+          lipo -create -output rockuml-macos-universal
+          target/aarch64-apple-darwin/release/rockuml
+          target/x86_64-apple-darwin/release/rockuml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-macos-universal
+          path: rockuml-macos-universal
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - run: bash tools/build-wasm.sh
+      - run: node --test web/rockuml.test.mjs
+      - run: cd web && zip ../rockuml-web.zip index.html rockuml.js rockuml.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-web.zip
+          path: rockuml-web.zip
+
+  publish:
+    needs: [windows, linux, macos, web]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - run: gh release create "$GITHUB_REF_NAME" artifacts/* --repo "$GITHUB_REPOSITORY" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}

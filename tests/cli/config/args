@@ -1,0 +1,13 @@
+-preproc
+-DX=ten
+-I
+inc.cfg
+--theme
+vibrant
+--config
+conf.cfg
+-Pteoz=true
+-Sbackgroundcolor=red
+--skinparam
+handwritten=true
+d.puml

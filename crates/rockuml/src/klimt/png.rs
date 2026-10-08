@@ -19,7 +19,7 @@ pub(crate) fn rasterize(
     (width, height): (u32, u32),
     background: XColor,
     fonts: &Arc<FontRegistry>,
-    metadata: &str,
+    metadata: Option<&str>,
 ) -> Vec<u8> {
     let mut pixmap = Pixmap::new(width.max(1), height.max(1))
         .expect("images are at most PLANTUML_LIMIT_SIZE wide");
@@ -38,7 +38,10 @@ pub(crate) fn rasterize(
     let tree = Tree::from_str(svg, &options).expect("rockuml writes valid SVG");
     resvg::render(&tree, Transform::identity(), &mut pixmap.as_mut());
     let png = pixmap.encode_png().expect("encoding to memory succeeds");
-    with_text_chunk(&png, "plantuml", metadata)
+    match metadata {
+        Some(metadata) => with_text_chunk(&png, "plantuml", metadata),
+        None => png,
+    }
 }
 
 /// The engine reads no files: images come embedded in the document or not at all.
@@ -132,7 +135,7 @@ mod tests {
             (20, 10),
             XColor::rgb(255, 255, 255),
             &Arc::new(FontRegistry::default()),
-            "src",
+            Some("src"),
         );
         Pixmap::decode_png(&png).unwrap()
     }
@@ -159,7 +162,7 @@ mod tests {
             (1, 1),
             XColor::rgb(255, 255, 255),
             &Arc::new(FontRegistry::default()),
-            "@startuml",
+            Some("@startuml"),
         );
         let at = png.windows(4).position(|window| window == b"iTXt").unwrap();
         assert_eq!(&png[at + 4..at + 13], b"plantuml\0");

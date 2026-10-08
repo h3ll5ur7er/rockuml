@@ -22,6 +22,7 @@ mod java;
 mod jaws;
 pub mod json;
 mod klimt;
+pub mod metadata;
 mod openiconic;
 mod pattern;
 mod plasma;
@@ -30,6 +31,10 @@ mod real;
 mod sdot;
 mod security_profile;
 mod skin;
+/// Turning images into `sprite` definitions.
+pub mod sprite {
+    pub use crate::klimt::sprite::encode;
+}
 mod stdlib;
 mod stereo;
 mod style;

@@ -14,9 +14,12 @@ use crate::color::HColor;
 use crate::klimt::ugraphic::UGraphic;
 use crate::svg_parser::SvgNanoParser;
 
-/// The bundle `tools/bundle-emoji.sh` builds: one `<code>[;<shortcut>] <svg>` line per emoji.
+/// The bundle `tools/bundle-emoji.sh` builds: one `<code>[;<shortcut>] <svg>` line per emoji. Builds without
+/// the `emoji` feature know no emoji.
 static TWEMOJI: LazyLock<String> = LazyLock::new(|| {
-    let compressed = crate::assets::get("emoji/twemoji.br").expect("the emoji are bundled");
+    let Some(compressed) = crate::assets::get("emoji/twemoji.br") else {
+        return String::new();
+    };
     let mut text = String::new();
     brotli_decompressor::Decompressor::new(compressed, 4096)
         .read_to_string(&mut text)
@@ -72,7 +75,7 @@ impl Emoji {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "emoji"))]
 mod tests {
     use super::*;
 

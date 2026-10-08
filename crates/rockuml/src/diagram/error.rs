@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use super::diagram_type::DiagramType;
 use super::source::UmlSource;
-use super::{Diagram, ExportSettings, NotYetPorted};
+use super::{Diagram, DiagramError, ExportSettings, NotYetPorted};
 use crate::color::HColor;
 use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
 use crate::klimt::blocks::{TextBlockMarged, TextBlockRaw, TextBlockVertical, WithBackcolor};
@@ -171,8 +171,14 @@ impl Diagram for ErrorDiagram {
         ExportSettings::without_skin(self.source.seed())
     }
 
-    fn is_error(&self) -> bool {
-        true
+    fn error(&self) -> Option<DiagramError> {
+        Some(DiagramError {
+            line: self
+                .trace
+                .last()
+                .map_or(0, |line| line.location().position()),
+            message: self.message.clone(),
+        })
     }
 }
 
@@ -240,5 +246,46 @@ impl TextBlock for Welcome {
 
     fn backcolor(&self) -> Option<HColor> {
         Some(HColor::WHITE)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::host::IsolatedHost;
+    use crate::preproc::{PreprocessorEnvironment, Source};
+
+    fn error_of(text: &str) -> Option<DiagramError> {
+        let source = Source {
+            text,
+            description: "t",
+            directory: std::path::PathBuf::new(),
+            environment: PreprocessorEnvironment::default(),
+        };
+        let block = crate::preproc::preprocess(&source, &IsolatedHost).remove(0);
+        super::super::create(&block, &IsolatedHost).unwrap().error()
+    }
+
+    #[test]
+    fn error_images_tell_the_faulty_line_and_why() {
+        assert_eq!(
+            error_of("@startuml\nAlice -> Bob\nfoo bar baz\n@enduml"),
+            Some(DiagramError {
+                line: 2,
+                message: "Syntax Error? (Assumed diagram type: sequence)".to_owned()
+            })
+        );
+        assert_eq!(error_of("@startuml\nAlice -> Bob\n@enduml"), None);
+    }
+
+    #[test]
+    fn preprocessor_errors_make_error_images() {
+        assert_eq!(
+            error_of("@startuml\n!assert 0 : \"boom\"\nA -> B\n@enduml"),
+            Some(DiagramError {
+                line: 1,
+                message: "Assertion error : boom".to_owned()
+            })
+        );
     }
 }

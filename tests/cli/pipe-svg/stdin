@@ -1,0 +1,6 @@
+@startuml
+Alice -> Bob : hello
+@enduml
+@startuml
+Bob -> Alice : again
+@enduml

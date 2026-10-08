@@ -9,12 +9,23 @@ Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the port
 ## Usage
 
 ```bash
-rockuml diagram.puml                    # writes diagram.svg next to it
-rockuml -tpng diagram.puml              # diagram.png
-rockuml -o out -f svg-deterministic a.puml b.puml
+rockuml diagram.puml                    # writes diagram.png next to it, as PlantUML does
+rockuml --svg diagram.puml              # diagram.svg
+rockuml --svg -o out "docs/**/*.puml"   # every .puml under docs/, each into an out/ beside it
+cat diagram.puml | rockuml --svg -pipe > diagram.svg
+rockuml --check-syntax diagrams/        # exit status 200 when a diagram has errors
+rockuml -DAUTHOR=John --theme mars diagram.puml
 ```
 
-A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`, `diagram_001.svg`, and so on.
+rockuml takes PlantUML's command line: the same flags (old spellings such as `-tsvg` included), directories and
+wildcards, `-pipe`, defines and config files, `--extract-source` from PNG or SVG metadata, and the same exit
+statuses. `rockuml --help` and `rockuml --help-more` list what it supports. Flags for features rockuml does not have
+(other output formats such as PDF or ASCII art, the GUI, the HTTP server) are refused with a message and status 1,
+as are diagrams that need parts of PlantUML not ported yet.
+
+A diagram with several pages (`newpage`) writes one file per page: `diagram.png`, `diagram_001.png`, and so on.
+`-f svg-deterministic` writes SVG measured with PlantUML's fixed width table instead of fonts, the same on every
+machine.
 
 ### Supported diagrams
 
@@ -67,6 +78,47 @@ cargo test
 
 ```bash
 ROCKUML_PARITY_RECORD=1 cargo test -p rockuml-cli --test parity
+```
+
+## Web / wasm
+
+rockuml also runs in the browser, as `rockuml.wasm` with a small JavaScript module, `web/rockuml.js`, and no other
+runtime. Build it (needs the `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`):
+
+```bash
+bash tools/build-wasm.sh          # writes web/rockuml.wasm
+```
+
+Try it in the demo page, an editor with a live preview:
+
+```bash
+cd web
+python -m http.server             # then open http://localhost:8000
+```
+
+Use it from your own page or from Node:
+
+```js
+import { load, RockumlError } from './rockuml.js';
+
+const rockuml = await load();     // fetches rockuml.wasm next to rockuml.js; or pass a URL, bytes or a WebAssembly.Module
+const { data, pageCount, isError } = await rockuml.render(source, { format: 'svg', page: 0 });
+```
+
+`format` is `svg`, `png`, `svg-deterministic`, `debug` or `preproc`; `data` is a string, or a `Uint8Array` for PNG.
+`page` counts the pages of all diagrams in the source, in the order the CLI writes their files. `isError` says the
+image shows the diagram's errors. Sources without a diagram, pages past the last, and diagram types rockuml has not
+ported yet throw a `RockumlError` (with `notPorted` set for the latter). In Node, pass the bytes:
+`load(await readFile('web/rockuml.wasm'))`.
+
+The wasm build has no files, URLs or environment variables, so `!include` of files and URLs fails; dates are local
+time. To keep the download small it leaves out the standard library (`!include <C4/...>` fails like a library that
+does not exist) and the emoji: these are the engine's `stdlib` and `emoji` cargo features, on by default.
+
+Its tests render corpus cases and compare them with the goldens:
+
+```bash
+node --test web/rockuml.test.mjs
 ```
 
 ## Adding corpus cases

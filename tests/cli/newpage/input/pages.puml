@@ -1,0 +1,8 @@
+@startuml
+Alice -> Bob : page one
+newpage
+Bob -> Alice : page two
+@enduml
+@startuml
+A -> B : after
+@enduml
