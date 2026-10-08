@@ -1,0 +1,52 @@
+smetana-trace 1
+agopen "g"
+agnode graph "g" "N0"
+agsafeset node "N0" "shape" "record" ""
+agsafeset node "N0" "height" "0.8438916270012364" ""
+agsafeset node "N0" "width" "0.5" ""
+agsafeset node "N0" "label" "<P0>_dim_18.0_52.76019714408902_|<P1>_dim_18.0_52.76019714408902_" ""
+agnode graph "g" "N1"
+agsafeset node "N1" "shape" "record" ""
+agsafeset node "N1" "height" "2.853435598725189" ""
+agsafeset node "N1" "width" "0.75" ""
+agsafeset node "N1" "label" "{_dim_54.0_51.602025849628575_|{<P0>_dim_18.0_137.84533725858503_|<P1>_dim_18.0_137.84533725858503_|<P2>_dim_18.0_137.84533725858503_}}" ""
+agedge graph "g" node "N0" node "N1"
+agsafeset edge e1 "arrowsize" ".75" ""
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "normal" ""
+agsafeset edge e1 "tailport" "P0" ""
+agnode graph "g" "N2"
+agsafeset node "N2" "shape" "record" ""
+agsafeset node "N2" "height" "3.113461010402603" ""
+agsafeset node "N2" "width" "0.75" ""
+agsafeset node "N2" "label" "{_dim_54.0_51.602025849628575_|{<P0>_dim_18.0_156.56716689935882_|<P1>_dim_18.0_156.56716689935882_|<P2>_dim_18.0_156.56716689935882_}}" ""
+agedge graph "g" node "N0" node "N2"
+agsafeset edge e2 "arrowsize" ".75" ""
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "normal" ""
+agsafeset edge e2 "tailport" "P1" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "N0" rank 0
+node "N1" rank 1
+node "N2" rank 1
+phase mincross
+rank 0 "N0"
+rank 1 "N1" "N2"
+phase position
+node "N0" rank 0 coord 9.0 292.0 lw 18.0 rw 18.0 ht 62.0
+node "N1" rank 1 coord -27.0 112.5 lw 27.0 rw 27.0 ht 206.0
+node "N2" rank 1 coord 45.0 112.5 lw 27.0 rw 27.0 ht 225.0
+graph "g" bb -54.0 0.0 72.0 323.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep -3.474503383040428 215.0193640927597 points 4 0.0 261.0 0.0 248.48681026894764 -0.9518469858448952 235.47265368512984 -2.4981045207420394 222.58678760560204
+edge e2 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 20.25556491315365 224.6518314434252 points 4 18.0 261.0 18.0 251.65349639836631 18.531042690156028 242.02749957027106 19.444177467281314 232.38423309799404
+phase final
+graph "g" bb 0.0 0.0 126.0 323.0
+node "N0" coord 63.0 292.0 width 0.5 height 0.8611111111111112 lw 18.0 rw 18.0 ht 62.0
+node "N1" coord 27.0 112.5 width 0.75 height 2.861111111111111 lw 27.0 rw 27.0 ht 206.0
+node "N2" coord 99.0 112.5 width 0.75 height 3.125 lw 27.0 rw 27.0 ht 225.0
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 50.52549661695957 215.0193640927597 points 4 54.0 261.0 54.0 248.48681026894764 53.048153014155105 235.47265368512984 51.50189547925796 222.58678760560204
+edge e2 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 74.25556491315365 224.6518314434252 points 4 72.0 261.0 72.0 251.65349639836631 72.53104269015603 242.02749957027106 73.44417746728132 232.38423309799404

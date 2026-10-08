@@ -1,0 +1,22 @@
+@startjson
+<style>
+  .h1 {
+    BackGroundColor green
+    FontColor white
+    FontStyle italic
+  }
+  .h2 {
+    BackGroundColor red
+    FontColor white
+    FontStyle bold
+  }
+</style>
+#highlight "lastName" <<h1>>
+#highlight "address" / "city" <<h2>>
+#highlight "**" / "type"
+{
+  "lastName": "Smith",
+  "address": { "city": "New York", "state": "NY" },
+  "phones": [ {"type": "home"}, {"type": "office"} ]
+}
+@endjson

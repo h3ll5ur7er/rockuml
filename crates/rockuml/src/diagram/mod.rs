@@ -12,6 +12,7 @@ mod cuca_commands;
 mod description;
 mod diagram_type;
 mod error;
+mod json;
 mod mindmap;
 mod salt;
 mod scale;
@@ -21,6 +22,7 @@ mod state;
 mod titled;
 mod unported;
 mod wbs;
+mod yaml;
 
 pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
 pub(crate) use titled::entity_image_legend;
@@ -164,6 +166,8 @@ pub fn create(
         Some(DiagramType::ChenEer) => |source, _| builder::create_chen(source),
         Some(DiagramType::MindMap) => |source, _| builder::create_mindmap(source),
         Some(DiagramType::Wbs) => |source, _| builder::create_wbs(source),
+        Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
+        Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_image_files(block.directory(), host);

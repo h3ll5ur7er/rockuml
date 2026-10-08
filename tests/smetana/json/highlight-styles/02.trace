@@ -1,0 +1,83 @@
+smetana-trace 1
+agopen "g"
+agnode graph "g" "N0"
+agsafeset node "N0" "shape" "record" ""
+agsafeset node "N0" "height" "2.9698804652790183" ""
+agsafeset node "N0" "width" "0.75" ""
+agsafeset node "N0" "label" "{_dim_54.0_129.48654411843432_|{<P0>_dim_18.0_68.344849381655_|<P1>_dim_18.0_68.344849381655_|<P2>_dim_18.0_68.344849381655_}}" ""
+agnode graph "g" "N1"
+agsafeset node "N1" "shape" "record" ""
+agsafeset node "N1" "height" "2.626194576214411" ""
+agsafeset node "N1" "width" "0.5" ""
+agsafeset node "N1" "label" "{_dim_36.0_73.35271420795154_|{<P0>_dim_18.0_99.73329527948604_|<P1>_dim_18.0_99.73329527948604_}}" ""
+agedge graph "g" node "N0" node "N1"
+agsafeset edge e1 "arrowsize" ".75" ""
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "normal" ""
+agsafeset edge e1 "tailport" "P1" ""
+agnode graph "g" "N2"
+agsafeset node "N2" "shape" "record" ""
+agsafeset node "N2" "height" "0.8438916270012364" ""
+agsafeset node "N2" "width" "0.5" ""
+agsafeset node "N2" "label" "<P0>_dim_18.0_52.76019714408902_|<P1>_dim_18.0_52.76019714408902_" ""
+agnode graph "g" "N3"
+agsafeset node "N3" "shape" "record" ""
+agsafeset node "N3" "height" "1.9484572273372072" ""
+agsafeset node "N3" "width" "0.25" ""
+agsafeset node "N3" "label" "{_dim_18.0_65.62519436894974_|{<P0>_dim_18.0_58.66372599932917_}}" ""
+agedge graph "g" node "N2" node "N3"
+agsafeset edge e2 "arrowsize" ".75" ""
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "normal" ""
+agsafeset edge e2 "tailport" "P0" ""
+agnode graph "g" "N4"
+agsafeset node "N4" "shape" "record" ""
+agsafeset node "N4" "height" "2.4437307916077935" ""
+agsafeset node "N4" "width" "0.25" ""
+agsafeset node "N4" "label" "{_dim_18.0_65.62519436894974_|{<P0>_dim_18.0_94.32342262681142_}}" ""
+agedge graph "g" node "N2" node "N4"
+agsafeset edge e3 "arrowsize" ".75" ""
+agsafeset edge e3 "arrowtail" "none" ""
+agsafeset edge e3 "arrowhead" "normal" ""
+agsafeset edge e3 "tailport" "P1" ""
+agedge graph "g" node "N0" node "N2"
+agsafeset edge e4 "arrowsize" ".75" ""
+agsafeset edge e4 "arrowtail" "none" ""
+agsafeset edge e4 "arrowhead" "normal" ""
+agsafeset edge e4 "tailport" "P2" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 2
+node "N0" rank 0
+node "N1" rank 1
+node "N2" rank 1
+node "N3" rank 2
+node "N4" rank 2
+phase mincross
+rank 0 "N0"
+rank 1 "N1" "N2"
+rank 2 "N3" "N4"
+phase position
+node "N0" rank 0 coord 18.0 546.5 lw 27.0 rw 27.0 ht 215.0
+node "N1" rank 1 coord 0.0 308.0 lw 18.0 rw 18.0 ht 190.0
+node "N2" rank 1 coord 54.0 308.0 lw 18.0 rw 18.0 ht 62.0
+node "N3" rank 2 coord 36.0 88.5 lw 9.0 rw 9.0 ht 141.0
+node "N4" rank 2 coord 72.0 88.5 lw 9.0 rw 9.0 ht 177.0
+graph "g" bb -18.0 0.0 81.0 654.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 16.073684692382812 402.51678894837283 points 4 18.0 439.0 18.0 429.5585636266886 17.528393626213074 419.76756184327706 16.73785423109075 409.98752860002236
+edge e2 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 40.92132568359375 158.54548814825205 points 4 45.0 276.0 45.0 239.83573112694097 43.29077571630478 199.7726637425829 41.362056321959244 166.07701463505114
+edge e3 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 66.04698944091797 176.7475718798822 points 4 63.0 276.0 63.0 246.24298604632747 64.15722650662065 213.84629921631705 65.6417593872452 184.5291938230588
+edge e4 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 47.55242845416069 338.52709700953136 points 4 36.0 439.0 36.0 407.3750152776503 41.29132178344298 371.8279820589055 46.13623673490574 345.9083896947522
+phase final
+graph "g" bb 0.0 0.0 99.0 654.0
+node "N0" coord 36.0 546.5 width 0.75 height 2.986111111111111 lw 27.0 rw 27.0 ht 215.0
+node "N1" coord 18.0 308.0 width 0.5 height 2.638888888888889 lw 18.0 rw 18.0 ht 190.0
+node "N2" coord 72.0 308.0 width 0.5 height 0.8611111111111112 lw 18.0 rw 18.0 ht 62.0
+node "N3" coord 54.0 88.5 width 0.25 height 1.9583333333333333 lw 9.0 rw 9.0 ht 141.0
+node "N4" coord 90.0 88.5 width 0.25 height 2.4583333333333335 lw 9.0 rw 9.0 ht 177.0
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 34.07368469238281 402.51678894837283 points 4 36.0 439.0 36.0 429.5585636266886 35.528393626213074 419.76756184327706 34.73785423109075 409.98752860002236
+edge e2 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 58.92132568359375 158.54548814825205 points 4 63.0 276.0 63.0 239.83573112694097 61.29077571630478 199.7726637425829 59.362056321959244 166.07701463505114
+edge e3 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 84.04698944091797 176.7475718798822 points 4 81.0 276.0 81.0 246.24298604632747 82.15722650662065 213.84629921631705 83.6417593872452 184.5291938230588
+edge e4 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 65.55242845416069 338.52709700953136 points 4 54.0 439.0 54.0 407.3750152776503 59.29132178344298 371.8279820589055 64.13623673490574 345.9083896947522

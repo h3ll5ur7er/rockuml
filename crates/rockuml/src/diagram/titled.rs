@@ -213,6 +213,15 @@ impl Titled {
         }
     }
 
+    /// A title no source line asked for, as JSON and YAML diagrams read theirs.
+    pub(super) fn set_title_without_source(&mut self, title: Display) {
+        self.title = Some(DisplayPositioned {
+            display: title,
+            alignment: HorizontalAlignment::Center,
+            location: None,
+        });
+    }
+
     pub(super) fn set_caption(&mut self, caption: Display, location: &LineLocation) {
         self.caption = Some(DisplayPositioned::centered(caption, location));
     }

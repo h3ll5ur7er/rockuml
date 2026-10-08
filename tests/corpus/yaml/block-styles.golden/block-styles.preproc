@@ -1,0 +1,11 @@
+@startyaml
+# a comment
+description: |
+  first line
+  second line
+note:
+  plain text
+  continued
+empty:
+last: value # trailing comment
+@endyaml

@@ -1,0 +1,23 @@
+@startyaml
+<style>
+yamlDiagram {
+  node {
+    BackGroundColor lightblue
+    LineColor navy
+  }
+  highlight {
+    BackGroundColor gold
+  }
+}
+</style>
+title YAML with a title
+#highlight "spec" / "replicas"
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  replicas: 3
+  template:
+    containers:
+      - name: web
+        image: nginx
+@endyaml

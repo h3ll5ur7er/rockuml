@@ -36,6 +36,8 @@ pub(crate) enum CreoleMode {
     FullButUnderscore,
     /// What class members are read with; it reads like [`CreoleMode::FullButUnderscore`].
     SimpleLine,
+    /// Inline markup only: no headings, lists or separator lines (what JSON and YAML values are read with).
+    NoCreole,
 }
 
 /// The smallest piece of a creole line: a run of text, an image, a bullet...
