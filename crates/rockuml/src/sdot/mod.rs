@@ -41,7 +41,7 @@ use crate::svek::{
 };
 
 /// A graph to lay out; tests that record graphs get traced ones.
-fn new_graph() -> Graph {
+pub(crate) fn new_graph() -> Graph {
     #[cfg(test)]
     if recorded_graphs::is_recording() {
         return Graph::traced();
@@ -73,7 +73,7 @@ pub(crate) mod recorded_graphs {
         RECORDED.with(|recorded| recorded.borrow().is_some())
     }
 
-    pub(super) fn record(graph: &Graph) {
+    pub(crate) fn record(graph: &Graph) {
         RECORDED.with(|recorded| {
             if let (Some(graphs), Some(calls)) = (recorded.borrow_mut().as_mut(), graph.trace()) {
                 graphs.push(calls.to_vec());

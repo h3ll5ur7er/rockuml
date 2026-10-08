@@ -55,6 +55,16 @@ impl LimitFinder {
         finder.borrow().min_max()
     }
 
+    /// How far a block reaches when drawn, from the origin on (`TextBlockUtils.getMinMax` with `initToZero`).
+    pub(crate) fn min_max_from_origin_of(
+        block: &dyn TextBlock,
+        string_bounder: Rc<dyn StringBounder>,
+    ) -> MinMax {
+        let (ug, finder) = Self::surface(string_bounder, MinMax::from_origin());
+        block.draw_u(&ug);
+        finder.borrow().min_max
+    }
+
     fn add_point(&mut self, x: f64, y: f64) {
         if self.clip.is_none_or(|clip| clip.is_inside(x, y)) {
             self.min_max = self.min_max.add_point(x, y);

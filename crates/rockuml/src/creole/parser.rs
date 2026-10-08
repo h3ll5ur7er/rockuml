@@ -325,6 +325,9 @@ impl StripeStyle {
             },
         ];
 
+        if mode == CreoleMode::NoCreole {
+            return (line.to_owned(), Self::NORMAL);
+        }
         let hidden = char_hidder::hide(line);
         for pattern in &PATTERNS {
             let text = if pattern.on_hidden_text {
