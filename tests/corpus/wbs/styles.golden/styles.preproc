@@ -1,0 +1,33 @@
+@startwbs
+<style>
+wbsDiagram {
+  node {
+    Padding 12
+    Margin 3
+    HorizontalAlignment center
+    LineColor blue
+    LineThickness 3.0
+    BackgroundColor gold
+    RoundCorner 40
+    MaximumWidth 100
+  }
+  arrow {
+    LineStyle 4
+    LineThickness 0.5
+    LineColor green
+  }
+  :depth(2) {
+    BackgroundColor lightblue
+  }
+  leafNode {
+    LineColor gold
+  }
+}
+</style>
+* Hi =)
+** sometimes i have node in wich i want to write a long text
+*** this results in really huge diagram
+****:of course, i can explicit split with a
+new line;
+**** but it could be cool if PlantUML was able to split long lines, maybe with an option
+@endwbs

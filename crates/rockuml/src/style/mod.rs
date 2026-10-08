@@ -61,6 +61,17 @@ impl Style {
         Style::new(self.signature.clone(), properties)
     }
 
+    /// The style with every property's priority raised by `delta` (`deltaPriority`).
+    #[must_use]
+    fn delta_priority(&self, delta: i32) -> Style {
+        let properties = self
+            .properties
+            .iter()
+            .map(|(&name, value)| (name, value.with_added_priority(delta)))
+            .collect();
+        Style::new(self.signature.clone(), properties)
+    }
+
     /// `other` declared over this style: its properties win unless declared with a lower priority.
     #[must_use]
     pub(crate) fn merge_with(&self, other: &Style) -> Style {
@@ -207,6 +218,43 @@ impl StyleBuilder {
     pub(crate) fn apply_skinparam(&mut self, key: &str, value: &str) {
         let styles = skinparam_styles(key, value, &mut self.counter);
         self.mute(styles);
+    }
+
+    /// The style of a node of a mind map or work breakdown: its own rules, then the rules each ancestor
+    /// passes down with `*`, a nearer ancestor's weighing more (`Idea.getStyle`, `WElement.getStyle`).
+    /// `ancestors` are the ancestors' signatures, nearest first.
+    pub(crate) fn merged_style_of_tree_node(
+        &self,
+        own: &StyleSignature,
+        ancestors: impl IntoIterator<Item = StyleSignature>,
+    ) -> Option<Style> {
+        // As in PlantUML, which computes these in `int`, the first product overflows and wraps.
+        const STEP_BY_PARENT: i32 = 1000_1000;
+        let mut delta_priority = STEP_BY_PARENT.wrapping_mul(1000);
+        let mut result = self.merged_style_special(own, delta_priority)?;
+        for ancestor in ancestors {
+            delta_priority = delta_priority.wrapping_sub(STEP_BY_PARENT);
+            if let Some(style) = self.merged_style_special(&ancestor.with_star(), delta_priority) {
+                result = result.merge_with(&style);
+            }
+        }
+        Some(result)
+    }
+
+    /// Like [`Self::merged_style`], with the priority of starred rules shifted by `delta_priority`
+    /// (`getMergedStyleSpecial`).
+    fn merged_style_special(&self, element: &StyleSignature, delta_priority: i32) -> Option<Style> {
+        self.storage
+            .styles()
+            .filter(|style| style.signature().matches(element))
+            .map(|style| {
+                if style.signature().is_starred() {
+                    style.delta_priority(delta_priority)
+                } else {
+                    style.clone()
+                }
+            })
+            .reduce(|merged, style| merged.merge_with(&style))
     }
 
     /// The style of an element: every rule that applies to it, merged in storage order.

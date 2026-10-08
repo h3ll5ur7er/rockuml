@@ -1,0 +1,133 @@
+DPI: 96
+dimension: [ 653.1465 ; 164.0000 ]
+scaleFactor: 1.0000
+seed: -4377568833924766668
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 13.0000 ; 13.0000 ]
+  pt2: [ 636.1465 ; 28.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-3.0
+  shadow: 0
+  color: ffffdd88
+  backcolor: ffffffcc
+
+TEXT:
+  text: Please define Direction/Shape before Color/Id.
+  position: [ 20.0000 ; 22.0000 ]
+  orientation: 0
+  font: Monospaced.plain/10 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 138.0725 ; 92.0000 ]
+  pt2: [ 138.0725 ; 112.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 112.0000 ]
+  pt2: [ 256.1450 ; 144.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffc0cb
+
+TEXT:
+  text: Old order on the left
+  position: [ 30.0000 ; 131.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 407.3038 ; 92.0000 ]
+  pt2: [ 407.3038 ; 112.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 276.1450 ; 112.0000 ]
+  pt2: [ 538.4626 ; 144.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd8e6
+
+TEXT:
+  text: Old order on the right
+  position: [ 286.1450 ; 131.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 595.8046 ; 92.0000 ]
+  pt2: [ 595.8046 ; 112.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 558.4626 ; 112.0000 ]
+  pt2: [ 633.1465 ; 144.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffd700
+
+TEXT:
+  text: coded
+  position: [ 568.4626 ; 131.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 138.0725 ; 92.0000 ]
+  pt2: [ 595.8046 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 328.7807 ; 40.0000 ]
+  pt2: [ 405.0964 ; 72.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Root
+  position: [ 338.7807 ; 59.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 366.9385 ; 72.0000 ]
+  pt2: [ 366.9385 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+

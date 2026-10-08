@@ -1,0 +1,211 @@
+DPI: 96
+dimension: [ 448.8955 ; 262.0000 ]
+scaleFactor: 1.0000
+seed: -1660464397424502915
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 96.2940 ; 72.0000 ]
+  pt2: [ 96.2940 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 92.0000 ]
+  pt2: [ 172.5879 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Phase one
+  position: [ 30.0000 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 96.2940 ; 161.0000 ]
+  pt2: [ 106.2940 ; 161.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 106.2940 ; 139.0000 ]
+  pt2: [ 300.8987 ; 183.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Multi line
+  position: [ 116.2940 ; 158.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: work
+  position: [ 116.2940 ; 170.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  package
+  position: [ 175.6389 ; 170.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 96.2940 ; 220.0000 ]
+  pt2: [ 106.2940 ; 220.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 106.2940 ; 198.0000 ]
+  pt2: [ 229.9900 ; 242.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: another
+  position: [ 116.2940 ; 217.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: one
+  position: [ 116.2940 ; 229.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 96.2940 ; 124.0000 ]
+  pt2: [ 96.2940 ; 220.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 374.8971 ; 72.0000 ]
+  pt2: [ 374.8971 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 320.8987 ; 92.0000 ]
+  pt2: [ 428.8955 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Phase two
+  position: [ 330.8987 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 96.2940 ; 72.0000 ]
+  pt2: [ 374.8971 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 173.2545 ; 20.0000 ]
+  pt2: [ 297.9365 ; 52.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 183.2545 ; 31.0000 ]
+  pt2: [ 193.2545 ; 39.0000 ]
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 1.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 1.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 2.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 2.0000 ; 4.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 4.0000 ; 4.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 4.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 8.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 6.0000 ; 3.0300 ]
+   - type: SEG_LINETO
+     pt1: [ 8.0000 ; 1.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 1.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 2.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text:  Project
+  position: [ 193.2545 ; 39.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 235.5955 ; 52.0000 ]
+  pt2: [ 235.5955 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+

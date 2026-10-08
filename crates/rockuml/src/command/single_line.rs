@@ -37,6 +37,7 @@ pub(crate) struct PatternCommand<F> {
     pattern: RegexTree,
     apply: F,
     passes: &'static [ParserPass],
+    trims_line: bool,
 }
 
 impl<F> PatternCommand<F> {
@@ -45,6 +46,16 @@ impl<F> PatternCommand<F> {
             pattern,
             apply,
             passes: &[ParserPass::One],
+            trims_line: true,
+        }
+    }
+
+    /// The pattern sees the line as written, its indentation included (`SingleLineCommand2(false, ...)`).
+    #[must_use]
+    pub(crate) fn untrimmed(self) -> Self {
+        Self {
+            trims_line: false,
+            ..self
         }
     }
 
@@ -69,6 +80,10 @@ where
         arg: &RegexResult,
     ) -> CommandResult {
         (self.apply)(diagram, location, arg)
+    }
+
+    fn trims_line(&self) -> bool {
+        self.trims_line
     }
 
     fn is_eligible_for(&self, pass: ParserPass) -> bool {

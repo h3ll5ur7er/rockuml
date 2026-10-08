@@ -16,12 +16,14 @@ use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
+use super::mindmap::MindMapDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::titled::TitledDiagram;
 use super::unported::{
     ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory, TimingDiagramFactory,
 };
+use super::wbs::WbsDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
 use crate::command::{Command, CommandError};
@@ -146,6 +148,16 @@ pub(super) fn create_uml(
 /// A `@startchen` diagram.
 pub(super) fn create_chen(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<ChenEerDiagramFactory>])
+}
+
+/// A `@startmindmap` diagram.
+pub(super) fn create_mindmap(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<MindMapDiagramFactory>])
+}
+
+/// A `@startwbs` diagram.
+pub(super) fn create_wbs(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<WbsDiagramFactory>])
 }
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.

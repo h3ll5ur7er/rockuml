@@ -1,0 +1,7 @@
+@startwbs
+* Test WBS
+** "Phase one" as p1
+** "Phase two" as p2
+*** "Detail" as d
+p1 -> d
+@endwbs

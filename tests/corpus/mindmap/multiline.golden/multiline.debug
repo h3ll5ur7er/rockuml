@@ -1,0 +1,186 @@
+DPI: 96
+dimension: [ 821.3611 ; 268.0000 ]
+scaleFactor: 1.0000
+seed: 6327700863940996268
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 107.0000 ]
+  pt2: [ 274.2454 ; 161.0000 ]
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 117.0000 ]
+  pt2: [ 274.2454 ; 151.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Class Templates
+  position: [ 20.0000 ; 137.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 324.2454 ; 10.0000 ]
+  pt2: [ 677.1774 ; 148.0000 ]
+
+RECTANGLE:
+  pt1: [ 324.2454 ; 20.0000 ]
+  pt2: [ 677.1774 ; 138.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Example 1
+  position: [ 334.2454 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: template <typename T>
+  position: [ 334.2454 ; 54.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: class cname{
+  position: [ 334.2454 ; 68.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: void f1()<U+003B>
+  position: [ 334.2454 ; 82.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ...
+  position: [ 334.2454 ; 96.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: }
+  position: [ 334.2454 ; 110.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 334.2454 ; 124.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 264.2454 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 274.2454 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 289.2454 ; 0.0000 ]
+     pt2: [ 289.2454 ; -55.0000 ]
+     pt3: [ 304.2454 ; -55.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 314.2454 ; -55.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 324.2454 ; 148.0000 ]
+  pt2: [ 801.3611 ; 258.0000 ]
+
+RECTANGLE:
+  pt1: [ 324.2454 ; 158.0000 ]
+  pt2: [ 801.3611 ; 248.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Example 2
+  position: [ 334.2454 ; 178.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: other template <typename T>
+  position: [ 334.2454 ; 192.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: class cname{
+  position: [ 334.2454 ; 206.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: ...
+  position: [ 334.2454 ; 220.8889 ]
+  orientation: 0
+  font: Monospaced.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 334.2454 ; 234.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 264.2454 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 274.2454 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 289.2454 ; 0.0000 ]
+     pt2: [ 289.2454 ; 69.0000 ]
+     pt3: [ 304.2454 ; 69.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 314.2454 ; 69.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

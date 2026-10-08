@@ -81,6 +81,25 @@ impl StyleSignature {
         }
     }
 
+    pub(crate) fn is_starred(&self) -> bool {
+        self.starred
+    }
+
+    /// The signature with each of the stereotype's labels (`addStereotype(Stereotype)`).
+    #[must_use]
+    pub(crate) fn with_stereotype_labels(
+        &self,
+        stereotype: Option<&crate::stereo::Stereotype>,
+    ) -> Self {
+        stereotype
+            .map(crate::stereo::Stereotype::labels_without_guillemets)
+            .unwrap_or_default()
+            .iter()
+            .fold(self.clone(), |signature, label| {
+                signature.with_stereotype(label)
+            })
+    }
+
     pub(crate) fn has_stereotypes(&self) -> bool {
         !self.stereotypes.is_empty()
     }

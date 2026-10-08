@@ -220,6 +220,14 @@ impl Stereotype {
         cut_labels(&self.label_double_comparator())
     }
 
+    /// Each label's text without its guillemets (`getLabels(Guillemet.NONE)`).
+    pub(crate) fn labels_without_guillemets(&self) -> Vec<String> {
+        self.labels_double_comparator()
+            .iter()
+            .map(|label| without_brackets(label).to_owned())
+            .collect()
+    }
+
     /// Each label's text, without brackets or the space next to them.
     pub(crate) fn multiple_labels(&self) -> Vec<String> {
         static LABEL: LazyLock<Regex> =
