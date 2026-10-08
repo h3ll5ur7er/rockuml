@@ -20,7 +20,6 @@ pub(crate) mod stencil;
 pub(crate) mod svg;
 pub(crate) mod typeface;
 pub(crate) mod ugraphic;
-#[allow(dead_code, reason = "used by activity groups, Phase 6 stage F")]
 pub(crate) mod ugraphic_dispatch_drawable;
 pub(crate) mod url;
 pub(crate) mod width_table;
