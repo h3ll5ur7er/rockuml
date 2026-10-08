@@ -16,6 +16,7 @@ use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
+use super::gantt::GanttDiagramFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
@@ -153,6 +154,11 @@ pub(super) fn create_chen(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetP
 /// A `@startmindmap` diagram.
 pub(super) fn create_mindmap(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<MindMapDiagramFactory>])
+}
+
+/// A `@startgantt` diagram.
+pub(super) fn create_gantt(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<GanttDiagramFactory>])
 }
 
 /// A `@startnwdiag` diagram.

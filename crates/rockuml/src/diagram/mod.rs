@@ -12,6 +12,7 @@ mod cuca_commands;
 mod description;
 mod diagram_type;
 mod error;
+mod gantt;
 mod json;
 mod mindmap;
 mod nwdiag;
@@ -169,11 +170,13 @@ pub fn create(
         Some(DiagramType::MindMap) => |source, _| builder::create_mindmap(source),
         Some(DiagramType::Wbs) => |source, _| builder::create_wbs(source),
         Some(DiagramType::NwDiag) => |source, _| builder::create_nwdiag(source),
+        Some(DiagramType::Gantt) => |source, _| builder::create_gantt(source),
         Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_image_files(block.directory(), host);
+    source.note_current_time(host);
     create(source, block.located_lines())
 }
 

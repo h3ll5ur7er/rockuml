@@ -112,7 +112,7 @@ describe('reports what it cannot render', () => {
   });
 
   test('diagram types that are not ported yet', async () => {
-    await assert.rejects(rockuml.render('@startgantt\n[Task] lasts 2 days\n@endgantt'), {
+    await assert.rejects(rockuml.render('@startditaa\n+--+\n|A |\n+--+\n@endditaa'), {
       name: 'RockumlError',
       message: 'this diagram type is not ported yet',
       notPorted: true,

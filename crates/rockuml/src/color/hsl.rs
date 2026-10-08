@@ -55,6 +55,17 @@ pub(crate) fn to_rgb(hue: f32, saturation: f32, luminance: f32, alpha: f32) -> X
     }
 }
 
+/// From `color1` at 0% to `color2` at 100%, along the cube of the completion, in HSL
+/// (`HColorSimple.unlinear`).
+pub(super) fn unlinear(color1: XColor, color2: XColor, completion: i32) -> XColor {
+    let [h1, s1, l1] = from_rgb(color1);
+    let [h2, s2, l2] = from_rgb(color2);
+    let factor = (f64::from(completion.min(100)) / 100.0) as f32;
+    let factor = factor * factor * factor;
+    let linear = |x: f32, y: f32| x + (y - x) * factor;
+    to_rgb(linear(h1, h2), linear(s1, s2), linear(l1, l2), 1.0)
+}
+
 fn hue_to_rgb(p: f32, q: f32, hue: f32) -> f32 {
     let mut hue = hue;
     if hue < 0.0 {

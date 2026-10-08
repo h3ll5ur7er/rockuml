@@ -21,6 +21,8 @@ pub struct UmlSource {
     md5_map: HashMap<String, String>,
     /// What `read_image_files` read, by the name the source gives it; `None` for what it could not read.
     image_files: HashMap<String, Option<Vec<u8>>>,
+    /// When the diagram is drawn, in milliseconds since 1970: what `today` means.
+    current_time_millis: i64,
 }
 
 impl UmlSource {
@@ -30,6 +32,7 @@ impl UmlSource {
             raw_lines,
             md5_map: HashMap::new(),
             image_files: HashMap::new(),
+            current_time_millis: 0,
         }
     }
 
@@ -51,6 +54,7 @@ impl UmlSource {
             raw_lines,
             md5_map: HashMap::new(),
             image_files: HashMap::new(),
+            current_time_millis: 0,
         }
     }
 
@@ -144,6 +148,15 @@ impl UmlSource {
     /// Reads the files and URLs `<img>`s name, which creole cannot read itself as it draws. Relative paths
     /// resolve against `directory`, the diagram file's, as PlantUML's `FileSystem` does. What cannot be read
     /// is left out, and its `<img>` draws as undecodable.
+    /// Remembers what time it is, which the source itself cannot know.
+    pub(crate) fn note_current_time(&mut self, host: &dyn Host) {
+        self.current_time_millis = host.current_time_millis();
+    }
+
+    pub(crate) fn current_time_millis(&self) -> i64 {
+        self.current_time_millis
+    }
+
     pub(crate) fn read_image_files(&mut self, directory: &Path, host: &dyn Host) {
         for line in &self.lines {
             for src in crate::creole::image_sources(line.text()) {

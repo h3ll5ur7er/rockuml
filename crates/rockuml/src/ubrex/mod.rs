@@ -74,6 +74,29 @@ impl<'a> UMatcher<'a> {
             .map(|&(_, value)| value)
             .collect()
     }
+
+    pub(crate) fn find_first_value_by_key(&self, key: &str) -> Option<&'a str> {
+        self.values
+            .iter()
+            .find(|(entry_key, _)| entry_key == key)
+            .map(|&(_, value)| value)
+    }
+
+    /// The values captured inside `prefix`, keyed as if it had been matched alone (`extractByPrefix`).
+    pub(crate) fn extract_by_prefix(&self, prefix: &str) -> UMatcher<'a> {
+        let prefix = format!("{prefix}/");
+        UMatcher {
+            accepted_match: self.accepted_match,
+            values: self
+                .values
+                .iter()
+                .filter_map(|(key, value)| {
+                    key.strip_prefix(&prefix)
+                        .map(|inner| (inner.to_owned(), *value))
+                })
+                .collect(),
+        }
+    }
 }
 
 /// The part of `text` between two UTF-16 indexes, widened to whole characters.
