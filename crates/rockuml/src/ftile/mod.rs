@@ -55,15 +55,18 @@ mod ftile_factory;
 mod ftile_factory_delegator;
 mod ftile_geometry;
 mod ftile_geometry_merger;
+pub(crate) mod hexagon;
 mod merge_strategy;
 mod snake;
 mod swimable;
 mod text_block_interceptor_udrawable;
 mod ugraphic_dispatch_ftile;
 pub(crate) mod vcompact;
+pub(crate) mod vertical;
 mod worm;
 mod worm_mutation;
 
+use std::any::Any;
 use std::rc::Rc;
 
 pub(crate) use abstract_connection::AbstractConnection;
@@ -95,7 +98,10 @@ use crate::skin::SkinParam;
 ///
 /// The defaults are those of PlantUML's `AbstractFtile`. Where it fails because a tile has no children,
 /// these answer that it has none.
-pub(crate) trait Ftile: Swimable {
+///
+/// A tile is [`Any`] so that tiles can ask what another tile is, as PlantUML's `instanceof` does, with
+/// [`downcast`].
+pub(crate) trait Ftile: Swimable + Any {
     fn skin_param(&self) -> &SkinParam;
 
     /// How the arrow into the tile is drawn.
@@ -148,6 +154,11 @@ pub(crate) trait Ftile: Swimable {
 /// Whether `a` and `b` are the same tile, as PlantUML compares tiles.
 pub(crate) fn same(a: &dyn Ftile, b: &dyn Ftile) -> bool {
     std::ptr::addr_eq(a, b)
+}
+
+/// `tile` as a `T`, when it is one (PlantUML's `tile instanceof T`).
+pub(crate) fn downcast<T: Ftile>(tile: &dyn Ftile) -> Option<&T> {
+    (tile as &dyn Any).downcast_ref()
 }
 
 #[cfg(test)]

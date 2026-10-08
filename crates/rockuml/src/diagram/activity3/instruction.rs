@@ -213,6 +213,21 @@ impl Instructions {
         list.all.iter().any(|ins| self.contains_break(*ins))
     }
 
+    /// Whether the list is a lone killed activity, spot, or `stop` or `end` without notes
+    /// (`InstructionList.isOnlySingleStopOrSpot`).
+    pub(crate) fn list_is_only_single_stop_or_spot(&self, list: &InstructionList) -> bool {
+        let [only] = list.all.as_slice() else {
+            return false;
+        };
+        match self.get(*only) {
+            Instruction::Simple(ins) => ins.killed,
+            Instruction::Spot(_) => true,
+            Instruction::Stop(ins) => ins.mono.notes.notes.is_empty(),
+            Instruction::End(ins) => ins.mono.notes.notes.is_empty(),
+            _ => false,
+        }
+    }
+
     fn lists_contain_break<'a>(
         &self,
         lists: impl IntoIterator<Item = &'a InstructionList>,
