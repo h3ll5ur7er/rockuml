@@ -1,0 +1,15 @@
+@startuml
+A -> B : first
+@enduml
+@startuml named
+A -> B : named
+@enduml
+@startuml
+A -> B : third
+@enduml
+@startuml sub/
+A -> B : in a directory
+@enduml
+@startuml "out/deep name.png"
+A -> B : nested
+@enduml
