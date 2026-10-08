@@ -23,12 +23,23 @@ rockuml -DAUTHOR=John --theme mars diagram.puml
 rockuml takes PlantUML's command line: the same flags (old spellings such as `-tsvg` included), directories and
 wildcards, `-pipe`, defines and config files, `--extract-source` from PNG or SVG metadata, and the same exit
 statuses. `rockuml --help` and `rockuml --help-more` list what it supports. Flags for features rockuml does not have
-(other output formats such as PDF or ASCII art, the GUI, the HTTP server) are refused with a message and status 1,
+(other output formats such as PDF or ASCII art, the GUI) are refused with a message and status 1,
 as are diagrams that need parts of PlantUML not ported yet.
 
 A diagram with several pages (`newpage`) writes one file per page: `diagram.png`, `diagram_001.png`, and so on.
 `-f svg-deterministic` writes SVG measured with PlantUML's fixed width table instead of fonts, the same on every
 machine.
+
+### As a server for editor plugins
+
+```bash
+rockuml --http-server:8080              # or --http-server:8080:127.0.0.1 to listen locally only
+```
+
+serves diagrams like PlantUML's built-in server: `GET /svg/<code>` and `/png/<code>` (also under `/plantuml/`),
+`POST /render` with `{"source": "...", "options": ["-tsvg"]}`, and `/serverinfo`. Point an editor's PlantUML plugin at
+`http://localhost:8080` (in VS Code: `"plantuml.render": "PlantUMLServer"`, `"plantuml.server": "http://localhost:8080"`).
+Add `:stop` to let `GET /stopserver` stop it.
 
 ### Supported diagrams
 

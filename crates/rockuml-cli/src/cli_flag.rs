@@ -133,7 +133,7 @@ cli_flags! {
         doc("Show splash screen with progress bar", 0), None;
     TestDot: "--check-graphviz" ["-testdot"] UnaryImmediateAction Dropped
         doc("Check Graphviz installation", 0), None;
-    Picoweb: "--http-server" ["-picoweb"] UnaryOptionalColon Dropped
+    Picoweb: "--http-server" ["-picoweb"] UnaryOptionalColon Ported
         doc_with_usage("Start internal HTTP server for rendering (default port : 8080)", 0, "--http-server[:<port>]"), None;
     // Input & preprocessing
     Exclude: "--exclude" ["-x", "-exclude"] BinaryNextArgumentValue Ported

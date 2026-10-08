@@ -155,7 +155,7 @@ rockuml/
                     impls Smetana (built-in) and ExternalDot (`dot -Tsvg` + the svek SVG back-parser)
     ru-diagrams/    one module per family: sequence (teoz + `real` solver), class, description, state, activity3,
                     mindmap, wbs, gantt, timing, json/yaml, nwdiag, salt, ...
-    rockuml-cli/    the `rockuml` binary (PlantUML-compatible CLI, -pipe, later --http-server)
+    rockuml-cli/    the `rockuml` binary (PlantUML-compatible CLI, -pipe, --http-server)
     rockuml-wasm/   wasm-bindgen API: render(source, format, options) -> bytes/string; tiny demo page
   tests/
     corpus/         .puml inputs
@@ -501,7 +501,7 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     `<output>: crashed: <message>` with status 200 and no image; `**` does not follow links to directories; status 1
     for flags, formats or diagram types not ported, which outranks PlantUML's 200/50/100. Not ported: other output
     formats (PDF, EPS, LaTeX, txt/utxt, HTML, SCXML, XMI, VDX, obfuscate, base64, braille), `-pipemap`, `--verbose`,
-    `-stdlib`, `--list-keywords`, compressed sprites. Dropped: GUI, HTTP/FTP servers, statistics, clipboard, splash
+    `-stdlib`, `--list-keywords`, compressed sprites. Dropped: GUI, FTP server, statistics, clipboard, splash
     screen, progress bar, Graphviz checks, dark mode.
   - Wasm: `crates/rockuml-wasm` (a C ABI, no wasm-bindgen), `web/rockuml.js` (dependency-free ES module for
     browsers and Node), `web/index.html` (editor with live preview), `tools/build-wasm.sh`, Node tests against the
@@ -542,6 +542,14 @@ nwdiag, timing and gantt.
   - Deviations: a malformed `#highlight` line is ignored (PlantUML fails the whole diagram).
   - Not ported: `skin` and handwritten drawing before the data (reported as not ported).
 
+### Phase 10 — HTTP server
+- **Status: done.** `--http-server[:port[:address]][:stop]` serves `GET /png/`, `/svg/` (also under `/plantuml/`),
+  `POST /render` (JSON source and command-line options) and `/serverinfo` like PlantUML's `PicoWebServer`, so editor
+  plugins can use rockuml as their server. Images, status codes and the size and error headers match PlantUML's
+  (checked side by side); `tests/http_server.rs` drives a real server.
+  - Deviations: `/stopserver` really stops the server; ASCII-art formats and `/language` answer 501; a source without
+    a diagram posted to `/render` answers 400; the description, title, donation and quote headers are left out.
+
 ---
 
 ## 8. Known risks and mitigations
@@ -570,5 +578,5 @@ nwdiag, timing and gantt.
 ---
 
 ## 10. Immediate next steps
-1. Phase 10: the HTTP server mode that lets editor plugins use rockuml, then nwdiag, timing and gantt.
+1. Phase 11: nwdiag, then timing and gantt.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

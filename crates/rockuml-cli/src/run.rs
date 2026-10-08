@@ -22,7 +22,7 @@ use crate::exit_status::{self, ExitStatus};
 use crate::file_format::FileFormat;
 use crate::source_file_reader::{self, SourceFileReader};
 use crate::system_host::SystemHost;
-use crate::{file_group, fonts, help_print, pipe};
+use crate::{file_group, fonts, help_print, pico_web_server, pipe};
 
 /// Deeply nested diagrams recurse deeply; a thread's stack is only 1 MiB on Windows.
 pub(crate) const STACK_SIZE: usize = 64 * 1024 * 1024;
@@ -83,6 +83,17 @@ fn run(arguments: Vec<String>, console: &mut Console, start: Instant) -> Result<
     }
     if options.is_true(CliFlag::EncodeSprite) {
         encode_sprite(options.remaining_args(), console)?;
+        return Ok(exit_status::OK);
+    }
+    if options.is_true(CliFlag::Picoweb) {
+        let fonts = fonts::load(&options.fonts()).map_err(Failure::Usage)?;
+        pico_web_server::start_server(
+            options.picoweb_port().map_err(Failure::Usage)?,
+            options.picoweb_bind_address(),
+            options.picoweb_enable_stop(),
+            &Arc::new(fonts),
+        )
+        .map_err(Failure::Usage)?;
         return Ok(exit_status::OK);
     }
     let settings = Settings::new(options)?;
@@ -181,10 +192,16 @@ fn immediate_action(options: &CliOptions) -> Option<String> {
 
 impl Settings {
     fn new(options: CliOptions) -> Result<Self, Failure> {
-        let format = options.file_format().map_err(Failure::Usage)?;
-        let charset = options.charset().map_err(Failure::Usage)?;
+        Self::of_options(options).map_err(Failure::Usage)
+    }
+
+    /// What a command line, or the options of an HTTP render request, ask for; an error names an option rockuml
+    /// cannot honour.
+    pub(crate) fn of_options(options: CliOptions) -> Result<Self, String> {
+        let format = options.file_format()?;
+        let charset = options.charset()?;
         let fonts = if format.measures_with_fonts() {
-            fonts::load(&options.fonts()).map_err(Failure::Usage)?
+            fonts::load(&options.fonts())?
         } else {
             FontRegistry::default()
         };

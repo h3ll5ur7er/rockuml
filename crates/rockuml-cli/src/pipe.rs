@@ -189,7 +189,7 @@ fn output_image(
     None
 }
 
-fn preprocess(text: &str, settings: &Settings) -> Vec<PreprocessedBlock> {
+pub(crate) fn preprocess(text: &str, settings: &Settings) -> Vec<PreprocessedBlock> {
     let options = &settings.options;
     let file_dir = options.get_string(CliFlag::FileDir);
     let source = Source {
