@@ -106,7 +106,7 @@ mod tests {
     }
 
     impl Ftile for Nest {
-        fn skin_param(&self) -> &SkinParam {
+        fn skin_param(&self) -> &Rc<SkinParam> {
             self.base.skin_param()
         }
 

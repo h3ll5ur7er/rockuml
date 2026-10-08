@@ -61,7 +61,7 @@ impl Swimable for FtileThinSplit {
 }
 
 impl Ftile for FtileThinSplit {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 

@@ -2,7 +2,7 @@
 
 use crate::creole::{CreoleMode, CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::font::{FontConfiguration, StringBounder};
-use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
+use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
@@ -33,7 +33,7 @@ impl NoteSheet {
         .create_display_sheet(note, font_configuration);
         Self {
             sheet: SheetBlock2::new(
-                SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(wrap_width),
+                SheetBlock1::new(sheet, skin_param.get_padding()).wrapped_at(wrap_width),
             ),
         }
     }

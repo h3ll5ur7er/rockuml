@@ -144,7 +144,7 @@ pub(crate) trait FtileFactory {
         top_inlink_rendering: &LinkRendering,
         label_test: Option<&Display>,
         colors: &Colors,
-        end_colors: Option<&Colors>,
+        end_colors: &Colors,
     ) -> Rc<dyn Ftile>;
 
     /// `label` is the join specification of a fork, like `{or}`.

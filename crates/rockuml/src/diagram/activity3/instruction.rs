@@ -50,9 +50,13 @@ pub(crate) enum Instruction {
 /// unreachable, as it is lost in PlantUML.
 pub(crate) struct Instructions {
     all: Vec<Instruction>,
+    /// The arrow for the next instruction, which an unclosed `repeat` takes as its way back when none comes.
+    next_link_renderer: LinkRendering,
 }
 
 static NONE: LinkRendering = LinkRendering::none();
+
+pub(crate) const NO_CASE_IN_SWITCH: &str = "No 'case' in this switch";
 
 impl Instructions {
     pub(crate) const ROOT: InstructionId = InstructionId(0);
@@ -60,7 +64,16 @@ impl Instructions {
     pub(crate) fn new() -> Self {
         Self {
             all: vec![Instruction::List(InstructionList::new(None))],
+            next_link_renderer: LinkRendering::none(),
         }
+    }
+
+    pub(crate) fn next_link_renderer(&self) -> &LinkRendering {
+        &self.next_link_renderer
+    }
+
+    pub(crate) fn set_next_link_renderer(&mut self, link: LinkRendering) {
+        self.next_link_renderer = link;
     }
 
     pub(crate) fn get(&self, id: InstructionId) -> &Instruction {
@@ -76,6 +89,12 @@ impl Instructions {
         InstructionId(self.all.len() - 1)
     }
 
+    pub(crate) fn contains_switch_without_case(&self) -> bool {
+        self.all.iter().any(
+            |instruction| matches!(instruction, Instruction::Switch(ins) if ins.switches.is_empty()),
+        )
+    }
+
     /// Adds `child` where `container` takes its next instruction.
     pub(crate) fn add(&mut self, container: InstructionId, child: InstructionId) -> CommandResult {
         let list = match self.get_mut(container) {
@@ -83,7 +102,7 @@ impl Instructions {
             Instruction::If(ins) => &mut ins.current_mut().list,
             Instruction::Switch(ins) => match ins.switches.last_mut() {
                 Some(current) => &mut current.list,
-                None => return Err(CommandError::new("No 'case' in this switch")),
+                None => return Err(CommandError::new(NO_CASE_IN_SWITCH)),
             },
             Instruction::While(ins) => &mut ins.repeat_list,
             Instruction::Repeat(ins) => &mut ins.repeat_list,

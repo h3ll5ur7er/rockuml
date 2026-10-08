@@ -15,15 +15,16 @@ use crate::command::{
 };
 use crate::creole::Display;
 use crate::decoration::Rainbow;
-use crate::decoration::symbol::{USymbol, USymbols};
+use crate::decoration::symbol::USymbols;
 use crate::diagram::chrome::Warning;
 use crate::diagram::description::style_colors_multiples;
 use crate::diagram::sequence::model::NotePosition;
 use crate::ftile::BoxStyle;
+use crate::ftile::vcompact::FtileGroup;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{Stereogroup, Stereotype};
-use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::style::{PName, ValueReading};
 use crate::text::{LineLocation, without_quotes_or_brackets};
 use crate::{color, stereo};
 
@@ -121,18 +122,13 @@ fn warn_deprecated_color(diagram: &mut ActivityDiagram3, color: Option<&str>) {
     }
 }
 
-/// `#color:` before a keyword, the old way of colouring.
-fn leading_color() -> RegexTree {
-    RegexTree::named(1, "COLOR", r"(?:(#\w+[-\\|/]?\w+):)?")
-}
-
 /// PlantUML's `CommandSwimlane`.
 pub(super) fn swimlane() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
             RegexTree::leaf(r"\|"),
-            RegexTree::named(1, "COLOR", r"(?:(#\w+[-\\|/]?\w+)\|)?"),
+            color::exp6(),
             RegexTree::named(1, "SWIMLANE", r"([^|]+)"),
             RegexTree::leaf(r"\|"),
             RegexTree::named(1, "LABEL", r"([^|]+)?"),
@@ -149,7 +145,7 @@ pub(super) fn swimlane2() -> Box<dyn Command<ActivityDiagram3>> {
             RegexTree::start(),
             RegexTree::leaf(r"swimlane"),
             RegexTree::spaces_one_or_more(),
-            RegexTree::named(1, "COLOR", r"(?:(#\w+[-\\|/]?\w+))?"),
+            color::exp7(),
             RegexTree::spaces_zero_or_more(),
             RegexTree::named(1, "SWIMLANE", r"([^|]+?)"),
             RegexTree::optional(RegexTree::concat(vec![
@@ -227,7 +223,7 @@ fn execute_partition3(
             format!("You should use a bracket ({{) when defining your container '{type_}' {name}"),
         );
     }
-    let style_partition = group_style_signature(symbol).get_merged_style_with(
+    let style_partition = FtileGroup::get_style_signature(symbol).get_merged_style_with(
         &diagram.titled.skin.current_style_builder(),
         stereotype.as_ref(),
     );
@@ -242,14 +238,6 @@ fn execute_partition3(
         style_partition,
     );
     Ok(())
-}
-
-/// The style of a group drawn as `symbol` (`FtileGroup.getStyleSignature`).
-pub(super) fn group_style_signature(symbol: USymbol) -> StyleSignature {
-    let mut names = vec![SName::Root, SName::Element, SName::ActivityDiagram];
-    names.extend(symbol.get_s_names());
-    names.push(SName::Composite);
-    StyleSignature::of(&names)
 }
 
 /// PlantUML's `CommandCloseGroup3`.
@@ -371,7 +359,7 @@ pub(super) fn repeat3() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::leaf(r"repeat"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::optional(RegexTree::concat(vec![
@@ -429,7 +417,7 @@ pub(super) fn if4() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::leaf(r"if"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::leaf(r"\("),
@@ -463,7 +451,7 @@ fn if2_pattern() -> RegexTree {
         RegexTree::start(),
         Url::optional_pattern(),
         RegexTree::spaces_zero_or_more(),
-        leading_color(),
+        color::exp4(),
         RegexTree::leaf(r"if"),
         stereo::optional_pattern("IGNORED"),
         RegexTree::leaf(r"\("),
@@ -560,7 +548,7 @@ pub(super) fn else_if3() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::spaces_zero_or_more(),
             incoming(),
             RegexTree::spaces_zero_or_more(),
@@ -606,7 +594,7 @@ pub(super) fn else_if3() -> Box<dyn Command<ActivityDiagram3>> {
 fn else_if2_pattern() -> RegexTree {
     RegexTree::concat(vec![
         RegexTree::start(),
-        leading_color(),
+        color::exp4(),
         RegexTree::spaces_zero_or_more(),
         incoming(),
         RegexTree::spaces_zero_or_more(),
@@ -750,7 +738,7 @@ pub(super) fn switch() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::leaf(r"switch"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::leaf(r"\("),
@@ -1040,7 +1028,7 @@ pub(super) fn while3() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::leaf(r"while"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::leaf(r"\("),
@@ -1220,7 +1208,7 @@ pub(super) fn circle_spot3() -> Box<dyn Command<ActivityDiagram3>> {
     command(
         RegexTree::concat(vec![
             RegexTree::start(),
-            leading_color(),
+            color::exp4(),
             RegexTree::named(1, "SPOT", r"\((\S)\)"),
             RegexTree::leaf(r";?"),
             RegexTree::end(),

@@ -380,6 +380,24 @@ root lane=null out=null
       list lane=null out=null
         simple "Text 3" lane=null box=null in=(null [])
   stop lane=null in=(null [])
+=== activity/if-condition-separators.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    then test="first\n----\nsecond" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "a" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+  if lane=null in=(null []) out=(null []) endif
+    then test="one\n====\ntwo" positive=("yes" []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+        simple "b" lane=null box=null in=(null [])
+    else test=null positive=("no" []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+        simple "c" lane=null box=null in=(null [])
+  stop lane=null in=(null [])
 === activity/if-condition-style-diamond.puml
 next=(null []) current=InstructionList
 root lane=null out=null
@@ -782,6 +800,45 @@ root lane=null out=null
     list lane=null out=null
       simple "Render the view" lane=null box=null in=(null [])
   stop lane=null in=(null [])
+=== activity/padding-boxes.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "hello" lane=null box=null in=(null [])
+  simple "two\nlines" lane=null box=null in=(null [])
+  simple "first\n----\nsecond" lane=null box=null in=(null [])
+  stop lane=null in=(null [])
+=== activity/padding-if.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    then test="cond" positive=("yes" []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+        simple "x" lane=null box=null in=(null [])
+    else test=null positive=("no" []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+        simple "y" lane=null box=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    note LEFT NOTE "on the if" lane=null
+    then test="other" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "z" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+  stop lane=null in=(null [])
+=== activity/padding-notes.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "Validate" lane=null box=null in=(null [])
+    note RIGHT NOTE "one line" lane=null
+  simple "Transform" lane=null box=null in=(null [])
+    note LEFT NOTE "two\nlines" lane=null
+    note RIGHT NOTE "both sides" lane=null
+  simple "Store" lane=null box=null in=(null [])
+    note LEFT FLOATING_NOTE "floating" lane=null
+  stop lane=null in=(null [])
 === activity/partition-basic.puml
 next=(null []) current=InstructionList
 root lane=null out=null
@@ -861,6 +918,13 @@ root lane=null out=null
       simple "Check the password" lane=null box=null in=(null [])
   simple "Open the session" lane=null box=null in=(null [])
   stop lane=null in=(null [])
+=== activity/repeat-unclosed-arrow.puml
+next=("lbl" [#FF0000/#FF0000/NORMAL(null)]) current=InstructionRepeat
+root lane=null out=null
+  start lane=null in=(null [])
+  repeat lane=null laneOut=null laneBackward=null in=(null []) start=null boxIn=null stereoLoop=null backward=null box=null stereoBack=null test=null yes=null out=null incoming1=(null []) incoming2=(null []) end=(null []) stereo2=null
+    list lane=null out=null
+      simple "a" lane=null box=null in=(null [])
 === activity/skinparam-activity.puml
 next=(null []) current=InstructionList
 root lane=null out=null
@@ -887,6 +951,32 @@ root lane=null out=null
     else test=null positive=("no" []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
       list lane=null out=null
         simple "Discard" lane=null box=null in=(null [])
+  stop lane=null in=(null [])
+=== activity/skinparam-reversecolor-dark.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "Read" lane=null box=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    note RIGHT NOTE "Reversed note" lane=null
+    then test="Valid?" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "Write;\nelse (no)\n  #lightblue:Discard" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
+  stop lane=null in=(null [])
+=== activity/skinparam-reversecolor-order.puml
+next=(null []) current=InstructionList
+root lane=null out=null
+  start lane=null in=(null [])
+  simple "Read" lane=null box=null in=(null [])
+  if lane=null in=(null []) out=(null []) endif
+    note RIGHT NOTE "Reversed note" lane=null
+    then test="Valid?" positive=("yes" []) inlabel=(null []) inlink=(null []) special=null specialColors=[ ]
+      list lane=null out=null
+        simple "Write;\nelse (no)\n  #lightblue:Discard" lane=null box=null in=(null [])
+    else test=null positive=(null []) inlabel=(null []) inlink=(null []) special=(null []) specialColors=[ ]
+      list lane=null out=null
   stop lane=null in=(null [])
 === activity/split-basic.puml
 next=(null []) current=InstructionList

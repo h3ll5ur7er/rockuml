@@ -13,6 +13,7 @@ pub(crate) use sprite_monochrome::SpriteMonochrome;
 use std::rc::Rc;
 
 use super::TextBlock;
+use super::geom::ClockwiseTopRightBottomLeft;
 use crate::color::HColor;
 
 pub(crate) trait Sprite {
@@ -36,6 +37,11 @@ pub(crate) trait SpriteContainer {
 
     /// The content of a file or URL an `<img>` names, read when the diagram was created.
     fn image_file(&self, src: &str) -> Option<&[u8]>;
+
+    /// The room around creole text laid out with this container (`ISkinSimple.getPadding`).
+    fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
+        ClockwiseTopRightBottomLeft::none()
+    }
 }
 
 /// For text outside any diagram that defines sprites, which still finds the built-in ones.

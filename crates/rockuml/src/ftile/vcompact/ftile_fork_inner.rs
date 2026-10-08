@@ -59,7 +59,7 @@ impl Swimable for FtileForkInner {
 }
 
 impl Ftile for FtileForkInner {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.forks[0].skin_param()
     }
 

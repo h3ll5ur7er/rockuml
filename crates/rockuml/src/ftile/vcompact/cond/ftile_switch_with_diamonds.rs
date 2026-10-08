@@ -67,14 +67,11 @@ impl FtileSwitchWithDiamonds {
         arrow_color: Rainbow,
         links: SwitchLinks,
     ) -> Self {
-        let first_right = tiles.first().map_or(0.0, |tile| {
-            tile.calculate_dimension(string_bounder).get_right()
-        });
-        let last_left = tiles.last().map_or(0.0, |tile| {
-            tile.calculate_dimension(string_bounder).get_left()
-        });
-        let w13 =
-            diamond1.calculate_dimension(string_bounder).get_width() - first_right - last_left;
+        let w13 = diamond1.calculate_dimension(string_bounder).get_width()
+            - tiles[0].calculate_dimension(string_bounder).get_right()
+            - tiles[tiles.len() - 1]
+                .calculate_dimension(string_bounder)
+                .get_left();
         let inner = tiles
             .get(1..tiles.len().saturating_sub(1))
             .unwrap_or_default();
@@ -147,15 +144,14 @@ impl FtileSwitchWithDiamonds {
         match self.mode {
             Mode::BigDiamond => {
                 let height = dim1.get_height() + dim_nude.get_height() + dim2.get_height() + delta;
-                let (Some(first), Some(last)) = (self.tiles.first(), self.tiles.last()) else {
-                    return dim_nude;
-                };
-                let tile0 = first.calculate_dimension(string_bounder);
+                let tile0 = self.tiles[0].calculate_dimension(string_bounder);
                 let width = tile0.get_width()
                     + SUPP15
                     + self.w13
                     + SUPP15
-                    + last.calculate_dimension(string_bounder).get_width();
+                    + self.tiles[self.tiles.len() - 1]
+                        .calculate_dimension(string_bounder)
+                        .get_width();
                 FtileGeometry::with_out(
                     width,
                     height,
@@ -216,10 +212,12 @@ impl FtileSwitchWithDiamonds {
             }
             dx += candidate.calculate_dimension(string_bounder).get_width() + suppx;
         }
-        let first_width = self.tiles.first().map_or(0.0, |first| {
-            first.calculate_dimension(string_bounder).get_width()
-        });
-        let dx9 = first_width + self.w13 + SUPP15 + SUPP15;
+        let dx9 = self.tiles[0]
+            .calculate_dimension(string_bounder)
+            .get_width()
+            + self.w13
+            + SUPP15
+            + SUPP15;
         main.compose(UTranslate::new(dx9, 0.0))
     }
 
@@ -269,7 +267,7 @@ impl Swimable for FtileSwitchWithDiamonds {
 }
 
 impl Ftile for FtileSwitchWithDiamonds {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 

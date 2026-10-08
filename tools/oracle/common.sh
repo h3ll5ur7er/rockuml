@@ -32,3 +32,27 @@ jdk_bin="$(find_jdk_bin)"
 reference_plantuml() {
 	"$jdk_bin/java" -Djava.awt.headless=true -Duser.language=en -Duser.country=US -jar "$reference_jar" "$@"
 }
+
+native_path() {
+	echo "$1" | to_native_paths
+}
+
+# Compiles tools/oracle/<unit>/<Class>.java against the golden-model jar and runs it with the remaining arguments.
+# A fixed locale and line separator keep its output the same on every machine.
+run_dump() {
+	local unit="${1%/*}" class="${1#*/}"
+	shift
+	[[ -f "$reference_jar" ]] || die "golden model not built; run tools/oracle/build-reference.sh"
+	local classes="$oracle_dir/build/$unit"
+	mkdir -p "$classes"
+	local jar_path classes_path
+	jar_path="$(native_path "$reference_jar")"
+	classes_path="$(native_path "$classes")"
+	"$jdk_bin/javac" -nowarn -encoding UTF-8 -cp "$jar_path" -d "$classes_path" \
+		"$(native_path "$oracle_dir/$unit/$class.java")"
+	# java.exe on Windows wants ';' between classpath entries.
+	local separator=":"
+	[[ "$(uname -s)" == MINGW* || "$(uname -s)" == MSYS* || "$(uname -s)" == CYGWIN* ]] && separator=";"
+	"$jdk_bin/java" -Djava.awt.headless=true -Duser.language=en -Duser.country=US -Dline.separator=$'\n' \
+		-cp "$jar_path$separator$classes_path" "$class" "$@" 2> /dev/null
+}

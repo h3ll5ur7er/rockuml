@@ -57,6 +57,26 @@ pub(super) fn reverse(color: XColor) -> XColor {
     XColor::rgb(to_255(red), to_255(green), to_255(blue))
 }
 
+/// `ColorUtils.getReversed`: the lightness turned around, but moved by half the range for middling saturations.
+pub(super) fn get_reversed(color: XColor) -> XColor {
+    let [hue, saturation, mut lightness] = rgb_to_hsluv([
+        f64::from(color.red) / 256.0,
+        f64::from(color.green) / 256.0,
+        f64::from(color.blue) / 256.0,
+    ]);
+    if saturation > 40.0 && saturation < 60.0 {
+        if lightness > 50.0 {
+            lightness -= 50.0;
+        } else if lightness < 50.0 {
+            lightness += 50.0;
+        }
+    } else {
+        lightness = 100.0 - lightness;
+    }
+    let [red, green, blue] = hsluv_to_rgb([hue, saturation, lightness]);
+    XColor::rgb(to_255(red), to_255(green), to_255(blue))
+}
+
 /// `ColorUtils.grayToColor`: `color` with its lightness moved towards white by `coef`.
 pub(super) fn gray_to_color(coef: f64, color: XColor) -> XColor {
     let [hue, saturation, lightness] = rgb_to_hsluv([

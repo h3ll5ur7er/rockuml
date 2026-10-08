@@ -228,7 +228,7 @@ impl FtileFactory for VCompactFactory {
         _top_inlink_rendering: &LinkRendering,
         _label_test: Option<&Display>,
         _colors: &Colors,
-        _end_colors: Option<&Colors>,
+        _end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         let ftiles = branches.iter().map(|branch| branch.ftile.clone()).collect();
         Rc::new(FtileForkInner::new(ftiles))

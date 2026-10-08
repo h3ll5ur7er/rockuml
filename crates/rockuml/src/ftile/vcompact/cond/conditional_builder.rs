@@ -8,18 +8,17 @@ use crate::color::HColor;
 use crate::creole::{CreoleMode, CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::decoration::Rainbow;
 use crate::diagram::activity3::{BranchFtile, Instructions, PositionedNote, SwimlaneId};
-use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
+use crate::ftile::hexagon::{self, HEXAGON_HALF_SIZE};
 use crate::ftile::vcompact::{FtileIfDown, create0_or_empty};
 use crate::ftile::vertical::{FtileDiamond, FtileDiamondInside, FtileDiamondSquare};
 use crate::ftile::{
     Ftile, FtileEmpty, FtileFactory, FtileMinWidthCentered, FtileWithUrl, ftile_utils,
 };
 use crate::klimt::font::{FontConfiguration, StringBounder};
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::url::Url;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
-use crate::style::{PName, Style, ValueReading};
+use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::svek::{ConditionEndStyle, ConditionStyle};
 
 pub(crate) struct ConditionalBuilder<'a> {
@@ -114,7 +113,6 @@ impl<'a> ConditionalBuilder<'a> {
     }
 
     /// `branch1` below the diamond, `branch2` going round it or, when it is a lone stop, beside it.
-    /// `branch1` is never empty here: of an empty branch and a lone stop, the stop is `branch2`.
     fn create_down(&self, branch1: &BranchFtile<'_>, branch2: &BranchFtile<'_>) -> Rc<dyn Ftile> {
         let tile1: Rc<dyn Ftile> =
             Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch1.ftile), 30.0));
@@ -235,7 +233,17 @@ impl<'a> ConditionalBuilder<'a> {
         }
     }
 
-    /// The condition, in the diamond style's font and alignment.
+    fn get_style_signature_diamond() -> StyleSignature {
+        StyleSignature::of(&[
+            SName::Root,
+            SName::Element,
+            SName::ActivityDiagram,
+            SName::Activity,
+            SName::Diamond,
+        ])
+    }
+
+    /// The condition, in the diamond style's font and alignment, its separators spanning the hexagon.
     fn label_test_block(&self) -> Rc<dyn TextBlock> {
         let horizontal_alignment = self
             .style_diamond
@@ -249,9 +257,17 @@ impl<'a> ConditionalBuilder<'a> {
             self.skin_param.as_ref(),
         )
         .create_display_sheet(&label_test, &self.style_diamon_font);
-        Rc::new(SheetBlock2::new(
-            SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
+        let sheet_block1 = Rc::new(
+            SheetBlock1::new(sheet, self.skin_param.get_padding())
                 .wrapped_at(self.diamond_line_break),
+        );
+        let thickness = Self::get_style_signature_diamond()
+            .get_merged_style(&self.skin_param.current_style_builder())
+            .stroke();
+        Rc::new(SheetBlock2::with_stencil(
+            sheet_block1.clone(),
+            Rc::new(hexagon::as_stencil(sheet_block1)),
+            thickness,
         ))
     }
 

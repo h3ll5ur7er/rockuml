@@ -144,7 +144,7 @@ pub(super) fn draw_hexagon(
 swimable_through_wip!(FtileDiamondInside);
 
 impl Ftile for FtileDiamondInside {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.wip.base.skin_param()
     }
 

@@ -34,15 +34,50 @@ impl ColorType {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct NoSuchColor(pub String);
 
+/// The pattern of a single colour (`COLOR_REGEXP`), a macro so that [`COLORS_REGEXP`] can be put together at
+/// compile time.
+macro_rules! color_regexp {
+    () => {
+        r"#\w+[-\\|/]?\w+"
+    };
+}
+
 /// The pattern of a colour specification, single colour or `;`-separated parts.
 pub(crate) const COLORS_REGEXP: &str = concat!(
     r"(?:#(?:\w+[-\\|/]?\w+;)?(?:(?:text|back|header|line|line\.dashed|line\.dotted|line\.bold|shadowing)",
-    r"(?::\w+[-\\|/]?\w+)?(?:;|(?![\w;:.])))+)|(?:#\w+[-\\|/]?\w+)"
+    r"(?::\w+[-\\|/]?\w+)?(?:;|(?![\w;:.])))+)|(?:",
+    color_regexp!(),
+    ")"
 );
 
 /// An optional colour specification, captured under `name` (`ColorParser.simpleColor`).
 pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
     RegexTree::named(1, name, format!("({COLORS_REGEXP})?"))
+}
+
+/// An optional single colour, captured as `BACKCOLOR` (`ColorParser.exp2`).
+pub(crate) fn exp2() -> RegexTree {
+    RegexTree::named(1, "BACKCOLOR", concat!("(", color_regexp!(), ")?"))
+}
+
+/// An optional single colour, captured as `BACKCOLOR2` (`ColorParser.exp3`).
+pub(crate) fn exp3() -> RegexTree {
+    RegexTree::named(1, "BACKCOLOR2", concat!("(", color_regexp!(), ")?"))
+}
+
+/// An optional single colour followed by `:`, captured as `COLOR` (`ColorParser.exp4`).
+pub(crate) fn exp4() -> RegexTree {
+    RegexTree::named(1, "COLOR", concat!("(?:(", color_regexp!(), "):)?"))
+}
+
+/// An optional single colour followed by `|`, captured as `COLOR` (`ColorParser.exp6`).
+pub(crate) fn exp6() -> RegexTree {
+    RegexTree::named(1, "COLOR", concat!("(?:(", color_regexp!(), r")\|)?"))
+}
+
+/// An optional single colour, captured as `COLOR` (`ColorParser.exp7`).
+pub(crate) fn exp7() -> RegexTree {
+    RegexTree::named(1, "COLOR", concat!("(?:(", color_regexp!(), "))?"))
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]

@@ -212,7 +212,7 @@ pub(crate) trait FtileFactoryDelegator {
         top_inlink_rendering: &LinkRendering,
         label_test: Option<&Display>,
         colors: &Colors,
-        end_colors: Option<&Colors>,
+        end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         self.get_factory().create_switch(
             instructions,
@@ -498,7 +498,7 @@ impl<T: FtileFactoryDelegator> FtileFactory for T {
         top_inlink_rendering: &LinkRendering,
         label_test: Option<&Display>,
         colors: &Colors,
-        end_colors: Option<&Colors>,
+        end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         FtileFactoryDelegator::create_switch(
             self,

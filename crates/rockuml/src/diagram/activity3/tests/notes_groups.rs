@@ -5,7 +5,6 @@ use std::cell::RefCell;
 use std::path::PathBuf;
 use std::rc::Rc;
 
-use super::super::commands::group_style_signature;
 use super::*;
 use crate::diagram::activity3::{NotePosition, SwimlaneSet};
 use crate::ftile::vcompact::{FtileGroup, FtileNoteAlone, FtileWithNoteOpale, FtileWithNotes};
@@ -184,7 +183,7 @@ impl Swimable for Box {
 }
 
 impl Ftile for Box {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 
@@ -293,7 +292,7 @@ fn build(case: &[&str]) -> Rc<dyn Ftile> {
             }
             "group" => {
                 let symbol = symbol(words[1]);
-                let style = group_style_signature(symbol)
+                let style = FtileGroup::get_style_signature(symbol)
                     .get_merged_style(&skin_param.current_style_builder());
                 Rc::new(FtileGroup::new(
                     inner(),

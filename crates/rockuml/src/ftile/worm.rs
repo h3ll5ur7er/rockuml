@@ -38,12 +38,25 @@ impl Worm {
     /// The same points, `dx` and `dy` further (`move`).
     #[must_use]
     pub(crate) fn move_by(&self, dx: f64, dy: f64) -> Self {
-        let step = UTranslate::new(dx, dy);
         Self {
             points: self.points.clone(),
-            tr: Some(self.tr.map_or(step, |tr| tr.compose(step))),
+            tr: Some(self.moved_tr(dx, dy)),
             ..self.clone_empty()
         }
+    }
+
+    fn moved_tr(&self, dx: f64, dy: f64) -> UTranslate {
+        let step = UTranslate::new(dx, dy);
+        self.tr.map_or(step, |tr| tr.compose(step))
+    }
+
+    /// The first and last points of [`Self::move_by`], without the copy.
+    pub(crate) fn get_ends_moved_by(&self, dx: f64, dy: f64) -> (XPoint2D, XPoint2D) {
+        let tr = self.moved_tr(dx, dy);
+        (
+            tr.get_translated(self.points[0]),
+            tr.get_translated(self.points[self.size() - 1]),
+        )
     }
 
     pub(crate) fn is_pure_horizontal(&self) -> bool {
@@ -151,7 +164,7 @@ impl Worm {
     pub(crate) fn move_first_point(&self, move_: UTranslate) -> Self {
         let (dx, dy) = (move_.dx, move_.dy);
         debug_assert!(dx == 0.0 || dy == 0.0, "PlantUML refuses a slanted move");
-        let mut result = self.clone_empty();
+        let mut result = Self::new(self.stroke, self.arrows);
         let (mut x0, mut y0) = (self.get_point(0).x, self.get_point(0).y);
         let (mut x1, mut y1) = (self.get_point(1).x, self.get_point(1).y);
         if dx != 0.0 && x0 == x1 {
@@ -176,7 +189,7 @@ impl Worm {
     pub(crate) fn move_last_point(&self, move_: UTranslate) -> Self {
         let (dx, dy) = (move_.dx, move_.dy);
         debug_assert!(dx == 0.0 || dy == 0.0, "PlantUML refuses a slanted move");
-        let mut result = self.clone_empty();
+        let mut result = Self::new(self.stroke, self.arrows);
         let last = self.size() - 1;
         let (mut x8, mut y8) = (self.get_point(last - 1).x, self.get_point(last - 1).y);
         let (mut x9, mut y9) = (self.get_point(last).x, self.get_point(last).y);
@@ -452,5 +465,22 @@ impl Worm {
             }
         }
         false
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn moving_an_end_point_forgets_that_arrowheads_take_no_room() {
+        let mut worm = Worm::new(UStroke::SIMPLE, Arrows::Regular);
+        worm.set_ignore_for_compression();
+        worm.add_point(0.0, 0.0);
+        worm.add_point(0.0, 10.0);
+        let moved = UTranslate::new(5.0, 0.0);
+        assert!(!worm.move_first_point(moved).ignore_for_compression);
+        assert!(!worm.move_last_point(moved).ignore_for_compression);
+        assert!(worm.move_by(5.0, 0.0).ignore_for_compression);
     }
 }

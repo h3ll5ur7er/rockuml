@@ -245,7 +245,7 @@ impl Swimable for FtileIfLongHorizontal {
 }
 
 impl Ftile for FtileIfLongHorizontal {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 

@@ -18,7 +18,7 @@ use crate::klimt::ugraphic_dispatch_drawable::UGraphicDispatchDrawable;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::skin::component::TextBlockEmpty;
-use crate::style::{PName, Style, ValueReading};
+use crate::style::{PName, SName, Style, StyleSignature, ValueReading};
 use crate::svek::UGraphicForSnake;
 
 /// The room below the tiles.
@@ -39,6 +39,14 @@ pub(crate) struct FtileGroup {
 }
 
 impl FtileGroup {
+    /// The style of a group drawn as `symbol`.
+    pub(crate) fn get_style_signature(symbol: USymbol) -> StyleSignature {
+        let mut names = vec![SName::Root, SName::Element, SName::ActivityDiagram];
+        names.extend(symbol.get_s_names());
+        names.push(SName::Composite);
+        StyleSignature::of(&names)
+    }
+
     /// `inner` framed as `type_` says, which must have a big form; its title draws the sprites of
     /// `skin_param`.
     pub(crate) fn new(
@@ -134,7 +142,7 @@ impl Swimable for FtileGroup {
 }
 
 impl Ftile for FtileGroup {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.inner.skin_param()
     }
 

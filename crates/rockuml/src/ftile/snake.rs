@@ -297,6 +297,11 @@ impl Snake {
         self.worm.get_point(self.worm.size() - 1)
     }
 
+    /// The first and last points of [`Self::move_by`], without the copy.
+    pub(crate) fn get_ends_moved_by(&self, dx: f64, dy: f64) -> (XPoint2D, XPoint2D) {
+        self.worm.get_ends_moved_by(dx, dy)
+    }
+
     /// Whether no arrow may lose its arrowhead for ending where this one starts (`cannotBeTouched`).
     pub(crate) fn cannot_be_touched(&self) -> bool {
         self.mergeable != MergeStrategy::Full || self.worm.is_pure_horizontal()

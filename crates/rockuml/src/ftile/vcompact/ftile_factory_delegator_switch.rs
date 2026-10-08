@@ -53,7 +53,7 @@ impl FtileFactoryDelegatorSwitch {
                         .ftile
                         .skin_param()
                         .get_default_text_alignment(HorizontalAlignment::Left),
-                    branch0.ftile.skin_param(),
+                    branch0.ftile.skin_param().as_ref(),
                     style.wrap_width(),
                     CreoleMode::Full,
                 ),
@@ -74,16 +74,14 @@ impl FtileFactoryDelegatorSwitch {
         &self,
         swimlane: Option<SwimlaneId>,
         branch0: &BranchFtile<'_>,
-        end_colors: Option<&Colors>,
+        end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         let style = self.diamond_style();
         let border_color = style.value(PName::LineColor).as_color();
-        let back_color = branch0.branch.get_color().unwrap_or_else(|| {
-            end_colors.map_or_else(
-                || style.value(PName::BackGroundColor).as_color(),
-                |end_colors| end_colors.get_color_of(&style, PName::BackGroundColor),
-            )
-        });
+        let back_color = branch0
+            .branch
+            .get_color()
+            .unwrap_or_else(|| end_colors.get_color_of(&style, PName::BackGroundColor));
         Rc::new(FtileDiamondInside::new(
             empty_label(),
             Rc::clone(FtileFactoryDelegator::skin_param(self)),
@@ -108,7 +106,7 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorSwitch {
         _top_inlink_rendering: &LinkRendering,
         label_test: Option<&Display>,
         colors: &Colors,
-        end_colors: Option<&Colors>,
+        end_colors: &Colors,
     ) -> Rc<dyn Ftile> {
         let string_bounder = FtileFactoryDelegator::get_string_bounder(self);
         let branch0 = &branches[0];

@@ -8,7 +8,6 @@ use crate::jaws::{
 };
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::FontConfiguration;
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::SpriteContainer;
 use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
@@ -258,9 +257,7 @@ impl Display {
         let alignment = self.natural_alignment.unwrap_or(alignment);
         let sheet = CreoleParser::with_mode(font.clone(), alignment, mode, sprites)
             .create_display_sheet(self, font);
-        SheetBlock2::new(
-            SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
-        )
+        SheetBlock2::new(SheetBlock1::new(sheet, sprites.get_padding()).wrapped_at(max_width))
     }
 
     pub(crate) fn is_single_empty_line(&self) -> bool {

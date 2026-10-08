@@ -146,7 +146,15 @@ impl CommandFactory for ActivityDiagramFactory3 {
     }
 }
 
-impl AbstractDiagram for ActivityDiagram3 {}
+impl AbstractDiagram for ActivityDiagram3 {
+    /// PlantUML crashes on drawing a switch without a case.
+    fn check_final_error(&mut self) -> Option<String> {
+        self.swimlanes
+            .instructions
+            .contains_switch_without_case()
+            .then(|| instruction::NO_CASE_IN_SWITCH.to_owned())
+    }
+}
 
 impl TitledDiagram for ActivityDiagram3 {
     fn titled(&mut self) -> &mut Titled {

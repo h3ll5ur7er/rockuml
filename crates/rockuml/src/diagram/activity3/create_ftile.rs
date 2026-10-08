@@ -234,7 +234,7 @@ impl Instructions {
             &ins.top_inlink_rendering,
             ins.label_test.as_ref(),
             &ins.colors,
-            Some(&end_colors),
+            &end_colors,
         );
         eventually_add_note(
             factory,
@@ -289,6 +289,11 @@ impl Instructions {
         let back = get_ftile_backward(ins, factory);
         let tmp = self.create_ftile_list(&ins.repeat_list, factory);
         let tmp = factory.decorate_out(tmp, &ins.end_repeat_link_rendering);
+        let incoming1 = if !ins.test_called && ins.incoming1.is_none() {
+            self.next_link_renderer()
+        } else {
+            &ins.incoming1
+        };
         let tmp = factory.repeat(
             &ins.stereogroup_loop,
             &ins.stereotype2,
@@ -302,7 +307,7 @@ impl Instructions {
             ins.out.as_ref(),
             back,
             self.is_last_of_the_parent(id, ins.parent),
-            &ins.incoming1,
+            incoming1,
             &ins.incoming2,
             &ins.current_style_builder,
         );

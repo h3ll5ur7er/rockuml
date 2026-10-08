@@ -541,7 +541,7 @@ fn the_commands_build_the_instruction_trees_plantuml_builds() {
             (header, format!("{}\n", body.trim_end_matches('\n')))
         })
         .collect();
-    assert_eq!(cases.len(), 91);
+    assert_eq!(cases.len(), 98);
     let mismatches: Vec<&str> = cases
         .iter()
         .filter(|(case, expected)| {
@@ -605,4 +605,19 @@ fn branches_follow_their_conditional() {
         "No 'case' in this switch"
     );
     assert_eq!(failure(&["start", "kill"]).0, "kill cannot be used here");
+}
+
+/// PlantUML crashes on drawing them.
+#[test]
+fn a_switch_needs_a_case() {
+    for body in [
+        &["start", "switch (x?)", "endswitch", "stop"][..],
+        &["start", "switch (x?)"],
+    ] {
+        assert_eq!(
+            failure(body),
+            ("No 'case' in this switch".to_owned(), "start".to_owned()),
+            "{body:?}"
+        );
+    }
 }

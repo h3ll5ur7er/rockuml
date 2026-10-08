@@ -28,6 +28,7 @@ use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
@@ -78,6 +79,10 @@ impl SpriteContainer for SkinParam {
 
     fn image_file(&self, src: &str) -> Option<&[u8]> {
         self.image_files.get(src)?.as_deref()
+    }
+
+    fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
+        SkinParam::get_padding(self)
     }
 }
 
@@ -321,7 +326,16 @@ impl SkinParam {
 
     /// `BoxPadding`: the room each side of a box around participants, or 0 unless a plain decimal.
     pub(crate) fn box_padding(&self) -> f64 {
-        self.value("boxPadding")
+        self.get_as_double("boxPadding")
+    }
+
+    /// `padding`: the room around texts laid out as sheets, the same on every side, or 0 unless a plain decimal.
+    pub(crate) fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
+        ClockwiseTopRightBottomLeft::same(self.get_as_double("padding"))
+    }
+
+    fn get_as_double(&self, key: &str) -> f64 {
+        self.value(key)
             .filter(|value| is_int_or_decimal(value))
             .and_then(|value| value.parse().ok())
             .unwrap_or(0.0)
@@ -479,6 +493,22 @@ mod tests {
         assert_eq!(padding(Some("12.5")), 12.5);
         assert_eq!(padding(Some("-3")), 0.0);
         assert_eq!(padding(Some("1e3")), 0.0);
+    }
+
+    #[test]
+    fn padding_is_the_same_on_every_side_and_a_plain_decimal() {
+        let padding = |value: &str| {
+            let mut skin = SkinParam::default();
+            skin.set_param("padding", value);
+            skin.get_padding()
+        };
+        assert_eq!(
+            SkinParam::default().get_padding(),
+            ClockwiseTopRightBottomLeft::none()
+        );
+        assert_eq!(padding("5"), ClockwiseTopRightBottomLeft::same(5.0));
+        assert_eq!(padding("2.5"), ClockwiseTopRightBottomLeft::same(2.5));
+        assert_eq!(padding("5px"), ClockwiseTopRightBottomLeft::none());
     }
 
     #[test]

@@ -62,8 +62,8 @@ use crate::klimt::font::FontConfiguration;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 
-/// `display` drawn as `Display.create0` draws it; a block taking no room for PlantUML's `Display.NULL`,
-/// which draws nothing.
+/// `display` drawn as `Display.create0` draws it, `None` as PlantUML's `Display.NULL`: no text, which still
+/// takes the room of the skin's padding.
 pub(crate) fn create0_or_empty(
     display: Option<&Display>,
     font: &FontConfiguration,
@@ -72,10 +72,8 @@ pub(crate) fn create0_or_empty(
     max_width: f64,
     mode: CreoleMode,
 ) -> Rc<dyn TextBlock> {
-    match display {
-        Some(display) => Rc::new(display.create0(font, alignment, skin_param, max_width, mode)),
-        None => super::vertical::empty_label(),
-    }
+    let display = display.cloned().unwrap_or_default();
+    Rc::new(display.create0(font, alignment, skin_param, max_width, mode))
 }
 
 /// The factory instructions build with: `v_compact_factory` wrapped in PlantUML's delegators, innermost

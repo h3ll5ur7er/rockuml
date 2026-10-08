@@ -60,7 +60,6 @@ pub(crate) struct Swimlanes {
     /// Every instruction, the root list first.
     pub(crate) instructions: Instructions,
     current_instruction: InstructionId,
-    next_link_renderer: LinkRendering,
 }
 
 impl Swimlanes {
@@ -70,7 +69,6 @@ impl Swimlanes {
             current_swimlane: None,
             instructions: Instructions::new(),
             current_instruction: Instructions::ROOT,
-            next_link_renderer: LinkRendering::none(),
         }
     }
 
@@ -113,11 +111,11 @@ impl Swimlanes {
     }
 
     pub(crate) fn next_link_renderer(&self) -> &LinkRendering {
-        &self.next_link_renderer
+        self.instructions.next_link_renderer()
     }
 
     pub(crate) fn set_next_link_renderer(&mut self, link: LinkRendering) {
-        self.next_link_renderer = link;
+        self.instructions.set_next_link_renderer(link);
     }
 
     pub(crate) fn get_current_swimlane(&self) -> Option<SwimlaneId> {
