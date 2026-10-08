@@ -241,12 +241,17 @@ fonts installed where Java runs.
 
 ## Activity diagram unit oracles
 
-`activity-unit/` holds harnesses for activity diagrams; fixtures are in `crates/rockuml/tests/data`.
-
-```bash
-bash tools/oracle/activity-unit/arrows.sh  # activity-arrows.txt: merged worms, multi-colour offsets, FtileGeometry
-```
+`activity-unit/ModelDump.java` reads each activity corpus case with PlantUML's own factory and writes the
+instruction tree its commands build: every instruction with its labels, colours, box style, notes and links, each
+branch with its links, and the swimlanes each instruction says it starts in, ends in and spans.
+`crates/rockuml/src/diagram/activity3/tests.rs` reads the same cases with rockuml's commands and compares the
+listing.
 
 `ArrowDump` merges generated worms after moving them, as `UGraphicForSnake` does, computes `WormMutation` offsets
 and chains `FtileGeometry` operations, writing doubles as their IEEE bits; `crates/rockuml/src/ftile/tests/arrows.rs`
 replays them and must match bit for bit.
+
+```bash
+bash tools/oracle/activity-unit/model.sh   # activity-model.txt: the instruction tree of each activity case
+bash tools/oracle/activity-unit/arrows.sh  # activity-arrows.txt: merged worms, multi-colour offsets, FtileGeometry
+```

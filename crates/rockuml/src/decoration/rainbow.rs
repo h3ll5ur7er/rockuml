@@ -16,8 +16,11 @@ pub(crate) struct Rainbow {
 
 impl Rainbow {
     /// No colour: whoever draws the arrow picks its default.
-    pub(crate) fn none() -> Self {
-        Self::default()
+    pub(crate) const fn none() -> Self {
+        Self {
+            colors: Vec::new(),
+            color_arrow_separation_space: 0,
+        }
     }
 
     /// One colour, its arrowhead in `arrow_head_color` or else the same; no colour without `arrow_color`
@@ -55,8 +58,7 @@ impl Rainbow {
 
     /// The colours of an arrow's specification, such as `#red;#blue,dashed`: one per `;`, each read by
     /// [`HtmlColorAndStyle::build`] (`build(ISkinParam, String, int)`).
-    #[allow(dead_code, reason = "read by activity arrow commands, Phase 6")]
-    pub(crate) fn build_from_string(
+    pub(crate) fn build_from_definition(
         skin_param: &SkinParam,
         color_string: &str,
         color_arrow_separation_space: i32,
@@ -124,7 +126,7 @@ mod tests {
     #[test]
     fn a_specification_gives_one_colour_per_semicolon_with_its_line_style() {
         let skin = SkinParam::default();
-        let rainbow = Rainbow::build_from_string(&skin, "#red;#blue,dashed;bold", 2).unwrap();
+        let rainbow = Rainbow::build_from_definition(&skin, "#red;#blue,dashed;bold", 2).unwrap();
         assert_eq!(rainbow.size(), 3);
         assert_eq!(rainbow.get_color_arrow_separation_space(), 2);
         let colors = rainbow.get_colors();
@@ -143,11 +145,11 @@ mod tests {
     fn hidden_colours_make_the_arrow_invisible_and_unknown_ones_fail() {
         let skin = SkinParam::default();
         assert!(
-            Rainbow::build_from_string(&skin, "#red;hidden", 0)
+            Rainbow::build_from_definition(&skin, "#red;hidden", 0)
                 .unwrap()
                 .is_invisible()
         );
-        assert!(Rainbow::build_from_string(&skin, "#nosuchcolor", 0).is_err());
+        assert!(Rainbow::build_from_definition(&skin, "#nosuchcolor", 0).is_err());
     }
 
     #[test]

@@ -6,9 +6,9 @@ use crate::decoration::Rainbow;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub(crate) struct LinkRendering {
-    rainbow: Rainbow,
+    pub(crate) rainbow: Rainbow,
     /// `None` is PlantUML's `Display.NULL`: no label at all, which is not the same as an empty one.
-    display: Option<Display>,
+    pub(crate) display: Option<Display>,
 }
 
 impl LinkRendering {
@@ -20,8 +20,11 @@ impl LinkRendering {
     }
 
     /// No colour and no label.
-    pub(crate) fn none() -> Self {
-        Self::default()
+    pub(crate) const fn none() -> Self {
+        Self {
+            rainbow: Rainbow::none(),
+            display: None,
+        }
     }
 
     #[must_use]
@@ -40,19 +43,12 @@ impl LinkRendering {
         }
     }
 
-    pub(crate) fn get_display(&self) -> Option<&Display> {
-        self.display.as_ref()
-    }
-
-    pub(crate) fn get_rainbow(&self) -> &Rainbow {
-        &self.rainbow
-    }
-
     /// The colours, or `default_color` when there are none (`getRainbow(Rainbow)`).
     pub(crate) fn get_rainbow_or(&self, default_color: &Rainbow) -> Rainbow {
         self.rainbow.with_default(default_color)
     }
 
+    /// Neither a label nor a colour.
     pub(crate) fn is_none(&self) -> bool {
         self.display.is_none() && self.rainbow.size() == 0
     }
@@ -72,9 +68,6 @@ mod tests {
         let coloured = LinkRendering::create(red.clone());
         assert!(!coloured.is_none());
         assert_eq!(LinkRendering::none().get_rainbow_or(&red), red);
-        assert_eq!(
-            labelled.with_rainbow(red.clone()).get_display(),
-            labelled.get_display()
-        );
+        assert_eq!(labelled.with_rainbow(red.clone()).display, labelled.display);
     }
 }

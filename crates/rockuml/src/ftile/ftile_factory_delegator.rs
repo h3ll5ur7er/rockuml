@@ -7,12 +7,15 @@ use super::{BoxStyle, Ftile, FtileFactory};
 use crate::color::{Colors, HColor};
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::Rainbow;
-use crate::diagram::activity3::{LinkRendering, SwimlaneId};
+use crate::decoration::symbol::USymbol;
+use crate::diagram::activity3::{
+    BranchFtile, ForkStyle, InstructionId, Instructions, LinkRendering, PositionedNote, SwimlaneId,
+};
 use crate::klimt::font::StringBounder;
 use crate::klimt::url::Url;
-use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
-use crate::stereo::Stereotype;
+use crate::stereo::{Stereogroup, Stereotype};
 use crate::style::{SName, Style, StyleBuilder, StyleSignature};
 
 /// A delegator implements [`Self::get_factory`] and overrides what it changes; it is an [`FtileFactory`]
@@ -81,6 +84,174 @@ pub(crate) trait FtileFactoryDelegator {
         self.get_factory().assembly(tile1, tile2)
     }
 
+    fn add_note(
+        &self,
+        ftile: Option<Rc<dyn Ftile>>,
+        swimlane: Option<SwimlaneId>,
+        notes: &[PositionedNote],
+        vertical_alignment: VerticalAlignment,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory()
+            .add_note(ftile, swimlane, notes, vertical_alignment)
+    }
+
+    #[allow(clippy::too_many_arguments, reason = "PlantUML's FtileFactory.repeat")]
+    fn repeat(
+        &self,
+        stereotype: &Stereogroup,
+        stereotype2: &Stereogroup,
+        box_style_in: BoxStyle,
+        swimlane: Option<SwimlaneId>,
+        swimlane_out: Option<SwimlaneId>,
+        start_label: Option<&Display>,
+        repeat: Rc<dyn Ftile>,
+        test: Option<&Display>,
+        yes: Option<&Display>,
+        out: Option<&Display>,
+        backward: Option<Rc<dyn Ftile>>,
+        no_out: bool,
+        incoming1: &LinkRendering,
+        incoming2: &LinkRendering,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory().repeat(
+            stereotype,
+            stereotype2,
+            box_style_in,
+            swimlane,
+            swimlane_out,
+            start_label,
+            repeat,
+            test,
+            yes,
+            out,
+            backward,
+            no_out,
+            incoming1,
+            incoming2,
+            current_style_builder,
+        )
+    }
+
+    #[allow(
+        clippy::too_many_arguments,
+        reason = "PlantUML's FtileFactory.createWhile"
+    )]
+    fn create_while(
+        &self,
+        instructions: &Instructions,
+        out_color: &LinkRendering,
+        swimlane: Option<SwimlaneId>,
+        while_block: Rc<dyn Ftile>,
+        test: &Display,
+        yes: Option<&Display>,
+        color: Option<HColor>,
+        special_out: Option<InstructionId>,
+        backward: Option<Rc<dyn Ftile>>,
+        incoming1: &LinkRendering,
+        incoming2: &LinkRendering,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory().create_while(
+            instructions,
+            out_color,
+            swimlane,
+            while_block,
+            test,
+            yes,
+            color,
+            special_out,
+            backward,
+            incoming1,
+            incoming2,
+            current_style_builder,
+        )
+    }
+
+    #[allow(
+        clippy::too_many_arguments,
+        reason = "PlantUML's FtileFactory.createIf"
+    )]
+    fn create_if(
+        &self,
+        instructions: &Instructions,
+        swimlane: Option<SwimlaneId>,
+        thens: &[BranchFtile<'_>],
+        else_branch: &BranchFtile<'_>,
+        out_color: &LinkRendering,
+        top_inlink_rendering: &LinkRendering,
+        url: Option<&Url>,
+        notes: &[PositionedNote],
+        stereotype: Option<&Stereotype>,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory().create_if(
+            instructions,
+            swimlane,
+            thens,
+            else_branch,
+            out_color,
+            top_inlink_rendering,
+            url,
+            notes,
+            stereotype,
+            current_style_builder,
+        )
+    }
+
+    #[allow(
+        clippy::too_many_arguments,
+        reason = "PlantUML's FtileFactory.createSwitch"
+    )]
+    fn create_switch(
+        &self,
+        instructions: &Instructions,
+        swimlane: Option<SwimlaneId>,
+        branches: &[BranchFtile<'_>],
+        after_endwhile: &LinkRendering,
+        top_inlink_rendering: &LinkRendering,
+        label_test: Option<&Display>,
+        colors: &Colors,
+        end_colors: Option<&Colors>,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory().create_switch(
+            instructions,
+            swimlane,
+            branches,
+            after_endwhile,
+            top_inlink_rendering,
+            label_test,
+            colors,
+            end_colors,
+        )
+    }
+
+    fn create_parallel(
+        &self,
+        all: Vec<Rc<dyn Ftile>>,
+        style: ForkStyle,
+        label: Option<&str>,
+        swimlane_in: Option<SwimlaneId>,
+        swimlane_out: Option<SwimlaneId>,
+        colors: &Colors,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory()
+            .create_parallel(all, style, label, swimlane_in, swimlane_out, colors)
+    }
+
+    fn create_group(
+        &self,
+        list: Rc<dyn Ftile>,
+        name: &Display,
+        back_color: Option<HColor>,
+        note: Option<&PositionedNote>,
+        type_: USymbol,
+        style: &Style,
+    ) -> Rc<dyn Ftile> {
+        self.get_factory()
+            .create_group(list, name, back_color, note, type_, style)
+    }
+
     fn get_default_style_definition_activity(&self) -> StyleSignature {
         StyleSignature::of(&[
             SName::Root,
@@ -118,7 +289,7 @@ pub(crate) trait FtileFactoryDelegator {
 
     /// The colours of the arrow into `tile`, or else those of the arrow style (`getInLinkRenderingColor`).
     fn get_in_link_rendering_color(&self, tile: &dyn Ftile) -> Rainbow {
-        let color = tile.get_in_link_rendering().get_rainbow().clone();
+        let color = tile.get_in_link_rendering().rainbow;
         if color.size() == 0 {
             return Rainbow::build_from_style(&self.arrow_style());
         }
@@ -140,7 +311,7 @@ pub(crate) trait FtileFactoryDelegator {
 
     /// The label of the arrow into `tile` (`getInLinkRenderingDisplay`).
     fn get_in_link_rendering_display(&self, tile: &dyn Ftile) -> Option<Display> {
-        tile.get_in_link_rendering().get_display().cloned()
+        tile.get_in_link_rendering().display
     }
 }
 
@@ -208,5 +379,169 @@ impl<T: FtileFactoryDelegator> FtileFactory for T {
 
     fn assembly(&self, tile1: Rc<dyn Ftile>, tile2: Rc<dyn Ftile>) -> Rc<dyn Ftile> {
         FtileFactoryDelegator::assembly(self, tile1, tile2)
+    }
+
+    fn add_note(
+        &self,
+        ftile: Option<Rc<dyn Ftile>>,
+        swimlane: Option<SwimlaneId>,
+        notes: &[PositionedNote],
+        vertical_alignment: VerticalAlignment,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::add_note(self, ftile, swimlane, notes, vertical_alignment)
+    }
+
+    fn repeat(
+        &self,
+        stereotype: &Stereogroup,
+        stereotype2: &Stereogroup,
+        box_style_in: BoxStyle,
+        swimlane: Option<SwimlaneId>,
+        swimlane_out: Option<SwimlaneId>,
+        start_label: Option<&Display>,
+        repeat: Rc<dyn Ftile>,
+        test: Option<&Display>,
+        yes: Option<&Display>,
+        out: Option<&Display>,
+        backward: Option<Rc<dyn Ftile>>,
+        no_out: bool,
+        incoming1: &LinkRendering,
+        incoming2: &LinkRendering,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::repeat(
+            self,
+            stereotype,
+            stereotype2,
+            box_style_in,
+            swimlane,
+            swimlane_out,
+            start_label,
+            repeat,
+            test,
+            yes,
+            out,
+            backward,
+            no_out,
+            incoming1,
+            incoming2,
+            current_style_builder,
+        )
+    }
+
+    fn create_while(
+        &self,
+        instructions: &Instructions,
+        out_color: &LinkRendering,
+        swimlane: Option<SwimlaneId>,
+        while_block: Rc<dyn Ftile>,
+        test: &Display,
+        yes: Option<&Display>,
+        color: Option<HColor>,
+        special_out: Option<InstructionId>,
+        backward: Option<Rc<dyn Ftile>>,
+        incoming1: &LinkRendering,
+        incoming2: &LinkRendering,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::create_while(
+            self,
+            instructions,
+            out_color,
+            swimlane,
+            while_block,
+            test,
+            yes,
+            color,
+            special_out,
+            backward,
+            incoming1,
+            incoming2,
+            current_style_builder,
+        )
+    }
+
+    fn create_if(
+        &self,
+        instructions: &Instructions,
+        swimlane: Option<SwimlaneId>,
+        thens: &[BranchFtile<'_>],
+        else_branch: &BranchFtile<'_>,
+        out_color: &LinkRendering,
+        top_inlink_rendering: &LinkRendering,
+        url: Option<&Url>,
+        notes: &[PositionedNote],
+        stereotype: Option<&Stereotype>,
+        current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::create_if(
+            self,
+            instructions,
+            swimlane,
+            thens,
+            else_branch,
+            out_color,
+            top_inlink_rendering,
+            url,
+            notes,
+            stereotype,
+            current_style_builder,
+        )
+    }
+
+    fn create_switch(
+        &self,
+        instructions: &Instructions,
+        swimlane: Option<SwimlaneId>,
+        branches: &[BranchFtile<'_>],
+        after_endwhile: &LinkRendering,
+        top_inlink_rendering: &LinkRendering,
+        label_test: Option<&Display>,
+        colors: &Colors,
+        end_colors: Option<&Colors>,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::create_switch(
+            self,
+            instructions,
+            swimlane,
+            branches,
+            after_endwhile,
+            top_inlink_rendering,
+            label_test,
+            colors,
+            end_colors,
+        )
+    }
+
+    fn create_parallel(
+        &self,
+        all: Vec<Rc<dyn Ftile>>,
+        style: ForkStyle,
+        label: Option<&str>,
+        swimlane_in: Option<SwimlaneId>,
+        swimlane_out: Option<SwimlaneId>,
+        colors: &Colors,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::create_parallel(
+            self,
+            all,
+            style,
+            label,
+            swimlane_in,
+            swimlane_out,
+            colors,
+        )
+    }
+
+    fn create_group(
+        &self,
+        list: Rc<dyn Ftile>,
+        name: &Display,
+        back_color: Option<HColor>,
+        note: Option<&PositionedNote>,
+        type_: USymbol,
+        style: &Style,
+    ) -> Rc<dyn Ftile> {
+        FtileFactoryDelegator::create_group(self, list, name, back_color, note, type_, style)
     }
 }

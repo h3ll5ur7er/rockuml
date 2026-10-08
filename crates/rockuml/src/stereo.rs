@@ -10,6 +10,7 @@ use regex::Regex;
 
 use crate::abel::LeafType;
 use crate::color::{ColorType, Colors, HColor, NoSuchColor};
+use crate::ftile::BoxStyle;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
@@ -259,6 +260,7 @@ pub(crate) struct Stereotag {
 
 /// The stereotypes written after a state or an activity, like `<<choice>>` or `<<#pink>>`, some of which
 /// change what the element is or how it is coloured (PlantUML's `Stereogroup`).
+#[derive(Clone, Debug, Default)]
 pub(crate) struct Stereogroup {
     definition: Option<String>,
 }
@@ -293,6 +295,15 @@ impl Stereogroup {
             .captures_iter(definition)
             .map(|captures| captures[1].trim().to_owned())
             .collect()
+    }
+
+    /// The shape the first label naming one gives an activity, like `<<input>>`.
+    pub(crate) fn get_box_style(&self) -> BoxStyle {
+        self.get_labels()
+            .iter()
+            .map(|label| BoxStyle::from_string(label))
+            .find(|style| *style != BoxStyle::Plain)
+            .unwrap_or(BoxStyle::Plain)
     }
 
     /// The pseudo-state the first label makes of a state, like `<<choice>>` or `<<history*>>`.

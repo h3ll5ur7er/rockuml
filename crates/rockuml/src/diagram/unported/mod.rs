@@ -2,7 +2,6 @@
 //! that a source is read as the diagram type it is in PlantUML, or fails with the same error.
 
 mod activity;
-mod activity3;
 mod help;
 mod list_sprite;
 mod timing;
@@ -84,75 +83,6 @@ impl CommandFactory for ActivityDiagramFactory {
 
     fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
         activity::init_commands_list()
-    }
-}
-
-/// Reads activity diagrams (PlantUML's `ActivityDiagramFactory3`).
-pub(super) struct ActivityDiagramFactory3;
-
-impl CommandFactory for ActivityDiagramFactory3 {
-    type Diagram = UnportedDiagram;
-
-    const DIAGRAM_TYPE: DiagramType = DiagramType::Activity;
-
-    fn create_empty_diagram(source: &Rc<UmlSource>) -> UnportedDiagram {
-        UnportedDiagram::new(source, SName::ActivityDiagram, "activity diagrams")
-    }
-
-    fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
-        let mut commands = vec![cuca_commands::footbox_ignored()];
-        commands.extend(add_common_commands1());
-        commands.extend([
-            activity3::swimlane(),
-            activity3::swimlane2(),
-            activity3::partition3(),
-            activity3::close_group3(),
-            activity3::close_group_legacy3(),
-            activity3::arrow3(),
-            activity3::arrow_long3(),
-            activity3::repeat3(),
-            activity3::activity3(),
-            activity3::if4(),
-            activity3::if2(),
-            activity3::if2_multine(),
-            activity3::if_legacy1(),
-            activity3::else_if3(),
-            activity3::else_if2(),
-            activity3::else3(),
-            activity3::else3_multine(),
-            activity3::else_legacy1(),
-            activity3::endif3(),
-            activity3::switch(),
-            activity3::case(),
-            activity3::end_switch(),
-            activity3::repeat_while3(),
-            activity3::repeat_while3_multilines(),
-            activity3::backward3(),
-            activity3::backward_long3(),
-            activity3::while3(),
-            activity3::while_end3(),
-            activity3::fork3(),
-            activity3::fork_again3(),
-            activity3::fork_end3(),
-            activity3::split3(),
-            activity3::split_again3(),
-            activity3::split_end3(),
-            activity3::start3(),
-            activity3::stop3(),
-            activity3::circle_spot3(),
-            activity3::break_command(),
-            activity3::end3(),
-            activity3::kill3(),
-            activity3::link3(),
-            activity3::note3(),
-            activity3::note_long3(),
-            activity3::activity_long3(),
-            activity3::activity_list(),
-            activity3::label(),
-            activity3::goto(),
-            activity3::else_if2_multine(),
-        ]);
-        commands
     }
 }
 

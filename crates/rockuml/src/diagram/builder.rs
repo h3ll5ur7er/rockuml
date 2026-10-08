@@ -10,6 +10,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::activity3::ActivityDiagramFactory3;
 use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
@@ -19,8 +20,7 @@ use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::titled::TitledDiagram;
 use super::unported::{
-    ActivityDiagramFactory, ActivityDiagramFactory3, HelpFactory, ListSpriteDiagramFactory,
-    TimingDiagramFactory,
+    ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory, TimingDiagramFactory,
 };
 use super::{Diagram, NotYetPorted, UmlSource};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};

@@ -1,0 +1,9 @@
+@startuml
+start
+switch (Mode?)
+:Default work;
+case (A)
+:Work A;
+endswitch
+stop
+@enduml

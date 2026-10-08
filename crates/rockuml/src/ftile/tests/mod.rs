@@ -1,21 +1,23 @@
 mod arrows;
 
 use std::cell::RefCell;
-use std::collections::BTreeSet;
 use std::rc::Rc;
 
 use super::*;
 use crate::color::{Colors, HColor};
 use crate::creole::Display;
 use crate::decoration::Rainbow;
-use crate::diagram::activity3::SwimlaneId;
-use crate::klimt::UDrawable;
+use crate::decoration::symbol::USymbol;
+use crate::diagram::activity3::{
+    BranchFtile, ForkStyle, InstructionId, Instructions, PositionedNote, SwimlaneId, SwimlaneSet,
+};
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::shape::{URectangle, UShape};
 use crate::klimt::ugraphic::tests::recording;
 use crate::klimt::url::Url;
-use crate::stereo::Stereotype;
-use crate::style::StyleBuilder;
+use crate::klimt::{UDrawable, VerticalAlignment};
+use crate::stereo::{Stereogroup, Stereotype};
+use crate::style::{Style, StyleBuilder};
 use crate::svek::UGraphicForSnake;
 
 /// A box with children below it, joined to each by an arrow.
@@ -36,8 +38,8 @@ impl Tile {
 }
 
 impl Swimable for Tile {
-    fn get_swimlanes(&self) -> BTreeSet<SwimlaneId> {
-        BTreeSet::new()
+    fn get_swimlanes(&self) -> SwimlaneSet {
+        SwimlaneSet::new()
     }
 
     fn get_swimlane_in(&self) -> Option<SwimlaneId> {
@@ -204,6 +206,109 @@ impl FtileFactory for Rc<Innermost> {
         self.calls.borrow_mut().push("assembly");
         Tile::create(5.0, vec![tile1, tile2])
     }
+
+    fn add_note(
+        &self,
+        _ftile: Option<Rc<dyn Ftile>>,
+        _swimlane: Option<SwimlaneId>,
+        _notes: &[PositionedNote],
+        _vertical_alignment: VerticalAlignment,
+    ) -> Rc<dyn Ftile> {
+        self.tile("add_note")
+    }
+
+    fn repeat(
+        &self,
+        _stereotype: &Stereogroup,
+        _stereotype2: &Stereogroup,
+        _box_style_in: BoxStyle,
+        _swimlane: Option<SwimlaneId>,
+        _swimlane_out: Option<SwimlaneId>,
+        _start_label: Option<&Display>,
+        _repeat: Rc<dyn Ftile>,
+        _test: Option<&Display>,
+        _yes: Option<&Display>,
+        _out: Option<&Display>,
+        _backward: Option<Rc<dyn Ftile>>,
+        _no_out: bool,
+        _incoming1: &LinkRendering,
+        _incoming2: &LinkRendering,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("repeat")
+    }
+
+    fn create_while(
+        &self,
+        _instructions: &Instructions,
+        _out_color: &LinkRendering,
+        _swimlane: Option<SwimlaneId>,
+        _while_block: Rc<dyn Ftile>,
+        _test: &Display,
+        _yes: Option<&Display>,
+        _color: Option<HColor>,
+        _special_out: Option<InstructionId>,
+        _backward: Option<Rc<dyn Ftile>>,
+        _incoming1: &LinkRendering,
+        _incoming2: &LinkRendering,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_while")
+    }
+
+    fn create_if(
+        &self,
+        _instructions: &Instructions,
+        _swimlane: Option<SwimlaneId>,
+        _thens: &[BranchFtile<'_>],
+        _else_branch: &BranchFtile<'_>,
+        _out_color: &LinkRendering,
+        _top_inlink_rendering: &LinkRendering,
+        _url: Option<&Url>,
+        _notes: &[PositionedNote],
+        _stereotype: Option<&Stereotype>,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_if")
+    }
+
+    fn create_switch(
+        &self,
+        _instructions: &Instructions,
+        _swimlane: Option<SwimlaneId>,
+        _branches: &[BranchFtile<'_>],
+        _after_endwhile: &LinkRendering,
+        _top_inlink_rendering: &LinkRendering,
+        _label_test: Option<&Display>,
+        _colors: &Colors,
+        _end_colors: Option<&Colors>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_switch")
+    }
+
+    fn create_parallel(
+        &self,
+        _all: Vec<Rc<dyn Ftile>>,
+        _style: ForkStyle,
+        _label: Option<&str>,
+        _swimlane_in: Option<SwimlaneId>,
+        _swimlane_out: Option<SwimlaneId>,
+        _colors: &Colors,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_parallel")
+    }
+
+    fn create_group(
+        &self,
+        _list: Rc<dyn Ftile>,
+        _name: &Display,
+        _back_color: Option<HColor>,
+        _note: Option<&PositionedNote>,
+        _type_: USymbol,
+        _style: &Style,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_group")
+    }
 }
 
 #[test]
@@ -213,10 +318,39 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
     let start = factory.start(None, &Colors::default());
     let stop = factory.stop(Some(SwimlaneId(0)), &Colors::default());
     let assembled = factory.assembly(start, stop);
-    factory.decorate_out(assembled, &LinkRendering::none());
+    let decorated = factory.decorate_out(assembled, &LinkRendering::none());
+    let parallel = factory.create_parallel(
+        vec![decorated],
+        ForkStyle::Fork,
+        None,
+        None,
+        None,
+        &Colors::default(),
+    );
+    factory.create_while(
+        &Instructions::new(),
+        &LinkRendering::none(),
+        None,
+        parallel,
+        &Display::create(["test"]),
+        None,
+        None,
+        None,
+        None,
+        &LinkRendering::none(),
+        &LinkRendering::none(),
+        &factory.skin_param().current_style_builder(),
+    );
     assert_eq!(
         *innermost.calls.borrow(),
-        ["start", "stop", "assembly", "decorate_out"]
+        [
+            "start",
+            "stop",
+            "assembly",
+            "decorate_out",
+            "create_parallel",
+            "create_while"
+        ]
     );
     assert!(Rc::ptr_eq(factory.skin_param(), &innermost.skin_param));
 }
