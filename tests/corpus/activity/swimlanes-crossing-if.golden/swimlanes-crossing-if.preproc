@@ -1,0 +1,31 @@
+@startuml
+|Sales|
+start
+:Take the order;
+if (Stock?) then (in stock)
+  |Warehouse|
+  :Pick the items;
+elseif (Supplier?) then (ordered)
+  |Purchasing|
+  :Order from the supplier;
+else (none)
+  |Sales|
+  :Apologise;
+endif
+|Warehouse|
+switch (Size?)
+case (small)
+  :Send a letter;
+case (large)
+  |Purchasing|
+  :Book a truck;
+endswitch
+|Sales|
+if (Paid?) then (yes)
+  :Thank the customer;
+else (no)
+  |Purchasing|
+  :Send a reminder;
+endif
+stop
+@enduml

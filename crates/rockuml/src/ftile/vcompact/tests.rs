@@ -8,7 +8,7 @@ use crate::color::HColor;
 use crate::creole::Display;
 use crate::decoration::Rainbow;
 use crate::diagram::activity3::LinkRendering;
-use crate::ftile::tests::{Innermost, Tile};
+use crate::ftile::tests::{Innermost, Tile, drawn_across_lanes};
 use crate::ftile::{Ftile, FtileFactory, TextBlockInterceptorUDrawable};
 use crate::klimt::UDrawable;
 use crate::klimt::debug::StringBounderDebug;
@@ -97,15 +97,12 @@ fn a_while_puts_its_test_above_its_body_with_room_for_the_arrows_around() {
         loop_tile.get_translate_for(diamond.as_ref(), &string_bounder),
         UTranslate::new(24.0, 0.0)
     );
-    let connections = tile.get_inner_connections();
-    assert_eq!(connections.len(), 3);
-    assert_eq!(
-        connections
+    let can_cross_lanes: Vec<bool> =
+        drawn_across_lanes(tile.as_ref(), UTranslate::default(), UTranslate::default())
             .iter()
-            .map(|connection| connection.as_translatable().is_some())
-            .collect::<Vec<_>>(),
-        [true, true, false]
-    );
+            .map(Option::is_some)
+            .collect();
+    assert_eq!(can_cross_lanes, [true, true, false]);
 }
 
 #[test]

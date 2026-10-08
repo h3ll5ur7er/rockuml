@@ -29,9 +29,4 @@ impl FtileDecorate for FtileWithConnection {
             ug.draw(connection);
         }
     }
-
-    /// Only its own: PlantUML drops those of the tile.
-    fn get_inner_connections(&self) -> Vec<Rc<dyn Connection>> {
-        self.connections.clone()
-    }
 }

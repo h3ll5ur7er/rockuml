@@ -99,11 +99,6 @@ impl Snake {
         }
     }
 
-    #[must_use]
-    pub(crate) fn translate(&self, translate: UTranslate) -> Self {
-        self.move_by(translate.dx, translate.dy)
-    }
-
     /// Arrowheads take no room when compressing across; only before points are added.
     #[must_use]
     pub(crate) fn ignore_for_compression(mut self) -> Self {

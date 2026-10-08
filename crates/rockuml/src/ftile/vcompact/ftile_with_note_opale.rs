@@ -3,8 +3,8 @@
 use std::cell::OnceCell;
 use std::rc::Rc;
 
-use super::FtileWithNotes;
 use super::note_sheet::NoteSheet;
+use super::{FtileWithNotes, UGraphicInterceptorOneSwimlane};
 use crate::diagram::activity3::{
     LinkRendering, NotePosition, NoteType, PositionedNote, SwimlaneId, SwimlaneSet,
 };
@@ -159,15 +159,6 @@ impl FtileWithNoteOpale {
     }
 }
 
-/// The lane `ug` keeps, when it draws the tiles of one lane only: PlantUML's
-/// `ug instanceof UGraphicInterceptorOneSwimlane`, then its `getSwimlane()`.
-///
-/// PLACEHOLDER until the swimlane layers are ported: no layer keeps one lane yet, so this answers `None`.
-/// It becomes `ug.layer::<UGraphicInterceptorOneSwimlane>().map(UGraphicInterceptorOneSwimlane::get_swimlane)`.
-fn swimlane_kept(_ug: &UGraphic) -> Option<SwimlaneId> {
-    None
-}
-
 impl Swimable for FtileWithNoteOpale {
     fn get_swimlanes(&self) -> SwimlaneSet {
         let mut result = self.tile.get_swimlanes();
@@ -219,7 +210,9 @@ impl Ftile for FtileWithNoteOpale {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let into_sw = swimlane_kept(ug);
+        let into_sw = ug
+            .layer::<UGraphicInterceptorOneSwimlane>()
+            .map(UGraphicInterceptorOneSwimlane::get_swimlane);
         if into_sw.is_none() || self.swimlane_note.is_none() || into_sw == self.swimlane_note {
             self.draw_note(ug);
         }

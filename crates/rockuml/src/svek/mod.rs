@@ -19,10 +19,6 @@ mod rounded_container;
 mod rounded_north;
 mod rounded_south;
 mod svek_node;
-#[allow(
-    dead_code,
-    reason = "Phase 6 scaffolding: activity diagrams draw through it once their tiles land"
-)]
 mod ugraphic_for_snake;
 
 pub(crate) use bibliotekon::Bibliotekon;

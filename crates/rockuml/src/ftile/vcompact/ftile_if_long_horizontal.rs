@@ -3,8 +3,8 @@
 
 use std::rc::Rc;
 
+use super::connection_hline::hline_extent;
 use super::create0_or_empty;
-use super::one_swimlane::hline_extent;
 use crate::color::HColor;
 use crate::creole::CreoleMode;
 use crate::creole::Display;

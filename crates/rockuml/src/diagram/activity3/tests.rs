@@ -202,46 +202,15 @@ struct Dump<'a> {
 }
 
 impl Dump<'_> {
-    fn instructions(&self) -> &Instructions {
-        &self.swimlanes.instructions
-    }
-
     fn lane(&self, lane: Option<SwimlaneId>) -> String {
-        quoted(lane.map(|lane| self.swimlanes.lane(lane).name.as_str()))
+        quoted(lane.map(|lane| self.swimlanes.swimlanes()[lane.0].name.as_str()))
     }
 
     fn line(&mut self, depth: usize, text: &str) {
         writeln!(self.out, "{}{text}", "  ".repeat(depth)).unwrap();
     }
 
-    fn swimlane_queries(
-        &mut self,
-        depth: usize,
-        lanes: (
-            Option<SwimlaneId>,
-            Option<SwimlaneId>,
-            Vec<Option<SwimlaneId>>,
-        ),
-    ) {
-        let (lane_in, lane_out, all) = lanes;
-        let all: Vec<String> = all.into_iter().map(|lane| self.lane(lane)).collect();
-        let text = format!(
-            "sw in={} out={} all=[{}]",
-            self.lane(lane_in),
-            self.lane(lane_out),
-            all.join(",")
-        );
-        self.line(depth, &text);
-    }
-
     fn list(&mut self, name: &str, list: &InstructionList, depth: usize) {
-        let instructions = self.instructions();
-        let lanes = (
-            list.get_swimlane_in(),
-            instructions.list_swimlane_out(list),
-            instructions.list_swimlanes(list).into_iter().collect(),
-        );
-        self.swimlane_queries(depth, lanes);
         let text = format!(
             "{name} lane={} out={}",
             self.lane(list.default_swimlane),
@@ -279,12 +248,6 @@ impl Dump<'_> {
     fn instruction(&mut self, id: InstructionId, depth: usize) {
         let swimlanes = self.swimlanes;
         let instructions = &swimlanes.instructions;
-        let lanes = (
-            instructions.get_swimlane_in(id),
-            instructions.get_swimlane_out(id),
-            instructions.get_swimlanes(id).into_iter().collect(),
-        );
-        self.swimlane_queries(depth, lanes);
         let in_link = link(Some(instructions.get_in_link_rendering(id)));
         match instructions.get(id) {
             Instruction::Simple(ins) => {
@@ -578,7 +541,7 @@ fn the_commands_build_the_instruction_trees_plantuml_builds() {
             (header, format!("{}\n", body.trim_end_matches('\n')))
         })
         .collect();
-    assert_eq!(cases.len(), 79);
+    assert_eq!(cases.len(), 91);
     let mismatches: Vec<&str> = cases
         .iter()
         .filter(|(case, expected)| {
