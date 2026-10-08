@@ -488,6 +488,32 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 - Wasm package: `rockuml.wasm` + JS shim + a static demo page (editor + live SVG), all running locally in the browser.
 - Release builds: `rockuml.exe`, `rockuml-linux-x86_64`, `rockuml-macos-universal`; `cargo dist` or a plain GitHub-Actions-style script.
 - Binary size budget: about 15 MB with the full stdlib, about 3 MB wasm without stdlib/emoji (fetch them lazily on the web).
+- **Status: done**, except the size budgets, which turned out unrealistic (below).
+  - Command line: PlantUML's `CliFlag` table with every spelling, `--help`/`--help-more`, `-pipe` (with
+    `-pipedelimitor`, `-pipenostderr`, `--pipe-image-index`), `-D`/`-I`/`-P`/`-S`, `--theme`, `--config`, `--charset`,
+    `--check-syntax`, `--stop-on-error`, `--check-before-run`, `--no-error-image`, `--threads`, `--exclude`, files,
+    directories and `*`/`?`/`**` patterns, `-o` (with `dir$`), `--extract-source`, `--disable-metadata`, `--skip-fresh`,
+    `--overwrite`, `--sprite` (uncompressed), `--null`, and PlantUML's exit statuses. 65 scenarios in `tests/cli`,
+    recorded from the golden model (`tools/oracle/cli-goldens.sh`), check stdout, stderr, exit status and the files
+    written.
+  - Deviations: unknown `-options` are refused unless such a file exists (PlantUML takes them for file names); a
+    diagram the engine panics on (where PlantUML throws and draws a crash report) is reported as
+    `<output>: crashed: <message>` with status 200 and no image; `**` does not follow links to directories; status 1
+    for flags, formats or diagram types not ported, which outranks PlantUML's 200/50/100. Not ported: other output
+    formats (PDF, EPS, LaTeX, txt/utxt, HTML, SCXML, XMI, VDX, obfuscate, base64, braille), `-pipemap`, `--verbose`,
+    `-stdlib`, `--list-keywords`, compressed sprites. Dropped: GUI, HTTP/FTP servers, statistics, clipboard, splash
+    screen, progress bar, Graphviz checks, dark mode.
+  - Wasm: `crates/rockuml-wasm` (a C ABI, no wasm-bindgen), `web/rockuml.js` (dependency-free ES module for
+    browsers and Node), `web/index.html` (editor with live preview), `tools/build-wasm.sh`, Node tests against the
+    goldens. The test suite also passes on Linux (checked under WSL).
+  - Releases: `.github/workflows/release.yml` builds `rockuml.exe`, a static musl `rockuml-linux-x86_64`, a universal
+    macOS binary and `rockuml-web.zip` on a `v*` tag; `ci.yml` tests on Windows, Linux and macOS. Not run yet: the
+    repository has no GitHub remote.
+  - Sizes: embedded assets are deflated and the stdlib and emoji are cargo features. Native `rockuml.exe` is about
+    26 MB: the stdlib (8.7 MB, already Brotli) and fonts (2.4 MB deflated) are 11.6 MB of data before any code, and the
+    code is 10.9 MB at opt-level 3. opt-level `s` would save about 3 MB at roughly 45% slower rendering, so release
+    builds keep opt-level 3. Wasm (opt-level `s`, no stdlib or emoji) is 9.5 MB, 4.95 MB gzipped, of which the fonts
+    are 2.4 MB; reaching 3 MB would mean fetching the fonts separately.
 
 ### Phase 8+ — Tier 2, then Tier 3, ordered by what you and your friends actually use.
 
@@ -519,6 +545,6 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 7: distribution polish (full CLI parity, the wasm package and demo page, release builds), which completes
-   Tier 1.
+1. Tier 1 is complete. Next: pick Tier 2 diagram types by use (mindmap, wbs, gantt, timing, json, yaml, nwdiag),
+   and the HTTP server mode that lets editor plugins use rockuml.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
