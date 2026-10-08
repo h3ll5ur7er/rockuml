@@ -2,10 +2,23 @@
 //! instruction that takes the next ones, the lane they go to, the arrow leading to the next one (the model
 //! half of PlantUML's `Swimlanes`, and `Swimlane`).
 
+use std::cell::OnceCell;
+use std::rc::Rc;
+
 use super::instruction::{InstructionId, Instructions, SwimlaneSet};
 use super::link_rendering::LinkRendering;
 use crate::color::{ColorType, Colors, HColor};
 use crate::creole::Display;
+use crate::ftile::vcompact::{self, VCompactFactory};
+use crate::ftile::{FtileFactory, TextBlockInterceptorUDrawable};
+use crate::klimt::font::StringBounder;
+use crate::klimt::geom::{MinMax, XDimension2D};
+use crate::klimt::limit_finder::LimitFinder;
+use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::{TextBlock, UDrawable};
+use crate::skin::SkinParam;
+use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::svek::UGraphicForSnake;
 
 /// A swimlane, known by its order of declaration, as tiles, connections and layers name it; PlantUML compares
 /// lanes by identity. The lane PlantUML adds after the last while drawing, ordered after all, is
@@ -104,6 +117,76 @@ impl Swimlanes {
 
     pub(crate) fn get_current_swimlane(&self) -> Option<SwimlaneId> {
         self.current_swimlane
+    }
+}
+
+/// The drawing half of PlantUML's `Swimlanes`: the tiles built from the instructions, drawn in the lanes.
+/// Diagrams with more than one lane are drawn by `drawWhenSwimlanes`, after `computeSizeInternal` laid the
+/// lanes out (track E2); the diagram refuses them until then.
+pub(super) struct SwimlanesDrawing<'a> {
+    swimlanes: &'a Swimlanes,
+    skin_param: Rc<SkinParam>,
+    /// `!pragma useVerticalIf on`.
+    use_vertical_if: bool,
+    string_bounder: Rc<dyn StringBounder>,
+    cached_min_max: OnceCell<MinMax>,
+}
+
+impl<'a> SwimlanesDrawing<'a> {
+    pub(super) fn new(
+        swimlanes: &'a Swimlanes,
+        skin_param: Rc<SkinParam>,
+        use_vertical_if: bool,
+        string_bounder: Rc<dyn StringBounder>,
+    ) -> Self {
+        Self {
+            swimlanes,
+            skin_param,
+            use_vertical_if,
+            string_bounder,
+            cached_min_max: OnceCell::new(),
+        }
+    }
+
+    fn get_ftile_factory(&self) -> Box<dyn FtileFactory> {
+        vcompact::delegator_chain(
+            Box::new(VCompactFactory::new(
+                self.skin_param.clone(),
+                self.string_bounder.clone(),
+            )),
+            self.use_vertical_if,
+        )
+    }
+
+    fn get_min_max(&self) -> MinMax {
+        *self
+            .cached_min_max
+            .get_or_init(|| LimitFinder::min_max_of(self, self.string_bounder.clone()))
+    }
+}
+
+impl TextBlock for SwimlanesDrawing<'_> {
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
+        self.get_min_max().dimension()
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        let factory = self.get_ftile_factory();
+        let full = self
+            .swimlanes
+            .instructions
+            .create_ftile(Instructions::ROOT, factory.as_ref());
+        let style = StyleSignature::of(&[
+            SName::Root,
+            SName::Element,
+            SName::ActivityDiagram,
+            SName::Goto,
+        ])
+        .get_merged_style(&self.skin_param.current_style_builder());
+        let goto_color = style.value(PName::LineColor).as_color();
+        let ug = UGraphicForSnake::create(ug.clone());
+        TextBlockInterceptorUDrawable::new(full, goto_color, false).draw_u(&ug);
+        ug.flush_ug();
     }
 }
 

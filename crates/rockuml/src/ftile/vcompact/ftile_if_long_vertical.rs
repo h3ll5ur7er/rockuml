@@ -5,7 +5,7 @@ use std::rc::Rc;
 
 use super::create0_or_empty;
 use crate::color::HColor;
-use crate::creole::CreoleMode;
+use crate::creole::{CreoleMode, Display};
 use crate::decoration::Rainbow;
 use crate::diagram::activity3::{BranchFtile, LinkRendering, SwimlaneId, SwimlaneSet};
 use crate::ftile::vertical::{FtileDiamond, FtileDiamondInside2};
@@ -51,7 +51,7 @@ impl FtileIfLongVertical {
         let fc_arrow = style_arrow.font_configuration();
         let border_color = style_diamond.value(PName::LineColor).as_color();
         let arrow_color = Rainbow::build_from_style(style_arrow);
-        let create = |display, alignment| {
+        let create = |display: Option<&Display>, alignment: HorizontalAlignment| {
             create0_or_empty(display, &fc_arrow, alignment, skin_param, 0.0, CreoleMode::Full)
         };
         let mut diamonds: Vec<Rc<dyn Ftile>> = Vec::new();

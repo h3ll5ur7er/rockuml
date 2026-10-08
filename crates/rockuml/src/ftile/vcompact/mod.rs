@@ -2,6 +2,7 @@
 //! `activitydiagram3.ftile.vcompact`).
 
 mod cond;
+mod connection_vertical_down;
 mod ftile_factory_delegator_add_note;
 mod ftile_factory_delegator_add_url;
 mod ftile_factory_delegator_assembly;
@@ -15,7 +16,9 @@ mod ftile_if_down;
 mod ftile_if_long_horizontal;
 mod ftile_if_long_vertical;
 pub(crate) mod one_swimlane;
+mod v_compact_factory;
 
+pub(crate) use connection_vertical_down::ConnectionVerticalDown;
 pub(crate) use ftile_factory_delegator_add_note::FtileFactoryDelegatorAddNote;
 pub(crate) use ftile_factory_delegator_add_url::FtileFactoryDelegatorAddUrl;
 pub(crate) use ftile_factory_delegator_assembly::FtileFactoryDelegatorAssembly;
@@ -28,6 +31,7 @@ pub(crate) use ftile_factory_delegator_while::FtileFactoryDelegatorWhile;
 pub(crate) use ftile_if_down::FtileIfDown;
 pub(crate) use ftile_if_long_horizontal::FtileIfLongHorizontal;
 pub(crate) use ftile_if_long_vertical::FtileIfLongVertical;
+pub(crate) use v_compact_factory::VCompactFactory;
 
 use std::rc::Rc;
 

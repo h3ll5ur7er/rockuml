@@ -51,11 +51,21 @@ mod abstract_ftile;
 mod arrows;
 mod box_style;
 mod connection;
+mod ftile_assembly_simple;
+mod ftile_decorate_welding;
+mod ftile_empty;
 mod ftile_factory;
 mod ftile_factory_delegator;
 mod ftile_geometry;
 mod ftile_geometry_merger;
+mod ftile_killed;
+mod ftile_marged;
 mod ftile_marged_west;
+mod ftile_min_width_centered;
+pub(crate) mod ftile_utils;
+mod ftile_with_connection;
+mod ftile_with_swimlanes;
+mod ftile_with_url;
 pub(crate) mod hexagon;
 mod merge_strategy;
 mod snake;
@@ -75,11 +85,20 @@ pub(crate) use abstract_ftile::AbstractFtile;
 pub(crate) use arrows::Arrows;
 pub(crate) use box_style::BoxStyle;
 pub(crate) use connection::{Connection, ConnectionTranslatable};
+pub(crate) use ftile_assembly_simple::FtileAssemblySimple;
+pub(crate) use ftile_decorate_welding::FtileDecorateWelding;
+pub(crate) use ftile_empty::{FtileBreak, FtileEmpty, FtileGoto, FtileLabel};
 pub(crate) use ftile_factory::FtileFactory;
 pub(crate) use ftile_factory_delegator::FtileFactoryDelegator;
 pub(crate) use ftile_geometry::FtileGeometry;
 pub(crate) use ftile_geometry_merger::FtileGeometryMerger;
+pub(crate) use ftile_killed::FtileKilled;
+pub(crate) use ftile_marged::{FtileMarged, FtileMargedRight, FtileMargedVertically};
 pub(crate) use ftile_marged_west::FtileMargedWest;
+pub(crate) use ftile_min_width_centered::FtileMinWidthCentered;
+pub(crate) use ftile_with_connection::FtileWithConnection;
+pub(crate) use ftile_with_swimlanes::FtileWithSwimlanes;
+pub(crate) use ftile_with_url::FtileWithUrl;
 pub(crate) use merge_strategy::MergeStrategy;
 pub(crate) use snake::Snake;
 pub(crate) use swimable::Swimable;
@@ -158,7 +177,7 @@ pub(crate) fn same(a: &dyn Ftile, b: &dyn Ftile) -> bool {
     std::ptr::addr_eq(a, b)
 }
 
-/// `tile` as a `T`, when it is one (PlantUML's `tile instanceof T`).
+/// The tile as a `T`, when it is one (PlantUML's `tile instanceof T`).
 pub(crate) fn downcast<T: Ftile>(tile: &dyn Ftile) -> Option<&T> {
     (tile as &dyn Any).downcast_ref()
 }

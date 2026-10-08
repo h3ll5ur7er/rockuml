@@ -399,7 +399,7 @@ mod tests {
         assert_eq!(read_as(&["@startuml", "[*] --> Idle", "@enduml"]), "STATE");
         assert_eq!(
             read_as(&["@startuml", "start", ":Hello;", "stop", "@enduml"]),
-            "activity diagrams"
+            "ACTIVITY"
         );
         assert_eq!(
             read_as(&[

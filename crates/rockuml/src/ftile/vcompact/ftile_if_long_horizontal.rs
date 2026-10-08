@@ -14,7 +14,8 @@ use crate::ftile::{
     FtileAssemblySimple, FtileFactory, FtileGeometry, FtileMinWidthCentered, MergeStrategy, Snake,
     Swimable, ftile_utils, same,
 };
-use crate::klimt::font::StringBounder;
+use crate::creole::Display;
+use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
@@ -54,8 +55,15 @@ impl FtileIfLongHorizontal {
         let arrow_color = Rainbow::build_from_style(style_arrow);
         let fc_test = style_diamond.font_configuration();
         let fc_arrow = style_arrow.font_configuration();
-        let create = |display, font| {
-            create0_or_empty(display, font, HorizontalAlignment::Left, skin_param, 0.0, CreoleMode::Full)
+        let create = |display: Option<&Display>, font: &FontConfiguration| {
+            create0_or_empty(
+                display,
+                font,
+                HorizontalAlignment::Left,
+                skin_param,
+                0.0,
+                CreoleMode::Full,
+            )
         };
         let tiles: Vec<Rc<dyn Ftile>> = thens
             .iter()

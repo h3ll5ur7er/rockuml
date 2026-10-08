@@ -251,7 +251,12 @@ listing.
 and chains `FtileGeometry` operations, writing doubles as their IEEE bits; `crates/rockuml/src/ftile/tests/arrows.rs`
 replays them and must match bit for bit.
 
+`CompressDump` draws generated scenes of shapes (frames ignored on either axis, lines, arrowhead polygons, texts,
+centred titles) through `CompressionXorYBuilder` across, down and both, and writes the compressed dimension,
+min-max and every primitive drawn; `crates/rockuml/src/klimt/compress/tests.rs` replays them bit for bit.
+
 ```bash
-bash tools/oracle/activity-unit/model.sh   # activity-model.txt: the instruction tree of each activity case
-bash tools/oracle/activity-unit/arrows.sh  # activity-arrows.txt: merged worms, multi-colour offsets, FtileGeometry
+bash tools/oracle/activity-unit/model.sh     # activity-model.txt: the instruction tree of each activity case
+bash tools/oracle/activity-unit/arrows.sh    # activity-arrows.txt: merged worms, multi-colour offsets, FtileGeometry
+bash tools/oracle/activity-unit/compress.sh  # activity-compress.txt: compressed scenes of shapes
 ```
