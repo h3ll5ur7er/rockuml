@@ -15,7 +15,6 @@ use crate::ftile::{
 };
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XPoint2D};
-use crate::klimt::shape::UPolygon;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;

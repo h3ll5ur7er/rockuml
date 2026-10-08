@@ -8,6 +8,8 @@ debug activity/arrow-branch-colors.puml
 debug activity/arrow-colors-styles.puml
 debug activity/arrow-hidden.puml
 debug activity/arrow-labels.puml
+debug activity/basic.puml
+debug activity/ci-pipeline.puml
 debug activity/colors-control-flow.puml
 debug activity/colors-stereogroup.puml
 debug activity/connectors-several.puml
@@ -25,6 +27,8 @@ debug activity/fork-basic.puml
 debug activity/fork-end-merge.puml
 debug activity/fork-join-labels.puml
 debug activity/fork-nested.puml
+debug activity/fork-with-if.puml
+debug activity/goto-label.puml
 debug activity/group.puml
 debug activity/header-footer.puml
 debug activity/if-basic.puml
@@ -42,6 +46,7 @@ debug activity/if-is-then.puml
 debug activity/if-long-labels.puml
 debug activity/if-nested.puml
 debug activity/if-no-labels.puml
+debug activity/if-notes.puml
 debug activity/if-without-else.puml
 debug activity/kill.puml
 debug activity/multiline-actions.puml
@@ -49,6 +54,7 @@ debug activity/no-start.puml
 debug activity/notes-colored.puml
 debug activity/notes-creole.puml
 debug activity/notes-floating.puml
+debug activity/notes-in-branches.puml
 debug activity/notes-left-right.puml
 debug activity/package-rectangle-card.puml
 debug activity/partition-basic.puml
@@ -59,12 +65,14 @@ debug activity/repeat-basic.puml
 debug activity/repeat-break.puml
 debug activity/repeat-labels.puml
 debug activity/skinparam-activity.puml
+debug activity/skinparam-monochrome.puml
 debug activity/split-basic.puml
 debug activity/split-ends.puml
 debug activity/split-starts.puml
 debug activity/start-end.puml
 debug activity/start-stop.puml
 debug activity/stop-in-every-branch.puml
+debug activity/style-activity.puml
 debug activity/style-stereotypes.puml
 debug activity/switch-basic.puml
 debug activity/switch-nested.puml
@@ -470,6 +478,7 @@ dsvg activity/arrow-branch-colors.puml
 dsvg activity/arrow-colors-styles.puml
 dsvg activity/arrow-hidden.puml
 dsvg activity/arrow-labels.puml
+dsvg activity/basic.puml
 dsvg activity/colors-control-flow.puml
 dsvg activity/colors-stereogroup.puml
 dsvg activity/connectors-several.puml
@@ -487,6 +496,8 @@ dsvg activity/fork-basic.puml
 dsvg activity/fork-end-merge.puml
 dsvg activity/fork-join-labels.puml
 dsvg activity/fork-nested.puml
+dsvg activity/fork-with-if.puml
+dsvg activity/goto-label.puml
 dsvg activity/group.puml
 dsvg activity/header-footer.puml
 dsvg activity/if-basic.puml
@@ -504,6 +515,7 @@ dsvg activity/if-is-then.puml
 dsvg activity/if-long-labels.puml
 dsvg activity/if-nested.puml
 dsvg activity/if-no-labels.puml
+dsvg activity/if-notes.puml
 dsvg activity/if-without-else.puml
 dsvg activity/kill.puml
 dsvg activity/multiline-actions.puml
@@ -511,6 +523,7 @@ dsvg activity/no-start.puml
 dsvg activity/notes-colored.puml
 dsvg activity/notes-creole.puml
 dsvg activity/notes-floating.puml
+dsvg activity/notes-in-branches.puml
 dsvg activity/notes-left-right.puml
 dsvg activity/package-rectangle-card.puml
 dsvg activity/partition-basic.puml
@@ -527,6 +540,7 @@ dsvg activity/split-starts.puml
 dsvg activity/start-end.puml
 dsvg activity/start-stop.puml
 dsvg activity/stop-in-every-branch.puml
+dsvg activity/style-activity.puml
 dsvg activity/style-stereotypes.puml
 dsvg activity/switch-basic.puml
 dsvg activity/switch-nested.puml
@@ -930,6 +944,7 @@ png activity/arrow-branch-colors.puml
 png activity/arrow-colors-styles.puml
 png activity/arrow-hidden.puml
 png activity/arrow-labels.puml
+png activity/basic.puml
 png activity/colors-control-flow.puml
 png activity/colors-stereogroup.puml
 png activity/connectors-several.puml
@@ -947,6 +962,7 @@ png activity/fork-basic.puml
 png activity/fork-end-merge.puml
 png activity/fork-join-labels.puml
 png activity/fork-nested.puml
+png activity/fork-with-if.puml
 png activity/goto-label.puml
 png activity/group.puml
 png activity/header-footer.puml
@@ -965,6 +981,7 @@ png activity/if-is-then.puml
 png activity/if-long-labels.puml
 png activity/if-nested.puml
 png activity/if-no-labels.puml
+png activity/if-notes.puml
 png activity/if-without-else.puml
 png activity/kill.puml
 png activity/multiline-actions.puml
@@ -972,6 +989,7 @@ png activity/no-start.puml
 png activity/notes-colored.puml
 png activity/notes-creole.puml
 png activity/notes-floating.puml
+png activity/notes-in-branches.puml
 png activity/notes-left-right.puml
 png activity/package-rectangle-card.puml
 png activity/partition-basic.puml
@@ -982,12 +1000,14 @@ png activity/repeat-basic.puml
 png activity/repeat-break.puml
 png activity/repeat-labels.puml
 png activity/skinparam-activity.puml
+png activity/skinparam-monochrome.puml
 png activity/split-basic.puml
 png activity/split-ends.puml
 png activity/split-starts.puml
 png activity/start-end.puml
 png activity/start-stop.puml
 png activity/stop-in-every-branch.puml
+png activity/style-activity.puml
 png activity/style-stereotypes.puml
 png activity/switch-basic.puml
 png activity/switch-nested.puml
@@ -1431,6 +1451,7 @@ preproc activity/if-is-then.puml
 preproc activity/if-long-labels.puml
 preproc activity/if-nested.puml
 preproc activity/if-no-labels.puml
+preproc activity/if-notes.puml
 preproc activity/if-without-else.puml
 preproc activity/kill.puml
 preproc activity/multiline-actions.puml
@@ -1880,6 +1901,7 @@ svg activity/arrow-branch-colors.puml
 svg activity/arrow-colors-styles.puml
 svg activity/arrow-hidden.puml
 svg activity/arrow-labels.puml
+svg activity/basic.puml
 svg activity/colors-control-flow.puml
 svg activity/colors-stereogroup.puml
 svg activity/creole-actions.puml
@@ -1895,6 +1917,8 @@ svg activity/fork-basic.puml
 svg activity/fork-end-merge.puml
 svg activity/fork-join-labels.puml
 svg activity/fork-nested.puml
+svg activity/fork-with-if.puml
+svg activity/goto-label.puml
 svg activity/group.puml
 svg activity/header-footer.puml
 svg activity/if-basic.puml
@@ -1912,6 +1936,7 @@ svg activity/if-is-then.puml
 svg activity/if-long-labels.puml
 svg activity/if-nested.puml
 svg activity/if-no-labels.puml
+svg activity/if-notes.puml
 svg activity/if-without-else.puml
 svg activity/kill.puml
 svg activity/multiline-actions.puml
@@ -1919,6 +1944,7 @@ svg activity/no-start.puml
 svg activity/notes-colored.puml
 svg activity/notes-creole.puml
 svg activity/notes-floating.puml
+svg activity/notes-in-branches.puml
 svg activity/notes-left-right.puml
 svg activity/package-rectangle-card.puml
 svg activity/partition-basic.puml
@@ -1935,6 +1961,7 @@ svg activity/split-starts.puml
 svg activity/start-end.puml
 svg activity/start-stop.puml
 svg activity/stop-in-every-branch.puml
+svg activity/style-activity.puml
 svg activity/style-stereotypes.puml
 svg activity/switch-basic.puml
 svg activity/switch-nested.puml
@@ -2311,6 +2338,7 @@ url activity/if-is-then.puml
 url activity/if-long-labels.puml
 url activity/if-nested.puml
 url activity/if-no-labels.puml
+url activity/if-notes.puml
 url activity/if-without-else.puml
 url activity/kill.puml
 url activity/multiline-actions.puml

@@ -32,7 +32,6 @@ pub(crate) struct FtileIfLongHorizontal {
     diamonds: Vec<Rc<dyn Ftile>>,
     /// Each diamond above its branch, with room left for the label of the arrow into the diamond.
     couples: Vec<Rc<dyn Ftile>>,
-    arrow_color: Rainbow,
 }
 
 impl FtileIfLongHorizontal {
@@ -93,7 +92,6 @@ impl FtileIfLongHorizontal {
             tile2: min_width_centered(&branch2.ftile),
             diamonds,
             couples,
-            arrow_color: builder.arrow_color.clone(),
         });
         let conns = builder.connections(
             &result,
