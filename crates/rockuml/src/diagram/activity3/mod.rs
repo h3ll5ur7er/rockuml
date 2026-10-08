@@ -6,12 +6,14 @@
 
 mod branch;
 mod commands;
+mod create_ftile;
 mod group;
 mod instruction;
 mod leaves;
 mod link_rendering;
 mod loops;
 mod parallel;
+mod recentred;
 mod swimlanes;
 #[cfg(test)]
 mod tests;
@@ -31,13 +33,14 @@ pub(crate) use self::link_rendering::LinkRendering;
 use self::loops::{InstructionRepeat, InstructionWhile};
 pub(crate) use self::parallel::ForkStyle;
 use self::parallel::{InstructionFork, InstructionSplit};
+use self::recentred::Recentred;
 pub(crate) use self::swimlanes::SwimlaneId;
-use self::swimlanes::Swimlanes;
+use self::swimlanes::{Swimlanes, SwimlanesDrawing};
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
 use super::cuca_commands;
 use super::diagram_type::DiagramType;
-use super::titled::{Titled, TitledDiagram};
+use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::color::{Colors, HColor};
 use crate::command::factory::AbstractDiagram;
@@ -48,13 +51,12 @@ use crate::decoration::symbol::USymbol;
 use crate::diagram::sequence::model::NotePosition;
 use crate::ftile::BoxStyle;
 use crate::klimt::TextBlock;
+use crate::klimt::compress::{CompressionMode, CompressionXorYBuilder};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::url::Url;
 use crate::stereo::{Stereogroup, Stereotype};
 use crate::style::{SName, Style};
-
-const NOT_PORTED: NotYetPorted = NotYetPorted("activity diagrams");
 
 /// Whether swimlanes may still be declared: only before the first instruction that goes in one.
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -79,8 +81,7 @@ impl CommandFactory for ActivityDiagramFactory3 {
     const DIAGRAM_TYPE: DiagramType = DiagramType::Activity;
 
     fn create_empty_diagram(source: &Rc<UmlSource>) -> ActivityDiagram3 {
-        let mut titled = Titled::new(SName::ActivityDiagram, "ACTIVITY", source);
-        titled.not_ported(NOT_PORTED);
+        let titled = Titled::new(SName::ActivityDiagram, "ACTIVITY", source);
         ActivityDiagram3 {
             source: source.clone(),
             titled,
@@ -162,9 +163,26 @@ impl Diagram for ActivityDiagram3 {
     fn text_block(
         &self,
         _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
+        string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Err(NOT_PORTED)
+        if self.swimlanes.swimlanes().len() > 1 {
+            return Err(NotYetPorted("activity diagrams with swimlanes (track E2)"));
+        }
+        if let Some(not_ported) = self.swimlanes.instructions.unported_part() {
+            return Err(not_ported);
+        }
+        let swimlanes = SwimlanesDrawing::new(
+            &self.swimlanes,
+            Rc::new(self.titled.skin.clone()),
+            self.titled.pragma.is_true(PragmaKey::UseVerticalIf),
+            string_bounder.clone(),
+        );
+        let compressed = CompressionXorYBuilder::build(
+            CompressionMode::OnY,
+            CompressionXorYBuilder::build(CompressionMode::OnX, swimlanes),
+        );
+        let result = Recentred::new(compressed);
+        Ok(self.titled.add_chrome(Box::new(result), string_bounder))
     }
 
     fn export_settings(&self) -> ExportSettings {
