@@ -1,0 +1,32 @@
+@startmindmap
+<style>
+mindmapDiagram {
+  node {
+    BackgroundColor lightGreen
+  }
+  :depth(1) {
+    BackGroundColor white
+  }
+  arrow {
+    LineColor red
+    LineThickness 2
+  }
+  rootNode {
+    LineStyle 8
+    RoundCorner 0
+  }
+  leafNode {
+    LineColor gold
+    RoundCorner 0
+    Padding 3
+  }
+}
+</style>
+* Linux
+** NixOS
+** Debian
+*** Ubuntu
+**** Linux Mint
+**** Kubuntu
+*** SteamOS
+@endmindmap

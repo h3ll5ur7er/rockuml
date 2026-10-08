@@ -1,0 +1,90 @@
+DPI: 96
+dimension: [ 704.5953 ; 144.0000 ]
+scaleFactor: 1.0000
+seed: 7654180618854877180
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 184.1985 ; 72.0000 ]
+  pt2: [ 184.1985 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 92.0000 ]
+  pt2: [ 348.3970 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffc0cb
+
+TEXT:
+  text: this is my workpackage
+  position: [ 30.0000 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 526.4961 ; 72.0000 ]
+  pt2: [ 526.4961 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 368.3970 ; 92.0000 ]
+  pt2: [ 684.5953 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: this is another workpackage
+  position: [ 378.3970 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 184.1985 ; 72.0000 ]
+  pt2: [ 526.4961 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 141.1128 ; 20.0000 ]
+  pt2: [ 569.5819 ; 52.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ff87ceeb
+
+TEXT:
+  text: this is the partner workpackage
+  position: [ 151.1128 ; 39.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 355.3473 ; 52.0000 ]
+  pt2: [ 355.3473 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+

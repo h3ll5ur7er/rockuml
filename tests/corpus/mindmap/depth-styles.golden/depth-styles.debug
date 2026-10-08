@@ -1,0 +1,258 @@
+DPI: 96
+dimension: [ 675.5678 ; 140.5000 ]
+scaleFactor: 1.0000
+seed: 876612951785522559
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 43.2500 ]
+  pt2: [ 111.6580 ; 97.2500 ]
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 53.2500 ]
+  pt2: [ 111.6580 ; 87.2500 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 8.0-8.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ff90ee90
+
+TEXT:
+  text: Linux
+  position: [ 20.0000 ; 74.1389 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 161.6580 ; 10.0000 ]
+  pt2: [ 257.2158 ; 50.0000 ]
+
+RECTANGLE:
+  pt1: [ 161.6580 ; 20.0000 ]
+  pt2: [ 257.2158 ; 40.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffffd700
+  backcolor: ffffffff
+
+TEXT:
+  text: NixOS
+  position: [ 164.6580 ; 33.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 101.6580 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 111.6580 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 126.6580 ; 0.0000 ]
+     pt2: [ 126.6580 ; -40.2500 ]
+     pt3: [ 141.6580 ; -40.2500 ]
+   - type: SEG_LINETO
+     pt1: [ 151.6580 ; -40.2500 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 161.6580 ; 50.0000 ]
+  pt2: [ 281.4076 ; 104.0000 ]
+
+RECTANGLE:
+  pt1: [ 161.6580 ; 60.0000 ]
+  pt2: [ 281.4076 ; 94.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffff
+
+TEXT:
+  text: Debian
+  position: [ 171.6580 ; 80.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 331.4076 ; 36.5000 ]
+  pt2: [ 455.9767 ; 90.5000 ]
+
+RECTANGLE:
+  pt1: [ 331.4076 ; 46.5000 ]
+  pt2: [ 455.9767 ; 80.5000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ff90ee90
+
+TEXT:
+  text: Ubuntu
+  position: [ 341.4076 ; 67.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 505.9767 ; 23.5000 ]
+  pt2: [ 655.5678 ; 63.5000 ]
+
+RECTANGLE:
+  pt1: [ 505.9767 ; 33.5000 ]
+  pt2: [ 655.5678 ; 53.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffffd700
+  backcolor: ff90ee90
+
+TEXT:
+  text: Linux Mint
+  position: [ 508.9767 ; 47.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 124.5692 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 134.5692 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 149.5692 ; 0.0000 ]
+     pt2: [ 149.5692 ; -20.0000 ]
+     pt3: [ 164.5692 ; -20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 174.5692 ; -20.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 505.9767 ; 63.5000 ]
+  pt2: [ 610.1910 ; 103.5000 ]
+
+RECTANGLE:
+  pt1: [ 505.9767 ; 73.5000 ]
+  pt2: [ 610.1910 ; 93.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffffd700
+  backcolor: ff90ee90
+
+TEXT:
+  text: Kubuntu
+  position: [ 508.9767 ; 87.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 124.5692 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 134.5692 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 149.5692 ; 0.0000 ]
+     pt2: [ 149.5692 ; 20.0000 ]
+     pt3: [ 164.5692 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 174.5692 ; 20.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 119.7496 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 129.7496 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 144.7496 ; 0.0000 ]
+     pt2: [ 144.7496 ; -13.5000 ]
+     pt3: [ 159.7496 ; -13.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 169.7496 ; -13.5000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 331.4076 ; 90.5000 ]
+  pt2: [ 434.0140 ; 130.5000 ]
+
+RECTANGLE:
+  pt1: [ 331.4076 ; 100.5000 ]
+  pt2: [ 434.0140 ; 120.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffffd700
+  backcolor: ff90ee90
+
+TEXT:
+  text: SteamOS
+  position: [ 334.4076 ; 114.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 119.7496 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 129.7496 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 144.7496 ; 0.0000 ]
+     pt2: [ 144.7496 ; 33.5000 ]
+     pt3: [ 159.7496 ; 33.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 169.7496 ; 33.5000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 101.6580 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 111.6580 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 126.6580 ; 0.0000 ]
+     pt2: [ 126.6580 ; 6.7500 ]
+     pt3: [ 141.6580 ; 6.7500 ]
+   - type: SEG_LINETO
+     pt1: [ 151.6580 ; 6.7500 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+

@@ -1,0 +1,68 @@
+DPI: 96
+dimension: [ 412.4564 ; 74.0000 ]
+scaleFactor: 1.0000
+seed: -6254580797068874456
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 248.3752 ; 64.0000 ]
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 20.0000 ]
+  pt2: [ 248.3752 ; 54.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: starts deeper
+  position: [ 20.0000 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 298.3752 ; 10.0000 ]
+  pt2: [ 392.4564 ; 64.0000 ]
+
+RECTANGLE:
+  pt1: [ 298.3752 ; 20.0000 ]
+  pt2: [ 392.4564 ; 54.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: child
+  position: [ 308.3752 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 238.3752 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 248.3752 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 263.3752 ; 0.0000 ]
+     pt2: [ 263.3752 ; 0.0000 ]
+     pt3: [ 278.3752 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 288.3752 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
