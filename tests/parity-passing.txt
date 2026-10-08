@@ -33,6 +33,7 @@ debug activity/group.puml
 debug activity/header-footer.puml
 debug activity/if-basic.puml
 debug activity/if-condition-end-hline.puml
+debug activity/if-condition-separators.puml
 debug activity/if-condition-style-diamond.puml
 debug activity/if-condition-style-inside-diamond.puml
 debug activity/if-down-variants.puml
@@ -58,6 +59,9 @@ debug activity/notes-in-branches.puml
 debug activity/notes-left-right.puml
 debug activity/order-processing.puml
 debug activity/package-rectangle-card.puml
+debug activity/padding-boxes.puml
+debug activity/padding-if.puml
+debug activity/padding-notes.puml
 debug activity/partition-basic.puml
 debug activity/partition-colors-nested.puml
 debug activity/partition-short-title.puml
@@ -66,8 +70,11 @@ debug activity/repeat-backward.puml
 debug activity/repeat-basic.puml
 debug activity/repeat-break.puml
 debug activity/repeat-labels.puml
+debug activity/repeat-unclosed-arrow.puml
 debug activity/skinparam-activity.puml
 debug activity/skinparam-monochrome.puml
+debug activity/skinparam-reversecolor-dark.puml
+debug activity/skinparam-reversecolor-order.puml
 debug activity/split-basic.puml
 debug activity/split-ends.puml
 debug activity/split-starts.puml
@@ -519,6 +526,7 @@ dsvg activity/group.puml
 dsvg activity/header-footer.puml
 dsvg activity/if-basic.puml
 dsvg activity/if-condition-end-hline.puml
+dsvg activity/if-condition-separators.puml
 dsvg activity/if-condition-style-diamond.puml
 dsvg activity/if-condition-style-inside-diamond.puml
 dsvg activity/if-down-variants.puml
@@ -544,6 +552,9 @@ dsvg activity/notes-in-branches.puml
 dsvg activity/notes-left-right.puml
 dsvg activity/order-processing.puml
 dsvg activity/package-rectangle-card.puml
+dsvg activity/padding-boxes.puml
+dsvg activity/padding-if.puml
+dsvg activity/padding-notes.puml
 dsvg activity/partition-basic.puml
 dsvg activity/partition-colors-nested.puml
 dsvg activity/partition-short-title.puml
@@ -552,8 +563,11 @@ dsvg activity/repeat-backward.puml
 dsvg activity/repeat-basic.puml
 dsvg activity/repeat-break.puml
 dsvg activity/repeat-labels.puml
+dsvg activity/repeat-unclosed-arrow.puml
 dsvg activity/skinparam-activity.puml
 dsvg activity/skinparam-monochrome.puml
+dsvg activity/skinparam-reversecolor-dark.puml
+dsvg activity/skinparam-reversecolor-order.puml
 dsvg activity/split-basic.puml
 dsvg activity/split-ends.puml
 dsvg activity/split-starts.puml
@@ -1003,6 +1017,7 @@ png activity/group.puml
 png activity/header-footer.puml
 png activity/if-basic.puml
 png activity/if-condition-end-hline.puml
+png activity/if-condition-separators.puml
 png activity/if-condition-style-diamond.puml
 png activity/if-condition-style-inside-diamond.puml
 png activity/if-down-variants.puml
@@ -1028,6 +1043,9 @@ png activity/notes-in-branches.puml
 png activity/notes-left-right.puml
 png activity/order-processing.puml
 png activity/package-rectangle-card.puml
+png activity/padding-boxes.puml
+png activity/padding-if.puml
+png activity/padding-notes.puml
 png activity/partition-basic.puml
 png activity/partition-colors-nested.puml
 png activity/partition-short-title.puml
@@ -1036,8 +1054,11 @@ png activity/repeat-backward.puml
 png activity/repeat-basic.puml
 png activity/repeat-break.puml
 png activity/repeat-labels.puml
+png activity/repeat-unclosed-arrow.puml
 png activity/skinparam-activity.puml
 png activity/skinparam-monochrome.puml
+png activity/skinparam-reversecolor-dark.puml
+png activity/skinparam-reversecolor-order.puml
 png activity/split-basic.puml
 png activity/split-ends.puml
 png activity/split-starts.puml
@@ -1489,6 +1510,7 @@ preproc activity/group.puml
 preproc activity/header-footer.puml
 preproc activity/if-basic.puml
 preproc activity/if-condition-end-hline.puml
+preproc activity/if-condition-separators.puml
 preproc activity/if-condition-style-diamond.puml
 preproc activity/if-condition-style-inside-diamond.puml
 preproc activity/if-down-variants.puml
@@ -1514,6 +1536,9 @@ preproc activity/notes-in-branches.puml
 preproc activity/notes-left-right.puml
 preproc activity/order-processing.puml
 preproc activity/package-rectangle-card.puml
+preproc activity/padding-boxes.puml
+preproc activity/padding-if.puml
+preproc activity/padding-notes.puml
 preproc activity/partition-basic.puml
 preproc activity/partition-colors-nested.puml
 preproc activity/partition-short-title.puml
@@ -1522,8 +1547,11 @@ preproc activity/repeat-backward.puml
 preproc activity/repeat-basic.puml
 preproc activity/repeat-break.puml
 preproc activity/repeat-labels.puml
+preproc activity/repeat-unclosed-arrow.puml
 preproc activity/skinparam-activity.puml
 preproc activity/skinparam-monochrome.puml
+preproc activity/skinparam-reversecolor-dark.puml
+preproc activity/skinparam-reversecolor-order.puml
 preproc activity/split-basic.puml
 preproc activity/split-ends.puml
 preproc activity/split-starts.puml
@@ -1984,6 +2012,7 @@ svg activity/group.puml
 svg activity/header-footer.puml
 svg activity/if-basic.puml
 svg activity/if-condition-end-hline.puml
+svg activity/if-condition-separators.puml
 svg activity/if-condition-style-diamond.puml
 svg activity/if-condition-style-inside-diamond.puml
 svg activity/if-down-variants.puml
@@ -2009,6 +2038,9 @@ svg activity/notes-in-branches.puml
 svg activity/notes-left-right.puml
 svg activity/order-processing.puml
 svg activity/package-rectangle-card.puml
+svg activity/padding-boxes.puml
+svg activity/padding-if.puml
+svg activity/padding-notes.puml
 svg activity/partition-basic.puml
 svg activity/partition-colors-nested.puml
 svg activity/partition-short-title.puml
@@ -2017,8 +2049,11 @@ svg activity/repeat-backward.puml
 svg activity/repeat-basic.puml
 svg activity/repeat-break.puml
 svg activity/repeat-labels.puml
+svg activity/repeat-unclosed-arrow.puml
 svg activity/skinparam-activity.puml
 svg activity/skinparam-monochrome.puml
+svg activity/skinparam-reversecolor-dark.puml
+svg activity/skinparam-reversecolor-order.puml
 svg activity/split-basic.puml
 svg activity/split-ends.puml
 svg activity/split-starts.puml
@@ -2402,6 +2437,7 @@ url activity/group.puml
 url activity/header-footer.puml
 url activity/if-basic.puml
 url activity/if-condition-end-hline.puml
+url activity/if-condition-separators.puml
 url activity/if-condition-style-diamond.puml
 url activity/if-condition-style-inside-diamond.puml
 url activity/if-down-variants.puml
@@ -2427,6 +2463,9 @@ url activity/notes-in-branches.puml
 url activity/notes-left-right.puml
 url activity/order-processing.puml
 url activity/package-rectangle-card.puml
+url activity/padding-boxes.puml
+url activity/padding-if.puml
+url activity/padding-notes.puml
 url activity/partition-basic.puml
 url activity/partition-colors-nested.puml
 url activity/partition-short-title.puml
@@ -2435,8 +2474,11 @@ url activity/repeat-backward.puml
 url activity/repeat-basic.puml
 url activity/repeat-break.puml
 url activity/repeat-labels.puml
+url activity/repeat-unclosed-arrow.puml
 url activity/skinparam-activity.puml
 url activity/skinparam-monochrome.puml
+url activity/skinparam-reversecolor-dark.puml
+url activity/skinparam-reversecolor-order.puml
 url activity/split-basic.puml
 url activity/split-ends.puml
 url activity/split-starts.puml
