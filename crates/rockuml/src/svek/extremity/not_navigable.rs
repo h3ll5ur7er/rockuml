@@ -36,7 +36,7 @@ impl ExtremityNotNavigable {
             }
         };
         Self {
-            path: UShape::Path(vec![
+            path: UShape::path(vec![
                 segment(USegment::MoveTo, -SIZE, 0.0),
                 segment(USegment::LineTo, SIZE, 2.0 * SIZE),
                 segment(USegment::MoveTo, SIZE, 0.0),

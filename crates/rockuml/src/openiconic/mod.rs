@@ -100,7 +100,7 @@ impl TextBlock for OpenIconicBlock<'_> {
             .with_color(self.color.clone())
             .with_backcolor(self.color.clone())
             .with_stroke(UStroke::with_thickness(0.0));
-        ug.draw(&UShape::Path(self.icon.svg_path.to_upath(self.factor)));
+        ug.draw(&UShape::path(self.icon.svg_path.to_upath(self.factor)));
     }
 }
 

@@ -38,7 +38,7 @@ use super::stencil::{
     HorizontalLineDrawer, Stencil, StencilFrame, UGraphicStencil, UHorizontalLine,
 };
 use super::url::Url;
-use crate::color::HColor;
+use crate::color::{ColorMapper, HColor};
 use crate::ftile::{Connection, Ftile, Snake};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -91,6 +91,11 @@ pub trait UGraphicBackend {
     /// rather than receiving the shape.
     fn draws_special_text(&self) -> bool {
         false
+    }
+
+    /// How the format paints colours; formats that describe or measure the drawing keep them as given.
+    fn color_mapper(&self) -> ColorMapper {
+        ColorMapper::Identity
     }
 
     /// Formats without groups ignore them.
@@ -310,6 +315,14 @@ impl UGraphic {
         match &self.kind {
             Kind::Surface(surface) => &surface.param,
             Kind::Layer(layer) => layer.ug().param(),
+        }
+    }
+
+    /// How the document paints colours, for shapes that work out their own pixels.
+    pub(crate) fn color_mapper(&self) -> ColorMapper {
+        match &self.kind {
+            Kind::Surface(surface) => surface.backend.borrow().color_mapper(),
+            Kind::Layer(layer) => layer.ug().color_mapper(),
         }
     }
 

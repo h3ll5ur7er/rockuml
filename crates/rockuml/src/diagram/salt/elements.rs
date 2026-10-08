@@ -765,7 +765,7 @@ impl PyramidScrolled {
 /// A closed path through three corners, drawn as PlantUML draws it.
 fn triangle(corners: [(f64, f64); 3]) -> UShape {
     let [(x, y), second, third] = corners;
-    UShape::Path(vec![
+    UShape::path(vec![
         USegment::MoveTo(x, y),
         USegment::LineTo(second.0, second.1),
         USegment::LineTo(third.0, third.1),

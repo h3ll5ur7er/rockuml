@@ -20,7 +20,7 @@ fn cubic(ctrl1: (f64, f64), ctrl2: (f64, f64), end: (f64, f64)) -> USegment {
 }
 
 fn draw_queue(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::Path(vec![
+    ug.draw(&UShape::path(vec![
         USegment::MoveTo(DX, 0.0),
         USegment::LineTo(width - DX, 0.0),
         cubic((width, 0.0), (width, height / 2.0), (width, height / 2.0)),
@@ -35,7 +35,7 @@ fn draw_queue(ug: &UGraphic, width: f64, height: f64) {
 
 /// The front of the right end.
 fn get_closing_path(width: f64, height: f64) -> UShape {
-    UShape::Path(vec![
+    UShape::path(vec![
         USegment::MoveTo(width - DX, 0.0),
         cubic(
             (width - DX * 2.0, 0.0),

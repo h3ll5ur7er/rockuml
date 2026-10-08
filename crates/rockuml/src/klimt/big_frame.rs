@@ -7,7 +7,7 @@ use super::fashion::Fashion;
 use super::font::StringBounder;
 use super::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D};
 use super::limit_finder::LimitFinder;
-use super::shape::{URectangle, USegment, UShape};
+use super::shape::{UPath, URectangle, USegment, UShape};
 use super::ugraphic::UGraphic;
 use crate::color::HColor;
 
@@ -94,7 +94,8 @@ impl TextBlock for BigFrame<'_> {
             USegment::LineTo(text_width - corner_size, text_height),
             USegment::LineTo(0.0, text_height),
         ];
-        ug.with_backcolor(HColor::NONE).draw(&UShape::Path(tab));
+        ug.with_backcolor(HColor::NONE)
+            .draw(&UShape::Path(UPath::new(tab).ignore_for_compression_on_x()));
         let ug_title = ug.translated(3.0, 1.0);
         if dim.width - dim_title.width < 25.0 {
             self.title.draw_u(&ug_title);

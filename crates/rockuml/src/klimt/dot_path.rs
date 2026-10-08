@@ -152,6 +152,6 @@ impl DotPath {
             ctrl2: (bez.ctrlx2, bez.ctrly2),
             end: (bez.x2, bez.y2),
         }));
-        UShape::Path(segments)
+        UShape::path(segments)
     }
 }

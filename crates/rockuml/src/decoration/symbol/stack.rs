@@ -41,7 +41,7 @@ fn draw_stack(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
             USegment::LineTo(width, 0.0),
         ]
     };
-    ug.with_backcolor(HColor::NONE).draw(&UShape::Path(outline));
+    ug.with_backcolor(HColor::NONE).draw(&UShape::path(outline));
 }
 
 impl SmallShape for USymbolStack {

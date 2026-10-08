@@ -158,6 +158,7 @@ debug class/relations-lengths.puml
 debug class/relations-styles.puml
 debug class/relations.puml
 debug class/skinparam-class.puml
+debug class/skinparam-monochrome.puml
 debug class/skinparam-stereotype.puml
 debug class/spots.puml
 debug class/stereotypes.puml
@@ -402,6 +403,7 @@ debug sequence/self-messages.puml
 debug sequence/short-arrows.puml
 debug sequence/skinparam-basic.puml
 debug sequence/skinparam-colors.puml
+debug sequence/skinparam-monochrome-reverse.puml
 debug sequence/skinparam-padding.puml
 debug sequence/slanted.puml
 debug sequence/spacing.puml
@@ -479,6 +481,7 @@ dsvg activity/arrow-colors-styles.puml
 dsvg activity/arrow-hidden.puml
 dsvg activity/arrow-labels.puml
 dsvg activity/basic.puml
+dsvg activity/ci-pipeline.puml
 dsvg activity/colors-control-flow.puml
 dsvg activity/colors-stereogroup.puml
 dsvg activity/connectors-several.puml
@@ -534,6 +537,7 @@ dsvg activity/repeat-basic.puml
 dsvg activity/repeat-break.puml
 dsvg activity/repeat-labels.puml
 dsvg activity/skinparam-activity.puml
+dsvg activity/skinparam-monochrome.puml
 dsvg activity/split-basic.puml
 dsvg activity/split-ends.puml
 dsvg activity/split-starts.puml
@@ -626,6 +630,7 @@ dsvg class/relations-lengths.puml
 dsvg class/relations-styles.puml
 dsvg class/relations.puml
 dsvg class/skinparam-class.puml
+dsvg class/skinparam-monochrome.puml
 dsvg class/skinparam-stereotype.puml
 dsvg class/spots.puml
 dsvg class/stereotypes.puml
@@ -867,6 +872,7 @@ dsvg sequence/self-messages.puml
 dsvg sequence/short-arrows.puml
 dsvg sequence/skinparam-basic.puml
 dsvg sequence/skinparam-colors.puml
+dsvg sequence/skinparam-monochrome-reverse.puml
 dsvg sequence/skinparam-padding.puml
 dsvg sequence/slanted.puml
 dsvg sequence/spacing.puml
@@ -945,6 +951,7 @@ png activity/arrow-colors-styles.puml
 png activity/arrow-hidden.puml
 png activity/arrow-labels.puml
 png activity/basic.puml
+png activity/ci-pipeline.puml
 png activity/colors-control-flow.puml
 png activity/colors-stereogroup.puml
 png activity/connectors-several.puml
@@ -1093,6 +1100,7 @@ png class/relations-lengths.puml
 png class/relations-styles.puml
 png class/relations.puml
 png class/skinparam-class.puml
+png class/skinparam-monochrome.puml
 png class/skinparam-stereotype.puml
 png class/spots.puml
 png class/stereotypes.puml
@@ -1336,6 +1344,7 @@ png sequence/self-messages.puml
 png sequence/short-arrows.puml
 png sequence/skinparam-basic.puml
 png sequence/skinparam-colors.puml
+png sequence/skinparam-monochrome-reverse.puml
 png sequence/skinparam-padding.puml
 png sequence/slanted.puml
 png sequence/spacing.puml
@@ -1571,6 +1580,7 @@ preproc class/relations-lengths.puml
 preproc class/relations-styles.puml
 preproc class/relations.puml
 preproc class/skinparam-class.puml
+preproc class/skinparam-monochrome.puml
 preproc class/skinparam-stereotype.puml
 preproc class/spots.puml
 preproc class/stereotypes.puml
@@ -1823,6 +1833,7 @@ preproc sequence/self-messages.puml
 preproc sequence/short-arrows.puml
 preproc sequence/skinparam-basic.puml
 preproc sequence/skinparam-colors.puml
+preproc sequence/skinparam-monochrome-reverse.puml
 preproc sequence/skinparam-padding.puml
 preproc sequence/slanted.puml
 preproc sequence/spacing.puml
@@ -1902,6 +1913,7 @@ svg activity/arrow-colors-styles.puml
 svg activity/arrow-hidden.puml
 svg activity/arrow-labels.puml
 svg activity/basic.puml
+svg activity/ci-pipeline.puml
 svg activity/colors-control-flow.puml
 svg activity/colors-stereogroup.puml
 svg activity/creole-actions.puml
@@ -1955,6 +1967,7 @@ svg activity/repeat-basic.puml
 svg activity/repeat-break.puml
 svg activity/repeat-labels.puml
 svg activity/skinparam-activity.puml
+svg activity/skinparam-monochrome.puml
 svg activity/split-basic.puml
 svg activity/split-ends.puml
 svg activity/split-starts.puml
@@ -2224,6 +2237,7 @@ svg sequence/self-messages.puml
 svg sequence/short-arrows.puml
 svg sequence/skinparam-basic.puml
 svg sequence/skinparam-colors.puml
+svg sequence/skinparam-monochrome-reverse.puml
 svg sequence/skinparam-padding.puml
 svg sequence/slanted.puml
 svg sequence/spacing.puml
@@ -2458,6 +2472,7 @@ url class/relations-lengths.puml
 url class/relations-styles.puml
 url class/relations.puml
 url class/skinparam-class.puml
+url class/skinparam-monochrome.puml
 url class/skinparam-stereotype.puml
 url class/spots.puml
 url class/stereotypes.puml
@@ -2710,6 +2725,7 @@ url sequence/self-messages.puml
 url sequence/short-arrows.puml
 url sequence/skinparam-basic.puml
 url sequence/skinparam-colors.puml
+url sequence/skinparam-monochrome-reverse.puml
 url sequence/skinparam-padding.puml
 url sequence/slanted.puml
 url sequence/spacing.puml

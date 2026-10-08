@@ -1,0 +1,18 @@
+@startuml
+skinparam monochrome reverse
+sprite $dot [8x8/16] {
+00000000
+00FFFF00
+0FFFFFF0
+0FFFFFF0
+0FFFFFF0
+0FFFFFF0
+00FFFF00
+00000000
+}
+participant Alice #LightBlue
+actor Bob
+Alice -[#red]> Bob : hello <$dot>
+note over Alice, Bob #yellow : Reversed note
+Bob --> Alice : <color:green>done</color>
+@enduml

@@ -11,7 +11,7 @@ use crate::klimt::ugraphic::UGraphic;
 pub(super) struct USymbolCloud;
 
 fn draw_cloud(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::Path(get_specific_frontier_for_cloud(
+    ug.draw(&UShape::path(get_specific_frontier_for_cloud(
         width, height,
     )));
 }

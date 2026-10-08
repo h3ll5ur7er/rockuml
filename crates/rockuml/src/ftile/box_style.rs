@@ -160,7 +160,7 @@ impl BoxStyle {
                 (width - DELTA_INPUT_OUTPUT, height),
                 (0.0, height),
             ]),
-            Self::SdlContinuous => UShape::Path(vec![
+            Self::SdlContinuous => UShape::path(vec![
                 USegment::MoveTo(DELTA_CONTINUOUS, 0.0),
                 USegment::LineTo(0.0, height / 2.0),
                 USegment::LineTo(DELTA_CONTINUOUS, height),

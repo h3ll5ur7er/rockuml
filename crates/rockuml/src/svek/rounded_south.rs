@@ -20,7 +20,7 @@ impl RoundedSouth {
         let footer = if self.rounded == 0.0 {
             UShape::Rectangle(URectangle::new(width, height))
         } else {
-            UShape::Path(vec![
+            UShape::path(vec![
                 USegment::MoveTo(0.0, 0.0),
                 USegment::LineTo(width, 0.0),
                 USegment::LineTo(width, height - r),

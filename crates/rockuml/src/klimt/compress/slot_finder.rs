@@ -7,7 +7,7 @@ use crate::color::HColor;
 use crate::klimt::clip::path_bounds;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::UTranslate;
-use crate::klimt::shape::{URectangle, UShape};
+use crate::klimt::shape::{UPath, URectangle, UShape};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend, UParam};
 
 /// A surface recording where along one axis shapes are drawn (`SlotFinder`). Lines and centred titles take
@@ -73,7 +73,8 @@ impl UGraphicBackend for SlotFinder {
             UShape::Rectangle(rectangle) => {
                 self.add_slot((x, x + rectangle.width), (y, y + rectangle.height));
             }
-            UShape::Path(segments) => {
+            UShape::Path(path) if path.is_ignore_for_compression_on(self.mode) => {}
+            UShape::Path(UPath { segments, .. }) => {
                 if let Some((min_x, min_y, max_x, max_y)) = path_bounds(segments) {
                     self.add_slot((x + min_x, x + max_x), (y + min_y, y + max_y));
                 }
@@ -109,5 +110,38 @@ impl UGraphicBackend for SlotFinder {
             | UShape::Comment(_)
             | UShape::CenteredText(_) => {}
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::klimt::debug::StringBounderDebug;
+    use crate::klimt::shape::USegment;
+
+    fn slots(mode: CompressionMode) -> Vec<(f64, f64)> {
+        let (ug, finder) = SlotFinder::create(mode, Rc::new(StringBounderDebug));
+        let tab = UPath::new(vec![
+            USegment::MoveTo(0.0, 0.0),
+            USegment::LineTo(50.0, 20.0),
+        ]);
+        ug.draw(&UShape::Path(tab.ignore_for_compression_on_x()));
+        ug.translated(60.0, 30.0)
+            .draw(&UShape::Rectangle(URectangle::new(10.0, 10.0)));
+        let finder = finder.borrow();
+        let mut slots: Vec<(f64, f64)> = finder
+            .get_slot_set()
+            .get_slots()
+            .iter()
+            .map(|slot| (slot.get_start(), slot.get_end()))
+            .collect();
+        slots.sort_by(|a, b| a.0.total_cmp(&b.0));
+        slots
+    }
+
+    #[test]
+    fn a_frame_title_tab_takes_room_down_but_not_across() {
+        assert_eq!(slots(CompressionMode::OnX), [(60.0, 70.0)]);
+        assert_eq!(slots(CompressionMode::OnY), [(0.0, 20.0), (30.0, 40.0)]);
     }
 }

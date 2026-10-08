@@ -23,8 +23,7 @@ pub enum UShape {
         dy: f64,
     },
     Polygon(UPolygon),
-    /// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
-    Path(Vec<USegment>),
+    Path(UPath),
     Image(UImage),
     ImageSvg(UImageSvg),
     /// A letter centred on the current position, as in a stereotype's spot.
@@ -65,6 +64,11 @@ impl UShape {
     /// A closed shape through `points`, relative to the current position.
     pub(crate) fn polygon(points: Vec<(f64, f64)>) -> Self {
         Self::Polygon(UPolygon::new(points))
+    }
+
+    /// A path through `segments`, relative to the current position.
+    pub(crate) fn path(segments: Vec<USegment>) -> Self {
+        Self::Path(UPath::new(segments))
     }
 }
 
@@ -131,6 +135,35 @@ impl fmt::Debug for CenteredText {
         f.debug_struct("CenteredText")
             .field("total_width", &self.total_width)
             .finish_non_exhaustive()
+    }
+}
+
+/// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
+#[derive(Clone, Debug, PartialEq)]
+pub struct UPath {
+    pub segments: Vec<USegment>,
+    /// The title tab of a frame takes no room when activity diagrams compress across.
+    ignore_for_compression_on_x: bool,
+}
+
+impl UPath {
+    pub(crate) fn new(segments: Vec<USegment>) -> Self {
+        Self {
+            segments,
+            ignore_for_compression_on_x: false,
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn ignore_for_compression_on_x(self) -> Self {
+        Self {
+            ignore_for_compression_on_x: true,
+            ..self
+        }
+    }
+
+    pub(crate) fn is_ignore_for_compression_on(&self, mode: CompressionMode) -> bool {
+        mode == CompressionMode::OnX && self.ignore_for_compression_on_x
     }
 }
 
@@ -548,7 +581,7 @@ impl URectangle {
             return UShape::Rectangle(self);
         }
         let (width, height, r) = (self.width, self.height, round_corner / 2.0);
-        UShape::Path(vec![
+        UShape::path(vec![
             USegment::MoveTo(r, 0.0),
             USegment::LineTo(width - r, 0.0),
             USegment::arc_to((width, r), r, true),

@@ -15,7 +15,7 @@ const MARGIN: Margin = Margin::new(10.0, 10.0, 10.0, 10.0);
 fn draw_rect(ug: &UGraphic, width: f64, height: f64, fashion: &Fashion) {
     let diagonal = fashion.diagonal_corner;
     if diagonal > 0.0 {
-        ug.draw(&UShape::Path(vec![
+        ug.draw(&UShape::path(vec![
             USegment::MoveTo(diagonal, 0.0),
             USegment::LineTo(width - diagonal, 0.0),
             USegment::LineTo(width, diagonal),

@@ -130,8 +130,8 @@ impl<'a> Opale<'a> {
             .with_backcolor(self.note_background_color.clone())
             .with_color(self.border_color.clone())
             .with_stroke(self.stroke);
-        ug.draw(&UShape::Path(polygon));
-        ug.draw(&UShape::Path(get_corner(
+        ug.draw(&UShape::path(polygon));
+        ug.draw(&UShape::path(get_corner(
             self.get_width(string_bounder),
             self.round_corner,
         )));

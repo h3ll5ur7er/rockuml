@@ -4,7 +4,7 @@
 use super::clip::UClip;
 use super::font::{StringBounder, UFont};
 use super::geom::{UTranslate, XDimension2D};
-use super::shape::{UEllipse, URectangle, USegment, UShape, UText};
+use super::shape::{UEllipse, UPath, URectangle, USegment, UShape, UText};
 use super::ugraphic::{UGraphicBackend, UParam};
 use crate::color::HColor;
 use crate::java::{self, Random};
@@ -197,7 +197,7 @@ fn is_out_of_clip(shape: &UShape, at: UTranslate, clip: Option<&UClip>) -> bool 
             let dimension = StringBounderDebug.calculate_dimension(&text.font.font(), &text.text);
             both_out(dimension.width, -dimension.height)
         }
-        UShape::Path(segments) => !clip.is_path_inside(x, y, segments),
+        UShape::Path(UPath { segments, .. }) => !clip.is_path_inside(x, y, segments),
         _ => false,
     }
 }
@@ -236,7 +236,7 @@ impl UGraphicBackend for UGraphicDebug {
                 );
                 self.out_style(param);
             }
-            UShape::Path(segments) => self.out_path(segments, param),
+            UShape::Path(UPath { segments, .. }) => self.out_path(segments, param),
             UShape::CenteredCharacter(centered) => self.lines.extend([
                 "CENTERED_CHAR:".to_owned(),
                 format!("  char: {}", centered.character),
