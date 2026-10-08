@@ -38,10 +38,12 @@ use crate::klimt::svg::{SvgOption, UGraphicSvg};
 use crate::klimt::typeface::{FontRegistry, StringBounderFonts};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend};
 use crate::klimt::width_table::StringBounderFromWidthTable;
+use crate::metadata::Metadata;
 use crate::preproc::PreprocessedBlock;
 use crate::text::StringLocated;
 use creole::CreoleDiagram;
 use diagram_type::DiagramType;
+use error::ErrorDiagram;
 use scale::Scale;
 pub use source::UmlSource;
 
@@ -73,10 +75,23 @@ pub trait Diagram {
 
     fn export_settings(&self) -> ExportSettings;
 
+    /// Why the diagram is an error image instead of what its source describes.
+    fn error(&self) -> Option<DiagramError> {
+        None
+    }
+
     /// Whether the diagram is an error image instead of what its source describes.
     fn is_error(&self) -> bool {
-        false
+        self.error().is_some()
     }
+}
+
+/// What an error image reports, as PlantUML's `PSystemError` tells it to the command line.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DiagramError {
+    /// The faulty line's position in its file, counted from zero.
+    pub line: i32,
+    pub message: String,
 }
 
 /// The resolution diagrams are drawn for unless `skinparam dpi` says otherwise.
@@ -124,6 +139,21 @@ pub fn create(
     host: &dyn Host,
 ) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let (diagram_type, mut source) = prepare(block);
+    if block.failed() {
+        // PlantUML's PSystemErrorPreprocessor: its source is what was read up to the error.
+        let lines = block.located_lines();
+        let read = lines.iter().map(|line| line.text().to_owned()).collect();
+        let message = lines
+            .last()
+            .and_then(StringLocated::preprocessor_error)
+            .unwrap_or_default();
+        return Ok(Box::new(ErrorDiagram::new(
+            uml_source(diagram_type, lines, read),
+            lines.to_vec(),
+            message,
+            None,
+        )));
+    }
     // Known first, so that diagrams rockuml cannot draw read no images.
     let create: Create = match diagram_type {
         Some(DiagramType::Creole) => |source, _| Ok(CreoleDiagram::create(source)),
@@ -150,13 +180,21 @@ fn prepare(block: &PreprocessedBlock) -> (Option<DiagramType>, UmlSource) {
     let lines = block.located_lines();
     let raw_lines = block.raw_lines().to_vec();
     let diagram_type = DiagramType::of_start_line(lines.first().map_or("", StringLocated::text));
+    (diagram_type, uml_source(diagram_type, lines, raw_lines))
+}
+
+fn uml_source(
+    diagram_type: Option<DiagramType>,
+    lines: &[StringLocated],
+    raw_lines: Vec<String>,
+) -> UmlSource {
     let mut source = if diagram_type == Some(DiagramType::Uml) {
         UmlSource::with_continuations_joined(lines, raw_lines)
     } else {
         UmlSource::new(lines.to_vec(), raw_lines)
     };
     source.patch_base64();
-    (diagram_type, source)
+    source
 }
 
 /// The image formats diagrams are exported to.
@@ -171,7 +209,8 @@ pub enum ImageFormat {
     Png,
 }
 
-/// The image's bytes. `fonts` measure the text of formats that use fonts, and draw it in PNG.
+/// The image's bytes, with the diagram's source embedded. `fonts` measure the text of formats that use
+/// fonts, and draw it in PNG.
 ///
 /// # Panics
 ///
@@ -183,6 +222,23 @@ pub fn export(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<Vec<u8>, NotYetPorted> {
+    export_with(diagram, page, format, Metadata::Embedded, fonts, host)
+}
+
+/// Like [`export`], with or without the diagram's source in SVG and PNG images.
+///
+/// # Panics
+///
+/// If `page` is not below the diagram's page count, like an index out of bounds.
+pub fn export_with(
+    diagram: &dyn Diagram,
+    page: usize,
+    format: ImageFormat,
+    metadata: Metadata,
+    fonts: &Arc<FontRegistry>,
+    host: &dyn Host,
+) -> Result<Vec<u8>, NotYetPorted> {
+    let source_metadata = (metadata == Metadata::Embedded).then(|| diagram.source().metadata());
     let settings = diagram.export_settings();
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
@@ -230,8 +286,8 @@ pub fn export(
             rasterized,
         )));
         draw(output.clone(), backcolor.clone());
-        let metadata = crate::url_code::encode(&diagram.source().metadata());
-        output.borrow_mut().take_document(Some(&metadata))
+        let encoded = source_metadata.as_deref().map(crate::url_code::encode);
+        output.borrow_mut().take_document(encoded.as_deref())
     };
 
     Ok(match format {
@@ -267,7 +323,7 @@ pub fn export(
                 ),
                 png_back_color,
                 fonts,
-                &diagram.source().metadata(),
+                source_metadata.as_deref(),
             )
         }
     })

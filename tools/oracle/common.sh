@@ -2,7 +2,9 @@
 
 oracle_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$oracle_dir/../.." && pwd)"
-reference_jar="$oracle_dir/build/plantuml-ref.jar"
+# A git worktree has no JDK or golden-model jar of its own; ROCKUML_ORACLE_CHECKOUT names the checkout that has.
+tools_checkout="${ROCKUML_ORACLE_CHECKOUT:-$repo_root}"
+reference_jar="$tools_checkout/tools/oracle/build/plantuml-ref.jar"
 corpus_dir="$repo_root/tests/corpus"
 
 die() {
@@ -12,7 +14,7 @@ die() {
 
 find_jdk_bin() {
 	local java
-	java="$(ls -d "$repo_root"/tools/jdk/*/bin 2>/dev/null | head -n 1)"
+	java="$(ls -d "$tools_checkout"/tools/jdk/*/bin 2>/dev/null | head -n 1)"
 	[[ -n "$java" ]] || die "no portable JDK in tools/jdk (see tools/oracle/README.md)"
 	echo "$java"
 }

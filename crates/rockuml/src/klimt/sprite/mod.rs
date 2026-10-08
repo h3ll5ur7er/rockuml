@@ -16,6 +16,24 @@ use super::TextBlock;
 use super::geom::ClockwiseTopRightBottomLeft;
 use crate::color::HColor;
 
+/// A `sprite` definition drawing the PNG, GIF or JPEG `image` in 4, 8 or 16 grays (`SpriteUtils.encode`);
+/// `None` when the image cannot be read or the number of grays is another.
+pub fn encode(image: &[u8], name: &str, grays: u32) -> Option<String> {
+    let level = SpriteGrayLevel::get(grays)?;
+    let image = super::image::PortableImage::read(image)?;
+    let mut result = format!(
+        "sprite ${name} [{}x{}/{grays}] {{\n",
+        image.width(),
+        image.height()
+    );
+    for line in level.encode(&image) {
+        result.push_str(&line);
+        result.push('\n');
+    }
+    result.push_str("}\n");
+    Some(result)
+}
+
 pub(crate) trait Sprite {
     /// The sprite drawn in `forced_color`, or else `font_color`, at `scale`. Only SVG sprites paint the
     /// text's `back_color` behind them.

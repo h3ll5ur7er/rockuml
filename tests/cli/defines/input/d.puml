@@ -1,0 +1,8 @@
+@startuml
+!ifdef FLAG
+Alice -> Bob : one A two B three C
+!endif
+!if %getenv("PLANTUML_LIMIT_SIZE") == ""
+Bob -> Alice : %variable_exists("A")
+!endif
+@enduml

@@ -1,4 +1,6 @@
 use super::sprite_monochrome::SpriteMonochrome;
+use crate::color::XColor;
+use crate::klimt::image::PortableImage;
 use crate::url_code;
 
 /// How many gray levels a sprite's text encodes, and how.
@@ -42,6 +44,37 @@ impl SpriteGrayLevel {
         }
     }
 
+    /// The image's lines of sprite text, the inverse of [`Self::build_sprite`]: dark pixels take high levels.
+    pub(crate) fn encode(self, image: &PortableImage) -> Vec<String> {
+        let gray = |x: usize, y: usize| gray_on_16(image, x, y);
+        let stacked_lines = |stacked: usize, divisor: usize| -> Vec<String> {
+            let levels = 16 / divisor;
+            (0..image.height())
+                .step_by(stacked)
+                .map(|y| {
+                    (0..image.width())
+                        .map(|x| {
+                            let value = (0..stacked)
+                                .fold(0, |value, row| value * levels + gray(x, y + row) / divisor);
+                            char::from(url_code::ALPHABET[value])
+                        })
+                        .collect()
+                })
+                .collect()
+        };
+        match self {
+            Self::Gray16 => (0..image.height())
+                .map(|y| {
+                    (0..image.width())
+                        .map(|x| char::from(b"0123456789ABCDEF"[gray(x, y)]))
+                        .collect()
+                })
+                .collect(),
+            Self::Gray8 => stacked_lines(2, 2),
+            Self::Gray4 => stacked_lines(3, 4),
+        }
+    }
+
     /// One byte per pixel, row by row, deflated and written in PlantUML's URL alphabet. PlantUML fails on
     /// too few pixels and on levels beyond the sprite's.
     pub(crate) fn build_sprite_z(
@@ -62,6 +95,15 @@ impl SpriteGrayLevel {
         }
         Some(result)
     }
+}
+
+/// The pixel's darkness from 0 to 15, its alpha ignored; pixels beyond the image are white.
+fn gray_on_16(image: &PortableImage, x: usize, y: usize) -> usize {
+    if x >= image.width() || y >= image.height() {
+        return 0;
+    }
+    let gray = XColor::from_rgb(image.get_rgb(x, y)).gray_scale_color().red;
+    usize::from(255 - gray) / 16
 }
 
 fn build_sprite16(strings: &[String]) -> SpriteMonochrome {
@@ -110,6 +152,24 @@ mod tests {
         (0..sprite.height())
             .map(|y| sprite.get_gray(0, y))
             .collect()
+    }
+
+    #[test]
+    fn images_encode_their_darkness() {
+        const BLACK: u32 = 0xFF00_0000;
+        const WHITE: u32 = 0xFFFF_FFFF;
+        let mut image = PortableImage::new(2, 3);
+        for (y, row) in [[BLACK, WHITE], [0xFF80_8080, BLACK], [WHITE, WHITE]]
+            .iter()
+            .enumerate()
+        {
+            for (x, &argb) in row.iter().enumerate() {
+                image.set_rgb(x, y, argb);
+            }
+        }
+        assert_eq!(SpriteGrayLevel::Gray16.encode(&image), ["F0", "7F", "00"]);
+        assert_eq!(SpriteGrayLevel::Gray8.encode(&image), ["x7", "00"]);
+        assert_eq!(SpriteGrayLevel::Gray4.encode(&image), ["qC"]);
     }
 
     #[test]

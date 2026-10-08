@@ -6,7 +6,17 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use rockuml::host::Host;
 
-pub(crate) struct SystemHost;
+#[derive(Default)]
+pub(crate) struct SystemHost {
+    /// `-DPLANTUML_LIMIT_SIZE=...`, which PlantUML sets as a system property, ahead of the environment.
+    limit_size: Option<String>,
+}
+
+impl SystemHost {
+    pub(crate) fn with_limit_size(limit_size: Option<String>) -> Self {
+        Self { limit_size }
+    }
+}
 
 impl Host for SystemHost {
     fn read_file(&self, path: &Path) -> Option<Vec<u8>> {
@@ -37,7 +47,10 @@ impl Host for SystemHost {
     }
 
     fn getenv(&self, name: &str) -> Option<String> {
-        std::env::var(name).ok()
+        match &self.limit_size {
+            Some(limit_size) if name == crate::cli_options::LIMIT_SIZE => Some(limit_size.clone()),
+            _ => std::env::var(name).ok(),
+        }
     }
 
     fn current_time_millis(&self) -> i64 {
