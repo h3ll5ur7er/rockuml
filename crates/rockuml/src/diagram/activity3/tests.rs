@@ -606,3 +606,18 @@ fn branches_follow_their_conditional() {
     );
     assert_eq!(failure(&["start", "kill"]).0, "kill cannot be used here");
 }
+
+/// PlantUML crashes on drawing them.
+#[test]
+fn a_switch_needs_a_case() {
+    for body in [
+        &["start", "switch (x?)", "endswitch", "stop"][..],
+        &["start", "switch (x?)"],
+    ] {
+        assert_eq!(
+            failure(body),
+            ("No 'case' in this switch".to_owned(), "start".to_owned()),
+            "{body:?}"
+        );
+    }
+}
