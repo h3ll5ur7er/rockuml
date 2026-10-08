@@ -16,6 +16,7 @@ use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
+use super::mindmap::MindMapDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::titled::TitledDiagram;
@@ -146,6 +147,11 @@ pub(super) fn create_uml(
 /// A `@startchen` diagram.
 pub(super) fn create_chen(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<ChenEerDiagramFactory>])
+}
+
+/// A `@startmindmap` diagram.
+pub(super) fn create_mindmap(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<MindMapDiagramFactory>])
 }
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.

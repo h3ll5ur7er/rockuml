@@ -12,6 +12,14 @@ use crate::klimt::sprite::SpriteContainer;
 use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
 
+/// A line ending with a stereotype (`Display.patternStereotype`).
+fn ending_stereotype() -> &'static Regex {
+    static PATTERN: std::sync::LazyLock<Regex> = std::sync::LazyLock::new(|| {
+        crate::pattern::java_regex(r"^(.*?)(\<\<\s*(.*)\s*\>\>)\s*$", false)
+    });
+    &PATTERN
+}
+
 /// Marks a quote PlantUML keeps out of the text.
 const BLOCK_E1_INVISIBLE_QUOTE: char = '\u{E121}';
 
@@ -233,6 +241,32 @@ impl Display {
             lines: self.lines.iter().map(|line| change(line)).collect(),
             natural_alignment: self.natural_alignment,
             stereotype: self.stereotype.clone(),
+        }
+    }
+
+    /// The stereotype the last line ends with, like `Green <<green>>` (`getEndingStereotype`).
+    pub(crate) fn get_ending_stereotype(&self) -> Option<Stereotype> {
+        let captures = ending_stereotype().captures(self.lines.last()?)?;
+        Some(Stereotype::new(&captures[2]))
+    }
+
+    /// The display without the stereotype its last line ends with (`removeEndingStereotype`); the space
+    /// before the stereotype stays.
+    #[must_use]
+    pub(crate) fn remove_ending_stereotype(&self) -> Self {
+        let Some(captures) = self
+            .lines
+            .last()
+            .and_then(|last| ending_stereotype().captures(last))
+        else {
+            return self.clone();
+        };
+        let mut lines = self.lines.clone();
+        let last = lines.len() - 1;
+        captures[1].clone_into(&mut lines[last]);
+        Self {
+            lines,
+            ..self.clone()
         }
     }
 

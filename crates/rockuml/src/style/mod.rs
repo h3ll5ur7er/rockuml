@@ -61,6 +61,17 @@ impl Style {
         Style::new(self.signature.clone(), properties)
     }
 
+    /// The style with every property's priority raised by `delta` (`deltaPriority`).
+    #[must_use]
+    fn delta_priority(&self, delta: i32) -> Style {
+        let properties = self
+            .properties
+            .iter()
+            .map(|(&name, value)| (name, value.with_added_priority(delta)))
+            .collect();
+        Style::new(self.signature.clone(), properties)
+    }
+
     /// `other` declared over this style: its properties win unless declared with a lower priority.
     #[must_use]
     pub(crate) fn merge_with(&self, other: &Style) -> Style {
@@ -207,6 +218,27 @@ impl StyleBuilder {
     pub(crate) fn apply_skinparam(&mut self, key: &str, value: &str) {
         let styles = skinparam_styles(key, value, &mut self.counter);
         self.mute(styles);
+    }
+
+    /// Like [`Self::merged_style`], with the priority of starred rules shifted by `delta_priority`
+    /// (`getMergedStyleSpecial`): mind maps and work breakdowns weigh a rule inherited from a nearer ancestor
+    /// more.
+    pub(crate) fn merged_style_special(
+        &self,
+        element: &StyleSignature,
+        delta_priority: i32,
+    ) -> Option<Style> {
+        self.storage
+            .styles()
+            .filter(|style| style.signature().matches(element))
+            .map(|style| {
+                if style.signature().is_starred() {
+                    style.delta_priority(delta_priority)
+                } else {
+                    style.clone()
+                }
+            })
+            .reduce(|merged, style| merged.merge_with(&style))
     }
 
     /// The style of an element: every rule that applies to it, merged in storage order.

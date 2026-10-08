@@ -12,6 +12,7 @@ mod cuca_commands;
 mod description;
 mod diagram_type;
 mod error;
+mod mindmap;
 mod salt;
 mod scale;
 mod sequence;
@@ -160,6 +161,7 @@ pub fn create(
         Some(DiagramType::Salt) => |source, _| Ok(salt::SaltDiagram::create(source)),
         Some(DiagramType::Uml) => builder::create_uml,
         Some(DiagramType::ChenEer) => |source, _| builder::create_chen(source),
+        Some(DiagramType::MindMap) => |source, _| builder::create_mindmap(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_image_files(block.directory(), host);
