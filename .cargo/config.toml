@@ -1,0 +1,3 @@
+# Deeply nested diagrams recurse deeply, as the CLI's 64 MiB thread stack allows; wasm's default is 1 MiB.
+[target.wasm32-unknown-unknown]
+rustflags = ["-C", "link-arg=-zstack-size=67108864"]

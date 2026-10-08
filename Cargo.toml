@@ -12,7 +12,8 @@ publish = false
 rockuml = { path = "crates/rockuml" }
 
 [workspace.lints.rust]
-unsafe_code = "forbid"
+# Denied rather than forbidden so that the wasm ABI, where JavaScript hands over raw memory, can allow it.
+unsafe_code = "deny"
 unused_must_use = "deny"
 # Items only the crate uses are `pub(crate)`, so that unused ones show up as dead code.
 unreachable_pub = "warn"
@@ -39,3 +40,8 @@ missing_errors_doc = "allow"
 lto = true
 codegen-units = 1
 strip = true
+
+# For the web, where the download counts: a quarter smaller, and still fast enough to preview while typing.
+[profile.wasm-release]
+inherits = "release"
+opt-level = "s"
