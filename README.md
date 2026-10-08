@@ -9,12 +9,23 @@ Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the port
 ## Usage
 
 ```bash
-rockuml diagram.puml                    # writes diagram.svg next to it
-rockuml -tpng diagram.puml              # diagram.png
-rockuml -o out -f svg-deterministic a.puml b.puml
+rockuml diagram.puml                    # writes diagram.png next to it, as PlantUML does
+rockuml --svg diagram.puml              # diagram.svg
+rockuml --svg -o out "docs/**/*.puml"   # every .puml under docs/, each into an out/ beside it
+cat diagram.puml | rockuml --svg -pipe > diagram.svg
+rockuml --check-syntax diagrams/        # exit status 200 when a diagram has errors
+rockuml -DAUTHOR=John --theme mars diagram.puml
 ```
 
-A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`, `diagram_001.svg`, and so on.
+rockuml takes PlantUML's command line: the same flags (old spellings such as `-tsvg` included), directories and
+wildcards, `-pipe`, defines and config files, `--extract-source` from PNG or SVG metadata, and the same exit
+statuses. `rockuml --help` and `rockuml --help-more` list what it supports. Flags for features rockuml does not have
+(other output formats such as PDF or ASCII art, the GUI, the HTTP server) are refused with a message and status 1,
+as are diagrams that need parts of PlantUML not ported yet.
+
+A diagram with several pages (`newpage`) writes one file per page: `diagram.png`, `diagram_001.png`, and so on.
+`-f svg-deterministic` writes SVG measured with PlantUML's fixed width table instead of fonts, the same on every
+machine.
 
 ### Supported diagrams
 

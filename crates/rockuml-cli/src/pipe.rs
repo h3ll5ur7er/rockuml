@@ -11,6 +11,7 @@ use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 use crate::charset::Charset;
 use crate::cli_flag::CliFlag;
 use crate::console::Console;
+use crate::crash::{self, Unrendered};
 use crate::exit_status::ExitStatus;
 use crate::file_format::FileFormat;
 use crate::run::Settings;
@@ -27,14 +28,26 @@ pub(crate) fn manage_pipe(settings: &Settings, status: &ExitStatus, console: &mu
     };
     let mut source = reader.read_single_diagram(true);
     while let Some(text) = source {
-        let blocks = preprocess(&text, settings);
+        let blocks = match crash::catch(|| preprocess(&text, settings)) {
+            Ok(blocks) => blocks,
+            Err(message) => {
+                console.error(&format!("rockuml: {STDIN}: crashed: {message}"));
+                status.goes_has_errors();
+                source = reader.read_single_diagram(false);
+                continue;
+            }
+        };
         let diagrams: Vec<_> = blocks
             .iter()
-            .map(|block| rockuml::diagram::create(block, &settings.host))
+            .map(|block| crash::render(|| rockuml::diagram::create(block, &settings.host)))
             .collect();
         for diagram in &diagrams {
             status.goes_has_blocks();
-            if diagram.as_ref().is_ok_and(|diagram| diagram.is_error()) {
+            let is_error = match diagram {
+                Ok(diagram) => diagram.is_error(),
+                Err(unrendered) => matches!(unrendered, Unrendered::Crashed(_)),
+            };
+            if is_error {
                 status.goes_has_errors();
             }
         }
@@ -61,7 +74,10 @@ pub(crate) fn manage_pipe(settings: &Settings, status: &ExitStatus, console: &mu
     }
 }
 
-type Created = Result<Box<dyn Diagram>, rockuml::diagram::NotYetPorted>;
+/// How the reports of diagrams read from standard input name their missing images.
+const STDIN: &str = "<stdin>";
+
+type Created = Result<Box<dyn Diagram>, Unrendered>;
 
 #[expect(clippy::too_many_arguments, reason = "mirrors Pipe.generateDiagram")]
 fn generate_diagram(
@@ -136,9 +152,8 @@ fn output_image(
     for diagram in diagrams {
         let diagram = match diagram {
             Ok(diagram) => diagram,
-            Err(not_ported) => {
-                console.error(&format!("rockuml: {not_ported}"));
-                status.goes_not_ported();
+            Err(unrendered) => {
+                unrendered.report(STDIN, status, console);
                 return None;
             }
         };
@@ -146,23 +161,24 @@ fn output_image(
             let image_format = format
                 .image_format()
                 .expect("drawing formats export images");
-            let exported = rockuml::diagram::export_with(
-                diagram.as_ref(),
-                num_image,
-                image_format,
-                settings.options.metadata(),
-                &settings.fonts,
-                &settings.host,
-            );
+            let exported = crash::render(|| {
+                rockuml::diagram::export_with(
+                    diagram.as_ref(),
+                    num_image,
+                    image_format,
+                    settings.options.metadata(),
+                    &settings.fonts,
+                    &settings.host,
+                )
+            });
             return match exported {
                 Ok(_) if format == FileFormat::Null => None,
                 Ok(bytes) => Some(Image {
                     bytes,
                     is_error: diagram.is_error(),
                 }),
-                Err(not_ported) => {
-                    console.error(&format!("rockuml: {not_ported}"));
-                    status.goes_not_ported();
+                Err(unrendered) => {
+                    unrendered.report(STDIN, status, console);
                     None
                 }
             };

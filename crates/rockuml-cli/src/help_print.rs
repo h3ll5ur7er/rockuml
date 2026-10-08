@@ -1,6 +1,8 @@
 //! `--help` and `--help-more` (PlantUML's `HelpPrint`, `HelpGroup` and `HelpTable`), listing the flags
 //! rockuml offers.
 
+use std::fmt::Write;
+
 use crate::cli_flag::{CliFlag, Support};
 use crate::exit_status::ExitStatus;
 
@@ -24,7 +26,7 @@ fn help_up_to_level(limit: i32) -> String {
     text.push_str(EXAMPLES);
     text.push_str("\nExit codes:\n");
     for (code, description) in ExitStatus::exit_codes() {
-        text.push_str(&format!("  {code:<4} {description}\n"));
+        writeln!(text, "  {code:<4} {description}").unwrap();
     }
     text.push_str(SEE_ALSO);
     text
@@ -139,17 +141,19 @@ impl HelpTable {
         let mut out = String::new();
         for (first, second) in &self.lines {
             if first.is_empty() {
-                out.push_str(&format!("\n{second}:\n"));
+                write!(out, "\n{second}:\n").unwrap();
                 continue;
             }
             let mut second_lines = second.split('\n');
-            out.push_str(&format!(
-                "{} {}\n",
+            writeln!(
+                out,
+                "{} {}",
                 pad(&format!("{first} "), size + 2, '.'),
                 second_lines.next().unwrap_or_default()
-            ));
+            )
+            .unwrap();
             for line in second_lines {
-                out.push_str(&format!("{} {line}\n", pad(" ", size + 2, ' ')));
+                writeln!(out, "{} {line}", pad(" ", size + 2, ' ')).unwrap();
             }
         }
         out

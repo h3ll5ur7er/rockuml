@@ -22,7 +22,7 @@ fn rockuml_runs_every_cli_scenario_like_the_golden_model() {
         .filter(|path| path.join("args").is_file())
         .collect();
     scenarios.sort();
-    assert!(!scenarios.is_empty());
+    assert_ne!(scenarios.len(), 0, "no scenarios in tests/cli");
 
     let failures = Mutex::new(Vec::new());
     let next = AtomicUsize::new(0);
@@ -189,17 +189,17 @@ fn comparable(content: &[u8], workdir: &str) -> String {
     let text = match content {
         [0xFE, 0xFF, rest @ ..] => utf16(rest, u16::from_be_bytes),
         [0xFF, 0xFE, rest @ ..] => utf16(rest, u16::from_le_bytes),
-        _ => match std::str::from_utf8(content) {
-            Ok(text) => text.to_owned(),
-            Err(_) => {
+        _ => {
+            let Ok(text) = std::str::from_utf8(content) else {
                 let without_carriage_returns: Vec<u8> = content
                     .iter()
                     .copied()
                     .filter(|&byte| byte != b'\r')
                     .collect();
                 return format!("{without_carriage_returns:?}");
-            }
-        },
+            };
+            text.to_owned()
+        }
     };
     let text = normalise(&text)
         .replace(workdir, WORKDIR)
@@ -209,8 +209,10 @@ fn comparable(content: &[u8], workdir: &str) -> String {
 
 fn utf16(bytes: &[u8], unit: fn([u8; 2]) -> u16) -> String {
     let units: Vec<u16> = bytes
-        .chunks_exact(2)
-        .map(|pair| unit([pair[0], pair[1]]))
+        .as_chunks::<2>()
+        .0
+        .iter()
+        .map(|&pair| unit(pair))
         .collect();
     String::from_utf16_lossy(&units)
 }

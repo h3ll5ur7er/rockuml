@@ -65,6 +65,34 @@ fn preprocessor_errors_are_reported_with_plantuml_exit_status() {
     );
 }
 
+/// PlantUML throws "Infinite Loop?" laying out these notes with fonts, draws a crash report and goes on with
+/// the next file; rockuml reports the crash and goes on too.
+#[test]
+fn a_crashing_diagram_does_not_stop_the_others() {
+    let directory = tempfile::tempdir().unwrap();
+    let crashing = directory.path().join("crashing.puml");
+    let good = directory.path().join("good.puml");
+    let corpus_case = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../../tests/corpus/sequence/notes-aligned.puml"
+    );
+    std::fs::copy(corpus_case, &crashing).unwrap();
+    std::fs::write(&good, "@startuml\nBob -> Alice : hello\n@enduml\n").unwrap();
+    let output = rockuml()
+        .args(["-tsvg", "--threads", "2"])
+        .args([&crashing, &good])
+        .output()
+        .unwrap();
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(output.status.code(), Some(200), "{stderr}");
+    assert!(
+        stderr.contains("crashing.svg: crashed: Infinite Loop?"),
+        "{stderr}"
+    );
+    assert!(directory.path().join("good.svg").exists());
+    assert!(!directory.path().join("crashing.svg").exists());
+}
+
 #[test]
 fn version_flag_reports_the_plantuml_release_rockuml_is_compatible_with() {
     assert_eq!(
@@ -107,10 +135,7 @@ fn renders_promptly(lines: &[&str]) {
             .unwrap()
             .read_to_string(&mut stderr)
             .unwrap();
-        assert!(
-            !stderr.contains("panicked"),
-            "{format}: {stderr}\n{diagram}"
-        );
+        assert!(!stderr.contains("crashed"), "{format}: {stderr}\n{diagram}");
     }
 }
 
@@ -126,7 +151,7 @@ fn reports_an_error(lines: &[&str]) {
         .output()
         .unwrap();
     let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(!stderr.contains("panicked"), "{stderr}\n{diagram}");
+    assert!(!stderr.contains("crashed"), "{stderr}\n{diagram}");
     assert_eq!(output.status.code(), Some(200), "{stderr}\n{diagram}");
 }
 

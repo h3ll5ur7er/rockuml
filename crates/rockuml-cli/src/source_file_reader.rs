@@ -4,11 +4,12 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use rockuml::diagram::{Diagram, NotYetPorted};
+use rockuml::diagram::Diagram;
 use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
 
 use crate::cli_flag::CliFlag;
 use crate::console::Console;
+use crate::crash::{self, Unrendered};
 use crate::exit_status::ExitStatus;
 use crate::file_format::FileFormat;
 use crate::run::Settings;
@@ -25,10 +26,17 @@ pub(crate) struct SourceFileReader<'a> {
 
 struct BlockUml {
     preprocessed: PreprocessedBlock,
-    diagram: Result<Box<dyn Diagram>, NotYetPorted>,
+    diagram: Result<Box<dyn Diagram>, Unrendered>,
 }
 
 impl BlockUml {
+    fn is_error(&self) -> bool {
+        match &self.diagram {
+            Ok(diagram) => diagram.is_error(),
+            Err(unrendered) => matches!(unrendered, Unrendered::Crashed(_)),
+        }
+    }
+
     fn error_line(&self) -> Option<i32> {
         self.diagram
             .as_ref()
@@ -47,10 +55,11 @@ enum OutputDirectory {
 
 impl<'a> SourceFileReader<'a> {
     pub(crate) fn new(file: &'a Path, settings: &'a Settings) -> Result<Self, String> {
-        let blocks = preprocess_file(file, settings)?
+        let blocks = crash::catch(|| preprocess_file(file, settings))
+            .map_err(|message| format!("{}: crashed: {message}", file.display()))??
             .into_iter()
             .map(|preprocessed| BlockUml {
-                diagram: rockuml::diagram::create(&preprocessed, &settings.host),
+                diagram: crash::render(|| rockuml::diagram::create(&preprocessed, &settings.host)),
                 preprocessed,
             })
             .collect();
@@ -70,14 +79,14 @@ impl<'a> SourceFileReader<'a> {
         status.goes_has_files();
         for block in &self.blocks {
             status.goes_has_blocks();
-            if block.error_line().is_some() {
+            if block.is_error() {
                 status.goes_has_errors();
             }
         }
     }
 
     pub(crate) fn has_error(&self) -> bool {
-        self.blocks.iter().any(|block| block.error_line().is_some())
+        self.blocks.iter().any(BlockUml::is_error)
     }
 
     /// Writes each block's preprocessed lines in the input's charset.
@@ -123,8 +132,12 @@ impl<'a> SourceFileReader<'a> {
         let options = &self.settings.options;
         let diagram = match &self.blocks[index].diagram {
             Ok(diagram) => diagram,
-            Err(not_ported) => {
-                not_rendered(&suggested.file(0, format), *not_ported, status, console);
+            Err(unrendered) => {
+                unrendered.report(
+                    &suggested.file(0, format).display().to_string(),
+                    status,
+                    console,
+                );
                 return;
             }
         };
@@ -147,19 +160,21 @@ impl<'a> SourceFileReader<'a> {
             if !can_file_be_written(&file, options.is_true(CliFlag::Overwrite), console) {
                 break;
             }
-            let image = rockuml::diagram::export_with(
-                diagram.as_ref(),
-                page,
-                image_format,
-                self.settings.options.metadata(),
-                &self.settings.fonts,
-                &self.settings.host,
-            );
+            let image = crash::render(|| {
+                rockuml::diagram::export_with(
+                    diagram.as_ref(),
+                    page,
+                    image_format,
+                    self.settings.options.metadata(),
+                    &self.settings.fonts,
+                    &self.settings.host,
+                )
+            });
             let content = match image {
                 Ok(_) if format == FileFormat::Null => Vec::new(),
                 Ok(image) => image,
-                Err(not_ported) => {
-                    not_rendered(&file, not_ported, status, console);
+                Err(unrendered) => {
+                    unrendered.report(&file.display().to_string(), status, console);
                     break;
                 }
             };
@@ -352,16 +367,6 @@ fn is_fresh(file: &Path, diagram: &dyn Diagram, format: FileFormat) -> bool {
     }
     svg.rfind("<!--SRC=[")
         .is_some_and(|start| svg[start + "<!--SRC=[".len()..].starts_with(&format!("{signature}]")))
-}
-
-fn not_rendered(
-    output: &Path,
-    not_ported: NotYetPorted,
-    status: &ExitStatus,
-    console: &mut Console,
-) {
-    console.error(&format!("rockuml: {}: {not_ported}", output.display()));
-    status.goes_not_ported();
 }
 
 pub(crate) fn file_name(file: &Path) -> String {

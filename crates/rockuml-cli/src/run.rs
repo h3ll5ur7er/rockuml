@@ -17,6 +17,7 @@ use crate::cli_flag::{CliFlag, Support};
 use crate::cli_options::{CliOptions, DEFAULT_CONFIG_VARIABLE};
 use crate::cli_parsed::CliParsed;
 use crate::console::Console;
+use crate::crash;
 use crate::exit_status::{self, ExitStatus};
 use crate::file_format::FileFormat;
 use crate::source_file_reader::{self, SourceFileReader};
@@ -46,6 +47,7 @@ enum Failure {
 /// Runs the command line and returns the exit status.
 pub(crate) fn main(arguments: Vec<String>) -> u8 {
     let start = Instant::now();
+    crash::silence_panic_hook();
     let mut console = Console::default();
     let status = match run(arguments, &mut console, start) {
         Ok(status) => status,
@@ -269,6 +271,7 @@ fn manage_file_internal(
         Ok(reader) => reader,
         Err(error) => {
             console.error(&format!("rockuml: {error}"));
+            status.goes_has_errors();
             return;
         }
     };
@@ -307,13 +310,20 @@ fn check_error(files: &[PathBuf], settings: &Settings, status: &ExitStatus) -> b
 /// `-encodeurl`: each diagram's URL code.
 fn compute_url(files: &[PathBuf], settings: &Settings, console: &mut Console) {
     for file in files {
-        match source_file_reader::preprocess_file(file, settings) {
-            Ok(blocks) => {
-                for block in &blocks {
-                    console.println(&rockuml::diagram::encoded_url(block));
-                }
+        let urls = crash::catch(|| {
+            source_file_reader::preprocess_file(file, settings).map(|blocks| {
+                blocks
+                    .iter()
+                    .map(rockuml::diagram::encoded_url)
+                    .collect::<Vec<_>>()
+            })
+        });
+        match urls {
+            Ok(Ok(urls)) => urls.iter().for_each(|url| console.println(url)),
+            Ok(Err(error)) => console.error(&format!("rockuml: {error}")),
+            Err(message) => {
+                console.error(&format!("rockuml: {}: crashed: {message}", file.display()));
             }
-            Err(error) => console.error(&format!("rockuml: {error}")),
         }
     }
 }

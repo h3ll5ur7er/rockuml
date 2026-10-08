@@ -37,26 +37,22 @@ pub(crate) struct CliFlagDoc {
     pub new_group: &'static str,
 }
 
-const fn doc(value: &'static str, level: i32) -> Option<CliFlagDoc> {
-    Some(CliFlagDoc {
+const fn doc(value: &'static str, level: i32) -> CliFlagDoc {
+    CliFlagDoc {
         value,
         level,
         usage: "",
         new_group: "",
-    })
+    }
 }
 
-const fn doc_with_usage(
-    value: &'static str,
-    level: i32,
-    usage: &'static str,
-) -> Option<CliFlagDoc> {
-    Some(CliFlagDoc {
+const fn doc_with_usage(value: &'static str, level: i32, usage: &'static str) -> CliFlagDoc {
+    CliFlagDoc {
         value,
         level,
         usage,
         new_group: "",
-    })
+    }
 }
 
 const fn doc_in_new_group(
@@ -64,13 +60,13 @@ const fn doc_in_new_group(
     level: i32,
     usage: &'static str,
     new_group: &'static str,
-) -> Option<CliFlagDoc> {
-    Some(CliFlagDoc {
+) -> CliFlagDoc {
+    CliFlagDoc {
         value,
         level,
         usage,
         new_group,
-    })
+    }
 }
 
 /// Documented flags without a level only show in neither help.
@@ -94,7 +90,8 @@ macro_rules! cli_flags {
                         aliases: &[$($alias),*],
                         arity: Arity::$arity,
                         support: Support::$support,
-                        doc: $doc,
+                        // A flag's doc is a `CliFlagDoc`, or `None` where PlantUML's is null.
+                        doc: $doc.into(),
                         default_value: $default,
                     },)*
                 }
