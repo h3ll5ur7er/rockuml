@@ -635,9 +635,8 @@ fn optional_string(value: Option<String>) -> JsonValue {
 }
 
 fn get_all_theme(_: &mut Call) -> TimResult<TValue> {
-    let mut names: Vec<String> = crate::assets::FILES
-        .iter()
-        .filter_map(|(path, _)| {
+    let mut names: Vec<String> = crate::assets::names()
+        .filter_map(|path| {
             path.strip_prefix("themes/puml-theme-")?
                 .strip_suffix(".puml")
         })

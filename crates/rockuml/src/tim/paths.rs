@@ -155,6 +155,7 @@ mod tests {
     use crate::host::{FakeHost, IsolatedHost};
 
     #[test]
+    #[cfg(feature = "stdlib")]
     fn stdlib_names_resolve_case_insensitively() {
         let paths = PathSystem::new(Folder::Regular(PathBuf::new()));
         let file = paths

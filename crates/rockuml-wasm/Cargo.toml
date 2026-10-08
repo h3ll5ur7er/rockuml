@@ -1,0 +1,17 @@
+[package]
+name = "rockuml-wasm"
+description = "rockuml for WebAssembly: a C ABI that web/rockuml.js wraps"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+# The standard library and emoji are left out to keep the download small.
+rockuml = { path = "../rockuml", default-features = false }

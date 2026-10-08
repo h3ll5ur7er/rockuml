@@ -282,6 +282,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[cfg(feature = "stdlib")]
     fn reads_library_files_case_insensitively() {
         let content = puml_resource("C4/C4_Container").expect("C4_Container is bundled");
         assert!(String::from_utf8_lossy(&content).contains("Container"));
@@ -320,6 +321,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "stdlib")]
     fn sprites_are_found_by_their_exported_name() {
         let office = Stdlib::retrieve("office").expect("the office library is bundled");
         assert!(
