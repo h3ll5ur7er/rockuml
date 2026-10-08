@@ -532,6 +532,16 @@ nwdiag, timing and gantt.
 - Every push to `main` that passes CI is published as a pre-release with the binaries and the web package; a `v*`
   tag as a release.
 
+### Phase 9 — JSON and YAML
+- **Status: done.** Every corpus case (10 JSON, 8 YAML) passes L1, L2, PNG size, URL and preprocessor outputs, and
+  builds exactly the Smetana graph PlantUML builds (checked against the traces). L3 fails four JSON cases only: PlantUML
+  measures `☑` and `☃` with Segoe UI Symbol, which rockuml does not embed.
+  - Ported: `@startjson` and `@startyaml` with PlantUML's style extraction (`<style>`, `title`, `scale` before the
+    data), `#highlight` paths with stereotypes, the YAML parser (block maps and lists, flow lists, `|` blocks), the
+    tables (in the new `NO_CREOLE` mode) and their Smetana layout, drawn turned.
+  - Deviations: a malformed `#highlight` line is ignored (PlantUML fails the whole diagram).
+  - Not ported: `skin` and handwritten drawing before the data (reported as not ported).
+
 ---
 
 ## 8. Known risks and mitigations
@@ -560,6 +570,5 @@ nwdiag, timing and gantt.
 ---
 
 ## 10. Immediate next steps
-1. Phase 9: JSON and YAML diagrams (`@startjson`, `@startyaml`), then the HTTP server mode that lets editor
-   plugins use rockuml.
+1. Phase 10: the HTTP server mode that lets editor plugins use rockuml, then nwdiag, timing and gantt.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

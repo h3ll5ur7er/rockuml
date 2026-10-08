@@ -40,6 +40,7 @@ machine.
   notes, swimlanes, `goto`/`label`, `detach`/`kill`), laid out like PlantUML's `ftile` engine. The legacy syntax
   (`(*) --> "action"`) is not ported yet.
 - Mind maps (`@startmindmap`) and work breakdown structures (`@startwbs`).
+- JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in
