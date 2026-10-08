@@ -379,8 +379,6 @@ impl Instructions {
                 Instruction::If(_) => "activity if (track C1)",
                 Instruction::Switch(_) => "activity switch (track C1)",
                 Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
-                Instruction::Group(_) => "activity partitions and groups (track F)",
-                _ if instruction.has_notes() => "activity notes (track F)",
                 _ => return None,
             };
             Some(NotYetPorted(what))
@@ -399,25 +397,6 @@ impl Instructions {
             Instruction::Label(ins) => &ins.mono,
             _ => unreachable!("only single instructions are in one lane"),
         }
-    }
-}
-
-impl Instruction {
-    /// Whether notes are attached to the instruction itself, if it holds no others.
-    fn has_notes(&self) -> bool {
-        let notes = match self {
-            Instruction::List(list) => &list.notes,
-            Instruction::Simple(ins) => &ins.mono.notes,
-            Instruction::Spot(ins) => &ins.mono.notes,
-            Instruction::Start(ins) => &ins.mono.notes,
-            Instruction::Stop(ins) => &ins.mono.notes,
-            Instruction::End(ins) => &ins.mono.notes,
-            Instruction::Break(ins) => &ins.mono.notes,
-            Instruction::Goto(ins) => &ins.mono.notes,
-            Instruction::Label(ins) => &ins.mono.notes,
-            _ => return false,
-        };
-        !notes.notes.is_empty()
     }
 }
 

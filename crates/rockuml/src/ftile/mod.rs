@@ -42,7 +42,8 @@
 //! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
 //!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
 //!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
-//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does.
+//!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does. Until then the query
+//!   `swimlane_kept` in `vcompact/ftile_with_note_opale.rs` answers that no layer keeps one lane.
 //! - The compression layer and its slot finder, in `klimt::compress`.
 //! - The delegators' own methods, each in its file under `vcompact/`.
 

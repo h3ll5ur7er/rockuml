@@ -10,6 +10,7 @@ use super::leaves::InstructionSimple;
 use super::link_rendering::LinkRendering;
 use super::loops::{InstructionRepeat, InstructionWhile};
 use crate::color::Colors;
+use crate::ftile::vcompact::{FtileWithNoteOpale, FtileWithNotes};
 use crate::ftile::{
     Ftile, FtileBreak, FtileDecorateWelding, FtileEmpty, FtileFactory, FtileGoto, FtileKilled,
     FtileLabel, ftile_utils,
@@ -55,16 +56,16 @@ impl Instructions {
             Instruction::While(ins) => self.create_ftile_while(ins, factory),
             Instruction::Repeat(ins) => self.create_ftile_repeat(id, ins, factory),
             Instruction::Fork(ins) => {
-                // A note on the fork itself is `FtileWithNoteOpale`'s, track F; the diagram refuses it until then.
                 let all = self.create_ftile_lists(&ins.forks, factory);
-                factory.create_parallel(
+                let result = factory.create_parallel(
                     all,
                     ins.style,
                     ins.label.as_deref(),
                     ins.swimlane_in,
                     ins.swimlane_out,
                     &ins.colors,
-                )
+                );
+                with_notes_beside(result, &ins.notes)
             }
             Instruction::Split(ins) => {
                 let all = self.create_ftile_lists(&ins.splits, factory);
@@ -78,8 +79,14 @@ impl Instructions {
                 )
             }
             Instruction::Group(ins) => {
-                // A note opening the group is `FtileWithNotes`'s, track F; the diagram refuses it until then.
-                let tmp = self.create_ftile_list(&ins.list, factory);
+                let mut tmp = self.create_ftile_list(&ins.list, factory);
+                if let Some(note) = &ins.note {
+                    tmp = Rc::new(FtileWithNotes::new(
+                        tmp,
+                        std::slice::from_ref(note),
+                        VerticalAlignment::Center,
+                    ));
+                }
                 factory.create_group(
                     tmp,
                     &ins.title,
@@ -269,7 +276,7 @@ impl Instructions {
             &ins.incoming2,
             &ins.current_style_builder,
         );
-        // A note on the loop itself is `FtileWithNoteOpale`'s, track F; the diagram refuses it until then.
+        let tmp = with_notes_beside(tmp, &ins.notes);
         killed_if(ins.killed || ins.special_out.is_some(), tmp)
     }
 
@@ -369,6 +376,14 @@ fn eventually_add_note(
         return ftile;
     }
     factory.add_note(Some(ftile), swimlane, &notes.notes, vertical_alignment)
+}
+
+/// The tile of a fork or a loop with the notes written right after it beside it, pointing at nothing.
+fn with_notes_beside(ftile: Rc<dyn Ftile>, notes: &WithNote) -> Rc<dyn Ftile> {
+    if notes.notes.is_empty() {
+        return ftile;
+    }
+    FtileWithNoteOpale::create(ftile, &notes.notes, false, VerticalAlignment::Center)
 }
 
 fn killed_if(killed: bool, ftile: Rc<dyn Ftile>) -> Rc<dyn Ftile> {

@@ -1,7 +1,11 @@
-//! PlantUML's `FtileFactoryDelegatorAddNote`: overrides `addNote`. Until that is ported it passes
-//! everything on.
+//! PlantUML's `FtileFactoryDelegatorAddNote`: notes beside tiles, or alone.
 
-use crate::ftile::{FtileFactory, FtileFactoryDelegator};
+use std::rc::Rc;
+
+use super::{FtileNoteAlone, FtileWithNoteOpale};
+use crate::diagram::activity3::{NoteType, PositionedNote, SwimlaneId};
+use crate::ftile::{Ftile, FtileFactory, FtileFactoryDelegator};
+use crate::klimt::VerticalAlignment;
 
 pub(crate) struct FtileFactoryDelegatorAddNote {
     factory: Box<dyn FtileFactory>,
@@ -16,5 +20,28 @@ impl FtileFactoryDelegatorAddNote {
 impl FtileFactoryDelegator for FtileFactoryDelegatorAddNote {
     fn get_factory(&self) -> &dyn FtileFactory {
         self.factory.as_ref()
+    }
+
+    /// Without a tile, only the first note shows.
+    fn add_note(
+        &self,
+        ftile: Option<Rc<dyn Ftile>>,
+        swimlane: Option<SwimlaneId>,
+        notes: &[PositionedNote],
+        vertical_alignment: VerticalAlignment,
+    ) -> Rc<dyn Ftile> {
+        let Some(ftile) = ftile else {
+            let note = notes
+                .first()
+                .expect("a tile gets notes only when it has some");
+            return Rc::new(FtileNoteAlone::new(
+                &note.display,
+                FtileFactoryDelegator::skin_param(self).clone(),
+                &note.colors,
+                note.type_ == NoteType::Note,
+                swimlane,
+            ));
+        };
+        FtileWithNoteOpale::create(ftile, notes, true, vertical_alignment)
     }
 }
