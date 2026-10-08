@@ -51,6 +51,7 @@ use crate::decoration::symbol::USymbol;
 use crate::diagram::sequence::model::NotePosition;
 use crate::ftile::BoxStyle;
 use crate::klimt::TextBlock;
+use crate::klimt::compress::{CompressionMode, CompressionXorYBuilder};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::url::Url;
@@ -176,8 +177,11 @@ impl Diagram for ActivityDiagram3 {
             self.titled.pragma.is_true(PragmaKey::UseVerticalIf),
             string_bounder.clone(),
         );
-        // PlantUML squeezes the empty space out across, then down (`CompressionXorYBuilder`, track E1).
-        let result = Recentred::new(Box::new(swimlanes), string_bounder.clone());
+        let compressed = CompressionXorYBuilder::build(
+            CompressionMode::OnY,
+            CompressionXorYBuilder::build(CompressionMode::OnX, swimlanes),
+        );
+        let result = Recentred::new(compressed);
         Ok(self.titled.add_chrome(Box::new(result), string_bounder))
     }
 
