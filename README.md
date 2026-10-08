@@ -69,6 +69,47 @@ cargo test
 ROCKUML_PARITY_RECORD=1 cargo test -p rockuml-cli --test parity
 ```
 
+## Web / wasm
+
+rockuml also runs in the browser, as `rockuml.wasm` with a small JavaScript module, `web/rockuml.js`, and no other
+runtime. Build it (needs the `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`):
+
+```bash
+bash tools/build-wasm.sh          # writes web/rockuml.wasm
+```
+
+Try it in the demo page, an editor with a live preview:
+
+```bash
+cd web
+python -m http.server             # then open http://localhost:8000
+```
+
+Use it from your own page or from Node:
+
+```js
+import { load, RockumlError } from './rockuml.js';
+
+const rockuml = await load();     // fetches rockuml.wasm next to rockuml.js; or pass a URL, bytes or a WebAssembly.Module
+const { data, pageCount, isError } = await rockuml.render(source, { format: 'svg', page: 0 });
+```
+
+`format` is `svg`, `png`, `svg-deterministic`, `debug` or `preproc`; `data` is a string, or a `Uint8Array` for PNG.
+`page` counts the pages of all diagrams in the source, in the order the CLI writes their files. `isError` says the
+image shows the diagram's errors. Sources without a diagram, pages past the last, and diagram types rockuml has not
+ported yet throw a `RockumlError` (with `notPorted` set for the latter). In Node, pass the bytes:
+`load(await readFile('web/rockuml.wasm'))`.
+
+The wasm build has no files, URLs or environment variables, so `!include` of files and URLs fails; dates are local
+time. To keep the download small it leaves out the standard library (`!include <C4/...>` fails like a library that
+does not exist) and the emoji: these are the engine's `stdlib` and `emoji` cargo features, on by default.
+
+Its tests render corpus cases and compare them with the goldens:
+
+```bash
+node --test web/rockuml.test.mjs
+```
+
 ## Adding corpus cases
 
 Put a `.puml` file under `tests/corpus/<area>/` and generate its goldens with the reference implementation
