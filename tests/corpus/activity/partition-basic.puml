@@ -1,0 +1,12 @@
+@startuml
+start
+partition Initialization {
+  :Read the configuration;
+  :Init the internal variables;
+}
+partition Running {
+  :Wait for user interaction;
+  :Print the information;
+}
+stop
+@enduml

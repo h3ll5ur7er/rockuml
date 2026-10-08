@@ -1,0 +1,182 @@
+DPI: 96
+dimension: [ 419.1087 ; 315.0000 ]
+scaleFactor: 1.0000
+seed: 6090155874691545107
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 88.1252 ; 10.0000 ]
+  pt2: [ 330.9834 ; 45.0000 ]
+
+TEXT:
+  text: Order processing
+  position: [ 98.1252 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 198.0543 ; 50.0000 ]
+  pt2: [ 218.0543 ; 70.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 101.7187 ; 90.0000 ]
+  pt2: [ 314.3900 ; 122.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Receive the order
+  position: [ 111.7187 ; 109.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 121.8305 ; 142.0000 ]
+  pt2: [ 294.2782 ; 174.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Ship the order
+  position: [ 131.8305 ; 161.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 197.0543 ; 194.0000 ]
+  pt2: [ 219.0543 ; 216.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 202.0543 ; 199.0000 ]
+  pt2: [ 214.0543 ; 211.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 208.0543 ; 70.0000 ]
+  pt2: [ 208.0543 ; 90.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 204.0543 ; 80.0000 ]
+   - [ 208.0543 ; 90.0000 ]
+   - [ 212.0543 ; 80.0000 ]
+   - [ 208.0543 ; 84.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 208.0543 ; 122.0000 ]
+  pt2: [ 208.0543 ; 142.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 204.0543 ; 132.0000 ]
+   - [ 208.0543 ; 142.0000 ]
+   - [ 212.0543 ; 132.0000 ]
+   - [ 208.0543 ; 136.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 208.0543 ; 174.0000 ]
+  pt2: [ 208.0543 ; 194.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 204.0543 ; 184.0000 ]
+   - [ 208.0543 ; 194.0000 ]
+   - [ 212.0543 ; 184.0000 ]
+   - [ 208.0543 ; 188.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+EMPTY:
+  pt1: [ 83.9750 ; 225.0000 ]
+  pt2: [ 335.1337 ; 288.0000 ]
+
+RECTANGLE:
+  pt1: [ 95.9750 ; 237.0000 ]
+  pt2: [ 322.1337 ; 275.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Short legend
+  position: [ 100.9750 ; 252.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: on two lines
+  position: [ 100.9750 ; 266.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 10.0000 ; 288.0000 ]
+  pt2: [ 409.1087 ; 305.0000 ]
+
+TEXT:
+  text: Figure 1: the happy path
+  position: [ 11.0000 ; 299.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

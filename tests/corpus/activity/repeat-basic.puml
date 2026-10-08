@@ -1,0 +1,8 @@
+@startuml
+start
+repeat
+  :Read a line;
+  :Process the line;
+repeat while (More lines?)
+stop
+@enduml

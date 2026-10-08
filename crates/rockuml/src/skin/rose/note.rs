@@ -98,12 +98,12 @@ impl Component for ComponentRoseNote {
         }
         let ug = self.fashion.apply(ug);
         let round_corner = self.fashion.round_corner;
-        ug.draw(&UShape::Path(get_polygon_normal(
+        ug.draw(&UShape::path(get_polygon_normal(
             x2,
             text_height,
             round_corner,
         )));
-        ug.draw(&UShape::Path(get_corner(x2, round_corner)));
+        ug.draw(&UShape::path(get_corner(x2, round_corner)));
         let ug = ug.with_stencil(Rc::new(NoteStencil { text_width }));
         let padding = self.text.padding();
         let x = text_x(
@@ -231,7 +231,7 @@ impl Component for ComponentRoseNoteHexagonal {
             (CORNER_SIZE, 0.0),
         ];
         let ug = self.fashion.apply(ug);
-        ug.draw(&UShape::Polygon(polygon));
+        ug.draw(&UShape::polygon(polygon));
         let padding = self.text.padding();
         self.text.text_block().draw_u(
             &ug.with_stroke(UStroke::SIMPLE)

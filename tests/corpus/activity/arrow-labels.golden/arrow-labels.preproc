@@ -1,0 +1,9 @@
+@startuml
+start
+:Write the request;
+-> HTTP POST;
+:Handle the request;
+-> JSON response;
+:Display the result;
+stop
+@enduml

@@ -1,0 +1,216 @@
+DPI: 96
+dimension: [ 981.9091 ; 202.0000 ]
+scaleFactor: 1.0000
+seed: 4603225740895140888
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 533.1666 ; 15.0000 ]
+  pt2: [ 553.1666 ; 35.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 382.3357 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 382.3357 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 372.3357 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 372.3357 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 372.3357 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 382.3357 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 372.3357 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: This is a floating note
+  position: [ 21.0000 ; 74.6111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 407.3357 ; 55.0000 ]
+  pt2: [ 678.9975 ; 87.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Collect the metrics
+  position: [ 417.3357 ; 74.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 273.9491 ; 36.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 273.9491 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 263.9491 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 263.9491 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 263.9491 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 273.9491 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 263.9491 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: Aggregation runs
+  position: [ 693.9600 ; 120.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: every five minutes
+  position: [ 693.9600 ; 133.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 418.3731 ; 107.0000 ]
+  pt2: [ 667.9600 ; 139.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Aggregate the metrics
+  position: [ 428.3731 ; 126.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 532.1666 ; 161.0000 ]
+  pt2: [ 554.1666 ; 183.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 537.1666 ; 166.0000 ]
+  pt2: [ 549.1666 ; 178.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 543.1666 ; 35.0000 ]
+  pt2: [ 543.1666 ; 55.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 539.1666 ; 45.0000 ]
+   - [ 543.1666 ; 55.0000 ]
+   - [ 547.1666 ; 45.0000 ]
+   - [ 543.1666 ; 49.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 543.1666 ; 87.0000 ]
+  pt2: [ 543.1666 ; 107.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 539.1666 ; 97.0000 ]
+   - [ 543.1666 ; 107.0000 ]
+   - [ 547.1666 ; 97.0000 ]
+   - [ 543.1666 ; 101.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 543.1666 ; 139.0000 ]
+  pt2: [ 543.1666 ; 161.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 539.1666 ; 151.0000 ]
+   - [ 543.1666 ; 161.0000 ]
+   - [ 547.1666 ; 151.0000 ]
+   - [ 543.1666 ; 155.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

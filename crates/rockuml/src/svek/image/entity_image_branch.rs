@@ -47,7 +47,7 @@ impl TextBlock for EntityImageBranch {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let diamond = UShape::Polygon(vec![
+        let diamond = UShape::polygon(vec![
             (SIZE, 0.0),
             (SIZE * 2.0, SIZE),
             (SIZE, SIZE * 2.0),

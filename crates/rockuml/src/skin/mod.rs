@@ -28,6 +28,7 @@ use crate::color::HColor;
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
@@ -35,6 +36,7 @@ use crate::stereo::Stereotype;
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
 };
+use crate::svek::{ConditionEndStyle, ConditionStyle};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 
@@ -77,6 +79,10 @@ impl SpriteContainer for SkinParam {
 
     fn image_file(&self, src: &str) -> Option<&[u8]> {
         self.image_files.get(src)?.as_deref()
+    }
+
+    fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
+        SkinParam::get_padding(self)
     }
 }
 
@@ -183,6 +189,11 @@ impl SkinParam {
             .and_then(|value| value.parse().ok())
     }
 
+    /// The space between the lines of an arrow drawn in several colours.
+    pub(crate) fn color_arrow_separation_space(&self) -> i32 {
+        self.as_int("colorarrowseparationspace").unwrap_or(0)
+    }
+
     pub(crate) fn strict_uml_style(&self) -> bool {
         self.value_is("style", "strictuml")
     }
@@ -259,6 +270,28 @@ impl SkinParam {
             .unwrap_or(default)
     }
 
+    /// Where activity diagrams put arrow labels: `skinparam arrowMessageAlignment`, left when it names no
+    /// alignment (`getHorizontalAlignment(arrowMessageAlignment, null, false, null)`).
+    pub(crate) fn arrow_message_alignment(&self) -> HorizontalAlignment {
+        self.value("arrowMessageAlignment")
+            .and_then(|value| HorizontalAlignment::from_name(&value))
+            .unwrap_or(HorizontalAlignment::Left)
+    }
+
+    /// `skinparam conditionStyle`, a hexagon by default (`getConditionStyle`).
+    pub(crate) fn get_condition_style(&self) -> ConditionStyle {
+        self.value("conditionStyle")
+            .and_then(|value| ConditionStyle::from_string(&value))
+            .unwrap_or(ConditionStyle::InsideHexagon)
+    }
+
+    /// `skinparam conditionEndStyle`, a diamond by default (`getConditionEndStyle`).
+    pub(crate) fn get_condition_end_style(&self) -> ConditionEndStyle {
+        self.value("conditionEndStyle")
+            .and_then(|value| ConditionEndStyle::from_string(&value))
+            .unwrap_or(ConditionEndStyle::Diamond)
+    }
+
     /// The direction `left to right direction` and `top to bottom direction` set.
     pub(crate) fn get_rankdir(&self) -> Rankdir {
         self.rankdir
@@ -293,7 +326,16 @@ impl SkinParam {
 
     /// `BoxPadding`: the room each side of a box around participants, or 0 unless a plain decimal.
     pub(crate) fn box_padding(&self) -> f64 {
-        self.value("boxPadding")
+        self.get_as_double("boxPadding")
+    }
+
+    /// `padding`: the room around texts laid out as sheets, the same on every side, or 0 unless a plain decimal.
+    pub(crate) fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
+        ClockwiseTopRightBottomLeft::same(self.get_as_double("padding"))
+    }
+
+    fn get_as_double(&self, key: &str) -> f64 {
+        self.value(key)
             .filter(|value| is_int_or_decimal(value))
             .and_then(|value| value.parse().ok())
             .unwrap_or(0.0)
@@ -305,6 +347,27 @@ impl SkinParam {
             .filter(|value| is_digits(value))
             .and_then(|value| value.parse().ok())
             .unwrap_or(0.0)
+    }
+
+    /// `swimlaneWidth`: the least width of a swimlane when written in digits,
+    /// [`Self::SWIMLANE_WIDTH_SAME`] for `same`, else 0.
+    pub(crate) fn swimlane_width(&self) -> f64 {
+        let value = self.value("swimlanewidth").unwrap_or_default();
+        if value.eq_ignore_ascii_case("same") {
+            return Self::SWIMLANE_WIDTH_SAME;
+        }
+        if is_digits(&value) {
+            return value.parse().unwrap_or(0.0);
+        }
+        0.0
+    }
+
+    /// `swimlaneWidth same`: every lane as wide as the widest.
+    pub(crate) const SWIMLANE_WIDTH_SAME: f64 = -1.0;
+
+    /// `swimlaneWrapTitleWidth`: how wide a swimlane title may grow before it wraps, a number or `auto`.
+    pub(crate) fn swimlane_wrap_title_width(&self) -> Option<String> {
+        self.value("swimlanewraptitlewidth")
     }
 
     pub(crate) fn value(&self, key: &str) -> Option<String> {
@@ -430,6 +493,22 @@ mod tests {
         assert_eq!(padding(Some("12.5")), 12.5);
         assert_eq!(padding(Some("-3")), 0.0);
         assert_eq!(padding(Some("1e3")), 0.0);
+    }
+
+    #[test]
+    fn padding_is_the_same_on_every_side_and_a_plain_decimal() {
+        let padding = |value: &str| {
+            let mut skin = SkinParam::default();
+            skin.set_param("padding", value);
+            skin.get_padding()
+        };
+        assert_eq!(
+            SkinParam::default().get_padding(),
+            ClockwiseTopRightBottomLeft::none()
+        );
+        assert_eq!(padding("5"), ClockwiseTopRightBottomLeft::same(5.0));
+        assert_eq!(padding("2.5"), ClockwiseTopRightBottomLeft::same(2.5));
+        assert_eq!(padding("5px"), ClockwiseTopRightBottomLeft::none());
     }
 
     #[test]

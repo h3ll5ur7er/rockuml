@@ -1,0 +1,16 @@
+@startuml
+start
+:foo1;
+-[#blue]->
+:foo2;
+-[#green,dashed]-> The text can
+also be on several lines
+and **very** long...;
+:foo3;
+-[#black,dotted]->
+:foo4;
+-[#gray,bold]->
+:foo5;
+-[#red]-> stop here;
+stop
+@enduml

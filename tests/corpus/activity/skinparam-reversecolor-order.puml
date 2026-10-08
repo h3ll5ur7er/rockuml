@@ -1,0 +1,12 @@
+@startuml
+skinparam reversecolor bgr
+start
+:Read;
+if (Valid?) then (yes)
+  #pink:Write;
+else (no)
+  #lightblue:Discard;
+endif
+note right: Reversed note
+stop
+@enduml

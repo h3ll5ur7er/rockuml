@@ -1,3 +1,5 @@
+use regex::Regex;
+
 use super::{CreoleMode, CreoleParser, SheetBlock1, SheetBlock2};
 use crate::java;
 use crate::jaws::{
@@ -6,7 +8,6 @@ use crate::jaws::{
 };
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::font::FontConfiguration;
-use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::sprite::SpriteContainer;
 use crate::skin::visibility_modifier::VisibilityModifier;
 use crate::stereo::Stereotype;
@@ -189,6 +190,39 @@ impl Display {
         result
     }
 
+    /// `line` after the last line.
+    #[must_use]
+    pub(crate) fn add(&self, line: &str) -> Self {
+        let mut result = self.clone();
+        result.lines.push(line.to_owned());
+        result
+    }
+
+    /// The display cut where `separator` first matches in each line: the text before the match ends one
+    /// display, the text after it starts the next.
+    pub(crate) fn split_multiline(&self, separator: &Regex) -> Vec<Self> {
+        let empty = || Self {
+            lines: Vec::new(),
+            ..self.clone()
+        };
+        let mut result = vec![empty()];
+        for line in &self.lines {
+            let pending = result
+                .last_mut()
+                .expect("there is always a pending display");
+            match separator.find(line) {
+                Some(found) => {
+                    pending.lines.push(line[..found.start()].to_owned());
+                    let mut next = empty();
+                    next.lines.push(line[found.end()..].to_owned());
+                    result.push(next);
+                }
+                None => pending.lines.push(line.clone()),
+            }
+        }
+        result
+    }
+
     #[must_use]
     pub(crate) fn underlined(&self) -> Self {
         self.map_lines(|line| format!("<u>{line}"))
@@ -223,9 +257,7 @@ impl Display {
         let alignment = self.natural_alignment.unwrap_or(alignment);
         let sheet = CreoleParser::with_mode(font.clone(), alignment, mode, sprites)
             .create_display_sheet(self, font);
-        SheetBlock2::new(
-            SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()).wrapped_at(max_width),
-        )
+        SheetBlock2::new(SheetBlock1::new(sheet, sprites.get_padding()).wrapped_at(max_width))
     }
 
     pub(crate) fn is_single_empty_line(&self) -> bool {

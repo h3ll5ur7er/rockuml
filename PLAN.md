@@ -467,6 +467,20 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ### Phase 6 — Activity v3 (~25k)
 - ftile + vcompact + vertical + gtile, swimlanes, goto, notes, partitions, parallel/split, switch, repeat/while, detach.
 - **Exit:** L1 ≥ 95%.
+- **Status: done.** Every activity corpus case (106) passes L1 (debug), L2 (deterministic SVG), PNG size and the URL
+  and preprocessor outputs. L3 (font-measured SVG) fails only `connectors` and `connectors-several`: circled
+  connector letters are drawn as Courier New glyph outlines (as class spots).
+  - Ported: the activity v3 model and commands, `ftile` with the `vcompact` delegator chain (if/elseif/switch with
+    every condition style, while/repeat with breaks and backward, fork/split/merge, partitions and groups, notes and
+    Opale), `vertical` tiles, Snake/Worm arrows, compression across then down, swimlanes (lane sizing, titles,
+    colours, dividers, crossing arrows), the layered `UGraphic` they draw through, skinparam `padding`, `monochrome`
+    and `reversecolor`. Bit-exact harnesses in `tools/oracle/activity-unit` check the model, arrows, compression
+    and tile trees against Java.
+  - Still differing elsewhere: skinparam `padding` in sequence, class and description diagrams.
+  - Not ported: `gtile` (dead in 1.2026.8: `USE_GTILE` is false), shadows, the legacy activity syntax
+    (`(*) -->`, Tier 2), skinparam `mode dark` (it needs PlantUML's dark colour variants).
+  - Deviations: where PlantUML throws on odd input (a switch without `case`, a lane missing for a horizontal line,
+    a slanted arrow segment) rockuml reports an error or skips the shape instead of crashing.
 
 ### Phase 7 — Distribution polish (Tier 1 complete)
 - Full CLI parity (`-t*`, `-o`, `-pipe`, `-pipemap`, `-charset`, `-D`, `-config`, `-theme`, `-checkonly`, `-failfast2`,
@@ -505,5 +519,6 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Phase 6: activity v3 (`ftile`), the other half of everyday UML.
+1. Phase 7: distribution polish (full CLI parity, the wasm package and demo page, release builds), which completes
+   Tier 1.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

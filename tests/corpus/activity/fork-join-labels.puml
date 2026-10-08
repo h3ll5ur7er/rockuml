@@ -1,0 +1,14 @@
+@startuml
+start
+fork
+  :action 1;
+fork again
+  :action 2;
+end fork {or}
+fork
+  :action 3;
+fork again
+  :action 4;
+end fork {and}
+stop
+@enduml

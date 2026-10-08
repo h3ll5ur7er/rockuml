@@ -1,0 +1,8 @@
+@startuml
+start
+repeat
+  :Download a chunk;
+repeat while (Chunks left?) is (yes) -> no;
+:Assemble the file;
+stop
+@enduml

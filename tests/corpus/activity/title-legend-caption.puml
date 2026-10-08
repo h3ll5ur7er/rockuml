@@ -1,0 +1,12 @@
+@startuml
+title Order processing
+caption Figure 1: the happy path
+start
+:Receive the order;
+:Ship the order;
+stop
+legend right
+  Short legend
+  on two lines
+endlegend
+@enduml

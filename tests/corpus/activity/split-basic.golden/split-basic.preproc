@@ -1,0 +1,12 @@
+@startuml
+start
+split
+  :Email the customer;
+split again
+  :Text the customer;
+split again
+  :Call the customer;
+end split
+:Mark as notified;
+stop
+@enduml

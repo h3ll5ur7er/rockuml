@@ -4,6 +4,7 @@ pub(crate) mod affine;
 pub(crate) mod big_frame;
 pub(crate) mod blocks;
 pub(crate) mod clip;
+pub(crate) mod compress;
 pub(crate) mod debug;
 pub(crate) mod dot_path;
 pub(crate) mod fashion;
@@ -19,6 +20,7 @@ pub(crate) mod stencil;
 pub(crate) mod svg;
 pub(crate) mod typeface;
 pub(crate) mod ugraphic;
+pub(crate) mod ugraphic_dispatch_drawable;
 pub(crate) mod url;
 pub(crate) mod width_table;
 mod width_table_data;
@@ -210,10 +212,11 @@ impl HorizontalAlignment {
     }
 }
 
-/// Where a legend goes: above or below what it explains.
+/// Where something goes vertically: a legend above or below what it explains, an arrow label beside it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum VerticalAlignment {
     Top,
+    Center,
     Bottom,
 }
 

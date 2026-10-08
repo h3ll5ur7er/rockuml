@@ -1,0 +1,8 @@
+@startuml
+start
+while (Check the filesize ?) is (not empty)
+  :Read the file;
+endwhile (empty)
+:Close the file;
+stop
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+start
+if (Valid?) then (yes)
+  -[#green]->
+  :Accept;
+else (no)
+  -[#red]->
+  :Reject;
+endif
+-[#blue,dashed]->
+stop
+@enduml

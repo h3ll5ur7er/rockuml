@@ -1,0 +1,471 @@
+mod arrows;
+mod parallel;
+
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use super::*;
+use crate::color::{Colors, HColor};
+use crate::creole::Display;
+use crate::decoration::Rainbow;
+use crate::decoration::symbol::{USymbol, USymbols};
+use crate::diagram::activity3::{
+    BranchFtile, ForkStyle, InstructionId, Instructions, NotePosition, NoteType, PositionedNote,
+    SwimlaneId, SwimlaneSet,
+};
+use crate::klimt::debug::StringBounderDebug;
+use crate::klimt::shape::{URectangle, UShape};
+use crate::klimt::ugraphic::tests::recording;
+use crate::klimt::ugraphic::{AnyShape, UChange, UGraphicLayer};
+use crate::klimt::url::Url;
+use crate::klimt::{UDrawable, VerticalAlignment};
+use crate::stereo::{Stereogroup, Stereotype};
+use crate::style::{SName, Style, StyleBuilder, StyleSignature};
+use crate::svek::UGraphicForSnake;
+
+/// A box with children below it, joined to each by an arrow.
+pub(super) struct Tile {
+    base: AbstractFtile,
+    height: f64,
+    children: Vec<Rc<dyn Ftile>>,
+}
+
+impl Tile {
+    pub(super) fn create(height: f64, children: Vec<Rc<dyn Ftile>>) -> Rc<dyn Ftile> {
+        Rc::new(Self {
+            base: AbstractFtile::new(Rc::new(SkinParam::default())),
+            height,
+            children,
+        })
+    }
+}
+
+impl Swimable for Tile {
+    fn get_swimlanes(&self) -> SwimlaneSet {
+        SwimlaneSet::new()
+    }
+
+    fn get_swimlane_in(&self) -> Option<SwimlaneId> {
+        None
+    }
+
+    fn get_swimlane_out(&self) -> Option<SwimlaneId> {
+        None
+    }
+}
+
+impl Ftile for Tile {
+    fn skin_param(&self) -> &Rc<SkinParam> {
+        self.base.skin_param()
+    }
+
+    fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> FtileGeometry {
+        self.base.calculate_dimension(|| {
+            FtileGeometry::with_out(10.0, self.height, 5.0, 0.0, self.height)
+        })
+    }
+
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        _string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
+        let index = self
+            .children
+            .iter()
+            .position(|tile| same(tile.as_ref(), child))
+            .unwrap_or_default();
+        UTranslate::new(0.0, 20.0 * (index + 1) as f64)
+    }
+
+    fn get_my_children(&self) -> Vec<Rc<dyn Ftile>> {
+        self.children.clone()
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        let string_bounder = ug.string_bounder();
+        ug.draw(&UShape::Rectangle(URectangle::new(10.0, self.height)));
+        for child in &self.children {
+            let translate = self.get_translate_for(child.as_ref(), string_bounder);
+            ug.apply(translate).draw(child);
+            let mut snake = Snake::create(
+                self.skin_param(),
+                Rainbow::from_color(Some(HColor::RED), None),
+            );
+            snake.add_point(5.0, self.height);
+            snake.add_point(5.0, translate.dy);
+            ug.draw(&snake);
+        }
+    }
+}
+
+#[test]
+fn tiles_are_dispatched_through_the_layers_and_arrows_drawn_last() {
+    let (surface, recorder) = recording();
+    let tree = Tile::create(
+        5.0,
+        vec![Tile::create(5.0, vec![]), Tile::create(5.0, vec![])],
+    );
+    TextBlockInterceptorUDrawable::new(tree, HColor::RED)
+        .draw_u(&UGraphicForSnake::create(surface.translated(1.0, 1.0)));
+    assert_eq!(
+        recorder.borrow().lines,
+        [
+            "rect 1,1 10x5",
+            "rect 1,21 10x5",
+            "rect 1,41 10x5",
+            "line 6,6 0,15",
+            "line 6,6 0,35",
+        ]
+    );
+}
+
+#[test]
+fn a_goto_draws_a_line_to_the_label_drawn_before_it() {
+    let (surface, recorder) = recording();
+    let skin_param = Rc::new(SkinParam::default());
+    let tree = Tile::create(
+        5.0,
+        vec![
+            Rc::new(FtileGoto::new(skin_param.clone(), None, "up")),
+            Rc::new(FtileLabel::new(skin_param.clone(), None, "up")),
+            Rc::new(FtileGoto::new(skin_param, None, "up")),
+        ],
+    );
+    TextBlockInterceptorUDrawable::new(tree, HColor::RED)
+        .draw_u(&UGraphicForSnake::create(surface.translated(1.0, 1.0)));
+    assert_eq!(
+        recorder.borrow().lines[..3],
+        ["rect 1,1 10x5", "line 1,61 0,0", "line 1,61 0,-20"]
+    );
+}
+
+#[test]
+fn tiles_find_their_children_by_identity() {
+    let child: Rc<dyn Ftile> = Tile::create(5.0, vec![]);
+    let twin: Rc<dyn Ftile> = Tile::create(5.0, vec![]);
+    let parent = Tile::create(5.0, vec![twin.clone(), child.clone()]);
+    let string_bounder = StringBounderDebug;
+    assert_eq!(
+        parent.get_translate_for(child.as_ref(), &string_bounder),
+        UTranslate::new(0.0, 40.0)
+    );
+    assert!(same(child.as_ref(), parent.get_my_children()[1].as_ref()));
+    assert!(!same(child.as_ref(), twin.as_ref()));
+}
+
+/// The connections `tile` draws itself (not those of the tiles inside it), in order, each drawn from one
+/// lane into another as `ConnectionCross` draws it, its start moved by `translate1` and its end by
+/// `translate2`: the lines it draws, or `None` for a connection that cannot cross lanes.
+pub(crate) fn drawn_across_lanes(
+    tile: &dyn Ftile,
+    translate1: UTranslate,
+    translate2: UTranslate,
+) -> Vec<Option<Vec<String>>> {
+    let (ug, _) = recording();
+    let drawn = Rc::new(RefCell::new(Vec::new()));
+    tile.draw_u(&UGraphic::from_layer(CrossingRecorder {
+        ug,
+        translates: (translate1, translate2),
+        drawn: drawn.clone(),
+    }));
+    drawn.take()
+}
+
+struct CrossingRecorder {
+    ug: UGraphic,
+    translates: (UTranslate, UTranslate),
+    drawn: Rc<RefCell<Vec<Option<Vec<String>>>>>,
+}
+
+impl UGraphicLayer for CrossingRecorder {
+    fn ug(&self) -> &UGraphic {
+        &self.ug
+    }
+
+    fn apply(&self, change: UChange) -> UGraphic {
+        UGraphic::from_layer(Self {
+            ug: self.ug.apply(change),
+            translates: self.translates,
+            drawn: self.drawn.clone(),
+        })
+    }
+
+    fn draw(&self, _this: &UGraphic, shape: AnyShape<'_>) {
+        if let AnyShape::Connection(connection) = shape {
+            let lines = connection.as_translatable().map(|connection| {
+                let (ug, recorder) = recording();
+                let (translate1, translate2) = self.translates;
+                connection.draw_translate(&ug, translate1, translate2);
+                recorder.take().lines
+            });
+            self.drawn.borrow_mut().push(lines);
+        }
+    }
+}
+
+/// Builds plain tiles and counts what it was asked.
+#[derive(Default)]
+pub(super) struct Innermost {
+    skin_param: Rc<SkinParam>,
+    calls: RefCell<Vec<&'static str>>,
+}
+
+impl Innermost {
+    fn tile(&self, call: &'static str) -> Rc<dyn Ftile> {
+        self.calls.borrow_mut().push(call);
+        Tile::create(5.0, vec![])
+    }
+}
+
+impl FtileFactory for Rc<Innermost> {
+    fn get_string_bounder(&self) -> &dyn StringBounder {
+        &StringBounderDebug
+    }
+
+    fn skin_param(&self) -> &Rc<SkinParam> {
+        &self.skin_param
+    }
+
+    fn start(&self, _swimlane: Option<SwimlaneId>, _colors: &Colors) -> Rc<dyn Ftile> {
+        self.tile("start")
+    }
+
+    fn stop(&self, _swimlane: Option<SwimlaneId>, _colors: &Colors) -> Rc<dyn Ftile> {
+        self.tile("stop")
+    }
+
+    fn end(&self, _swimlane: Option<SwimlaneId>, _colors: &Colors) -> Rc<dyn Ftile> {
+        self.tile("end")
+    }
+
+    fn spot(
+        &self,
+        _swimlane: Option<SwimlaneId>,
+        _spot: &str,
+        _color: Option<HColor>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("spot")
+    }
+
+    fn activity(
+        &self,
+        _label: &Display,
+        _swimlane: Option<SwimlaneId>,
+        _style: BoxStyle,
+        _colors: &Colors,
+        _stereotype: Option<&Stereotype>,
+        _style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("activity")
+    }
+
+    fn add_url(&self, ftile: Rc<dyn Ftile>, _url: &Url) -> Rc<dyn Ftile> {
+        self.calls.borrow_mut().push("add_url");
+        ftile
+    }
+
+    fn decorate_in(&self, ftile: Rc<dyn Ftile>, _link: &LinkRendering) -> Rc<dyn Ftile> {
+        self.calls.borrow_mut().push("decorate_in");
+        ftile
+    }
+
+    fn decorate_out(&self, ftile: Rc<dyn Ftile>, _link: &LinkRendering) -> Rc<dyn Ftile> {
+        self.calls.borrow_mut().push("decorate_out");
+        ftile
+    }
+
+    fn assembly(&self, tile1: Rc<dyn Ftile>, tile2: Rc<dyn Ftile>) -> Rc<dyn Ftile> {
+        self.calls.borrow_mut().push("assembly");
+        Tile::create(5.0, vec![tile1, tile2])
+    }
+
+    fn add_note(
+        &self,
+        _ftile: Option<Rc<dyn Ftile>>,
+        _swimlane: Option<SwimlaneId>,
+        _notes: &[PositionedNote],
+        _vertical_alignment: VerticalAlignment,
+    ) -> Rc<dyn Ftile> {
+        self.tile("add_note")
+    }
+
+    fn repeat(
+        &self,
+        _stereotype: &Stereogroup,
+        _stereotype2: &Stereogroup,
+        _box_style_in: BoxStyle,
+        _swimlane: Option<SwimlaneId>,
+        _swimlane_out: Option<SwimlaneId>,
+        _start_label: Option<&Display>,
+        _repeat: Rc<dyn Ftile>,
+        _test: Option<&Display>,
+        _yes: Option<&Display>,
+        _out: Option<&Display>,
+        _backward: Option<Rc<dyn Ftile>>,
+        _no_out: bool,
+        _incoming1: &LinkRendering,
+        _incoming2: &LinkRendering,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("repeat")
+    }
+
+    fn create_while(
+        &self,
+        _instructions: &Instructions,
+        _out_color: &LinkRendering,
+        _swimlane: Option<SwimlaneId>,
+        _while_block: Rc<dyn Ftile>,
+        _test: &Display,
+        _yes: Option<&Display>,
+        _color: Option<HColor>,
+        _special_out: Option<InstructionId>,
+        _backward: Option<Rc<dyn Ftile>>,
+        _incoming1: &LinkRendering,
+        _incoming2: &LinkRendering,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_while")
+    }
+
+    fn create_if(
+        &self,
+        _instructions: &Instructions,
+        _swimlane: Option<SwimlaneId>,
+        _thens: &[BranchFtile<'_>],
+        _else_branch: &BranchFtile<'_>,
+        _out_color: &LinkRendering,
+        _top_inlink_rendering: &LinkRendering,
+        _url: Option<&Url>,
+        _notes: &[PositionedNote],
+        _stereotype: Option<&Stereotype>,
+        _current_style_builder: &Rc<StyleBuilder>,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_if")
+    }
+
+    fn create_switch(
+        &self,
+        _instructions: &Instructions,
+        _swimlane: Option<SwimlaneId>,
+        _branches: &[BranchFtile<'_>],
+        _after_endwhile: &LinkRendering,
+        _top_inlink_rendering: &LinkRendering,
+        _label_test: Option<&Display>,
+        _colors: &Colors,
+        _end_colors: &Colors,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_switch")
+    }
+
+    fn create_parallel(
+        &self,
+        _all: Vec<Rc<dyn Ftile>>,
+        _style: ForkStyle,
+        _label: Option<&str>,
+        _swimlane_in: Option<SwimlaneId>,
+        _swimlane_out: Option<SwimlaneId>,
+        _colors: &Colors,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_parallel")
+    }
+
+    fn create_group(
+        &self,
+        _list: Rc<dyn Ftile>,
+        _name: &Display,
+        _back_color: Option<HColor>,
+        _note: Option<&PositionedNote>,
+        _type_: USymbol,
+        _style: &Style,
+    ) -> Rc<dyn Ftile> {
+        self.tile("create_group")
+    }
+}
+
+#[test]
+fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
+    let innermost = Rc::new(Innermost::default());
+    let factory = vcompact::delegator_chain(Box::new(innermost.clone()), false);
+    let start = factory.start(None, &Colors::default());
+    let stop = factory.stop(Some(SwimlaneId(0)), &Colors::default());
+    let assembled = factory.assembly(start, stop);
+    let decorated = factory.decorate_out(assembled, &LinkRendering::none());
+    factory.create_parallel(
+        vec![decorated],
+        ForkStyle::Fork,
+        None,
+        None,
+        None,
+        &Colors::default(),
+    );
+    assert_eq!(
+        *innermost.calls.borrow(),
+        [
+            "start",
+            "stop",
+            "assembly",
+            "decorate_out",
+            "create_parallel"
+        ]
+    );
+    assert!(Rc::ptr_eq(factory.skin_param(), &innermost.skin_param));
+}
+
+#[test]
+fn notes_and_groups_are_built_by_their_own_delegators() {
+    let innermost = Rc::new(Innermost::default());
+    let factory = vcompact::delegator_chain(Box::new(innermost.clone()), false);
+    let note = |type_| PositionedNote {
+        display: Display::create(["note"]),
+        note_position: NotePosition::Right,
+        type_,
+        colors: Colors::default(),
+        swimlane_note: None,
+        stereotype: None,
+    };
+    let string_bounder = StringBounderDebug;
+
+    // Alone, only the first note shows.
+    let floating_alone = factory.add_note(
+        None,
+        Some(SwimlaneId(1)),
+        &[note(NoteType::FloatingNote), note(NoteType::Note)],
+        VerticalAlignment::Center,
+    );
+    assert!(
+        !floating_alone
+            .calculate_dimension(&string_bounder)
+            .has_point_out()
+    );
+    assert_eq!(floating_alone.get_swimlane_in(), Some(SwimlaneId(1)));
+
+    let tile = Tile::create(5.0, vec![]);
+    let with_note = factory.add_note(
+        Some(tile.clone()),
+        None,
+        &[note(NoteType::Note)],
+        VerticalAlignment::Center,
+    );
+    assert!(same(with_note.get_my_children()[0].as_ref(), tile.as_ref()));
+
+    let style = StyleSignature::of(&[
+        SName::Root,
+        SName::Element,
+        SName::ActivityDiagram,
+        SName::Partition,
+        SName::Composite,
+    ])
+    .get_merged_style(&factory.skin_param().current_style_builder());
+    let group = factory.create_group(
+        tile.clone(),
+        &Display::create(["group"]),
+        None,
+        None,
+        USymbols::PARTITION,
+        &style,
+    );
+    assert!(same(group.get_my_children()[0].as_ref(), tile.as_ref()));
+    assert!(innermost.calls.borrow().is_empty());
+}

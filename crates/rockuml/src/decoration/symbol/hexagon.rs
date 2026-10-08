@@ -34,7 +34,7 @@ impl TextBlock for SmallHexagon {
 
 fn draw_rect(ug: &UGraphic, width: f64, height: f64) {
     let dx = width / 8.0;
-    ug.draw(&UShape::Path(vec![
+    ug.draw(&UShape::path(vec![
         USegment::MoveTo(0.0, height / 2.0),
         USegment::LineTo(dx, 0.0),
         USegment::LineTo(width - dx, 0.0),

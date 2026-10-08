@@ -18,7 +18,7 @@ mod sheet_block;
 mod table;
 mod tree;
 
-pub(crate) use commands::image_sources;
+pub(crate) use commands::{emoji_matching_size, image_sources};
 pub(crate) use display::Display;
 use fission::Neutron;
 pub(crate) use parser::{CreoleParser, manage_guillemet};

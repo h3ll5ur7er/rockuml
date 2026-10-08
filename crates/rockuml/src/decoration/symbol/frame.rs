@@ -4,14 +4,17 @@ use super::{BigContent, BigShape, Margin, SmallShape};
 use crate::color::HColor;
 use crate::klimt::fashion::Fashion;
 use crate::klimt::geom::XDimension2D;
-use crate::klimt::shape::{URectangle, USegment, UShape};
+use crate::klimt::shape::{UPath, URectangle, USegment, UShape};
 use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolFrame;
 
 fn draw_frame(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, round_corner: f64) {
     ug.draw(&UShape::Rectangle(
-        URectangle::new(width, height).rounded(round_corner),
+        URectangle::new(width, height)
+            .rounded(round_corner)
+            .ignore_for_compression_on_x()
+            .ignore_for_compression_on_y(),
     ));
     let (text_width, cornersize) = if dim_title.width == 0.0 {
         (width / 3.0, 7.0)
@@ -19,12 +22,14 @@ fn draw_frame(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, r
         (dim_title.width + 10.0, 10.0)
     };
     let text_height = get_ypos(dim_title);
-    ug.with_backcolor(HColor::NONE).draw(&UShape::Path(vec![
+    let tab = UPath::new(vec![
         USegment::MoveTo(text_width, 0.0),
         USegment::LineTo(text_width, text_height - cornersize),
         USegment::LineTo(text_width - cornersize, text_height),
         USegment::LineTo(0.0, text_height),
-    ]));
+    ]);
+    ug.with_backcolor(HColor::NONE)
+        .draw(&UShape::Path(tab.ignore_for_compression_on_x()));
 }
 
 /// The height of the title's corner.

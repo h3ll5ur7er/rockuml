@@ -1,0 +1,9 @@
+@startuml
+start
+while (Connected?) is (yes)
+  :Poll the server;
+backward:Wait one second;
+endwhile (no)
+:Reconnect;
+stop
+@enduml

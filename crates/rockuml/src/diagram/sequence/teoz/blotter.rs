@@ -80,7 +80,7 @@ impl Blotter {
             end,
         };
         if i == 0 {
-            return UShape::Path(vec![
+            return UShape::path(vec![
                 USegment::MoveTo(half, 0.0),
                 USegment::LineTo(width - half, 0.0),
                 arc((width, half)),
@@ -91,7 +91,7 @@ impl Blotter {
             ]);
         }
         if i == self.changes.len() - 1 {
-            return UShape::Path(vec![
+            return UShape::path(vec![
                 USegment::MoveTo(0.0, 0.0),
                 USegment::LineTo(width, 0.0),
                 USegment::LineTo(width, height - half),

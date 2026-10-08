@@ -1,11 +1,14 @@
 use std::cell::OnceCell;
+use std::fmt;
 use std::rc::Rc;
 use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::TextBlock;
+use super::compress::CompressionMode;
 use super::font::{FontConfiguration, UFont};
-use super::geom::{XDimension2D, XPoint2D};
+use super::geom::{MinMax, XDimension2D, XPoint2D};
 use super::image::PortableImage;
 use crate::color::XColor;
 
@@ -19,10 +22,8 @@ pub enum UShape {
         dx: f64,
         dy: f64,
     },
-    /// A closed shape through these points, relative to the current position.
-    Polygon(Vec<(f64, f64)>),
-    /// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
-    Path(Vec<USegment>),
+    Polygon(UPolygon),
+    Path(UPath),
     Image(UImage),
     ImageSvg(UImageSvg),
     /// A letter centred on the current position, as in a stereotype's spot.
@@ -31,10 +32,15 @@ pub enum UShape {
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
     HorizontalLine,
-    /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
-    SpecialText,
+    /// A text block that formats drawing it themselves never pass on. Compression keeps the column just past
+    /// the title, so it needs the title's width.
+    SpecialText {
+        title_width: f64,
+    },
     /// A note for whoever reads the document, which only SVG and the debug listing keep.
     Comment(String),
+    /// A swimlane title centred in its lane; only the compression layer of activity diagrams draws it.
+    CenteredText(CenteredText),
 }
 
 impl UShape {
@@ -52,9 +58,115 @@ impl UShape {
             Self::ImageSvg(_) => "UImageSvg",
             Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
-            Self::SpecialText => "SpecialText",
+            Self::SpecialText { .. } => "SpecialText",
             Self::Comment(_) => "UComment",
+            Self::CenteredText(_) => "CenteredText",
         }
+    }
+
+    /// A closed shape through `points`, relative to the current position.
+    pub(crate) fn polygon(points: Vec<(f64, f64)>) -> Self {
+        Self::Polygon(UPolygon::new(points))
+    }
+
+    /// A path through `segments`, relative to the current position.
+    pub(crate) fn path(segments: Vec<USegment>) -> Self {
+        Self::Path(UPath::new(segments))
+    }
+}
+
+/// A closed shape through points relative to the current position, with their bounding box.
+#[derive(Clone, Debug, PartialEq)]
+pub struct UPolygon {
+    points: Vec<(f64, f64)>,
+    min_max: MinMax,
+    /// The compression pass that skips the polygon: the arrowheads of arrows that take no room
+    /// (`compressionMode`).
+    compression_mode: Option<CompressionMode>,
+}
+
+impl UPolygon {
+    pub(crate) fn new(points: Vec<(f64, f64)>) -> Self {
+        let min_max = points
+            .iter()
+            .fold(MinMax::empty(), |min_max, &(x, y)| min_max.add_point(x, y));
+        Self {
+            points,
+            min_max,
+            compression_mode: None,
+        }
+    }
+
+    pub(crate) fn points(&self) -> &[(f64, f64)] {
+        &self.points
+    }
+
+    /// The bounding box of the points; empty, with minimums above maximums, when there are none.
+    pub(crate) fn min_max(&self) -> MinMax {
+        self.min_max
+    }
+
+    pub(crate) fn get_compression_mode(&self) -> Option<CompressionMode> {
+        self.compression_mode
+    }
+
+    /// PlantUML sets this on an arrow's own arrowhead, so it stays set for every later drawing of that
+    /// arrow.
+    pub(crate) fn set_compression_mode(&mut self, compression_mode: CompressionMode) {
+        self.compression_mode = Some(compression_mode);
+    }
+}
+
+/// A title drawn centred in `total_width` (PlantUML's `activitydiagram3.ftile.CenteredText`). Compressing
+/// across changes that width, so only the compression layer can centre it; output formats and measuring
+/// surfaces skip it.
+#[derive(Clone)]
+pub struct CenteredText {
+    pub(crate) text: Rc<dyn TextBlock>,
+    pub(crate) total_width: f64,
+}
+
+/// The same title, as PlantUML compares shapes: by identity.
+impl PartialEq for CenteredText {
+    fn eq(&self, other: &Self) -> bool {
+        Rc::ptr_eq(&self.text, &other.text) && self.total_width == other.total_width
+    }
+}
+
+impl fmt::Debug for CenteredText {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("CenteredText")
+            .field("total_width", &self.total_width)
+            .finish_non_exhaustive()
+    }
+}
+
+/// Segments relative to the current position. Closing a path adds nothing, as in PlantUML.
+#[derive(Clone, Debug, PartialEq)]
+pub struct UPath {
+    pub segments: Vec<USegment>,
+    /// The title tab of a frame takes no room when activity diagrams compress across.
+    ignore_for_compression_on_x: bool,
+}
+
+impl UPath {
+    pub(crate) fn new(segments: Vec<USegment>) -> Self {
+        Self {
+            segments,
+            ignore_for_compression_on_x: false,
+        }
+    }
+
+    #[must_use]
+    pub(crate) fn ignore_for_compression_on_x(self) -> Self {
+        Self {
+            ignore_for_compression_on_x: true,
+            ..self
+        }
+    }
+
+    pub(crate) fn is_ignore_for_compression_on(&self, mode: CompressionMode) -> bool {
+        mode == CompressionMode::OnX && self.ignore_for_compression_on_x
     }
 }
 
@@ -405,6 +517,9 @@ pub struct URectangle {
     pub height: f64,
     pub rx: f64,
     pub ry: f64,
+    /// Frames around content take no room of their own when activity diagrams compress across or down.
+    ignore_for_compression_on_x: bool,
+    ignore_for_compression_on_y: bool,
 }
 
 impl URectangle {
@@ -414,7 +529,44 @@ impl URectangle {
             height,
             rx: 0.0,
             ry: 0.0,
+            ignore_for_compression_on_x: false,
+            ignore_for_compression_on_y: false,
         }
+    }
+
+    #[must_use]
+    pub(crate) const fn ignore_for_compression_on_x(self) -> Self {
+        Self {
+            ignore_for_compression_on_x: true,
+            ..self
+        }
+    }
+
+    #[must_use]
+    pub(crate) const fn ignore_for_compression_on_y(self) -> Self {
+        Self {
+            ignore_for_compression_on_y: true,
+            ..self
+        }
+    }
+
+    pub(crate) fn is_ignore_for_compression_on(self, mode: CompressionMode) -> bool {
+        match mode {
+            CompressionMode::OnX => self.ignore_for_compression_on_x,
+            CompressionMode::OnY => self.ignore_for_compression_on_y,
+        }
+    }
+
+    /// The same rectangle `width` wide, as compressing across makes it (`withWidth`).
+    #[must_use]
+    pub(crate) const fn with_width(self, width: f64) -> Self {
+        Self { width, ..self }
+    }
+
+    /// The same rectangle `height` high, as compressing down makes it (`withHeight`).
+    #[must_use]
+    pub(crate) const fn with_height(self, height: f64) -> Self {
+        Self { height, ..self }
     }
 
     #[must_use]
@@ -432,7 +584,7 @@ impl URectangle {
             return UShape::Rectangle(self);
         }
         let (width, height, r) = (self.width, self.height, round_corner / 2.0);
-        UShape::Path(vec![
+        UShape::path(vec![
             USegment::MoveTo(r, 0.0),
             USegment::LineTo(width - r, 0.0),
             USegment::arc_to((width, r), r, true),

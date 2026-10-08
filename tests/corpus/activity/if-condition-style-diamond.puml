@@ -1,0 +1,13 @@
+@startuml
+skinparam conditionStyle diamond
+start
+if (Ready?) then (yes)
+  :Launch;
+else (no)
+  :Wait;
+endif
+if (Again?) then (yes)
+  :Repeat;
+endif
+stop
+@enduml

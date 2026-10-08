@@ -1,0 +1,10 @@
+@startuml
+start
+:Normal action;
+:Red background; <<#red>>
+:Blue line; <<##blue>>
+:Green text; <<###green>>
+:Gradient background; <<#lightblue/white>>
+:Style inline; <<#yellow;line:orange;line.bold>>
+stop
+@enduml

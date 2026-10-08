@@ -10,26 +10,25 @@ use resvg::usvg::fontdb::{self, Database};
 use resvg::usvg::{FontFamily, FontResolver, ImageHrefResolver, Options, Tree};
 
 use super::typeface::FontRegistry;
-use crate::color::HColor;
+use crate::color::XColor;
 
-/// `size` is the image's size in pixels; `metadata` the diagram source PlantUML embeds in its PNGs.
+/// `size` is the image's size in pixels, filled with `background` before the drawing; `metadata` the diagram source
+/// PlantUML embeds in its PNGs.
 pub(crate) fn rasterize(
     svg: &str,
     (width, height): (u32, u32),
-    background: &HColor,
+    background: XColor,
     fonts: &Arc<FontRegistry>,
     metadata: &str,
 ) -> Vec<u8> {
     let mut pixmap = Pixmap::new(width.max(1), height.max(1))
         .expect("images are at most PLANTUML_LIMIT_SIZE wide");
-    if let HColor::Simple(color) = background {
-        pixmap.fill(Color::from_rgba8(
-            color.red,
-            color.green,
-            color.blue,
-            color.alpha,
-        ));
-    }
+    pixmap.fill(Color::from_rgba8(
+        background.red,
+        background.green,
+        background.blue,
+        background.alpha,
+    ));
     let options = Options {
         fontdb: Arc::new(font_database(fonts)),
         font_resolver: font_resolver(fonts.clone()),
@@ -131,7 +130,7 @@ mod tests {
         let png = rasterize(
             svg,
             (20, 10),
-            &HColor::WHITE,
+            XColor::rgb(255, 255, 255),
             &Arc::new(FontRegistry::default()),
             "src",
         );
@@ -158,7 +157,7 @@ mod tests {
         let png = rasterize(
             r#"<svg xmlns="http://www.w3.org/2000/svg"/>"#,
             (1, 1),
-            &HColor::WHITE,
+            XColor::rgb(255, 255, 255),
             &Arc::new(FontRegistry::default()),
             "@startuml",
         );

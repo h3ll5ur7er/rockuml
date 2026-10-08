@@ -10,7 +10,7 @@ use base64::Engine;
 use base64::prelude::BASE64_STANDARD;
 
 use super::xml::XmlNode;
-use crate::color::{Gradient, HColor};
+use crate::color::{ColorMapper, Gradient, HColor};
 use crate::java;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::group::{UGroup, UGroupType};
@@ -32,6 +32,7 @@ pub(crate) struct SvgOption {
     pub root_attributes: Vec<(String, String)>,
     /// The window links open in.
     pub link_target: Option<String>,
+    pub color_mapper: ColorMapper,
 }
 
 /// A text run with everything that styles it.
@@ -107,7 +108,7 @@ impl SvgGraphics {
                 graphics.paint_background(&fill);
             }
             other => {
-                let color = other.to_svg();
+                let color = other.to_svg(graphics.option.color_mapper);
                 if !["#00000000", "#000000", "#FFFFFF"].contains(&color.as_str()) {
                     graphics.paint_background(&color);
                 }
@@ -398,6 +399,7 @@ impl SvgGraphics {
 
     /// A fill painting the gradient, defined on first use (PlantUML's `createSvgGradient`).
     pub(super) fn gradient_fill(&mut self, gradient: Gradient) -> String {
+        let gradient = gradient.mapped(self.option.color_mapper);
         if let Some((_, id)) = self.gradients.iter().find(|(known, _)| *known == gradient) {
             return format!("url(#{id})");
         }
@@ -420,7 +422,8 @@ impl SvgGraphics {
         }
         for (color, offset) in [(gradient.from, "0%"), (gradient.to, "100%")] {
             let mut stop = XmlNode::new("stop");
-            stop.set_attribute("stop-color", shorten_color(&HColor::Simple(color).to_rgb()));
+            let color = HColor::Simple(color).to_rgb(ColorMapper::Identity);
+            stop.set_attribute("stop-color", shorten_color(&color));
             stop.set_attribute("offset", offset);
             element.append_child(stop);
         }
@@ -788,6 +791,7 @@ mod tests {
                 preserve_aspect_ratio: "none".to_owned(),
                 root_attributes: Vec::new(),
                 link_target: None,
+                color_mapper: ColorMapper::Identity,
             },
         )
     }

@@ -126,7 +126,7 @@ impl ComponentRoseArrow {
             ArrowHead::Normal => {
                 let points = rotate_all(polygon_reverse(part, self.nice_arrow), angle);
                 ug.with_backcolor(self.parts.foreground.clone())
-                    .draw(&UShape::Polygon(points));
+                    .draw(&UShape::polygon(points));
             }
             ArrowHead::None => {}
         }
@@ -173,7 +173,7 @@ impl ComponentRoseArrow {
             ArrowHead::Normal => {
                 let points = rotate_all(polygon_normal(part, self.nice_arrow), angle);
                 ug.with_backcolor(self.parts.foreground.clone())
-                    .draw(&UShape::Polygon(points));
+                    .draw(&UShape::polygon(points));
             }
             ArrowHead::None => {}
         }

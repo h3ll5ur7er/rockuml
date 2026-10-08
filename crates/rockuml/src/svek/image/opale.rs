@@ -1,5 +1,6 @@
 //! A note's outline: a box with its top right corner folded, which may reach out to a point like a callout
-//! (PlantUML's `Opale`).
+//! (PlantUML's `Opale`). As a [`TextBlock`] it draws without callout, as PlantUML's does when built
+//! without link.
 
 use crate::color::HColor;
 use crate::direction::Direction;
@@ -103,29 +104,34 @@ impl<'a> Opale<'a> {
         self.text_block.calculate_dimension(string_bounder).height + 2.0 * MARGIN_Y
     }
 
-    pub(crate) fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        XDimension2D::new(
-            self.get_width(string_bounder),
-            self.get_height(string_bounder),
-        )
-    }
-
     /// Draws the note with its callout leaving the side `strategy` names near `pp1` and reaching `pp2`
     /// (`setOpale`, then `drawU`).
-    pub(crate) fn draw_u(&self, ug: &UGraphic, strategy: Direction, pp1: XPoint2D, pp2: XPoint2D) {
+    pub(crate) fn draw_opale(
+        &self,
+        ug: &UGraphic,
+        strategy: Direction,
+        pp1: XPoint2D,
+        pp2: XPoint2D,
+    ) {
         let string_bounder = ug.string_bounder();
-        let ug = ug
-            .with_backcolor(self.note_background_color.clone())
-            .with_color(self.border_color.clone())
-            .with_stroke(self.stroke);
         let polygon = match strategy {
             Direction::Left => self.get_polygon_left(string_bounder, pp1, pp2),
             Direction::Right => self.get_polygon_right(string_bounder, pp1, pp2),
             Direction::Up => self.get_polygon_up(string_bounder, pp1, pp2),
             Direction::Down => self.get_polygon_down(string_bounder, pp1, pp2),
         };
-        ug.draw(&UShape::Path(polygon));
-        ug.draw(&UShape::Path(get_corner(
+        self.draw_outline(ug, polygon);
+    }
+
+    /// The outline `polygon`, the fold and the text.
+    fn draw_outline(&self, ug: &UGraphic, polygon: Vec<USegment>) {
+        let string_bounder = ug.string_bounder();
+        let ug = ug
+            .with_backcolor(self.note_background_color.clone())
+            .with_color(self.border_color.clone())
+            .with_stroke(self.stroke);
+        ug.draw(&UShape::path(polygon));
+        ug.draw(&UShape::path(get_corner(
             self.get_width(string_bounder),
             self.round_corner,
         )));
@@ -244,5 +250,26 @@ impl<'a> Opale<'a> {
         ];
         self.top(width, &mut path);
         path
+    }
+}
+
+impl TextBlock for Opale<'_> {
+    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
+        XDimension2D::new(
+            self.get_width(string_bounder),
+            self.get_height(string_bounder),
+        )
+    }
+
+    fn draw_u(&self, ug: &UGraphic) {
+        let string_bounder = ug.string_bounder();
+        self.draw_outline(
+            ug,
+            get_polygon_normal(
+                self.get_width(string_bounder),
+                self.get_height(string_bounder),
+                self.round_corner,
+            ),
+        );
     }
 }

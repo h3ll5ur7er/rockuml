@@ -1,0 +1,11 @@
+@startuml
+start
+if (Ready?) then (yes)
+:Go;
+else (no)
+:Wait;
+elseif (Late?) then (yes)
+:Hurry;
+endif
+stop
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+start
+:Deploy to staging;
+note right #lightgreen: Automatic
+:Deploy to production;
+note left #FFAAAA
+  Needs a manual
+  approval
+end note
+stop
+@enduml

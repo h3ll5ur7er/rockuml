@@ -10,13 +10,14 @@ use regex::Regex;
 
 use crate::abel::LeafType;
 use crate::color::{ColorType, Colors, HColor, NoSuchColor};
+use crate::ftile::BoxStyle;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::sprite::{Sprite, SpriteContainer};
 use crate::klimt::ugraphic::UGraphic;
 use crate::pattern::{RegexTree, java_regex};
-use crate::style::parse_single_line;
+use crate::style::{PName, StyleBuilder, StyleSignature, parse_single_line};
 
 /// The pattern stereotypes are written with, as an optional part of a command.
 pub(crate) fn optional_pattern(name: &'static str) -> RegexTree {
@@ -188,6 +189,11 @@ impl Stereotype {
         self.label.eq_ignore_ascii_case("<<O-O>>")
     }
 
+    /// `<<icon>>`, which draws an activity as its emoji.
+    pub(crate) fn is_icon(&self) -> bool {
+        self.label.eq_ignore_ascii_case("<<icon>>")
+    }
+
     /// The labels as shown, in guillemets (`getLabels(Guillemet.GUILLEMET)`).
     pub(crate) fn labels(&self) -> Vec<String> {
         cut_labels(&self.label_double_comparator())
@@ -259,6 +265,7 @@ pub(crate) struct Stereotag {
 
 /// The stereotypes written after a state or an activity, like `<<choice>>` or `<<#pink>>`, some of which
 /// change what the element is or how it is coloured (PlantUML's `Stereogroup`).
+#[derive(Clone, Debug, Default)]
 pub(crate) struct Stereogroup {
     definition: Option<String>,
 }
@@ -279,6 +286,11 @@ impl Stereogroup {
         }
     }
 
+    /// No stereotype written at all.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.definition.is_none()
+    }
+
     pub(crate) fn build_stereotype(&self) -> Option<Stereotype> {
         self.definition.as_deref().map(Stereotype::new)
     }
@@ -295,6 +307,15 @@ impl Stereogroup {
             .collect()
     }
 
+    /// The shape the first label naming one gives an activity, like `<<input>>`.
+    pub(crate) fn get_box_style(&self) -> BoxStyle {
+        self.get_labels()
+            .iter()
+            .map(|label| BoxStyle::from_string(label))
+            .find(|style| *style != BoxStyle::Plain)
+            .unwrap_or(BoxStyle::Plain)
+    }
+
     /// The pseudo-state the first label makes of a state, like `<<choice>>` or `<<history*>>`.
     pub(crate) fn get_leaf_type(&self) -> Option<LeafType> {
         let labels = self.get_labels();
@@ -307,6 +328,21 @@ impl Stereogroup {
             "history*" => Some(LeafType::DeepHistory),
             _ => None,
         }
+    }
+
+    /// The `name` colour of an element styled `signature` with these stereotypes: the one a label sets,
+    /// or else the stereotypes' style's (`getHColor`). A colour PlantUML cannot read sets none.
+    pub(crate) fn get_hcolor(
+        &self,
+        signature: &StyleSignature,
+        name: PName,
+        style_builder: &StyleBuilder,
+    ) -> HColor {
+        let style =
+            signature.get_merged_style_with(style_builder, self.build_stereotype().as_ref());
+        self.get_inner_colors()
+            .unwrap_or_default()
+            .get_color_of(&style, name)
     }
 
     /// The colours labels like `<<#pink>>`, `<<##[dashed]blue>>` (line), `<<###red>>` (text) or

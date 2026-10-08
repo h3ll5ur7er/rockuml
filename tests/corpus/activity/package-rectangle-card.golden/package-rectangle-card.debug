@@ -1,0 +1,236 @@
+DPI: 96
+dimension: [ 349.1134 ; 384.0000 ]
+scaleFactor: 1.0000
+seed: 6248633135606410432
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 162.0567 ; 15.0000 ]
+  pt2: [ 182.0567 ; 35.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+POLYGON:
+  points:
+   - [ 25.0000 ; 45.0000 ]
+   - [ 180.6600 ; 45.0000 ]
+   - [ 187.6600 ; 65.0000 ]
+   - [ 319.1134 ; 65.0000 ]
+   - [ 319.1134 ; 131.0000 ]
+   - [ 25.0000 ; 131.0000 ]
+   - [ 25.0000 ; 45.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 25.0000 ; 65.0000 ]
+  pt2: [ 187.6600 ; 65.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Data layer
+  position: [ 29.0000 ; 57.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 35.0000 ; 79.0000 ]
+  pt2: [ 309.1134 ; 111.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Open the connection
+  position: [ 45.0000 ; 98.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 47.4028 ; 141.0000 ]
+  pt2: [ 296.7105 ; 227.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Business layer
+  position: [ 57.4028 ; 153.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 63.0082 ; 175.0000 ]
+  pt2: [ 281.1052 ; 207.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Validate the rules
+  position: [ 73.0082 ; 194.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 38.9499 ; 237.0000 ]
+  pt2: [ 305.1634 ; 323.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 38.9499 ; 255.0000 ]
+  pt2: [ 305.1634 ; 255.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+
+TEXT:
+  text: Presentation layer
+  position: [ 48.9499 ; 249.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 82.9858 ; 271.0000 ]
+  pt2: [ 261.1276 ; 303.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Render the view
+  position: [ 92.9858 ; 290.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 161.0567 ; 343.0000 ]
+  pt2: [ 183.0567 ; 365.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 166.0567 ; 348.0000 ]
+  pt2: [ 178.0567 ; 360.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 172.0567 ; 35.0000 ]
+  pt2: [ 172.0567 ; 79.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 168.0567 ; 69.0000 ]
+   - [ 172.0567 ; 79.0000 ]
+   - [ 176.0567 ; 69.0000 ]
+   - [ 172.0567 ; 73.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 172.0567 ; 111.0000 ]
+  pt2: [ 172.0567 ; 175.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 168.0567 ; 165.0000 ]
+   - [ 172.0567 ; 175.0000 ]
+   - [ 176.0567 ; 165.0000 ]
+   - [ 172.0567 ; 169.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 172.0567 ; 207.0000 ]
+  pt2: [ 172.0567 ; 271.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 168.0567 ; 261.0000 ]
+   - [ 172.0567 ; 271.0000 ]
+   - [ 176.0567 ; 261.0000 ]
+   - [ 172.0567 ; 265.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 172.0567 ; 303.0000 ]
+  pt2: [ 172.0567 ; 343.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 168.0567 ; 333.0000 ]
+   - [ 172.0567 ; 343.0000 ]
+   - [ 176.0567 ; 333.0000 ]
+   - [ 172.0567 ; 337.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

@@ -1,0 +1,11 @@
+@startuml
+start
+label retry
+:Connect to the server;
+if (Connected?) then (no)
+  :Wait a little;
+  goto retry
+endif
+:Transfer the data;
+stop
+@enduml

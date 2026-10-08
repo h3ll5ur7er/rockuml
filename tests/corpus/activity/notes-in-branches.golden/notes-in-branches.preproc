@@ -1,0 +1,17 @@
+@startuml
+start
+if (Ready?) then (yes)
+  :Launch;
+  note right: Point of no return
+else (no)
+  :Wait;
+  note left: Try again later
+endif
+fork
+  :Monitor;
+  note right: Dashboards
+fork again
+  :Alert;
+end fork
+stop
+@enduml

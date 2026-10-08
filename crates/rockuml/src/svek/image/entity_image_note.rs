@@ -131,8 +131,8 @@ impl EntityImageNote {
         let ug = ug
             .with_backcolor(self.note_background_color.clone())
             .with_color(self.border_color.clone());
-        ug.with_stroke(self.stroke).draw(&UShape::Path(polygon));
-        ug.draw(&UShape::Path(opale::get_corner(
+        ug.with_stroke(self.stroke).draw(&UShape::path(polygon));
+        ug.draw(&UShape::path(opale::get_corner(
             self.get_text_width(string_bounder),
             self.round_corner,
         )));
@@ -165,7 +165,7 @@ impl EntityImageNote {
             self.stroke,
             self.round_corner,
         );
-        opale.draw_u(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
+        opale.draw_opale(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
     }
 }
 

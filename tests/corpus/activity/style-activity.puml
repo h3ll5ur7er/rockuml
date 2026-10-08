@@ -1,0 +1,32 @@
+@startuml
+<style>
+activityDiagram {
+  activity {
+    BackgroundColor #E8F4FD
+    LineColor #1F6FB2
+    FontName Serif
+    RoundCorner 0
+  }
+  diamond {
+    BackgroundColor #FFF4D6
+    LineColor #B28A1F
+  }
+  arrow {
+    LineColor #555555
+    FontColor #555555
+  }
+  note {
+    BackgroundColor #FFFFFF
+  }
+}
+</style>
+start
+:Collect;
+if (Enough?) then (yes)
+  :Analyse;
+  note right: Styled note
+else (no)
+  :Collect more;
+endif
+stop
+@enduml

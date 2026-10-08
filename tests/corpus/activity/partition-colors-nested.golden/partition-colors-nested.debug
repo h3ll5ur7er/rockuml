@@ -1,0 +1,214 @@
+DPI: 96
+dimension: [ 279.0578 ; 324.0000 ]
+scaleFactor: 1.0000
+seed: 919055573933280328
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 128.0289 ; 15.0000 ]
+  pt2: [ 148.0289 ; 35.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 45.0000 ]
+  pt2: [ 260.0578 ; 263.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: ffadd8e6
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 172.7195 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 172.7195 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 162.7195 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+UGraphicDebug SpecialText <timestamp>
+RECTANGLE:
+  pt1: [ 31.6932 ; 79.0000 ]
+  pt2: [ 244.3646 ; 111.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Receive the order
+  position: [ 41.6932 ; 98.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 26.0000 ; 121.0000 ]
+  pt2: [ 250.0578 ; 199.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: ffffffe0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 126.8912 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 126.8912 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 116.8912 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+UGraphicDebug SpecialText <timestamp>
+RECTANGLE:
+  pt1: [ 36.0000 ; 155.0000 ]
+  pt2: [ 240.0578 ; 187.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Charge the card
+  position: [ 46.0000 ; 174.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 51.8051 ; 219.0000 ]
+  pt2: [ 224.2528 ; 251.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Ship the order
+  position: [ 61.8051 ; 238.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 127.0289 ; 283.0000 ]
+  pt2: [ 149.0289 ; 305.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 132.0289 ; 288.0000 ]
+  pt2: [ 144.0289 ; 300.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 138.0289 ; 111.0000 ]
+  pt2: [ 138.0289 ; 155.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.0289 ; 145.0000 ]
+   - [ 138.0289 ; 155.0000 ]
+   - [ 142.0289 ; 145.0000 ]
+   - [ 138.0289 ; 149.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 138.0289 ; 187.0000 ]
+  pt2: [ 138.0289 ; 219.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.0289 ; 209.0000 ]
+   - [ 138.0289 ; 219.0000 ]
+   - [ 142.0289 ; 209.0000 ]
+   - [ 138.0289 ; 213.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 138.0289 ; 35.0000 ]
+  pt2: [ 138.0289 ; 79.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.0289 ; 69.0000 ]
+   - [ 138.0289 ; 79.0000 ]
+   - [ 142.0289 ; 69.0000 ]
+   - [ 138.0289 ; 73.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 138.0289 ; 251.0000 ]
+  pt2: [ 138.0289 ; 283.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.0289 ; 273.0000 ]
+   - [ 138.0289 ; 283.0000 ]
+   - [ 142.0289 ; 273.0000 ]
+   - [ 138.0289 ; 277.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

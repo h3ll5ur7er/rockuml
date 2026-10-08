@@ -1,0 +1,15 @@
+@startuml
+|Frontend|
+start
+:Submit the form;
+|Backend|
+fork
+  :Save the record;
+fork again
+  |Mailer|
+  :Send the confirmation;
+end fork
+|Frontend|
+:Show the success page;
+stop
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+skinparam conditionEndStyle hline
+skinparam swimlaneWrapTitleWidth auto
+|First lane with a long title|
+start
+if (Left?) then (yes)
+  :Go left;
+else (no)
+  |Second|
+  :Go right;
+endif
+|Third|
+if (One?) then (1)
+  |First lane with a long title|
+  :One;
+elseif (Two?) then (2)
+  |Second|
+  :Two;
+else (3)
+  |Third|
+  :Three;
+endif
+stop
+@enduml

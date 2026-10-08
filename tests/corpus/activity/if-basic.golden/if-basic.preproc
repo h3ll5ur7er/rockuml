@@ -1,0 +1,10 @@
+@startuml
+start
+:Read the temperature;
+if (Too hot?) then (yes)
+  :Turn on the fan;
+else (no)
+  :Turn off the fan;
+endif
+stop
+@enduml

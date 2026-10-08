@@ -1,0 +1,10 @@
+@startuml
+start
+repeat
+  :Compile the project;
+  :Run the tests;
+backward:Fix the failing tests;
+repeat while (Tests green?) is (no)
+:Merge the branch;
+stop
+@enduml

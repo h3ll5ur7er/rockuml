@@ -21,6 +21,12 @@ impl XDimension2D {
         Self::new(self.width.max(min_width), self.height.max(min_height))
     }
 
+    /// The space for `self` with `right` beside it (`mergeLR`).
+    #[must_use]
+    pub fn merge_lr(self, right: Self) -> Self {
+        Self::new(self.width + right.width, self.height.max(right.height))
+    }
+
     /// The space for `self` with `below` stacked under it.
     #[must_use]
     pub fn merge_top_bottom(self, below: Self) -> Self {
@@ -159,6 +165,16 @@ impl MinMax {
     pub(crate) fn dimension(self) -> XDimension2D {
         XDimension2D::new(self.max_x - self.min_x, self.max_y - self.min_y)
     }
+
+    /// The box grown `dx` to the right and `dy` down.
+    #[must_use]
+    pub(crate) fn enlarge(self, dx: f64, dy: f64) -> Self {
+        Self {
+            max_x: self.max_x + dx,
+            max_y: self.max_y + dy,
+            ..self
+        }
+    }
 }
 
 /// Space around something, in PlantUML's clockwise order.
@@ -236,6 +252,21 @@ impl XPoint2D {
 impl UTranslate {
     pub(crate) fn point(p: XPoint2D) -> Self {
         Self::new(p.x, p.y)
+    }
+
+    #[must_use]
+    pub(crate) fn reverse(self) -> Self {
+        Self::new(-self.dx, -self.dy)
+    }
+
+    #[must_use]
+    pub(crate) fn multiply_by(self, v: f64) -> Self {
+        Self::new(self.dx * v, self.dy * v)
+    }
+
+    /// PlantUML's test: the same along either axis (`isAlmostSame`).
+    pub(crate) fn is_almost_same(self, other: Self) -> bool {
+        self.dx == other.dx || self.dy == other.dy
     }
 
     /// The vector turned by `angle` radians.

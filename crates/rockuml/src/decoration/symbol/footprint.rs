@@ -9,7 +9,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::clip::path_bounds;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{UTranslate, XPoint2D};
-use crate::klimt::shape::{UEllipse, UShape};
+use crate::klimt::shape::{UEllipse, UPath, UShape};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend, UParam};
 
 /// The ellipse `alpha` times as high as wide around the corners of what `drawable` draws.
@@ -63,7 +63,7 @@ impl UGraphicBackend for Footprint {
                 self.add_point(x + image.width(), y);
                 self.add_point(x + image.width(), y + image.height());
             }
-            UShape::Path(segments) => {
+            UShape::Path(UPath { segments, .. }) => {
                 if let Some((min_x, min_y, max_x, max_y)) = path_bounds(segments) {
                     self.add_point(x + min_x, y + min_y);
                     self.add_point(x + max_x, y + max_y);
@@ -87,7 +87,8 @@ impl UGraphicBackend for Footprint {
             | UShape::Polygon(_)
             | UShape::ImageSvg(_)
             | UShape::CenteredCharacter(_)
-            | UShape::SpecialText
+            | UShape::SpecialText { .. }
+            | UShape::CenteredText(_)
             | UShape::Comment(_) => {}
         }
     }

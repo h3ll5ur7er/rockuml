@@ -1,0 +1,12 @@
+@startuml
+start
+if (first\n----\nsecond) then (yes)
+  :a;
+endif
+if (one\n====\ntwo) then (yes)
+  :b;
+else (no)
+  :c;
+endif
+stop
+@enduml

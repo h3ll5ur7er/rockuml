@@ -1,0 +1,17 @@
+@startuml
+start
+if (Remote?) then (yes)
+  :Upload;
+  (U)
+  detach
+else (no)
+  :Copy locally;
+  (C)
+  detach
+endif
+(U)
+:Verify the checksum;
+(C)
+:Update the index;
+stop
+@enduml

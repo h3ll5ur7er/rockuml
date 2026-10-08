@@ -1,0 +1,12 @@
+@startuml
+start
+group Initialization {
+  :Read the configuration;
+  :Init the internal variables;
+}
+group Running {
+  :Wait for user interaction;
+  :Print the information;
+}
+stop
+@enduml

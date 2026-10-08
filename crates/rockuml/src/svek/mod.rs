@@ -10,6 +10,7 @@ mod cluster_header;
 mod cluster_manager;
 mod color_sequence;
 mod concurrent_states;
+mod condition_style;
 mod entity_image;
 mod frontier_calculator;
 mod general_image_builder;
@@ -18,6 +19,7 @@ mod rounded_container;
 mod rounded_north;
 mod rounded_south;
 mod svek_node;
+mod ugraphic_for_snake;
 
 pub(crate) use bibliotekon::Bibliotekon;
 pub(crate) use cluster::{Cluster, ClusterId};
@@ -26,10 +28,12 @@ pub(crate) use cluster_header::ClusterHeader;
 pub(crate) use cluster_manager::ClusterManager;
 use color_sequence::ColorSequence;
 pub(crate) use concurrent_states::ConcurrentStates;
+pub(crate) use condition_style::{ConditionEndStyle, ConditionStyle};
 pub(crate) use entity_image::{AbstractEntityImage, IEntityImage, LayoutContext};
 pub(crate) use general_image_builder::create_entity_image_block;
 pub(crate) use inner_state_autonom::InnerStateAutonom;
 pub(crate) use svek_node::SvekNode;
+pub(crate) use ugraphic_for_snake::UGraphicForSnake;
 
 /// Room around the text of entity images (`IEntityImage.MARGIN`).
 pub(crate) const MARGIN: i32 = 5;

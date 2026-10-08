@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+start
+:Read;
+if (Valid?) then (yes)
+  :Write;
+else (no)
+  :Discard;
+endif
+note right: Monochrome note
+stop
+@enduml

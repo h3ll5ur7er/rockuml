@@ -1,0 +1,11 @@
+@startuml
+start
+:Collect the metrics;
+floating note left: This is a floating note
+:Aggregate the metrics;
+floating note right
+  Aggregation runs
+  every five minutes
+end note
+stop
+@enduml

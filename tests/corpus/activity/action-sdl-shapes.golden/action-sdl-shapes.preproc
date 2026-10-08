@@ -1,0 +1,11 @@
+@startuml
+start
+:Read the sensor; <<input>>
+:Send the alarm; <<output>>
+:Compute the average; <<procedure>>
+:Load the profile; <<load>>
+:Save the profile; <<save>>
+:Keep polling; <<continuous>>
+:Schedule the task; <<task>>
+stop
+@enduml

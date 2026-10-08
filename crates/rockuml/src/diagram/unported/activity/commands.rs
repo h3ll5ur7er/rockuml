@@ -102,7 +102,7 @@ pub(super) fn link_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command
                 ],
             )),
             stereo::optional_pattern("STEREOTYPE"),
-            RegexTree::named(1, "BACKCOLOR", r"(#\w+[-\\|/]?\w+)?"),
+            color::exp2(),
             RegexTree::spaces_zero_or_more(),
             Url::optional_pattern(),
             RegexTree::named(1, "ARROW_BODY1", r"([-.]+)"),
@@ -140,7 +140,7 @@ pub(super) fn link_activity<D: NotPortedCommands + 'static>() -> Box<dyn Command
                 RegexTree::named(1, "PARTITION2", r"([%g][^%g]+[%g]|\S+)"),
             ])),
             RegexTree::spaces_zero_or_more(),
-            RegexTree::named(1, "BACKCOLOR2", r"(#\w+[-\\|/]?\w+)?"),
+            color::exp3(),
             RegexTree::end(),
         ]),
     )

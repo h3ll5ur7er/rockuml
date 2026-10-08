@@ -1,0 +1,172 @@
+DPI: 96
+dimension: [ 300.1358 ; 271.0000 ]
+scaleFactor: 1.0000
+seed: -426387770091973638
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 144.4875 ; 10.0000 ]
+  pt2: [ 290.1358 ; 21.0000 ]
+
+TEXT:
+  text: Internal draft
+  position: [ 144.4875 ; 17.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 10.0000 ; 21.0000 ]
+  pt2: [ 290.1358 ; 70.0000 ]
+
+TEXT:
+  text: Release checklist
+  position: [ 20.0000 ; 41.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: version 2
+  position: [ 77.2203 ; 55.8889 ]
+  orientation: 0
+  font: SansSerif.bolditalic/14 [ITALIC, BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 138.5679 ; 75.0000 ]
+  pt2: [ 158.5679 ; 95.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 32.1596 ; 115.0000 ]
+  pt2: [ 264.9762 ; 147.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Tag the release
+  position: [ 42.1596 ; 134.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 43.7855 ; 167.0000 ]
+  pt2: [ 253.3503 ; 199.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Write the notes
+  position: [ 53.7855 ; 186.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 137.5679 ; 219.0000 ]
+  pt2: [ 159.5679 ; 241.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 142.5679 ; 224.0000 ]
+  pt2: [ 154.5679 ; 236.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 148.5679 ; 95.0000 ]
+  pt2: [ 148.5679 ; 115.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 144.5679 ; 105.0000 ]
+   - [ 148.5679 ; 115.0000 ]
+   - [ 152.5679 ; 105.0000 ]
+   - [ 148.5679 ; 109.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 148.5679 ; 147.0000 ]
+  pt2: [ 148.5679 ; 167.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 144.5679 ; 157.0000 ]
+   - [ 148.5679 ; 167.0000 ]
+   - [ 152.5679 ; 157.0000 ]
+   - [ 148.5679 ; 161.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 148.5679 ; 199.0000 ]
+  pt2: [ 148.5679 ; 219.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 144.5679 ; 209.0000 ]
+   - [ 148.5679 ; 219.0000 ]
+   - [ 152.5679 ; 209.0000 ]
+   - [ 148.5679 ; 213.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+EMPTY:
+  pt1: [ 100.0141 ; 250.0000 ]
+  pt2: [ 200.1217 ; 261.0000 ]
+
+TEXT:
+  text: Page 1 of 1
+  position: [ 100.0141 ; 257.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

@@ -47,7 +47,7 @@ impl TextBlock for Boundary {
         ];
         ug.translated(MARGIN, MARGIN)
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::Path(bar));
+            .draw(&UShape::path(bar));
         ug.translated(MARGIN + Self::LEFT, MARGIN).draw(&circle());
     }
 }
@@ -84,7 +84,7 @@ impl TextBlock for Control {
         ug.with_stroke(UStroke::SIMPLE)
             .with_backcolor(self.fashion.fore_color.clone())
             .translated(MARGIN + RADIUS - X_CONTACT, MARGIN)
-            .draw(&UShape::Polygon(arrowhead));
+            .draw(&UShape::polygon(arrowhead));
     }
 }
 

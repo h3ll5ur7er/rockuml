@@ -1,5 +1,6 @@
 //! Diagrams: recognising a block's diagram type, building the diagram, and exporting it.
 
+pub(crate) mod activity3;
 mod builder;
 mod chen;
 mod chrome;
@@ -26,7 +27,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::color::HColor;
+use crate::color::{ColorMapper, HColor};
 use crate::host::{Host, IsolatedHost};
 use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
@@ -94,6 +95,8 @@ pub struct ExportSettings {
     pub(super) dpi: u32,
     pub(super) svg_link_target: Option<String>,
     pub(super) preserve_aspect_ratio: String,
+    /// How SVG and PNG paint colours.
+    pub(super) color_mapper: ColorMapper,
 }
 
 impl ExportSettings {
@@ -108,6 +111,7 @@ impl ExportSettings {
             dpi: DEFAULT_DPI,
             svg_link_target: None,
             preserve_aspect_ratio: "none".to_owned(),
+            color_mapper: ColorMapper::Identity,
         }
     }
 }
@@ -216,6 +220,7 @@ pub fn export(
                 .into_iter()
                 .collect(),
             link_target: settings.svg_link_target.clone(),
+            color_mapper: settings.color_mapper,
         };
         let output = Rc::new(RefCell::new(UGraphicSvg::new(
             settings.seed,
@@ -249,13 +254,18 @@ pub fn export(
         ImageFormat::Svg | ImageFormat::DeterministicSvg => svg(false).into_bytes(),
         ImageFormat::Png => {
             let limit = image_size_limit(host);
+            // A gradient is painted by the drawing itself.
+            let png_back_color = match backcolor {
+                HColor::Simple(_) => backcolor.to_color(settings.color_mapper),
+                _ => HColor::NONE.as_xcolor(),
+            };
             png::rasterize(
                 &svg(true),
                 (
                     ((dimension.width * scale_factor) as u32).min(limit),
                     ((dimension.height * scale_factor) as u32).min(limit),
                 ),
-                &backcolor,
+                png_back_color,
                 fonts,
                 &diagram.source().metadata(),
             )

@@ -55,7 +55,7 @@ impl ExtremityExtendsLike {
             let p = Point::new(x, y).rotate(angle);
             (p.x + porig.x, p.y + porig.y)
         };
-        let trig = UShape::Polygon(vec![
+        let trig = UShape::polygon(vec![
             (porig.x, porig.y),
             trig_point(XLEN, -HALF_WIDTH),
             trig_point(XLEN, HALF_WIDTH),

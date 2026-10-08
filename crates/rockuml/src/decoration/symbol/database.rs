@@ -19,7 +19,7 @@ fn cubic(ctrl1: (f64, f64), ctrl2: (f64, f64), end: (f64, f64)) -> USegment {
 
 /// The empty square past the bottom right corner makes room for the cylinder's curves.
 fn draw_database(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::Path(vec![
+    ug.draw(&UShape::path(vec![
         USegment::MoveTo(0.0, 10.0),
         cubic((0.0, 0.0), (width / 2.0, 0.0), (width / 2.0, 0.0)),
         cubic((width / 2.0, 0.0), (width, 0.0), (width, 10.0)),
@@ -40,7 +40,7 @@ fn draw_database(ug: &UGraphic, width: f64, height: f64) {
 
 /// The front of the top rim.
 fn get_closing_path(width: f64) -> UShape {
-    UShape::Path(vec![
+    UShape::path(vec![
         USegment::MoveTo(0.0, 10.0),
         cubic((0.0, 20.0), (width / 2.0, 20.0), (width / 2.0, 20.0)),
         cubic((width / 2.0, 20.0), (width, 20.0), (width, 10.0)),

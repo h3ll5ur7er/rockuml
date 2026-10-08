@@ -1,0 +1,15 @@
+@startuml
+skinparam padding 4
+start
+:Validate;
+note right: one line
+:Transform;
+note left
+  two
+  lines
+end note
+note right: both sides
+:Store;
+floating note left: floating
+stop
+@enduml

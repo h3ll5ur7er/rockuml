@@ -1,0 +1,16 @@
+@startuml
+start
+if (Request valid?) then (yes)
+  switch (HTTP method)
+  case (GET)
+    :Read the resource;
+  case (POST)
+    :Create the resource;
+  case (DELETE)
+    :Delete the resource;
+  endswitch
+else (no)
+  :Return 400;
+endif
+stop
+@enduml

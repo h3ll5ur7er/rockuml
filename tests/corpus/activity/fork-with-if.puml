@@ -1,0 +1,13 @@
+@startuml
+start
+fork
+  if (Cache warm?) then (yes)
+    :Serve from cache;
+  else (no)
+    :Query the database;
+  endif
+fork again
+  :Record the metrics;
+end fork
+stop
+@enduml

@@ -324,7 +324,7 @@ impl Element for RadioCheckbox {
             ug.translated(2.0, (height - Self::BOX) / 2.0).draw(&square);
             if self.checked {
                 let tick = vec![(0.0, 0.0), (3.0, 3.0), (10.0, -6.0), (3.0, 1.0)];
-                mark.translated(3.0, 6.0).draw(&UShape::Polygon(tick));
+                mark.translated(3.0, 6.0).draw(&UShape::polygon(tick));
             }
         }
     }
@@ -387,7 +387,7 @@ impl Element for Droplist {
             ];
             ug.with_backcolor(ug.param().color.clone())
                 .translated(x_line + 3.0, 6.0)
-                .draw(&UShape::Polygon(arrow));
+                .draw(&UShape::polygon(arrow));
         }
         if let Some(open) = &self.open {
             let options = open.calculate_dimension(string_bounder);
@@ -765,7 +765,7 @@ impl PyramidScrolled {
 /// A closed path through three corners, drawn as PlantUML draws it.
 fn triangle(corners: [(f64, f64); 3]) -> UShape {
     let [(x, y), second, third] = corners;
-    UShape::Path(vec![
+    UShape::path(vec![
         USegment::MoveTo(x, y),
         USegment::LineTo(second.0, second.1),
         USegment::LineTo(third.0, third.1),

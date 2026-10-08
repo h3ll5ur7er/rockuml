@@ -1,0 +1,8 @@
+@startuml
+start
+- Fetch the sources
+- Build the project
+* Run the tests
+* Publish the artifacts
+stop
+@enduml

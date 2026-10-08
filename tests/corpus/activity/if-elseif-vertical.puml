@@ -1,0 +1,15 @@
+@startuml
+!pragma useVerticalIf on
+start
+if (condition A) then (yes)
+  :Text 1;
+(no) elseif (condition B) then (yes)
+  :Text 2;
+  stop
+elseif (condition C) then (yes)
+  :Text 3;
+else (nothing)
+  :Text else;
+endif
+stop
+@enduml

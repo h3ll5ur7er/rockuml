@@ -1,0 +1,9 @@
+@startuml
+start
+if (Logged in?) then
+  :Show the dashboard;
+else
+  :Show the login form;
+endif
+stop
+@enduml

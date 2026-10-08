@@ -1,0 +1,9 @@
+@startuml
+start
+:Step 1;
+-[hidden]->
+:Step 2;
+-[dashed]->
+:Step 3;
+stop
+@enduml

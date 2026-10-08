@@ -63,7 +63,7 @@ impl ComponentRoseGroupingHeader {
     fn corner(&self, width: f64, height: f64) -> UShape {
         let round = self.round_corner;
         if round == 0.0 {
-            return UShape::Path(vec![
+            return UShape::path(vec![
                 USegment::MoveTo(0.0, 0.0),
                 USegment::LineTo(width, 0.0),
                 USegment::LineTo(width, height - CORNER_SIZE),
@@ -72,7 +72,7 @@ impl ComponentRoseGroupingHeader {
                 USegment::LineTo(0.0, 0.0),
             ]);
         }
-        UShape::Path(vec![
+        UShape::path(vec![
             USegment::MoveTo(round / 2.0, 0.0),
             USegment::LineTo(width, 0.0),
             USegment::LineTo(width, height - CORNER_SIZE),
