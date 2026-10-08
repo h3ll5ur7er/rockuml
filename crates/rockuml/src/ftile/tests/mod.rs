@@ -103,7 +103,7 @@ fn tiles_are_dispatched_through_the_layers_and_arrows_drawn_last() {
         5.0,
         vec![Tile::create(5.0, vec![]), Tile::create(5.0, vec![])],
     );
-    TextBlockInterceptorUDrawable::new(tree, HColor::RED, false)
+    TextBlockInterceptorUDrawable::new(tree, HColor::RED)
         .draw_u(&UGraphicForSnake::create(surface.translated(1.0, 1.0)));
     assert_eq!(
         recorder.borrow().lines,
@@ -114,6 +114,26 @@ fn tiles_are_dispatched_through_the_layers_and_arrows_drawn_last() {
             "line 6,6 0,15",
             "line 6,6 0,35",
         ]
+    );
+}
+
+#[test]
+fn a_goto_draws_a_line_to_the_label_drawn_before_it() {
+    let (surface, recorder) = recording();
+    let skin_param = Rc::new(SkinParam::default());
+    let tree = Tile::create(
+        5.0,
+        vec![
+            Rc::new(FtileGoto::new(skin_param.clone(), None, "up")),
+            Rc::new(FtileLabel::new(skin_param.clone(), None, "up")),
+            Rc::new(FtileGoto::new(skin_param, None, "up")),
+        ],
+    );
+    TextBlockInterceptorUDrawable::new(tree, HColor::RED)
+        .draw_u(&UGraphicForSnake::create(surface.translated(1.0, 1.0)));
+    assert_eq!(
+        recorder.borrow().lines[..3],
+        ["rect 1,1 10x5", "line 1,61 0,0", "line 1,61 0,-20"]
     );
 }
 

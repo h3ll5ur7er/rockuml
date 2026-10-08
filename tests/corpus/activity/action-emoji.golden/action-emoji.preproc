@@ -1,0 +1,8 @@
+@startuml
+start
+:<:sunny:> Check the weather; <<icon>>
+:<:coffee:>; <<icon>>
+:<:rocket:*3> Launch; <<icon>>
+:No emoji at all; <<icon>>
+stop
+@enduml

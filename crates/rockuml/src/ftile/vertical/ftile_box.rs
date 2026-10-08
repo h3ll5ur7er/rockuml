@@ -14,7 +14,7 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
 use crate::stereo::Stereotype;
-use crate::style::{PName, SName, Style, StyleBuilder, StyleSignature, ValueReading};
+use crate::style::{PName, SName, StyleBuilder, StyleSignature, ValueReading};
 
 pub(crate) struct FtileBox {
     base: AbstractFtile,

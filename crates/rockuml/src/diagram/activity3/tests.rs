@@ -576,7 +576,7 @@ fn the_commands_build_the_instruction_trees_plantuml_builds() {
             (header, format!("{}\n", body.trim_end_matches('\n')))
         })
         .collect();
-    assert_eq!(cases.len(), 78);
+    assert_eq!(cases.len(), 79);
     let mismatches: Vec<&str> = cases
         .iter()
         .filter(|(case, expected)| {

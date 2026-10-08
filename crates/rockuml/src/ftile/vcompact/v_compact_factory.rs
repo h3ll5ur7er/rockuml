@@ -10,8 +10,8 @@ use crate::diagram::activity3::{
     BranchFtile, ForkStyle, InstructionId, Instructions, LinkRendering, PositionedNote, SwimlaneId,
 };
 use crate::ftile::vertical::{
-    FtileBox, FtileCircleEndCross, FtileCircleSpot, FtileCircleStart, FtileCircleStop,
-    FtileDecorateIn, FtileDecorateOut,
+    FtileBox, FtileBoxEmoji, FtileCircleEndCross, FtileCircleSpot, FtileCircleStart,
+    FtileCircleStop, FtileDecorateIn, FtileDecorateOut,
 };
 use crate::ftile::{BoxStyle, Ftile, FtileAssemblySimple, FtileEmpty, FtileFactory};
 use crate::klimt::VerticalAlignment;
@@ -117,6 +117,15 @@ impl FtileFactory for VCompactFactory {
         stereotype: Option<&Stereotype>,
         style_builder: &Rc<StyleBuilder>,
     ) -> Rc<dyn Ftile> {
+        if let Some(stereotype) = stereotype.filter(|stereotype| stereotype.is_icon()) {
+            return Rc::new(FtileBoxEmoji::create(
+                self.skin_param.clone(),
+                label,
+                swimlane,
+                stereotype,
+                style_builder,
+            ));
+        }
         Rc::new(FtileBox::create(
             self.skin_param.clone(),
             colors,
