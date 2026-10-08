@@ -1,4 +1,5 @@
 mod arrows;
+mod parallel;
 
 use std::cell::RefCell;
 use std::rc::Rc;

@@ -378,7 +378,6 @@ impl Instructions {
             let what = match instruction {
                 Instruction::If(_) => "activity if (track C1)",
                 Instruction::Switch(_) => "activity switch (track C1)",
-                Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
                 _ => return None,
             };
             Some(NotYetPorted(what))

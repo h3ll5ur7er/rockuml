@@ -3,6 +3,7 @@
 
 use std::rc::Rc;
 
+use super::FtileForkInner;
 use crate::color::{Colors, HColor};
 use crate::creole::Display;
 use crate::decoration::symbol::USymbol;
@@ -44,12 +45,6 @@ impl VCompactFactory {
             name,
         ])
         .get_merged_style(&self.skin_param.current_style_builder())
-    }
-
-    /// Stands in for PlantUML's `FtileForkInner` (the branches side by side, unjoined), which only shows when
-    /// a delegator does not lay compound instructions out; the diagram refuses those until theirs is ported.
-    fn fork_inner_placeholder(&self) -> Rc<dyn Ftile> {
-        Rc::new(FtileEmpty::new(self.skin_param.clone(), None))
     }
 }
 
@@ -198,8 +193,8 @@ impl FtileFactory for VCompactFactory {
         &self,
         _instructions: &Instructions,
         _swimlane: Option<SwimlaneId>,
-        _thens: &[BranchFtile<'_>],
-        _else_branch: &BranchFtile<'_>,
+        thens: &[BranchFtile<'_>],
+        else_branch: &BranchFtile<'_>,
         _out_color: &LinkRendering,
         _top_inlink_rendering: &LinkRendering,
         _url: Option<&Url>,
@@ -207,33 +202,39 @@ impl FtileFactory for VCompactFactory {
         _stereotype: Option<&Stereotype>,
         _current_style_builder: &Rc<StyleBuilder>,
     ) -> Rc<dyn Ftile> {
-        self.fork_inner_placeholder()
+        let ftiles = thens
+            .iter()
+            .chain([else_branch])
+            .map(|branch| branch.ftile.clone())
+            .collect();
+        Rc::new(FtileForkInner::new(ftiles))
     }
 
     fn create_switch(
         &self,
         _instructions: &Instructions,
         _swimlane: Option<SwimlaneId>,
-        _branches: &[BranchFtile<'_>],
+        branches: &[BranchFtile<'_>],
         _after_endwhile: &LinkRendering,
         _top_inlink_rendering: &LinkRendering,
         _label_test: Option<&Display>,
         _colors: &Colors,
         _end_colors: Option<&Colors>,
     ) -> Rc<dyn Ftile> {
-        self.fork_inner_placeholder()
+        let ftiles = branches.iter().map(|branch| branch.ftile.clone()).collect();
+        Rc::new(FtileForkInner::new(ftiles))
     }
 
     fn create_parallel(
         &self,
-        _all: Vec<Rc<dyn Ftile>>,
+        all: Vec<Rc<dyn Ftile>>,
         _style: ForkStyle,
         _label: Option<&str>,
         _swimlane_in: Option<SwimlaneId>,
         _swimlane_out: Option<SwimlaneId>,
         _colors: &Colors,
     ) -> Rc<dyn Ftile> {
-        self.fork_inner_placeholder()
+        Rc::new(FtileForkInner::new(all))
     }
 
     fn create_group(

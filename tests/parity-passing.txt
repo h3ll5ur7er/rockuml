@@ -9,6 +9,7 @@ debug activity/arrow-labels.puml
 debug activity/colors-stereogroup.puml
 debug activity/connectors.puml
 debug activity/creole-actions.puml
+debug activity/detach.puml
 debug activity/error-close-without-group.puml
 debug activity/error-else-without-if.puml
 debug activity/error-elseif-after-else.puml
@@ -16,6 +17,10 @@ debug activity/error-end-fork-without-fork.puml
 debug activity/error-kill-after-start.puml
 debug activity/error-swimlane-after-activity.puml
 debug activity/error-switch-without-case.puml
+debug activity/fork-basic.puml
+debug activity/fork-end-merge.puml
+debug activity/fork-join-labels.puml
+debug activity/fork-nested.puml
 debug activity/group.puml
 debug activity/header-footer.puml
 debug activity/multiline-actions.puml
@@ -31,6 +36,9 @@ debug activity/repeat-arrow-label.puml
 debug activity/repeat-backward.puml
 debug activity/repeat-basic.puml
 debug activity/repeat-labels.puml
+debug activity/split-basic.puml
+debug activity/split-ends.puml
+debug activity/split-starts.puml
 debug activity/start-end.puml
 debug activity/start-stop.puml
 debug activity/style-stereotypes.puml
@@ -436,6 +444,7 @@ dsvg activity/arrow-labels.puml
 dsvg activity/colors-stereogroup.puml
 dsvg activity/connectors.puml
 dsvg activity/creole-actions.puml
+dsvg activity/detach.puml
 dsvg activity/error-close-without-group.puml
 dsvg activity/error-else-without-if.puml
 dsvg activity/error-elseif-after-else.puml
@@ -443,6 +452,10 @@ dsvg activity/error-end-fork-without-fork.puml
 dsvg activity/error-kill-after-start.puml
 dsvg activity/error-swimlane-after-activity.puml
 dsvg activity/error-switch-without-case.puml
+dsvg activity/fork-basic.puml
+dsvg activity/fork-end-merge.puml
+dsvg activity/fork-join-labels.puml
+dsvg activity/fork-nested.puml
 dsvg activity/group.puml
 dsvg activity/header-footer.puml
 dsvg activity/multiline-actions.puml
@@ -458,6 +471,9 @@ dsvg activity/repeat-arrow-label.puml
 dsvg activity/repeat-backward.puml
 dsvg activity/repeat-basic.puml
 dsvg activity/repeat-labels.puml
+dsvg activity/split-basic.puml
+dsvg activity/split-ends.puml
+dsvg activity/split-starts.puml
 dsvg activity/start-end.puml
 dsvg activity/start-stop.puml
 dsvg activity/style-stereotypes.puml
@@ -860,6 +876,7 @@ png activity/arrow-labels.puml
 png activity/colors-stereogroup.puml
 png activity/connectors.puml
 png activity/creole-actions.puml
+png activity/detach.puml
 png activity/error-close-without-group.puml
 png activity/error-else-without-if.puml
 png activity/error-elseif-after-else.puml
@@ -867,6 +884,10 @@ png activity/error-end-fork-without-fork.puml
 png activity/error-kill-after-start.puml
 png activity/error-swimlane-after-activity.puml
 png activity/error-switch-without-case.puml
+png activity/fork-basic.puml
+png activity/fork-end-merge.puml
+png activity/fork-join-labels.puml
+png activity/fork-nested.puml
 png activity/group.puml
 png activity/header-footer.puml
 png activity/multiline-actions.puml
@@ -882,6 +903,9 @@ png activity/repeat-arrow-label.puml
 png activity/repeat-backward.puml
 png activity/repeat-basic.puml
 png activity/repeat-labels.puml
+png activity/split-basic.puml
+png activity/split-ends.puml
+png activity/split-starts.puml
 png activity/start-end.puml
 png activity/start-stop.puml
 png activity/style-stereotypes.puml
@@ -1766,6 +1790,7 @@ svg activity/arrow-hidden.puml
 svg activity/arrow-labels.puml
 svg activity/colors-stereogroup.puml
 svg activity/creole-actions.puml
+svg activity/detach.puml
 svg activity/error-close-without-group.puml
 svg activity/error-else-without-if.puml
 svg activity/error-elseif-after-else.puml
@@ -1773,6 +1798,10 @@ svg activity/error-end-fork-without-fork.puml
 svg activity/error-kill-after-start.puml
 svg activity/error-swimlane-after-activity.puml
 svg activity/error-switch-without-case.puml
+svg activity/fork-basic.puml
+svg activity/fork-end-merge.puml
+svg activity/fork-join-labels.puml
+svg activity/fork-nested.puml
 svg activity/group.puml
 svg activity/header-footer.puml
 svg activity/multiline-actions.puml
@@ -1788,6 +1817,9 @@ svg activity/repeat-arrow-label.puml
 svg activity/repeat-backward.puml
 svg activity/repeat-basic.puml
 svg activity/repeat-labels.puml
+svg activity/split-basic.puml
+svg activity/split-ends.puml
+svg activity/split-starts.puml
 svg activity/start-end.puml
 svg activity/start-stop.puml
 svg activity/style-stereotypes.puml
