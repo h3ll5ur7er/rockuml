@@ -50,6 +50,8 @@ pub(crate) enum Instruction {
 /// unreachable, as it is lost in PlantUML.
 pub(crate) struct Instructions {
     all: Vec<Instruction>,
+    /// The arrow for the next instruction, which an unclosed `repeat` takes as its way back when none comes.
+    next_link_renderer: LinkRendering,
 }
 
 static NONE: LinkRendering = LinkRendering::none();
@@ -60,7 +62,16 @@ impl Instructions {
     pub(crate) fn new() -> Self {
         Self {
             all: vec![Instruction::List(InstructionList::new(None))],
+            next_link_renderer: LinkRendering::none(),
         }
+    }
+
+    pub(crate) fn next_link_renderer(&self) -> &LinkRendering {
+        &self.next_link_renderer
+    }
+
+    pub(crate) fn set_next_link_renderer(&mut self, link: LinkRendering) {
+        self.next_link_renderer = link;
     }
 
     pub(crate) fn get(&self, id: InstructionId) -> &Instruction {

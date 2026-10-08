@@ -124,7 +124,7 @@ pub(crate) struct InstructionRepeat {
     pub(crate) backward: Option<Display>,
     pub(crate) stereogroup_loop: Stereogroup,
     pub(crate) stereotype_back: Option<Stereotype>,
-    /// The arrow back to the start; while the test is missing, the diagram's next arrow when drawn.
+    /// The arrow back to the start; an unclosed repeat without one takes the diagram's pending arrow when built.
     pub(crate) incoming1: LinkRendering,
     pub(crate) incoming2: LinkRendering,
     pub(crate) backward_notes: Vec<PositionedNote>,
