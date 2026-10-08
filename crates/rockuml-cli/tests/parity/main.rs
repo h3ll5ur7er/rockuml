@@ -4,6 +4,7 @@
 //! cases recorded in `tests/parity-passing.txt`. Run with `ROCKUML_PARITY_RECORD=1` to record new passes.
 
 mod check;
+mod cli;
 mod corpus;
 mod ratchet;
 

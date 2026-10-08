@@ -1,25 +1,22 @@
-//! Acceptance tests of the command line against the golden model: every scenario in `tests/cli` must exit,
-//! print and write files as PlantUML did when `tools/oracle/cli-goldens.sh` recorded it.
+//! The command line against the golden model: every scenario in `tests/cli` must exit, print and write files
+//! as PlantUML did when `tools/oracle/cli-goldens.sh` recorded it.
 
 use std::collections::BTreeMap;
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+use std::sync::Mutex;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::{LazyLock, Mutex};
 
-use regex::Regex;
+use crate::check::{embedded_pngs_as_pixels, first_difference, normalise, png_size};
+use crate::repository_root;
 
 const WORKDIR: &str = "<WORKDIR>";
 
-fn scenarios_directory() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../tests/cli")
-}
-
 #[test]
-fn rockuml_runs_every_scenario_like_the_golden_model() {
-    let mut scenarios: Vec<PathBuf> = fs::read_dir(scenarios_directory())
+fn rockuml_runs_every_cli_scenario_like_the_golden_model() {
+    let mut scenarios: Vec<PathBuf> = fs::read_dir(repository_root().join("tests/cli"))
         .unwrap()
         .map(|entry| entry.unwrap().path())
         .filter(|path| path.join("args").is_file())
@@ -63,15 +60,59 @@ fn check(scenario: &Path) -> Result<(), String> {
         copy_tree(&input, work.path());
     }
     let workdir = work.path().to_string_lossy().into_owned();
+    let output = run(scenario, work.path(), &workdir);
+
+    let expected = scenario.join("expected");
+    let expected_status: i32 = fs::read_to_string(expected.join("status"))
+        .unwrap()
+        .trim()
+        .parse()
+        .unwrap();
+    if output.status.code() != Some(expected_status) {
+        return Err(format!(
+            "exit status {:?} instead of {expected_status}; stderr: {}",
+            output.status.code(),
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    for (stream, produced) in [("stdout", &output.stdout), ("stderr", &output.stderr)] {
+        let golden = fs::read(expected.join(stream)).unwrap();
+        compare(
+            stream,
+            &comparable(&golden, WORKDIR),
+            &comparable(produced, &workdir),
+        )?;
+    }
+    let expected_files = files_in(&expected.join("files"), None);
+    let produced_files = files_in(work.path(), Some(&input));
+    let expected_names: Vec<_> = expected_files.keys().collect();
+    let produced_names: Vec<_> = produced_files.keys().collect();
+    if expected_names != produced_names {
+        return Err(format!(
+            "expected files {expected_names:?}, produced {produced_names:?}"
+        ));
+    }
+    for (name, content) in &expected_files {
+        compare(
+            name,
+            &comparable(content, WORKDIR),
+            &comparable(&produced_files[name], &workdir),
+        )?;
+    }
+    Ok(())
+}
+
+/// rockuml run in `work` with the scenario's arguments, environment and standard input.
+fn run(scenario: &Path, work: &Path, workdir: &str) -> std::process::Output {
     let arguments: Vec<String> = fs::read_to_string(scenario.join("args"))
         .unwrap()
         .lines()
-        .map(|argument| argument.replace(WORKDIR, &workdir))
+        .map(|argument| argument.replace(WORKDIR, workdir))
         .collect();
     let mut command = Command::new(env!("CARGO_BIN_EXE_rockuml"));
     command
         .args(&arguments)
-        .current_dir(work.path())
+        .current_dir(work)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped());
@@ -85,52 +126,11 @@ fn check(scenario: &Path) -> Result<(), String> {
     let mut child = command.spawn().unwrap();
     let stdin = fs::read(scenario.join("stdin")).unwrap_or_default();
     let mut child_stdin = child.stdin.take().unwrap();
+    // rockuml may stop reading standard input early, so writing it may fail.
     let writer = std::thread::spawn(move || child_stdin.write_all(&stdin));
     let output = child.wait_with_output().unwrap();
-    // rockuml may stop reading once it has failed.
     let _ = writer.join().unwrap();
-
-    let expected = scenario.join("expected");
-    let expected_status: i32 = fs::read_to_string(expected.join("status"))
-        .unwrap()
-        .trim()
-        .parse()
-        .unwrap();
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    if output.status.code() != Some(expected_status) {
-        return Err(format!(
-            "exit status {:?} instead of {expected_status}; stderr: {}",
-            output.status.code(),
-            stderr.trim()
-        ));
-    }
-    compare(
-        "stdout",
-        &normalise(&fs::read(expected.join("stdout")).unwrap(), WORKDIR),
-        &normalise(&output.stdout, &workdir),
-    )?;
-    compare(
-        "stderr",
-        &normalise(&fs::read(expected.join("stderr")).unwrap(), WORKDIR),
-        &normalise(&output.stderr, &workdir),
-    )?;
-    let expected_files = files_in(&expected.join("files"), None);
-    let produced_files = files_in(work.path(), Some(&input));
-    let expected_names: Vec<_> = expected_files.keys().collect();
-    let produced_names: Vec<_> = produced_files.keys().collect();
-    if expected_names != produced_names {
-        return Err(format!(
-            "expected files {expected_names:?}, produced {produced_names:?}"
-        ));
-    }
-    for (name, content) in &expected_files {
-        compare(
-            name,
-            &normalise(content, WORKDIR),
-            &normalise(&produced_files[name], &workdir),
-        )?;
-    }
-    Ok(())
+    output
 }
 
 fn copy_tree(from: &Path, to: &Path) {
@@ -146,8 +146,8 @@ fn copy_tree(from: &Path, to: &Path) {
     }
 }
 
-/// The files below `root` by their path relative to it, written with `/`; those identical to the file of
-/// the same path in `unchanged_from` are left out.
+/// The files below `root` by their path relative to it, written with `/`, without those identical to the
+/// file of the same path in `unchanged_from`.
 fn files_in(root: &Path, unchanged_from: Option<&Path>) -> BTreeMap<String, Vec<u8>> {
     let mut result = BTreeMap::new();
     let mut pending = vec![root.to_path_buf()];
@@ -163,33 +163,28 @@ fn files_in(root: &Path, unchanged_from: Option<&Path>) -> BTreeMap<String, Vec<
             }
             let relative = path.strip_prefix(root).unwrap();
             let content = fs::read(&path).unwrap();
-            if unchanged_from
-                .is_some_and(|input| fs::read(input.join(relative)).ok() == Some(content.clone()))
-            {
-                continue;
+            let unchanged = unchanged_from.is_some_and(|input| {
+                fs::read(input.join(relative)).is_ok_and(|old| old == content)
+            });
+            if !unchanged {
+                let name = relative
+                    .components()
+                    .map(|part| part.as_os_str().to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join("/");
+                result.insert(name, content);
             }
-            let name = relative
-                .components()
-                .map(|part| part.as_os_str().to_string_lossy())
-                .collect::<Vec<_>>()
-                .join("/");
-            result.insert(name, content);
         }
     }
     result
 }
 
-/// What may differ between the golden model's run and rockuml's without saying anything about the command
-/// line: line endings, path separators, where the run happened, render timestamps, and how PNGs are drawn
-/// (compared by size). Text in another encoding than UTF-8 compares byte for byte.
-fn normalise(content: &[u8], workdir: &str) -> String {
-    static RENDER_TIMESTAMP: LazyLock<Regex> = LazyLock::new(|| {
-        Regex::new(r"(Mon|Tue|Wed|Thu|Fri|Sat|Sun) [A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2} \S+ \d{4}")
-            .unwrap()
-    });
+/// What may differ without saying anything about the command line, besides what `normalise` masks: path
+/// separators, where the run happened, and how PNGs are encoded (compared by size, or by pixels when
+/// embedded). Text in an encoding other than UTF-8 compares byte for byte.
+fn comparable(content: &[u8], workdir: &str) -> String {
     if content.starts_with(b"\x89PNG") {
-        let dimension = |at: usize| u32::from_be_bytes(content[at..at + 4].try_into().unwrap());
-        return format!("png {} x {}", dimension(16), dimension(20));
+        return png_size(content);
     }
     let text = match content {
         [0xFE, 0xFF, rest @ ..] => utf16(rest, u16::from_be_bytes),
@@ -197,23 +192,19 @@ fn normalise(content: &[u8], workdir: &str) -> String {
         _ => match std::str::from_utf8(content) {
             Ok(text) => text.to_owned(),
             Err(_) => {
-                return format!(
-                    "{:?}",
-                    content
-                        .split(|&byte| byte == b'\r')
-                        .collect::<Vec<_>>()
-                        .concat()
-                );
+                let without_carriage_returns: Vec<u8> = content
+                    .iter()
+                    .copied()
+                    .filter(|&byte| byte != b'\r')
+                    .collect();
+                return format!("{without_carriage_returns:?}");
             }
         },
     };
-    let text = text
-        .replace("\r\n", "\n")
+    let text = normalise(&text)
         .replace(workdir, WORKDIR)
         .replace('\\', "/");
-    RENDER_TIMESTAMP
-        .replace_all(&text, "<timestamp>")
-        .into_owned()
+    embedded_pngs_as_pixels(&text)
 }
 
 fn utf16(bytes: &[u8], unit: fn([u8; 2]) -> u16) -> String {
@@ -225,20 +216,8 @@ fn utf16(bytes: &[u8], unit: fn([u8; 2]) -> u16) -> String {
 }
 
 fn compare(what: &str, expected: &str, produced: &str) -> Result<(), String> {
-    let mut expected_lines = expected.lines();
-    let mut produced_lines = produced.lines();
-    for line_number in 1.. {
-        match (expected_lines.next(), produced_lines.next()) {
-            (None, None) => return Ok(()),
-            (expected_line, produced_line) if expected_line != produced_line => {
-                return Err(format!(
-                    "{what} line {line_number}: expected {:?}, produced {:?}",
-                    expected_line.unwrap_or("<end>"),
-                    produced_line.unwrap_or("<end>")
-                ));
-            }
-            _ => {}
-        }
+    match first_difference(expected, produced) {
+        Some(difference) => Err(format!("{what}: {difference}")),
+        None => Ok(()),
     }
-    unreachable!()
 }

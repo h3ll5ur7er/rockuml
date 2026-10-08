@@ -101,7 +101,7 @@ fn compare(expected: &BTreeMap<String, String>, produced: &BTreeMap<String, Stri
     Outcome::Pass
 }
 
-fn first_difference(expected: &str, produced: &str) -> Option<String> {
+pub(crate) fn first_difference(expected: &str, produced: &str) -> Option<String> {
     let mut expected_lines = expected.lines();
     let mut produced_lines = produced.lines();
     for line_number in 1.. {
@@ -134,14 +134,14 @@ fn read_normalised(path: &Path, kind: GoldenKind) -> String {
 }
 
 /// Width and height from the PNG header.
-fn png_size(png: &[u8]) -> String {
+pub(crate) fn png_size(png: &[u8]) -> String {
     let dimension = |at: usize| u32::from_be_bytes(png[at..at + 4].try_into().unwrap());
     format!("{} x {}", dimension(16), dimension(20))
 }
 
 /// Replaces each `data:image/png;base64,` payload by the image's size and a hash of its pixels. Fully
 /// transparent pixels count as equal whatever colour they carry.
-fn embedded_pngs_as_pixels(text: &str) -> String {
+pub(crate) fn embedded_pngs_as_pixels(text: &str) -> String {
     static PNG_DATA: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"data:image/png;base64,([A-Za-z0-9+/=]+)").unwrap());
     PNG_DATA
@@ -199,7 +199,7 @@ impl Fnv1a {
 
 /// Line endings depend on how git checked out the goldens, and PlantUML's debug output stamps the
 /// current time next to shapes it cannot describe; neither says anything about rendering.
-fn normalise(text: &str) -> String {
+pub(crate) fn normalise(text: &str) -> String {
     static RENDER_TIMESTAMP: LazyLock<Regex> = LazyLock::new(|| {
         Regex::new(r"(Mon|Tue|Wed|Thu|Fri|Sat|Sun) [A-Z][a-z]{2} \d{2} \d{2}:\d{2}:\d{2} \S+ \d{4}")
             .unwrap()
