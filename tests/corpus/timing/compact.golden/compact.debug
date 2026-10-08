@@ -1,0 +1,310 @@
+DPI: 96
+dimension: [ 380.1399 ; 236.0000 ]
+scaleFactor: 1.0000
+seed: -684641950721845728
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 370.1399 ; 226.0000 ]
+
+LINE:
+  pt1: [ 155.1399 ; 20.0000 ]
+  pt2: [ 155.1399 ; 205.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 205.1399 ; 20.0000 ]
+  pt2: [ 205.1399 ; 205.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 255.1399 ; 20.0000 ]
+  pt2: [ 255.1399 ; 205.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 305.1399 ; 20.0000 ]
+  pt2: [ 305.1399 ; 205.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 355.1399 ; 20.0000 ]
+  pt2: [ 355.1399 ; 205.0000 ]
+  stroke: 3.0-5.0-0.5
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: Web Browser
+  position: [ 25.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Idle
+  position: [ 25.0000 ; 87.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Processing
+  position: [ 25.0000 ; 67.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Waiting
+  position: [ 25.0000 ; 47.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 155.1399 ; 83.0000 ]
+  pt2: [ 205.1399 ; 83.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 205.1399 ; 63.0000 ]
+  pt2: [ 305.1399 ; 63.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 305.1399 ; 43.0000 ]
+  pt2: [ 355.1399 ; 43.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 205.1399 ; 63.0000 ]
+  pt2: [ 205.1399 ; 83.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+LINE:
+  pt1: [ 305.1399 ; 43.0000 ]
+  pt2: [ 305.1399 ; 63.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff006400
+
+TEXT:
+  text: Web User
+  position: [ 25.0000 ; 111.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 167.1399 ; 119.0000 ]
+   - [ 193.1399 ; 119.0000 ]
+   - [ 205.1399 ; 131.0000 ]
+   - [ 193.1399 ; 143.0000 ]
+   - [ 167.1399 ; 143.0000 ]
+   - [ 155.1399 ; 131.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+POLYGON:
+  points:
+   - [ 217.1399 ; 119.0000 ]
+   - [ 355.1399 ; 119.0000 ]
+   - [ 355.1399 ; 143.0000 ]
+   - [ 217.1399 ; 143.0000 ]
+   - [ 205.1399 ; 131.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffe2e2f0
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 150.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 24.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 150.0000 ; 24.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: Idle
+  position: [ 151.7004 ; 134.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Waiting
+  position: [ 217.1399 ; 134.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Third
+  position: [ 25.0000 ; 163.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 167.1399 ; 171.0000 ]
+   - [ 193.1399 ; 171.0000 ]
+   - [ 205.1399 ; 183.0000 ]
+   - [ 193.1399 ; 195.0000 ]
+   - [ 167.1399 ; 195.0000 ]
+   - [ 155.1399 ; 183.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+POLYGON:
+  points:
+   - [ 217.1399 ; 171.0000 ]
+   - [ 355.1399 ; 171.0000 ]
+   - [ 355.1399 ; 195.0000 ]
+   - [ 217.1399 ; 195.0000 ]
+   - [ 205.1399 ; 183.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffe2e2f0
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 150.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.0000 ; 24.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 150.0000 ; 24.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff006400
+  backcolor: ffe2e2f0
+
+TEXT:
+  text: A
+  position: [ 174.4645 ; 186.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: B
+  position: [ 217.1399 ; 186.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 155.1399 ; 205.0000 ]
+  pt2: [ 155.1399 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 205.1399 ; 205.0000 ]
+  pt2: [ 205.1399 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 255.1399 ; 205.0000 ]
+  pt2: [ 255.1399 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 305.1399 ; 205.0000 ]
+  pt2: [ 305.1399 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 355.1399 ; 205.0000 ]
+  pt2: [ 355.1399 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+LINE:
+  pt1: [ 155.1399 ; 205.0000 ]
+  pt2: [ 355.1399 ; 205.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff333333
+
+TEXT:
+  text: 0
+  position: [ 149.9402 ; 219.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 100
+  position: [ 188.8596 ; 219.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 300
+  position: [ 287.4392 ; 219.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff333333
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,15 @@
+@startuml
+rectangle "Rect" as R
+concise "Con" as C
+
+@0
+R is "First state"
+C is A
+
+@100
+R is "Second"
+C is B
+
+@250
+R is {-}
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+concise "LR" as LR
+concise "ST" as ST
+robust "RB" as RB #lightblue
+
+LR is AtPlace #palegreen
+ST is AtLoad #gray
+RB is Idle
+
+@LR
+0 is Lowering
+100 is Lowered #pink
+350 is Releasing
+
+@ST
+200 is Moving
+300 is {-}
+400 is Done
+
+@RB
+150 is Busy #yellow
+250 is {hidden}
+450 is Idle
+@enduml

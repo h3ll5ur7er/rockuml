@@ -1,0 +1,22 @@
+@startuml
+robust "Web Browser" as WB
+concise "Web User" as WU
+
+@WB
+0 is idle
++200 is Proc.
++100 is Waiting
+
+@WU
+0 is Waiting
++500 is ok
+
+@200
+note top of WU : first note\non several\nlines
+note bottom of WU : second note\non several\nlines
+@300
+note top of WB
+  a long note
+  on two lines
+end note
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+use date format "YY-MM-DD"
+concise "Website" as WS
+
+@2019/07/02
+WS is Online
+
+@2019/07/04
+WS is Offline
+
+@2019/07/07
+WS is Online
+@enduml
