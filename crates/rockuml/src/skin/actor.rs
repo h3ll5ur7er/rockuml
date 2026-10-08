@@ -119,7 +119,7 @@ impl TextBlock for ActorStickMan {
         }
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::Path(body));
+            .draw(&UShape::path(body));
     }
 }
 
@@ -206,7 +206,7 @@ impl TextBlock for ActorAwesome {
                 Self::HEAD_DIAM,
             )));
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
-            .draw(&UShape::Path(Self::body()));
+            .draw(&UShape::path(Self::body()));
     }
 }
 
@@ -277,7 +277,7 @@ impl TextBlock for ActorHollow {
             center_x,
             Self::HEAD_DIAM + self.thickness() + Self::NECK_HEIGHT,
         )
-        .draw(&UShape::Path(Self::body()));
+        .draw(&UShape::path(Self::body()));
     }
 }
 

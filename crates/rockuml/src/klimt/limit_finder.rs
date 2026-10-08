@@ -8,7 +8,7 @@ use super::TextBlock;
 use super::clip::{UClip, path_bounds};
 use super::font::StringBounder;
 use super::geom::{MinMax, UTranslate};
-use super::shape::UShape;
+use super::shape::{UPath, UShape};
 use super::ugraphic::{UGraphic, UGraphicBackend, UParam};
 use crate::color::HColor;
 
@@ -96,7 +96,7 @@ impl UGraphicBackend for LimitFinder {
                     self.add_point(x + bounds.max_x() + HACK_X_FOR_POLYGON, y + bounds.max_y());
                 }
             }
-            UShape::Path(segments) => {
+            UShape::Path(UPath { segments, .. }) => {
                 if let Some((min_x, min_y, max_x, max_y)) = path_bounds(segments) {
                     self.add_point(x + min_x, y + min_y);
                     self.add_point(x + max_x, y + max_y);

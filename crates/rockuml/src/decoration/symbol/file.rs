@@ -22,7 +22,7 @@ fn draw_file(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
         ]));
     } else {
         let r = round_corner / 2.0;
-        ug.draw(&UShape::Path(vec![
+        ug.draw(&UShape::path(vec![
             USegment::MoveTo(0.0, r),
             USegment::LineTo(0.0, height - r),
             USegment::arc_to((r, height), r, false),
@@ -47,7 +47,7 @@ fn draw_file(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
         ));
     }
     fold.push(USegment::LineTo(width, CORNERSIZE));
-    ug.draw(&UShape::Path(fold));
+    ug.draw(&UShape::path(fold));
 }
 
 impl SmallShape for USymbolFile {

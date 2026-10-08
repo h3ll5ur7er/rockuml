@@ -97,7 +97,7 @@ impl Component for ComponentRoseReference {
             .draw(&UShape::Rectangle(rectangle));
         let ug = self.header_fashion.apply(&ug);
         ug.translated(X_MARGIN, 0.0)
-            .draw(&UShape::Path(self.corner(header_width, header_height)));
+            .draw(&UShape::path(self.corner(header_width, header_height)));
         let ug = ug.with_stroke(UStroke::SIMPLE);
         self.header.draw_u(&ug.translated(15.0, 2.0));
         let padding = self.text.padding();

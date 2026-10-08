@@ -47,7 +47,7 @@ impl TextBlock for Boundary {
         ];
         ug.translated(MARGIN, MARGIN)
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::Path(bar));
+            .draw(&UShape::path(bar));
         ug.translated(MARGIN + Self::LEFT, MARGIN).draw(&circle());
     }
 }

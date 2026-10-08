@@ -12,7 +12,7 @@ use graphics::{SvgGraphics, SvgText};
 use super::font::{FontStyle, StringBounder};
 use super::geom::UTranslate;
 use super::group::UGroup;
-use super::shape::{UCenteredCharacter, UEllipse, UImage, UShape, UText};
+use super::shape::{UCenteredCharacter, UEllipse, UImage, UPath, UShape, UText};
 use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
@@ -332,7 +332,7 @@ impl UGraphicBackend for UGraphicSvg {
                 self.apply_colors_and_stroke(param);
                 self.svg().polygon(&points);
             }
-            UShape::Path(segments) => {
+            UShape::Path(UPath { segments, .. }) => {
                 if clip.is_some_and(|clip| !clip.is_path_inside(at.dx, at.dy, segments)) {
                     return;
                 }

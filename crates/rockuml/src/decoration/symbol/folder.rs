@@ -39,7 +39,7 @@ fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, 
         ]));
     } else {
         let r = round_corner / 2.0;
-        ug.draw(&UShape::Path(vec![
+        ug.draw(&UShape::path(vec![
             USegment::MoveTo(r, 0.0),
             USegment::LineTo(wtitle - r, 0.0),
             USegment::arc_to((wtitle, r), r * 1.5, true),

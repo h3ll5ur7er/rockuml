@@ -364,7 +364,7 @@ fn draw_path(ugs: &UGraphicWithScale, s: &str, stack_g: &[&str]) {
         .iter()
         .any(|segment| !matches!(segment, USegment::MoveTo(..)))
     {
-        ugs.draw(&UShape::Path(path));
+        ugs.draw(&UShape::path(path));
     }
 }
 
@@ -419,7 +419,7 @@ fn draw_ellipse(ugs: &UGraphicWithScale, s: &str, stack_g: &[&str]) {
             )
         })
         .collect();
-    ugs.draw(&UShape::Path(path));
+    ugs.draw(&UShape::path(path));
 }
 
 /// PlantUML's `USegment.affine`: arcs turn by `angle` and grow by `scale` whatever the transform.
@@ -525,7 +525,7 @@ mod tests {
         );
         assert_eq!(
             shapes[1].0,
-            UShape::Path(vec![USegment::MoveTo(0.0, 0.0), USegment::LineTo(2.0, 0.0)])
+            UShape::path(vec![USegment::MoveTo(0.0, 0.0), USegment::LineTo(2.0, 0.0)])
         );
         assert_eq!(shapes[1].2.backcolor, color("#FFF"));
         assert_eq!(shapes[2].2.backcolor, HColor::BLACK);
@@ -556,11 +556,11 @@ mod tests {
         assert_eq!(shapes.len(), 2, "a path that only moves draws nothing");
         assert_eq!(
             shapes[0].0,
-            UShape::Path(vec![USegment::MoveTo(6.0, 9.0), USegment::LineTo(9.0, 9.0)])
+            UShape::path(vec![USegment::MoveTo(6.0, 9.0), USegment::LineTo(9.0, 9.0)])
         );
         assert_eq!(
             shapes[1].0,
-            UShape::Path(vec![USegment::MoveTo(5.0, 5.0), USegment::LineTo(6.0, 5.0)])
+            UShape::path(vec![USegment::MoveTo(5.0, 5.0), USegment::LineTo(6.0, 5.0)])
         );
     }
 

@@ -80,7 +80,7 @@ fn shape(words: &[&str]) -> UShape {
             words[2],
             FontConfiguration::black_blue_true(UFont::serif(words[1].parse().unwrap())),
         )),
-        "path" => UShape::Path(
+        "path" => UShape::path(
             words[1..]
                 .iter()
                 .enumerate()
