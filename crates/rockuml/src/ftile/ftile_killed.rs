@@ -38,7 +38,7 @@ impl Swimable for FtileKilled {
 }
 
 impl Ftile for FtileKilled {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.tile.skin_param()
     }
 

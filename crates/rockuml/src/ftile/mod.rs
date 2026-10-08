@@ -126,7 +126,7 @@ use crate::skin::SkinParam;
 /// A tile is [`Any`] so that tiles can ask what another tile is, as PlantUML's `instanceof` does, with
 /// [`downcast`].
 pub(crate) trait Ftile: Swimable + Any {
-    fn skin_param(&self) -> &SkinParam;
+    fn skin_param(&self) -> &Rc<SkinParam>;
 
     /// How the arrow into the tile is drawn.
     fn get_in_link_rendering(&self) -> LinkRendering {

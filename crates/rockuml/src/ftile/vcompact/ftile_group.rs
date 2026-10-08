@@ -142,7 +142,7 @@ impl Swimable for FtileGroup {
 }
 
 impl Ftile for FtileGroup {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.inner.skin_param()
     }
 

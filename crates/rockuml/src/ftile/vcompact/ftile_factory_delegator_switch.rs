@@ -53,7 +53,7 @@ impl FtileFactoryDelegatorSwitch {
                         .ftile
                         .skin_param()
                         .get_default_text_alignment(HorizontalAlignment::Left),
-                    branch0.ftile.skin_param(),
+                    branch0.ftile.skin_param().as_ref(),
                     style.wrap_width(),
                     CreoleMode::Full,
                 ),

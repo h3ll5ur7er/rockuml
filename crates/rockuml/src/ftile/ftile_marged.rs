@@ -57,7 +57,7 @@ impl FtileMarged {
 marged_swimable!(FtileMarged);
 
 impl Ftile for FtileMarged {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.tile.skin_param()
     }
 
@@ -125,7 +125,7 @@ impl FtileMargedRight {
 marged_swimable!(FtileMargedRight);
 
 impl Ftile for FtileMargedRight {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.tile.skin_param()
     }
 

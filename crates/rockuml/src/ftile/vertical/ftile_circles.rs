@@ -59,7 +59,7 @@ impl FtileCircleStart {
 mono_swimable!(FtileCircleStart);
 
 impl Ftile for FtileCircleStart {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 
@@ -102,7 +102,7 @@ impl FtileCircleStop {
 mono_swimable!(FtileCircleStop);
 
 impl Ftile for FtileCircleStop {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 
@@ -148,7 +148,7 @@ impl FtileCircleEndCross {
 mono_swimable!(FtileCircleEndCross);
 
 impl Ftile for FtileCircleEndCross {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 
@@ -215,7 +215,7 @@ impl FtileCircleSpot {
 mono_swimable!(FtileCircleSpot);
 
 impl Ftile for FtileCircleSpot {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 

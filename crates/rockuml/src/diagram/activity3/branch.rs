@@ -177,7 +177,7 @@ impl BranchFtile<'_> {
         Rc::new(display.create0(
             &style.font_configuration(),
             HorizontalAlignment::Left,
-            skin_param,
+            skin_param.as_ref(),
             style.wrap_width(),
             CreoleMode::SimpleLine,
         ))

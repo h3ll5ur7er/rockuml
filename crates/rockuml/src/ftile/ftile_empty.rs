@@ -58,7 +58,7 @@ impl Swimable for FtileEmpty {
 }
 
 impl Ftile for FtileEmpty {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 
@@ -111,7 +111,7 @@ impl FtileLabel {
 empty_swimable!(FtileLabel);
 
 impl Ftile for FtileLabel {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.empty.skin_param()
     }
 
@@ -144,7 +144,7 @@ impl FtileGoto {
 empty_swimable!(FtileGoto);
 
 impl Ftile for FtileGoto {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.empty.skin_param()
     }
 
@@ -176,7 +176,7 @@ impl FtileBreak {
 empty_swimable!(FtileBreak);
 
 impl Ftile for FtileBreak {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.empty.skin_param()
     }
 

@@ -401,7 +401,7 @@ impl Swimable for FtileIfWithLinks {
 }
 
 impl Ftile for FtileIfWithLinks {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.base.skin_param()
     }
 

@@ -78,7 +78,7 @@ impl FtileDiamondSquare {
 swimable_through_wip!(FtileDiamondSquare);
 
 impl Ftile for FtileDiamondSquare {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.wip.base.skin_param()
     }
 

@@ -29,7 +29,7 @@ impl AbstractFtile {
         }
     }
 
-    pub(crate) fn skin_param(&self) -> &SkinParam {
+    pub(crate) fn skin_param(&self) -> &Rc<SkinParam> {
         &self.skin_param
     }
 

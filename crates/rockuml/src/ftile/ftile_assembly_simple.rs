@@ -15,11 +15,17 @@ pub(crate) struct FtileAssemblySimple {
     tile1: Rc<dyn Ftile>,
     tile2: Rc<dyn Ftile>,
     calculate_dimension: OnceCell<FtileGeometry>,
+    /// The first tile's, which PlantUML asks it for each time. A sequence nests one assembly in the next, so
+    /// asking down the whole chain on every arrow would take quadratic time.
+    skin_param: Rc<SkinParam>,
+    arrow_horizontal_alignment: HorizontalAlignment,
 }
 
 impl FtileAssemblySimple {
     pub(crate) fn new(tile1: Rc<dyn Ftile>, tile2: Rc<dyn Ftile>) -> Self {
         Self {
+            skin_param: Rc::clone(tile1.skin_param()),
+            arrow_horizontal_alignment: tile1.arrow_horizontal_alignment(),
             tile1,
             tile2,
             calculate_dimension: OnceCell::new(),
@@ -61,8 +67,8 @@ impl Swimable for FtileAssemblySimple {
 }
 
 impl Ftile for FtileAssemblySimple {
-    fn skin_param(&self) -> &SkinParam {
-        self.tile1.skin_param()
+    fn skin_param(&self) -> &Rc<SkinParam> {
+        &self.skin_param
     }
 
     fn get_in_link_rendering(&self) -> LinkRendering {
@@ -106,7 +112,7 @@ impl Ftile for FtileAssemblySimple {
     }
 
     fn arrow_horizontal_alignment(&self) -> HorizontalAlignment {
-        self.tile1.arrow_horizontal_alignment()
+        self.arrow_horizontal_alignment
     }
 
     fn draw_u(&self, ug: &UGraphic) {

@@ -227,7 +227,7 @@ impl ConnectionSwitch {
             .expect("switch connections join two tiles")
     }
 
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.parent.skin_param()
     }
 

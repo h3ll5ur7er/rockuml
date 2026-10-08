@@ -178,7 +178,7 @@ impl Swimable for FtileWithNoteOpale {
 }
 
 impl Ftile for FtileWithNoteOpale {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.tile.skin_param()
     }
 

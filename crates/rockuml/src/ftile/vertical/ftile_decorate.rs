@@ -81,7 +81,7 @@ impl<T: FtileDecorate> Swimable for T {
 }
 
 impl<T: FtileDecorate> Ftile for T {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.get_ftile_delegated().skin_param()
     }
 

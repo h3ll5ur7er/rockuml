@@ -48,7 +48,7 @@ impl Swimable for FtileHeightFixedMarged {
 }
 
 impl Ftile for FtileHeightFixedMarged {
-    fn skin_param(&self) -> &SkinParam {
+    fn skin_param(&self) -> &Rc<SkinParam> {
         self.tile.skin_param()
     }
 
