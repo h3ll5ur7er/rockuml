@@ -117,9 +117,8 @@ mod tests {
 
     #[test]
     fn every_bundled_icon_parses() {
-        let names = crate::assets::FILES
-            .iter()
-            .filter_map(|(path, _)| path.strip_prefix("openiconic/")?.strip_suffix(".svg"));
+        let names = crate::assets::names()
+            .filter_map(|path| path.strip_prefix("openiconic/")?.strip_suffix(".svg"));
         for name in names {
             let icon = OpenIconic::retrieve(name).expect("a bundled icon");
             assert!(!icon.svg_path.to_upath(1.0).is_empty(), "{name}");

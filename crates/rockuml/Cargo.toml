@@ -9,6 +9,13 @@ publish.workspace = true
 [lints]
 workspace = true
 
+[features]
+default = ["stdlib", "emoji"]
+# PlantUML's standard library (`!include <C4/C4_Container>`): 8.7 MB of the binary.
+stdlib = []
+# Twemoji pictures for creole's `<:name:>`.
+emoji = []
+
 [dependencies]
 base64 = "0.23.1"
 brotli-decompressor = "6.0.1"
@@ -25,3 +32,6 @@ smetana = { path = "../smetana" }
 ttf-parser = "0.25.1"
 unicode-general-category = "1.1.0"
 zune-jpeg = "0.5.15"
+
+[build-dependencies]
+flate2 = "1.1.10"
