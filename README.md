@@ -6,6 +6,9 @@ A PlantUML-compatible diagram renderer written in Rust: one self-contained binar
 Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the porting plan and the definition of
 "compatible".
 
+Ready-made binaries for Windows, Linux and macOS, and the web package, are on the repository's releases page:
+every change to `main` that passes CI is published as a pre-release.
+
 ## Usage
 
 ```bash
@@ -36,6 +39,7 @@ machine.
 - Activity diagrams in the current syntax (`:action;`, `if`/`switch`/`while`/`repeat`, `fork`/`split`, partitions,
   notes, swimlanes, `goto`/`label`, `detach`/`kill`), laid out like PlantUML's `ftile` engine. The legacy syntax
   (`(*) --> "action"`) is not ported yet.
+- Mind maps (`@startmindmap`) and work breakdown structures (`@startwbs`).
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in

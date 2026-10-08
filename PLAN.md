@@ -516,6 +516,21 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
     are 2.4 MB; reaching 3 MB would mean fetching the fonts separately.
 
 ### Phase 8+ — Tier 2, then Tier 3, ordered by what you and your friends actually use.
+Cheapest first unless use says otherwise: mind maps and work breakdowns, JSON and YAML, the HTTP server, then
+nwdiag, timing and gantt.
+
+### Phase 8 — Mind maps and work breakdowns
+- **Status: done.** Every corpus case (19 mind maps, 17 work breakdowns) passes L1, L2, L3, PNG size, URL and
+  preprocessor outputs.
+  - Ported: `@startmindmap` (org-mode, markdown tabs, `+`/`-`, `0` root, multiline nodes, sides, `left side` and
+    direction commands, `top to bottom direction`, several roots) with PlantUML's Tetris packing of subtrees;
+    `@startwbs` (new and old orders, quoted labels with aliases, multiline nodes, `<`/`>`, boxless and pseudo nodes,
+    `Width auto`, links between aliases); the depth-weighted node styles (`getMergedStyleSpecial`, starred rules),
+    with Java's wrapping `int` priorities.
+  - Deviations: a mind map or breakdown without a root draws nothing (PlantUML crashes).
+  - Not ported: the ASCII-art output of work breakdowns (txt/utxt are Tier 3).
+- Every push to `main` that passes CI is published as a pre-release with the binaries and the web package; a `v*`
+  tag as a release.
 
 ---
 
@@ -545,6 +560,6 @@ Phases 3–6 can run in parallel once Phase 2 has fixed the core traits.
 ---
 
 ## 10. Immediate next steps
-1. Tier 1 is complete. Next: pick Tier 2 diagram types by use (mindmap, wbs, gantt, timing, json, yaml, nwdiag),
-   and the HTTP server mode that lets editor plugins use rockuml.
+1. Phase 9: JSON and YAML diagrams (`@startjson`, `@startyaml`), then the HTTP server mode that lets editor
+   plugins use rockuml.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).

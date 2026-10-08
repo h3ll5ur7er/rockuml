@@ -1,9 +1,15 @@
 name: CI
 
+# Every push to main that passes the tests is published as a pre-release, v<version>-build.<run>; a pushed
+# v* tag is published as a release of that name. Pull requests are only tested.
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
+
+permissions:
+  contents: write
 
 jobs:
   test:
@@ -15,7 +21,7 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
@@ -26,7 +32,7 @@ jobs:
   wasm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -34,3 +40,81 @@ jobs:
       - run: cargo clippy -p rockuml-wasm --target wasm32-unknown-unknown -- -D warnings
       - run: bash tools/build-wasm.sh
       - run: node --test web/rockuml.test.mjs
+      - run: cd web && zip ../rockuml-web.zip index.html rockuml.js rockuml.wasm
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-web.zip
+          path: rockuml-web.zip
+
+  build-windows:
+    if: github.event_name == 'push'
+    needs: [test, wasm]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release -p rockuml-cli
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml.exe
+          path: target/release/rockuml.exe
+
+  build-linux:
+    if: github.event_name == 'push'
+    needs: [test, wasm]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+      # musl links statically, so the binary runs on any distribution; ring's C code needs musl-gcc.
+      - run: sudo apt-get update && sudo apt-get install -y musl-tools
+      - run: cargo build --release -p rockuml-cli --target x86_64-unknown-linux-musl
+      - run: cp target/x86_64-unknown-linux-musl/release/rockuml rockuml-linux-x86_64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-linux-x86_64
+          path: rockuml-linux-x86_64
+
+  build-macos:
+    if: github.event_name == 'push'
+    needs: [test, wasm]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - run: cargo build --release -p rockuml-cli --target aarch64-apple-darwin
+      - run: cargo build --release -p rockuml-cli --target x86_64-apple-darwin
+      - run: >
+          lipo -create -output rockuml-macos-universal
+          target/aarch64-apple-darwin/release/rockuml
+          target/x86_64-apple-darwin/release/rockuml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rockuml-macos-universal
+          path: rockuml-macos-universal
+
+  publish:
+    needs: [build-windows, build-linux, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            gh release create "$GITHUB_REF_NAME" artifacts/* --generate-notes
+          else
+            version=$(grep -m 1 '^version' Cargo.toml | cut -d '"' -f 2)
+            gh release create "v$version-build.$GITHUB_RUN_NUMBER" artifacts/* \
+              --target "$GITHUB_SHA" --prerelease --generate-notes \
+              --title "rockuml $version build $GITHUB_RUN_NUMBER"
+          fi
