@@ -1,0 +1,30 @@
+@startjson
+<style>
+jsonDiagram {
+  node {
+    BackGroundColor Khaki
+    LineThickness 2
+    FontName Monospaced
+    FontColor Red
+    FontSize 14
+    FontStyle bold
+    RoundCorner 0
+    LineColor Blue
+    MaximumWidth 100
+  }
+  arrow {
+    BackGroundColor lightblue
+    LineColor green
+    LineThickness 2
+    LineStyle 2;5
+  }
+  highlight {
+    BackGroundColor red
+    FontColor White
+    FontStyle italic
+  }
+}
+</style>
+#highlight "a" / "b"
+{"a": {"b": "a value that is certainly long enough to wrap", "c": [1, 2]}, "d": "x"}
+@endjson

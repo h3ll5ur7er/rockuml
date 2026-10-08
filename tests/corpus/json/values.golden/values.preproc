@@ -1,0 +1,8 @@
+@startjson
+{
+  "creole": "**not bold** <b>nor this</b>",
+  "unicode": "été ☃",
+  "numbers": [0, -1.5, 3e10, 1E-3],
+  "nested": {"deeper": {"deepest": {"end": true}}}
+}
+@endjson
