@@ -67,14 +67,17 @@ impl FtileSwitchWithDiamonds {
         arrow_color: Rainbow,
         links: SwitchLinks,
     ) -> Self {
-        let first_right = tiles
-            .first()
-            .map_or(0.0, |tile| tile.calculate_dimension(string_bounder).get_right());
-        let last_left = tiles
-            .last()
-            .map_or(0.0, |tile| tile.calculate_dimension(string_bounder).get_left());
-        let w13 = diamond1.calculate_dimension(string_bounder).get_width() - first_right - last_left;
-        let inner = tiles.get(1..tiles.len().saturating_sub(1)).unwrap_or_default();
+        let first_right = tiles.first().map_or(0.0, |tile| {
+            tile.calculate_dimension(string_bounder).get_right()
+        });
+        let last_left = tiles.last().map_or(0.0, |tile| {
+            tile.calculate_dimension(string_bounder).get_left()
+        });
+        let w13 =
+            diamond1.calculate_dimension(string_bounder).get_width() - first_right - last_left;
+        let inner = tiles
+            .get(1..tiles.len().saturating_sub(1))
+            .unwrap_or_default();
         let w9 = inner.iter().fold(0.0, |result, tile| {
             result + tile.calculate_dimension(string_bounder).get_width()
         });
@@ -133,7 +136,10 @@ impl FtileSwitchWithDiamonds {
             .get_or_init(|| self.calculate_dimension_internal_slow(string_bounder))
     }
 
-    fn calculate_dimension_internal_slow(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
+    fn calculate_dimension_internal_slow(
+        &self,
+        string_bounder: &dyn StringBounder,
+    ) -> FtileGeometry {
         let dim1 = self.diamond1.calculate_dimension(string_bounder);
         let dim2 = self.diamond2.calculate_dimension(string_bounder);
         let dim_nude = self.calculate_dimension_nude(string_bounder);
@@ -171,15 +177,16 @@ impl FtileSwitchWithDiamonds {
         for couple in &self.tiles {
             result = result.merge_lr(couple.calculate_dimension(string_bounder).dimension());
         }
-        let result = result.delta(
-            X_SEPARATION * (self.tiles.len() as f64 - 1.0),
-            100.0,
-        );
+        let result = result.delta(X_SEPARATION * (self.tiles.len() as f64 - 1.0), 100.0);
         FtileGeometry::new(result.width, result.height, result.width / 2.0, 0.0)
     }
 
     /// Where `tile`, a case, lies among the cases side by side (`getTranslateNude`).
-    fn get_translate_nude(&self, tile: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_nude(
+        &self,
+        tile: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         let mut x1 = 0.0;
         for candidate in &self.tiles {
             if same(candidate.as_ref(), tile) {
@@ -191,7 +198,11 @@ impl FtileSwitchWithDiamonds {
     }
 
     /// Where `tile`, a case, is drawn (`getTranslateOf`).
-    pub(super) fn get_translate_of(&self, tile: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    pub(super) fn get_translate_of(
+        &self,
+        tile: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         let main = self.get_translate_main(string_bounder);
         if self.mode == Mode::SmallDiamond {
             return self.get_translate_nude(tile, string_bounder).compose(main);
@@ -205,10 +216,9 @@ impl FtileSwitchWithDiamonds {
             }
             dx += candidate.calculate_dimension(string_bounder).get_width() + suppx;
         }
-        let first_width = self
-            .tiles
-            .first()
-            .map_or(0.0, |first| first.calculate_dimension(string_bounder).get_width());
+        let first_width = self.tiles.first().map_or(0.0, |first| {
+            first.calculate_dimension(string_bounder).get_width()
+        });
         let dx9 = first_width + self.w13 + SUPP15 + SUPP15;
         main.compose(UTranslate::new(dx9, 0.0))
     }
@@ -279,7 +289,11 @@ impl Ftile for FtileSwitchWithDiamonds {
     }
 
     /// Where a case lies among the cases, without the room above them, as in PlantUML.
-    fn get_translate_for(&self, child: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         self.get_translate_nude(child, string_bounder)
     }
 

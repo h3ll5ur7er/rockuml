@@ -218,11 +218,15 @@ struct ConnectionSwitch {
 
 impl ConnectionSwitch {
     fn ftile1(&self) -> &Rc<dyn Ftile> {
-        self.base.get_ftile1().expect("switch connections join two tiles")
+        self.base
+            .get_ftile1()
+            .expect("switch connections join two tiles")
     }
 
     fn ftile2(&self) -> &Rc<dyn Ftile> {
-        self.base.get_ftile2().expect("switch connections join two tiles")
+        self.base
+            .get_ftile2()
+            .expect("switch connections join two tiles")
     }
 
     fn skin_param(&self) -> &SkinParam {
@@ -319,8 +323,9 @@ impl ConnectionSwitch {
             (pt_a, arrows.as_to_down(), Direction::Down)
         };
         let (x2, y2) = (p2.x, p2.y);
-        let mut snake = Snake::create_with_end(self.skin_param(), parent.arrow_color.clone(), arrow)
-            .with_label_vertical(self.label.clone(), VerticalAlignment::Center);
+        let mut snake =
+            Snake::create_with_end(self.skin_param(), parent.arrow_color.clone(), arrow)
+                .with_label_vertical(self.label.clone(), VerticalAlignment::Center);
         snake.add_point(x1, y1);
         if direction == Direction::Left && x2 > x1 - 10.0 {
             snake.add_point(x1, y2 - 8.0);
@@ -334,7 +339,10 @@ impl ConnectionSwitch {
     }
 
     /// The first diamond's points `b`, `c` and `d`, where it is drawn.
-    fn diamond1_points(&self, string_bounder: &dyn StringBounder) -> (XPoint2D, XPoint2D, XPoint2D) {
+    fn diamond1_points(
+        &self,
+        string_bounder: &dyn StringBounder,
+    ) -> (XPoint2D, XPoint2D, XPoint2D) {
         let parent = &self.parent;
         let dim_diamond1 = parent.diamond1.calculate_dimension(string_bounder);
         let translate_diamond1 = parent.get_translate_diamond1(string_bounder);
@@ -450,33 +458,35 @@ impl ConnectionTranslatable for ConnectionSwitch {
         match self.kind {
             ConnectionKind::HorizontalThenVerticalCrossSwimlane => {
                 let (p1, p2) = self.cross_in_points(string_bounder);
-                let mp1a = translate1.get_translated(p1);
-                let mp2b = translate2.get_translated(p2);
+                let from = translate1.get_translated(p1);
+                let to = translate2.get_translated(p2);
                 let mut snake = self
                     .snake_down()
                     .with_label(self.label.clone(), self.base.arrow_horizontal_alignment());
                 let dim_diamond1 = parent.diamond1.calculate_dimension(string_bounder);
                 let y = p1.y - dim_diamond1.get_height() / 2.0;
-                if mp1a.x > mp2b.x {
-                    snake.add_point(mp1a.x - dim_diamond1.get_width() / 2.0, y);
+                if from.x > to.x {
+                    snake.add_point(from.x - dim_diamond1.get_width() / 2.0, y);
                 } else {
-                    snake.add_point(mp1a.x + dim_diamond1.get_width() / 2.0, y);
+                    snake.add_point(from.x + dim_diamond1.get_width() / 2.0, y);
                 }
-                snake.add_point(mp2b.x, y);
-                snake.add_point_at(mp2b);
+                snake.add_point(to.x, y);
+                snake.add_point_at(to);
                 ug.draw(&snake);
             }
             ConnectionKind::VerticalThenHorizontalCrossSwimlane => {
-                let mp1a = translate1.get_translated(self.case_out(string_bounder));
-                let p2 = parent.get_translate_diamond2(string_bounder).get_translated(
-                    self.ftile2()
-                        .calculate_dimension(string_bounder)
-                        .get_point_in(),
-                );
-                let mp2b = translate2.get_translated(p2);
+                let from = translate1.get_translated(self.case_out(string_bounder));
+                let p2 = parent
+                    .get_translate_diamond2(string_bounder)
+                    .get_translated(
+                        self.ftile2()
+                            .calculate_dimension(string_bounder)
+                            .get_point_in(),
+                    );
+                let to = translate2.get_translated(p2);
                 let dim_diamond2 = parent.diamond2.calculate_dimension(string_bounder);
                 let arrows = self.skin_param().arrows();
-                let left = mp1a.x > mp2b.x;
+                let left = from.x > to.x;
                 let arrow = if left {
                     arrows.as_to_left()
                 } else {
@@ -484,13 +494,13 @@ impl ConnectionTranslatable for ConnectionSwitch {
                 };
                 let mut snake =
                     Snake::create_with_end(self.skin_param(), parent.arrow_color.clone(), arrow);
-                let y = mp2b.y + dim_diamond2.get_height() / 2.0;
-                snake.add_point_at(mp1a);
-                snake.add_point(mp1a.x, y);
+                let y = to.y + dim_diamond2.get_height() / 2.0;
+                snake.add_point_at(from);
+                snake.add_point(from.x, y);
                 if left {
-                    snake.add_point(mp2b.x + dim_diamond2.get_width() / 2.0, y);
+                    snake.add_point(to.x + dim_diamond2.get_width() / 2.0, y);
                 } else {
-                    snake.add_point(mp2b.x - dim_diamond2.get_width() / 2.0, y);
+                    snake.add_point(to.x - dim_diamond2.get_width() / 2.0, y);
                 }
                 ug.draw(&snake);
             }

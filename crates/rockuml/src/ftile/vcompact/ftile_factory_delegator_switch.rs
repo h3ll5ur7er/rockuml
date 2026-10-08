@@ -46,16 +46,18 @@ impl FtileFactoryDelegatorSwitch {
             .get_color()
             .unwrap_or_else(|| colors.get_color_of(&style, PName::BackGroundColor));
         let tb_test: Rc<dyn TextBlock> = match test {
-            Some(test) if !test.is_white() => Rc::new(test.create0(
-                &style.font_configuration(),
-                branch0
-                    .ftile
-                    .skin_param()
-                    .get_default_text_alignment(HorizontalAlignment::Left),
-                branch0.ftile.skin_param(),
-                style.wrap_width(),
-                CreoleMode::Full,
-            )),
+            Some(test) if !test.is_white() => Rc::new(
+                test.create0(
+                    &style.font_configuration(),
+                    branch0
+                        .ftile
+                        .skin_param()
+                        .get_default_text_alignment(HorizontalAlignment::Left),
+                    branch0.ftile.skin_param(),
+                    style.wrap_width(),
+                    CreoleMode::Full,
+                ),
+            ),
             _ => empty_label(),
         };
         Rc::new(FtileDiamondInside::new(
@@ -132,11 +134,9 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorSwitch {
         }
         let arrow_color = Rainbow::build_from_style(&self.arrow_style());
         let skin_param = Rc::clone(FtileFactoryDelegator::skin_param(self));
-        if let ([tile], [positive], [special]) = (
-            ftiles.as_slice(),
-            positives.as_slice(),
-            specials.as_slice(),
-        ) {
+        if let ([tile], [positive], [special]) =
+            (ftiles.as_slice(), positives.as_slice(), specials.as_slice())
+        {
             return ftile_switch_with_one_link::create(
                 skin_param,
                 Rc::clone(tile),

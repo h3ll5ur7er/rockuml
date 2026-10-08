@@ -32,10 +32,10 @@ use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
 use crate::stereo::Stereotype;
-use crate::svek::{ConditionEndStyle, ConditionStyle};
 use crate::style::{
     PName, SName, Style, StyleBuilder, StyleParsingError, StyleSignature, ValueReading,
 };
+use crate::svek::{ConditionEndStyle, ConditionStyle};
 
 const DEFAULT_SKIN: &str = "plantuml.skin";
 

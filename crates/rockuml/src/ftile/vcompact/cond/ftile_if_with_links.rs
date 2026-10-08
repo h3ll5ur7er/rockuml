@@ -93,10 +93,9 @@ impl FtileIfWithLinks {
     }
 
     fn get_ydelta_for_labels(&self, string_bounder: &dyn StringBounder) -> f64 {
-        downcast::<FtileDiamond>(self.diamond2.as_ref())
-            .map_or(0.0, |diamond2| {
-                diamond2.get_west_east_label_height(string_bounder)
-            })
+        downcast::<FtileDiamond>(self.diamond2.as_ref()).map_or(0.0, |diamond2| {
+            diamond2.get_west_east_label_height(string_bounder)
+        })
     }
 
     /// The room between the branches (`FtileIfWithDiamonds.widthInner`).
@@ -114,7 +113,10 @@ impl FtileIfWithLinks {
             .get_or_init(|| self.calculate_dimension_internal_slow(string_bounder))
     }
 
-    fn calculate_dimension_internal_slow(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
+    fn calculate_dimension_internal_slow(
+        &self,
+        string_bounder: &dyn StringBounder,
+    ) -> FtileGeometry {
         let dim1 = self.diamond1.calculate_dimension(string_bounder);
         let dim2 = self.diamond2.calculate_dimension(string_bounder);
         let dim_nude = self.calculate_dimension_nude(string_bounder);
@@ -132,7 +134,13 @@ impl FtileIfWithLinks {
         let inner_margin = self.width_inner(string_bounder);
         let width = dim1.get_left() + inner_margin + (dim2.get_width() - dim2.get_left());
         let height = dim1.dimension().merge_lr(dim2.dimension()).height;
-        FtileGeometry::with_out(width, height, dim1.get_left() + inner_margin / 2.0, 0.0, height)
+        FtileGeometry::with_out(
+            width,
+            height,
+            dim1.get_left() + inner_margin / 2.0,
+            0.0,
+            height,
+        )
     }
 
     fn get_translate_branch1(&self, string_bounder: &dyn StringBounder) -> UTranslate {
@@ -228,8 +236,12 @@ impl FtileIfWithLinks {
         let tile1 = Rc::clone(&self.tile1);
         let tile2 = Rc::clone(&self.tile2);
         let mut conns: Vec<Rc<dyn Connection>> = vec![
-            Rc::new(ConnectionHorizontalThenVertical::new(&self, &tile1, branch1)),
-            Rc::new(ConnectionHorizontalThenVertical::new(&self, &tile2, branch2)),
+            Rc::new(ConnectionHorizontalThenVertical::new(
+                &self, &tile1, branch1,
+            )),
+            Rc::new(ConnectionHorizontalThenVertical::new(
+                &self, &tile2, branch2,
+            )),
         ];
         let has_point_out1 = tile1.calculate_dimension(string_bounder).has_point_out();
         let has_point_out2 = tile2.calculate_dimension(string_bounder).has_point_out();
@@ -316,7 +328,11 @@ impl Ftile for FtileIfWithLinks {
         })
     }
 
-    fn get_translate_for(&self, child: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         if same(child, self.tile1.as_ref()) {
             return self.get_translate_branch1(string_bounder);
         }
@@ -367,7 +383,9 @@ impl ConnectionHorizontalThenVertical {
     }
 
     fn ftile2(&self) -> &Rc<dyn Ftile> {
-        self.base.get_ftile2().expect("the connection enters a branch")
+        self.base
+            .get_ftile2()
+            .expect("the connection enters a branch")
     }
 
     fn get_p1(&self, string_bounder: &dyn StringBounder) -> XPoint2D {
@@ -378,7 +396,9 @@ impl ConnectionHorizontalThenVertical {
         } else {
             dim_diamond1.get_point_b()
         };
-        parent.get_translate_diamond1(string_bounder).get_translated(pt)
+        parent
+            .get_translate_diamond1(string_bounder)
+            .get_translated(pt)
     }
 
     fn get_p2(&self, string_bounder: &dyn StringBounder) -> XPoint2D {
@@ -487,7 +507,9 @@ impl ConnectionVerticalThenHorizontal {
     }
 
     fn ftile1(&self) -> &Rc<dyn Ftile> {
-        self.base.get_ftile1().expect("the connection leaves a branch")
+        self.base
+            .get_ftile1()
+            .expect("the connection leaves a branch")
     }
 
     fn get_p1(&self, string_bounder: &dyn StringBounder) -> Option<XPoint2D> {
@@ -507,7 +529,9 @@ impl ConnectionVerticalThenHorizontal {
         } else {
             dim_diamond2.get_point_b()
         };
-        parent.get_translate_diamond2(string_bounder).get_translated(pt)
+        parent
+            .get_translate_diamond2(string_bounder)
+            .get_translated(pt)
     }
 
     fn arrow(&self, x1: f64, x2: f64) -> UPolygon {
@@ -563,38 +587,38 @@ impl ConnectionTranslatable for ConnectionVerticalThenHorizontal {
         let p2 = self.get_p2(string_bounder);
         let original_direction = Direction::left_or_right(p1, p2);
         let (x1, x2) = (p1.x, p2.x);
-        let mp1a = translate1.get_translated(p1);
-        let mp2b = translate2.get_translated(p2);
-        let new_direction = Direction::left_or_right(mp1a, mp2b);
+        let from = translate1.get_translated(p1);
+        let to = translate2.get_translated(p2);
+        let new_direction = Direction::left_or_right(from, to);
         let arrow = self.arrow(x1, x2);
         let skin_param = self.parent.skin_param();
         let delta = if x2 > x1 { -1.0 } else { 1.0 } * 1.5 * HEXAGON_HALF_SIZE;
         let corner = if original_direction == new_direction {
-            let mp2bc = XPoint2D::new(mp2b.x + delta, mp2b.y);
-            let middle = f64::midpoint(mp1a.y, mp2b.y);
+            let elbow = XPoint2D::new(to.x + delta, to.y);
+            let middle = f64::midpoint(from.y, to.y);
             let mut snake = Snake::create(skin_param, self.my_arrow_color.clone())
                 .with_merge(MergeStrategy::Limited);
-            snake.add_point_at(mp1a);
-            snake.add_point(mp1a.x, middle);
-            snake.add_point(mp2bc.x, middle);
-            snake.add_point_at(mp2bc);
+            snake.add_point_at(from);
+            snake.add_point(from.x, middle);
+            snake.add_point(elbow.x, middle);
+            snake.add_point_at(elbow);
             ug.draw(&snake);
-            mp2bc
+            elbow
         } else {
-            let mp2bb = XPoint2D::new(mp2b.x + delta, mp2b.y - 1.5 * HEXAGON_HALF_SIZE);
+            let elbow = XPoint2D::new(to.x + delta, to.y - 1.5 * HEXAGON_HALF_SIZE);
             let mut snake = Snake::create(skin_param, self.my_arrow_color.clone())
                 .with_merge(MergeStrategy::Limited);
-            snake.add_point_at(mp1a);
-            snake.add_point(mp1a.x, mp2bb.y);
-            snake.add_point_at(mp2bb);
+            snake.add_point_at(from);
+            snake.add_point(from.x, elbow.y);
+            snake.add_point_at(elbow);
             ug.draw(&snake);
-            mp2bb
+            elbow
         };
         let mut small = Snake::create_with_end(skin_param, self.my_arrow_color.clone(), arrow)
             .with_merge(MergeStrategy::Limited);
         small.add_point_at(corner);
-        small.add_point(corner.x, mp2b.y);
-        small.add_point_at(mp2b);
+        small.add_point(corner.x, to.y);
+        small.add_point_at(to);
         ug.draw(&small);
     }
 }
@@ -623,7 +647,10 @@ impl ConnectionVerticalThenHorizontalDirect {
     }
 
     fn get_p1(&self, string_bounder: &dyn StringBounder) -> Option<XPoint2D> {
-        let tile = self.base.get_ftile1().expect("the connection leaves a branch");
+        let tile = self
+            .base
+            .get_ftile1()
+            .expect("the connection leaves a branch");
         let geo = tile.calculate_dimension(string_bounder);
         geo.has_point_out().then(|| {
             geo.translate(self.parent.translate_branch(tile.as_ref(), string_bounder))
@@ -675,14 +702,14 @@ impl ConnectionTranslatable for ConnectionVerticalThenHorizontalDirect {
             dim_total.get_left(),
             dim_total.get_height() - HEXAGON_HALF_SIZE,
         );
-        let mp1a = translate1.get_translated(p1);
-        let mp2b = translate2.get_translated(p2);
+        let from = translate1.get_translated(p1);
+        let to = translate2.get_translated(p2);
         let mut snake = Snake::create(self.parent.skin_param(), self.my_arrow_color.clone())
             .with_merge(MergeStrategy::Limited);
-        snake.add_point_at(mp1a);
-        snake.add_point(mp1a.x, mp2b.y);
-        snake.add_point_at(mp2b);
-        snake.add_point(mp2b.x, dim_total.get_height());
+        snake.add_point_at(from);
+        snake.add_point(from.x, to.y);
+        snake.add_point_at(to);
+        snake.add_point(to.x, dim_total.get_height());
         ug.draw(&snake);
     }
 }
@@ -713,7 +740,10 @@ impl Connection for ConnectionVerticalOut {
 
     fn draw_u(&self, ug: &UGraphic) {
         let string_bounder = ug.string_bounder();
-        let tile = self.base.get_ftile1().expect("the connection leaves a branch");
+        let tile = self
+            .base
+            .get_ftile1()
+            .expect("the connection leaves a branch");
         let geo = tile.calculate_dimension(string_bounder);
         if !geo.has_point_out() {
             return;

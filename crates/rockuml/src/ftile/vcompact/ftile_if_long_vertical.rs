@@ -52,7 +52,14 @@ impl FtileIfLongVertical {
         let border_color = style_diamond.value(PName::LineColor).as_color();
         let arrow_color = Rainbow::build_from_style(style_arrow);
         let create = |display: Option<&Display>, alignment: HorizontalAlignment| {
-            create0_or_empty(display, &fc_arrow, alignment, skin_param, 0.0, CreoleMode::Full)
+            create0_or_empty(
+                display,
+                &fc_arrow,
+                alignment,
+                skin_param,
+                0.0,
+                CreoleMode::Full,
+            )
         };
         let mut diamonds: Vec<Rc<dyn Ftile>> = Vec::new();
         let mut west: f64 = 10.0;
@@ -78,7 +85,7 @@ impl FtileIfLongVertical {
                 west = west.max(tb_inlabel.calculate_dimension(string_bounder).width);
             }
         }
-        let tiles: Vec<Rc<dyn Ftile>> = thens
+        let then_tiles: Vec<Rc<dyn Ftile>> = thens
             .iter()
             .map(|branch| {
                 Rc::new(FtileMargedWest::new(Rc::clone(&branch.ftile), west)) as Rc<dyn Ftile>
@@ -90,34 +97,50 @@ impl FtileIfLongVertical {
             border_color,
             swimlane,
         ));
-        let tile2: Rc<dyn Ftile> =
-            Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch2.ftile), 30.0));
         let result = Rc::new(Self {
             base: AbstractFtile::new(Rc::clone(skin_param)),
-            tiles: tiles.clone(),
-            tile2: Rc::clone(&tile2),
-            diamonds: diamonds.clone(),
-            last_diamond: Rc::clone(&last_diamond),
-            arrow_color: arrow_color.clone(),
+            tiles: then_tiles,
+            tile2: Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch2.ftile), 30.0)),
+            diamonds,
+            last_diamond,
+            arrow_color,
         });
-        let connection = |kind: ConnectionKind,
-                          tile1: Option<&Rc<dyn Ftile>>,
-                          tile2: Option<&Rc<dyn Ftile>>,
-                          color: Rainbow,
-                          label: Option<Rc<dyn TextBlock>>|
-         -> Rc<dyn Connection> {
-            Rc::new(ConnectionLongVertical {
-                parent: Rc::clone(&result),
-                base: AbstractConnection::new(tile1.cloned(), tile2.cloned()),
-                kind,
-                color,
-                label,
+        let tb2 = create(
+            branch2.get_display_positive().as_ref(),
+            HorizontalAlignment::Left,
+        );
+        let inlabels = thens
+            .iter()
+            .skip(1)
+            .map(|branch| {
+                branch
+                    .branch
+                    .get_inlabel()
+                    .map(|inlabel| create(Some(inlabel), HorizontalAlignment::Left))
             })
-        };
+            .collect();
+        let in_colors = thens
+            .iter()
+            .map(|branch| branch.get_in_color(&result.arrow_color))
+            .collect();
+        let conns = result.connections(in_colors, inlabels, top_inlink_rendering, tb2);
+        ftile_utils::add_connections(result, conns)
+    }
+
+    /// The arrows: `in_colors` into the branches, `inlabels` into the conditions after the first, `tb2`
+    /// into the `else`.
+    fn connections(
+        self: &Rc<Self>,
+        in_colors: Vec<Rainbow>,
+        inlabels: Vec<Option<Rc<dyn TextBlock>>>,
+        top_inlink_rendering: &LinkRendering,
+        tb2: Rc<dyn TextBlock>,
+    ) -> Vec<Rc<dyn Connection>> {
+        let (tiles, diamonds) = (&self.tiles, &self.diamonds);
+        let arrow_color = &self.arrow_color;
         let mut conns = Vec::new();
-        for ((tile, diamond), branch) in tiles.iter().zip(&diamonds).zip(thens) {
-            let color = branch.get_in_color(&arrow_color);
-            conns.push(connection(
+        for ((tile, diamond), color) in tiles.iter().zip(diamonds).zip(in_colors) {
+            conns.push(self.connection(
                 ConnectionKind::VerticalIn,
                 Some(diamond),
                 Some(tile),
@@ -125,12 +148,8 @@ impl FtileIfLongVertical {
                 None,
             ));
         }
-        for (pair, branch) in diamonds.windows(2).zip(thens.iter().skip(1)) {
-            let tb_inlabel = branch
-                .branch
-                .get_inlabel()
-                .map(|inlabel| create(Some(inlabel), HorizontalAlignment::Left));
-            conns.push(connection(
+        for (pair, tb_inlabel) in diamonds.windows(2).zip(inlabels) {
+            conns.push(self.connection(
                 ConnectionKind::Vertical,
                 Some(&pair[0]),
                 Some(&pair[1]),
@@ -139,55 +158,76 @@ impl FtileIfLongVertical {
             ));
         }
         if let Some(first) = tiles.first() {
-            conns.push(connection(
+            conns.push(self.connection(
                 ConnectionKind::ThenOut,
                 Some(first),
-                Some(&last_diamond),
+                Some(&self.last_diamond),
                 arrow_color.clone(),
                 None,
             ));
         }
         for tile in tiles.iter().skip(1) {
-            conns.push(connection(
+            conns.push(self.connection(
                 ConnectionKind::ThenOutConnect,
                 Some(tile),
-                Some(&last_diamond),
+                Some(&self.last_diamond),
                 arrow_color.clone(),
                 None,
             ));
         }
-        let top_in_color = top_inlink_rendering.get_rainbow_or(&arrow_color);
-        conns.push(connection(
+        let top_in_color = top_inlink_rendering.get_rainbow_or(arrow_color);
+        conns.push(self.connection(
             ConnectionKind::In,
             None,
             diamonds.first(),
             top_in_color.clone(),
             None,
         ));
-        let tb2 = create(
-            branch2.get_display_positive().as_ref(),
-            HorizontalAlignment::Left,
-        );
-        conns.push(connection(
+        conns.push(self.connection(
             ConnectionKind::LastElse,
             diamonds.last(),
-            Some(&tile2),
+            Some(&self.tile2),
             top_in_color,
             Some(tb2),
         ));
-        conns.push(connection(
+        conns.push(self.connection(
             ConnectionKind::LastElseOut,
-            Some(&tile2),
-            Some(&last_diamond),
-            arrow_color,
+            Some(&self.tile2),
+            Some(&self.last_diamond),
+            arrow_color.clone(),
             None,
         ));
-        ftile_utils::add_connections(result, conns)
+        conns
     }
 
-    fn get_translate_diamond(&self, diamond: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn connection(
+        self: &Rc<Self>,
+        kind: ConnectionKind,
+        tile1: Option<&Rc<dyn Ftile>>,
+        tile2: Option<&Rc<dyn Ftile>>,
+        color: Rainbow,
+        label: Option<Rc<dyn TextBlock>>,
+    ) -> Rc<dyn Connection> {
+        Rc::new(ConnectionLongVertical {
+            parent: Rc::clone(self),
+            base: AbstractConnection::new(tile1.cloned(), tile2.cloned()),
+            kind,
+            color,
+            label,
+        })
+    }
+
+    fn get_translate_diamond(
+        &self,
+        diamond: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         let all_diamonds_width = self.all_diamonds_width(string_bounder);
-        let Some(idx) = self.diamonds.iter().position(|other| same(other.as_ref(), diamond)) else {
+        let Some(idx) = self
+            .diamonds
+            .iter()
+            .position(|other| same(other.as_ref(), diamond))
+        else {
             return UTranslate::default();
         };
         let y1 = self.get_translate_dy(idx, string_bounder);
@@ -204,8 +244,16 @@ impl FtileIfLongVertical {
         UTranslate::new(x, dim_total.get_height() - dim_last.get_height())
     }
 
-    fn get_translate1(&self, candidate: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
-        let Some(idx) = self.tiles.iter().position(|other| same(other.as_ref(), candidate)) else {
+    fn get_translate1(
+        &self,
+        candidate: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
+        let Some(idx) = self
+            .tiles
+            .iter()
+            .position(|other| same(other.as_ref(), candidate))
+        else {
             return UTranslate::default();
         };
         let y1 = self.get_translate_dy(idx, string_bounder);
@@ -297,7 +345,9 @@ impl Ftile for FtileIfLongVertical {
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
         self.base.calculate_dimension(|| {
-            let dim_total = self.calculate_dimension_internal(string_bounder).dimension();
+            let dim_total = self
+                .calculate_dimension_internal(string_bounder)
+                .dimension();
             let any_out = self
                 .tiles
                 .iter()
@@ -316,7 +366,11 @@ impl Ftile for FtileIfLongVertical {
         })
     }
 
-    fn get_translate_for(&self, child: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         if same(child, self.tile2.as_ref()) {
             return self.get_translate2(string_bounder);
         }
@@ -330,11 +384,7 @@ impl Ftile for FtileIfLongVertical {
     }
 
     fn get_my_children(&self) -> Vec<Rc<dyn Ftile>> {
-        self.tiles
-            .iter()
-            .chain([&self.tile2])
-            .cloned()
-            .collect()
+        self.tiles.iter().chain([&self.tile2]).cloned().collect()
     }
 
     fn draw_u(&self, ug: &UGraphic) {
@@ -382,25 +432,155 @@ struct ConnectionLongVertical {
 }
 
 impl ConnectionLongVertical {
-    fn arrow(&self, to: fn(crate::ftile::Arrows) -> UPolygon) -> Snake {
+    /// The arrow, its head as the kind of connection has it, before its points are added.
+    fn snake(&self) -> Snake {
         let skin_param = self.parent.skin_param();
-        Snake::create_with_end(skin_param, self.color.clone(), to(skin_param.arrows()))
-    }
-
-    /// The arrow down, its label beside the middle.
-    fn arrow_down_labelled(&self) -> Snake {
-        self.arrow(crate::ftile::Arrows::as_to_down)
-            .with_label_vertical(self.label.clone(), VerticalAlignment::Center)
+        let arrows = skin_param.arrows();
+        let head = match self.kind {
+            ConnectionKind::ThenOut => arrows.as_to_left(),
+            ConnectionKind::ThenOutConnect => arrows.as_to_right(),
+            _ => arrows.as_to_down(),
+        };
+        let snake = Snake::create_with_end(skin_param, self.color.clone(), head);
+        match self.kind {
+            ConnectionKind::Vertical | ConnectionKind::LastElse => {
+                snake.with_label_vertical(self.label.clone(), VerticalAlignment::Center)
+            }
+            _ => snake,
+        }
     }
 
     /// The point out of the branch `tile`, when the flow goes on below it.
-    fn branch_out(&self, tile: &Rc<dyn Ftile>, string_bounder: &dyn StringBounder) -> Option<XPoint2D> {
+    fn branch_out(
+        &self,
+        tile: &Rc<dyn Ftile>,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<XPoint2D> {
         let dim1 = tile.calculate_dimension(string_bounder);
         dim1.has_point_out().then(|| {
             self.parent
                 .get_translate1(tile.as_ref(), string_bounder)
                 .get_translated(dim1.get_point_out())
         })
+    }
+
+    /// From the first branch round the right, into the middle of the last diamond.
+    fn then_out_points(
+        &self,
+        tile: &Rc<dyn Ftile>,
+        last_diamond: &Rc<dyn Ftile>,
+        string_bounder: &dyn StringBounder,
+    ) -> Option<Vec<XPoint2D>> {
+        let parent = &self.parent;
+        let p1 = self.branch_out(tile, string_bounder)?;
+        let dim_last_diamond = last_diamond.calculate_dimension(string_bounder);
+        let p2 = parent
+            .get_translate_last_diamond(string_bounder)
+            .get_translated(dim_last_diamond.get_point_in());
+        let p2 = UTranslate::new(
+            dim_last_diamond.get_width() / 2.0,
+            dim_last_diamond.get_height() / 2.0,
+        )
+        .get_translated(p2);
+        let width = parent
+            .calculate_dimension_internal(string_bounder)
+            .get_width();
+        Some(vec![
+            p1,
+            XPoint2D::new(p1.x, p1.y + 15.0),
+            XPoint2D::new(width, p1.y + 15.0),
+            XPoint2D::new(width, p2.y),
+            p2,
+        ])
+    }
+
+    /// The points the arrow goes through; none when it is not drawn.
+    fn points(&self, string_bounder: &dyn StringBounder) -> Option<Vec<XPoint2D>> {
+        let parent = &self.parent;
+        let point_in = |tile: &Rc<dyn Ftile>, translate: UTranslate| {
+            translate.get_translated(tile.calculate_dimension(string_bounder).get_point_in())
+        };
+        let point_out = |tile: &Rc<dyn Ftile>, translate: UTranslate| {
+            translate.get_translated(tile.calculate_dimension(string_bounder).get_point_out())
+        };
+        let dim_total = || parent.calculate_dimension_internal(string_bounder);
+        Some(
+            match (self.kind, self.base.get_ftile1(), self.base.get_ftile2()) {
+                (ConnectionKind::In, _, Some(diamond)) => {
+                    let p2 = point_in(
+                        diamond,
+                        parent.get_translate_diamond(diamond.as_ref(), string_bounder),
+                    );
+                    let p1 = dim_total().get_point_in();
+                    let middle = f64::midpoint(p1.y, p2.y);
+                    vec![
+                        p1,
+                        XPoint2D::new(p1.x, middle),
+                        XPoint2D::new(p2.x, middle),
+                        p2,
+                    ]
+                }
+                (ConnectionKind::VerticalIn, Some(diamond), Some(tile)) => {
+                    let dim_diamond1 = diamond.calculate_dimension(string_bounder);
+                    let p1 = parent
+                        .get_translate_diamond(diamond.as_ref(), string_bounder)
+                        .get_translated(XPoint2D::new(
+                            dim_diamond1.get_width(),
+                            dim_diamond1.get_height() / 2.0,
+                        ));
+                    let p2 = point_in(tile, parent.get_translate1(tile.as_ref(), string_bounder));
+                    vec![p1, XPoint2D::new(p2.x, p1.y), p2]
+                }
+                (ConnectionKind::Vertical, Some(diamond1), Some(diamond2)) => vec![
+                    point_out(
+                        diamond1,
+                        parent.get_translate_for(diamond1.as_ref(), string_bounder),
+                    ),
+                    point_in(
+                        diamond2,
+                        parent.get_translate_for(diamond2.as_ref(), string_bounder),
+                    ),
+                ],
+                (ConnectionKind::LastElse, Some(diamond), Some(tile2)) => {
+                    let p1 = point_out(
+                        diamond,
+                        parent.get_translate_diamond(diamond.as_ref(), string_bounder),
+                    );
+                    let p2 = point_in(tile2, parent.get_translate2(string_bounder));
+                    vec![
+                        p1,
+                        XPoint2D::new(p1.x, p2.y - 15.0),
+                        XPoint2D::new(p2.x, p2.y - 15.0),
+                        p2,
+                    ]
+                }
+                (ConnectionKind::LastElseOut, Some(tile2), Some(last_diamond)) => {
+                    if !tile2.calculate_dimension(string_bounder).has_point_out() {
+                        return None;
+                    }
+                    let p1 = point_out(tile2, parent.get_translate2(string_bounder));
+                    let p2 = point_in(
+                        last_diamond,
+                        parent.get_translate_last_diamond(string_bounder),
+                    );
+                    vec![
+                        p1,
+                        XPoint2D::new(p1.x, p2.y - 15.0),
+                        XPoint2D::new(p2.x, p2.y - 15.0),
+                        p2,
+                    ]
+                }
+                (ConnectionKind::ThenOut, Some(tile), Some(last_diamond)) => {
+                    return self.then_out_points(tile, last_diamond, string_bounder);
+                }
+                (ConnectionKind::ThenOutConnect, Some(tile), Some(_)) => {
+                    let p1 = self.branch_out(tile, string_bounder)?;
+                    let p2 = XPoint2D::new(dim_total().get_width(), p1.y + 15.0);
+                    vec![p1, XPoint2D::new(p1.x, p2.y), p2]
+                }
+                _ => return None,
+            },
+        )
     }
 }
 
@@ -414,118 +594,13 @@ impl Connection for ConnectionLongVertical {
     }
 
     fn draw_u(&self, ug: &UGraphic) {
-        let string_bounder = ug.string_bounder();
-        let parent = &self.parent;
-        let (ftile1, ftile2) = (self.base.get_ftile1(), self.base.get_ftile2());
-        let point_in = |tile: &Rc<dyn Ftile>, translate: UTranslate| {
-            translate.get_translated(tile.calculate_dimension(string_bounder).get_point_in())
+        let Some(points) = self.points(ug.string_bounder()) else {
+            return;
         };
-        let snake = match (self.kind, ftile1, ftile2) {
-            (ConnectionKind::In, _, Some(diamond)) => {
-                let p2 = point_in(diamond, parent.get_translate_diamond(diamond.as_ref(), string_bounder));
-                let p1 = parent
-                    .calculate_dimension_internal(string_bounder)
-                    .get_point_in();
-                let middle = f64::midpoint(p1.y, p2.y);
-                let mut snake = self.arrow(crate::ftile::Arrows::as_to_down);
-                snake.add_point_at(p1);
-                snake.add_point(p1.x, middle);
-                snake.add_point(p2.x, middle);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::VerticalIn, Some(diamond), Some(tile)) => {
-                let dim_diamond1 = diamond.calculate_dimension(string_bounder);
-                let p1 = parent
-                    .get_translate_diamond(diamond.as_ref(), string_bounder)
-                    .get_translated(XPoint2D::new(
-                        dim_diamond1.get_width(),
-                        dim_diamond1.get_height() / 2.0,
-                    ));
-                let p2 = point_in(tile, parent.get_translate1(tile.as_ref(), string_bounder));
-                let mut snake = self.arrow(crate::ftile::Arrows::as_to_down);
-                snake.add_point_at(p1);
-                snake.add_point(p2.x, p1.y);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::Vertical, Some(diamond1), Some(diamond2)) => {
-                let p1 = parent
-                    .get_translate_for(diamond1.as_ref(), string_bounder)
-                    .get_translated(diamond1.calculate_dimension(string_bounder).get_point_out());
-                let p2 = point_in(diamond2, parent.get_translate_for(diamond2.as_ref(), string_bounder));
-                let mut snake = self.arrow_down_labelled();
-                snake.add_point_at(p1);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::LastElse, Some(diamond), Some(tile2)) => {
-                let p1 = parent
-                    .get_translate_diamond(diamond.as_ref(), string_bounder)
-                    .get_translated(diamond.calculate_dimension(string_bounder).get_point_out());
-                let p2 = point_in(tile2, parent.get_translate2(string_bounder));
-                let mut snake = self.arrow_down_labelled();
-                snake.add_point_at(p1);
-                snake.add_point(p1.x, p2.y - 15.0);
-                snake.add_point(p2.x, p2.y - 15.0);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::LastElseOut, Some(tile2), Some(last_diamond)) => {
-                let dim1 = tile2.calculate_dimension(string_bounder);
-                if !dim1.has_point_out() {
-                    return;
-                }
-                let p1 = parent
-                    .get_translate2(string_bounder)
-                    .get_translated(dim1.get_point_out());
-                let p2 = point_in(
-                    last_diamond,
-                    parent.get_translate_last_diamond(string_bounder),
-                );
-                let mut snake = self.arrow(crate::ftile::Arrows::as_to_down);
-                snake.add_point_at(p1);
-                snake.add_point(p1.x, p2.y - 15.0);
-                snake.add_point(p2.x, p2.y - 15.0);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::ThenOut, Some(tile), Some(last_diamond)) => {
-                let Some(p1) = self.branch_out(tile, string_bounder) else {
-                    return;
-                };
-                let dim_last_diamond = last_diamond.calculate_dimension(string_bounder);
-                let p2 = UTranslate::new(
-                    dim_last_diamond.get_width() / 2.0,
-                    dim_last_diamond.get_height() / 2.0,
-                )
-                .get_translated(point_in(
-                    last_diamond,
-                    parent.get_translate_last_diamond(string_bounder),
-                ));
-                let dim_total = parent.calculate_dimension_internal(string_bounder);
-                let mut snake = self.arrow(crate::ftile::Arrows::as_to_left);
-                snake.add_point_at(p1);
-                snake.add_point(p1.x, p1.y + 15.0);
-                snake.add_point(dim_total.get_width(), p1.y + 15.0);
-                snake.add_point(dim_total.get_width(), p2.y);
-                snake.add_point_at(p2);
-                snake
-            }
-            (ConnectionKind::ThenOutConnect, Some(tile), Some(_)) => {
-                let Some(p1) = self.branch_out(tile, string_bounder) else {
-                    return;
-                };
-                let dim_total = parent.calculate_dimension_internal(string_bounder);
-                let p2 = XPoint2D::new(dim_total.get_width(), p1.y + 15.0);
-                let mut snake = self.arrow(crate::ftile::Arrows::as_to_right);
-                snake.add_point_at(p1);
-                snake.add_point(p1.x, p2.y);
-                snake.add_point_at(p2);
-                snake
-            }
-            _ => return,
-        };
+        let mut snake = self.snake();
+        for point in points {
+            snake.add_point_at(point);
+        }
         ug.draw(&snake);
     }
 }

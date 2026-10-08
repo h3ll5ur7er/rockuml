@@ -6,6 +6,8 @@ use std::rc::Rc;
 use super::create0_or_empty;
 use super::one_swimlane::hline_extent;
 use crate::color::HColor;
+use crate::creole::CreoleMode;
+use crate::creole::Display;
 use crate::decoration::Rainbow;
 use crate::diagram::activity3::{BranchFtile, LinkRendering, SwimlaneId, SwimlaneSet};
 use crate::ftile::vertical::FtileDiamondInside2;
@@ -14,12 +16,10 @@ use crate::ftile::{
     FtileAssemblySimple, FtileFactory, FtileGeometry, FtileMinWidthCentered, MergeStrategy, Snake,
     Swimable, ftile_utils, same,
 };
-use crate::creole::Display;
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
-use crate::creole::CreoleMode;
 use crate::skin::SkinParam;
 use crate::style::{PName, Style, ValueReading};
 
@@ -49,160 +49,59 @@ impl FtileIfLongHorizontal {
         style_arrow: &Style,
         style_diamond: &Style,
     ) -> Rc<dyn Ftile> {
-        let skin_param = ftile_factory.skin_param();
-        let string_bounder = ftile_factory.get_string_bounder();
-        let border_color = style_diamond.value(PName::LineColor).as_color();
-        let arrow_color = Rainbow::build_from_style(style_arrow);
-        let fc_test = style_diamond.font_configuration();
-        let fc_arrow = style_arrow.font_configuration();
-        let create = |display: Option<&Display>, font: &FontConfiguration| {
-            create0_or_empty(
-                display,
-                font,
-                HorizontalAlignment::Left,
-                skin_param,
-                0.0,
-                CreoleMode::Full,
-            )
+        let builder = Builder {
+            swimlane,
+            back_color,
+            skin_param: ftile_factory.skin_param(),
+            string_bounder: ftile_factory.get_string_bounder(),
+            border_color: style_diamond.value(PName::LineColor).as_color(),
+            arrow_color: Rainbow::build_from_style(style_arrow),
+            fc_test: style_diamond.font_configuration(),
+            fc_arrow: style_arrow.font_configuration(),
+            diamond_line_break: style_diamond.wrap_width(),
         };
-        let tiles: Vec<Rc<dyn Ftile>> = thens
+        let then_tiles: Vec<Rc<dyn Ftile>> = thens
             .iter()
             .map(|branch| min_width_centered(&branch.ftile))
             .collect();
-        let tile2 = min_width_centered(&branch2.ftile);
-        let mut diamonds = Vec::new();
-        let mut inlabel_sizes = Vec::new();
-        for branch in thens {
-            let tb1 = create(branch.get_display_positive().as_ref(), &fc_arrow);
-            let tb_test = create0_or_empty(
-                branch.branch.label_test.as_ref(),
-                &fc_test,
-                skin_param.get_default_text_alignment(HorizontalAlignment::Left),
-                skin_param,
-                style_diamond.wrap_width(),
-                CreoleMode::Full,
-            );
-            let diamond_color = branch
-                .branch
-                .get_color()
-                .unwrap_or_else(|| back_color.clone());
-            let mut diamond = FtileDiamondInside2::new(
-                tb_test,
-                Rc::clone(skin_param),
-                diamond_color,
-                border_color.clone(),
-                swimlane,
-            );
-            match branch.branch.get_inlabel() {
-                None => inlabel_sizes.push(0.0),
-                Some(inlabel) => {
-                    let tb_inlabel = create(Some(inlabel), &fc_arrow);
-                    inlabel_sizes.push(tb_inlabel.calculate_dimension(string_bounder).width);
-                    diamond = diamond.with_west(tb_inlabel);
-                }
-            }
-            diamonds.push(diamond.with_north(tb1));
+        let (mut diamonds, inlabel_sizes): (Vec<_>, Vec<_>) =
+            thens.iter().map(|branch| builder.diamond(branch)).unzip();
+        let tb2 = builder.label(branch2.get_display_positive().as_ref(), &builder.fc_arrow);
+        if let Some(last) = diamonds.pop() {
+            diamonds.push(last.with_east(tb2));
         }
-        let tb2 = create(branch2.get_display_positive().as_ref(), &fc_arrow);
-        let mut diamonds: Vec<Rc<dyn Ftile>> = match diamonds.pop() {
-            Some(last) => diamonds
-                .into_iter()
-                .chain([last.with_east(tb2)])
-                .map(|diamond| Rc::new(diamond) as Rc<dyn Ftile>)
-                .collect(),
-            None => Vec::new(),
-        };
-        diamonds = align_diamonds(&diamonds, string_bounder);
+        let diamonds: Vec<Rc<dyn Ftile>> = diamonds
+            .into_iter()
+            .map(|diamond| Rc::new(diamond) as Rc<dyn Ftile>)
+            .collect();
+        let diamonds = align_diamonds(&diamonds, builder.string_bounder);
         let couples = diamonds
             .iter()
-            .zip(&tiles)
+            .zip(&then_tiles)
             .zip(&inlabel_sizes)
             .map(|((diamond, tile), inlabel_size)| {
-                let tmp: Rc<dyn Ftile> =
-                    Rc::new(FtileAssemblySimple::new(Rc::clone(diamond), Rc::clone(tile)));
+                let tmp: Rc<dyn Ftile> = Rc::new(FtileAssemblySimple::new(
+                    Rc::clone(diamond),
+                    Rc::clone(tile),
+                ));
                 ftile_utils::add_horizontal_margin(tmp, *inlabel_size, 0.0)
             })
             .collect();
         let result = Rc::new(Self {
-            base: AbstractFtile::new(Rc::clone(skin_param)),
-            tiles: tiles.clone(),
-            tile2: Rc::clone(&tile2),
-            diamonds: diamonds.clone(),
+            base: AbstractFtile::new(Rc::clone(builder.skin_param)),
+            tiles: then_tiles,
+            tile2: min_width_centered(&branch2.ftile),
+            diamonds,
             couples,
-            arrow_color: arrow_color.clone(),
+            arrow_color: builder.arrow_color.clone(),
         });
-        let or_arrow_color = |color: Rainbow| {
-            if color.size() == 0 {
-                arrow_color.clone()
-            } else {
-                color
-            }
-        };
-        let special_label = |branch: &BranchFtile<'_>| {
-            branch
-                .branch
-                .special
-                .as_ref()
-                .map(|special| create(special.display.as_ref(), &fc_test))
-        };
-        let mut conns: Vec<Rc<dyn Connection>> = Vec::new();
-        let mut nb_out = 0;
-        for ((tile, diamond), branch) in tiles.iter().zip(&diamonds).zip(thens) {
-            let rainbow_in = branch.get_in_color(&arrow_color);
-            if branch
-                .ftile
-                .calculate_dimension(string_bounder)
-                .has_point_out()
-            {
-                nb_out += 1;
-            }
-            let rainbow_out = branch.branch.get_out();
-            conns.push(Rc::new(ConnectionVerticalIn {
-                parent: Rc::clone(&result),
-                base: AbstractConnection::new(Some(Rc::clone(diamond)), Some(Rc::clone(tile))),
-                color: or_arrow_color(rainbow_in),
-            }));
-            conns.push(Rc::new(ConnectionVerticalOut {
-                parent: Rc::clone(&result),
-                base: AbstractConnection::new(Some(Rc::clone(tile)), None),
-                color: or_arrow_color(rainbow_out),
-                out2: special_label(branch),
-            }));
-        }
-        let top_in_color = top_inlink_rendering.get_rainbow_or(&arrow_color);
-        for (pair, branch) in diamonds.windows(2).zip(thens.iter().skip(1)) {
-            conns.push(Rc::new(ConnectionHorizontal {
-                parent: Rc::clone(&result),
-                base: AbstractConnection::new(Some(Rc::clone(&pair[0])), Some(Rc::clone(&pair[1]))),
-                color: branch.branch.get_in_rainbow(&arrow_color),
-            }));
-        }
-        conns.push(Rc::new(ConnectionIn {
-            parent: Rc::clone(&result),
-            base: AbstractConnection::new(None, diamonds.first().cloned()),
-            arrow_color: top_in_color,
-        }));
-        let rainbow_out = branch2.branch.get_out();
-        let rainbow_in = branch2.get_in_color(&arrow_color);
-        conns.push(Rc::new(ConnectionLastElseIn {
-            parent: Rc::clone(&result),
-            base: AbstractConnection::new(diamonds.last().cloned(), Some(Rc::clone(&tile2))),
-            arrow_color: or_arrow_color(rainbow_in),
-        }));
-        conns.push(Rc::new(ConnectionLastElseOut {
-            parent: Rc::clone(&result),
-            base: AbstractConnection::new(Some(Rc::clone(&tile2)), None),
-            arrow_color: or_arrow_color(rainbow_out),
-            out2: special_label(branch2),
-            nb_out,
-        }));
-        if nb_out > 0 {
-            conns.push(Rc::new(ConnectionHline {
-                parent: Rc::clone(&result),
-                base: AbstractConnection::new(None, None),
-                arrow_color: after_endwhile.get_rainbow_or(&arrow_color),
-            }));
-        }
+        let conns = builder.connections(
+            &result,
+            thens,
+            branch2,
+            top_inlink_rendering,
+            after_endwhile,
+        );
         ftile_utils::add_connections(result, conns)
     }
 
@@ -216,7 +115,11 @@ impl FtileIfLongHorizontal {
     }
 
     /// Where `diamond` is drawn, through the couple holding it.
-    fn get_translate_diamond1(&self, diamond: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_diamond1(
+        &self,
+        diamond: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         self.through_couple(&self.diamonds, diamond, string_bounder)
     }
 
@@ -239,7 +142,11 @@ impl FtileIfLongHorizontal {
         tr_couple.compose(couple.get_translate_for(tile, string_bounder))
     }
 
-    fn get_translate_couple1(&self, candidate: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_couple1(
+        &self,
+        candidate: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         let mut x1 = 0.0;
         for couple in &self.couples {
             if same(couple.as_ref(), candidate) {
@@ -261,9 +168,10 @@ impl FtileIfLongHorizontal {
             .calculate_dimension(string_bounder)
             .dimension()
             .delta(0.0, self.get_diamonds_height(string_bounder) / 2.0);
-        let result = result
-            .merge_lr(dim_tile2)
-            .delta(X_SEPARATION * self.couples.len() as f64, max_out_y.max(100.0));
+        let result = result.merge_lr(dim_tile2).delta(
+            X_SEPARATION * self.couples.len() as f64,
+            max_out_y.max(100.0),
+        );
         FtileGeometry::from_dim(result, result.width / 2.0, 0.0)
     }
 
@@ -294,7 +202,10 @@ fn min_width_centered(tile: &Rc<dyn Ftile>) -> Rc<dyn Ftile> {
 }
 
 /// The diamonds with room above, so that arrows leave them all at the same height, and 20 below.
-fn align_diamonds(diamonds: &[Rc<dyn Ftile>], string_bounder: &dyn StringBounder) -> Vec<Rc<dyn Ftile>> {
+fn align_diamonds(
+    diamonds: &[Rc<dyn Ftile>],
+    string_bounder: &dyn StringBounder,
+) -> Vec<Rc<dyn Ftile>> {
     let max_out_y = get_max_out_y(diamonds, string_bounder);
     diamonds
         .iter()
@@ -325,7 +236,9 @@ impl Swimable for FtileIfLongHorizontal {
     }
 
     fn get_swimlane_in(&self) -> Option<SwimlaneId> {
-        self.couples.first().and_then(|couple| couple.get_swimlane_in())
+        self.couples
+            .first()
+            .and_then(|couple| couple.get_swimlane_in())
     }
 
     fn get_swimlane_out(&self) -> Option<SwimlaneId> {
@@ -340,7 +253,9 @@ impl Ftile for FtileIfLongHorizontal {
 
     fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> FtileGeometry {
         self.base.calculate_dimension(|| {
-            let dim_total = self.calculate_dimension_internal(string_bounder).dimension();
+            let dim_total = self
+                .calculate_dimension_internal(string_bounder)
+                .dimension();
             let any_out = self
                 .tiles
                 .iter()
@@ -359,22 +274,26 @@ impl Ftile for FtileIfLongHorizontal {
         })
     }
 
-    fn get_translate_for(&self, child: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         if same(child, self.tile2.as_ref()) {
             return self.get_translate2(string_bounder);
         }
-        if self.couples.iter().any(|couple| same(couple.as_ref(), child)) {
+        if self
+            .couples
+            .iter()
+            .any(|couple| same(couple.as_ref(), child))
+        {
             return self.get_translate_couple1(child, string_bounder);
         }
         self.get_translate1(child, string_bounder)
     }
 
     fn get_my_children(&self) -> Vec<Rc<dyn Ftile>> {
-        self.tiles
-            .iter()
-            .chain([&self.tile2])
-            .cloned()
-            .collect()
+        self.tiles.iter().chain([&self.tile2]).cloned().collect()
     }
 
     fn draw_u(&self, ug: &UGraphic) {
@@ -412,7 +331,8 @@ impl Connection for ConnectionHorizontal {
     connection_tiles!();
 
     fn draw_u(&self, ug: &UGraphic) {
-        let (Some(diamond1), Some(diamond2)) = (self.base.get_ftile1(), self.base.get_ftile2()) else {
+        let (Some(diamond1), Some(diamond2)) = (self.base.get_ftile1(), self.base.get_ftile2())
+        else {
             return;
         };
         let string_bounder = ug.string_bounder();
@@ -426,7 +346,11 @@ impl Connection for ConnectionHorizontal {
                 FtileIfLongHorizontal::get_ydiamont_out_to_left(dim_diamond2),
             ));
         let skin_param = parent.skin_param();
-        let mut snake = Snake::create_with_end(skin_param, self.color.clone(), skin_param.arrows().as_to_right());
+        let mut snake = Snake::create_with_end(
+            skin_param,
+            self.color.clone(),
+            skin_param.arrows().as_to_right(),
+        );
         snake.add_point_at(p1);
         snake.add_point_at(p2);
         ug.draw(&snake);
@@ -453,7 +377,11 @@ impl Connection for ConnectionIn {
             .get_translate_diamond1(diamond.as_ref(), string_bounder)
             .get_translated(diamond.calculate_dimension(string_bounder).get_point_in());
         let skin_param = parent.skin_param();
-        let mut snake = Snake::create_with_end(skin_param, self.arrow_color.clone(), skin_param.arrows().as_to_down());
+        let mut snake = Snake::create_with_end(
+            skin_param,
+            self.arrow_color.clone(),
+            skin_param.arrows().as_to_down(),
+        );
         let p1 = parent
             .calculate_dimension_internal(string_bounder)
             .get_point_in();
@@ -481,11 +409,18 @@ impl Connection for ConnectionLastElseIn {
         let string_bounder = ug.string_bounder();
         let parent = &self.parent;
         let p1 = parent.get_east_of(diamond.as_ref(), string_bounder);
-        let p2 = parent
-            .get_translate2(string_bounder)
-            .get_translated(parent.tile2.calculate_dimension(string_bounder).get_point_in());
+        let p2 = parent.get_translate2(string_bounder).get_translated(
+            parent
+                .tile2
+                .calculate_dimension(string_bounder)
+                .get_point_in(),
+        );
         let skin_param = parent.skin_param();
-        let mut snake = Snake::create_with_end(skin_param, self.arrow_color.clone(), skin_param.arrows().as_to_down());
+        let mut snake = Snake::create_with_end(
+            skin_param,
+            self.arrow_color.clone(),
+            skin_param.arrows().as_to_down(),
+        );
         snake.add_point_at(p1);
         snake.add_point(p2.x, p1.y);
         snake.add_point_at(p2);
@@ -518,8 +453,12 @@ impl Connection for ConnectionLastElseOut {
         let full = parent.calculate_dimension_internal(string_bounder);
         let total_height = full.get_height();
         let skin_param = parent.skin_param();
-        let mut snake = Snake::create_with_end(skin_param, self.arrow_color.clone(), skin_param.arrows().as_to_down())
-            .with_label(self.out2.clone(), self.base.arrow_horizontal_alignment());
+        let mut snake = Snake::create_with_end(
+            skin_param,
+            self.arrow_color.clone(),
+            skin_param.arrows().as_to_down(),
+        )
+        .with_label(self.out2.clone(), self.base.arrow_horizontal_alignment());
         snake.add_point_at(p1);
         snake.add_point(p1.x, total_height);
         if self.nb_out == 0 {
@@ -551,7 +490,11 @@ impl ConnectionVerticalIn {
 
     fn snake(&self) -> Snake {
         let skin_param = self.parent.skin_param();
-        Snake::create_with_end(skin_param, self.color.clone(), skin_param.arrows().as_to_down())
+        Snake::create_with_end(
+            skin_param,
+            self.color.clone(),
+            skin_param.arrows().as_to_down(),
+        )
     }
 }
 
@@ -578,14 +521,14 @@ impl ConnectionTranslatable for ConnectionVerticalIn {
         let Some((p1, p2)) = self.points(ug.string_bounder()) else {
             return;
         };
-        let mp1a = translate1.get_translated(p1);
-        let mp2b = translate2.get_translated(p2);
-        let middle = mp1a.y + 4.0;
+        let from = translate1.get_translated(p1);
+        let to = translate2.get_translated(p2);
+        let middle = from.y + 4.0;
         let mut snake = self.snake();
-        snake.add_point_at(mp1a);
-        snake.add_point(mp1a.x, middle);
-        snake.add_point(mp2b.x, middle);
-        snake.add_point_at(mp2b);
+        snake.add_point_at(from);
+        snake.add_point(from.x, middle);
+        snake.add_point(to.x, middle);
+        snake.add_point_at(to);
         ug.draw(&snake);
     }
 }
@@ -618,8 +561,12 @@ impl Connection for ConnectionVerticalOut {
             .get_translate1(tile.as_ref(), string_bounder)
             .get_translated(geo.get_point_out());
         let skin_param = parent.skin_param();
-        let mut snake = Snake::create_with_end(skin_param, self.color.clone(), skin_param.arrows().as_to_down())
-            .with_label(self.out2.clone(), self.base.arrow_horizontal_alignment());
+        let mut snake = Snake::create_with_end(
+            skin_param,
+            self.color.clone(),
+            skin_param.arrows().as_to_down(),
+        )
+        .with_label(self.out2.clone(), self.base.arrow_horizontal_alignment());
         snake.add_point_at(p1);
         snake.add_point(p1.x, total_height);
         ug.draw(&snake);
@@ -664,5 +611,148 @@ impl Connection for ConnectionHline {
         snake.add_point(min_x, total_dim.get_height());
         snake.add_point(max_x, total_dim.get_height());
         ug.draw(&snake);
+    }
+}
+
+/// What `create` builds the diamonds and the arrows with.
+struct Builder<'a> {
+    swimlane: Option<SwimlaneId>,
+    back_color: &'a HColor,
+    skin_param: &'a Rc<SkinParam>,
+    string_bounder: &'a dyn StringBounder,
+    border_color: HColor,
+    arrow_color: Rainbow,
+    fc_test: FontConfiguration,
+    fc_arrow: FontConfiguration,
+    diamond_line_break: f64,
+}
+
+impl Builder<'_> {
+    fn label(&self, display: Option<&Display>, font: &FontConfiguration) -> Rc<dyn TextBlock> {
+        create0_or_empty(
+            display,
+            font,
+            HorizontalAlignment::Left,
+            self.skin_param,
+            0.0,
+            CreoleMode::Full,
+        )
+    }
+
+    /// The condition of `branch`, and the width of the label of the arrow into it.
+    fn diamond(&self, branch: &BranchFtile<'_>) -> (FtileDiamondInside2, f64) {
+        let tb1 = self.label(branch.get_display_positive().as_ref(), &self.fc_arrow);
+        let tb_test = create0_or_empty(
+            branch.branch.label_test.as_ref(),
+            &self.fc_test,
+            self.skin_param
+                .get_default_text_alignment(HorizontalAlignment::Left),
+            self.skin_param,
+            self.diamond_line_break,
+            CreoleMode::Full,
+        );
+        let diamond_color = branch
+            .branch
+            .get_color()
+            .unwrap_or_else(|| self.back_color.clone());
+        let mut diamond = FtileDiamondInside2::new(
+            tb_test,
+            Rc::clone(self.skin_param),
+            diamond_color,
+            self.border_color.clone(),
+            self.swimlane,
+        );
+        let mut inlabel_size = 0.0;
+        if let Some(inlabel) = branch.branch.get_inlabel() {
+            let tb_inlabel = self.label(Some(inlabel), &self.fc_arrow);
+            inlabel_size = tb_inlabel.calculate_dimension(self.string_bounder).width;
+            diamond = diamond.with_west(tb_inlabel);
+        }
+        (diamond.with_north(tb1), inlabel_size)
+    }
+
+    fn or_arrow_color(&self, color: Rainbow) -> Rainbow {
+        if color.size() == 0 {
+            self.arrow_color.clone()
+        } else {
+            color
+        }
+    }
+
+    /// The label of the arrow out of `branch`, in the font of the conditions, as PlantUML has it.
+    fn special_label(&self, branch: &BranchFtile<'_>) -> Option<Rc<dyn TextBlock>> {
+        branch
+            .branch
+            .special
+            .as_ref()
+            .map(|special| self.label(special.display.as_ref(), &self.fc_test))
+    }
+
+    fn connections(
+        &self,
+        result: &Rc<FtileIfLongHorizontal>,
+        thens: &[BranchFtile<'_>],
+        branch2: &BranchFtile<'_>,
+        top_inlink_rendering: &LinkRendering,
+        after_endwhile: &LinkRendering,
+    ) -> Vec<Rc<dyn Connection>> {
+        let arrow_color = &self.arrow_color;
+        let diamonds = &result.diamonds;
+        let tile2 = &result.tile2;
+        let mut conns: Vec<Rc<dyn Connection>> = Vec::new();
+        let mut nb_out = 0;
+        for ((tile, diamond), branch) in result.tiles.iter().zip(diamonds).zip(thens) {
+            let rainbow_in = branch.get_in_color(arrow_color);
+            if branch
+                .ftile
+                .calculate_dimension(self.string_bounder)
+                .has_point_out()
+            {
+                nb_out += 1;
+            }
+            conns.push(Rc::new(ConnectionVerticalIn {
+                parent: Rc::clone(result),
+                base: AbstractConnection::new(Some(Rc::clone(diamond)), Some(Rc::clone(tile))),
+                color: self.or_arrow_color(rainbow_in),
+            }));
+            conns.push(Rc::new(ConnectionVerticalOut {
+                parent: Rc::clone(result),
+                base: AbstractConnection::new(Some(Rc::clone(tile)), None),
+                color: self.or_arrow_color(branch.branch.get_out()),
+                out2: self.special_label(branch),
+            }));
+        }
+        for (pair, branch) in diamonds.windows(2).zip(thens.iter().skip(1)) {
+            conns.push(Rc::new(ConnectionHorizontal {
+                parent: Rc::clone(result),
+                base: AbstractConnection::new(Some(Rc::clone(&pair[0])), Some(Rc::clone(&pair[1]))),
+                color: branch.branch.get_in_rainbow(arrow_color),
+            }));
+        }
+        conns.push(Rc::new(ConnectionIn {
+            parent: Rc::clone(result),
+            base: AbstractConnection::new(None, diamonds.first().cloned()),
+            arrow_color: top_inlink_rendering.get_rainbow_or(arrow_color),
+        }));
+        conns.push(Rc::new(ConnectionLastElseIn {
+            parent: Rc::clone(result),
+            base: AbstractConnection::new(diamonds.last().cloned(), Some(Rc::clone(tile2))),
+            arrow_color: self.or_arrow_color(branch2.get_in_color(arrow_color)),
+        }));
+        conns.push(Rc::new(ConnectionLastElseOut {
+            parent: Rc::clone(result),
+            base: AbstractConnection::new(Some(Rc::clone(tile2)), None),
+            arrow_color: self.or_arrow_color(branch2.branch.get_out()),
+            out2: self.special_label(branch2),
+            nb_out,
+        }));
+        if nb_out > 0 {
+            conns.push(Rc::new(ConnectionHline {
+                parent: Rc::clone(result),
+                base: AbstractConnection::new(None, None),
+                arrow_color: after_endwhile.get_rainbow_or(arrow_color),
+            }));
+        }
+        conns
     }
 }

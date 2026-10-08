@@ -54,19 +54,23 @@ impl FtileIfDown {
         let has_stop = optional_stop.is_some();
         let result = Rc::new(Self {
             base: AbstractFtile::new(Rc::clone(ftile_factory.skin_param())),
-            then_block: Rc::clone(&then_block),
-            diamond1: Rc::clone(&diamond1),
+            then_block,
+            diamond1,
             diamond2,
             optional_stop,
             condition_end_style,
         });
-        let in_color = then_block.get_in_link_rendering().get_rainbow_or(arrow_color);
+        let in_color = result
+            .then_block
+            .get_in_link_rendering()
+            .get_rainbow_or(arrow_color);
         let mut conns: Vec<Rc<dyn Connection>> = vec![Rc::new(ConnectionIn {
-            base: result.between(&result.diamond1, &result.then_block),
+            base: between(&result.diamond1, &result.then_block),
             parent: Rc::clone(&result),
             arrow_color: in_color,
         })];
-        let has_point_out1 = then_block
+        let has_point_out1 = result
+            .then_block
             .calculate_dimension(ftile_factory.get_string_bounder())
             .has_point_out();
         if has_stop {
@@ -82,11 +86,11 @@ impl FtileIfDown {
             conns.push(result.connection_else(else_color, ElseKind::NoDiamond));
         } else if condition_end_style == ConditionEndStyle::Diamond {
             let left = swimlane.is_some_and(|swimlane| {
-                swimlane.is_smaller_than_all_others(&then_block.get_swimlanes())
+                swimlane.is_smaller_than_all_others(&result.then_block.get_swimlanes())
             });
             if left {
                 conns.push(result.connection_else(else_color, ElseKind::Else1));
-                if let Some(diamond1) = downcast::<FtileDiamondInside>(diamond1.as_ref()) {
+                if let Some(diamond1) = downcast::<FtileDiamondInside>(result.diamond1.as_ref()) {
                     diamond1.swap_east_west();
                 }
             } else {
@@ -95,27 +99,30 @@ impl FtileIfDown {
         } else {
             conns.push(result.connection_else(else_color.clone(), ElseKind::Hline));
             conns.push(Rc::new(ConnectionHline {
-                base: result.between(&result.diamond1, &result.diamond2),
+                base: between(&result.diamond1, &result.diamond2),
                 parent: Rc::clone(&result),
                 end_inlink_color: else_color,
             }));
         }
-        let out_color = then_block.get_out_link_rendering().get_rainbow_or(arrow_color);
+        let out_color = result
+            .then_block
+            .get_out_link_rendering()
+            .get_rainbow_or(arrow_color);
         conns.push(Rc::new(ConnectionOut {
-            base: result.between(&result.then_block, &result.diamond2),
+            base: between(&result.then_block, &result.diamond2),
             parent: Rc::clone(&result),
             arrow_color: out_color,
         }));
         ftile_utils::add_connections(result, conns)
     }
 
-    fn between(&self, tile1: &Rc<dyn Ftile>, tile2: &Rc<dyn Ftile>) -> AbstractConnection {
-        AbstractConnection::new(Some(Rc::clone(tile1)), Some(Rc::clone(tile2)))
-    }
-
-    fn connection_else(self: &Rc<Self>, end_inlink_color: Rainbow, kind: ElseKind) -> Rc<dyn Connection> {
+    fn connection_else(
+        self: &Rc<Self>,
+        end_inlink_color: Rainbow,
+        kind: ElseKind,
+    ) -> Rc<dyn Connection> {
         Rc::new(ConnectionElse {
-            base: self.between(&self.diamond1, &self.diamond2),
+            base: between(&self.diamond1, &self.diamond2),
             parent: Rc::clone(self),
             end_inlink_color,
             kind,
@@ -126,16 +133,18 @@ impl FtileIfDown {
         if let Some(diamond1) = downcast::<FtileDiamondInside>(self.diamond1.as_ref()) {
             return diamond1.get_south_label_height(string_bounder);
         }
-        downcast::<FtileDiamond>(self.diamond1.as_ref())
-            .map_or(0.0, |diamond1| diamond1.get_south_label_height(string_bounder))
+        downcast::<FtileDiamond>(self.diamond1.as_ref()).map_or(0.0, |diamond1| {
+            diamond1.get_south_label_height(string_bounder)
+        })
     }
 
     fn get_east_label_width(&self, string_bounder: &dyn StringBounder) -> f64 {
         if let Some(diamond1) = downcast::<FtileDiamondInside>(self.diamond1.as_ref()) {
             return diamond1.get_east_label_width(string_bounder);
         }
-        downcast::<FtileDiamond>(self.diamond1.as_ref())
-            .map_or(0.0, |diamond1| diamond1.get_east_label_width(string_bounder))
+        downcast::<FtileDiamond>(self.diamond1.as_ref()).map_or(0.0, |diamond1| {
+            diamond1.get_east_label_width(string_bounder)
+        })
     }
 
     fn get_additional_width(&self, stop: &dyn Ftile, string_bounder: &dyn StringBounder) -> f64 {
@@ -202,8 +211,8 @@ impl FtileIfDown {
         let dim_diamond1 = self.diamond1.calculate_dimension(string_bounder);
         let dim_stop = stop.calculate_dimension(string_bounder);
         let label_north = dim_diamond1.get_in_y();
-        let y1 = label_north
-            + (dim_diamond1.get_height() - label_north - dim_stop.get_height()) / 2.0;
+        let y1 =
+            label_north + (dim_diamond1.get_height() - label_north - dim_stop.get_height()) / 2.0;
         let x1 = dim_total.get_left() - dim_diamond1.get_left()
             + dim_diamond1.get_width()
             + self.get_additional_width(stop, string_bounder);
@@ -236,6 +245,10 @@ impl FtileIfDown {
     }
 }
 
+fn between(tile1: &Rc<dyn Ftile>, tile2: &Rc<dyn Ftile>) -> AbstractConnection {
+    AbstractConnection::new(Some(Rc::clone(tile1)), Some(Rc::clone(tile2)))
+}
+
 impl Swimable for FtileIfDown {
     fn get_swimlanes(&self) -> SwimlaneSet {
         let mut result = self.then_block.get_swimlanes();
@@ -265,7 +278,11 @@ impl Ftile for FtileIfDown {
             .calculate_dimension(|| self.calculate_dimension_ftile(string_bounder))
     }
 
-    fn get_translate_for(&self, child: &dyn Ftile, string_bounder: &dyn StringBounder) -> UTranslate {
+    fn get_translate_for(
+        &self,
+        child: &dyn Ftile,
+        string_bounder: &dyn StringBounder,
+    ) -> UTranslate {
         if same(child, self.then_block.as_ref()) {
             return self.get_translate_for_then(string_bounder);
         }
@@ -371,18 +388,22 @@ struct ConnectionIn {
 impl ConnectionIn {
     fn points(&self, string_bounder: &dyn StringBounder) -> (XPoint2D, XPoint2D) {
         let parent = &self.parent;
-        let p1 = parent.get_translate_diamond1(string_bounder).get_translated(
-            parent
-                .diamond1
-                .calculate_dimension(string_bounder)
-                .get_point_out(),
-        );
-        let p2 = parent.get_translate_for_then(string_bounder).get_translated(
-            parent
-                .then_block
-                .calculate_dimension(string_bounder)
-                .get_point_in(),
-        );
+        let p1 = parent
+            .get_translate_diamond1(string_bounder)
+            .get_translated(
+                parent
+                    .diamond1
+                    .calculate_dimension(string_bounder)
+                    .get_point_out(),
+            );
+        let p2 = parent
+            .get_translate_for_then(string_bounder)
+            .get_translated(
+                parent
+                    .then_block
+                    .calculate_dimension(string_bounder)
+                    .get_point_in(),
+            );
         (p1, p2)
     }
 }
@@ -420,20 +441,20 @@ impl ConnectionTranslatable for ConnectionIn {
     }
 }
 
-/// An arrow down from `mp1a` to `mp2b`, in lanes apart: it crosses at mid-height.
+/// An arrow down from `from` to `to`, in lanes apart: it crosses at mid-height.
 fn draw_translated_down(
     parent: &FtileIfDown,
     color: &Rainbow,
-    mp1a: XPoint2D,
-    mp2b: XPoint2D,
+    from: XPoint2D,
+    to: XPoint2D,
     ug: &UGraphic,
 ) {
     let mut snake = Snake::create_with_end(parent.skin_param(), color.clone(), parent.arrow_down());
-    let middle = f64::midpoint(mp1a.y, mp2b.y);
-    snake.add_point_at(mp1a);
-    snake.add_point(mp1a.x, middle);
-    snake.add_point(mp2b.x, middle);
-    snake.add_point_at(mp2b);
+    let middle = f64::midpoint(from.y, to.y);
+    snake.add_point_at(from);
+    snake.add_point(from.x, middle);
+    snake.add_point(to.x, middle);
+    snake.add_point_at(to);
     ug.draw(&snake);
 }
 
@@ -457,12 +478,14 @@ impl ConnectionOut {
 
     fn get_p2(&self, string_bounder: &dyn StringBounder) -> XPoint2D {
         let parent = &self.parent;
-        parent.get_translate_diamond2(string_bounder).get_translated(
-            parent
-                .diamond2
-                .calculate_dimension(string_bounder)
-                .get_point_in(),
-        )
+        parent
+            .get_translate_diamond2(string_bounder)
+            .get_translated(
+                parent
+                    .diamond2
+                    .calculate_dimension(string_bounder)
+                    .get_point_in(),
+            )
     }
 }
 

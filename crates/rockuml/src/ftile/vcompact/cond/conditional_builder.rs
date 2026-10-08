@@ -11,7 +11,9 @@ use crate::diagram::activity3::{BranchFtile, Instructions, SwimlaneId};
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
 use crate::ftile::vcompact::{FtileIfDown, create0_or_empty};
 use crate::ftile::vertical::{FtileDiamond, FtileDiamondInside, FtileDiamondSquare};
-use crate::ftile::{Ftile, FtileEmpty, FtileFactory, FtileMinWidthCentered, FtileWithUrl, ftile_utils};
+use crate::ftile::{
+    Ftile, FtileEmpty, FtileFactory, FtileMinWidthCentered, FtileWithUrl, ftile_utils,
+};
 use crate::klimt::font::{FontConfiguration, StringBounder};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::url::Url;
@@ -111,7 +113,8 @@ impl<'a> ConditionalBuilder<'a> {
     /// `branch1` below the diamond, `branch2` going round it or, when it is a lone stop, beside it.
     /// `branch1` is never empty here: of an empty branch and a lone stop, the stop is `branch2`.
     fn create_down(&self, branch1: &BranchFtile<'_>, branch2: &BranchFtile<'_>) -> Rc<dyn Ftile> {
-        let tile1: Rc<dyn Ftile> = Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch1.ftile), 30.0));
+        let tile1: Rc<dyn Ftile> =
+            Rc::new(FtileMinWidthCentered::new(Rc::clone(&branch1.ftile), 30.0));
         let tb1 = self.get_label_positive(branch1);
         let tb2 = self.get_label_positive(branch2);
         let diamond1 = self.get_shape1(false, tb1, tb2);
@@ -290,14 +293,10 @@ impl<'a> ConditionalBuilder<'a> {
                 self.swimlane,
             ));
         }
-        let tbout1 = self.create_arrow_label(
-            branch1.ftile.get_out_link_rendering().display.as_ref(),
-            0.0,
-        );
-        let tbout2 = self.create_arrow_label(
-            branch2.ftile.get_out_link_rendering().display.as_ref(),
-            0.0,
-        );
+        let tbout1 =
+            self.create_arrow_label(branch1.ftile.get_out_link_rendering().display.as_ref(), 0.0);
+        let tbout2 =
+            self.create_arrow_label(branch2.ftile.get_out_link_rendering().display.as_ref(), 0.0);
         let color = branch2
             .branch
             .get_color()

@@ -1,0 +1,26 @@
+@startuml
+start
+if (Valid?) then (no)
+  stop
+endif
+:Process;
+if (Retry?) then (yes)
+else (no)
+  end
+endif
+if (Done?) then (yes)
+  :Finish;
+  stop
+else (no)
+  :Continue;
+endif
+if (Archive?) then
+else
+  :Archive it;
+endif
+switch (Only)
+case (one)
+  :Single;
+endswitch
+stop
+@enduml
