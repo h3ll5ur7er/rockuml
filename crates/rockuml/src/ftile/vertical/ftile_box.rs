@@ -81,8 +81,7 @@ impl FtileBox {
         .create_display_sheet(label, &fc);
         Self {
             padding: colored.padding(),
-            tb: SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none())
-                .wrapped_at(colored.wrap_width()),
+            tb: SheetBlock1::new(sheet, skin_param.get_padding()).wrapped_at(colored.wrap_width()),
             round_corner: colored.value(PName::RoundCorner).as_double(),
             horizontal_alignment,
             minimum_width: colored.value(PName::MinimumWidth).as_double(),

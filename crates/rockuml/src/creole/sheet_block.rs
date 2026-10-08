@@ -5,7 +5,7 @@ use super::{Atom, Sheet, Stripe, fission};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, MinMax, XDimension2D};
 use crate::klimt::stencil::Stencil;
-use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::ugraphic::{UGraphic, UStroke};
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
 /// Lays a sheet out: atoms side by side on their stripe's baseline, stripes stacked top to bottom.
@@ -169,15 +169,47 @@ impl TextBlock for SheetBlock1 {
     }
 }
 
-/// A laid-out sheet whose separators span it (PlantUML's `SheetBlock2`), and inside a border, the border's padding.
+/// The width of the sheet.
+impl Stencil for SheetBlock1 {
+    fn starting_x(&self, _string_bounder: &dyn StringBounder, _y: f64) -> f64 {
+        // PlantUML's `-marginX1` of a sheet without margins, whose sign can reach the output.
+        -0.0
+    }
+
+    fn ending_x(&self, string_bounder: &dyn StringBounder, _y: f64) -> f64 {
+        self.calculate_dimension(string_bounder).width
+    }
+}
+
+/// A laid-out sheet whose separators span a stencil (PlantUML's `SheetBlock2`), and inside a border, the border's
+/// padding as well.
 pub(crate) struct SheetBlock2 {
     block: Rc<SheetBlock1>,
+    stencil: Rc<dyn Stencil>,
+    /// What separators without a style of their own are drawn with.
+    default_stroke: Option<UStroke>,
 }
 
 impl SheetBlock2 {
+    /// Separators spanning the sheet itself.
     pub(crate) fn new(block: SheetBlock1) -> Self {
+        let block = Rc::new(block);
         Self {
-            block: Rc::new(block),
+            stencil: block.clone(),
+            block,
+            default_stroke: None,
+        }
+    }
+
+    pub(crate) fn with_stencil(
+        block: Rc<SheetBlock1>,
+        stencil: Rc<dyn Stencil>,
+        default_stroke: UStroke,
+    ) -> Self {
+        Self {
+            block,
+            stencil,
+            default_stroke: Some(default_stroke),
         }
     }
 }
@@ -192,28 +224,32 @@ impl TextBlock for SheetBlock2 {
     }
 
     fn draw_in_padding(&self, ug: &UGraphic, left: f64, right: f64) {
-        let stencil = SheetStencil {
-            sheet: self.block.clone(),
+        let stencil = Rc::new(EnlargedStencil {
+            stencil: self.stencil.clone(),
             left,
             right,
+        });
+        let ug = match self.default_stroke {
+            Some(stroke) => ug.with_stencil_stroke(stencil, stroke),
+            None => ug.with_stencil(stencil),
         };
-        self.block.draw_u(&ug.with_stencil(Rc::new(stencil)));
+        self.block.draw_u(&ug);
     }
 }
 
-/// The width of a sheet, widened on each side.
-struct SheetStencil {
-    sheet: Rc<SheetBlock1>,
+/// A stencil widened on each side (`SheetBlock2.enlargeMe`).
+struct EnlargedStencil {
+    stencil: Rc<dyn Stencil>,
     left: f64,
     right: f64,
 }
 
-impl Stencil for SheetStencil {
-    fn starting_x(&self, _string_bounder: &dyn StringBounder, _y: f64) -> f64 {
-        -self.left
+impl Stencil for EnlargedStencil {
+    fn starting_x(&self, string_bounder: &dyn StringBounder, y: f64) -> f64 {
+        self.stencil.starting_x(string_bounder, y) - self.left
     }
 
-    fn ending_x(&self, string_bounder: &dyn StringBounder, _y: f64) -> f64 {
-        self.sheet.calculate_dimension(string_bounder).width + self.right
+    fn ending_x(&self, string_bounder: &dyn StringBounder, y: f64) -> f64 {
+        self.stencil.ending_x(string_bounder, y) + self.right
     }
 }

@@ -1,0 +1,205 @@
+DPI: 96
+dimension: [ 542.6880 ; 336.0000 ]
+scaleFactor: 1.0000
+seed: -6129208397417513344
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 13.0000 ; 13.0000 ]
+  pt2: [ 525.6880 ; 28.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-3.0
+  shadow: 0
+  color: ffffdd88
+  backcolor: ffffffcc
+
+TEXT:
+  text: Please use CSS style instead of skinparam padding
+  position: [ 20.0000 ; 22.0000 ]
+  orientation: 0
+  font: Monospaced.plain/10 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 60.5565 ; 35.0000 ]
+  pt2: [ 80.5565 ; 55.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 27.8080 ; 75.0000 ]
+  pt2: [ 113.3049 ; 117.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: hello
+  position: [ 42.8080 ; 99.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 17.9958 ; 137.0000 ]
+  pt2: [ 123.1171 ; 191.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: two
+  position: [ 32.9958 ; 161.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: lines
+  position: [ 32.9958 ; 173.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 211.0000 ]
+  pt2: [ 125.1130 ; 275.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: first
+  position: [ 31.0000 ; 235.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 16.0000 ; 243.0000 ]
+  pt2: [ 125.1130 ; 243.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: second
+  position: [ 31.0000 ; 257.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 59.5565 ; 295.0000 ]
+  pt2: [ 81.5565 ; 317.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 64.5565 ; 300.0000 ]
+  pt2: [ 76.5565 ; 312.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+LINE:
+  pt1: [ 70.5565 ; 55.0000 ]
+  pt2: [ 70.5565 ; 75.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 66.5565 ; 65.0000 ]
+   - [ 70.5565 ; 75.0000 ]
+   - [ 74.5565 ; 65.0000 ]
+   - [ 70.5565 ; 69.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 70.5565 ; 117.0000 ]
+  pt2: [ 70.5565 ; 137.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 66.5565 ; 127.0000 ]
+   - [ 70.5565 ; 137.0000 ]
+   - [ 74.5565 ; 127.0000 ]
+   - [ 70.5565 ; 131.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 70.5565 ; 191.0000 ]
+  pt2: [ 70.5565 ; 211.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 66.5565 ; 201.0000 ]
+   - [ 70.5565 ; 211.0000 ]
+   - [ 74.5565 ; 201.0000 ]
+   - [ 70.5565 ; 205.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 70.5565 ; 275.0000 ]
+  pt2: [ 70.5565 ; 295.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 66.5565 ; 285.0000 ]
+   - [ 70.5565 ; 295.0000 ]
+   - [ 74.5565 ; 285.0000 ]
+   - [ 70.5565 ; 289.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

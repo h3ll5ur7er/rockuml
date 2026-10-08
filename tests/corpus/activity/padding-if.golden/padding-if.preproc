@@ -1,0 +1,14 @@
+@startuml
+skinparam padding 10
+start
+if (cond) then (yes)
+  :x;
+else (no)
+  :y;
+endif
+if (other) then (yes)
+  note left: on the if
+  :z;
+endif
+stop
+@enduml

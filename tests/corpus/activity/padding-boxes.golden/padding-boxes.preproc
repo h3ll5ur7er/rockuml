@@ -1,0 +1,11 @@
+@startuml
+skinparam padding 5
+start
+:hello;
+:two
+lines;
+:first
+----
+second;
+stop
+@enduml
