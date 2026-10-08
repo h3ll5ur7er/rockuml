@@ -54,6 +54,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).
+- Gantt charts (`@startgantt`), except working hours.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in
