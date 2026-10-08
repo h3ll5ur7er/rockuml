@@ -119,7 +119,7 @@ impl TextBlock for ImageBlock<'_> {
     fn draw_u(&self, ug: &UGraphic) {
         let image = self
             .img
-            .mute_color(self.used_color.as_xcolor())
+            .mute_color(self.used_color.to_color(ug.color_mapper()))
             .scale(self.scale);
         ug.draw(&UShape::Image(image));
     }

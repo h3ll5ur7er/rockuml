@@ -1,0 +1,12 @@
+@startuml
+skinparam monochrome true
+class Car #LightBlue {
+  - String model
+  + start() : void
+}
+interface Drivable
+enum Color #pink-yellow
+Drivable <|.. Car
+Car -[#red]-> Color : paint
+note right of Car #lightgreen : Monochrome note
+@enduml

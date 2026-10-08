@@ -18,6 +18,7 @@ use crate::klimt::sprite::SpriteContainer;
 use super::cuca::CucaDiagram;
 use super::description::DescriptionDiagram;
 use super::sequence::SequenceDiagram;
+use crate::color::ColorMapper;
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
@@ -352,6 +353,15 @@ impl Titled {
                 .skin
                 .value("preserveaspectratio")
                 .unwrap_or_else(|| "none".to_owned()),
+            color_mapper: self.mute_color_mapper(),
+        }
+    }
+
+    fn mute_color_mapper(&self) -> ColorMapper {
+        match self.skin.value("monochrome").as_deref() {
+            Some("true") => ColorMapper::Monochrome,
+            Some("reverse") => ColorMapper::MonochromeReverse,
+            _ => ColorMapper::Identity,
         }
     }
 }

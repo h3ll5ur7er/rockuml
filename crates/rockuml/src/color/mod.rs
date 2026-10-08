@@ -53,6 +53,32 @@ impl XColor {
         let gray = self.gray_scale() as u8;
         Self::rgb(gray, gray, gray)
     }
+
+    /// The gray of the opposite brightness (`ColorUtils.getGrayScaleColorReverse`).
+    fn gray_scale_color_reverse(self) -> Self {
+        let gray = 255 - self.gray_scale() as u8;
+        Self::rgb(gray, gray, gray)
+    }
+}
+
+/// How an image format paints colours: as given, or as grays (`skinparam monochrome`). The `debug` format
+/// describes the drawing and keeps them as given.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum ColorMapper {
+    #[default]
+    Identity,
+    Monochrome,
+    MonochromeReverse,
+}
+
+impl ColorMapper {
+    fn map_color_simple(self, color: XColor) -> XColor {
+        match self {
+            ColorMapper::Identity => color,
+            ColorMapper::Monochrome => color.gray_scale_color(),
+            ColorMapper::MonochromeReverse => color.gray_scale_color_reverse(),
+        }
+    }
 }
 
 /// A parsed colour. Only plain colours take part in arithmetic; the others pass through unchanged.
@@ -78,6 +104,17 @@ pub struct Gradient {
     /// The character written between the colours, which gives the direction: `|` left to right, `-` top to
     /// bottom, `/` and `\` diagonally.
     pub policy: char,
+}
+
+impl Gradient {
+    /// The gradient between the colours `mapper` paints.
+    pub(crate) fn mapped(self, mapper: ColorMapper) -> Gradient {
+        Gradient {
+            from: HColor::Simple(self.from).to_color(mapper),
+            to: HColor::Simple(self.to).to_color(mapper),
+            policy: self.policy,
+        }
+    }
 }
 
 impl HColor {
@@ -227,19 +264,32 @@ impl HColor {
         }
     }
 
-    /// `#RRGGBB`, with the alpha appended when translucent, or `#00000000` when transparent.
-    pub fn to_svg(&self) -> String {
-        match self.as_xcolor() {
+    /// `#RRGGBB` as `mapper` paints it, with the alpha appended when translucent, or `#00000000` when
+    /// transparent.
+    pub fn to_svg(&self, mapper: ColorMapper) -> String {
+        match self.to_color(mapper) {
             color if color.alpha == 0 => "#00000000".to_owned(),
-            color if color.alpha == 255 => self.to_rgb(),
-            color => format!("{}{:02X}", self.to_rgb(), color.alpha),
+            color if color.alpha == 255 => rgb_hex(color),
+            color => format!("{}{:02X}", rgb_hex(color), color.alpha),
         }
     }
 
-    /// `#RRGGBB`, ignoring transparency.
-    pub fn to_rgb(&self) -> String {
-        let color = self.as_xcolor();
-        format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
+    /// `#RRGGBB` as `mapper` paints it, ignoring transparency.
+    pub fn to_rgb(&self, mapper: ColorMapper) -> String {
+        rgb_hex(self.to_color(mapper))
+    }
+
+    /// The colour `mapper` paints; transparent colours stay as they are.
+    pub(crate) fn to_color(&self, mapper: ColorMapper) -> XColor {
+        match self {
+            HColor::Simple(color) if color.alpha != 0 => mapper.map_color_simple(*color),
+            HColor::Gradient(gradient) => HColor::Simple(gradient.from).to_color(mapper),
+            HColor::Middle(color1, color2) => middle(
+                HColor::Simple(*color1).to_color(mapper),
+                HColor::Simple(*color2).to_color(mapper),
+            ),
+            other => other.as_xcolor(),
+        }
     }
 
     /// Where one colour is needed, a gradient gives its first. Automagic and scheme colours are not ported to
@@ -250,11 +300,7 @@ impl HColor {
             HColor::Gradient(gradient) => gradient.from,
             HColor::Automagic | HColor::Scheme => XColor::rgb(0, 0, 0),
             HColor::TransparentFill => HColor::NONE.as_xcolor(),
-            HColor::Middle(color1, color2) => XColor::rgb(
-                u8::midpoint(color1.red, color2.red),
-                u8::midpoint(color1.green, color2.green),
-                u8::midpoint(color1.blue, color2.blue),
-            ),
+            HColor::Middle(color1, color2) => middle(*color1, *color2),
         }
     }
 
@@ -286,6 +332,19 @@ impl HColor {
             other => format!("?{}", other.java_class_name()),
         }
     }
+}
+
+fn rgb_hex(color: XColor) -> String {
+    format!("#{:02X}{:02X}{:02X}", color.red, color.green, color.blue)
+}
+
+/// Halfway between, each channel rounded down (`HColorMiddle`).
+fn middle(color1: XColor, color2: XColor) -> XColor {
+    XColor::rgb(
+        u8::midpoint(color1.red, color2.red),
+        u8::midpoint(color1.green, color2.green),
+        u8::midpoint(color1.blue, color2.blue),
+    )
 }
 
 fn parse_simple_color(text: &str) -> Option<XColor> {
@@ -386,6 +445,22 @@ mod tests {
                 .as_string()
         });
         assert_eq!(shades, ["#FED4B3", "#FEA400", "#FEE6D5"]);
+    }
+
+    #[test]
+    fn monochrome_mappers_paint_grays_of_the_same_or_opposite_brightness() {
+        let color = |text| HColor::parse(text).unwrap().unwrap();
+        assert_eq!(color("#FEFFDD").to_svg(ColorMapper::Monochrome), "#FAFAFA");
+        assert_eq!(
+            color("white").to_svg(ColorMapper::MonochromeReverse),
+            "#000000"
+        );
+        assert_eq!(color("red-blue").to_rgb(ColorMapper::Monochrome), "#4C4C4C");
+        assert_eq!(color("#FEFFDD").to_svg(ColorMapper::Identity), "#FEFFDD");
+        assert_eq!(
+            color("transparent").to_svg(ColorMapper::Monochrome),
+            "#00000000"
+        );
     }
 
     #[test]

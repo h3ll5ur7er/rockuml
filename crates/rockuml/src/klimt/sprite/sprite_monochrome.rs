@@ -1,5 +1,5 @@
 use super::Sprite;
-use crate::color::{HColor, XColor};
+use crate::color::{ColorMapper, HColor, XColor};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
@@ -49,7 +49,7 @@ impl SpriteMonochrome {
     }
 
     /// Faint levels fade out: a level below a quarter of the darkest is drawn translucent.
-    fn to_uimage(&self, backcolor: &HColor, color: &HColor) -> UImage {
+    fn to_uimage(&self, mapper: ColorMapper, backcolor: &HColor, color: &HColor) -> UImage {
         let back = if backcolor.is_transparent() {
             HColor::WHITE
         } else {
@@ -71,7 +71,8 @@ impl SpriteMonochrome {
                 } else {
                     (255.0 * (coef * 4.0 / max_coef)) as i32
                 };
-                let pixel = gradient_color(back.as_xcolor(), color.as_xcolor(), coef, alpha);
+                let pixel =
+                    gradient_color(back.to_color(mapper), color.to_color(mapper), coef, alpha);
                 image.set_rgb(col, line, pixel);
             }
         }
@@ -127,7 +128,7 @@ impl TextBlock for MonochromeBlock<'_> {
     fn draw_u(&self, ug: &UGraphic) {
         let image = self
             .sprite
-            .to_uimage(&ug.param().backcolor, &self.color)
+            .to_uimage(ug.color_mapper(), &ug.param().backcolor, &self.color)
             .scale(self.scale);
         ug.draw(&UShape::Image(image));
     }
@@ -143,7 +144,7 @@ mod tests {
         sprite.set_gray(1, 0, 3);
         sprite.set_gray(2, 0, 4);
         sprite.set_gray(3, 0, 15);
-        let image = sprite.to_uimage(&HColor::NONE, &HColor::BLUE);
+        let image = sprite.to_uimage(ColorMapper::Identity, &HColor::NONE, &HColor::BLUE);
         let pixels: Vec<u32> = (0..4)
             .map(|x| image.image().unwrap().get_rgb(x, 0))
             .collect();

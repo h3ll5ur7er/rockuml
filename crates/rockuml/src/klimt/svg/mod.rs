@@ -16,7 +16,7 @@ use super::shape::{UCenteredCharacter, UEllipse, UImage, UShape, UText};
 use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
-use crate::color::HColor;
+use crate::color::{ColorMapper, HColor};
 
 pub(crate) struct UGraphicSvg {
     graphics: Option<SvgGraphics>,
@@ -26,6 +26,7 @@ pub(crate) struct UGraphicSvg {
     glyph_fonts: Option<Arc<FontRegistry>>,
     /// The document becomes a PNG, whose `Graphics2D` driver in PlantUML draws no SVG images.
     rasterized: bool,
+    color_mapper: ColorMapper,
 }
 
 impl UGraphicSvg {
@@ -37,6 +38,7 @@ impl UGraphicSvg {
         rasterized: bool,
     ) -> Self {
         Self {
+            color_mapper: option.color_mapper,
             graphics: Some(SvgGraphics::new(seed, option)),
             string_bounder,
             glyph_fonts,
@@ -75,7 +77,7 @@ impl UGraphicSvg {
     fn paint(&mut self, color: &HColor) -> String {
         match color {
             HColor::Gradient(gradient) => self.svg().gradient_fill(*gradient),
-            other => other.to_svg(),
+            other => other.to_svg(self.color_mapper),
         }
     }
 
@@ -149,13 +151,14 @@ impl UGraphicSvg {
                         0.0,
                     );
                 }
-                Some(color) => back_color = Some(color.to_rgb()),
+                Some(color) => back_color = Some(color.to_rgb(self.color_mapper)),
                 None => {}
             }
         }
 
+        let mapper = self.color_mapper;
         let svg = self.svg();
-        svg.set_fill_color(Some(&configuration.color().to_svg()));
+        svg.set_fill_color(Some(&configuration.color().to_svg(mapper)));
         svg.text(&SvgText {
             text: &text,
             x,
@@ -169,7 +172,7 @@ impl UGraphicSvg {
             back_color,
         });
         for (color, delta_y) in extra_lines {
-            svg.set_stroke_color(Some(&color.to_svg()));
+            svg.set_stroke_color(Some(&color.to_svg(mapper)));
             svg.set_stroke_width(size / 28.0, None);
             let y = at.dy + delta_y;
             svg.line(x, y, x + dimension.width, y);
@@ -184,7 +187,7 @@ impl UGraphicSvg {
         at: UTranslate,
         param: &UParam,
     ) {
-        let color = param.color.to_svg();
+        let color = param.color.to_svg(self.color_mapper);
         if let Some(fonts) = &self.glyph_fonts {
             if let Some(outline) = fonts.glyph_outline(&centered.font, centered.character) {
                 let (center_x, center_y) = outline.center();
@@ -266,6 +269,10 @@ impl UGraphicBackend for UGraphicSvg {
         true
     }
 
+    fn color_mapper(&self) -> ColorMapper {
+        self.color_mapper
+    }
+
     /// Clips as PlantUML's SVG drivers do: straight lines and rectangles are cut to the clip, other shapes
     /// are dropped unless inside.
     fn draw(&mut self, shape: &UShape, at: UTranslate, param: &UParam) {
@@ -307,8 +314,9 @@ impl UGraphicBackend for UGraphicSvg {
                 }) else {
                     return;
                 };
+                let stroke = param.color.to_svg(self.color_mapper);
                 let svg = self.svg();
-                svg.set_stroke_color(Some(&param.color.to_svg()));
+                svg.set_stroke_color(Some(&stroke));
                 apply_stroke(svg, param.stroke);
                 svg.line(x1, y1, x2, y2);
             }
@@ -330,8 +338,9 @@ impl UGraphicBackend for UGraphicSvg {
                 }
                 // A path filled with the colour of its outline gets no outline in PlantUML.
                 if param.color == param.backcolor {
+                    let fill = param.color.to_svg(self.color_mapper);
                     let svg = self.svg();
-                    svg.set_fill_color(Some(&param.color.to_svg()));
+                    svg.set_fill_color(Some(&fill));
                     svg.set_stroke_color(Some(""));
                     svg.set_stroke_width(0.0, None);
                 } else {

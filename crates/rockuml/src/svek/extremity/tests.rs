@@ -7,7 +7,7 @@ use std::rc::Rc;
 use regex::Regex;
 
 use super::*;
-use crate::color::{HColor, XColor};
+use crate::color::{ColorMapper, HColor, XColor};
 use crate::java;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::geom::XDimension2D;
@@ -153,6 +153,7 @@ fn arcs_draw_the_svg_paths_plantuml_draws() {
             preserve_aspect_ratio: "none".to_owned(),
             root_attributes: Vec::new(),
             link_target: None,
+            color_mapper: ColorMapper::Identity,
         };
         let svg = UGraphicSvg::new(0, option, Rc::new(StringBounderDebug), None, false);
         let svg = drawn_on(svg, |ug| case.extremity().draw_u(ug));
