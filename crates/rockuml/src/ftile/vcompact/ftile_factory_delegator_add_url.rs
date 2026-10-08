@@ -2,7 +2,7 @@
 
 use std::rc::Rc;
 
-use crate::ftile::vertical::FtileBox;
+use crate::ftile::vertical::{FtileBox, FtileBoxEmoji};
 use crate::ftile::{Ftile, FtileFactory, FtileFactoryDelegator, FtileWithUrl, downcast};
 use crate::klimt::url::Url;
 
@@ -21,9 +21,11 @@ impl FtileFactoryDelegator for FtileFactoryDelegatorAddUrl {
         self.factory.as_ref()
     }
 
-    /// Only boxes take links.
+    /// Only boxes, and icons, take links.
     fn add_url(&self, ftile: Rc<dyn Ftile>, url: &Url) -> Rc<dyn Ftile> {
-        if downcast::<FtileBox>(ftile.as_ref()).is_some() {
+        if downcast::<FtileBox>(ftile.as_ref()).is_some()
+            || downcast::<FtileBoxEmoji>(ftile.as_ref()).is_some()
+        {
             return Rc::new(FtileWithUrl::new(ftile, url.clone()));
         }
         ftile

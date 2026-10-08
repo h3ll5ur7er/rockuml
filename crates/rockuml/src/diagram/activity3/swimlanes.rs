@@ -185,7 +185,7 @@ impl TextBlock for SwimlanesDrawing<'_> {
         .get_merged_style(&self.skin_param.current_style_builder());
         let goto_color = style.value(PName::LineColor).as_color();
         let ug = UGraphicForSnake::create(ug.clone());
-        TextBlockInterceptorUDrawable::new(full, goto_color, false).draw_u(&ug);
+        TextBlockInterceptorUDrawable::new(full, goto_color).draw_u(&ug);
         ug.flush_ug();
     }
 }

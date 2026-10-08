@@ -21,7 +21,7 @@ use crate::svek::{ConditionStyle, UGraphicForSnake};
 /// What drawing `tile` as a diagram draws.
 fn drawn(tile: Rc<dyn Ftile>) -> Vec<String> {
     let (surface, recorder) = recording();
-    TextBlockInterceptorUDrawable::new(tile, HColor::RED, false)
+    TextBlockInterceptorUDrawable::new(tile, HColor::RED)
         .draw_u(&UGraphicForSnake::create(surface));
     recorder.take().lines
 }

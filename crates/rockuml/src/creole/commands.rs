@@ -86,12 +86,7 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
             1,
             open_icon,
         ),
-        RegexCommand::boxed(
-            &["<#", "<:"],
-            &format!(r"^(\<(#\w+)?:([0-9a-z][0-9_a-z]*):{SCALE_OR_COLOR}\>)"),
-            1,
-            emoji,
-        ),
+        RegexCommand::boxed(&["<#", "<:"], &format!("^({})", emoji_pattern()), 1, emoji),
         RegexCommand::boxed(
             &["<#", "<$"],
             &format!(r"^(\<(#\w+)?\$([-\p{{L}}0-9_/]+){SCALE_OR_COLOR}\>)"),
@@ -109,6 +104,21 @@ fn build_commands(creole_underline: bool) -> Vec<Box<dyn CreoleCommand>> {
         Box::new(LinkCommand),
     ]);
     commands
+}
+
+/// `<:smile:>` or `<#red:smile:{scale=2}>` (`Splitter.emojiPattern`).
+fn emoji_pattern() -> String {
+    format!(r"\<(#\w+)?:([0-9a-z][0-9_a-z]*):{SCALE_OR_COLOR}\>")
+}
+
+/// How long the emoji the line starts with is written, or 0 (`CommandCreoleEmoji.matchingSize`).
+pub(crate) fn emoji_matching_size(line: &str) -> usize {
+    static EMOJI: LazyLock<Regex> =
+        LazyLock::new(|| plantuml_regex(&format!("^({})", emoji_pattern())));
+    EMOJI
+        .captures(line)
+        .and_then(|captures| captures.get(1))
+        .map_or(0, |emoji| emoji.len())
 }
 
 const COLOR: &str = r"\<color[\s:]+(#[0-9a-fA-F]{1,6}|#?\w+)[%s]*\>";

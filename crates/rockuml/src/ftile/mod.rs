@@ -8,7 +8,9 @@
 //! Tiles draw their children with `ug.draw(&child)`, their [`Connection`]s with `ug.draw(&connection)`
 //! and arrows ([`Snake`]) with `ug.draw(&snake)`, never by calling `draw_u` themselves: the
 //! [`UGraphic`] they draw on is a stack of
-//! [layers](crate::klimt::ugraphic::UGraphicLayer) deciding what is drawn where.
+//! [layers](crate::klimt::ugraphic::UGraphicLayer) deciding what is drawn where. Only decorators
+//! ([`vertical::FtileDecorate`]) draw the tile they wrap with `draw_u`, as PlantUML's do, so that layers
+//! see the decorator alone.
 //!
 //! - `UGraphicForSnake` (in `svek`) collects arrows, merges those that continue each other, and draws
 //!   them on `flush_ug`, after everything else.
@@ -37,15 +39,13 @@
 //!
 //! # Still to come
 //!
-//! - `VCompactFactory` and the tiles it builds; building tiles from instructions (`createFtile`);
-//!   `Swimlanes`' drawing with its `Cross` layer.
+//! - `Swimlanes`' drawing of several lanes, with its `Cross` layer.
 //! - The swimlane layers `UGraphicInterceptorOneSwimlane` and `UGraphicInterceptorAllSwimlanes`, in
 //!   `ftile/vcompact/`, implementing [`UGraphicLayer`](crate::klimt::ugraphic::UGraphicLayer). The
 //!   latter fans out to one surface per lane: its `ug` is the first lane's, for queries, and it overrides
 //!   groups and links (ignored) and `flush_ug` (every lane), as PlantUML's does. Until then the query
 //!   `swimlane_kept` in `vcompact/ftile_with_note_opale.rs` answers that no layer keeps one lane.
-//! - The compression layer and its slot finder, in `klimt::compress`.
-//! - The delegators' own methods, each in its file under `vcompact/`.
+//! - The If and Switch delegators' methods, in their files under `vcompact/`, and the tiles they build.
 
 mod abstract_connection;
 mod abstract_ftile;

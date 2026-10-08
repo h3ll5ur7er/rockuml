@@ -189,6 +189,11 @@ impl Stereotype {
         self.label.eq_ignore_ascii_case("<<O-O>>")
     }
 
+    /// `<<icon>>`, which draws an activity as its emoji.
+    pub(crate) fn is_icon(&self) -> bool {
+        self.label.eq_ignore_ascii_case("<<icon>>")
+    }
+
     /// The labels as shown, in guillemets (`getLabels(Guillemet.GUILLEMET)`).
     pub(crate) fn labels(&self) -> Vec<String> {
         cut_labels(&self.label_double_comparator())
