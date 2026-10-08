@@ -166,6 +166,27 @@ impl MinMax {
         XDimension2D::new(self.max_x - self.min_x, self.max_y - self.min_y)
     }
 
+    #[must_use]
+    pub(crate) fn translate(self, translate: UTranslate) -> Self {
+        Self {
+            min_x: self.min_x + translate.dx,
+            min_y: self.min_y + translate.dy,
+            max_x: self.max_x + translate.dx,
+            max_y: self.max_y + translate.dy,
+        }
+    }
+
+    /// The box holding both (`addMinMax`).
+    #[must_use]
+    pub(crate) fn add_min_max(self, other: Self) -> Self {
+        Self {
+            min_x: other.min_x.min(self.min_x),
+            min_y: other.min_y.min(self.min_y),
+            max_x: other.max_x.max(self.max_x),
+            max_y: other.max_y.max(self.max_y),
+        }
+    }
+
     /// The box grown `dx` to the right and `dy` down.
     #[must_use]
     pub(crate) fn enlarge(self, dx: f64, dy: f64) -> Self {

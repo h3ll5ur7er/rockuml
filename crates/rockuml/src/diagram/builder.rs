@@ -17,6 +17,7 @@ use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::error::ErrorDiagram;
 use super::mindmap::MindMapDiagramFactory;
+use super::nwdiag::NwDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::titled::TitledDiagram;
@@ -153,6 +154,11 @@ pub(super) fn create_chen(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetP
 /// A `@startmindmap` diagram.
 pub(super) fn create_mindmap(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<MindMapDiagramFactory>])
+}
+
+/// A `@startnwdiag` diagram.
+pub(super) fn create_nwdiag(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<NwDiagramFactory>])
 }
 
 /// A `@startwbs` diagram.

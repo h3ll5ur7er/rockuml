@@ -14,6 +14,7 @@ mod diagram_type;
 mod error;
 mod json;
 mod mindmap;
+mod nwdiag;
 mod salt;
 mod scale;
 mod sequence;
@@ -166,6 +167,7 @@ pub fn create(
         Some(DiagramType::ChenEer) => |source, _| builder::create_chen(source),
         Some(DiagramType::MindMap) => |source, _| builder::create_mindmap(source),
         Some(DiagramType::Wbs) => |source, _| builder::create_wbs(source),
+        Some(DiagramType::NwDiag) => |source, _| builder::create_nwdiag(source),
         Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         _ => return Err(NotYetPorted("this diagram type")),
