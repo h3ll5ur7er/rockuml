@@ -38,6 +38,7 @@ use crate::klimt::svg::{SvgOption, UGraphicSvg};
 use crate::klimt::typeface::{FontRegistry, StringBounderFonts};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend};
 use crate::klimt::width_table::StringBounderFromWidthTable;
+use crate::metadata::Metadata;
 use crate::preproc::PreprocessedBlock;
 use crate::text::StringLocated;
 use creole::CreoleDiagram;
@@ -73,10 +74,23 @@ pub trait Diagram {
 
     fn export_settings(&self) -> ExportSettings;
 
+    /// Why the diagram is an error image instead of what its source describes.
+    fn error(&self) -> Option<DiagramError> {
+        None
+    }
+
     /// Whether the diagram is an error image instead of what its source describes.
     fn is_error(&self) -> bool {
-        false
+        self.error().is_some()
     }
+}
+
+/// What an error image reports, as PlantUML's `PSystemError` tells it to the command line.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DiagramError {
+    /// The faulty line's position in its file, counted from zero.
+    pub line: i32,
+    pub message: String,
 }
 
 /// The resolution diagrams are drawn for unless `skinparam dpi` says otherwise.
@@ -171,7 +185,8 @@ pub enum ImageFormat {
     Png,
 }
 
-/// The image's bytes. `fonts` measure the text of formats that use fonts, and draw it in PNG.
+/// The image's bytes, with the diagram's source embedded. `fonts` measure the text of formats that use
+/// fonts, and draw it in PNG.
 ///
 /// # Panics
 ///
@@ -183,6 +198,23 @@ pub fn export(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<Vec<u8>, NotYetPorted> {
+    export_with(diagram, page, format, Metadata::Embedded, fonts, host)
+}
+
+/// Like [`export`], with or without the diagram's source in SVG and PNG images.
+///
+/// # Panics
+///
+/// If `page` is not below the diagram's page count, like an index out of bounds.
+pub fn export_with(
+    diagram: &dyn Diagram,
+    page: usize,
+    format: ImageFormat,
+    metadata: Metadata,
+    fonts: &Arc<FontRegistry>,
+    host: &dyn Host,
+) -> Result<Vec<u8>, NotYetPorted> {
+    let source_metadata = (metadata == Metadata::Embedded).then(|| diagram.source().metadata());
     let settings = diagram.export_settings();
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
@@ -230,8 +262,8 @@ pub fn export(
             rasterized,
         )));
         draw(output.clone(), backcolor.clone());
-        let metadata = crate::url_code::encode(&diagram.source().metadata());
-        output.borrow_mut().take_document(Some(&metadata))
+        let encoded = source_metadata.as_deref().map(crate::url_code::encode);
+        output.borrow_mut().take_document(encoded.as_deref())
     };
 
     Ok(match format {
@@ -267,7 +299,7 @@ pub fn export(
                 ),
                 png_back_color,
                 fonts,
-                &diagram.source().metadata(),
+                source_metadata.as_deref(),
             )
         }
     })

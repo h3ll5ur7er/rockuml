@@ -140,7 +140,8 @@ fn decode_hex(text: &str) -> Result<Vec<u8>, NotPlantUmlCode> {
         .collect()
 }
 
-const ALPHABET: &[u8; 64] = b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
+pub(crate) const ALPHABET: &[u8; 64] =
+    b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_";
 
 pub(crate) fn encode_6bit(data: &[u8]) -> String {
     let mut result = String::with_capacity(data.len().div_ceil(3) * 4);

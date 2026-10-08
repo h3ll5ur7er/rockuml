@@ -43,6 +43,9 @@ pub struct PreprocessorEnvironment {
     pub filedate: Option<String>,
     /// `-DNAME=value` definitions, visible as global variables.
     pub defines: Vec<(String, String)>,
+    /// Lines the command line adds after every `@start` line: `-config` files, `-theme`, `-pragma`,
+    /// `-skinparam`.
+    pub config: Vec<String>,
 }
 
 /// `@startdef(id=NAME)` blocks of the same source, for `!includedef NAME`.

@@ -184,7 +184,11 @@ fn read_all(mut reader: impl ReadLine) -> Vec<StringLocated> {
 /// Splits the source into diagram blocks and preprocesses each in turn.
 pub fn preprocess(source: &Source, host: &dyn Host) -> Vec<PreprocessedBlock> {
     let mut blocks: Vec<PreprocessedBlock> = Vec::new();
-    for lines in block::extract_blocks(source.text, source.description, Vec::new()) {
+    for lines in block::extract_blocks(
+        source.text,
+        source.description,
+        source.environment.config.clone(),
+    ) {
         let preprocessed = tim::preprocess_block(
             &lines,
             host,
@@ -346,6 +350,34 @@ mod tests {
         assert_eq!(
             preprocessed(&source),
             ["@startuml", "A -> B : 4", "@enduml"]
+        );
+    }
+
+    #[test]
+    fn configuration_lines_follow_every_start_line() {
+        let source = Source {
+            text: "@startuml\nA -> B\n@enduml\n@startuml\n@enduml",
+            description: "t",
+            directory: PathBuf::new(),
+            environment: PreprocessorEnvironment {
+                config: vec![
+                    "' dropped".to_owned(),
+                    "!$x = 1".to_owned(),
+                    "x $x".to_owned(),
+                ],
+                ..PreprocessorEnvironment::default()
+            },
+        };
+        let blocks: Vec<Vec<String>> = preprocess(&source, &crate::host::IsolatedHost)
+            .iter()
+            .map(|block| block.lines().map(str::to_owned).collect())
+            .collect();
+        assert_eq!(
+            blocks,
+            [
+                vec!["@startuml", "x 1", "A -> B", "@enduml"],
+                vec!["@startuml", "x 1", "@enduml"]
+            ]
         );
     }
 
