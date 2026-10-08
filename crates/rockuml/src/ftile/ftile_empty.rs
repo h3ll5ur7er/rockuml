@@ -19,10 +19,20 @@ pub(crate) struct FtileEmpty {
 
 impl FtileEmpty {
     pub(crate) fn new(skin_param: Rc<SkinParam>, swimlane: Option<SwimlaneId>) -> Self {
+        Self::with_size(skin_param, 0.0, 0.0, swimlane)
+    }
+
+    /// A point taking `width` and `height`, as where only one branch of an `if` goes on.
+    pub(crate) fn with_size(
+        skin_param: Rc<SkinParam>,
+        width: f64,
+        height: f64,
+        swimlane: Option<SwimlaneId>,
+    ) -> Self {
         Self {
             base: AbstractFtile::new(skin_param),
-            width: 0.0,
-            height: 0.0,
+            width,
+            height,
             swimlane,
         }
     }

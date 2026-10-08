@@ -32,7 +32,7 @@ pub(crate) use cluster_header::ClusterHeader;
 pub(crate) use cluster_manager::ClusterManager;
 use color_sequence::ColorSequence;
 pub(crate) use concurrent_states::ConcurrentStates;
-pub(crate) use condition_style::ConditionStyle;
+pub(crate) use condition_style::{ConditionEndStyle, ConditionStyle};
 pub(crate) use entity_image::{AbstractEntityImage, IEntityImage, LayoutContext};
 pub(crate) use general_image_builder::create_entity_image_block;
 pub(crate) use inner_state_autonom::InnerStateAutonom;

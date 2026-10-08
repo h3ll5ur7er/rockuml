@@ -173,9 +173,6 @@ impl Diagram for ActivityDiagram3 {
         if self.swimlanes.swimlanes().len() > 1 {
             return Err(NotYetPorted("activity diagrams with swimlanes (track E2)"));
         }
-        if let Some(not_ported) = self.swimlanes.instructions.unported_part() {
-            return Err(not_ported);
-        }
         let swimlanes = SwimlanesDrawing::new(
             &self.swimlanes,
             Rc::new(self.titled.skin.clone()),

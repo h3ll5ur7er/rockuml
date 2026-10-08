@@ -4,7 +4,7 @@
 
 use std::rc::Rc;
 
-use super::display_text;
+use super::create0_or_empty;
 use crate::color::HColor;
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::Rainbow;
@@ -48,11 +48,12 @@ pub(crate) struct WhileStyle {
 impl WhileStyle {
     /// An arrow label.
     fn arrow_text(&self, display: Option<&Display>, skin_param: &SkinParam) -> Rc<dyn TextBlock> {
-        display_text(
+        create0_or_empty(
             display,
             &self.font_arrow,
             HorizontalAlignment::Left,
             skin_param,
+            0.0,
             CreoleMode::Full,
         )
     }
@@ -121,13 +122,14 @@ impl FtileWhile {
         let test_tb: Rc<dyn TextBlock> = if test.is_white() {
             Rc::new(TextBlockEmpty::default())
         } else {
-            display_text(
+            create0_or_empty(
                 Some(test),
                 &style.fc_test,
                 while_block
                     .skin_param()
                     .get_default_text_alignment(HorizontalAlignment::Left),
                 skin_param,
+                0.0,
                 CreoleMode::Full,
             )
         };

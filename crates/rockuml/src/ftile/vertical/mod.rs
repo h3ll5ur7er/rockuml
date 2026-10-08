@@ -8,6 +8,7 @@ mod ftile_circles;
 mod ftile_decorate;
 mod ftile_diamond;
 mod ftile_diamond_inside;
+mod ftile_diamond_inside2;
 mod ftile_diamond_square;
 mod ftile_diamond_wip;
 mod ftile_thin_split;
@@ -23,5 +24,7 @@ pub(crate) use ftile_decorate::{
 };
 pub(crate) use ftile_diamond::FtileDiamond;
 pub(crate) use ftile_diamond_inside::FtileDiamondInside;
+pub(crate) use ftile_diamond_inside2::FtileDiamondInside2;
 pub(crate) use ftile_diamond_square::FtileDiamondSquare;
+pub(crate) use ftile_diamond_wip::empty_label;
 pub(crate) use ftile_thin_split::FtileThinSplit;

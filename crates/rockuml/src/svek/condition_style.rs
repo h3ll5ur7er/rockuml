@@ -1,45 +1,56 @@
-//! How the tests of activity diagrams are drawn: `skinparam conditionStyle` (PlantUML's
-//! `svek.ConditionStyle`).
+//! How the conditions of activity diagrams are drawn: `skinparam conditionStyle` (PlantUML's
+//! `ConditionStyle`) and `skinparam conditionEndStyle` (`ConditionEndStyle`).
 
-use crate::skin::SkinParam;
-
+/// The outline of a condition.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum ConditionStyle {
-    /// A small diamond with the test beside it.
+    /// A small diamond with the condition above it.
     EmptyDiamond,
-    /// The test inside a hexagon.
+    /// The condition inside a hexagon.
     InsideHexagon,
-    /// The test inside a diamond.
+    /// The condition inside a diamond.
     InsideDiamond,
 }
 
 impl ConditionStyle {
+    /// The style a skinparam value names, ignoring case (`fromString`).
     pub(crate) fn from_string(value: &str) -> Option<Self> {
-        let lowercase = value.to_ascii_lowercase();
-        match lowercase.as_str() {
-            "insidediamond" | "foo1" | "inside_diamond" => Some(Self::InsideDiamond),
-            "diamond" | "empty_diamond" => Some(Self::EmptyDiamond),
-            "inside" | "inside_hexagon" => Some(Self::InsideHexagon),
-            _ => None,
-        }
+        let lower = value.to_ascii_lowercase();
+        Some(match lower.as_str() {
+            "insidediamond" | "foo1" | "inside_diamond" => Self::InsideDiamond,
+            "diamond" | "empty_diamond" => Self::EmptyDiamond,
+            "inside" | "inside_hexagon" => Self::InsideHexagon,
+            _ => return None,
+        })
     }
 }
 
-impl SkinParam {
-    /// `skinparam conditionStyle`, a hexagon when it names no style.
-    pub(crate) fn get_condition_style(&self) -> ConditionStyle {
-        self.value("conditionStyle")
-            .and_then(|value| ConditionStyle::from_string(&value))
-            .unwrap_or(ConditionStyle::InsideHexagon)
+/// What ends a conditional.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ConditionEndStyle {
+    Diamond,
+    /// A horizontal line joining the branches.
+    Hline,
+}
+
+impl ConditionEndStyle {
+    /// The style a skinparam value names, ignoring case (`fromString`).
+    pub(crate) fn from_string(value: &str) -> Option<Self> {
+        match value.to_ascii_lowercase().as_str() {
+            "diamond" => Some(Self::Diamond),
+            "hline" => Some(Self::Hline),
+            _ => None,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::skin::SkinParam;
 
     #[test]
-    fn styles_are_named_in_any_case_or_by_their_constant() {
+    fn styles_are_named_as_in_plantuml_ignoring_case() {
         assert_eq!(
             ConditionStyle::from_string("InsideDiamond"),
             Some(ConditionStyle::InsideDiamond)
@@ -57,13 +68,27 @@ mod tests {
             Some(ConditionStyle::EmptyDiamond)
         );
         assert_eq!(
-            ConditionStyle::from_string("inside"),
+            ConditionStyle::from_string("Inside"),
             Some(ConditionStyle::InsideHexagon)
         );
         assert_eq!(ConditionStyle::from_string("hexagon"), None);
         assert_eq!(
-            SkinParam::default().get_condition_style(),
+            ConditionEndStyle::from_string("HLine"),
+            Some(ConditionEndStyle::Hline)
+        );
+        assert_eq!(ConditionEndStyle::from_string("line"), None);
+    }
+
+    #[test]
+    fn a_hexagon_ended_by_a_diamond_is_the_default() {
+        let skin_param = SkinParam::default();
+        assert_eq!(
+            skin_param.get_condition_style(),
             ConditionStyle::InsideHexagon
+        );
+        assert_eq!(
+            skin_param.get_condition_end_style(),
+            ConditionEndStyle::Diamond
         );
     }
 }

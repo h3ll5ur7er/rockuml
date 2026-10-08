@@ -3,7 +3,7 @@
 
 use std::rc::Rc;
 
-use super::display_text;
+use super::create0_or_empty;
 use crate::color::HColor;
 use crate::creole::{CreoleMode, Display};
 use crate::decoration::Rainbow;
@@ -54,11 +54,12 @@ impl RepeatStyle {
         skin_param: &SkinParam,
         mode: CreoleMode,
     ) -> Rc<dyn TextBlock> {
-        display_text(
+        create0_or_empty(
             display,
             &self.fc_arrow,
             HorizontalAlignment::Left,
             skin_param,
+            0.0,
             mode,
         )
     }
@@ -89,13 +90,14 @@ impl FtileRepeat {
             &style.fc_arrow
         };
         let tb_test: Rc<dyn TextBlock> = match test {
-            Some(test) if !test.is_white() => display_text(
+            Some(test) if !test.is_white() => create0_or_empty(
                 Some(test),
                 font_configuration1,
                 repeat
                     .skin_param()
                     .get_default_text_alignment(HorizontalAlignment::Left),
                 skin_param,
+                0.0,
                 CreoleMode::Full,
             ),
             _ => empty(),

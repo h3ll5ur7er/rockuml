@@ -63,6 +63,7 @@ mod ftile_height_fixed_centered;
 mod ftile_height_fixed_marged;
 mod ftile_killed;
 mod ftile_marged;
+mod ftile_marged_west;
 mod ftile_min_width_centered;
 pub(crate) mod ftile_utils;
 mod ftile_with_connection;
@@ -99,6 +100,7 @@ pub(crate) use ftile_height_fixed_centered::FtileHeightFixedCentered;
 pub(crate) use ftile_height_fixed_marged::FtileHeightFixedMarged;
 pub(crate) use ftile_killed::FtileKilled;
 pub(crate) use ftile_marged::{FtileMarged, FtileMargedRight, FtileMargedVertically};
+pub(crate) use ftile_marged_west::FtileMargedWest;
 pub(crate) use ftile_min_width_centered::FtileMinWidthCentered;
 pub(crate) use ftile_with_connection::FtileWithConnection;
 pub(crate) use ftile_with_swimlanes::FtileWithSwimlanes;
@@ -124,6 +126,9 @@ use crate::skin::SkinParam;
 ///
 /// The defaults are those of PlantUML's `AbstractFtile`. Where it fails because a tile has no children,
 /// these answer that it has none.
+///
+/// A tile is [`Any`] so that tiles can ask what another tile is, as PlantUML's `instanceof` does, with
+/// [`downcast`].
 pub(crate) trait Ftile: Swimable + Any {
     fn skin_param(&self) -> &SkinParam;
 

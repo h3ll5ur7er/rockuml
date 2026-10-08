@@ -52,6 +52,18 @@ impl Direction {
         None
     }
 
+    /// `Left` when `p1` lies left of `p2`, `Right` when it lies right of it: the side `p2` is crossed
+    /// from, as PlantUML names it; `None` above one another, where PlantUML fails (`leftOrRight`).
+    pub(crate) fn left_or_right(p1: XPoint2D, p2: XPoint2D) -> Option<Self> {
+        if p1.x < p2.x {
+            return Some(Self::Left);
+        }
+        if p1.x > p2.x {
+            return Some(Self::Right);
+        }
+        None
+    }
+
     /// The direction an arrow's body like `-left-`, `-l-` or `--` names; a body without one points down,
     /// and a single dash right.
     pub(crate) fn of_queue(queue: &str) -> Self {

@@ -17,7 +17,6 @@ use super::swimlanes::SwimlaneId;
 use crate::color::Colors;
 use crate::command::{CommandError, CommandResult};
 use crate::creole::Display;
-use crate::diagram::NotYetPorted;
 use crate::diagram::sequence::model::NotePosition;
 use crate::stereo::Stereotype;
 
@@ -214,6 +213,21 @@ impl Instructions {
         list.all.iter().any(|ins| self.contains_break(*ins))
     }
 
+    /// Whether the list is a lone killed activity, spot, or `stop` or `end` without notes
+    /// (`InstructionList.isOnlySingleStopOrSpot`).
+    pub(crate) fn list_is_only_single_stop_or_spot(&self, list: &InstructionList) -> bool {
+        let [only] = list.all.as_slice() else {
+            return false;
+        };
+        match self.get(*only) {
+            Instruction::Simple(ins) => ins.killed,
+            Instruction::Spot(_) => true,
+            Instruction::Stop(ins) => ins.mono.notes.notes.is_empty(),
+            Instruction::End(ins) => ins.mono.notes.notes.is_empty(),
+            _ => false,
+        }
+    }
+
     fn lists_contain_break<'a>(
         &self,
         lists: impl IntoIterator<Item = &'a InstructionList>,
@@ -370,18 +384,6 @@ impl Instructions {
             Instruction::Group(ins) => ins.list.get_last(),
             _ => None,
         }
-    }
-
-    /// The first kind of instruction whose tiles are not drawn yet; each track removes its own as it lands.
-    pub(crate) fn unported_part(&self) -> Option<NotYetPorted> {
-        self.all.iter().find_map(|instruction| {
-            let what = match instruction {
-                Instruction::If(_) => "activity if (track C1)",
-                Instruction::Switch(_) => "activity switch (track C1)",
-                _ => return None,
-            };
-            Some(NotYetPorted(what))
-        })
     }
 
     fn mono(&self, id: InstructionId) -> &MonoSwimable {

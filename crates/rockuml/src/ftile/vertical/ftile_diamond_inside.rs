@@ -59,12 +59,11 @@ impl FtileDiamondInside {
 
     #[must_use]
     pub(crate) fn with_west_and_east(
-        mut self,
+        self,
         west: Rc<dyn TextBlock>,
         east: Rc<dyn TextBlock>,
     ) -> Self {
-        self.wip.set_west(west);
-        self.with_east(east)
+        self.with_west(west).with_east(east)
     }
 
     /// `swapEastWest`.

@@ -3,15 +3,18 @@
 
 use std::rc::Rc;
 
-use super::instruction::{InstructionId, InstructionList, WithNote};
+use super::instruction::{InstructionId, InstructionList, Instructions, WithNote};
 use super::link_rendering::LinkRendering;
 use super::swimlanes::SwimlaneId;
-use crate::color::{Colors, HColor};
-use crate::creole::Display;
+use crate::color::{ColorType, Colors, HColor};
+use crate::creole::{CreoleMode, Display};
+use crate::decoration::Rainbow;
 use crate::ftile::Ftile;
 use crate::klimt::url::Url;
+use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::skin::component::TextBlockEmpty;
 use crate::stereo::Stereotype;
-use crate::style::StyleBuilder;
+use crate::style::{SName, StyleBuilder, StyleSignature};
 
 /// One way out of a conditional, and the instructions down it.
 pub(crate) struct Branch {
@@ -66,6 +69,40 @@ impl Branch {
         self.special = Some(link);
         self.special_colors = colors;
     }
+
+    /// The colours of the arrow out of the branch (`getOut`).
+    pub(crate) fn get_out(&self) -> Rainbow {
+        self.special
+            .as_ref()
+            .unwrap_or(&self.inlink_rendering)
+            .rainbow
+            .clone()
+    }
+
+    /// The label of the arrow into an `elseif`'s diamond (`getInlabel`).
+    pub(crate) fn get_inlabel(&self) -> Option<&Display> {
+        self.inlabel.display.as_ref()
+    }
+
+    /// The colours of the arrow into an `elseif`'s diamond, or `default_color` (`getInRainbow`).
+    pub(crate) fn get_in_rainbow(&self, default_color: &Rainbow) -> Rainbow {
+        self.inlabel.get_rainbow_or(default_color)
+    }
+
+    /// The colour of the diamond: the one set at the end of the conditional, or else the branch's
+    /// (`getColor`).
+    pub(crate) fn get_color(&self) -> Option<HColor> {
+        self.special_colors
+            .as_ref()
+            .and_then(|colors| colors.get(ColorType::Back))
+            .or(self.color.as_ref())
+            .cloned()
+    }
+
+    /// The label of the arrow out of the branch, if it has one (`getSpecialDisplay`).
+    pub(crate) fn get_special_display(&self) -> Option<&Display> {
+        self.special.as_ref()?.display.as_ref()
+    }
 }
 
 /// A branch with the tile built for it, as factories get it (PlantUML's `Branch` once `updateFtile` set its
@@ -73,6 +110,78 @@ impl Branch {
 pub(crate) struct BranchFtile<'a> {
     pub(crate) branch: &'a Branch,
     pub(crate) ftile: Rc<dyn Ftile>,
+}
+
+impl BranchFtile<'_> {
+    pub(crate) fn is_empty(&self) -> bool {
+        self.branch.is_empty()
+    }
+
+    /// Whether the branch is a lone stop, end, spot or killed activity (`isOnlySingleStopOrSpot`).
+    pub(crate) fn is_only_single_stop_or_spot(&self, instructions: &Instructions) -> bool {
+        instructions.list_is_only_single_stop_or_spot(&self.branch.list)
+    }
+
+    /// The colours of the arrow into the branch, `arrow_color` by default (`getInColor`).
+    pub(crate) fn get_in_color(&self, arrow_color: &Rainbow) -> Rainbow {
+        if self.is_empty() {
+            return self
+                .ftile
+                .get_out_link_rendering()
+                .get_rainbow_or(arrow_color);
+        }
+        if self.branch.label_positive.rainbow.size() > 0 {
+            return self.branch.label_positive.rainbow.clone();
+        }
+        let color = self
+            .ftile
+            .get_in_link_rendering()
+            .get_rainbow_or(arrow_color);
+        if color.size() == 0 {
+            return arrow_color.clone();
+        }
+        color
+    }
+
+    /// The label of the arrow into the branch: the one on the branch's first arrow, or else the
+    /// condition's value (`getDisplayPositive`).
+    pub(crate) fn get_display_positive(&self) -> Option<Display> {
+        self.ftile
+            .get_in_link_rendering()
+            .display
+            .or_else(|| self.branch.label_positive.display.clone())
+    }
+
+    /// [`Self::get_display_positive`] in the arrow style (`getTextBlockPositive`).
+    pub(crate) fn get_text_block_positive(&self) -> Rc<dyn TextBlock> {
+        self.get_text_block(self.get_display_positive().as_ref())
+    }
+
+    /// The label of the arrow out of the branch in the arrow style (`getTextBlockSpecial`).
+    pub(crate) fn get_text_block_special(&self) -> Rc<dyn TextBlock> {
+        self.get_text_block(self.branch.get_special_display())
+    }
+
+    fn get_text_block(&self, display: Option<&Display>) -> Rc<dyn TextBlock> {
+        let Some(display) = display else {
+            return Rc::new(TextBlockEmpty::default());
+        };
+        let skin_param = self.ftile.skin_param();
+        let style = StyleSignature::of(&[
+            SName::Root,
+            SName::Element,
+            SName::ActivityDiagram,
+            SName::Arrow,
+        ])
+        .get_merged_style(&skin_param.current_style_builder());
+        Rc::new(display.create0(
+            &style.font_configuration(),
+            HorizontalAlignment::Left,
+            skin_param,
+            style.wrap_width(),
+            CreoleMode::SimpleLine,
+        ))
+    }
 }
 
 pub(crate) struct InstructionIf {
