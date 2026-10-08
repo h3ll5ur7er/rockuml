@@ -4,9 +4,11 @@
 /// The outline of a condition.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum ConditionStyle {
-    /// An empty diamond, the condition above it.
+    /// A small diamond with the condition above it.
     EmptyDiamond,
+    /// The condition inside a hexagon.
     InsideHexagon,
+    /// The condition inside a diamond.
     InsideDiamond,
 }
 
@@ -45,6 +47,7 @@ impl ConditionEndStyle {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::skin::SkinParam;
 
     #[test]
     fn styles_are_named_as_in_plantuml_ignoring_case() {
@@ -61,7 +64,7 @@ mod tests {
             Some(ConditionStyle::EmptyDiamond)
         );
         assert_eq!(
-            ConditionStyle::from_string("empty_diamond"),
+            ConditionStyle::from_string("Empty_Diamond"),
             Some(ConditionStyle::EmptyDiamond)
         );
         assert_eq!(
@@ -74,5 +77,18 @@ mod tests {
             Some(ConditionEndStyle::Hline)
         );
         assert_eq!(ConditionEndStyle::from_string("line"), None);
+    }
+
+    #[test]
+    fn a_hexagon_ended_by_a_diamond_is_the_default() {
+        let skin_param = SkinParam::default();
+        assert_eq!(
+            skin_param.get_condition_style(),
+            ConditionStyle::InsideHexagon
+        );
+        assert_eq!(
+            skin_param.get_condition_end_style(),
+            ConditionEndStyle::Diamond
+        );
     }
 }

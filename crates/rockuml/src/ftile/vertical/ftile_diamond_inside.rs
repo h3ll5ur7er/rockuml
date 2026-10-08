@@ -34,6 +34,18 @@ impl FtileDiamondInside {
     }
 
     #[must_use]
+    pub(crate) fn with_north(mut self, north: Rc<dyn TextBlock>) -> Self {
+        self.wip.north = north;
+        self
+    }
+
+    #[must_use]
+    pub(crate) fn with_west(mut self, west: Rc<dyn TextBlock>) -> Self {
+        self.wip.set_west(west);
+        self
+    }
+
+    #[must_use]
     pub(crate) fn with_south(mut self, south: Rc<dyn TextBlock>) -> Self {
         self.wip.south = south;
         self
@@ -47,12 +59,11 @@ impl FtileDiamondInside {
 
     #[must_use]
     pub(crate) fn with_west_and_east(
-        mut self,
+        self,
         west: Rc<dyn TextBlock>,
         east: Rc<dyn TextBlock>,
     ) -> Self {
-        self.wip.set_west(west);
-        self.with_east(east)
+        self.with_west(west).with_east(east)
     }
 
     /// `swapEastWest`.

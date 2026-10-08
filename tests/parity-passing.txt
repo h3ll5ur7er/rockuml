@@ -7,6 +7,7 @@ debug activity/arrow-branch-colors.puml
 debug activity/arrow-colors-styles.puml
 debug activity/arrow-hidden.puml
 debug activity/arrow-labels.puml
+debug activity/colors-control-flow.puml
 debug activity/colors-stereogroup.puml
 debug activity/connectors-several.puml
 debug activity/connectors.puml
@@ -38,6 +39,11 @@ debug activity/if-without-else.puml
 debug activity/kill.puml
 debug activity/multiline-actions.puml
 debug activity/no-start.puml
+debug activity/repeat-arrow-label.puml
+debug activity/repeat-backward.puml
+debug activity/repeat-basic.puml
+debug activity/repeat-break.puml
+debug activity/repeat-labels.puml
 debug activity/skinparam-activity.puml
 debug activity/start-end.puml
 debug activity/start-stop.puml
@@ -48,6 +54,11 @@ debug activity/switch-nested.puml
 debug activity/switch-with-stop.puml
 debug activity/title-legend-caption.puml
 debug activity/unicode-actions.puml
+debug activity/while-backward.puml
+debug activity/while-basic.puml
+debug activity/while-break.puml
+debug activity/while-labels.puml
+debug activity/while-nested.puml
 debug archimate/application-layer.puml
 debug archimate/business-layer.puml
 debug archimate/grouped-sprites.puml
@@ -442,6 +453,7 @@ dsvg activity/arrow-branch-colors.puml
 dsvg activity/arrow-colors-styles.puml
 dsvg activity/arrow-hidden.puml
 dsvg activity/arrow-labels.puml
+dsvg activity/colors-control-flow.puml
 dsvg activity/colors-stereogroup.puml
 dsvg activity/connectors-several.puml
 dsvg activity/connectors.puml
@@ -473,6 +485,11 @@ dsvg activity/if-without-else.puml
 dsvg activity/kill.puml
 dsvg activity/multiline-actions.puml
 dsvg activity/no-start.puml
+dsvg activity/repeat-arrow-label.puml
+dsvg activity/repeat-backward.puml
+dsvg activity/repeat-basic.puml
+dsvg activity/repeat-break.puml
+dsvg activity/repeat-labels.puml
 dsvg activity/skinparam-activity.puml
 dsvg activity/start-end.puml
 dsvg activity/start-stop.puml
@@ -483,6 +500,11 @@ dsvg activity/switch-nested.puml
 dsvg activity/switch-with-stop.puml
 dsvg activity/title-legend-caption.puml
 dsvg activity/unicode-actions.puml
+dsvg activity/while-backward.puml
+dsvg activity/while-basic.puml
+dsvg activity/while-break.puml
+dsvg activity/while-labels.puml
+dsvg activity/while-nested.puml
 dsvg archimate/application-layer.puml
 dsvg archimate/business-layer.puml
 dsvg archimate/grouped-sprites.puml
@@ -874,6 +896,7 @@ png activity/arrow-branch-colors.puml
 png activity/arrow-colors-styles.puml
 png activity/arrow-hidden.puml
 png activity/arrow-labels.puml
+png activity/colors-control-flow.puml
 png activity/colors-stereogroup.puml
 png activity/connectors-several.puml
 png activity/connectors.puml
@@ -906,6 +929,11 @@ png activity/if-without-else.puml
 png activity/kill.puml
 png activity/multiline-actions.puml
 png activity/no-start.puml
+png activity/repeat-arrow-label.puml
+png activity/repeat-backward.puml
+png activity/repeat-basic.puml
+png activity/repeat-break.puml
+png activity/repeat-labels.puml
 png activity/skinparam-activity.puml
 png activity/start-end.puml
 png activity/start-stop.puml
@@ -916,6 +944,11 @@ png activity/switch-nested.puml
 png activity/switch-with-stop.puml
 png activity/title-legend-caption.puml
 png activity/unicode-actions.puml
+png activity/while-backward.puml
+png activity/while-basic.puml
+png activity/while-break.puml
+png activity/while-labels.puml
+png activity/while-nested.puml
 png archimate/application-layer.puml
 png archimate/business-layer.puml
 png archimate/grouped-sprites.puml
@@ -1795,6 +1828,7 @@ svg activity/arrow-branch-colors.puml
 svg activity/arrow-colors-styles.puml
 svg activity/arrow-hidden.puml
 svg activity/arrow-labels.puml
+svg activity/colors-control-flow.puml
 svg activity/colors-stereogroup.puml
 svg activity/creole-actions.puml
 svg activity/error-close-without-group.puml
@@ -1824,6 +1858,11 @@ svg activity/if-without-else.puml
 svg activity/kill.puml
 svg activity/multiline-actions.puml
 svg activity/no-start.puml
+svg activity/repeat-arrow-label.puml
+svg activity/repeat-backward.puml
+svg activity/repeat-basic.puml
+svg activity/repeat-break.puml
+svg activity/repeat-labels.puml
 svg activity/skinparam-activity.puml
 svg activity/start-end.puml
 svg activity/start-stop.puml
@@ -1834,6 +1873,11 @@ svg activity/switch-nested.puml
 svg activity/switch-with-stop.puml
 svg activity/title-legend-caption.puml
 svg activity/unicode-actions.puml
+svg activity/while-backward.puml
+svg activity/while-basic.puml
+svg activity/while-break.puml
+svg activity/while-labels.puml
+svg activity/while-nested.puml
 svg archimate/application-layer.puml
 svg archimate/business-layer.puml
 svg archimate/grouped-sprites.puml

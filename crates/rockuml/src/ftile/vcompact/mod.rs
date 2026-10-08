@@ -15,6 +15,8 @@ mod ftile_factory_delegator_while;
 mod ftile_if_down;
 mod ftile_if_long_horizontal;
 mod ftile_if_long_vertical;
+mod ftile_repeat;
+mod ftile_while;
 pub(crate) mod one_swimlane;
 mod v_compact_factory;
 
@@ -73,3 +75,6 @@ pub(crate) fn delegator_chain(
     let factory = Box::new(FtileFactoryDelegatorAddNote::new(factory));
     Box::new(FtileFactoryDelegatorCreateGroup::new(factory))
 }
+
+#[cfg(test)]
+mod tests;

@@ -391,8 +391,6 @@ impl Instructions {
     pub(crate) fn unported_part(&self) -> Option<NotYetPorted> {
         self.all.iter().find_map(|instruction| {
             let what = match instruction {
-                Instruction::While(_) => "activity while (track C2)",
-                Instruction::Repeat(_) => "activity repeat (track C2)",
                 Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
                 Instruction::Group(_) => "activity partitions and groups (track F)",
                 _ if instruction.has_notes() => "activity notes (track F)",
