@@ -63,14 +63,17 @@ impl XColor {
     }
 }
 
-/// How an image format paints colours: as given, or as grays (`skinparam monochrome`). The `debug` format
-/// describes the drawing and keeps them as given.
+/// How an image format paints colours: as given, as grays (`skinparam monochrome`) or reversed
+/// (`skinparam reversecolor`). The `debug` format describes the drawing and keeps them as given.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum ColorMapper {
     #[default]
     Identity,
     Monochrome,
     MonochromeReverse,
+    /// PlantUML's `LIGTHNESS_INVERSE`.
+    LightnessInverse,
+    Reverse(ColorOrder),
 }
 
 impl ColorMapper {
@@ -79,7 +82,56 @@ impl ColorMapper {
             ColorMapper::Identity => color,
             ColorMapper::Monochrome => color.gray_scale_color(),
             ColorMapper::MonochromeReverse => color.gray_scale_color_reverse(),
+            ColorMapper::LightnessInverse => hsluv::get_reversed(color),
+            ColorMapper::Reverse(order) => order.get_reverse(color),
         }
+    }
+}
+
+/// An order of the red, green and blue channels.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ColorOrder {
+    Rgb,
+    Rbg,
+    Grb,
+    Gbr,
+    Brg,
+    Bgr,
+}
+
+impl ColorOrder {
+    /// The order named, in any case (`fromString`).
+    pub(crate) fn from_string(order: &str) -> Option<Self> {
+        let order = match order.to_ascii_uppercase().as_str() {
+            "RGB" => Self::Rgb,
+            "RBG" => Self::Rbg,
+            "GRB" => Self::Grb,
+            "GBR" => Self::Gbr,
+            "BRG" => Self::Brg,
+            "BGR" => Self::Bgr,
+            _ => return None,
+        };
+        Some(order)
+    }
+
+    fn get_color(self, color: XColor) -> XColor {
+        let XColor {
+            red, green, blue, ..
+        } = color;
+        match self {
+            Self::Rgb => XColor::rgb(red, green, blue),
+            Self::Rbg => XColor::rgb(red, blue, green),
+            Self::Grb => XColor::rgb(green, red, blue),
+            Self::Gbr => XColor::rgb(green, blue, red),
+            Self::Brg => XColor::rgb(blue, red, green),
+            Self::Bgr => XColor::rgb(blue, green, red),
+        }
+    }
+
+    /// The channels reordered, then inverted.
+    fn get_reverse(self, color: XColor) -> XColor {
+        let color = self.get_color(color);
+        XColor::rgb(255 - color.red, 255 - color.green, 255 - color.blue)
     }
 }
 

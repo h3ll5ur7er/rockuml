@@ -18,7 +18,7 @@ use crate::klimt::sprite::SpriteContainer;
 use super::cuca::CucaDiagram;
 use super::description::DescriptionDiagram;
 use super::sequence::SequenceDiagram;
-use crate::color::ColorMapper;
+use crate::color::{ColorMapper, ColorOrder};
 use crate::klimt::font::StringBounder;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
@@ -357,11 +357,21 @@ impl Titled {
         }
     }
 
+    /// PlantUML first checks `skinparam mode dark`, which paints the dark variants of colours; those are not
+    /// ported.
     fn mute_color_mapper(&self) -> ColorMapper {
         match self.skin.value("monochrome").as_deref() {
-            Some("true") => ColorMapper::Monochrome,
-            Some("reverse") => ColorMapper::MonochromeReverse,
-            _ => ColorMapper::Identity,
+            Some("true") => return ColorMapper::Monochrome,
+            Some("reverse") => return ColorMapper::MonochromeReverse,
+            _ => {}
+        }
+        match self.skin.value("reversecolor") {
+            Some(reversecolor) if reversecolor.eq_ignore_ascii_case("dark") => {
+                ColorMapper::LightnessInverse
+            }
+            Some(reversecolor) => ColorOrder::from_string(&reversecolor)
+                .map_or(ColorMapper::Identity, ColorMapper::Reverse),
+            None => ColorMapper::Identity,
         }
     }
 }
