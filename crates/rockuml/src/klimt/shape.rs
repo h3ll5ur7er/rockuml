@@ -32,8 +32,11 @@ pub enum UShape {
     Empty(XDimension2D),
     /// A separator across whatever contains it; only containers that know their width can draw it.
     HorizontalLine,
-    /// A text block that formats drawing it themselves never pass on, and measuring surfaces skip.
-    SpecialText,
+    /// A text block that formats drawing it themselves never pass on. Compression keeps the column just past
+    /// the title, so it needs the title's width.
+    SpecialText {
+        title_width: f64,
+    },
     /// A note for whoever reads the document, which only SVG and the debug listing keep.
     Comment(String),
     /// A swimlane title centred in its lane; only the compression layer of activity diagrams draws it.
@@ -55,7 +58,7 @@ impl UShape {
             Self::ImageSvg(_) => "UImageSvg",
             Self::CenteredCharacter(_) => "UCenteredCharacter",
             Self::HorizontalLine => "UHorizontalLine",
-            Self::SpecialText => "SpecialText",
+            Self::SpecialText { .. } => "SpecialText",
             Self::Comment(_) => "UComment",
             Self::CenteredText(_) => "CenteredText",
         }

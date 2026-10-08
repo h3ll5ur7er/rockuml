@@ -116,7 +116,7 @@ impl UGraphicBackend for LimitFinder {
             }
             // The circle around a centred character already bounds it.
             UShape::HorizontalLine
-            | UShape::SpecialText
+            | UShape::SpecialText { .. }
             | UShape::CenteredText(_)
             | UShape::CenteredCharacter(_)
             | UShape::Comment(_) => {}

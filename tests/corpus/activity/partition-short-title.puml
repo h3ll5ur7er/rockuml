@@ -1,0 +1,14 @@
+@startuml
+partition G {
+fork
+:a;
+end fork
+}
+partition W {
+if (x?) then (yes)
+:b;
+else (no)
+:c;
+endif
+}
+@enduml
