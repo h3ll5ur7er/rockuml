@@ -48,7 +48,6 @@ impl Direction {
         if y1 == y2 {
             return Some(if x2 > x1 { Self::Right } else { Self::Left });
         }
-        debug_assert!(false, "not a horizontal or vertical segment: {p1:?} {p2:?}");
         None
     }
 
@@ -124,6 +123,7 @@ mod tests {
             Some(Direction::Left)
         );
         assert_eq!(Direction::from_vector(at(1.0, 1.0), at(1.0, 1.0)), None);
+        assert_eq!(Direction::from_vector(at(1.0, 1.0), at(2.0, 2.0)), None);
         let code: String = [
             Direction::Right,
             Direction::Left,
