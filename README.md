@@ -22,6 +22,9 @@ A diagram with several pages (`newpage`) writes one file per page: `diagram.svg`
 - Class, object, use case, component, deployment, archimate and state diagrams (`@startuml`) and Chen ER diagrams
   (`@startchen`), laid out by `crates/smetana`, a bit-exact port of PlantUML's Smetana (its Java translation of
   Graphviz `dot`), so no Graphviz installation is needed.
+- Activity diagrams in the current syntax (`:action;`, `if`/`switch`/`while`/`repeat`, `fork`/`split`, partitions,
+  notes, swimlanes, `goto`/`label`, `detach`/`kill`), laid out like PlantUML's `ftile` engine. The legacy syntax
+  (`(*) --> "action"`) is not ported yet.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
 
 Their text takes PlantUML's creole markup, including sprites (`sprite $name …`, `<$name>`, the stdlib and built-in
