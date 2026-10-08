@@ -301,7 +301,11 @@ fn check_error(files: &[PathBuf], settings: &Settings, status: &ExitStatus) -> b
                     status.goes_has_errors();
                 }
             }
-            Err(error) => console.error(&format!("rockuml: {error}")),
+            Err(error) => {
+                console.error(&format!("rockuml: {error}"));
+                has_error.store(true, Ordering::SeqCst);
+                status.goes_has_errors();
+            }
         }
     });
     has_error.load(Ordering::SeqCst)

@@ -38,11 +38,13 @@ pub fn from_png(png: &[u8]) -> Option<String> {
     while rest.len() >= 12 {
         let length = usize::try_from(u32::from_be_bytes(rest[..4].try_into().ok()?)).ok()?;
         let chunk_type = &rest[4..8];
-        let data = rest.get(8..8 + length)?;
+        // A damaged length can overflow a 32-bit (wasm) address.
+        let data_end = length.checked_add(8)?;
+        let data = rest.get(8..data_end)?;
         if let Some(text) = text_of_chunk(chunk_type, data) {
             return Some(text);
         }
-        rest = rest.get(12 + length..)?;
+        rest = rest.get(data_end.checked_add(4)?..)?;
     }
     None
 }

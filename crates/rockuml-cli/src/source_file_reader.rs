@@ -2,7 +2,7 @@
 //! `SourceFileReader`, `SourceFileReaderCopyCat` and `PSystemUtils`).
 
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 
 use rockuml::diagram::Diagram;
 use rockuml::preproc::{PreprocessedBlock, PreprocessorEnvironment, Source};
@@ -210,11 +210,11 @@ impl<'a> SourceFileReader<'a> {
             (OutputDirectory::Regular(directory), Some(new_name)) => {
                 match dir_if_directory(&new_name, directory) {
                     Some(target) => SuggestedFile::new(target.join(&file_name), 0),
-                    None => SuggestedFile::new(directory.join(&new_name), 0),
+                    None => SuggestedFile::new(java_file(directory, &new_name), 0),
                 }
             }
             (OutputDirectory::CopyCat(directory), new_name) => {
-                self.numbered(directory.join(new_name.unwrap_or(file_name)))
+                self.numbered(java_file(directory, &new_name.unwrap_or(file_name)))
             }
         };
         if let Some(parent) = suggested.output_file.parent() {
@@ -312,6 +312,16 @@ fn output_directory(file: &Path, requested: Option<&str>) -> OutputDirectory {
     }
 }
 
+/// Java's `new File(parent, child)`, which puts even an absolute `child` below `parent` (where `Path::join`
+/// would replace `parent`): a block named `@startuml /x` writes into the output directory, not to `/x`.
+fn java_file(parent: &Path, child: &str) -> PathBuf {
+    let relative: PathBuf = Path::new(child)
+        .components()
+        .filter(|component| !matches!(component, Component::Prefix(_) | Component::RootDir))
+        .collect();
+    parent.join(relative)
+}
+
 /// The directory a block name such as `@startuml out/` names (`getDirIfDirectory`).
 fn dir_if_directory(new_name: &str, output_directory: &Path) -> Option<PathBuf> {
     if let Some(name) = new_name.strip_suffix(['/', '\\']) {
@@ -373,4 +383,19 @@ pub(crate) fn file_name(file: &Path) -> String {
     file.file_name()
         .map(|name| name.to_string_lossy().into_owned())
         .unwrap_or_default()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn block_names_stay_below_the_output_directory() {
+        let out = Path::new("out");
+        assert_eq!(java_file(out, "a/b"), Path::new("out/a/b"));
+        assert_eq!(java_file(out, "/etc/x"), Path::new("out/etc/x"));
+        if cfg!(windows) {
+            assert_eq!(java_file(out, r"C:\Windows\x"), Path::new(r"out\Windows\x"));
+        }
+    }
 }

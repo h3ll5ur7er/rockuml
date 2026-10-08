@@ -75,9 +75,10 @@ impl FileGroup {
         }
     }
 
+    /// Unlike PlantUML, which overflows its stack on a link cycle, links to directories are not followed.
     fn init_with_double_star(&mut self, directory: &Path, matcher: &Regex) {
         for path in entries(directory) {
-            if path.is_dir() {
+            if path.is_dir() && !path.is_symlink() {
                 self.init_with_double_star(&path, matcher);
             } else if path.is_file() && matcher.is_match(&normalized_path(&path)) {
                 self.add_result_file(path);
