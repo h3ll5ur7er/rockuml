@@ -1,0 +1,47 @@
+@startgantt
+<style>
+ganttDiagram {
+  task {
+    FontName Helvetica
+    FontColor red
+    FontSize 18
+    FontStyle bold
+    BackGroundColor GreenYellow
+    LineColor blue
+  }
+  milestone {
+    FontColor blue
+    FontSize 25
+    FontStyle italic
+    BackGroundColor yellow
+    LineColor red
+  }
+  arrow {
+    FontName Helvetica
+    FontColor red
+    FontSize 18
+    FontStyle bold
+    BackGroundColor GreenYellow
+    LineColor blue
+    LineStyle 8.0;13.0
+    LineThickness 3.0
+  }
+  separator {
+    BackgroundColor lightGreen
+    LineStyle 8.0;3.0
+    LineColor red
+    LineThickness 1.0
+    FontSize 16
+    FontStyle bold
+    FontColor purple
+    Margin 5
+    Padding 20
+  }
+}
+</style>
+[Task1] requires 10 days
+[Task1] -> [Task2]
+[Task2] requires 4 days
+-- separator --
+[Milestone] happens at [Task2]'s end
+@endgantt

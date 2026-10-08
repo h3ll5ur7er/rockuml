@@ -1,0 +1,9 @@
+@startgantt
+printscale weekly
+Project starts the 20th of september 2020
+[Prototype design] as [TASK1] lasts 130 days
+[TASK1] is colored in Lavender/LightBlue
+[Testing] lasts 20 days
+[TASK1]->[Testing]
+2020-12-11 to 2020-12-24 are named [Christmas holidays]
+@endgantt
