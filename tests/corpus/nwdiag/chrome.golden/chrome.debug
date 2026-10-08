@@ -1,0 +1,144 @@
+DPI: 96
+dimension: [ 257.6941 ; 228.5000 ]
+scaleFactor: 1.0000
+seed: 7978449570505878053
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 127.9893 ; 0.0000 ]
+  pt2: [ 257.6941 ; 11.0000 ]
+
+TEXT:
+  text: page header
+  position: [ 127.9893 ; 7.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 0.0000 ; 11.0000 ]
+  pt2: [ 257.6941 ; 46.0000 ]
+
+TEXT:
+  text: Network with chrome
+  position: [ 10.0000 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: LAN
+  position: [ 27.0144 ; 60.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 67.0418 ; 54.5000 ]
+  pt2: [ 229.6798 ; 59.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffe2e2f0
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 35.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 35.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 82.0418 ; 89.5000 ]
+  pt2: [ 133.3583 ; 121.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: pc1
+  position: [ 92.0418 ; 108.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 163.3583 ; 89.5000 ]
+  pt2: [ 214.6798 ; 121.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: pc2
+  position: [ 173.3583 ; 108.8333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 234.6798 ; 161.5000 ]
+  pt2: [ 235.6798 ; 162.5000 ]
+
+EMPTY:
+  pt1: [ 48.4939 ; 162.5000 ]
+  pt2: [ 209.2002 ; 211.5000 ]
+
+RECTANGLE:
+  pt1: [ 60.4939 ; 174.5000 ]
+  pt2: [ 196.2002 ; 198.5000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: the legend
+  position: [ 65.4939 ; 190.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 54.0500 ; 211.5000 ]
+  pt2: [ 203.6441 ; 228.5000 ]
+
+TEXT:
+  text: a caption
+  position: [ 55.0500 ; 223.3889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

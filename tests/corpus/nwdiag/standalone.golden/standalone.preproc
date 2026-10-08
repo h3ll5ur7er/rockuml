@@ -1,0 +1,9 @@
+@startnwdiag
+nwdiag {
+  alone1;
+  alone2 [description = "just\na server"];
+  network {
+    member;
+  }
+}
+@endnwdiag

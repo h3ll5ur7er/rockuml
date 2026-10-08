@@ -1,0 +1,21 @@
+@startnwdiag
+nwdiag {
+  network NETWORK_BASE {
+   width = full
+   description = "Base network"
+   color = "palegreen"
+   dev_A [address = "dev_A" ]
+   dev_B [address = "dev_B" ]
+  }
+  network IntNET1 {
+   width = full
+   color = "#FFAAAA"
+   dev_B [address = "dev_B", description = "Device B"]
+   dev_C [address = "dev_C", color = "lightblue"]
+  }
+  network IntNET2 {
+   dev_C [address = "dev_C"]
+   dev_D [address = "dev_D"]
+  }
+}
+@endnwdiag

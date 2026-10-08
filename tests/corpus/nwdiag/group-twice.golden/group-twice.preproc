@@ -1,0 +1,14 @@
+@startnwdiag
+nwdiag {
+  // a comment
+  network n1 {
+    a;
+  }
+  group {
+    a;
+  }
+  group {
+    a;
+  }
+}
+@endnwdiag

@@ -1,0 +1,128 @@
+DPI: 96
+dimension: [ 326.6777 ; 157.5000 ]
+scaleFactor: 1.0000
+seed: 5471093083706601203
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+TEXT:
+  text: n1
+  position: [ 100.7652 ; 14.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000080
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 10.0.0.0/8
+  position: [ 5.0000 ; 26.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000080
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 245.6557 ; 50.0000 ]
+  pt2: [ 300.6984 ; 104.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffffd700
+
+TEXT:
+  text: Group
+  position: [ 250.6557 ; 59.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 130.6950 ; 14.5000 ]
+  pt2: [ 320.6777 ; 19.5000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000080
+  backcolor: ffadd8e6
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 52.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: 10.0.0.2
+  position: [ 142.6950 ; 43.8056 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ffff0000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 52.5000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: 10.0.0.1
+  position: [ 237.6765 ; 37.8056 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ffff0000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 155.6671 ; 67.0000 ]
+  pt2: [ 200.7044 ; 99.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffc0cb
+
+TEXT:
+  text: s2
+  position: [ 165.6671 ; 86.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 250.6557 ; 67.0000 ]
+  pt2: [ 295.6984 ; 99.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffc0cb
+
+TEXT:
+  text: s1
+  position: [ 260.6557 ; 86.3333 ]
+  orientation: 0
+  font: SansSerif.bold/12 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 325.6777 ; 156.5000 ]
+  pt2: [ 326.6777 ; 157.5000 ]
+

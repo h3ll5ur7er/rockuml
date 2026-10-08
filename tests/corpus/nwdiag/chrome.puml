@@ -1,0 +1,14 @@
+@startnwdiag
+title Network with chrome
+header page header
+nwdiag {
+  network LAN {
+    pc1;
+    pc2;
+  }
+}
+legend
+the legend
+endlegend
+caption a caption
+@endnwdiag
