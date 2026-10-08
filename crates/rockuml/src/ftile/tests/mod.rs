@@ -21,14 +21,14 @@ use crate::style::{Style, StyleBuilder};
 use crate::svek::UGraphicForSnake;
 
 /// A box with children below it, joined to each by an arrow.
-struct Tile {
+pub(super) struct Tile {
     base: AbstractFtile,
     height: f64,
     children: Vec<Rc<dyn Ftile>>,
 }
 
 impl Tile {
-    fn create(height: f64, children: Vec<Rc<dyn Ftile>>) -> Rc<dyn Ftile> {
+    pub(super) fn create(height: f64, children: Vec<Rc<dyn Ftile>>) -> Rc<dyn Ftile> {
         Rc::new(Self {
             base: AbstractFtile::new(Rc::new(SkinParam::default())),
             height,
@@ -133,7 +133,7 @@ fn tiles_find_their_children_by_identity() {
 
 /// Builds plain tiles and counts what it was asked.
 #[derive(Default)]
-struct Innermost {
+pub(super) struct Innermost {
     skin_param: Rc<SkinParam>,
     calls: RefCell<Vec<&'static str>>,
 }
@@ -319,27 +319,13 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
     let stop = factory.stop(Some(SwimlaneId(0)), &Colors::default());
     let assembled = factory.assembly(start, stop);
     let decorated = factory.decorate_out(assembled, &LinkRendering::none());
-    let parallel = factory.create_parallel(
+    factory.create_parallel(
         vec![decorated],
         ForkStyle::Fork,
         None,
         None,
         None,
         &Colors::default(),
-    );
-    factory.create_while(
-        &Instructions::new(),
-        &LinkRendering::none(),
-        None,
-        parallel,
-        &Display::create(["test"]),
-        None,
-        None,
-        None,
-        None,
-        &LinkRendering::none(),
-        &LinkRendering::none(),
-        &factory.skin_param().current_style_builder(),
     );
     assert_eq!(
         *innermost.calls.borrow(),
@@ -348,8 +334,7 @@ fn the_delegator_chain_passes_what_it_does_not_change_inwards() {
             "stop",
             "assembly",
             "decorate_out",
-            "create_parallel",
-            "create_while"
+            "create_parallel"
         ]
     );
     assert!(Rc::ptr_eq(factory.skin_param(), &innermost.skin_param));

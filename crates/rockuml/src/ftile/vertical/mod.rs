@@ -4,6 +4,10 @@
 mod ftile_box;
 mod ftile_circles;
 mod ftile_decorate;
+mod ftile_diamond;
+mod ftile_diamond_inside;
+mod ftile_diamond_square;
+mod ftile_diamond_wip;
 
 pub(crate) use ftile_box::FtileBox;
 pub(crate) use ftile_circles::{
@@ -12,3 +16,6 @@ pub(crate) use ftile_circles::{
 pub(crate) use ftile_decorate::{
     FtileDecorate, FtileDecorateIn, FtileDecorateInLabel, FtileDecorateOut, FtileDecorateOutLabel,
 };
+pub(crate) use ftile_diamond::FtileDiamond;
+pub(crate) use ftile_diamond_inside::FtileDiamondInside;
+pub(crate) use ftile_diamond_square::FtileDiamondSquare;

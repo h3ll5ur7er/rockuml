@@ -378,8 +378,6 @@ impl Instructions {
             let what = match instruction {
                 Instruction::If(_) => "activity if (track C1)",
                 Instruction::Switch(_) => "activity switch (track C1)",
-                Instruction::While(_) => "activity while (track C2)",
-                Instruction::Repeat(_) => "activity repeat (track C2)",
                 Instruction::Fork(_) | Instruction::Split(_) => "activity fork and split (track D)",
                 Instruction::Group(_) => "activity partitions and groups (track F)",
                 _ if instruction.has_notes() => "activity notes (track F)",

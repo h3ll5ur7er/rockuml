@@ -11,6 +11,8 @@ mod ftile_factory_delegator_if;
 mod ftile_factory_delegator_repeat;
 mod ftile_factory_delegator_switch;
 mod ftile_factory_delegator_while;
+mod ftile_repeat;
+mod ftile_while;
 mod v_compact_factory;
 
 pub(crate) use connection_vertical_down::ConnectionVerticalDown;
@@ -25,7 +27,13 @@ pub(crate) use ftile_factory_delegator_switch::FtileFactoryDelegatorSwitch;
 pub(crate) use ftile_factory_delegator_while::FtileFactoryDelegatorWhile;
 pub(crate) use v_compact_factory::VCompactFactory;
 
+use std::rc::Rc;
+
 use super::FtileFactory;
+use crate::creole::{CreoleMode, Display};
+use crate::klimt::font::FontConfiguration;
+use crate::klimt::{HorizontalAlignment, TextBlock};
+use crate::skin::SkinParam;
 
 /// The factory instructions build with: `v_compact_factory` wrapped in PlantUML's delegators, innermost
 /// first (`Swimlanes.getFtileFactory`). `use_vertical_if` is `!pragma useVerticalIf`.
@@ -43,3 +51,22 @@ pub(crate) fn delegator_chain(
     let factory = Box::new(FtileFactoryDelegatorAddNote::new(factory));
     Box::new(FtileFactoryDelegatorCreateGroup::new(factory))
 }
+
+/// `display` drawn in `font`; PlantUML's `Display.NULL` (`None`) draws as no lines at all.
+fn display_text(
+    display: Option<&Display>,
+    font: &FontConfiguration,
+    alignment: HorizontalAlignment,
+    skin_param: &SkinParam,
+    mode: CreoleMode,
+) -> Rc<dyn TextBlock> {
+    let no_lines = Display::default();
+    Rc::new(
+        display
+            .unwrap_or(&no_lines)
+            .create0(font, alignment, skin_param, 0.0, mode),
+    )
+}
+
+#[cfg(test)]
+mod tests;

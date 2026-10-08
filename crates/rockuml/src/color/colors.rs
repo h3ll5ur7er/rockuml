@@ -162,6 +162,11 @@ impl Colors {
         own.cloned().unwrap_or_else(|| style.value(name).as_color())
     }
 
+    /// No colour set; a line style alone does not count.
+    pub(crate) fn is_empty(&self) -> bool {
+        self.colors.is_empty()
+    }
+
     pub(crate) fn get(&self, kind: ColorType) -> Option<&HColor> {
         self.colors
             .iter()
