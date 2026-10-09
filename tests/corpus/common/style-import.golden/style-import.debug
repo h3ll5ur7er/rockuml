@@ -1,0 +1,92 @@
+DPI: 96
+dimension: [ 272.0000 ; 192.0000 ]
+scaleFactor: 1.0000
+seed: -619080141627695464
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Neo
+ELLIPSE:
+  pt1: [ 123.3424 ; 12.5000 ]
+  pt2: [ 139.3424 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ffcc0000
+  backcolor: ffffcccc
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ffcc0000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Neo
+  position: [ 111.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity red
+ELLIPSE:
+  pt1: [ 6.0000 ; 122.0000 ]
+  pt2: [ 257.1932 ; 177.0386 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffccffcc
+
+TEXT:
+  text: Take the red pill
+  position: [ 14.1022 ; 153.0193 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff006600
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 131.5000 ; 121.9499 ]
+   - [ 135.5000 ; 112.9499 ]
+   - [ 131.5000 ; 116.9499 ]
+   - [ 127.5000 ; 112.9499 ]
+   - [ 131.5000 ; 121.9499 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 125.5000 ; 80.1185 ]
+   - type: SEG_CUBICTO
+     pt1: [ 125.5000 ; 91.9781 ]
+     pt2: [ 125.5000 ; 99.9338 ]
+     pt3: [ 125.5000 ; 110.9499 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

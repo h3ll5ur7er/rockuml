@@ -390,35 +390,7 @@
       "reason": "PlantUML's way of testing its crash report; rockuml reports crashes on the command line."
     }
   },
-  "commands": {
-    "CommandAssumeTransparent": {
-      "status": "later"
-    },
-    "CommandSkin": {
-      "status": "later",
-      "reason": "Old skins are superseded by themes and styles."
-    },
-    "CommandMinwidth": {
-      "status": "later"
-    },
-    "CommandPage": {
-      "status": "later"
-    },
-    "CommandRotate": {
-      "status": "later"
-    },
-    "CommandStyleImport": {
-      "status": "later",
-      "reason": "Reads style files."
-    },
-    "CommandStyleSingleLineCSS": {
-      "status": "later"
-    },
-    "CommandSkinParamJaws": {
-      "status": "later",
-      "reason": "A `skinparam` line with line breaks inside, which only macros produce."
-    }
-  },
+  "commands": {},
   "outputFormats": {
     "PDF": {
       "status": "soon",

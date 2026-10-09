@@ -388,7 +388,7 @@ mod tests {
         match create(texts) {
             Ok(diagram) if diagram.is_error() => "error",
             Ok(diagram) => diagram
-                .export_settings()
+                .export_settings(0)
                 .diagram_type
                 .unwrap_or("a drawable diagram"),
             Err(NotYetPorted(what)) => what,

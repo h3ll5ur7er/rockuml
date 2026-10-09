@@ -5,7 +5,7 @@ use std::sync::Arc;
 
 use flate2::Crc;
 use flate2::write::ZlibEncoder;
-use resvg::tiny_skia::{Color, Pixmap, Transform};
+use resvg::tiny_skia::{Color, IntRect, Paint, Pixmap, PixmapPaint, Rect, Transform};
 use resvg::usvg::fontdb::{self, Database};
 use resvg::usvg::{FontFamily, FontResolver, ImageHrefResolver, Options, Tree};
 
@@ -16,19 +16,40 @@ use crate::color::XColor;
 /// PlantUML embeds in its PNGs.
 pub(crate) fn rasterize(
     svg: &str,
-    (width, height): (u32, u32),
+    size: (u32, u32),
     background: XColor,
     fonts: &Arc<FontRegistry>,
     metadata: Option<&str>,
 ) -> Vec<u8> {
+    encode(&render(svg, size, background, fonts), metadata)
+}
+
+/// Like [`rasterize`], cut into the pieces `split` asks for, across then down (PlantUML's `PngSplitter`).
+pub(crate) fn rasterize_pieces(
+    svg: &str,
+    size: (u32, u32),
+    background: XColor,
+    fonts: &Arc<FontRegistry>,
+    metadata: Option<&str>,
+    split: &PageSplit,
+) -> Vec<Vec<u8>> {
+    let image = render(svg, size, background, fonts);
+    split
+        .pieces(&image)
+        .iter()
+        .map(|piece| encode(piece, metadata))
+        .collect()
+}
+
+fn render(
+    svg: &str,
+    (width, height): (u32, u32),
+    background: XColor,
+    fonts: &Arc<FontRegistry>,
+) -> Pixmap {
     let mut pixmap = Pixmap::new(width.max(1), height.max(1))
         .expect("images are at most PLANTUML_LIMIT_SIZE wide");
-    pixmap.fill(Color::from_rgba8(
-        background.red,
-        background.green,
-        background.blue,
-        background.alpha,
-    ));
+    pixmap.fill(color(background));
     let options = Options {
         fontdb: Arc::new(font_database(fonts)),
         font_resolver: font_resolver(fonts.clone()),
@@ -37,6 +58,10 @@ pub(crate) fn rasterize(
     };
     let tree = Tree::from_str(svg, &options).expect("rockuml writes valid SVG");
     resvg::render(&tree, Transform::identity(), &mut pixmap.as_mut());
+    pixmap
+}
+
+fn encode(pixmap: &Pixmap, metadata: Option<&str>) -> Vec<u8> {
     let png = pixmap.encode_png().expect("encoding to memory succeeds");
     match metadata {
         Some(metadata) => with_text_chunk(&png, "plantuml", metadata),
@@ -44,7 +69,101 @@ pub(crate) fn rasterize(
     }
 }
 
-/// The engine reads no files: images come embedded in the document or not at all.
+fn color(color: XColor) -> Color {
+    Color::from_rgba8(color.red, color.green, color.blue, color.alpha)
+}
+
+/// `page 2x3`: an image cut into 2 pieces across and 3 down.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct PageSplit {
+    pub(crate) horizontal: u32,
+    pub(crate) vertical: u32,
+    pub(crate) param: SplitParam,
+}
+
+impl PageSplit {
+    fn pieces(&self, image: &Pixmap) -> Vec<Pixmap> {
+        let mut pieces = Vec::new();
+        for i in 0..self.horizontal {
+            for j in 0..self.vertical {
+                let (x, width) = segment(image.width(), self.horizontal, i);
+                let (y, height) = segment(image.height(), self.vertical, j);
+                let piece = IntRect::from_xywh(x as i32, y as i32, width.max(1), height.max(1))
+                    .and_then(|rect| image.clone_rect(rect))
+                    .expect("pieces lie inside the image");
+                pieces.push(self.param.framed(piece));
+            }
+        }
+        pieces
+    }
+}
+
+/// Where piece `index` of `count` starts along `total` pixels, and how long it is (PlantUML's `PngSegment`).
+fn segment(total: u32, count: u32, index: u32) -> (u32, u32) {
+    let length = f64::from(total) / f64::from(count);
+    ((length * f64::from(index)) as u32, length as u32)
+}
+
+/// How the pieces of a cut image are framed: a margin, painted or transparent, and a border inside it
+/// (PlantUML's `SplitParam`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub(crate) struct SplitParam {
+    border: Option<XColor>,
+    external: Option<XColor>,
+    margin: u32,
+}
+
+impl SplitParam {
+    pub(crate) fn new(border: Option<XColor>, external: Option<XColor>, margin: u32) -> Self {
+        // The border is drawn in the margin, which must be there for it.
+        let margin = if border.is_some() { margin.max(1) } else { margin };
+        Self {
+            border,
+            external,
+            margin,
+        }
+    }
+
+    fn framed(&self, piece: Pixmap) -> Pixmap {
+        if self.margin == 0 {
+            return piece;
+        }
+        let margin = self.margin;
+        let (width, height) = (piece.width(), piece.height());
+        let mut framed = Pixmap::new(width + 2 * margin, height + 2 * margin)
+            .expect("pieces are smaller than the image");
+        if let Some(external) = self.external {
+            framed.fill(color(external));
+        }
+        framed.draw_pixmap(
+            margin as i32,
+            margin as i32,
+            piece.as_ref(),
+            &PixmapPaint::default(),
+            Transform::identity(),
+            None,
+        );
+        if let Some(border) = self.border {
+            let mut paint = Paint::default();
+            paint.set_color(color(border));
+            paint.anti_alias = false;
+            // Java's drawRect outlines the pixels around the piece.
+            let (left, top) = ((margin - 1) as f32, (margin - 1) as f32);
+            let (outer_width, outer_height) = ((width + 2) as f32, (height + 2) as f32);
+            let lines = [
+                Rect::from_xywh(left, top, outer_width, 1.0),
+                Rect::from_xywh(left, top + outer_height - 1.0, outer_width, 1.0),
+                Rect::from_xywh(left, top, 1.0, outer_height),
+                Rect::from_xywh(left + outer_width - 1.0, top, 1.0, outer_height),
+            ];
+            for line in lines.into_iter().flatten() {
+                framed.fill_rect(line, &paint, Transform::identity(), None);
+            }
+        }
+        framed
+    }
+}
+
 fn embedded_images_only() -> ImageHrefResolver<'static> {
     ImageHrefResolver {
         resolve_data: ImageHrefResolver::default_data_resolver(),
@@ -138,6 +257,21 @@ mod tests {
             Some("src"),
         );
         Pixmap::decode_png(&png).unwrap()
+    }
+
+    #[test]
+    fn pieces_split_the_image_evenly_and_drop_the_rest() {
+        assert_eq!(segment(255, 2, 0), (0, 127));
+        assert_eq!(segment(255, 2, 1), (127, 127));
+    }
+
+    #[test]
+    fn a_border_gets_a_margin_to_be_drawn_in() {
+        let piece = Pixmap::new(3, 2).unwrap();
+        let framed = SplitParam::new(Some(XColor::rgb(255, 0, 0)), None, 0).framed(piece);
+        assert_eq!((framed.width(), framed.height()), (5, 4));
+        assert_eq!(framed.pixel(0, 0).unwrap().red(), 255);
+        assert_eq!(framed.pixel(2, 2).unwrap().alpha(), 0);
     }
 
     #[test]

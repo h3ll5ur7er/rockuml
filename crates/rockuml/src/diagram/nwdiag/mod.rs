@@ -640,7 +640,7 @@ impl Diagram for NwDiagram {
             .add_chrome(Box::new(Drawing(self)), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
     }

@@ -24,11 +24,12 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::color::HColor;
+use crate::color::{ColorMapper, HColor};
 use crate::diagram::UmlSource;
 use crate::java;
 use crate::klimt::HorizontalAlignment;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::png::SplitParam;
 use crate::klimt::sprite::{Sprite, SpriteContainer, SpriteImage};
 use crate::klimt::ugraphic::UStroke;
 use crate::pattern::java_regex;
@@ -46,14 +47,16 @@ pub(crate) struct SkinParam {
     /// Loaded from the default skin when first needed. Diagram elements keep the builder in force when they
     /// were declared, so a change makes a new builder rather than changing the shared one.
     style_builder: OnceCell<Rc<StyleBuilder>>,
+    /// The style sheet `skin` chose to start from instead of the default skin.
+    default_skin: Option<Rc<StyleBuilder>>,
     params: HashMap<String, String>,
     /// PlantUML remembers every value it looked up, even when a later `skinparam` changes it.
     looked_up: RefCell<HashMap<String, Option<String>>>,
     sprites: Rc<HashMap<String, Rc<dyn Sprite>>>,
     /// The base64 data of the PNGs the source refers to by MD5.
     md5_map: Rc<HashMap<String, String>>,
-    /// The files and URLs the source's `<img>`s name, by name; `None` for those that could not be read.
-    image_files: Rc<HashMap<String, Option<Vec<u8>>>>,
+    /// The files and URLs the source names, by name; `None` for those that could not be read.
+    files: Rc<HashMap<String, Option<Vec<u8>>>>,
     rankdir: Rankdir,
 }
 
@@ -78,7 +81,7 @@ impl SpriteContainer for SkinParam {
     }
 
     fn image_file(&self, src: &str) -> Option<&[u8]> {
-        self.image_files.get(src)?.as_deref()
+        self.file(src)
     }
 
     fn get_padding(&self) -> ClockwiseTopRightBottomLeft {
@@ -87,11 +90,11 @@ impl SpriteContainer for SkinParam {
 }
 
 impl SkinParam {
-    /// With the images of `source`.
+    /// With the images and files of `source`.
     pub(crate) fn new(source: &UmlSource) -> Self {
         Self {
             md5_map: Rc::new(source.md5_map().clone()),
-            image_files: Rc::new(source.image_files().clone()),
+            files: Rc::new(source.files().clone()),
             ..Self::default()
         }
     }
@@ -101,8 +104,21 @@ impl SkinParam {
     }
 
     fn style_builder(&self) -> &StyleBuilder {
-        self.style_builder
-            .get_or_init(|| Rc::new(StyleBuilder::load_skin(DEFAULT_SKIN)))
+        self.style_builder.get_or_init(|| {
+            self.default_skin
+                .clone()
+                .unwrap_or_else(|| Rc::new(StyleBuilder::load_skin(DEFAULT_SKIN)))
+        })
+    }
+
+    /// `skin`: the style sheet to start from. As in PlantUML, it is too late once a style was needed.
+    pub(crate) fn set_default_skin(&mut self, skin: StyleBuilder) {
+        self.default_skin = Some(Rc::new(skin));
+    }
+
+    /// A file or URL the source names, as it was read before the diagram was built.
+    pub(crate) fn file(&self, name: &str) -> Option<&[u8]> {
+        self.files.get(name)?.as_deref()
     }
 
     /// The rules in force now, which later changes leave untouched.
@@ -187,6 +203,20 @@ impl SkinParam {
         self.value(key)
             .filter(|value| is_digits(value))
             .and_then(|value| value.parse().ok())
+    }
+
+    /// How the pieces `page` cuts PNG images into are framed (`getSplitParam`).
+    pub(crate) fn split_param(&self) -> SplitParam {
+        let color = |key| {
+            self.value(key)
+                .map(|name| HColor::parse_or_white(&name).to_color(ColorMapper::Identity))
+        };
+        let margin = self.as_int("pagemargin").unwrap_or(0);
+        SplitParam::new(
+            color("pagebordercolor"),
+            color("pageexternalcolor"),
+            u32::try_from(margin).unwrap_or(0),
+        )
     }
 
     /// The space between the lines of an arrow drawn in several colours.

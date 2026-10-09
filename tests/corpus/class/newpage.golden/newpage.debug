@@ -1,0 +1,162 @@
+DPI: 96
+dimension: [ 239.4348 ; 194.0000 ]
+scaleFactor: 1.0000
+seed: -2233298043039423897
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 234.4348 ; 35.0000 ]
+
+TEXT:
+  text: The Avengers
+  position: [ 10.0000 ; 20.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: class IronMan
+RECTANGLE:
+  pt1: [ 55.7174 ; 47.0000 ]
+  pt2: [ 174.6699 ; 95.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 55.7174 ; 47.0000 ]
+  pt2: [ 81.7174 ; 79.0000 ]
+
+ELLIPSE:
+  pt1: [ 59.7174 ; 52.0000 ]
+  pt2: [ 81.7174 ; 74.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 70.7174 ; 63.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 81.7174 ; 56.0000 ]
+  pt2: [ 174.6699 ; 70.0000 ]
+
+TEXT:
+  text: IronMan
+  position: [ 84.7174 ; 66.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 56.7174 ; 79.0000 ]
+  pt2: [ 173.6699 ; 79.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 55.7174 ; 79.0000 ]
+  pt2: [ 67.7174 ; 87.0000 ]
+
+LINE:
+  pt1: [ 56.7174 ; 87.0000 ]
+  pt2: [ 173.6699 ; 87.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 55.7174 ; 87.0000 ]
+  pt2: [ 67.7174 ; 95.0000 ]
+
+COMMENT: class Hulk
+RECTANGLE:
+  pt1: [ 64.7174 ; 131.0000 ]
+  pt2: [ 165.3437 ; 179.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 64.7174 ; 131.0000 ]
+  pt2: [ 90.7174 ; 163.0000 ]
+
+ELLIPSE:
+  pt1: [ 68.7174 ; 136.0000 ]
+  pt2: [ 90.7174 ; 158.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 79.7174 ; 147.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 90.7174 ; 140.0000 ]
+  pt2: [ 165.3437 ; 154.0000 ]
+
+TEXT:
+  text: Hulk
+  position: [ 93.7174 ; 150.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 65.7174 ; 163.0000 ]
+  pt2: [ 164.3437 ; 163.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 64.7174 ; 163.0000 ]
+  pt2: [ 76.7174 ; 171.0000 ]
+
+LINE:
+  pt1: [ 65.7174 ; 171.0000 ]
+  pt2: [ 164.3437 ; 171.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 64.7174 ; 171.0000 ]
+  pt2: [ 76.7174 ; 179.0000 ]
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 59.5000 ; 54.2786 ]
+   - type: SEG_CUBICTO
+     pt1: [ 59.5000 ; 65.4530 ]
+     pt2: [ 59.5000 ; 78.8021 ]
+     pt3: [ 59.5000 ; 89.9470 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

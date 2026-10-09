@@ -345,7 +345,7 @@ impl Diagram for StateDiagram {
         Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.cuca
             .titled
             .export_settings(self.source.seed(), CucaDiagram::get_default_margins())

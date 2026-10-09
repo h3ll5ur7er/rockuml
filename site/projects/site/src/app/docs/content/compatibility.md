@@ -43,7 +43,7 @@ The [feature status](docs/features) lists every diagram type, command, function,
 | Output formats | PDF, EPS, LaTeX, ASCII art (`-ttxt`, `-tutxt`), HTML, SCXML, XMI, VDX and braille |
 | Gantt charts | working hours (`from 9:00 to 17:00 are working hours`) |
 | Salt | the `salt` keyword inside `@startuml`, and `{{ … }}` diagrams embedded in notes or labels |
-| Drawing | handwritten drawing (`!option handwritten true`) |
+| Drawing | handwritten drawing (`!option handwritten true`), and shadows (`skinparam shadowing true`, the `Shadowing` style property, the `rose` skin's shadows) |
 | Command line | `-pipemap`, `--verbose`, `-stdlib`, `--list-keywords`, compressed sprites |
 
 A diagram type that isn't ported yet is reported with a message and exit status 1, never drawn wrong. The rest is ordered by what people use; the [plan](https://github.com/h3ll5ur7er/rockuml/blob/main/PLAN.md) in the repository says what comes next.
@@ -54,6 +54,7 @@ A diagram type that isn't ported yet is reported with a message and exit status 
 - **Hopeless sources.** Where PlantUML crashes or loops forever, rockuml reports an error: a mind map without a root draws nothing, and a Gantt task whose calendar never opens gives up after 100 000 days.
 - **Command line.** An unknown `-option` is refused unless a file of that name exists; PlantUML takes any unknown option for a file name. A diagram the engine fails on is reported as crashed, without an image.
 - **The server.** `/stopserver` really stops the server; ASCII-art formats answer 501.
+- **Pages.** Class, object, use case, component and deployment diagrams with `newpage` write every page; PlantUML 1.2026.8 writes only the first, a regression of that release.
 - **Extras.** PlantUML's easter eggs, GUI, FTP server, statistics, splash screen and Graphviz checks are left out.
 
 ## The browser build

@@ -1,0 +1,206 @@
+DPI: 96
+dimension: [ 217.3058 ; 195.0000 ]
+scaleFactor: 1.0000
+seed: -1005029548301974476
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 58.8733 ; 43.0000 ]
+  pt2: [ 66.8733 ; 152.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 62.3733 ; 43.0000 ]
+  pt2: [ 62.3733 ; 152.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffa80036
+
+RECTANGLE:
+  pt1: [ 162.5262 ; 43.0000 ]
+  pt2: [ 170.5262 ; 152.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 166.0262 ; 43.0000 ]
+  pt2: [ 166.0262 ; 152.0000 ]
+  stroke: 5.0-5.0-1.0
+  shadow: 0
+  color: ffa80036
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 110.7467 ; 38.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ffa80036
+  backcolor: fffefece
+
+TEXT:
+  text: Homer
+  position: [ 17.0000 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 124.7467 ; 10.0000 ]
+  pt2: [ 203.3058 ; 38.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ffa80036
+  backcolor: fffefece
+
+TEXT:
+  text: Marge
+  position: [ 131.7467 ; 27.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 152.0000 ]
+  pt2: [ 110.7467 ; 180.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ffa80036
+  backcolor: fffefece
+
+TEXT:
+  text: Homer
+  position: [ 17.0000 ; 169.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 124.7467 ; 152.0000 ]
+  pt2: [ 203.3058 ; 180.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ffa80036
+  backcolor: fffefece
+
+TEXT:
+  text: Marge
+  position: [ 131.7467 ; 169.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 154.0262 ; 66.0000 ]
+   - [ 164.0262 ; 70.0000 ]
+   - [ 154.0262 ; 74.0000 ]
+   - [ 158.0262 ; 70.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffa80036
+  backcolor: ffa80036
+
+LINE:
+  pt1: [ 62.3733 ; 70.0000 ]
+  pt2: [ 160.0262 ; 70.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffa80036
+
+TEXT:
+  text: D'oh!
+  position: [ 69.3733 ; 65.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 73.3733 ; 93.0000 ]
+   - [ 63.3733 ; 97.0000 ]
+   - [ 73.3733 ; 101.0000 ]
+   - [ 69.3733 ; 97.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffa80036
+  backcolor: ffa80036
+
+LINE:
+  pt1: [ 67.3733 ; 97.0000 ]
+  pt2: [ 165.0262 ; 97.0000 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ffa80036
+
+TEXT:
+  text: Hmmm
+  position: [ 79.3733 ; 92.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 78.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 78.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 68.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 4
+  color: ffa80036
+  backcolor: fffbfb77
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 68.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 68.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 78.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 68.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffa80036
+  backcolor: fffbfb77
+
+TEXT:
+  text: donut
+  position: [ 73.3733 ; 125.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

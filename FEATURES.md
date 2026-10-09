@@ -59,7 +59,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Area | rockuml |
 |---|---|
 | Diagram types | 15 of 52 ported, 29 planned, 8 not planned |
-| Commands of the ported diagrams | 653 of 752 ported |
+| Commands of the ported diagrams | 752 of 752 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -69,21 +69,21 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Diagram | Status | Reference diagrams | Notes | In PlantUML |
 |---|---|---|---|---|
+| [Sequence diagrams](https://h3ll5ur7er.github.io/rockuml/docs/sequence) | ✅ Ported | 91 of 91 match PlantUML |  | `SequenceDiagramFactory` |
+| [Class and object diagrams](https://h3ll5ur7er.github.io/rockuml/docs/class) | ✅ Ported | 80 of 82 match PlantUML |  | `ClassDiagramFactory` |
+| [Use case, component, deployment and ArchiMate diagrams](https://h3ll5ur7er.github.io/rockuml/docs/component) | ✅ Ported | 76 of 77 match PlantUML |  | `DescriptionDiagramFactory` |
+| [State diagrams](https://h3ll5ur7er.github.io/rockuml/docs/state) | ✅ Ported | 35 of 35 match PlantUML |  | `StateDiagramFactory` |
+| [Activity diagrams](https://h3ll5ur7er.github.io/rockuml/docs/activity) | ✅ Ported | 106 of 106 match PlantUML |  | `ActivityDiagramFactory3` |
+| [Wireframes (Salt)](https://h3ll5ur7er.github.io/rockuml/docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
+| [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | ✅ Ported | 12 of 12 match PlantUML |  | `NwDiagramFactory` |
+| [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | ✅ Ported | 19 of 19 match PlantUML |  | `MindMapDiagramFactory` |
+| [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | ✅ Ported | 17 of 17 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
 | [Creole text (`@startcreole`)](https://h3ll5ur7er.github.io/rockuml/docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
+| [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | ✅ Ported | 22 of 22 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
+| [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 20 of 20 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](https://h3ll5ur7er.github.io/rockuml/docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
 | [YAML data](https://h3ll5ur7er.github.io/rockuml/docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
-| [Sequence diagrams](https://h3ll5ur7er.github.io/rockuml/docs/sequence) | 🟡 Partly ported | 91 of 91 match PlantUML | 8 of 84 commands not yet ported, listed below (8 of them shared by every diagram). | `SequenceDiagramFactory` |
-| [Class and object diagrams](https://h3ll5ur7er.github.io/rockuml/docs/class) | 🟡 Partly ported | 80 of 80 match PlantUML | 10 of 82 commands not yet ported, listed below (8 of them shared by every diagram). | `ClassDiagramFactory` |
-| [Use case, component, deployment and ArchiMate diagrams](https://h3ll5ur7er.github.io/rockuml/docs/component) | 🟡 Partly ported | 76 of 76 match PlantUML | 9 of 68 commands not yet ported, listed below (8 of them shared by every diagram). | `DescriptionDiagramFactory` |
-| [State diagrams](https://h3ll5ur7er.github.io/rockuml/docs/state) | 🟡 Partly ported | 35 of 35 match PlantUML | 8 of 65 commands not yet ported, listed below (8 of them shared by every diagram). | `StateDiagramFactory` |
-| [Activity diagrams](https://h3ll5ur7er.github.io/rockuml/docs/activity) | 🟡 Partly ported | 106 of 106 match PlantUML | 8 of 89 commands not yet ported, listed below (8 of them shared by every diagram). | `ActivityDiagramFactory3` |
-| [Wireframes (Salt)](https://h3ll5ur7er.github.io/rockuml/docs/salt) | 🟡 Partly ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. 8 of 41 commands not yet ported, listed below (8 of them shared by every diagram). | `PSystemSaltFactory` |
-| [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | 🟡 Partly ported | 12 of 12 match PlantUML | 8 of 52 commands not yet ported, listed below (8 of them shared by every diagram). | `NwDiagramFactory` |
-| [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | 🟡 Partly ported | 19 of 19 match PlantUML | 8 of 49 commands not yet ported, listed below (8 of them shared by every diagram). | `MindMapDiagramFactory` |
-| [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | 🟡 Partly ported | 17 of 17 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). 8 of 48 commands not yet ported, listed below (8 of them shared by every diagram). | `WBSDiagramFactory` |
-| [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | 🟡 Partly ported | 22 of 22 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. 8 of 59 commands not yet ported, listed below (8 of them shared by every diagram). | `GanttDiagramFactory` |
-| [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | 🟡 Partly ported | 20 of 20 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. 8 of 65 commands not yet ported, listed below (8 of them shared by every diagram). | `TimingDiagramFactory` |
-| [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | 🟡 Partly ported | 6 of 6 match PlantUML | 8 of 50 commands not yet ported, listed below (8 of them shared by every diagram). | `ChenEerDiagramFactory` |
+| [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | The welcome screen of an empty diagram | 🗓️ Planned later |  | A reference card; low priority. | `PSystemWelcomeFactory` |
 | The colour chart (`colors`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemColorsFactory` |
 | Legacy activity diagrams (`(*) --> "Action"`) | 🗓️ Planned later |  | Tier 3 of the plan: the current activity syntax covers the same diagrams. | `ActivityDiagramFactory` |
@@ -128,18 +128,7 @@ Reference diagrams are the cases of rockuml's test corpus; a matching one gives 
 
 Every command of a ported diagram type that is not listed here is ported. Commands are named after PlantUML's Java classes.
 
-| Command | Status | In | Notes |
-|---|---|---|---|
-| `CommandAssumeTransparent` | 🗓️ Planned later | every ported diagram | Recognised and reported as not ported. |
-| `CommandCreateElementParenthesis` | 🔜 Planned soon | Class and object diagrams | Recognised and reported as not ported. |
-| `CommandMinwidth` | 🗓️ Planned later | every ported diagram | Recognised and reported as not ported. |
-| `CommandNewpage` | 🔜 Planned soon | Class and object diagrams, Use case, component, deployment and ArchiMate diagrams | Recognised and reported as not ported. |
-| `CommandPage` | 🗓️ Planned later | every ported diagram | Recognised and reported as not ported. |
-| `CommandRotate` | 🗓️ Planned later | every ported diagram | Recognised and reported as not ported. |
-| `CommandSkin` | 🗓️ Planned later | every ported diagram | Old skins are superseded by themes and styles. Recognised and reported as not ported. |
-| `CommandSkinParamJaws` | 🗓️ Planned later | every ported diagram | A `skinparam` line with line breaks inside, which only macros produce. Not recognised yet: a syntax error. |
-| `CommandStyleImport` | 🗓️ Planned later | every ported diagram | Reads style files. Recognised and reported as not ported. |
-| `CommandStyleSingleLineCSS` | 🗓️ Planned later | every ported diagram | Recognised and reported as not ported. |
+None.
 
 ## Preprocessor functions
 

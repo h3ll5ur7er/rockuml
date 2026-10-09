@@ -11,10 +11,10 @@ use regex::Regex;
 pub(super) use labels::Labels;
 
 use super::cuca::{CucaDiagram, EntityDiagram};
+use super::DEFAULT_DPI;
 use super::titled::TitledDiagram;
 use crate::abel::{Entity, EntityId, GroupType, LeafType, LinkArg};
 use crate::color::{ColorType, Colors, HColor};
-use crate::command::unported::{self, NotPortedCommands};
 use crate::command::{
     BlocLines, Command, CommandControl, CommandError, Multiline, PatternCommand, SingleLine,
 };
@@ -95,17 +95,57 @@ pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
+/// A diagram that `newpage` goes on with on a new, empty diagram: each is a page of its own (PlantUML's
+/// `NewpagedDiagram`).
+pub(super) trait Newpaged: TitledDiagram + Sized {
+    /// An empty diagram of the same type and source.
+    fn create_empty_diagram(&self) -> Self;
+
+    /// The pages before this one.
+    fn previous_pages(&mut self) -> &mut Vec<Self>;
+
+    fn previous_pages_ref(&self) -> &[Self];
+
+    fn page(&self, page: usize) -> &Self {
+        self.previous_pages_ref().get(page).unwrap_or(self)
+    }
+}
+
+/// Runs `hook` on every page in turn, up to the first error it finds.
+pub(super) fn on_each_page<D: Newpaged>(
+    diagram: &mut D,
+    mut hook: impl FnMut(&mut D) -> Option<String>,
+) -> Option<String> {
+    let mut pages = std::mem::take(diagram.previous_pages());
+    let error = pages.iter_mut().find_map(&mut hook).or_else(|| hook(diagram));
+    *diagram.previous_pages() = pages;
+    error
+}
+
 /// PlantUML's `CommandNewpage`.
-pub(super) fn newpage<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandNewpage",
+pub(super) fn newpage<D: Newpaged + 'static>() -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::leaf(r"newpage"),
+            RegexTree::leaf("newpage"),
             RegexTree::end(),
         ]),
-    )
-    .boxed()
+        |diagram: &mut D, _: &LineLocation, _: &RegexResult| {
+            let mut next = diagram.create_empty_diagram();
+            let dpi = diagram.titled().dpi();
+            if dpi != DEFAULT_DPI {
+                next.titled().skin.set_param("dpi", &dpi.to_string());
+            }
+            let mut finished = std::mem::replace(diagram, next);
+            let mut pages = std::mem::take(finished.previous_pages());
+            if let Some(not_ported) = finished.titled().not_ported_part() {
+                diagram.titled().not_ported(not_ported);
+            }
+            pages.push(finished);
+            *diagram.previous_pages() = pages;
+            Ok(())
+        },
+    )))
 }
 
 /// PlantUML's `CommandHideShow2`: `hide Foo`, `show <<Stereo>>`, `hide $tag`, `hide @unlinked`.

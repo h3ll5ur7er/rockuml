@@ -98,6 +98,10 @@ impl SName {
 }
 
 impl PName {
+    pub(crate) fn java_name(self) -> &'static str {
+        Self::ALL[self as usize].1
+    }
+
     pub(crate) fn retrieve(name: &str) -> Option<Self> {
         Self::ALL
             .iter()

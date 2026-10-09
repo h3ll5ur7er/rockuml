@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::path::Path;
 
+use crate::diagram::common_commands::style_file_named;
 use crate::host::Host;
 use crate::java;
 use crate::preproc::start_utils;
@@ -19,8 +20,8 @@ pub struct UmlSource {
     raw_lines: Vec<String>,
     /// The base64 data of the PNGs `patch_base64` took out, by their MD5.
     md5_map: HashMap<String, String>,
-    /// What `read_image_files` read, by the name the source gives it; `None` for what it could not read.
-    image_files: HashMap<String, Option<Vec<u8>>>,
+    /// What `read_named_files` read, by the name the source gives it; `None` for what it could not read.
+    files: HashMap<String, Option<Vec<u8>>>,
     /// When the diagram is drawn, in milliseconds since 1970: what `today` means.
     current_time_millis: i64,
 }
@@ -31,7 +32,7 @@ impl UmlSource {
             lines,
             raw_lines,
             md5_map: HashMap::new(),
-            image_files: HashMap::new(),
+            files: HashMap::new(),
             current_time_millis: 0,
         }
     }
@@ -53,7 +54,7 @@ impl UmlSource {
             lines: joined,
             raw_lines,
             md5_map: HashMap::new(),
-            image_files: HashMap::new(),
+            files: HashMap::new(),
             current_time_millis: 0,
         }
     }
@@ -145,9 +146,6 @@ impl UmlSource {
         &self.md5_map
     }
 
-    /// Reads the files and URLs `<img>`s name, which creole cannot read itself as it draws. Relative paths
-    /// resolve against `directory`, the diagram file's, as PlantUML's `FileSystem` does. What cannot be read
-    /// is left out, and its `<img>` draws as undecodable.
     /// Remembers what time it is, which the source itself cannot know.
     pub(crate) fn note_current_time(&mut self, host: &dyn Host) {
         self.current_time_millis = host.current_time_millis();
@@ -157,34 +155,39 @@ impl UmlSource {
         self.current_time_millis
     }
 
-    pub(crate) fn read_image_files(&mut self, directory: &Path, host: &dyn Host) {
+    /// Reads the files and URLs the source names, which commands and creole cannot read themselves: the
+    /// images `<img>`s show, and the style sheets and skins it loads. Relative paths resolve against
+    /// `directory`, the diagram file's, as PlantUML's `FileSystem` does. What cannot be read is left out.
+    pub(crate) fn read_named_files(&mut self, directory: &Path, host: &dyn Host) {
         for line in &self.lines {
-            for src in crate::creole::image_sources(line.text()) {
-                if self.image_files.contains_key(src) || src.starts_with("data:") {
+            let images = crate::creole::image_sources(line.text())
+                .filter(|src| !src.starts_with("data:"))
+                .map(str::to_owned);
+            for name in images.chain(style_file_named(line.text())) {
+                if self.files.contains_key(&name) {
                     continue;
                 }
-                let content = if src.starts_with("http:") || src.starts_with("https:") {
-                    if crate::url_policy::is_forbidden(src) {
-                        None
-                    } else {
-                        host.read_url(src)
-                    }
-                } else {
-                    let path = directory.join(src);
-                    if crate::file_policy::is_forbidden(&path, host) {
-                        None
-                    } else {
-                        host.read_file(&path)
-                    }
-                };
-                self.image_files.insert(src.to_owned(), content);
+                let content = read_named_file(&name, directory, host);
+                self.files.insert(name, content);
             }
         }
     }
 
-    pub(crate) fn image_files(&self) -> &HashMap<String, Option<Vec<u8>>> {
-        &self.image_files
+    pub(crate) fn files(&self) -> &HashMap<String, Option<Vec<u8>>> {
+        &self.files
     }
+}
+
+fn read_named_file(name: &str, directory: &Path, host: &dyn Host) -> Option<Vec<u8>> {
+    if name.starts_with("http:") || name.starts_with("https:") {
+        return (!crate::url_policy::is_forbidden(name))
+            .then(|| host.read_url(name))
+            .flatten();
+    }
+    let path = directory.join(name);
+    (!crate::file_policy::is_forbidden(&path, host))
+        .then(|| host.read_file(&path))
+        .flatten()
 }
 
 fn patch_base64_line(line: &str, md5_map: &mut HashMap<String, String>) -> Option<String> {
@@ -269,12 +272,12 @@ mod tests {
     fn each_image_file_is_read_once_even_when_it_cannot_be() {
         let mut images = source(&["<img:missing.png> <img:missing.png>", "<img:missing.png>"]);
         let host = FakeHost::default();
-        images.read_image_files(Path::new("diagrams"), &host);
+        images.read_named_files(Path::new("diagrams"), &host);
         assert_eq!(
             *host.reads.borrow(),
             [Path::new("diagrams").join("missing.png")]
         );
-        assert_eq!(images.image_files()["missing.png"], None);
+        assert_eq!(images.files()["missing.png"], None);
     }
 
     #[test]
@@ -282,9 +285,20 @@ mod tests {
         let mut images = source(&["<img:/etc/logo.png>"]);
         let mut host = FakeHost::default();
         host.files.insert("/etc/logo.png".into(), vec![1]);
-        images.read_image_files(Path::new(""), &host);
+        images.read_named_files(Path::new(""), &host);
         assert!(host.reads.borrow().is_empty());
-        assert_eq!(images.image_files()["/etc/logo.png"], None);
+        assert_eq!(images.files()["/etc/logo.png"], None);
+    }
+
+    #[test]
+    fn style_sheets_and_skins_are_read_too() {
+        let mut styles = source(&["<style file=\"dark.css\">", "  skin rose", "skin debug"]);
+        let mut host = FakeHost::default();
+        host.files.insert(Path::new("d").join("dark.css"), vec![1]);
+        styles.read_named_files(Path::new("d"), &host);
+        assert_eq!(styles.files()["dark.css"], Some(vec![1]));
+        assert_eq!(styles.files()["rose.skin"], None);
+        assert!(styles.files().contains_key("debug.skin"));
     }
 
     #[test]
