@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>rockuml — PlantUML diagrams, rendered by Rust</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="rockuml renders PlantUML diagrams without Java or Graphviz: one binary for Windows, Linux and macOS, and a WebAssembly build that runs in your browser."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <script>
+      // Sets the theme before the first paint, so a dark page doesn't flash white while Angular starts.
+      try {
+        const stored = localStorage.getItem('rockuml-theme');
+        const dark = stored
+          ? stored === 'dark'
+          : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+  </head>
+  <body>
+    <site-root></site-root>
+    <noscript
+      >rockuml's site renders its diagrams in your browser, which needs JavaScript.</noscript
+    >
+  </body>
+</html>

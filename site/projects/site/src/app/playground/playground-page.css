@@ -1,0 +1,57 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--header-height));
+  min-height: 480px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px var(--gutter);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 14px;
+}
+
+.toolbar__title {
+  margin: 0 8px 0 0;
+  font-size: 1.05rem;
+}
+
+.toolbar select {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--surface-raised);
+}
+
+.toolbar__pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.toolbar__notice {
+  flex: 1;
+  color: var(--accent-strong);
+}
+
+.toolbar__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.playground--actual-size {
+  --rockuml-diagram-max-width: none;
+}
+
+.playground {
+  --rockuml-playground-divider: 1px solid var(--border);
+  --rockuml-editor-font-size: 14px;
+  --rockuml-preview-align: safe start safe center;
+  flex: 1;
+  min-height: 0;
+}

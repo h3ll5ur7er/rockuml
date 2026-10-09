@@ -1,0 +1,44 @@
+<div class="toolbar">
+  <h1 class="toolbar__title">Playground</h1>
+  <label class="toolbar__template">
+    <span class="visually-hidden">Start from a template</span>
+    <select (change)="useTemplate($any($event.target).value); $any($event.target).value = ''">
+      <option value="">Start from a template…</option>
+      @for (template of templates; track template.slug) {
+        <option [value]="template.slug">{{ template.title }}</option>
+      }
+    </select>
+  </label>
+  @if (pageCount() > 1) {
+    <label class="toolbar__pages">
+      Page
+      <select (change)="page.set(+$any($event.target).value)">
+        @for (number of pageNumbers(); track number) {
+          <option [value]="number" [selected]="number === page()">{{ number + 1 }}</option>
+        }
+      </select>
+      of {{ pageCount() }}
+    </label>
+  }
+  <span class="toolbar__notice" role="status">{{ notice() }}</span>
+  <span class="toolbar__actions">
+    <button
+      type="button"
+      class="button"
+      [attr.aria-pressed]="actualSize()"
+      (click)="actualSize.set(!actualSize())"
+    >
+      {{ actualSize() ? 'Fit to width' : 'Actual size' }}
+    </button>
+    <button type="button" class="button" (click)="share()">Copy link</button>
+    <button type="button" class="button" (click)="downloadSvg()">SVG</button>
+    <button type="button" class="button" (click)="downloadPng()">PNG</button>
+  </span>
+</div>
+<rockuml-playground
+  class="playground"
+  [class.playground--actual-size]="actualSize()"
+  [(source)]="source"
+  [page]="page()"
+  (rendered)="rendered($event)"
+/>

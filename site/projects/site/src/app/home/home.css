@@ -1,0 +1,179 @@
+:host {
+  display: block;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--gutter) 64px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 40px;
+  align-items: center;
+  padding: 64px 0 48px;
+}
+
+.hero__kicker {
+  margin: 0;
+  color: var(--accent-strong);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  margin: 12px 0 16px;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.hero h1 span {
+  background: linear-gradient(90deg, #f97316, #dc2626);
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__lead {
+  margin: 0 0 28px;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero__actions .button {
+  padding: 10px 18px;
+  font-size: 15px;
+}
+
+.hero__example {
+  margin: 0;
+  --rockuml-playground-max-height: 440px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 24px 0 48px;
+}
+
+.features article {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.features h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.features p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.gallery h2,
+.usage h2 {
+  margin: 32px 0 8px;
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.gallery__lead {
+  margin: 0 0 24px;
+  color: var(--text-muted);
+}
+
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  color: var(--text);
+  text-decoration: none;
+  transition:
+    transform 150ms,
+    box-shadow 150ms,
+    border-color 150ms;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.card__image {
+  display: grid;
+  place-items: center;
+  height: 200px;
+  padding: 12px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: #ffffff;
+}
+
+.card__image rockuml-diagram {
+  --rockuml-diagram-max-height: 176px;
+}
+
+.card h3 {
+  margin: 14px 16px 4px;
+  font-size: 1.05rem;
+}
+
+.card p {
+  margin: 0 16px 16px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.usage__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.usage article {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.usage h3 {
+  margin: 0 0 12px;
+}
+
+.usage pre {
+  margin: 0 0 12px;
+  padding: 12px;
+  overflow-x: auto;
+  border-radius: var(--radius-small);
+  background: var(--code-background);
+}
+
+@media (max-width: 960px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 40px;
+  }
+}

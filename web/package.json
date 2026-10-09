@@ -1,0 +1,16 @@
+{
+  "name": "rockuml",
+  "version": "0.1.0",
+  "description": "PlantUML-compatible diagrams rendered by WebAssembly, in browsers and Node, without Java or Graphviz",
+  "license": "LGPL-3.0-or-later",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./rockuml.d.ts",
+      "default": "./rockuml.js"
+    },
+    "./rockuml.wasm": "./rockuml.wasm"
+  },
+  "files": ["rockuml.js", "rockuml.d.ts", "rockuml.wasm"],
+  "sideEffects": false
+}

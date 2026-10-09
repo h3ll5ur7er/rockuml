@@ -1,0 +1,45 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
+@Component({
+  selector: 'site-logo',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { 'aria-hidden': 'true' },
+  styles: `
+    :host {
+      display: inline-block;
+      width: 1.75em;
+      height: 1.75em;
+    }
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  `,
+  template: `
+    <svg viewBox="0 0 32 32">
+      <defs>
+        <linearGradient id="site-logo-rock" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fb923c" />
+          <stop offset="1" stop-color="#c2410c" />
+        </linearGradient>
+      </defs>
+      <path d="M5 12 12 4l11 1 6 9-3 13-15 2-8-8z" fill="url(#site-logo-rock)" />
+      <path
+        d="M12 4l3 9-10-1m10 1 14 1m-14-1-4 16m4-16 11 14"
+        fill="none"
+        stroke="#7c2d12"
+        stroke-opacity=".35"
+      />
+      <path
+        d="M10 18h10m-3-3 3 3-3 3"
+        fill="none"
+        stroke="#fff"
+        stroke-width="2.4"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  `,
+})
+export class Logo {}

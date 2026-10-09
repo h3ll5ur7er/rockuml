@@ -1,0 +1,258 @@
+/* Design tokens, base elements and the prose of documentation pages, which arrives as HTML and so can't use
+   component styles. */
+
+:root {
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, Consolas, monospace;
+  --radius: 10px;
+  --radius-small: 6px;
+  --header-height: 60px;
+  --content-width: 860px;
+  --gutter: 16px;
+
+  --accent: #ea580c;
+  --accent-strong: #c2410c;
+  --accent-soft: #fff1e6;
+  --accent-contrast: #ffffff;
+  --background: #ffffff;
+  --surface: #f8f8f9;
+  --surface-raised: #ffffff;
+  --border: #e4e4e7;
+  --text: #18181b;
+  --text-muted: #5b5b66;
+  --code-background: #f4f4f5;
+  --note-background: #f0f7ff;
+  --note-border: #3b82f6;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.05), 0 4px 16px rgb(0 0 0 / 0.06);
+
+  --rockuml-editor-background: var(--surface-raised);
+  --rockuml-editor-color: var(--text);
+  --rockuml-preview-background: #ffffff;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --accent: #fb923c;
+  --accent-strong: #fdba74;
+  --accent-soft: #3b1d0c;
+  --accent-contrast: #1c0f06;
+  --background: #111113;
+  --surface: #18181b;
+  --surface-raised: #1f1f23;
+  --border: #2e2e33;
+  --text: #ececf0;
+  --text-muted: #a1a1aa;
+  --code-background: #232328;
+  --note-background: #10223d;
+  --note-border: #60a5fa;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 16px rgb(0 0 0 / 0.3);
+
+  --rockuml-syntax-comment: #8b8b96;
+  --rockuml-syntax-meta: #c084fc;
+  --rockuml-syntax-preprocessor: #fb923c;
+  --rockuml-syntax-keyword: #60a5fa;
+  --rockuml-syntax-string: #4ade80;
+  --rockuml-syntax-stereotype: #f472b6;
+  --rockuml-syntax-color: #fbbf24;
+  --rockuml-syntax-variable: #22d3ee;
+  --rockuml-syntax-arrow: #f87171;
+  --rockuml-syntax-number: #2dd4bf;
+  --rockuml-editor-gutter-color: #5b5b66;
+  --rockuml-message-color: #fca5a5;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: calc(var(--header-height) + 16px);
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font: 16px/1.65 var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent-strong);
+  text-underline-offset: 3px;
+}
+
+:root[data-theme='dark'] a {
+  color: var(--accent);
+}
+
+button,
+select,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  /* Coding fonts would join PlantUML's arrows, such as <->, into one arrow sign. */
+  font-variant-ligatures: none;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.button:hover {
+  border-color: var(--accent);
+}
+
+.button--primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 600;
+}
+
+:root[data-theme='dark'] .button--primary {
+  color: var(--accent-contrast);
+}
+
+.button--primary:hover {
+  background: var(--accent-strong);
+}
+
+.button--small {
+  padding: 2px 10px;
+  font-size: 13px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Documentation prose */
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  position: relative;
+  line-height: 1.3;
+}
+
+.prose h2 {
+  margin: 2.4em 0 0.6em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--border);
+  font-size: 1.6rem;
+}
+
+.prose h3 {
+  margin: 1.8em 0 0.5em;
+  font-size: 1.25rem;
+}
+
+.prose h4 {
+  margin: 1.4em 0 0.4em;
+  font-size: 1.05rem;
+}
+
+.prose .anchor {
+  position: absolute;
+  left: -1em;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0;
+}
+
+.prose :is(h2, h3, h4):hover .anchor {
+  opacity: 1;
+}
+
+.prose p,
+.prose ul,
+.prose ol {
+  margin: 0.8em 0;
+}
+
+.prose li + li {
+  margin-top: 0.25em;
+}
+
+.prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--code-background);
+  overflow-wrap: anywhere;
+}
+
+.prose pre.code {
+  margin: 1em 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-background);
+  line-height: 1.55;
+}
+
+.prose .table {
+  margin: 1em 0;
+  overflow-x: auto;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95em;
+}
+
+.prose th,
+.prose td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  border-bottom-width: 2px;
+  font-weight: 600;
+}
+
+.prose .note {
+  margin: 1.2em 0;
+  padding: 4px 16px;
+  border-left: 4px solid var(--note-border);
+  border-radius: var(--radius-small);
+  background: var(--note-background);
+}
