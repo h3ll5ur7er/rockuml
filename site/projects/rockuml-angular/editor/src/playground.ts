@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import type { Rendering } from 'rockuml';
 
-import { RockumlDiagram } from './diagram';
+import { RockumlDiagram } from 'rockuml-angular';
 import { RockumlEditor } from './editor';
 
 /** An editor with the diagram of its source next to it, redrawn as you type. */
@@ -49,11 +49,15 @@ import { RockumlEditor } from './editor';
       padding: var(--rockuml-preview-padding, 16px);
       background: var(--rockuml-preview-background, #ffffff);
     }
+    /* Stacked, the editor gets a height of its own, and the diagram the rest. */
     @container (max-width: 640px) {
       .rockuml-playground__layout {
         grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto minmax(0, 1fr);
+        max-height: none;
       }
       .rockuml-playground__editor {
+        max-height: var(--rockuml-stacked-editor-max-height, 50vh);
         border-right: none;
         border-bottom: var(--rockuml-playground-divider, none);
       }

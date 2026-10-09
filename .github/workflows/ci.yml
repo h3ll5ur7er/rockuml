@@ -1,7 +1,8 @@
 name: CI
 
 # Every push to main that passes the tests is published as a pre-release, v<version>-build.<run>; a pushed
-# v* tag is published as a release of that name. Pull requests are only tested.
+# v* tag is published as a release of that name. Pull requests are only tested. Pushes to main also deploy the
+# website to GitHub Pages, once the repository is public (Pages needs that, or a paid plan).
 on:
   push:
     branches: [main]
@@ -40,6 +41,23 @@ jobs:
       - run: cargo clippy -p rockuml-wasm --target wasm32-unknown-unknown -- -D warnings
       - run: bash tools/build-wasm.sh
       - run: node --test web/rockuml.test.mjs
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - name: Test and build the website
+        working-directory: site
+        run: |
+          npm ci
+          npm run format:check
+          npm test
+          npm run build -- --base-href /rockuml/
+          # GitHub Pages answers unknown paths with 404.html, so deep links start the app too.
+          cp dist/site/browser/index.html dist/site/browser/404.html
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/dist/site/browser
       # The license texts every package carries, at the paths NOTICE.md and THIRD-PARTY.md link to.
       - name: Collect the licenses
         run: |
@@ -48,7 +66,7 @@ jobs:
           cp crates/smetana/LICENSE legal/crates/smetana/
           cp crates/rockuml/assets/fonts/LICENSE-Liberation.txt legal/crates/rockuml/assets/fonts/
           python3 tools/third-party-licenses.py legal/THIRD-PARTY-CRATES.md
-      - run: cd web && zip ../rockuml-web.zip index.html rockuml.js rockuml.wasm
+      - run: cd web && zip ../rockuml-web.zip index.html package.json rockuml.js rockuml.d.ts rockuml.wasm
       - run: cd legal && zip -r ../rockuml-web.zip . && zip -r ../rockuml-licenses.zip .
       - uses: actions/upload-artifact@v7
         with:
@@ -58,6 +76,20 @@ jobs:
         with:
           name: rockuml-licenses.zip
           path: rockuml-licenses.zip
+
+  pages:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !github.event.repository.private
+    needs: [test, wasm]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
   build-windows:
     if: github.event_name == 'push'
@@ -115,9 +147,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # Only the release files: the website's artifact goes to GitHub Pages.
       - uses: actions/download-artifact@v8
         with:
           path: artifacts
+          pattern: rockuml*
           merge-multiple: true
       - name: Publish the release
         env:

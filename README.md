@@ -140,6 +140,27 @@ Its tests render corpus cases and compare them with the goldens:
 node --test web/rockuml.test.mjs
 ```
 
+## Website
+
+`site/` holds rockuml's website: documentation for every diagram type, with live examples you can edit, and a
+playground. It is an Angular 22 application that renders with the wasm build in the browser; CI deploys it to
+GitHub Pages. To work on it, build the wasm module first (see above), then:
+
+```bash
+cd site
+npm ci
+npm start                       # http://localhost:4200
+npm test                        # unit tests, and every documentation example rendered with rockuml.wasm
+npm run format:check
+```
+
+The documentation pages are Markdown files in `site/projects/site/src/app/docs/content/`; a ```` ```rockuml ````
+fence is a live example, and each page opens with one marked ```` ```rockuml tldr ````.
+
+`site/projects/rockuml-angular` is the Angular component library the site is built with, shaped to be published
+on npm: `rockuml-angular` renders diagrams (`<rockuml-diagram>`), and `rockuml-angular/editor` adds a CodeMirror
+editor and a live playground.
+
 ## Adding corpus cases
 
 Put a `.puml` file under `tests/corpus/<area>/` and generate its goldens with the reference implementation

@@ -44,6 +44,10 @@
   gap: 6px;
 }
 
+.playground--actual-size {
+  --rockuml-diagram-max-width: none;
+}
+
 .playground {
   --rockuml-playground-divider: 1px solid var(--border);
   --rockuml-editor-font-size: 14px;

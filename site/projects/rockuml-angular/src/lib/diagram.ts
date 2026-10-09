@@ -42,7 +42,7 @@ import { RockumlRenderer } from './renderer';
     }
     img {
       display: block;
-      max-width: 100%;
+      max-width: var(--rockuml-diagram-max-width, 100%);
       max-height: var(--rockuml-diagram-max-height, none);
       height: auto;
       object-fit: contain;

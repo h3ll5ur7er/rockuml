@@ -1,4 +1,5 @@
-// rockuml for Angular: diagrams rendered in the browser by rockuml's WebAssembly engine.
+// rockuml for Angular: diagrams rendered in the browser by rockuml's WebAssembly engine. The editors are in
+// rockuml-angular/editor.
 
 export * from './lib/types';
 export {
@@ -9,7 +10,4 @@ export {
 } from './lib/provider';
 export { RockumlRenderer } from './lib/renderer';
 export { RockumlDiagram } from './lib/diagram';
-export { RockumlEditor } from './lib/editor';
-export { RockumlPlayground } from './lib/playground';
-export { plantUmlLanguage } from './lib/language';
 export { encodeSource, decodeSource } from './lib/source-code';

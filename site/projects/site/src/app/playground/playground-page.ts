@@ -8,13 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  RockumlPlayground,
-  RockumlRenderer,
-  decodeSource,
-  encodeSource,
-  type Rendering,
-} from 'rockuml-angular';
+import { RockumlRenderer, decodeSource, encodeSource, type Rendering } from 'rockuml-angular';
+import { RockumlPlayground } from 'rockuml-angular/editor';
 
 import { DIAGRAM_PAGES } from '../docs/pages';
 import { loadTemplate } from '../docs/templates';
@@ -56,6 +51,8 @@ export class PlaygroundPage {
     Array.from({ length: this.pageCount() }, (_, number) => number),
   );
   protected readonly notice = signal('');
+  /** Wide diagrams shrink to fit unless shown at their actual size. */
+  protected readonly actualSize = signal(false);
   protected readonly templates = DIAGRAM_PAGES;
 
   private readonly renderer = inject(RockumlRenderer);

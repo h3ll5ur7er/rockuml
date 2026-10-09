@@ -54,7 +54,11 @@ for (const name of pages) {
           const { data, isError } =
             page === 0 ? first : await rockuml.render(example.source, { page });
           assert.equal(isError, false, `page ${page + 1} is an error image: ${texts(data)}`);
-          assert.doesNotMatch(texts(data), /deprecated/i, `page ${page + 1} warns of deprecated syntax`);
+          assert.doesNotMatch(
+            texts(data),
+            /deprecated/i,
+            `page ${page + 1} warns of deprecated syntax`,
+          );
         }
       });
     });

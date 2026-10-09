@@ -10,7 +10,7 @@ import {
   model,
 } from '@angular/core';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { EditorState } from '@codemirror/state';
+import { EditorState, type Extension } from '@codemirror/state';
 import {
   EditorView,
   drawSelection,
@@ -56,7 +56,7 @@ export class RockumlEditor {
             EditorView.lineWrapping,
             keymap.of([...defaultKeymap, ...historyKeymap]),
             plantUmlLanguage(),
-            theme,
+            editorTheme(),
             EditorView.contentAttributes.of({ 'aria-label': this.label() }),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
@@ -81,31 +81,37 @@ export class RockumlEditor {
   }
 }
 
-const theme = EditorView.theme({
-  '&': {
-    height: '100%',
-    fontSize: 'var(--rockuml-editor-font-size, 13px)',
-    color: 'var(--rockuml-editor-color, inherit)',
-    backgroundColor: 'var(--rockuml-editor-background, transparent)',
-  },
-  '&.cm-focused': { outline: 'none' },
-  '.cm-scroller': {
-    fontFamily:
-      'var(--rockuml-editor-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)',
-    lineHeight: '1.55',
-    // Coding fonts would join arrows such as <-> into one sign, hiding what was typed.
-    fontVariantLigatures: 'none',
-  },
-  '.cm-content': { caretColor: 'var(--rockuml-editor-caret, currentColor)' },
-  '.cm-gutters': {
-    color: 'var(--rockuml-editor-gutter-color, #9ca3af)',
-    backgroundColor: 'var(--rockuml-editor-gutter-background, transparent)',
-    border: 'none',
-  },
-  '.cm-activeLine, .cm-activeLineGutter': {
-    backgroundColor: 'var(--rockuml-editor-active-line, rgba(127, 127, 127, 0.08))',
-  },
-  '&.cm-focused .cm-selectionBackground, .cm-selectionBackground': {
-    backgroundColor: 'var(--rockuml-editor-selection, rgba(59, 130, 246, 0.25))',
-  },
-});
+let theme: Extension | undefined;
+
+/** Defined on first use, so that applications that only show diagrams don't bundle CodeMirror. */
+function editorTheme(): Extension {
+  theme ??= EditorView.theme({
+    '&': {
+      height: '100%',
+      fontSize: 'var(--rockuml-editor-font-size, 13px)',
+      color: 'var(--rockuml-editor-color, inherit)',
+      backgroundColor: 'var(--rockuml-editor-background, transparent)',
+    },
+    '&.cm-focused': { outline: 'none' },
+    '.cm-scroller': {
+      fontFamily:
+        'var(--rockuml-editor-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)',
+      lineHeight: '1.55',
+      // Coding fonts would join arrows such as <-> into one sign, hiding what was typed.
+      fontVariantLigatures: 'none',
+    },
+    '.cm-content': { caretColor: 'var(--rockuml-editor-caret, currentColor)' },
+    '.cm-gutters': {
+      color: 'var(--rockuml-editor-gutter-color, #9ca3af)',
+      backgroundColor: 'var(--rockuml-editor-gutter-background, transparent)',
+      border: 'none',
+    },
+    '.cm-activeLine, .cm-activeLineGutter': {
+      backgroundColor: 'var(--rockuml-editor-active-line, rgba(127, 127, 127, 0.08))',
+    },
+    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground': {
+      backgroundColor: 'var(--rockuml-editor-selection, rgba(59, 130, 246, 0.25))',
+    },
+  });
+  return theme;
+}

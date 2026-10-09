@@ -22,6 +22,14 @@
   }
   <span class="toolbar__notice" role="status">{{ notice() }}</span>
   <span class="toolbar__actions">
+    <button
+      type="button"
+      class="button"
+      [attr.aria-pressed]="actualSize()"
+      (click)="actualSize.set(!actualSize())"
+    >
+      {{ actualSize() ? 'Fit to width' : 'Actual size' }}
+    </button>
     <button type="button" class="button" (click)="share()">Copy link</button>
     <button type="button" class="button" (click)="downloadSvg()">SVG</button>
     <button type="button" class="button" (click)="downloadPng()">PNG</button>
@@ -29,6 +37,7 @@
 </div>
 <rockuml-playground
   class="playground"
+  [class.playground--actual-size]="actualSize()"
   [(source)]="source"
   [page]="page()"
   (rendered)="rendered($event)"

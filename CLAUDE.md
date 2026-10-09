@@ -9,6 +9,8 @@ first.
   (`tools/oracle`). Unit tests cover the pieces in between.
 - A phase is done when its parity numbers meet the exit criteria in PLAN.md, `cargo clippy --all-targets` is clean,
   `cargo fmt` has run, and the passing cases are recorded in `tests/parity-passing.txt`.
+- The website (`site/`) is checked with `npm test` and `npm run format:check` in `site/`. New or changed features
+  get documented there, with live examples.
 
 ## Code
 - Port faithfully: output compatibility lives in PlantUML's arithmetic, constants and iteration order. Keep Java

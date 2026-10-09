@@ -12,7 +12,7 @@ App --> User : all good
 @enduml
 ```
 
-rockuml draws diagrams from text. You describe *what* is in the diagram, people and boxes and arrows, and rockuml works out *where* everything goes. It understands the language of [PlantUML](https://plantuml.com), so the thousands of diagrams already written for PlantUML work with rockuml as they are.
+rockuml draws diagrams from text. You describe *what* is in the diagram, people and boxes and arrows, and rockuml works out *where* everything goes. It understands the language of [PlantUML](https://plantuml.com), so diagrams written for PlantUML work with rockuml as they are; the few parts it doesn't do yet are listed under [Compatibility](docs/compatibility).
 
 What makes rockuml different is how it runs: it is written in Rust and ships as one binary per platform. There is no Java to install, no Graphviz to find and no server to call. Every example on this site is drawn by the same engine, compiled to WebAssembly, right inside your browser. Edit any of them: the diagram follows as you type.
 

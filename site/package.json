@@ -2,10 +2,11 @@
   "name": "rockuml-site",
   "version": "0.0.0",
   "scripts": {
-    "start": "ng serve site",
-    "build": "ng build site",
+    "start": "npm run build:library && ng serve site",
+    "build": "npm run build:library && ng build site",
     "build:library": "ng build rockuml-angular",
-    "test": "ng test rockuml-angular --watch=false && ng test site --watch=false && node --test tools/examples.test.mjs",
+    "watch:library": "ng build rockuml-angular --watch --configuration development",
+    "test": "ng test rockuml-angular --watch=false && npm run build:library && ng test site --watch=false && node --test tools/examples.test.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

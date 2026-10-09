@@ -582,6 +582,21 @@ nwdiag, timing and gantt.
   - Not ported: working hours (`from 9:00 to 17:00 are working hours`, reported as not ported); the ASCII-art
     table of txt output (Tier 3).
 
+### Phase 14 — Website
+- **Status: done.** An Angular 22 site in `site/`, deployed to GitHub Pages by CI once the repository is public.
+  - The site: a home page with a live editor and a gallery of every diagram type, a playground whose address is a
+    link to its diagram (fit or actual size, PNG and SVG downloads), and 30 documentation pages: every ported
+    diagram type, text formatting, styles, themes, sprites, the preprocessor, the command line, the server, the
+    JavaScript API, the Angular components and compatibility. Each page opens with a TL;DR template and its
+    examples are edited in place with a live preview, all rendered by the wasm build in the browser.
+  - `site/projects/rockuml-angular`: the components as a library shaped for npm, with two entry points:
+    `rockuml-angular` (provider, renderer, `<rockuml-diagram>`, link codes) and `rockuml-angular/editor`
+    (`<rockuml-editor>`, `<rockuml-playground>`, the CodeMirror 6 language), so applications that only show
+    diagrams never load an editor. The site consumes the built package, as an npm user would.
+  - `web/` became the `rockuml` package, with `package.json` and TypeScript types (`rockuml.d.ts`).
+  - Tests: the library's and the site's unit tests (Vitest), and `site/tools/examples.test.mjs`, which renders
+    every documentation example with `rockuml.wasm` and fails on error images and deprecated syntax.
+
 ---
 
 ## 8. Known risks and mitigations
@@ -611,4 +626,5 @@ nwdiag, timing and gantt.
 
 ## 10. Immediate next steps
 1. Remaining Tier 2: PDF output (svg2pdf), then `-pipe`, `-o` and directory globbing parity checks.
+   New diagram features get a section in the website's documentation, with live examples.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
