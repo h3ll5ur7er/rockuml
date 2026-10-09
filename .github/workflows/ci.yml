@@ -42,6 +42,9 @@ jobs:
       - run: cargo clippy -p rockuml-wasm --target wasm32-unknown-unknown -- -D warnings
       - run: bash tools/build-wasm.sh
       - run: node --test web/rockuml.test.mjs
+      # FEATURES.md and the website's feature page must say what the sources say.
+      - run: python3 -m unittest discover -s tools/features
+      - run: python3 tools/features/status.py --check
       - uses: actions/setup-node@v5
         with:
           node-version: 24

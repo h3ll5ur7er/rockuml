@@ -77,7 +77,7 @@ pub(super) fn single_line<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
 
 /// `sprite $name data:image/png;base64,...`, which reaches the commands as `data:image/png;md5,...` once
 /// [`crate::diagram::source::UmlSource::patch_base64`] has taken the data out (PlantUML's
-/// `CommandSpriteMd5`).
+/// `CommandSpriteMd5`). PlantUML's `CommandSpriteBase64`, for the same lines, never sees them for that reason.
 pub(super) fn md5<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     let pattern = sprite_pattern(
         OPTIONAL_DOLLAR,

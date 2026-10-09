@@ -11,6 +11,9 @@ first.
   `cargo fmt` has run, and the passing cases are recorded in `tests/parity-passing.txt`.
 - The website (`site/`) is checked with `npm test` and `npm run format:check` in `site/`. New or changed features
   get documented there, with live examples.
+- `python tools/features/status.py` regenerates FEATURES.md and the website's feature page after porting; CI fails
+  when they are stale. A ported command is found by its Java class name in its diagram's Rust modules, so name it
+  there (``PlantUML's `CommandX` ``); record plans and reasons for what is not ported in `features/decisions.json`.
 
 ## Code
 - Port faithfully: output compatibility lives in PlantUML's arithmetic, constants and iteration order. Keep Java

@@ -214,6 +214,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         summary: 'How rockuml relates to PlantUML, and what it does not do (yet).',
         load: text(() => import('./content/compatibility.md')),
       },
+      {
+        slug: 'features',
+        title: 'Feature status',
+        summary: 'Every PlantUML feature, and whether rockuml ports it, plans to or never will.',
+        load: text(() => import('./content/features.md')),
+      },
     ],
   },
 ];

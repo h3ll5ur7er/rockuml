@@ -1,0 +1,6074 @@
+{
+ "plantuml": "1.2026.8",
+ "diagrams": [
+  {
+   "factory": "PSystemWelcomeFactory",
+   "file": "eggs/PSystemWelcomeFactory.java",
+   "hash": "b6083120ee51d861",
+   "commands": []
+  },
+  {
+   "factory": "PSystemColorsFactory",
+   "file": "eggs/PSystemColorsFactory.java",
+   "hash": "13afcfa18d1573a5",
+   "commands": []
+  },
+  {
+   "factory": "SequenceDiagramFactory",
+   "file": "sequencediagram/SequenceDiagramFactory.java",
+   "hash": "1badb0d682be66d0",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandHideUnlinked",
+     "hash": "e11da9dc96c37378"
+    },
+    {
+     "id": "CommandActivate",
+     "hash": "55791e9ae49c81b7"
+    },
+    {
+     "id": "CommandDeactivateShort",
+     "hash": "8b28d2f94c9d1a48"
+    },
+    {
+     "id": "CommandParticipantA",
+     "hash": "70f3c9e921d9f290"
+    },
+    {
+     "id": "CommandParticipantA2",
+     "hash": "e098656a8ebb5c3c"
+    },
+    {
+     "id": "CommandParticipantA3",
+     "hash": "6b33cab501094094"
+    },
+    {
+     "id": "CommandParticipantA4",
+     "hash": "9cc44b9e346ee273"
+    },
+    {
+     "id": "CommandParticipantMultilines",
+     "hash": "64985cb50286832d"
+    },
+    {
+     "id": "CommandArrow",
+     "hash": "c2a2667adfaaa95f"
+    },
+    {
+     "id": "CommandExoArrowLeft",
+     "hash": "202b46cfc8823ebe"
+    },
+    {
+     "id": "CommandExoArrowRight",
+     "hash": "f602caf62a7aabd2"
+    },
+    {
+     "id": "FactorySequenceNoteCommand.createSingleLine",
+     "hash": "cbe0526e9292cf02"
+    },
+    {
+     "id": "FactorySequenceNoteOverSeveralCommand.createSingleLine",
+     "hash": "f11ea2e7a9a8c6d7"
+    },
+    {
+     "id": "FactorySequenceNoteAcrossCommand.createSingleLine",
+     "hash": "5e76daded12e10ef"
+    },
+    {
+     "id": "CommandBoxStart",
+     "hash": "4fd962be23ffcbac"
+    },
+    {
+     "id": "CommandBoxEnd",
+     "hash": "a572b4f2b18e959f"
+    },
+    {
+     "id": "CommandGrouping",
+     "hash": "cfae1a7033205c56"
+    },
+    {
+     "id": "CommandActivate2",
+     "hash": "a30455a4aa42a60b"
+    },
+    {
+     "id": "CommandReturn",
+     "hash": "078db2f3f2c2d698"
+    },
+    {
+     "id": "FactorySequenceNoteOnArrowCommand.createSingleLine",
+     "hash": "6e414b0bafc31154"
+    },
+    {
+     "id": "FactorySequenceNoteCommand.createMultiLine",
+     "hash": "cbe0526e9292cf02"
+    },
+    {
+     "id": "FactorySequenceNoteOverSeveralCommand.createMultiLine",
+     "hash": "f11ea2e7a9a8c6d7"
+    },
+    {
+     "id": "FactorySequenceNoteOnArrowCommand.createMultiLine",
+     "hash": "6e414b0bafc31154"
+    },
+    {
+     "id": "FactorySequenceNoteAcrossCommand.createMultiLine",
+     "hash": "5e76daded12e10ef"
+    },
+    {
+     "id": "CommandNewpage",
+     "hash": "486d0d00a33eb684"
+    },
+    {
+     "id": "CommandIgnoreNewpage",
+     "hash": "c2691fe6f5755474"
+    },
+    {
+     "id": "CommandAutoNewpage",
+     "hash": "8a4ef8ff5eaaa26a"
+    },
+    {
+     "id": "CommandDivider",
+     "hash": "b2bb9777ab7e3f8f"
+    },
+    {
+     "id": "CommandHSpace",
+     "hash": "0689c22330a9a105"
+    },
+    {
+     "id": "CommandReferenceOverSeveral",
+     "hash": "e3142a83a1c02ea9"
+    },
+    {
+     "id": "CommandReferenceMultilinesOverSeveral",
+     "hash": "d07a1c911fcabc30"
+    },
+    {
+     "id": "CommandAutonumber",
+     "hash": "ef66e7121dcf1bf9"
+    },
+    {
+     "id": "CommandAutonumberStop",
+     "hash": "faf399a31d3f34ba"
+    },
+    {
+     "id": "CommandAutonumberResume",
+     "hash": "51d50b34ee043dee"
+    },
+    {
+     "id": "CommandAutonumberIncrement",
+     "hash": "ee9669fc275fda3a"
+    },
+    {
+     "id": "CommandAutoactivate",
+     "hash": "42e41a10c18d8164"
+    },
+    {
+     "id": "CommandFootbox",
+     "hash": "da22148f24a29488"
+    },
+    {
+     "id": "CommandDelay",
+     "hash": "c957619d9119b818"
+    },
+    {
+     "id": "CommandFootboxOld",
+     "hash": "af2df64efce093a9"
+    },
+    {
+     "id": "CommandUrl",
+     "hash": "fd5558f09401e082"
+    },
+    {
+     "id": "CommandLinkAnchor",
+     "hash": "a87282b31238f567"
+    }
+   ]
+  },
+  {
+   "factory": "ClassDiagramFactory",
+   "file": "classdiagram/ClassDiagramFactory.java",
+   "hash": "1e1f49019a2f4f2c",
+   "commands": [
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    },
+    {
+     "id": "CommandRankDir",
+     "hash": "004049e91897a8dd"
+    },
+    {
+     "id": "CommandNewpage",
+     "hash": "486d0d00a33eb684"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandAddMethod",
+     "hash": "1ca578775a13bfa7"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandHideShow2",
+     "hash": "540adf5b63a96c49"
+    },
+    {
+     "id": "CommandRemoveRestore",
+     "hash": "e2164b6a4ae3310d"
+    },
+    {
+     "id": "CommandCreateClassMultilines",
+     "hash": "29eb5b0ad61e3948"
+    },
+    {
+     "id": "CommandCreateEntityObjectMultilines",
+     "hash": "02ff4d02798c43ba"
+    },
+    {
+     "id": "CommandCreateMap",
+     "hash": "86eb93d11d559215"
+    },
+    {
+     "id": "CommandCreateJson",
+     "hash": "57b0217cc847c2d6"
+    },
+    {
+     "id": "CommandCreateJsonSingleLine",
+     "hash": "305a9dfa47767cd4"
+    },
+    {
+     "id": "CommandCreateClass",
+     "hash": "9b69af67f28a5307"
+    },
+    {
+     "id": "CommandCreateEntityObject",
+     "hash": "99309827e097b36c"
+    },
+    {
+     "id": "CommandAllowMixing",
+     "hash": "74fd99c50db0dd5f"
+    },
+    {
+     "id": "CommandCreateElementParenthesis",
+     "hash": "1bb9bbf52710c8c7"
+    },
+    {
+     "id": "CommandLayoutNewLine",
+     "hash": "60447861b6a4e947"
+    },
+    {
+     "id": "CommandPackage",
+     "hash": "4305a5874987c9cd"
+    },
+    {
+     "id": "CommandEndPackage",
+     "hash": "64325f57465be211"
+    },
+    {
+     "id": "CommandPackageEmpty",
+     "hash": "3bbdb66f2a92dae8"
+    },
+    {
+     "id": "CommandPackageWithUSymbol",
+     "hash": "d355212d618cc1f4"
+    },
+    {
+     "id": "CommandTogether",
+     "hash": "974a4b918355eb2f"
+    },
+    {
+     "id": "CommandCreateElementFull2",
+     "hash": "6ed2ba0fb1b843f2"
+    },
+    {
+     "id": "CommandFactoryNote.createSingleLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandNamespace",
+     "hash": "0862241e6b933177"
+    },
+    {
+     "id": "CommandNamespace2",
+     "hash": "dd0a2a42592f47f3"
+    },
+    {
+     "id": "CommandNamespaceEmpty",
+     "hash": "5359a2ef64b9cc56"
+    },
+    {
+     "id": "CommandStereotype",
+     "hash": "8e39db6a9546fd91"
+    },
+    {
+     "id": "CommandLinkClass",
+     "hash": "435c489f4203a089"
+    },
+    {
+     "id": "CommandLinkLollipop",
+     "hash": "5395a8db229d50eb"
+    },
+    {
+     "id": "CommandFactoryTipOnEntity.createMultiLine",
+     "hash": "b8833db1ddf04f9e"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createSingleLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandUrl",
+     "hash": "fd5558f09401e082"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createMultiLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandFactoryNote.createMultiLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createSingleLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createMultiLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandConstraintOnLinks",
+     "hash": "26a948327ef7d2b8"
+    },
+    {
+     "id": "CommandDiamondAssociation",
+     "hash": "22972a7416172800"
+    },
+    {
+     "id": "CommandCreateElementMultilines",
+     "hash": "59edaed72ea278e9"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    }
+   ]
+  },
+  {
+   "factory": "ActivityDiagramFactory",
+   "file": "activitydiagram/ActivityDiagramFactory.java",
+   "hash": "c670382a1463de0f",
+   "commands": [
+    {
+     "id": "UBrexCommandFootboxIgnored",
+     "hash": "b7b0dd5505131d91"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "UBrexCommandRankDir",
+     "hash": "cfb226fbaea03f78"
+    },
+    {
+     "id": "UBrexCommandPartition",
+     "hash": "5229629bcb7deda5"
+    },
+    {
+     "id": "UBrexCommandEndPartition",
+     "hash": "4e6fadee1e536e95"
+    },
+    {
+     "id": "CommandLinkLongActivity",
+     "hash": "55d8362e6db0f18f"
+    },
+    {
+     "id": "CommandFactoryNoteActivity.createSingleLine",
+     "hash": "2b53780b6a0c69a5"
+    },
+    {
+     "id": "CommandFactoryNoteActivity.createMultiLine",
+     "hash": "2b53780b6a0c69a5"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createSingleLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createMultiLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "UBrexCommandIf",
+     "hash": "c210849e5921e15a"
+    },
+    {
+     "id": "UBrexCommandElse",
+     "hash": "2f51f3b1847579a6"
+    },
+    {
+     "id": "UBrexCommandEndif",
+     "hash": "3da672e3e3dee852"
+    },
+    {
+     "id": "CommandLinkActivity",
+     "hash": "c4a240cfab66efa3"
+    },
+    {
+     "id": "UBrexCommandHideShow2",
+     "hash": "68f9d7dadece91a2"
+    }
+   ]
+  },
+  {
+   "factory": "DescriptionDiagramFactory",
+   "file": "descdiagram/DescriptionDiagramFactory.java",
+   "hash": "125590b03ff689c8",
+   "commands": [
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    },
+    {
+     "id": "CommandRankDir",
+     "hash": "004049e91897a8dd"
+    },
+    {
+     "id": "CommandNewpage",
+     "hash": "486d0d00a33eb684"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandLinkElement",
+     "hash": "ade4887425357cd9"
+    },
+    {
+     "id": "CommandHideShow2",
+     "hash": "540adf5b63a96c49"
+    },
+    {
+     "id": "CommandRemoveRestore",
+     "hash": "e2164b6a4ae3310d"
+    },
+    {
+     "id": "CommandPackageWithUSymbol",
+     "hash": "d355212d618cc1f4"
+    },
+    {
+     "id": "CommandTogether",
+     "hash": "974a4b918355eb2f"
+    },
+    {
+     "id": "CommandEndPackage",
+     "hash": "64325f57465be211"
+    },
+    {
+     "id": "CommandFactoryNote.createMultiLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createSingleLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createMultiLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createSingleLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandFactoryNote.createSingleLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandUrl",
+     "hash": "fd5558f09401e082"
+    },
+    {
+     "id": "CommandCreateElementFull",
+     "hash": "4e7a92c6e4314734"
+    },
+    {
+     "id": "CommandCreateElementMultilines",
+     "hash": "59edaed72ea278e9"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createMultiLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandCreateMap",
+     "hash": "86eb93d11d559215"
+    },
+    {
+     "id": "CommandCreateJson",
+     "hash": "57b0217cc847c2d6"
+    },
+    {
+     "id": "CommandCreateJsonSingleLine",
+     "hash": "305a9dfa47767cd4"
+    },
+    {
+     "id": "CommandArchimate",
+     "hash": "17ca5011a65b4d22"
+    },
+    {
+     "id": "CommandArchimateMultilines",
+     "hash": "97e5b2de978aede6"
+    },
+    {
+     "id": "CommandArchimatePackage",
+     "hash": "82e2f70b4cf5e1a9"
+    },
+    {
+     "id": "CommandCreateDomain",
+     "hash": "34829a16033281e2"
+    }
+   ]
+  },
+  {
+   "factory": "StateDiagramFactory",
+   "file": "statediagram/StateDiagramFactory.java",
+   "hash": "d80933d6b1844081",
+   "commands": [
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    },
+    {
+     "id": "CommandRankDir",
+     "hash": "004049e91897a8dd"
+    },
+    {
+     "id": "CommandRemoveRestore",
+     "hash": "e2164b6a4ae3310d"
+    },
+    {
+     "id": "CommandCreateState",
+     "hash": "ec287ec7435629dd"
+    },
+    {
+     "id": "CommandLinkState",
+     "hash": "2f79080dd9fea9e9"
+    },
+    {
+     "id": "CommandLinkStateReverse",
+     "hash": "77e4fb4b9c536a08"
+    },
+    {
+     "id": "CommandCreatePackageState",
+     "hash": "e2860aa083e52be2"
+    },
+    {
+     "id": "CommandCreatePackage2",
+     "hash": "9d3ba8643a73370f"
+    },
+    {
+     "id": "CommandEndState",
+     "hash": "4416adce11adc2d0"
+    },
+    {
+     "id": "CommandAddField",
+     "hash": "a738463a0599da92"
+    },
+    {
+     "id": "CommandConcurrentState",
+     "hash": "9ee963e001e706ce"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createMultiLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandFactoryNoteOnEntity.createSingleLine",
+     "hash": "1c8196b9fa357f88"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createSingleLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandFactoryNoteOnLink.createMultiLine",
+     "hash": "4a59bb837763e127"
+    },
+    {
+     "id": "CommandUrl",
+     "hash": "fd5558f09401e082"
+    },
+    {
+     "id": "CommandFactoryNote.createSingleLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandFactoryNote.createMultiLine",
+     "hash": "4fa497e29211420a"
+    },
+    {
+     "id": "CommandCreateMap",
+     "hash": "86eb93d11d559215"
+    },
+    {
+     "id": "CommandCreateJson",
+     "hash": "57b0217cc847c2d6"
+    },
+    {
+     "id": "CommandCreateJsonSingleLine",
+     "hash": "305a9dfa47767cd4"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandHideShow2",
+     "hash": "540adf5b63a96c49"
+    }
+   ]
+  },
+  {
+   "factory": "ActivityDiagramFactory3",
+   "file": "activitydiagram3/ActivityDiagramFactory3.java",
+   "hash": "ec596ce8c3bfb74c",
+   "commands": [
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandSwimlane",
+     "hash": "ce36fa52a4709921"
+    },
+    {
+     "id": "CommandSwimlane2",
+     "hash": "38d50e7ee095bae5"
+    },
+    {
+     "id": "CommandPartition3",
+     "hash": "3e208cf663ee3b9f"
+    },
+    {
+     "id": "CommandCloseGroup3",
+     "hash": "62ded26f4600550c"
+    },
+    {
+     "id": "CommandCloseGroupLegacy3",
+     "hash": "17cf583dd8726c2e"
+    },
+    {
+     "id": "CommandArrow3",
+     "hash": "1ea757ac7e16f8c8"
+    },
+    {
+     "id": "CommandArrowLong3",
+     "hash": "895fc11104fba9c6"
+    },
+    {
+     "id": "CommandRepeat3",
+     "hash": "be9acf979872737f"
+    },
+    {
+     "id": "CommandActivity3",
+     "hash": "6694228407b212ce"
+    },
+    {
+     "id": "CommandIf4",
+     "hash": "3d3f3a7636c4b347"
+    },
+    {
+     "id": "CommandIf2",
+     "hash": "c643b1802d9504a8"
+    },
+    {
+     "id": "CommandIfLegacy1",
+     "hash": "ab969daa0254548c"
+    },
+    {
+     "id": "CommandElseIf3",
+     "hash": "a42b3c01c969e666"
+    },
+    {
+     "id": "CommandElseIf2",
+     "hash": "0eeddc4e4687019d"
+    },
+    {
+     "id": "CommandElse3",
+     "hash": "369a58866fbe74b5"
+    },
+    {
+     "id": "CommandElseLegacy1",
+     "hash": "e59b6d800f74710a"
+    },
+    {
+     "id": "CommandEndif3",
+     "hash": "262538607e84cf2a"
+    },
+    {
+     "id": "CommandSwitch",
+     "hash": "37ef85c0ea8b9f18"
+    },
+    {
+     "id": "CommandCase",
+     "hash": "2ca4d6eebfe2f9b4"
+    },
+    {
+     "id": "CommandEndSwitch",
+     "hash": "46b43d1d98a8d542"
+    },
+    {
+     "id": "CommandRepeatWhile3",
+     "hash": "c89c789d38eaa571"
+    },
+    {
+     "id": "CommandRepeatWhile3Multilines",
+     "hash": "d95a4d32d6bf3f4f"
+    },
+    {
+     "id": "CommandBackward3",
+     "hash": "01f9b06423c2659e"
+    },
+    {
+     "id": "CommandBackwardLong3",
+     "hash": "831f391cd1ffbd97"
+    },
+    {
+     "id": "CommandWhile3",
+     "hash": "d7a36eb8642d2a66"
+    },
+    {
+     "id": "CommandWhileEnd3",
+     "hash": "1d6eb9e913f10f30"
+    },
+    {
+     "id": "CommandFork3",
+     "hash": "042377a015cd9750"
+    },
+    {
+     "id": "CommandForkAgain3",
+     "hash": "52471bf1f352f138"
+    },
+    {
+     "id": "CommandForkEnd3",
+     "hash": "e6ba766051ddd810"
+    },
+    {
+     "id": "CommandSplit3",
+     "hash": "92df232131b7cdd6"
+    },
+    {
+     "id": "CommandSplitAgain3",
+     "hash": "556a9e2bec73eb18"
+    },
+    {
+     "id": "CommandSplitEnd3",
+     "hash": "c4eb863f5f4c4c74"
+    },
+    {
+     "id": "CommandStart3",
+     "hash": "da62ef4e005a25fa"
+    },
+    {
+     "id": "CommandStop3",
+     "hash": "96c612d38ce6c58a"
+    },
+    {
+     "id": "CommandCircleSpot3",
+     "hash": "f6ec95d4ea404470"
+    },
+    {
+     "id": "CommandBreak",
+     "hash": "bbb9db7d9cfbc098"
+    },
+    {
+     "id": "CommandEnd3",
+     "hash": "7ec41070ffd2bc6e"
+    },
+    {
+     "id": "CommandKill3",
+     "hash": "8d1e6d4a583b65ad"
+    },
+    {
+     "id": "CommandLink3",
+     "hash": "53c36b3eff00ff4f"
+    },
+    {
+     "id": "CommandNote3",
+     "hash": "d84dd536a63f3afc"
+    },
+    {
+     "id": "CommandNoteLong3",
+     "hash": "7754c397b5f0540f"
+    },
+    {
+     "id": "CommandActivityLong3",
+     "hash": "6012f3dee5011856"
+    },
+    {
+     "id": "CommandActivityList",
+     "hash": "0efd47fc529e5f93"
+    },
+    {
+     "id": "CommandLabel",
+     "hash": "7a5d113c460dfc33"
+    },
+    {
+     "id": "CommandGoto",
+     "hash": "d6a3c568f17a3b05"
+    }
+   ]
+  },
+  {
+   "factory": "BpmDiagramFactory",
+   "file": "bpm/BpmDiagramFactory.java",
+   "hash": "5af72073b3f52797",
+   "commands": [
+    {
+     "id": "CommandDockedEvent",
+     "hash": "f3c031de13a1cf19"
+    },
+    {
+     "id": "CommandMerge",
+     "hash": "2bac245f13fbe8ea"
+    },
+    {
+     "id": "CommandResume",
+     "hash": "e2b3080826d1f85b"
+    },
+    {
+     "id": "CommandGoto",
+     "hash": "d6a3c568f17a3b05"
+    },
+    {
+     "id": "CommandNewBranch",
+     "hash": "74d2429facec0fb5"
+    },
+    {
+     "id": "CommandElseBranch",
+     "hash": "5cba892338d5a3cb"
+    },
+    {
+     "id": "CommandEndBranch",
+     "hash": "cb0892b5fd47e9ed"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemLicenseFactory",
+   "file": "version/PSystemLicenseFactory.java",
+   "hash": "5b9a4616270dcf46",
+   "commands": []
+  },
+  {
+   "factory": "PSystemVersionFactory",
+   "file": "version/PSystemVersionFactory.java",
+   "hash": "ae706448de73c73a",
+   "commands": []
+  },
+  {
+   "factory": "PSystemDonorsFactory",
+   "file": "donors/PSystemDonorsFactory.java",
+   "hash": "a1f087af166c5f66",
+   "commands": []
+  },
+  {
+   "factory": "PSystemSkinparameterListFactory",
+   "file": "donors/PSystemSkinparameterListFactory.java",
+   "hash": "07b73440fe94b937",
+   "commands": []
+  },
+  {
+   "factory": "PSystemListFontsFactory",
+   "file": "font/PSystemListFontsFactory.java",
+   "hash": "3fdb977e16d06641",
+   "commands": []
+  },
+  {
+   "factory": "PSystemListEmojiFactory",
+   "file": "emoji/PSystemListEmojiFactory.java",
+   "hash": "4aa02c7ec70eae5c",
+   "commands": []
+  },
+  {
+   "factory": "PSystemOpenIconicFactory",
+   "file": "openiconic/PSystemOpenIconicFactory.java",
+   "hash": "55460fbb48693a56",
+   "commands": []
+  },
+  {
+   "factory": "PSystemListOpenIconicFactory",
+   "file": "openiconic/PSystemListOpenIconicFactory.java",
+   "hash": "8aa7f0c98bd5e0e8",
+   "commands": []
+  },
+  {
+   "factory": "PSystemListArchimateSpritesFactory",
+   "file": "klimt/sprite/PSystemListArchimateSpritesFactory.java",
+   "hash": "b0e0f3e092dba00c",
+   "commands": []
+  },
+  {
+   "factory": "PSystemSaltFactory",
+   "file": "salt/PSystemSaltFactory.java",
+   "hash": "5c241dd643f6432a",
+   "commands": [
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandAnything",
+     "hash": "86f6ad1f9cb1b312"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemDotFactory",
+   "file": "directdot/PSystemDotFactory.java",
+   "hash": "37018b33daa46e3a",
+   "commands": []
+  },
+  {
+   "factory": "NwDiagramFactory",
+   "file": "nwdiag/NwDiagramFactory.java",
+   "hash": "017381cd75832c6a",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandNwDiagInit",
+     "hash": "1af8a2b2eb2fb419"
+    },
+    {
+     "id": "CommandComment",
+     "hash": "6d364e26a1c9e8de"
+    },
+    {
+     "id": "CommandElement",
+     "hash": "55952be278e79778"
+    },
+    {
+     "id": "CommandGroup",
+     "hash": "7424d741c3832159"
+    },
+    {
+     "id": "CommandNetwork",
+     "hash": "b79c377ed6338e2a"
+    },
+    {
+     "id": "CommandLink",
+     "hash": "321f89c1aaa7e8b7"
+    },
+    {
+     "id": "CommandProperty",
+     "hash": "8ef1da532ae1ad54"
+    },
+    {
+     "id": "CommandEndSomething",
+     "hash": "063bb6d443b1745e"
+    },
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    }
+   ]
+  },
+  {
+   "factory": "MindMapDiagramFactory",
+   "file": "mindmap/MindMapDiagramFactory.java",
+   "hash": "4c3120ffb75f2d7f",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandRankDir",
+     "hash": "004049e91897a8dd"
+    },
+    {
+     "id": "CommandMindMapOrgmodeMultiline",
+     "hash": "7f359c553a4dc7e3"
+    },
+    {
+     "id": "CommandMindMapOrgmode",
+     "hash": "c0b35c2d367de12f"
+    },
+    {
+     "id": "CommandMindMapRoot",
+     "hash": "6812a7b9c5af73bd"
+    },
+    {
+     "id": "CommandMindMapPlus",
+     "hash": "7ad73de9e7c19a9b"
+    },
+    {
+     "id": "CommandMindMapDirection",
+     "hash": "a77ab6c9bb537277"
+    }
+   ]
+  },
+  {
+   "factory": "WBSDiagramFactory",
+   "file": "wbs/WBSDiagramFactory.java",
+   "hash": "96f226b2e545e99a",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandWBSItemNew",
+     "hash": "a56f34f7af1150e4"
+    },
+    {
+     "id": "CommandWBSItemMultilineNew",
+     "hash": "f24c8ca165a610dd"
+    },
+    {
+     "id": "CommandWBSItemOld",
+     "hash": "705196c84514368d"
+    },
+    {
+     "id": "CommandWBSItemMultilineOld",
+     "hash": "79575e6da3c575a4"
+    },
+    {
+     "id": "CommandWBSLink",
+     "hash": "cadd4c5e05a704c2"
+    }
+   ]
+  },
+  {
+   "factory": "ChartDiagramFactory",
+   "file": "chart/ChartDiagramFactory.java",
+   "hash": "def1afa0f2931885",
+   "commands": [
+    {
+     "id": "CommandChartHAxis",
+     "hash": "2c0266719714f671"
+    },
+    {
+     "id": "CommandChartVAxis",
+     "hash": "078ccfe66575305d"
+    },
+    {
+     "id": "CommandChartBar",
+     "hash": "13c6cbc546fd9481"
+    },
+    {
+     "id": "CommandChartLine",
+     "hash": "7f27dc8023c98b60"
+    },
+    {
+     "id": "CommandChartArea",
+     "hash": "e6c752088b5d5c07"
+    },
+    {
+     "id": "CommandChartScatter",
+     "hash": "5b6836bf80c94837"
+    },
+    {
+     "id": "CommandChartLegend",
+     "hash": "1d46ed8ac90485fe"
+    },
+    {
+     "id": "CommandChartStackMode",
+     "hash": "b73f42e6d910bae6"
+    },
+    {
+     "id": "CommandChartOrientation",
+     "hash": "25f9087fcb95b9bc"
+    },
+    {
+     "id": "CommandChartAnnotation",
+     "hash": "1cb15ba6922b675c"
+    },
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    }
+   ]
+  },
+  {
+   "factory": "PacketDiagramFactory",
+   "file": "packetdiag/PacketDiagramFactory.java",
+   "hash": "37b0c23bc9cd746f",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandPacketDiagStart",
+     "hash": "caa6fdfc1f6a31cd"
+    },
+    {
+     "id": "CommandColWidth",
+     "hash": "424d921a45f2dd0c"
+    },
+    {
+     "id": "CommandNodeHeight",
+     "hash": "f93bf9dfa953917f"
+    },
+    {
+     "id": "CommandScaleDirection",
+     "hash": "edcbaca174d00cb5"
+    },
+    {
+     "id": "CommandScaleInterval",
+     "hash": "02dedcac61c7f38f"
+    },
+    {
+     "id": "CommandSameHeight",
+     "hash": "fabaac04c084df02"
+    },
+    {
+     "id": "CommandNumRange",
+     "hash": "534d9951f90d4acd"
+    },
+    {
+     "id": "CommandPacketDiagEnd",
+     "hash": "1bc52845276c5b00"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemDitaaFactory",
+   "file": "ditaa/PSystemDitaaFactory.java",
+   "hash": "f4165e077de55b0b",
+   "commands": []
+  },
+  {
+   "factory": "PSystemDefinitionFactory",
+   "file": "definition/PSystemDefinitionFactory.java",
+   "hash": "54bda42e77f7aca2",
+   "commands": []
+  },
+  {
+   "factory": "ListSpriteDiagramFactory",
+   "file": "klimt/sprite/ListSpriteDiagramFactory.java",
+   "hash": "ac50d5dc3971b3dc",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandListSprite",
+     "hash": "a0193bf420bd2e7c"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemMathFactory",
+   "file": "math/PSystemMathFactory.java",
+   "hash": "0ac9e3a8c91c182a",
+   "commands": []
+  },
+  {
+   "factory": "PSystemLatexFactory",
+   "file": "math/PSystemLatexFactory.java",
+   "hash": "854472555f2fd677",
+   "commands": []
+  },
+  {
+   "factory": "PSystemCreoleFactory",
+   "file": "klimt/creole/legacy/PSystemCreoleFactory.java",
+   "hash": "53bf9747d2f00787",
+   "commands": []
+  },
+  {
+   "factory": "PSystemEggFactory",
+   "file": "eggs/PSystemEggFactory.java",
+   "hash": "e6e73876e406a942",
+   "commands": []
+  },
+  {
+   "factory": "PSystemAppleTwoFactory",
+   "file": "eggs/PSystemAppleTwoFactory.java",
+   "hash": "5fdf38cd8464cdd2",
+   "commands": []
+  },
+  {
+   "factory": "PSystemRIPFactory",
+   "file": "eggs/PSystemRIPFactory.java",
+   "hash": "f823d8aa28444260",
+   "commands": []
+  },
+  {
+   "factory": "PSystemPathFactory",
+   "file": "eggs/PSystemPathFactory.java",
+   "hash": "45dd678b154a8fff",
+   "commands": []
+  },
+  {
+   "factory": "PSystemCharlieFactory",
+   "file": "eggs/PSystemCharlieFactory.java",
+   "hash": "a120b7db983897e3",
+   "commands": []
+  },
+  {
+   "factory": "GanttDiagramFactory",
+   "file": "gantt/GanttDiagramFactory.java",
+   "hash": "bcfe53cdb1659a62",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "NaturalGanttCommand",
+     "hash": "673038e2c092c4aa"
+    },
+    {
+     "id": "CommandGanttArrow",
+     "hash": "48dd3df5cbdd3292"
+    },
+    {
+     "id": "CommandGanttArrow2",
+     "hash": "e6df0cfaa785cc8c"
+    },
+    {
+     "id": "CommandColorTask",
+     "hash": "4ee27065c4a9b08d"
+    },
+    {
+     "id": "CommandSeparator",
+     "hash": "326dc724377f5c2a"
+    },
+    {
+     "id": "CommandWeekNumberStrategy",
+     "hash": "5f269c80c4860b31"
+    },
+    {
+     "id": "CommandGroupStart",
+     "hash": "46a4e08e6215483c"
+    },
+    {
+     "id": "CommandGroupEnd",
+     "hash": "d4647b4ba370c849"
+    },
+    {
+     "id": "CommandLanguage",
+     "hash": "4699134346f13d65"
+    },
+    {
+     "id": "CommandPrintScale",
+     "hash": "85555ec940fe1af4"
+    },
+    {
+     "id": "CommandPrintBetween",
+     "hash": "744c3e501efee054"
+    },
+    {
+     "id": "CommandNoteBottom",
+     "hash": "514dc021cc551120"
+    },
+    {
+     "id": "CommandFootboxGantt",
+     "hash": "497fab457fccebb6"
+    },
+    {
+     "id": "CommandLabelOnColumn",
+     "hash": "a5b7db9fec8fc4fb"
+    },
+    {
+     "id": "CommandHideResourceName",
+     "hash": "79c737d85c77b589"
+    },
+    {
+     "id": "CommandHideResourceFootbox",
+     "hash": "d7d83c59dc5b8502"
+    },
+    {
+     "id": "CommandHideShowColumns",
+     "hash": "e280d123e1bb8e6a"
+    },
+    {
+     "id": "CommandHideClosed",
+     "hash": "c539f4adc08c0bd7"
+    },
+    {
+     "id": "CommandTaskCompleteDefault",
+     "hash": "c859fd82e58a348a"
+    }
+   ]
+  },
+  {
+   "factory": "FlowDiagramFactory",
+   "file": "flowdiagram/FlowDiagramFactory.java",
+   "hash": "02c3e6e34b908393",
+   "commands": [
+    {
+     "id": "CommandLineSimple",
+     "hash": "531c0d6b025deeb5"
+    },
+    {
+     "id": "CommandLink",
+     "hash": "321f89c1aaa7e8b7"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemDedicationFactory",
+   "file": "dedication/PSystemDedicationFactory.java",
+   "hash": "0ef592cacf04d675",
+   "commands": []
+  },
+  {
+   "factory": "TimingDiagramFactory",
+   "file": "timingdiagram/TimingDiagramFactory.java",
+   "hash": "37ea5930479ba5e6",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandFootboxIgnored",
+     "hash": "17ad4591fded5376"
+    },
+    {
+     "id": "CommandRobustConcise",
+     "hash": "43e6699c98211521"
+    },
+    {
+     "id": "CommandClock",
+     "hash": "fe8e141da8bb181d"
+    },
+    {
+     "id": "CommandAnalog",
+     "hash": "34ac621eb0a44281"
+    },
+    {
+     "id": "CommandBinary",
+     "hash": "3f64b8cbad8b17de"
+    },
+    {
+     "id": "CommandDefineStateShort",
+     "hash": "7cf7ce754d9f1681"
+    },
+    {
+     "id": "CommandDefineStateLong",
+     "hash": "f6034a3e08b3fe74"
+    },
+    {
+     "id": "CommandChangeStateByPlayerCode",
+     "hash": "8f9b3f3ea998bb0e"
+    },
+    {
+     "id": "CommandChangeStateByTime",
+     "hash": "36b8ec6159b2bd0d"
+    },
+    {
+     "id": "CommandAtTime",
+     "hash": "15d1951236b08176"
+    },
+    {
+     "id": "CommandAtPlayer",
+     "hash": "5f747b3269fabdcb"
+    },
+    {
+     "id": "CommandTimeMessage",
+     "hash": "f690a5c1c287e1b8"
+    },
+    {
+     "id": "CommandNote",
+     "hash": "f5165fdfe1d1183f"
+    },
+    {
+     "id": "CommandNoteLong",
+     "hash": "188eb1531aabe666"
+    },
+    {
+     "id": "CommandConstraint",
+     "hash": "3bd93e6f2c8311db"
+    },
+    {
+     "id": "CommandScalePixel",
+     "hash": "9d02e0eab7a65db1"
+    },
+    {
+     "id": "CommandHideTimeAxis",
+     "hash": "dc6a8bc12ca72381"
+    },
+    {
+     "id": "CommandHighlight",
+     "hash": "410dd042d62cb457"
+    },
+    {
+     "id": "CommandModeCompact",
+     "hash": "cf32bb71f0e1bc22"
+    },
+    {
+     "id": "CommandTicks",
+     "hash": "87db987a1907d701"
+    },
+    {
+     "id": "CommandPixelHeight",
+     "hash": "dbc36282dcda110c"
+    },
+    {
+     "id": "CommandUseDateFormat",
+     "hash": "c6a63e23a9bd9ca8"
+    }
+   ]
+  },
+  {
+   "factory": "HelpFactory",
+   "file": "help/HelpFactory.java",
+   "hash": "ed2f5ddba20ffada",
+   "commands": [
+    {
+     "id": "CommandHelpColor",
+     "hash": "f3cfec638d9c72a0"
+    },
+    {
+     "id": "CommandHelpFont",
+     "hash": "e165ed3619196a60"
+    },
+    {
+     "id": "CommandHelpKeyword",
+     "hash": "0a60fd04f25a0ef9"
+    },
+    {
+     "id": "CommandHelpType",
+     "hash": "21ce46c2b1ed1a40"
+    },
+    {
+     "id": "CommandHelpTheme",
+     "hash": "f7bc5f0474dbf4b9"
+    }
+   ]
+  },
+  {
+   "factory": "WireDiagramFactory",
+   "file": "wire/WireDiagramFactory.java",
+   "hash": "856237f81c7d83be",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandComponent",
+     "hash": "7f2b7d97770b5ea1"
+    },
+    {
+     "id": "CommandSpot",
+     "hash": "4f5ee75a2cc09768"
+    },
+    {
+     "id": "CommandGoto",
+     "hash": "d6a3c568f17a3b05"
+    },
+    {
+     "id": "CommandMove",
+     "hash": "e436bac422166c56"
+    },
+    {
+     "id": "CommandWLink",
+     "hash": "6049088c82e26870"
+    },
+    {
+     "id": "CommandNewColumn",
+     "hash": "d6e4f4fa0a39f089"
+    },
+    {
+     "id": "CommandPrint",
+     "hash": "f3574cf537e0c425"
+    }
+   ]
+  },
+  {
+   "factory": "JsonDiagramFactory",
+   "file": "jsondiagram/JsonDiagramFactory.java",
+   "hash": "e7af5967d5053a75",
+   "commands": []
+  },
+  {
+   "factory": "GitDiagramFactory",
+   "file": "gitlog/GitDiagramFactory.java",
+   "hash": "e3ff587cf550cd01",
+   "commands": []
+  },
+  {
+   "factory": "FilesDiagramFactory",
+   "file": "filesdiagram/FilesDiagramFactory.java",
+   "hash": "d6666084c16a8be3",
+   "commands": []
+  },
+  {
+   "factory": "BoardDiagramFactory",
+   "file": "board/BoardDiagramFactory.java",
+   "hash": "2c3d0336459bfe06",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandBoardPlus",
+     "hash": "11243fb38a538bb2"
+    }
+   ]
+  },
+  {
+   "factory": "YamlDiagramFactory",
+   "file": "yaml/YamlDiagramFactory.java",
+   "hash": "0418880b77b916b1",
+   "commands": []
+  },
+  {
+   "factory": "HclDiagramFactory",
+   "file": "hcl/HclDiagramFactory.java",
+   "hash": "38c79a46b2b2b23a",
+   "commands": []
+  },
+  {
+   "factory": "PSystemEbnfFactory",
+   "file": "ebnf/PSystemEbnfFactory.java",
+   "hash": "e57dbf2614cb9ee8",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "UBrexCommandComment",
+     "hash": "53644fb357589e12"
+    },
+    {
+     "id": "CommandCommentMultilines2",
+     "hash": "8d51765f9ab9a19a"
+    },
+    {
+     "id": "CommandCommentMultilines",
+     "hash": "f3f18ccfb575c05f"
+    },
+    {
+     "id": "CommandEBnfSingleLine",
+     "hash": "9b6f88102524cc0b"
+    },
+    {
+     "id": "UBrexCommandEbnfMultilines",
+     "hash": "835f4084f3e7ad73"
+    }
+   ]
+  },
+  {
+   "factory": "PSystemRegexFactory",
+   "file": "regexdiagram/PSystemRegexFactory.java",
+   "hash": "52852a88a371e322",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandRegexfSingleLine",
+     "hash": "4f1e2c09301056c7"
+    }
+   ]
+  },
+  {
+   "factory": "ChenEerDiagramFactory",
+   "file": "cheneer/ChenEerDiagramFactory.java",
+   "hash": "85ab806a689b2570",
+   "commands": [
+    {
+     "id": "CommandTitle",
+     "hash": "1d5240c5171551bf"
+    },
+    {
+     "id": "CommandMainframe",
+     "hash": "294deb14a0cbcca7"
+    },
+    {
+     "id": "CommandCaption",
+     "hash": "b6ee47de96d85348"
+    },
+    {
+     "id": "CommandMultilinesCaption",
+     "hash": "632e7a2df9a90301"
+    },
+    {
+     "id": "CommandMultilinesTitle",
+     "hash": "3377c2031dfd5c55"
+    },
+    {
+     "id": "CommandMultilinesLegend",
+     "hash": "a2ed498bc5d9ebe4"
+    },
+    {
+     "id": "CommandLegend",
+     "hash": "7dd0b5f13cc86e18"
+    },
+    {
+     "id": "CommandFooter",
+     "hash": "ce3c164d606e85dc"
+    },
+    {
+     "id": "CommandMultilinesFooter",
+     "hash": "a5845a36b723a167"
+    },
+    {
+     "id": "CommandHeader",
+     "hash": "717c67962377b9ec"
+    },
+    {
+     "id": "CommandMultilinesHeader",
+     "hash": "346de6e5791a318e"
+    },
+    {
+     "id": "CommandNamespaceSeparator",
+     "hash": "658b10792cc7f444"
+    },
+    {
+     "id": "CommandNope",
+     "hash": "86f2e72980dcef83"
+    },
+    {
+     "id": "CommandPragma",
+     "hash": "8d19f1c47c769289"
+    },
+    {
+     "id": "CommandAssumeTransparent",
+     "hash": "f7c8f764f8a92b01"
+    },
+    {
+     "id": "CommandSkinParam",
+     "hash": "fa96f9d1d9417ffc"
+    },
+    {
+     "id": "CommandSkinParamJaws",
+     "hash": "46ca46b5307007ba"
+    },
+    {
+     "id": "CommandSkinParamMultilines",
+     "hash": "57bbdacf30391d84"
+    },
+    {
+     "id": "CommandSkin",
+     "hash": "a83f0023b5c7ef9c"
+    },
+    {
+     "id": "CommandMinwidth",
+     "hash": "fb2376a03feebc19"
+    },
+    {
+     "id": "CommandPage",
+     "hash": "eda054e2de4fe5f9"
+    },
+    {
+     "id": "CommandRotate",
+     "hash": "2fca8313e1c4f580"
+    },
+    {
+     "id": "CommandFactorySprite.createMultiLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandFactorySprite.createSingleLine",
+     "hash": "766133a579e49f40"
+    },
+    {
+     "id": "CommandSpriteBase64",
+     "hash": "3c0fefba32e8ddab"
+    },
+    {
+     "id": "CommandSpriteMd5",
+     "hash": "a7c738ac7503ff38"
+    },
+    {
+     "id": "CommandSpriteSvg",
+     "hash": "313bfda0a918b63e"
+    },
+    {
+     "id": "CommandSpriteStdlib",
+     "hash": "83fb6316fdc8638a"
+    },
+    {
+     "id": "CommandSpriteStdlibSvg",
+     "hash": "971ead4949ffba9a"
+    },
+    {
+     "id": "CommandSpriteSvgMultiline",
+     "hash": "9abf5628544187e4"
+    },
+    {
+     "id": "CommandSpriteFile",
+     "hash": "57b759c2572ecc69"
+    },
+    {
+     "id": "CommandStyleSingleLineCSS",
+     "hash": "bf7d3279a5308fc3"
+    },
+    {
+     "id": "CommandStyleMultilinesCSS",
+     "hash": "86bceef5e2ea4f32"
+    },
+    {
+     "id": "CommandStyleImport",
+     "hash": "c5b17a39e0149c9f"
+    },
+    {
+     "id": "CommandScale",
+     "hash": "f5be506dc9b1016b"
+    },
+    {
+     "id": "CommandScaleWidthAndHeight",
+     "hash": "3ebc30419d4b77b6"
+    },
+    {
+     "id": "CommandScaleWidthOrHeight",
+     "hash": "7c33a7d1629e060e"
+    },
+    {
+     "id": "CommandScaleMaxWidth",
+     "hash": "a8040340f6e86941"
+    },
+    {
+     "id": "CommandScaleMaxHeight",
+     "hash": "bb959384406cbf07"
+    },
+    {
+     "id": "CommandScaleMaxWidthAndHeight",
+     "hash": "a6aeb15cd2f58307"
+    },
+    {
+     "id": "CommandHideEmptyDescription",
+     "hash": "747a102078deccc7"
+    },
+    {
+     "id": "CommandHideShowByVisibility",
+     "hash": "80372f34861e5308"
+    },
+    {
+     "id": "CommandHideShowByGender",
+     "hash": "673d7c8dafa02be6"
+    },
+    {
+     "id": "CommandRankDir",
+     "hash": "004049e91897a8dd"
+    },
+    {
+     "id": "CommandCreateEntity",
+     "hash": "d7bb641302a384c9"
+    },
+    {
+     "id": "CommandCreateAttribute",
+     "hash": "a007bb98bf84707b"
+    },
+    {
+     "id": "CommandAssociate",
+     "hash": "2d2853ee39171e7c"
+    },
+    {
+     "id": "CommandEndGroup",
+     "hash": "82e04e6365acf180"
+    },
+    {
+     "id": "CommandSimpleSubclass",
+     "hash": "3957d7117537b4d3"
+    },
+    {
+     "id": "CommandMultiSubclass",
+     "hash": "40ce3938066937d8"
+    }
+   ]
+  },
+  {
+   "factory": "CrashDiagramFactory",
+   "file": "crash/CrashDiagramFactory.java",
+   "hash": "a1bdbbfd87a7a22b",
+   "commands": [
+    {
+     "id": "CommandSelectCrash",
+     "hash": "230b18424e43b9c2"
+    },
+    {
+     "id": "CommandCrashAny",
+     "hash": "25ccaab58060765e"
+    }
+   ]
+  }
+ ],
+ "diagramTypes": [
+  "SEQUENCE",
+  "STATE",
+  "CLASS",
+  "OBJECT",
+  "ACTIVITY",
+  "DESCRIPTION",
+  "COMPOSITE",
+  "TIMING",
+  "HELP",
+  "BPM",
+  "DITAA",
+  "DOT",
+  "JCCKIT",
+  "SALT",
+  "FLOW",
+  "CREOLE",
+  "MATH",
+  "LATEX",
+  "DEFINITION",
+  "GANTT",
+  "CHRONOLOGY",
+  "NWDIAG",
+  "MINDMAP",
+  "WBS",
+  "WIRE",
+  "JSON",
+  "GIT",
+  "BOARD",
+  "YAML",
+  "HCL",
+  "EBNF",
+  "REGEX",
+  "FILES",
+  "CHEN_EER",
+  "CHART",
+  "PACKET",
+  "SPRITES",
+  "CRASH",
+  "UNKNOWN"
+ ],
+ "builtins": [
+  {
+   "name": "%false",
+   "class": "AlwaysFalse",
+   "hash": "064ec820c017dd72"
+  },
+  {
+   "name": "%true",
+   "class": "AlwaysTrue",
+   "hash": "d7fa6c02e5febbad"
+  },
+  {
+   "name": "%backslash",
+   "class": "Backslash",
+   "hash": "b0f1b43b44f3c3d5"
+  },
+  {
+   "name": "%boolval",
+   "class": "BoolVal",
+   "hash": "320758eab0fdb5fa"
+  },
+  {
+   "name": "%breakline",
+   "class": "Breakline",
+   "hash": "482421575ff7f8fa"
+  },
+  {
+   "name": "%call_user_func",
+   "class": "CallUserFunction",
+   "hash": "25d78f0569c18925"
+  },
+  {
+   "name": "%chr",
+   "class": "Chr",
+   "hash": "1973061428c282ed"
+  },
+  {
+   "name": "%darken",
+   "class": "Darken",
+   "hash": "e616ed2b29d71562"
+  },
+  {
+   "name": "%date",
+   "class": "DateFunction",
+   "hash": "e13f67e935010100"
+  },
+  {
+   "name": "%dec2hex",
+   "class": "Dec2hex",
+   "hash": "2afb05958917dc73"
+  },
+  {
+   "name": "%dirpath",
+   "class": "Dirpath",
+   "hash": "a8244e10ecd570ee"
+  },
+  {
+   "name": "%dollar",
+   "class": "Dollar",
+   "hash": "92ddd01a9c95c259"
+  },
+  {
+   "name": "%eval",
+   "class": "Eval",
+   "hash": "66f4b81ad8ef3cae"
+  },
+  {
+   "name": "%feature",
+   "class": "Feature",
+   "hash": "ceba52f060c5feb6"
+  },
+  {
+   "name": "%filedate",
+   "class": "Filedate",
+   "hash": "8f25a7bfcdf96a51"
+  },
+  {
+   "name": "%file_exists",
+   "class": "FileExists",
+   "hash": "4b656442c518bbc7"
+  },
+  {
+   "name": "%filename",
+   "class": "Filename",
+   "hash": "613ef1db43674251"
+  },
+  {
+   "name": "%filename_no_extension",
+   "class": "FilenameNoExtension",
+   "hash": "806d9ffca67e30a1"
+  },
+  {
+   "name": "%function_exists",
+   "class": "FunctionExists",
+   "hash": "d748c6beeaec9f68"
+  },
+  {
+   "name": "%get_all_stdlib",
+   "class": "GetAllStdlib",
+   "hash": "2651ae541566cb50"
+  },
+  {
+   "name": "%get_all_theme",
+   "class": "GetAllTheme",
+   "hash": "239496d4c95adc46"
+  },
+  {
+   "name": "%get_current_theme",
+   "class": "GetCurrentTheme",
+   "hash": "ec0aa9d3280569bf"
+  },
+  {
+   "name": "%get_json_keys",
+   "class": "GetJsonKey",
+   "hash": "8045b12f5d2d6bc6"
+  },
+  {
+   "name": "%get_json_type",
+   "class": "GetJsonType",
+   "hash": "08fbdd4be2802c72"
+  },
+  {
+   "name": "%get_stdlib",
+   "class": "GetStdlib",
+   "hash": "0730d0b9bd5b5087"
+  },
+  {
+   "name": "%get_variable_value",
+   "class": "GetVariableValue",
+   "hash": "89c08a52de2503fe"
+  },
+  {
+   "name": "%version",
+   "class": "GetVersion",
+   "hash": "67929a76d215f75d"
+  },
+  {
+   "name": "%getenv",
+   "class": "Getenv",
+   "hash": "9fc55c67ac761ac3"
+  },
+  {
+   "name": "%hex2dec",
+   "class": "Hex2dec",
+   "hash": "40fd5c5f8fe92c7c"
+  },
+  {
+   "name": "%hsl_color",
+   "class": "HslColor",
+   "hash": "eecf121224dbd549"
+  },
+  {
+   "name": "%intval",
+   "class": "IntVal",
+   "hash": "e109a87b10ce7a11"
+  },
+  {
+   "name": "%invoke_procedure",
+   "class": "InvokeProcedure",
+   "hash": "b7a94b39798458ea"
+  },
+  {
+   "name": "%is_dark",
+   "class": "IsDark",
+   "hash": "a2f820c326154896"
+  },
+  {
+   "name": "%is_light",
+   "class": "IsLight",
+   "hash": "6ee8953bca4199ea"
+  },
+  {
+   "name": "%json_add",
+   "class": "JsonAdd",
+   "hash": "a017532e0d66d42f"
+  },
+  {
+   "name": "%json_key_exists",
+   "class": "JsonKeyExists",
+   "hash": "0d92ee4b3d6979c1"
+  },
+  {
+   "name": "%json_merge",
+   "class": "JsonMerge",
+   "hash": "758b13f736e98394"
+  },
+  {
+   "name": "%json_remove",
+   "class": "JsonRemove",
+   "hash": "db7a606aea594ece"
+  },
+  {
+   "name": "%json_set",
+   "class": "JsonSet",
+   "hash": "5f631bfc744eee3c"
+  },
+  {
+   "name": "%left_align",
+   "class": "LeftAlign",
+   "hash": "8f00b1e642d2a0ac"
+  },
+  {
+   "name": "%lighten",
+   "class": "Lighten",
+   "hash": "f84a0fd096a097f8"
+  },
+  {
+   "name": "%load_json",
+   "class": "LoadJson",
+   "hash": "bad65e3aa032b95e"
+  },
+  {
+   "name": "%and",
+   "class": "LogicalAnd",
+   "hash": "2903ddc8b23ed751"
+  },
+  {
+   "name": "%nand",
+   "class": "LogicalNand",
+   "hash": "24156cdfe0cf8ccb"
+  },
+  {
+   "name": "%nor",
+   "class": "LogicalNor",
+   "hash": "0d8ae33309aaa988"
+  },
+  {
+   "name": "%not",
+   "class": "LogicalNot",
+   "hash": "32e6ce0e21113fa1"
+  },
+  {
+   "name": "%nxor",
+   "class": "LogicalNxor",
+   "hash": "5a7fd9e4e44c02c2"
+  },
+  {
+   "name": "%or",
+   "class": "LogicalOr",
+   "hash": "a35ec5270501644b"
+  },
+  {
+   "name": "%xor",
+   "class": "LogicalXor",
+   "hash": "60f0b85296ad9337"
+  },
+  {
+   "name": "%lower",
+   "class": "Lower",
+   "hash": "8bea3a1361bde080"
+  },
+  {
+   "name": "%mod",
+   "class": "Modulo",
+   "hash": "e820a420050ad8cc"
+  },
+  {
+   "name": "%newline",
+   "class": "Newline",
+   "hash": "2c6030f7b169af8f"
+  },
+  {
+   "name": "%n",
+   "class": "NewlineShort",
+   "hash": "76751a3d443e23ce"
+  },
+  {
+   "name": "%now",
+   "class": "Now",
+   "hash": "32440186cba9d36f"
+  },
+  {
+   "name": "%ord",
+   "class": "Ord",
+   "hash": "7a0dba2b140799c4"
+  },
+  {
+   "name": "%percent",
+   "class": "Percent",
+   "hash": "9410ef5b3c290318"
+  },
+  {
+   "name": "%random",
+   "class": "RandomFunction",
+   "hash": "eb61cf3bb1710724"
+  },
+  {
+   "name": "%retrieve_procedure",
+   "class": "RetrieveProcedure",
+   "hash": "4662f2ad372ec8c0"
+  },
+  {
+   "name": "%reverse_color",
+   "class": "ReverseColor",
+   "hash": "cdfb8f18eb80c960"
+  },
+  {
+   "name": "%reverse_hsluv_color",
+   "class": "ReverseHsluvColor",
+   "hash": "068ad915a11bb92e"
+  },
+  {
+   "name": "%right_align",
+   "class": "RightAlign",
+   "hash": "020b9637b1b18ccf"
+  },
+  {
+   "name": "%set_variable_value",
+   "class": "SetVariableValue",
+   "hash": "19130e75428f2793"
+  },
+  {
+   "name": "%size",
+   "class": "Size",
+   "hash": "62a356b284c85da0"
+  },
+  {
+   "name": "%splitstr",
+   "class": "SplitStr",
+   "hash": "221818d5fdc0c39d"
+  },
+  {
+   "name": "%splitstr_regex",
+   "class": "SplitStrRegex",
+   "hash": "6ca0470a7ace842d"
+  },
+  {
+   "name": "%str2json",
+   "class": "Str2Json",
+   "hash": "2f9bf0f9864c2213"
+  },
+  {
+   "name": "%string",
+   "class": "StringFunction",
+   "hash": "ce0b949bbe3b5dd0"
+  },
+  {
+   "name": "%strlen",
+   "class": "Strlen",
+   "hash": "e522b15d997c2be1"
+  },
+  {
+   "name": "%strpos",
+   "class": "Strpos",
+   "hash": "875b10f39c2cffda"
+  },
+  {
+   "name": "%substr",
+   "class": "Substr",
+   "hash": "fde630deda3250b7"
+  },
+  {
+   "name": "%tab",
+   "class": "Tabulation",
+   "hash": "0af4fbd354bc9ea1"
+  },
+  {
+   "name": "%upper",
+   "class": "Upper",
+   "hash": "27f896be202b0014"
+  },
+  {
+   "name": "%variable_exists",
+   "class": "VariableExists",
+   "hash": "335a274d1a02c274"
+  },
+  {
+   "name": "%xargs",
+   "class": "Xargs",
+   "hash": "d0becf97e64dc68c"
+  }
+ ],
+ "cliFlags": [
+  {
+   "name": "HELP",
+   "flag": "--help",
+   "hash": "056584434eaed448"
+  },
+  {
+   "name": "HELP_MORE",
+   "flag": "--help-more",
+   "hash": "7da1111fef3eab2f"
+  },
+  {
+   "name": "VERSION",
+   "flag": "--version",
+   "hash": "2c0c89b3f9705a34"
+  },
+  {
+   "name": "AUTHOR",
+   "flag": "--author",
+   "hash": "bf03d20f31a2608a"
+  },
+  {
+   "name": "GUI",
+   "flag": "--gui",
+   "hash": "600ed994bc24821c"
+  },
+  {
+   "name": "DARK_MODE",
+   "flag": "--dark-mode",
+   "hash": "d2768e09fb2e1fa9"
+  },
+  {
+   "name": "VERBOSE",
+   "flag": "--verbose",
+   "hash": "a2ae145cb6974af0"
+  },
+  {
+   "name": "DURATION",
+   "flag": "--duration",
+   "hash": "130af5ca55c4c242"
+  },
+  {
+   "name": "PROGRESS",
+   "flag": "--progress-bar",
+   "hash": "9b03e316a19a4dc3"
+  },
+  {
+   "name": "SPLASH",
+   "flag": "--splash-screen",
+   "hash": "8f82477f67f8b8e5"
+  },
+  {
+   "name": "TEST_DOT",
+   "flag": "--check-graphviz",
+   "hash": "18017e11aa37a15f"
+  },
+  {
+   "name": "PICOWEB",
+   "flag": "--http-server",
+   "hash": "0ae0956a579de920"
+  },
+  {
+   "name": "EXCLUDE",
+   "flag": "--exclude",
+   "hash": "c5cd2f2beec0e4b1"
+  },
+  {
+   "name": "PIPE",
+   "flag": "--pipe",
+   "hash": "a12f641088052ed8"
+  },
+  {
+   "name": "PIPEMAP",
+   "flag": "-pipemap",
+   "hash": "2c65ddbe6a06c719"
+  },
+  {
+   "name": "PIPEDELIMITOR",
+   "flag": "-pipedelimitor",
+   "hash": "3b7860138c0d8fdd"
+  },
+  {
+   "name": "PIPENOSTDERR",
+   "flag": "-pipenostderr",
+   "hash": "52682f5deb0d2e4c"
+  },
+  {
+   "name": "PIPE_IMAGE_INDEX",
+   "flag": "--pipe-image-index",
+   "hash": "a7f0ce5cc72f1193"
+  },
+  {
+   "name": "DEFINE",
+   "flag": "-D",
+   "hash": "6b492d618e820098"
+  },
+  {
+   "name": "DEFINE_LONG",
+   "flag": "--define",
+   "hash": "64a0a38e9db98093"
+  },
+  {
+   "name": "INCLUDE",
+   "flag": "-I",
+   "hash": "3de7557678a912ac"
+  },
+  {
+   "name": "INCLUDE_LONG",
+   "flag": "--include",
+   "hash": "096f56753f28b5d4"
+  },
+  {
+   "name": "PRAGMA",
+   "flag": "-P",
+   "hash": "7714d4a15512f6af"
+  },
+  {
+   "name": "PRAGMA_LONG",
+   "flag": "--pragma",
+   "hash": "0018f2149efea47c"
+  },
+  {
+   "name": "SKINPARAM",
+   "flag": "-S",
+   "hash": "b9e79c6ca7fb700e"
+  },
+  {
+   "name": "SKINPARAM_LONG",
+   "flag": "--skinparam",
+   "hash": "fe077a829904c676"
+  },
+  {
+   "name": "THEME",
+   "flag": "--theme",
+   "hash": "6bd3ab9b3048d6d4"
+  },
+  {
+   "name": "CONFIG",
+   "flag": "--config",
+   "hash": "45b5d5cf333866d2"
+  },
+  {
+   "name": "CHARSET",
+   "flag": "--charset",
+   "hash": "07fc99822687b93e"
+  },
+  {
+   "name": "CHECK_ONLY",
+   "flag": "--check-syntax",
+   "hash": "c6720e45503fb750"
+  },
+  {
+   "name": "FAIL_FAST",
+   "flag": "--stop-on-error",
+   "hash": "23b075c5b210e4ad"
+  },
+  {
+   "name": "FAIL_FAST2",
+   "flag": "--check-before-run",
+   "hash": "f0059bce11c4d59d"
+  },
+  {
+   "name": "NO_ERROR_IMAGE",
+   "flag": "--no-error-image",
+   "hash": "b1a3a05c1761738a"
+  },
+  {
+   "name": "TIMEOUT",
+   "flag": "--graphviz-timeout",
+   "hash": "865bd0c9b820881c"
+  },
+  {
+   "name": "IGNORE_STARTUML_FILENAME",
+   "flag": "--ignore-startuml-filename",
+   "hash": "a782e4d4005fae66"
+  },
+  {
+   "name": "NB_THREAD",
+   "flag": "--threads",
+   "hash": "0eef832d2fd6a44a"
+  },
+  {
+   "name": "LOOP",
+   "flag": "--loop",
+   "hash": "54a18c14c16b5076"
+  },
+  {
+   "name": "RETRIEVE_METADATA",
+   "flag": "--extract-source",
+   "hash": "c6412f232dd2d12e"
+  },
+  {
+   "name": "NO_METADATA",
+   "flag": "--disable-metadata",
+   "hash": "d90dd610ac7944da"
+  },
+  {
+   "name": "CHECK_METADATA",
+   "flag": "--skip-fresh",
+   "hash": "54ff4edcddc2f50c"
+  },
+  {
+   "name": "ENCODE_SPRITE",
+   "flag": "--encode-sprite",
+   "hash": "f7c8d399213ac5d9"
+  },
+  {
+   "name": "COMPUTE_URL",
+   "flag": "--encode-url",
+   "hash": "411f2da040411c74"
+  },
+  {
+   "name": "DECODE_URL",
+   "flag": "--decode-url",
+   "hash": "1df1f65b4fbfd1d4"
+  },
+  {
+   "name": "LANGUAGE",
+   "flag": "--list-keywords",
+   "hash": "d5716f96c5139056"
+  },
+  {
+   "name": "GRAPHVIZ_DOT",
+   "flag": "--dot-path",
+   "hash": "86ba521c9d1af3c4"
+  },
+  {
+   "name": "FTP",
+   "flag": "--ftp-server",
+   "hash": "e46f785e9141a6eb"
+  },
+  {
+   "name": "OUTPUT_DIR",
+   "flag": "--output-dir",
+   "hash": "1e705fb2a0787ef9"
+  },
+  {
+   "name": "OVERWRITE",
+   "flag": "--overwrite",
+   "hash": "d645583e184e83f9"
+  },
+  {
+   "name": "CLIPBOARD",
+   "flag": "--clipboard",
+   "hash": "504989c2030179db"
+  },
+  {
+   "name": "CLIPBOARDLOOP",
+   "flag": "--clipboardloop",
+   "hash": "418b951e58132a9c"
+  },
+  {
+   "name": "DEBUG_SVEK",
+   "flag": "-debugsvek",
+   "hash": "23faa214fc24cfd7"
+  },
+  {
+   "name": "FILE_DIR",
+   "flag": "-filedir",
+   "hash": "a81f909f9dcff7bd"
+  },
+  {
+   "name": "FILENAME",
+   "flag": "-filename",
+   "hash": "82d3f9b402acf1f3"
+  },
+  {
+   "name": "HEADLESS",
+   "flag": "-headless",
+   "hash": "57441bd458646b35"
+  },
+  {
+   "name": "PRINT_FONTS",
+   "flag": "-printfonts",
+   "hash": "7fe862c7c079cb07"
+  },
+  {
+   "name": "STD_LIB",
+   "flag": "-stdlib",
+   "hash": "ab1048f4f711505d"
+  },
+  {
+   "name": "STDRPT",
+   "flag": "-stdrpt",
+   "hash": "113680465d3b22e0"
+  },
+  {
+   "name": "SYNTAX",
+   "flag": "-syntax",
+   "hash": "189d10457bfcd5cf"
+  },
+  {
+   "name": "LICENSE",
+   "flag": "-license",
+   "hash": "66270e400d10f96f"
+  },
+  {
+   "name": "WORD",
+   "flag": "-word",
+   "hash": "d33e8c457489827e"
+  },
+  {
+   "name": "USE_SEPARATOR_MINUS",
+   "flag": "-useseparatorminus",
+   "hash": "25d1d80fbf3fc460"
+  },
+  {
+   "name": "FORMAT",
+   "flag": "--format",
+   "hash": "d801ac5e0dc5311d"
+  },
+  {
+   "name": "T_EPS",
+   "flag": "--eps",
+   "hash": "a3c71889f1cce495"
+  },
+  {
+   "name": "T_EPS_TEXT",
+   "flag": "--teps:text",
+   "hash": "ff2ff07bd7dad4a9"
+  },
+  {
+   "name": "T_HTML",
+   "flag": "--html",
+   "hash": "c5dbcd4cbf8f743c"
+  },
+  {
+   "name": "T_LATEX",
+   "flag": "--latex",
+   "hash": "ca3add3d79a433c8"
+  },
+  {
+   "name": "T_LATEX_NOPREAMBLE",
+   "flag": "--latex-nopreamble",
+   "hash": "4c744872d63bf730"
+  },
+  {
+   "name": "OBFUSCATE",
+   "flag": "--obfuscate",
+   "hash": "edcc832918ebbba1"
+  },
+  {
+   "name": "T_PDF",
+   "flag": "--pdf",
+   "hash": "1c62be7e838cbe82"
+  },
+  {
+   "name": "T_PNG",
+   "flag": "--png",
+   "hash": "c62d84aae250dbdb"
+  },
+  {
+   "name": "PREPROCESS",
+   "flag": "--preproc",
+   "hash": "f4975cd05fee0d8a"
+  },
+  {
+   "name": "T_SCXML",
+   "flag": "--scxml",
+   "hash": "f7cc6bfa11cd0297"
+  },
+  {
+   "name": "T_SVG",
+   "flag": "--svg",
+   "hash": "c11fff51a54b55f0"
+  },
+  {
+   "name": "T_NULL",
+   "flag": "--null",
+   "hash": "0452338f0fd3cdce"
+  },
+  {
+   "name": "T_TXT",
+   "flag": "--txt",
+   "hash": "1256aaeae817952b"
+  },
+  {
+   "name": "T_UTXT",
+   "flag": "--utxt",
+   "hash": "e2db5afd63328534"
+  },
+  {
+   "name": "T_VDX",
+   "flag": "--vdx",
+   "hash": "50d9404a13fdbcbc"
+  },
+  {
+   "name": "T_XMI",
+   "flag": "--xmi",
+   "hash": "ca264bfc8b41d4f3"
+  },
+  {
+   "name": "T_XMI_ARGO",
+   "flag": "--xmi:argo",
+   "hash": "c5a6150a4f94c09f"
+  },
+  {
+   "name": "T_XMI_CUSTOM",
+   "flag": "--xmi:custom",
+   "hash": "b1af8a8cd861dcbb"
+  },
+  {
+   "name": "T_XMI_SCRIPT",
+   "flag": "--xmi:script",
+   "hash": "ebe20edf559d9ad2"
+  },
+  {
+   "name": "T_XMI_STAR",
+   "flag": "--xmi:star",
+   "hash": "3329f2c5b6d45279"
+  },
+  {
+   "name": "T_BASE64",
+   "flag": "--base64",
+   "hash": "9cd9c2cc2afea20b"
+  },
+  {
+   "name": "T_BRAILLE",
+   "flag": "--braille",
+   "hash": "ffb978df2c5fe767"
+  },
+  {
+   "name": "DISABLE_STATS",
+   "flag": "--disable-stats",
+   "hash": "8640713694746ce3"
+  },
+  {
+   "name": "ENABLE_STATS",
+   "flag": "--enable-stats",
+   "hash": "61845b235630f6dd"
+  },
+  {
+   "name": "DUMPHTMLSTATS",
+   "flag": "--export-stats-html",
+   "hash": "3d6564e94775c372"
+  },
+  {
+   "name": "DUMPSTATS",
+   "flag": "--export-stats",
+   "hash": "e1b864e8c7d83b25"
+  },
+  {
+   "name": "HTML_STATS",
+   "flag": "--html-stats",
+   "hash": "0efa121a473e1f73"
+  },
+  {
+   "name": "XML_STATS",
+   "flag": "--xml-stats",
+   "hash": "0803b33c08abdc0e"
+  },
+  {
+   "name": "REALTIME_STATS",
+   "flag": "--realtime-stats",
+   "hash": "5714d1a04a6f6f1c"
+  },
+  {
+   "name": "LOOP_STATS",
+   "flag": "--loop-stats",
+   "hash": "c396aa5eaa6e7b57"
+  }
+ ],
+ "outputFormats": [
+  "EPS",
+  "EPS_TEXT",
+  "ATXT",
+  "UTXT",
+  "XMI_STANDARD",
+  "XMI_STAR",
+  "XMI_ARGO",
+  "XMI_CUSTOM",
+  "XMI_SCRIPT",
+  "SCXML",
+  "GRAPHML",
+  "PDF",
+  "HTML",
+  "HTML5",
+  "VDX",
+  "LATEX",
+  "LATEX_NO_PREAMBLE",
+  "LATEX_DETERMINISTIC",
+  "BASE64",
+  "BRAILLE_PNG",
+  "OBFUSCATE",
+  "DEBUG",
+  "NULL",
+  "PREPROC",
+  "PNG",
+  "PNG_EMPTY",
+  "RAW",
+  "SVG_DETERMINISTIC",
+  "SVG"
+ ],
+ "styleNames": [
+  "action",
+  "activationBox",
+  "activity",
+  "activityBar",
+  "activityDiagram",
+  "actor",
+  "agent",
+  "analog",
+  "archimate",
+  "arrow",
+  "artifact",
+  "binary",
+  "body",
+  "boundary",
+  "box",
+  "boxless",
+  "business",
+  "caption",
+  "card",
+  "cardinality",
+  "circle",
+  "classDiagram",
+  "class_",
+  "clickable",
+  "cloud",
+  "closed",
+  "collection",
+  "collections",
+  "component",
+  "composite",
+  "robust",
+  "chenAttribute",
+  "chenEerDiagram",
+  "chenEntity",
+  "chenRelationship",
+  "concise",
+  "clock",
+  "componentDiagram",
+  "constraintArrow",
+  "control",
+  "database",
+  "day",
+  "delay",
+  "description",
+  "destroy",
+  "diamond",
+  "document",
+  "ebnf",
+  "element",
+  "entity",
+  "end",
+  "start",
+  "stop",
+  "file",
+  "filesDiagram",
+  "folder",
+  "footer",
+  "frame",
+  "ganttDiagram",
+  "generic",
+  "goto_",
+  "group",
+  "groupHeader",
+  "header",
+  "hexagon",
+  "highlight",
+  "hnote",
+  "interface_",
+  "json",
+  "jsonDiagram",
+  "gitDiagram",
+  "label",
+  "leafNode",
+  "legend",
+  "lifeLine",
+  "mainframe",
+  "map",
+  "milestone",
+  "mindmapDiagram",
+  "month",
+  "name",
+  "network",
+  "newpage",
+  "node",
+  "note",
+  "nwdiagDiagram",
+  "packetdiagDiagram",
+  "objectDiagram",
+  "object",
+  "package_",
+  "participant",
+  "partition",
+  "person",
+  "port",
+  "process",
+  "qualified",
+  "queue",
+  "rectangle",
+  "reference",
+  "referenceHeader",
+  "regex",
+  "requirement",
+  "rnote",
+  "root",
+  "rootNode",
+  "saltDiagram",
+  "separator",
+  "sequenceDiagram",
+  "server",
+  "stack",
+  "stateDiagram",
+  "state",
+  "stateBody",
+  "stereotype",
+  "storage",
+  "swimlane",
+  "task",
+  "timegrid",
+  "timeline",
+  "timingDiagram",
+  "title",
+  "undone",
+  "unstarted",
+  "usecase",
+  "verticalSeparator",
+  "year",
+  "visibilityIcon",
+  "private_",
+  "protected_",
+  "public_",
+  "IEMandatory",
+  "spot",
+  "spotAnnotation",
+  "spotInterface",
+  "spotEnum",
+  "spotProtocol",
+  "spotStruct",
+  "spotEntity",
+  "spotException",
+  "spotClass",
+  "spotAbstractClass",
+  "spotMetaClass",
+  "spotStereotype",
+  "spotDataClass",
+  "spotRecord",
+  "wbsDiagram",
+  "yamlDiagram",
+  "chartDiagram",
+  "bar",
+  "line",
+  "area",
+  "scatter",
+  "axis",
+  "hAxis",
+  "vAxis",
+  "grid",
+  "annotation"
+ ],
+ "styleProperties": [
+  "Shadowing",
+  "FontName",
+  "FontColor",
+  "FontSize",
+  "FontStyle",
+  "FontWeight",
+  "BackGroundColor",
+  "RoundCorner",
+  "LineThickness",
+  "DiagonalCorner",
+  "HyperLinkColor",
+  "HyperlinkUnderlineStyle",
+  "HyperlinkUnderlineThickness",
+  "HeadColor",
+  "LineColor",
+  "LineStyle",
+  "Padding",
+  "Margin",
+  "MaximumWidth",
+  "MinimumWidth",
+  "ExportedName",
+  "Image",
+  "HorizontalAlignment",
+  "ShowStereotype",
+  "ImagePosition",
+  "MarkerShape",
+  "MarkerSize",
+  "MarkerColor",
+  "BarWidth",
+  "Width"
+ ]
+}

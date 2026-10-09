@@ -1,0 +1,454 @@
+{
+  "_comment": "What tools/features/status.py cannot find out by itself. For every PlantUML diagram factory: the Rust modules that port it (relative to crates/rockuml/src), or else a status (soon, later, never) and the reason. Commands, built-in functions, flags and formats are ported when rockuml names them; the entries here only explain the ones that are not.",
+  "inventory": "plantuml-1.2026.8.json",
+  "diagrams": {
+    "SequenceDiagramFactory": {
+      "title": "Sequence diagrams",
+      "rust": [
+        "diagram/sequence",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "sequence"
+      ],
+      "docs": "sequence"
+    },
+    "ClassDiagramFactory": {
+      "title": "Class and object diagrams",
+      "rust": [
+        "diagram/class",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "class",
+        "object"
+      ],
+      "docs": "class"
+    },
+    "DescriptionDiagramFactory": {
+      "title": "Use case, component, deployment and ArchiMate diagrams",
+      "rust": [
+        "diagram/description",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "usecase",
+        "component",
+        "deployment",
+        "archimate"
+      ],
+      "docs": "component"
+    },
+    "StateDiagramFactory": {
+      "title": "State diagrams",
+      "rust": [
+        "diagram/state",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "state"
+      ],
+      "docs": "state"
+    },
+    "ActivityDiagramFactory3": {
+      "title": "Activity diagrams",
+      "rust": [
+        "diagram/activity3",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "activity"
+      ],
+      "docs": "activity"
+    },
+    "TimingDiagramFactory": {
+      "title": "Timing diagrams",
+      "rust": [
+        "diagram/timing",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "timing"
+      ],
+      "docs": "timing",
+      "notes": "Dates print in UTC; `use date format` knows the common SimpleDateFormat letters."
+    },
+    "ChenEerDiagramFactory": {
+      "title": "Entity relationship diagrams (Chen)",
+      "rust": [
+        "diagram/chen",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "chen"
+      ],
+      "docs": "chen"
+    },
+    "MindMapDiagramFactory": {
+      "title": "Mind maps",
+      "rust": [
+        "diagram/mindmap",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "mindmap"
+      ],
+      "docs": "mindmap"
+    },
+    "WBSDiagramFactory": {
+      "title": "Work breakdown structures",
+      "rust": [
+        "diagram/wbs",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "wbs"
+      ],
+      "docs": "wbs",
+      "notes": "The ASCII-art output is not ported (txt formats are planned later)."
+    },
+    "GanttDiagramFactory": {
+      "title": "Gantt charts",
+      "rust": [
+        "diagram/gantt",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "gantt"
+      ],
+      "docs": "gantt",
+      "notes": "Working hours are not ported yet; `today` without a date is today in UTC."
+    },
+    "JsonDiagramFactory": {
+      "title": "JSON data",
+      "rust": [
+        "diagram/json"
+      ],
+      "corpus": [
+        "json"
+      ],
+      "docs": "json"
+    },
+    "YamlDiagramFactory": {
+      "title": "YAML data",
+      "rust": [
+        "diagram/yaml.rs",
+        "diagram/json"
+      ],
+      "corpus": [
+        "yaml"
+      ],
+      "docs": "yaml"
+    },
+    "NwDiagramFactory": {
+      "title": "Network diagrams (nwdiag)",
+      "rust": [
+        "diagram/nwdiag",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "nwdiag"
+      ],
+      "docs": "network"
+    },
+    "PSystemSaltFactory": {
+      "title": "Wireframes (Salt)",
+      "rust": [
+        "diagram/salt",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "salt"
+      ],
+      "docs": "salt",
+      "notes": "`salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet."
+    },
+    "PSystemCreoleFactory": {
+      "title": "Creole text (`@startcreole`)",
+      "rust": [
+        "diagram/creole.rs"
+      ],
+      "corpus": [
+        "creole"
+      ],
+      "docs": "creole"
+    },
+    "ActivityDiagramFactory": {
+      "title": "Legacy activity diagrams (`(*) --> \"Action\"`)",
+      "status": "later",
+      "reason": "Tier 3 of the plan: the current activity syntax covers the same diagrams."
+    },
+    "BpmDiagramFactory": {
+      "title": "BPM diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "PSystemDitaaFactory": {
+      "title": "Ditaa diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines."
+    },
+    "PSystemDotFactory": {
+      "title": "Graphviz sources (`@startdot`)",
+      "status": "later",
+      "reason": "Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz."
+    },
+    "ChartDiagramFactory": {
+      "title": "Charts",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "PacketDiagramFactory": {
+      "title": "Packet diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "FlowDiagramFactory": {
+      "title": "Flow diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "WireDiagramFactory": {
+      "title": "Wire diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "GitDiagramFactory": {
+      "title": "Git diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "FilesDiagramFactory": {
+      "title": "File trees",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "BoardDiagramFactory": {
+      "title": "Boards",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "HclDiagramFactory": {
+      "title": "HCL data",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "PSystemEbnfFactory": {
+      "title": "EBNF diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "PSystemRegexFactory": {
+      "title": "Regular expression diagrams",
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    },
+    "PSystemMathFactory": {
+      "title": "Math (`@startmath`)",
+      "status": "later",
+      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+    },
+    "PSystemLatexFactory": {
+      "title": "LaTeX math (`@startlatex`)",
+      "status": "later",
+      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+    },
+    "PSystemDefinitionFactory": {
+      "title": "Definitions drawn on their own (`@startdef`)",
+      "status": "later",
+      "reason": "Definitions work with `!includedef`; drawing them on their own is rarely needed."
+    },
+    "HelpFactory": {
+      "title": "Help diagrams (`help keywords`, …)",
+      "status": "later",
+      "reason": "PlantUML's built-in reference cards; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemWelcomeFactory": {
+      "title": "The welcome screen of an empty diagram",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemColorsFactory": {
+      "title": "The colour chart (`colors`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemVersionFactory": {
+      "title": "The version diagram (`version`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemLicenseFactory": {
+      "title": "The license diagram (`license`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemSkinparameterListFactory": {
+      "title": "The skin parameter list (`skinparameters`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemListFontsFactory": {
+      "title": "The font list (`listfonts`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemListEmojiFactory": {
+      "title": "The emoji list (`emoji`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemOpenIconicFactory": {
+      "title": "An Open Iconic icon on its own (`openiconic`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemListOpenIconicFactory": {
+      "title": "The Open Iconic list (`listopeniconic`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemListArchimateSpritesFactory": {
+      "title": "The ArchiMate sprite list",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "ListSpriteDiagramFactory": {
+      "title": "The sprite list (`listsprites`)",
+      "status": "later",
+      "reason": "A reference card; low priority.",
+      "group": "Reference cards"
+    },
+    "PSystemDonorsFactory": {
+      "title": "PlantUML's donors",
+      "status": "never",
+      "reason": "About PlantUML itself, not about diagrams."
+    },
+    "PSystemEggFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "PSystemAppleTwoFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "PSystemRIPFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "PSystemPathFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "PSystemCharlieFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "PSystemDedicationFactory": {
+      "title": "Easter egg",
+      "status": "never",
+      "reason": "Easter eggs are PlantUML's own.",
+      "group": "Easter eggs"
+    },
+    "CrashDiagramFactory": {
+      "title": "Crash reports (`@startcrash`)",
+      "status": "never",
+      "reason": "PlantUML's way of testing its crash report; rockuml reports crashes on the command line."
+    }
+  },
+  "commands": {
+    "CommandAssumeTransparent": {
+      "status": "later"
+    },
+    "CommandSkin": {
+      "status": "later",
+      "reason": "Old skins are superseded by themes and styles."
+    },
+    "CommandMinwidth": {
+      "status": "later"
+    },
+    "CommandPage": {
+      "status": "later"
+    },
+    "CommandRotate": {
+      "status": "later"
+    },
+    "CommandStyleImport": {
+      "status": "later",
+      "reason": "Reads style files."
+    },
+    "CommandStyleSingleLineCSS": {
+      "status": "later"
+    },
+    "CommandSkinParamJaws": {
+      "status": "later",
+      "reason": "A `skinparam` line with line breaks inside, which only macros produce."
+    }
+  },
+  "outputFormats": {
+    "PDF": {
+      "status": "soon",
+      "reason": "Next on the plan (Tier 2), through svg2pdf."
+    },
+    "HTML5": {
+      "status": "never",
+      "reason": "PlantUML's HTML5 canvas output; SVG covers browsers."
+    },
+    "VDX": {
+      "status": "never",
+      "reason": "Visio's old XML format."
+    },
+    "BRAILLE_PNG": {
+      "status": "never",
+      "reason": "Dropped in the plan; may be reconsidered on request."
+    },
+    "_default": {
+      "status": "later",
+      "reason": "Tier 3 of the plan, ported on demand."
+    }
+  },
+  "cliFlags": {
+    "_dropped": "Belongs to PlantUML's Java runtime or GUI, which rockuml does not have.",
+    "_notPorted": "Recognised and refused with a message; ported on demand."
+  },
+  "builtins": {
+    "_default": {
+      "status": "soon",
+      "reason": "Part of the preprocessor, which is ported; missing functions are ported as found."
+    }
+  }
+}

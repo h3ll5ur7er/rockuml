@@ -35,6 +35,8 @@ PlantUML lays out class, component, state and similar diagrams with Graphviz whe
 
 ## Not ported yet
 
+The [feature status](docs/features) lists every diagram type, command, function, flag and output format of PlantUML, and whether rockuml ports it; it is generated from both projects' sources. In short:
+
 | Area | What's missing |
 |---|---|
 | Diagram types | ditaa, EBNF, regex, charts, packet diagrams, HCL, git, files, board, wire, BPM and flow diagrams; the legacy activity syntax `(*) --> "Action"`; math with `@startmath`, `<math>` and `<latex>` |

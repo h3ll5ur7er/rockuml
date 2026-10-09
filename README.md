@@ -65,6 +65,11 @@ read relative to the diagram file; like PlantUML, rockuml refuses system paths s
 For other diagram types rockuml reports that they are not ported yet and exits with status 1; the phases in
 [PLAN.md](PLAN.md) say when they come.
 
+[FEATURES.md](FEATURES.md) lists every diagram type, command, preprocessor function, command line flag and output
+format of PlantUML, and whether rockuml ports it, plans to, or won't (with the reason). It is generated from both
+projects' sources by `tools/features`, which also compares two PlantUML releases to show what a new one asks of
+rockuml.
+
 ### Fonts
 
 Text is measured with embedded fonts: the Liberation fonts, which have the metrics of Arial, Times New Roman and

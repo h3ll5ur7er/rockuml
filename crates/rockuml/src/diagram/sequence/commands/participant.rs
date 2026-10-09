@@ -13,6 +13,8 @@ use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{self, Stereotype};
 use crate::text::LineLocation;
 
+/// PlantUML's `CommandParticipantA`, `CommandParticipantA2`, `CommandParticipantA3`, `CommandParticipantA4` and
+/// `CommandParticipantMultilines`, in that order.
 pub(super) fn commands() -> Vec<Box<dyn Command<SequenceDiagram>>> {
     let full_as_code = vec![
         RegexTree::optional(RegexTree::concat(vec![

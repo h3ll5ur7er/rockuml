@@ -69,7 +69,7 @@ impl SaltDiagram {
         let mut commands: Vec<Box<dyn Command<SaltDiagram>>> = add_common_commands2();
         commands.extend(add_common_scale_commands());
         commands.extend(add_title_commands());
-        commands.push(Box::new(SingleLine(Anything::new())));
+        commands.push(Box::new(SingleLine(CommandAnything::new())));
         let lines = diagram.source.lines().to_vec();
         match factory::execute_lines(&lines, &mut diagram, &commands, ParserPass::One) {
             Ok(()) => Box::new(diagram),
@@ -100,9 +100,9 @@ impl SaltDiagram {
 }
 
 /// Every line no other command takes describes widgets.
-struct Anything(RegexTree);
+struct CommandAnything(RegexTree);
 
-impl Anything {
+impl CommandAnything {
     fn new() -> Self {
         Self(RegexTree::concat(vec![
             RegexTree::start(),
@@ -112,7 +112,7 @@ impl Anything {
     }
 }
 
-impl SingleLineCommand<SaltDiagram> for Anything {
+impl SingleLineCommand<SaltDiagram> for CommandAnything {
     fn pattern(&self) -> &RegexTree {
         &self.0
     }

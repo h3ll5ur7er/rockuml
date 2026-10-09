@@ -27,19 +27,25 @@ use crate::text::LineLocation;
 /// Titles, captions, legends, headers and footers (`CommonCommands.addTitleCommands`).
 pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
+        // CommandTitle
         single(labelled("title", "TITLE1", "TITLE2"), set_title),
+        // CommandMainframe
         single(mainframe_pattern(), set_mainframe),
+        // CommandCaption
         single(labelled("caption", "DISPLAY1", "DISPLAY2"), set_caption),
+        // CommandMultilinesCaption
         Box::new(Multiline::new(
             &plantuml_regex("^caption$"),
             &plantuml_regex("^end[%s]?caption$"),
             set_multiline_caption,
         )),
+        // CommandMultilinesTitle
         Box::new(Multiline::new(
             &plantuml_regex("^title$"),
             &plantuml_regex("^end[%s]?title$"),
             set_multiline_title,
         )),
+        // CommandMultilinesLegend
         Box::new(
             Multiline::new(
                 &LEGEND_START,
@@ -48,18 +54,23 @@ pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Co
             )
             .skipping_quote_lines(),
         ),
+        // CommandLegend
         single(labelled("legend", "LEGEND1", "LEGEND2"), set_legend),
+        // CommandFooter
         single(Ribbon::Footer.pattern(), |diagram, arg, location| {
             Ribbon::Footer.set_from_line(diagram, arg, location);
         }),
+        // CommandMultilinesFooter
         Box::new(Multiline::new(
             Ribbon::Footer.block_start(),
             &plantuml_regex("^end[%s]?footer$"),
             |diagram, lines| Ribbon::Footer.set_from_block(diagram, lines),
         )),
+        // CommandHeader
         single(Ribbon::Header.pattern(), |diagram, arg, location| {
             Ribbon::Header.set_from_line(diagram, arg, location);
         }),
+        // CommandMultilinesHeader
         Box::new(Multiline::new(
             Ribbon::Header.block_start(),
             &plantuml_regex("^end[%s]?header$"),
@@ -72,9 +83,11 @@ pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Co
 /// Blank lines, pragmas, skin parameters, sprites and styles (`CommonCommands.addCommonCommands2`).
 pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
+        // CommandNope
         single(blank_line_pattern(), |_, _, _| {}),
         single(pragma_pattern(), define_pragma),
         unported::assume_transparent(),
+        // CommandSkinParam
         single(skinparam_pattern(), set_skinparam),
         Box::new(skin_block::SkinParamBlock),
         unported::skin(),
@@ -90,6 +103,7 @@ pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
         sprite::svg_multi_line(),
         sprite::file(),
         unported::style_single_line_css(),
+        // CommandStyleMultilinesCSS
         Box::new(
             Multiline::new(
                 &plantuml_regex(r"^\<style\>$"),
@@ -105,20 +119,26 @@ pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
 /// `scale` in its forms (`CommonCommands.addCommonScaleCommands`).
 pub(super) fn add_common_scale_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
+        // CommandScale
         scale(scale_pattern(), scale_factor),
+        // CommandScaleWidthAndHeight
         scale(sized("WIDTH", "HEIGHT", false), |arg| {
             Ok(Scale::WidthAndHeight(
                 number(arg, "WIDTH")?,
                 number(arg, "HEIGHT")?,
             ))
         }),
+        // CommandScaleWidthOrHeight
         scale(width_or_height_pattern(), scale_width_or_height),
+        // CommandScaleMaxWidth
         scale(capped("WIDTH", "width"), |arg| {
             Ok(Scale::MaxWidth(number(arg, "WIDTH")?))
         }),
+        // CommandScaleMaxHeight
         scale(capped("HEIGHT", "height"), |arg| {
             Ok(Scale::MaxHeight(number(arg, "HEIGHT")?))
         }),
+        // CommandScaleMaxWidthAndHeight
         scale(sized("WIDTH", "HEIGHT", true), |arg| {
             Ok(Scale::MaxWidthAndHeight(
                 number(arg, "WIDTH")?,
@@ -131,6 +151,7 @@ pub(super) fn add_common_scale_commands<D: TitledDiagram + 'static>() -> Vec<Box
 /// Hiding parts of entities (`CommonCommands.addCommonHides`).
 pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Command<D>>> {
     vec![
+        // CommandHideEmptyDescription
         single(
             RegexTree::concat(vec![
                 RegexTree::start(),
@@ -148,7 +169,9 @@ pub(super) fn add_common_hides<D: TitledDiagram + 'static>() -> Vec<Box<dyn Comm
                 diagram.set_hide_empty_description(hide);
             },
         ),
+        // CommandHideShowByVisibility
         super::class::hide_show_by_visibility(),
+        // CommandHideShowByGender
         super::class::hide_show_by_gender(),
     ]
 }
