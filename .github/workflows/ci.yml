@@ -40,11 +40,24 @@ jobs:
       - run: cargo clippy -p rockuml-wasm --target wasm32-unknown-unknown -- -D warnings
       - run: bash tools/build-wasm.sh
       - run: node --test web/rockuml.test.mjs
+      # The license texts every package carries, at the paths NOTICE.md and THIRD-PARTY.md link to.
+      - name: Collect the licenses
+        run: |
+          mkdir -p legal/crates/smetana legal/crates/rockuml/assets/fonts
+          cp LICENSE COPYING NOTICE.md THIRD-PARTY.md legal/
+          cp crates/smetana/LICENSE legal/crates/smetana/
+          cp crates/rockuml/assets/fonts/LICENSE-Liberation.txt legal/crates/rockuml/assets/fonts/
+          python3 tools/third-party-licenses.py legal/THIRD-PARTY-CRATES.md
       - run: cd web && zip ../rockuml-web.zip index.html rockuml.js rockuml.wasm
+      - run: cd legal && zip -r ../rockuml-web.zip . && zip -r ../rockuml-licenses.zip .
       - uses: actions/upload-artifact@v7
         with:
           name: rockuml-web.zip
           path: rockuml-web.zip
+      - uses: actions/upload-artifact@v7
+        with:
+          name: rockuml-licenses.zip
+          path: rockuml-licenses.zip
 
   build-windows:
     if: github.event_name == 'push'

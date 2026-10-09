@@ -148,3 +148,15 @@ Put a `.puml` file under `tests/corpus/<area>/` and generate its goldens with th
 ```bash
 bash tools/oracle/generate-goldens.sh tests/corpus/<area>/<case>.puml
 ```
+
+## License
+
+rockuml is a port of [PlantUML](https://plantuml.com) by Arnaud Roques and, like the PlantUML edition it was
+ported from, is distributed under the GNU Lesser General Public License, version 3 or later
+([LICENSE](LICENSE), with the GPL it builds on in [COPYING](COPYING)). The layout crate
+[crates/smetana](crates/smetana), a port of Graphviz code, is under the Eclipse Public License 1.0.
+
+Using rockuml puts no obligation on what you draw with it: the diagrams belong to their authors. Only
+passing rockuml itself on, changed or not, comes with the LGPL's conditions on rockuml's own code.
+[NOTICE.md](NOTICE.md) gives the details, and [THIRD-PARTY.md](THIRD-PARTY.md) the fonts, emoji, icons,
+themes and libraries rockuml carries.

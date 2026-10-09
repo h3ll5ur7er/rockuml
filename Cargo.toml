@@ -7,6 +7,8 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.99"
 publish = false
+# A port of PlantUML's LGPL edition; crates/smetana, a port of Graphviz code, is EPL-1.0.
+license = "LGPL-3.0-or-later"
 
 [workspace.dependencies]
 rockuml = { path = "crates/rockuml" }
