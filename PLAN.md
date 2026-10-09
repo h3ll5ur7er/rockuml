@@ -600,6 +600,20 @@ nwdiag, timing and gantt.
   - Tests: the library's and the site's unit tests (Vitest), and `site/tools/examples.test.mjs`, which renders
     every documentation example with `rockuml.wasm` and fails on error images and deprecated syntax.
 
+### Phase 15 — Feature status
+- **Status: done.** Suggested by Arnaud Roques, PlantUML's author: a table of what is ported, planned soon,
+  planned later or not planned (with the reason), usable to see what each new PlantUML release asks of rockuml.
+  - `tools/features/inventory.py` lists a PlantUML release from its sources (`features/plantuml-<version>.json`):
+    52 diagram factories with the commands each registers (1159), 74 preprocessor functions, 92 command line
+    flags, 29 output formats, 157 style names and 30 style properties, each with a hash of its Java source.
+  - `tools/features/status.py` decides what rockuml ports: commands by their Java class names in the Rust
+    modules of their diagram (outside the stubs of unported commands), functions by name, flags and formats by
+    the command line's tables; `features/decisions.json` holds the rest. It writes FEATURES.md and the website's
+    feature page; CI checks both are current.
+  - `tools/features/compare.py` compares two inventories: new, removed and changed diagram types, commands,
+    functions, flags, formats and style names, flagging changed items rockuml has ported.
+  - The ported commands that the sources did not name yet now carry their Java names.
+
 ---
 
 ## 8. Known risks and mitigations
@@ -631,3 +645,4 @@ nwdiag, timing and gantt.
 1. Remaining Tier 2: PDF output (svg2pdf), then `-pipe`, `-o` and directory globbing parity checks.
    New diagram features get a section in the website's documentation, with live examples.
 2. Grow the corpus per diagram type before porting it (examples from the PlantUML language reference).
+3. Close the gaps FEATURES.md lists in ported diagrams, starting with those marked "planned soon".

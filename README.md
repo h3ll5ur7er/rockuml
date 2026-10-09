@@ -1,5 +1,12 @@
 # rockuml
 
+[![CI](https://img.shields.io/github/actions/workflow/status/h3ll5ur7er/rockuml/ci.yml?branch=main&label=CI&logo=githubactions&logoColor=white)](https://github.com/h3ll5ur7er/rockuml/actions/workflows/ci.yml)
+[![@rockuml/core on npm](https://img.shields.io/npm/v/%40rockuml%2Fcore?label=%40rockuml%2Fcore&logo=npm&color=cb3837)](https://www.npmjs.com/package/@rockuml/core)
+[![@rockuml/angular on npm](https://img.shields.io/npm/v/%40rockuml%2Fangular?label=%40rockuml%2Fangular&logo=angular&color=dd0031)](https://www.npmjs.com/package/@rockuml/angular)
+[![PlantUML compatibility](https://img.shields.io/badge/PlantUML-1.2026.8-1f6feb?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0yIDNoOXY2SDJ6TTEzIDE1aDl2NmgtOXpNNiA5aDJ2Nmg1djJINnoiLz48L3N2Zz4=)](FEATURES.md)
+[![License: LGPL 3.0 or later](https://img.shields.io/badge/license-LGPL--3.0--or--later-blue)](LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-live%20examples-ea580c?logo=readthedocs&logoColor=white)](https://h3ll5ur7er.github.io/rockuml/)
+
 A PlantUML-compatible diagram renderer written in Rust: one self-contained binary for Windows, Linux and macOS
 (and a WebAssembly build), with no Java and no Graphviz required.
 
@@ -64,6 +71,11 @@ read relative to the diagram file; like PlantUML, rockuml refuses system paths s
 
 For other diagram types rockuml reports that they are not ported yet and exits with status 1; the phases in
 [PLAN.md](PLAN.md) say when they come.
+
+[FEATURES.md](FEATURES.md) lists every diagram type, command, preprocessor function, command line flag and output
+format of PlantUML, and whether rockuml ports it, plans to, or won't (with the reason). It is generated from both
+projects' sources by `tools/features`, which also compares two PlantUML releases to show what a new one asks of
+rockuml.
 
 ### Fonts
 

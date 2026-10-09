@@ -131,18 +131,22 @@ fn single(kind: Kind) -> Box<dyn Command<SequenceDiagram>> {
     }))
 }
 
+/// PlantUML's `FactorySequenceNoteCommand`, single line.
 pub(super) fn single_line() -> Box<dyn Command<SequenceDiagram>> {
     single(Kind::OnParticipant)
 }
 
+/// PlantUML's `FactorySequenceNoteOverSeveralCommand`, single line.
 pub(super) fn over_several_single_line() -> Box<dyn Command<SequenceDiagram>> {
     single(Kind::OverSeveral)
 }
 
+/// PlantUML's `FactorySequenceNoteAcrossCommand`, single line.
 pub(super) fn across_single_line() -> Box<dyn Command<SequenceDiagram>> {
     single(Kind::Across)
 }
 
+/// PlantUML's `FactorySequenceNoteOnArrowCommand`, single line.
 pub(super) fn on_arrow_single_line() -> Box<dyn Command<SequenceDiagram>> {
     single(Kind::OnArrow)
 }
@@ -187,6 +191,7 @@ fn block_index(kind: Kind) -> usize {
 static END: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^end[%s]?(note|hnote|rnote)$"));
 static END_ON_ARROW: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^[%s]*end[%s]?note$"));
 
+/// PlantUML's `FactorySequenceNoteCommand`, several lines.
 pub(super) fn multi_line() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(Multiline::starting_with(
         &BLOCKS[0],
@@ -195,6 +200,7 @@ pub(super) fn multi_line() -> Box<dyn Command<SequenceDiagram>> {
     ))
 }
 
+/// PlantUML's `FactorySequenceNoteOverSeveralCommand`, several lines.
 pub(super) fn over_several_multi_line() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(Multiline::starting_with(
         &BLOCKS[1],
@@ -203,6 +209,7 @@ pub(super) fn over_several_multi_line() -> Box<dyn Command<SequenceDiagram>> {
     ))
 }
 
+/// PlantUML's `FactorySequenceNoteAcrossCommand`, several lines.
 pub(super) fn across_multi_line() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(Multiline::starting_with(
         &BLOCKS[2],
@@ -211,6 +218,7 @@ pub(super) fn across_multi_line() -> Box<dyn Command<SequenceDiagram>> {
     ))
 }
 
+/// PlantUML's `FactorySequenceNoteOnArrowCommand`, several lines.
 pub(super) fn on_arrow_multi_line() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(Multiline::starting_with(
         &BLOCKS[3],

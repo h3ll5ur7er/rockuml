@@ -63,6 +63,7 @@ fn optional_color(
     arg.get(name, 0).map(color_named).transpose()
 }
 
+/// PlantUML's `CommandHideUnlinked`.
 pub(super) fn hide_unlinked() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -80,6 +81,7 @@ pub(super) fn hide_unlinked() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandActivate`.
 pub(super) fn activate() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -118,6 +120,7 @@ pub(super) fn activate() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandDeactivateShort`.
 pub(super) fn deactivate_short() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![named(0, "TYPE", "deactivate"), spaces()],
@@ -140,6 +143,7 @@ fn receiver(diagram: &SequenceDiagram, message: usize) -> ParticipantId {
     }
 }
 
+/// PlantUML's `CommandActivate2`.
 pub(super) fn activate_shortcut() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -163,6 +167,7 @@ pub(super) fn activate_shortcut() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandBoxStart`.
 pub(super) fn box_start() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -188,6 +193,7 @@ pub(super) fn box_start() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandBoxEnd`.
 pub(super) fn box_end() -> Box<dyn Command<SequenceDiagram>> {
     simple(vec![leaf("end"), spaces(), leaf("box")], |diagram, _, _| {
         if diagram.end_box() {
@@ -198,6 +204,7 @@ pub(super) fn box_end() -> Box<dyn Command<SequenceDiagram>> {
     })
 }
 
+/// PlantUML's `CommandGrouping`.
 pub(super) fn grouping() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -261,6 +268,7 @@ fn optional_color_at(
     arg.get("COLORS", index).map(color_named).transpose()
 }
 
+/// PlantUML's `CommandReturn`.
 pub(super) fn return_command() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -318,6 +326,7 @@ pub(super) fn return_command() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandNewpage`.
 pub(super) fn newpage() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -343,6 +352,7 @@ pub(super) fn newpage() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandIgnoreNewpage`.
 pub(super) fn ignore_newpage() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![leaf("ignore"), spaces(), leaf("newpage")],
@@ -354,6 +364,7 @@ pub(super) fn ignore_newpage() -> Box<dyn Command<SequenceDiagram>> {
 }
 
 /// `autonewpage`, which PlantUML accepts and ignores.
+/// PlantUML's `CommandAutoNewpage`.
 pub(super) fn auto_newpage() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -365,6 +376,7 @@ pub(super) fn auto_newpage() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandDivider`.
 pub(super) fn divider() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -383,6 +395,7 @@ pub(super) fn divider() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandHSpace`.
 pub(super) fn hspace() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![leaf(r"\|\|"), named(1, "VALUE", r"(\d+)?"), leaf(r"\|+")],
@@ -397,6 +410,7 @@ pub(super) fn hspace() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandDelay`.
 pub(super) fn delay() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -450,6 +464,7 @@ fn add_reference(
     }));
 }
 
+/// PlantUML's `CommandReferenceOverSeveral`.
 pub(super) fn reference_over_several() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -505,6 +520,7 @@ static REFERENCE_FIRST_LINE: LazyLock<RegexTree> = LazyLock::new(|| {
 
 static REFERENCE_END: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^end[%s]?(ref)?$"));
 
+/// PlantUML's `CommandReferenceMultilinesOverSeveral`.
 pub(super) fn reference_multiline_over_several() -> Box<dyn Command<SequenceDiagram>> {
     Box::new(Multiline::starting_with(
         &REFERENCE_FIRST_LINE,
@@ -525,6 +541,7 @@ fn reference_block(diagram: &mut SequenceDiagram, lines: &BlocLines) -> CommandR
     Ok(())
 }
 
+/// PlantUML's `CommandAutonumber`.
 pub(super) fn autonumber() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -559,6 +576,7 @@ fn decimal_format(pattern: &str) -> Result<DecimalFormat, CommandError> {
         .map_err(|_| CommandError::new(format!("Error in pattern : {pattern}")))
 }
 
+/// PlantUML's `CommandAutonumberStop`.
 pub(super) fn autonumber_stop() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![leaf("autonumber"), some_spaces(), leaf("stop"), spaces()],
@@ -569,6 +587,7 @@ pub(super) fn autonumber_stop() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandAutonumberResume`.
 pub(super) fn autonumber_resume() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -594,6 +613,7 @@ pub(super) fn autonumber_resume() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandAutonumberIncrement`.
 pub(super) fn autonumber_increment() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -624,6 +644,7 @@ pub(super) fn autonumber_increment() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandAutoactivate`.
 pub(super) fn autoactivate() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -641,6 +662,7 @@ pub(super) fn autoactivate() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandFootbox`.
 pub(super) fn footbox() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![named(1, "TYPE", "(hide|show)?"), spaces(), leaf("footbox")],
@@ -654,6 +676,7 @@ pub(super) fn footbox() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandFootboxOld`.
 pub(super) fn footbox_old() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -672,6 +695,7 @@ pub(super) fn footbox_old() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandUrl`.
 pub(super) fn url() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![
@@ -694,6 +718,7 @@ pub(super) fn url() -> Box<dyn Command<SequenceDiagram>> {
     )
 }
 
+/// PlantUML's `CommandLinkAnchor`.
 pub(super) fn link_anchor() -> Box<dyn Command<SequenceDiagram>> {
     simple(
         vec![

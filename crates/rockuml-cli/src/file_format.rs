@@ -11,7 +11,8 @@ use crate::cli_flag::CliFlag;
 pub(crate) enum FileFormat {
     Png,
     Svg,
-    /// SVG with text measured by a fixed width table instead of fonts, identical on every machine.
+    /// SVG with text measured by a fixed width table instead of fonts, identical on every machine (PlantUML's
+    /// `SVG_DETERMINISTIC`).
     DeterministicSvg,
     /// PlantUML's list of every drawn shape.
     Debug,
