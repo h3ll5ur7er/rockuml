@@ -1,0 +1,42 @@
+<div class="docs">
+  <button
+    type="button"
+    class="docs__menu button"
+    [attr.aria-expanded]="menuOpen()"
+    aria-controls="docs-nav"
+    (click)="menuOpen.set(!menuOpen())"
+  >
+    {{ menuOpen() ? 'Close menu' : 'All pages' }}
+  </button>
+  <nav id="docs-nav" class="sidebar" [class.sidebar--open]="menuOpen()" aria-label="Documentation">
+    <input
+      type="search"
+      class="sidebar__filter"
+      placeholder="Filter pages…"
+      aria-label="Filter pages"
+      [value]="filter()"
+      (input)="filter.set($any($event.target).value)"
+    />
+    @for (section of sections(); track section.title) {
+      <h2 class="sidebar__section">{{ section.title }}</h2>
+      <ul>
+        @for (page of section.pages; track page.slug) {
+          <li>
+            <a
+              [routerLink]="['/docs', page.slug]"
+              routerLinkActive="active"
+              (click)="menuOpen.set(false)"
+            >
+              {{ page.title }}
+            </a>
+          </li>
+        }
+      </ul>
+    } @empty {
+      <p class="sidebar__empty">No page matches. Don't panic: try fewer words.</p>
+    }
+  </nav>
+  <div class="docs__page">
+    <router-outlet />
+  </div>
+</div>

@@ -1,0 +1,19 @@
+{
+  "name": "rockuml-angular",
+  "version": "0.1.0",
+  "description": "Angular components that render, edit and preview PlantUML-compatible diagrams with rockuml's WebAssembly engine",
+  "license": "LGPL-3.0-or-later",
+  "peerDependencies": {
+    "@angular/core": "^22.2.0",
+    "@codemirror/commands": "^6.0.0",
+    "@codemirror/language": "^6.0.0",
+    "@codemirror/state": "^6.0.0",
+    "@codemirror/view": "^6.0.0",
+    "@lezer/highlight": "^1.0.0",
+    "rockuml": "^0.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

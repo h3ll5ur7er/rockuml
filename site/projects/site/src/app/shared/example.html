@@ -1,0 +1,32 @@
+<figure class="example" [class.example--tldr]="tldr()">
+  <figcaption class="example__bar">
+    <span class="example__label">
+      @if (tldr()) {
+        <strong>TL;DR</strong> Copy this template, change it, done.
+      } @else {
+        Live example: edit the source, the diagram follows.
+      }
+    </span>
+    <span class="example__actions">
+      @if (edited() !== source()) {
+        <button type="button" class="button button--small" (click)="reset()">Reset</button>
+      }
+      <button
+        type="button"
+        class="button button--small"
+        [class.button--primary]="tldr()"
+        (click)="copy()"
+      >
+        {{ copied() ? 'Copied!' : 'Copy' }}
+      </button>
+      <button type="button" class="button button--small" (click)="openInPlayground()">
+        Playground
+      </button>
+    </span>
+  </figcaption>
+  <rockuml-playground
+    class="example__playground"
+    [(source)]="edited"
+    [label]="tldr() ? 'TL;DR template source' : 'Example source'"
+  />
+</figure>

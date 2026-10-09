@@ -1,0 +1,49 @@
+@if (page(); as page) {
+  <div class="layout">
+    <article class="doc" (click)="followLink($event)">
+      <header class="doc__header">
+        <p class="doc__section">{{ page.section }}</p>
+        <h1>{{ page.title }}</h1>
+        <p class="doc__summary">{{ page.summary }}</p>
+      </header>
+      @for (block of blocks(); track $index) {
+        @if (block.kind === 'html') {
+          <div class="prose" [innerHTML]="block.trusted"></div>
+        } @else {
+          <site-example [source]="block.source" [tldr]="block.tldr" />
+        }
+      } @empty {
+        <p class="doc__loading">Loading the page…</p>
+      }
+      <nav class="pager" aria-label="Previous and next page">
+        @if (neighbours().previous; as previous) {
+          <a class="pager__link" [routerLink]="['/docs', previous.slug]">
+            <span>Previous</span>{{ previous.title }}
+          </a>
+        }
+        @if (neighbours().next; as next) {
+          <a class="pager__link pager__link--next" [routerLink]="['/docs', next.slug]">
+            <span>Next</span>{{ next.title }}
+          </a>
+        }
+      </nav>
+    </article>
+    @if (headings().length > 0) {
+      <nav class="toc" aria-label="On this page">
+        <p class="toc__title">On this page</p>
+        <ul>
+          @for (heading of headings(); track heading.id) {
+            <li [class.toc__sub]="heading.level === 3">
+              <a [routerLink]="[]" [fragment]="heading.id">{{ heading.text }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
+    }
+  </div>
+} @else {
+  <div class="missing">
+    <h1>This page is mostly harmless, and also missing</h1>
+    <p>There is no documentation page called “{{ slug() }}”. Pick one from the list.</p>
+  </div>
+}

@@ -1,0 +1,93 @@
+<section class="hero">
+  <div class="hero__text">
+    <p class="hero__kicker">PlantUML-compatible · Rust · WebAssembly</p>
+    <h1>Diagrams as code, <span>without the JVM.</span></h1>
+    <p class="hero__lead">
+      rockuml draws PlantUML diagrams with one small binary for Windows, Linux and macOS. No Java,
+      no Graphviz, no server. Its WebAssembly build even runs right here in your browser: edit the
+      diagram below.
+    </p>
+    <div class="hero__actions">
+      <a class="button button--primary" routerLink="/docs/getting-started">Get started</a>
+      <a class="button" routerLink="/playground">Open the playground</a>
+      <a class="button" [href]="releases" target="_blank" rel="noopener">Download</a>
+    </div>
+  </div>
+  <site-example class="hero__example" [source]="hero" />
+</section>
+
+<section class="features" aria-label="Features">
+  <article>
+    <h2>One binary, zero runtimes</h2>
+    <p>
+      A single executable per platform. The fonts, themes and the PlantUML standard library are
+      built in, so every machine draws the same image.
+    </p>
+  </article>
+  <article>
+    <h2>Speaks PlantUML</h2>
+    <p>
+      Your existing <code>.puml</code> files work as they are. rockuml is tested against PlantUML
+      1.2026.8 on hundreds of reference diagrams, down to the coordinates of every line.
+    </p>
+  </article>
+  <article>
+    <h2>Runs in the browser</h2>
+    <p>
+      The same engine compiled to WebAssembly renders diagrams client-side. Use it from JavaScript,
+      or drop the Angular components into your app.
+    </p>
+  </article>
+  <article>
+    <h2>Plugs into your editor</h2>
+    <p>
+      Start <code>rockuml --http-server</code> and point the PlantUML plugin of VS Code or JetBrains
+      at it. Live previews, no Java in sight.
+    </p>
+  </article>
+</section>
+
+<section class="gallery">
+  <h2>Every kind of diagram rockuml draws</h2>
+  <p class="gallery__lead">
+    Each one has its own page, with a template to start from and examples to play with.
+  </p>
+  <div class="gallery__grid">
+    @for (entry of gallery.value(); track entry.page.slug) {
+      <a class="card" [routerLink]="['/docs', entry.page.slug]">
+        <div class="card__image">
+          <rockuml-diagram [source]="entry.source" [alt]="entry.page.title" />
+        </div>
+        <h3>{{ entry.page.title }}</h3>
+        <p>{{ entry.page.summary }}</p>
+      </a>
+    }
+  </div>
+</section>
+
+<section class="usage">
+  <h2>Use it from anywhere</h2>
+  <div class="usage__grid">
+    <article>
+      <h3>The command line</h3>
+      <pre><code>rockuml --svg "docs/**/*.puml"</code></pre>
+      <a routerLink="/docs/cli">Command line reference</a>
+    </article>
+    <article>
+      <h3>Your editor</h3>
+      <pre><code>rockuml --http-server:8080</code></pre>
+      <a routerLink="/docs/server">Set up the server</a>
+    </article>
+    <article>
+      <h3>JavaScript</h3>
+      <pre><code>const rockuml = await load();
+const &#123; data &#125; = await rockuml.render(source);</code></pre>
+      <a routerLink="/docs/javascript">The JavaScript API</a>
+    </article>
+    <article>
+      <h3>Angular</h3>
+      <pre><code>&lt;rockuml-diagram [source]="source" /&gt;</code></pre>
+      <a routerLink="/docs/angular">The Angular components</a>
+    </article>
+  </div>
+</section>

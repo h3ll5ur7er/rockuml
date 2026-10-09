@@ -1,0 +1,43 @@
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <a class="brand" routerLink="/"><site-logo />rockuml</a>
+  <nav class="topnav" aria-label="Main">
+    <a routerLink="/docs" routerLinkActive="active">Docs</a>
+    <a routerLink="/playground" routerLinkActive="active">Playground</a>
+    <a [href]="repository" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+  <button
+    type="button"
+    class="theme-toggle"
+    (click)="theme.toggle()"
+    [attr.aria-label]="theme.theme() === 'dark' ? 'Use the light theme' : 'Use the dark theme'"
+  >
+    @if (theme.theme() === 'dark') {
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.5" />
+        <path
+          d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"
+        />
+      </svg>
+    } @else {
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+      </svg>
+    }
+  </button>
+</header>
+<main id="main">
+  <router-outlet />
+</main>
+<footer class="footer">
+  <p>
+    rockuml is free software under the
+    <a href="https://www.gnu.org/licenses/lgpl-3.0.html" target="_blank" rel="noopener">LGPL 3.0</a
+    >, a Rust port of <a href="https://plantuml.com" target="_blank" rel="noopener">PlantUML</a> by
+    Arnaud Roques. It is an independent project, not affiliated with PlantUML.
+  </p>
+  <p>
+    Every diagram on this site is drawn in your browser by rockuml's WebAssembly build. Nothing
+    leaves your machine.
+  </p>
+</footer>
