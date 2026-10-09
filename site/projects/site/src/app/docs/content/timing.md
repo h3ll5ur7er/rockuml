@@ -2,23 +2,25 @@
 @startuml
 robust "Hogwarts Express" as Train
 concise "Harry" as Harry
+scale 100 as 60 pixels
 
 @0
 Train is Waiting
-Harry is "On the platform"
+Harry is "Platform 9"
 
-@100
-Harry is "Running at the wall"
+@200
+Harry is "Wall run"
 
-@150
+@400
 Harry is "Platform 9¾"
 Train is Boarding
 
-@300
+@600
 Train is Departing
 Harry -> Train : jumps on
+Harry is Aboard
 
-@400
+@800
 Train is Travelling
 @enduml
 ```
