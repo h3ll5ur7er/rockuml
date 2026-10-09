@@ -2,6 +2,8 @@
 //! Graphviz `dot` 2.38 (`gen/`, `h/` and `smetana/` in the reference sources). Layouts must match Smetana's
 //! coordinates exactly, so the port keeps Graphviz's function names, evaluation order and integer semantics.
 //!
+//! Like Graphviz and Smetana, the crate is distributed under the Eclipse Public License 1.0 (see `LICENSE`).
+//!
 //! # Use
 //!
 //! Build a [`Graph`] with the calls PlantUML makes, in PlantUML's order, then [`Graph::layout`] it and read the
