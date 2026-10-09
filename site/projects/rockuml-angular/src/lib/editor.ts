@@ -93,6 +93,8 @@ const theme = EditorView.theme({
     fontFamily:
       'var(--rockuml-editor-font, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace)',
     lineHeight: '1.55',
+    // Coding fonts would join arrows such as <-> into one sign, hiding what was typed.
+    fontVariantLigatures: 'none',
   },
   '.cm-content': { caretColor: 'var(--rockuml-editor-caret, currentColor)' },
   '.cm-gutters': {

@@ -107,6 +107,8 @@ code,
 pre {
   font-family: var(--font-mono);
   font-size: 0.875em;
+  /* Coding fonts would join PlantUML's arrows, such as <->, into one arrow sign. */
+  font-variant-ligatures: none;
 }
 
 .button {

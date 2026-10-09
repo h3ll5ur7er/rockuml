@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   afterRenderEffect,
   computed,
   inject,
@@ -59,11 +60,26 @@ export class DocPageView {
     });
 
     // The router scrolls to a fragment before the page's content has loaded, so the page does it once it has.
-    afterRenderEffect(() => {
+    // Diagrams above the heading grow as they render, so it is kept in view until the reader scrolls.
+    const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    afterRenderEffect((onCleanup) => {
       const fragment = this.fragment();
-      if (this.content.value() && fragment) {
-        document.getElementById(fragment)?.scrollIntoView();
+      const target = this.content.value() && fragment && document.getElementById(fragment);
+      if (!target) {
+        return;
       }
+      target.scrollIntoView();
+      const keepInView = new ResizeObserver(() => target.scrollIntoView());
+      keepInView.observe(host);
+      const stop = () => keepInView.disconnect();
+      const timer = setTimeout(stop, 3000);
+      const readerEvents = ['wheel', 'touchstart', 'keydown'];
+      readerEvents.forEach((name) => addEventListener(name, stop, { once: true }));
+      onCleanup(() => {
+        stop();
+        clearTimeout(timer);
+        readerEvents.forEach((name) => removeEventListener(name, stop));
+      });
     });
   }
 
