@@ -5,10 +5,10 @@ import assert from 'node:assert/strict';
 import { readFile, readdir } from 'node:fs/promises';
 import { before, describe, test } from 'node:test';
 
-import { load } from 'rockuml';
+import { load } from '@rockuml/core';
 
 const content = new URL('../projects/site/src/app/docs/content/', import.meta.url);
-const wasm = new URL('../node_modules/rockuml/rockuml.wasm', import.meta.url);
+const wasm = new URL('../node_modules/@rockuml/core/rockuml.wasm', import.meta.url);
 
 const pages = (await readdir(content)).filter((name) => name.endsWith('.md')).sort();
 const slugs = new Set(pages.map((name) => name.replace(/\.md$/, '')));

@@ -115,7 +115,8 @@ cd web
 python -m http.server             # then open http://localhost:8000
 ```
 
-Use it from your own page or from Node:
+Use it from your own page or from Node. It is also on npm as `@rockuml/core` (`npm install @rockuml/core`, then
+`import { load } from '@rockuml/core'`):
 
 ```js
 import { load, RockumlError } from './rockuml.js';
@@ -157,8 +158,8 @@ npm run format:check
 The documentation pages are Markdown files in `site/projects/site/src/app/docs/content/`; a ```` ```rockuml ````
 fence is a live example, and each page opens with one marked ```` ```rockuml tldr ````.
 
-`site/projects/rockuml-angular` is the Angular component library the site is built with, shaped to be published
-on npm: `rockuml-angular` renders diagrams (`<rockuml-diagram>`), and `rockuml-angular/editor` adds a CodeMirror
+`site/projects/rockuml-angular` is the Angular component library the site is built with, published on npm as
+`@rockuml/angular`: it renders diagrams (`<rockuml-diagram>`), and `@rockuml/angular/editor` adds a CodeMirror
 editor and a live playground.
 
 ## Adding corpus cases

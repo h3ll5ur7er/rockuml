@@ -12,8 +12,8 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "paths": {
-      "rockuml-angular": ["./dist/rockuml-angular"],
-      "rockuml-angular/editor": ["./dist/rockuml-angular/editor"]
+      "@rockuml/angular": ["./dist/rockuml-angular"],
+      "@rockuml/angular/editor": ["./dist/rockuml-angular/editor"]
     },
     "target": "ES2022",
     "module": "preserve"

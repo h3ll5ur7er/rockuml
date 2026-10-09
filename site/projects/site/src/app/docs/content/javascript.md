@@ -16,19 +16,19 @@ JS --> Page : { data, pageCount, isError }
 
 rockuml compiles to WebAssembly: `rockuml.wasm` is the whole engine, fonts and themes included, and `rockuml.js` is a small module without dependencies that loads it. Together they render diagrams in any modern browser and in Node, with no server and no other runtime. This site draws every one of its diagrams that way.
 
-## Getting the files
+## Installing
 
-Every release has a `rockuml-web.zip` with `rockuml.js`, `rockuml.wasm`, the TypeScript types and a demo page. To build them from source you need a Rust toolchain with the WebAssembly target:
+The engine is the npm package [@rockuml/core](https://www.npmjs.com/package/@rockuml/core):
+
+```bash
+npm install @rockuml/core
+```
+
+It holds `rockuml.js`, `rockuml.wasm` and the TypeScript types. Without npm, every release on GitHub has a `rockuml-web.zip` with the same files and a demo page. To build them from source you need a Rust toolchain with the WebAssembly target:
 
 ```bash
 rustup target add wasm32-unknown-unknown
 bash tools/build-wasm.sh      # writes web/rockuml.wasm next to web/rockuml.js
-```
-
-The `web/` folder is laid out as an npm package called `rockuml`, with its `package.json` and `rockuml.d.ts`, so a project can depend on it by path until it is published:
-
-```bash
-npm install ../rockuml/web
 ```
 
 ## Rendering
@@ -83,9 +83,9 @@ Node has no `fetch` for local files, so pass the bytes:
 
 ```js
 import { readFile, writeFile } from 'node:fs/promises';
-import { load } from 'rockuml';
+import { load } from '@rockuml/core';
 
-const rockuml = await load(await readFile('node_modules/rockuml/rockuml.wasm'));
+const rockuml = await load(await readFile('node_modules/@rockuml/core/rockuml.wasm'));
 const { data } = await rockuml.render('@startuml\nA -> B\n@enduml', { format: 'png' });
 await writeFile('diagram.png', data);
 ```
@@ -95,7 +95,7 @@ await writeFile('diagram.png', data);
 `rockuml.d.ts` describes the module. `render` is typed by format: PNG gives a `Uint8Array`, every other format a string.
 
 ```ts
-import { load, type Rendering } from 'rockuml';
+import { load, type Rendering } from '@rockuml/core';
 
 const rockuml = await load();
 const svg: Rendering<string> = await rockuml.render(source);

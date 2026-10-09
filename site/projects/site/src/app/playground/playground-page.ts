@@ -8,8 +8,8 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RockumlRenderer, decodeSource, encodeSource, type Rendering } from 'rockuml-angular';
-import { RockumlPlayground } from 'rockuml-angular/editor';
+import { RockumlRenderer, decodeSource, encodeSource, type Rendering } from '@rockuml/angular';
+import { RockumlPlayground } from '@rockuml/angular/editor';
 
 import { DIAGRAM_PAGES } from '../docs/pages';
 import { loadTemplate } from '../docs/templates';

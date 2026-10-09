@@ -6,7 +6,7 @@
     "outDir": "../../out-tsc/spec",
     "types": ["vitest/globals"],
     "paths": {
-      "rockuml-angular": ["./src/public-api.ts"]
+      "@rockuml/angular": ["./src/public-api.ts"]
     }
   },
   "include": ["src/**/*.d.ts", "src/**/*.spec.ts", "editor/**/*.spec.ts"]

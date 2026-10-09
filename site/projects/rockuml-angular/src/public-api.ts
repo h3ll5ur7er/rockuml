@@ -1,5 +1,5 @@
 // rockuml for Angular: diagrams rendered in the browser by rockuml's WebAssembly engine. The editors are in
-// rockuml-angular/editor.
+// @rockuml/angular/editor.
 
 export * from './lib/types';
 export {

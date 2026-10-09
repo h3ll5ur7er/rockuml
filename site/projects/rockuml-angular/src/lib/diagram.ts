@@ -10,7 +10,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { RockumlError, type Rendering } from 'rockuml';
+import { RockumlError, type Rendering } from '@rockuml/core';
 
 import { RockumlRenderer } from './renderer';
 

@@ -5,7 +5,7 @@ import {
   withInMemoryScrolling,
   withViewTransitions,
 } from '@angular/router';
-import { provideRockuml } from 'rockuml-angular';
+import { provideRockuml } from '@rockuml/angular';
 
 import { routes } from './app.routes';
 

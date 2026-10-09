@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { EditorView } from '@codemirror/view';
-import { ROCKUML_LOADER, type Rockuml } from 'rockuml-angular';
+import { ROCKUML_LOADER, type Rockuml } from '@rockuml/angular';
 
 import { Example } from './example';
 
