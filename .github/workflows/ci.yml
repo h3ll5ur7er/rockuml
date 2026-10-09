@@ -2,7 +2,8 @@ name: CI
 
 # Every push to main that passes the tests is published as a pre-release, v<version>-build.<run>; a pushed
 # v* tag is published as a release of that name. Pull requests are only tested. Pushes to main also deploy the
-# website to GitHub Pages, once the repository is public (Pages needs that, or a paid plan).
+# website to GitHub Pages, once the repository is public (Pages needs that, or a paid plan). A v* tag also
+# publishes the npm packages @rockuml/core and @rockuml/angular.
 on:
   push:
     branches: [main]
@@ -58,14 +59,13 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site/dist/site/browser
-      # The license texts every package carries, at the paths NOTICE.md and THIRD-PARTY.md link to.
-      - name: Collect the licenses
-        run: |
-          mkdir -p legal/crates/smetana legal/crates/rockuml/assets/fonts
-          cp LICENSE COPYING NOTICE.md THIRD-PARTY.md legal/
-          cp crates/smetana/LICENSE legal/crates/smetana/
-          cp crates/rockuml/assets/fonts/LICENSE-Liberation.txt legal/crates/rockuml/assets/fonts/
-          python3 tools/third-party-licenses.py legal/THIRD-PARTY-CRATES.md
+      - run: bash tools/collect-licenses.sh
+      - run: cd site && node tools/stage-npm-packages.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: npm-packages
+          path: site/dist/npm
+          include-hidden-files: true
       - run: cd web && zip ../rockuml-web.zip index.html package.json rockuml.js rockuml.d.ts rockuml.wasm
       - run: cd legal && zip -r ../rockuml-web.zip . && zip -r ../rockuml-licenses.zip .
       - uses: actions/upload-artifact@v7
@@ -90,6 +90,36 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  npm:
+    # npm trusts this workflow (trusted publishing), so no npm token is stored anywhere, and npm records the
+    # packages' provenance: the commit and the run that built them.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [test, wasm]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: npm-packages
+          path: npm
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Check that the packages have the tag's version
+        run: |
+          for package in npm/core npm/angular; do
+            version=$(node -p "require('./$package/package.json').version")
+            if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+              echo "$package is version $version, but the tag is $GITHUB_REF_NAME"
+              exit 1
+            fi
+          done
+      - run: npm publish ./npm/core
+      - run: npm publish ./npm/angular
 
   build-windows:
     if: github.event_name == 'push'

@@ -1,5 +1,5 @@
 import { EnvironmentProviders, InjectionToken, makeEnvironmentProviders } from '@angular/core';
-import { load, type Rockuml } from 'rockuml';
+import { load, type Rockuml } from '@rockuml/core';
 
 /** Loads the rockuml engine. The renderer calls it once, when the first diagram is rendered. */
 export type RockumlLoader = () => Promise<Rockuml>;

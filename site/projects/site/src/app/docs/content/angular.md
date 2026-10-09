@@ -1,13 +1,13 @@
 ```rockuml tldr
 @startuml
-package "rockuml-angular" {
+package "@rockuml/angular" {
   component "provideRockuml()" as Provide
   component RockumlRenderer as Renderer
   component "<rockuml-diagram>" as Diagram
   component "<rockuml-editor>" as Editor
   component "<rockuml-playground>" as Playground
 }
-package rockuml {
+package "@rockuml/core" {
   component "rockuml.js" as JS
   artifact "rockuml.wasm" as Wasm
 }
@@ -20,20 +20,24 @@ JS --> Wasm
 @enduml
 ```
 
-`rockuml-angular` is a library of Angular components for live diagrams: `<rockuml-diagram>` draws a source, `<rockuml-editor>` edits one with syntax highlighting, and `<rockuml-playground>` puts the two side by side and redraws as you type. They are standalone, signal-based components for Angular 22, and they power every example on this site.
+`@rockuml/angular` is a library of Angular components for live diagrams: `<rockuml-diagram>` draws a source, `<rockuml-editor>` edits one with syntax highlighting, and `<rockuml-playground>` puts the two side by side and redraws as you type. They are standalone, signal-based components for Angular 22, and they power every example on this site.
 
-The library has two entry points. `rockuml-angular` renders diagrams; `rockuml-angular/editor` adds the editors, built on [CodeMirror 6](https://codemirror.net). An application that only shows diagrams imports the first one and never downloads an editor.
+The library has two entry points. `@rockuml/angular` renders diagrams; `@rockuml/angular/editor` adds the editors, built on [CodeMirror 6](https://codemirror.net). An application that only shows diagrams imports the first one and never downloads an editor.
 
-> **Not on npm yet.** The library lives in `site/projects/rockuml-angular` in the repository and is built with `ng build rockuml-angular`. It is shaped to be published on its own, so it can become an npm package without changes.
+```bash
+npm install @rockuml/angular @rockuml/core
+```
+
+The editors also need CodeMirror: `npm install @codemirror/state @codemirror/view @codemirror/commands @codemirror/language @lezer/highlight`. An application that only shows diagrams can leave it out.
 
 ## Setup
 
-The library renders with the [JavaScript module](docs/javascript), the `rockuml` package. Serve `rockuml.wasm` with your application, for example by copying it among the assets in `angular.json`:
+The library renders with the [JavaScript module](docs/javascript), the `@rockuml/core` package. Serve `rockuml.wasm` with your application, for example by copying it among the assets in `angular.json`:
 
 ```json
 {
   "glob": "rockuml.wasm",
-  "input": "node_modules/rockuml",
+  "input": "node_modules/@rockuml/core",
   "output": "/"
 }
 ```
@@ -42,7 +46,7 @@ Then tell the library where it is, once, in the application's providers:
 
 ```ts
 import { ApplicationConfig } from '@angular/core';
-import { provideRockuml } from 'rockuml-angular';
+import { provideRockuml } from '@rockuml/angular';
 
 export const appConfig: ApplicationConfig = {
   providers: [provideRockuml({ wasm: 'rockuml.wasm' })],
@@ -55,7 +59,7 @@ The wasm module is downloaded the first time a diagram is drawn, not when the ap
 
 ```ts
 import { Component, signal } from '@angular/core';
-import { RockumlDiagram } from 'rockuml-angular';
+import { RockumlDiagram } from '@rockuml/angular';
 
 @Component({
   selector: 'app-architecture',
@@ -82,11 +86,11 @@ A diagram renders once it scrolls into view, so long pages full of diagrams stay
 
 ## The editor
 
-`<rockuml-editor>`, from `rockuml-angular/editor`, binds two-way to a source and highlights comments, keywords, arrows, strings, colours, stereotypes and preprocessor lines:
+`<rockuml-editor>`, from `@rockuml/angular/editor`, binds two-way to a source and highlights comments, keywords, arrows, strings, colours, stereotypes and preprocessor lines:
 
 ```ts
 import { Component, signal } from '@angular/core';
-import { RockumlEditor } from 'rockuml-angular/editor';
+import { RockumlEditor } from '@rockuml/angular/editor';
 
 @Component({
   selector: 'app-diagram-field',
@@ -104,7 +108,7 @@ The highlighting is also available for your own CodeMirror editors, as `plantUml
 
 ## The playground
 
-`<rockuml-playground>`, also from `rockuml-angular/editor`, is an editor and a diagram side by side. It stacks them when it is narrower than 640 pixels.
+`<rockuml-playground>`, also from `@rockuml/angular/editor`, is an editor and a diagram side by side. It stacks them when it is narrower than 640 pixels.
 
 ```html
 <rockuml-playground [(source)]="source" (rendered)="svg = $event.data" />
@@ -118,7 +122,7 @@ It takes the inputs of both, with a default `delay` of 150 milliseconds.
 
 ```ts
 import { inject } from '@angular/core';
-import { RockumlRenderer } from 'rockuml-angular';
+import { RockumlRenderer } from '@rockuml/angular';
 
 export class DownloadButton {
   private readonly renderer = inject(RockumlRenderer);

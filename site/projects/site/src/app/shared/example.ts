@@ -7,8 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { encodeSource } from 'rockuml-angular';
-import { RockumlPlayground } from 'rockuml-angular/editor';
+import { encodeSource } from '@rockuml/angular';
+import { RockumlPlayground } from '@rockuml/angular/editor';
 
 /** A diagram source to edit in place, with its live diagram and buttons to copy, reset or take it elsewhere. */
 @Component({

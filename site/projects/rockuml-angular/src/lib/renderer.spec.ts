@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import type { Rockuml } from 'rockuml';
+import type { Rockuml } from '@rockuml/core';
 
 import { ROCKUML_LOADER } from './provider';
 import { RockumlRenderer } from './renderer';

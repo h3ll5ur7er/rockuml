@@ -1,7 +1,23 @@
 {
-  "name": "rockuml",
+  "name": "@rockuml/core",
   "version": "0.2.0",
   "description": "PlantUML-compatible diagrams rendered by WebAssembly, in browsers and Node, without Java or Graphviz",
+  "keywords": [
+    "plantuml",
+    "uml",
+    "diagram",
+    "webassembly",
+    "wasm",
+    "sequence-diagram",
+    "class-diagram"
+  ],
+  "homepage": "https://h3ll5ur7er.github.io/rockuml/docs/javascript",
+  "bugs": "https://github.com/h3ll5ur7er/rockuml/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/h3ll5ur7er/rockuml.git",
+    "directory": "web"
+  },
   "license": "LGPL-3.0-or-later",
   "type": "module",
   "exports": {
@@ -11,6 +27,19 @@
     },
     "./rockuml.wasm": "./rockuml.wasm"
   },
-  "files": ["rockuml.js", "rockuml.d.ts", "rockuml.wasm"],
-  "sideEffects": false
+  "files": [
+    "rockuml.js",
+    "rockuml.d.ts",
+    "rockuml.wasm",
+    "LICENSE",
+    "COPYING",
+    "NOTICE.md",
+    "THIRD-PARTY.md",
+    "THIRD-PARTY-CRATES.md",
+    "crates/"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }

@@ -594,6 +594,9 @@ nwdiag, timing and gantt.
     (`<rockuml-editor>`, `<rockuml-playground>`, the CodeMirror 6 language), so applications that only show
     diagrams never load an editor. The site consumes the built package, as an npm user would.
   - `web/` became the `rockuml` package, with `package.json` and TypeScript types (`rockuml.d.ts`).
+  - Both are on npm as `@rockuml/core` and `@rockuml/angular`, published by CI on `v*` tags through npm's trusted
+    publishing (no token stored, provenance recorded); `site/tools/stage-npm-packages.mjs` assembles them with
+    their license texts (`tools/collect-licenses.sh`).
   - Tests: the library's and the site's unit tests (Vitest), and `site/tools/examples.test.mjs`, which renders
     every documentation example with `rockuml.wasm` and fails on error images and deprecated syntax.
 

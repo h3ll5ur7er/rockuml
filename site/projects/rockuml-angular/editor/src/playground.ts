@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
-import type { Rendering } from 'rockuml';
+import type { Rendering } from '@rockuml/core';
 
-import { RockumlDiagram } from 'rockuml-angular';
+import { RockumlDiagram } from '@rockuml/angular';
 import { RockumlEditor } from './editor';
 
 /** An editor with the diagram of its source next to it, redrawn as you type. */

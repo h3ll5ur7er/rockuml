@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { RockumlError, type Rendering } from 'rockuml';
+import { RockumlError, type Rendering } from '@rockuml/core';
 
 import { RockumlDiagram } from './diagram';
 import { RockumlRenderer } from './renderer';

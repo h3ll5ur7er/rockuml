@@ -6,6 +6,7 @@
     "build": "npm run build:library && ng build site",
     "build:library": "ng build rockuml-angular",
     "watch:library": "ng build rockuml-angular --watch --configuration development",
+    "pack:npm": "npm run build:library && node tools/stage-npm-packages.mjs",
     "test": "ng test rockuml-angular --watch=false && npm run build:library && ng test site --watch=false && node --test tools/examples.test.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -23,7 +24,7 @@
     "@codemirror/state": "^6.7.6",
     "@codemirror/view": "^6.43.14",
     "@lezer/highlight": "^1.2.5",
-    "rockuml": "file:../web",
+    "@rockuml/core": "file:../web",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

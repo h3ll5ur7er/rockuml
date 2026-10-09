@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import type { Format, RenderOptions, Rendering, Rockuml } from 'rockuml';
+import type { Format, RenderOptions, Rendering, Rockuml } from '@rockuml/core';
 
 import { ROCKUML_LOADER } from './provider';
 

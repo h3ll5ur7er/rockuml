@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, resource } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { RockumlDiagram } from 'rockuml-angular';
+import { RockumlDiagram } from '@rockuml/angular';
 
 import { DIAGRAM_PAGES } from '../docs/pages';
 import { loadTemplate } from '../docs/templates';
