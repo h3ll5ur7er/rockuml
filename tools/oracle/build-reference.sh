@@ -13,6 +13,7 @@
 #
 # tools/oracle/smetana-trace/hooks.patch adds calls to a layout tracer (SmetanaTrace) to copies of a few
 # Smetana sources; reference/ itself stays untouched. The tracer is inert unless ROCKUML_SMETANA_TRACE is set.
+# tools/oracle/fixes.patch fixes the regressions of 1.2026.8 that rockuml does not copy, the same way.
 set -euo pipefail
 
 source "$(dirname "$0")/common.sh"
@@ -28,12 +29,15 @@ patched_sources="$build/patched-sources"
 rm -rf "$build/classes" "$patched_sources"
 mkdir -p "$build/classes" "$patched_sources"
 
-sed -n 's|^+++ b/||p' "$smetana_trace/hooks.patch" > "$build/patched.txt"
+patches=("$smetana_trace/hooks.patch" "$oracle_dir/fixes.patch")
+sed -n 's|^+++ b/||p' "${patches[@]}" | sort -u > "$build/patched.txt"
 while read -r source; do
 	mkdir -p "$patched_sources/$(dirname "$source")"
 	cp "$reference_sources/$source" "$patched_sources/$source"
 done < "$build/patched.txt"
-patch --quiet -p1 -d "$patched_sources" < "$smetana_trace/hooks.patch" || die "hooks.patch does not apply"
+for patch_file in "${patches[@]}"; do
+	patch --quiet -p1 -d "$patched_sources" < "$patch_file" || die "$(basename "$patch_file") does not apply"
+done
 
 find "$reference_sources" -name '*.java' \
 	| grep -v -E '/plantuml/(ant|openpdf)/' \

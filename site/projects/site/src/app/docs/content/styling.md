@@ -142,6 +142,28 @@ Inn --> Hobbit : second breakfast
 @enduml
 ```
 
+A short style sheet fits on one line:
+
+```rockuml
+@startuml
+<style>class { BackgroundColor #FFE4B5; LineColor #8B4513 }</style>
+class Towel
+class Babelfish
+Towel -- Babelfish
+@enduml
+```
+
+`<style file=house.css>` reads a style sheet from a file, relative to the diagram, or from a URL. This reads files, so it works with the `rockuml` binary and not in the browser:
+
+```plantuml
+@startuml
+<style file=house.css>
+actor Neo
+usecase "Take the red pill" as red
+Neo --> red
+@enduml
+```
+
 ### Properties
 
 The common properties are:
@@ -187,6 +209,19 @@ stop
 ### Depth
 
 In mind maps and work breakdowns, `:depth(1)` selects the nodes of one level, and `rootNode` and `leafNode` the top and the ends. See [mind maps](docs/mindmap#colours).
+
+## Skins
+
+`skin name` starts the diagram from another of PlantUML's style sheets instead of its default one: `rose` (PlantUML's old colours), `debug` (big fonts and loud colours, to see which style applies where) and `sonyxperiadev`. It must come before anything that styles the diagram. A file `name.skin` beside the diagram, a style sheet that styles everything, is a skin too.
+
+```rockuml
+@startuml
+skin debug
+class Bender
+interface Robot
+Robot <|.. Bender
+@enduml
+```
 
 ## Colours of the page
 

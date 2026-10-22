@@ -1,0 +1,9 @@
+@startuml
+[Death Star] as ds
+[Exhaust port] as port
+ds --> port
+newpage
+actor Luke
+usecase "Use the Force" as force
+Luke --> force
+@enduml

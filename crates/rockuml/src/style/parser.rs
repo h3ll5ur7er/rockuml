@@ -10,7 +10,7 @@ use super::signature::StyleSignature;
 use super::value::Value;
 use super::{STEREOTYPE_PRIORITY, Style};
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum StyleParsingError {
     /// PlantUML reports "Error in style definition: " followed by this message.
     Invalid(&'static str),

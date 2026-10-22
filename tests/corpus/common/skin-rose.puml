@@ -1,0 +1,8 @@
+@startuml
+skin rose
+participant Homer
+participant Marge
+Homer -> Marge : D'oh!
+Marge --> Homer : Hmmm
+note right of Homer : donut
+@enduml

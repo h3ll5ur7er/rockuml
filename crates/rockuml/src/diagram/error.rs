@@ -167,7 +167,7 @@ impl Diagram for ErrorDiagram {
         Ok(Box::new(image))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         ExportSettings::without_skin(self.source.seed())
     }
 
@@ -252,19 +252,7 @@ impl TextBlock for Welcome {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::host::IsolatedHost;
-    use crate::preproc::{PreprocessorEnvironment, Source};
-
-    fn error_of(text: &str) -> Option<DiagramError> {
-        let source = Source {
-            text,
-            description: "t",
-            directory: std::path::PathBuf::new(),
-            environment: PreprocessorEnvironment::default(),
-        };
-        let block = crate::preproc::preprocess(&source, &IsolatedHost).remove(0);
-        super::super::create(&block, &IsolatedHost).unwrap().error()
-    }
+    use crate::diagram::test_support::error_of;
 
     #[test]
     fn error_images_tell_the_faulty_line_and_why() {

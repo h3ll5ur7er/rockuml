@@ -13,6 +13,10 @@ to regenerate goldens. Building and testing rockuml never needs it.
 **Do not install Graphviz** and do not set `GRAPHVIZ_DOT`. Without `dot`, PlantUML lays out graphs with Smetana,
 which is the engine rockuml ports, so the goldens stay comparable.
 
+`fixes.patch` fixes regressions of 1.2026.8 that rockuml does not copy, in copies of the sources it touches;
+`reference/` stays as it is. Each fix says why. So far there is one: `newpage` in class and description
+diagrams exports every page again, not only the first.
+
 ## Usage
 
 ```bash

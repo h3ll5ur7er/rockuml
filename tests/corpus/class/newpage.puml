@@ -1,0 +1,14 @@
+@startuml
+title The Avengers
+class IronMan
+class Hulk
+IronMan -- Hulk
+newpage
+title The Guardians
+skinparam classBackgroundColor #DDEEFF
+class Groot
+class Rocket
+Rocket o-- Groot
+newpage
+class Thanos
+@enduml

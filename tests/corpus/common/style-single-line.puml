@@ -1,0 +1,6 @@
+@startuml
+<style>class { BackgroundColor #FFE4B5; LineColor #8B4513 }</style>
+class Towel
+class Babelfish
+Towel -- Babelfish
+@enduml

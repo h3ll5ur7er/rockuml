@@ -61,7 +61,7 @@ impl Diagram for UnportedDiagram {
         Err(self.what)
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
     }

@@ -156,7 +156,7 @@ impl Diagram for SaltDiagram {
             .add_chrome(Box::new(Drawing(root)), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(5.0))
     }

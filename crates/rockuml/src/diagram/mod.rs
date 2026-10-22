@@ -21,6 +21,8 @@ mod scale;
 mod sequence;
 mod source;
 mod state;
+#[cfg(test)]
+mod test_support;
 mod timing;
 mod titled;
 mod unported;
@@ -40,7 +42,7 @@ use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
-use crate::klimt::png;
+use crate::klimt::png::{self, PageSplit};
 use crate::klimt::svg::{SvgOption, UGraphicSvg};
 use crate::klimt::typeface::{FontRegistry, StringBounderFonts};
 use crate::klimt::ugraphic::{UGraphic, UGraphicBackend};
@@ -75,12 +77,13 @@ pub trait Diagram {
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
 
-    /// How many images the diagram makes: sequence diagrams break into pages with `newpage`.
+    /// How many images the diagram makes: `newpage` breaks diagrams into pages.
     fn page_count(&self) -> usize {
         1
     }
 
-    fn export_settings(&self) -> ExportSettings;
+    /// How a page is placed on its image, and the image-wide options.
+    fn export_settings(&self, page: usize) -> ExportSettings;
 
     /// Why the diagram is an error image instead of what its source describes.
     fn error(&self) -> Option<DiagramError> {
@@ -119,6 +122,8 @@ pub struct ExportSettings {
     pub(super) preserve_aspect_ratio: String,
     /// How SVG and PNG paint colours.
     pub(super) color_mapper: ColorMapper,
+    /// How `page` cuts the PNG files the command line writes.
+    pub(super) split: Option<PageSplit>,
 }
 
 impl ExportSettings {
@@ -134,6 +139,7 @@ impl ExportSettings {
             svg_link_target: None,
             preserve_aspect_ratio: "none".to_owned(),
             color_mapper: ColorMapper::Identity,
+            split: None,
         }
     }
 }
@@ -175,7 +181,7 @@ pub fn create(
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
-    source.read_image_files(block.directory(), host);
+    source.read_named_files(block.directory(), host);
     source.note_current_time(host);
     create(source, block.located_lines())
 }
@@ -276,8 +282,44 @@ pub fn export_image(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<ExportedImage, NotYetPorted> {
+    let (mut files, width, height) =
+        export_pieces(diagram, page, format, metadata, fonts, host, false)?;
+    Ok(ExportedImage {
+        data: files.remove(0),
+        width,
+        height,
+    })
+}
+
+/// The files PlantUML's command line writes for a page: its image, or for PNG the pieces `page 2x3` cuts
+/// it into, across then down.
+///
+/// # Panics
+///
+/// If `page` is not below the diagram's page count, like an index out of bounds.
+pub fn export_files(
+    diagram: &dyn Diagram,
+    page: usize,
+    format: ImageFormat,
+    metadata: Metadata,
+    fonts: &Arc<FontRegistry>,
+    host: &dyn Host,
+) -> Result<Vec<Vec<u8>>, NotYetPorted> {
+    export_pieces(diagram, page, format, metadata, fonts, host, true).map(|(files, ..)| files)
+}
+
+/// The image, or its pieces when `cut` and the diagram asks for them; with the size of the whole.
+fn export_pieces(
+    diagram: &dyn Diagram,
+    page: usize,
+    format: ImageFormat,
+    metadata: Metadata,
+    fonts: &Arc<FontRegistry>,
+    host: &dyn Host,
+    cut: bool,
+) -> Result<(Vec<Vec<u8>>, i32, i32), NotYetPorted> {
     let source_metadata = (metadata == Metadata::Embedded).then(|| diagram.source().metadata());
-    let settings = diagram.export_settings();
+    let settings = diagram.export_settings(page);
     let string_bounder: Rc<dyn StringBounder> = match format {
         ImageFormat::Debug => Rc::new(StringBounderDebug),
         ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
@@ -328,24 +370,26 @@ pub fn export_image(
         output.borrow_mut().take_document(encoded.as_deref())
     };
 
-    let data = match format {
+    let files = match format {
         ImageFormat::Debug => {
             let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
             let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
             draw(output.clone(), HColor::WHITE);
-            output
-                .borrow()
-                .document(&DebugHeader {
-                    dimension,
-                    scale_factor,
-                    seed: settings.seed,
-                    svg_link_target: settings.svg_link_target.clone(),
-                    hover_path_color_rgb: None,
-                    preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
-                })
-                .into_bytes()
+            vec![
+                output
+                    .borrow()
+                    .document(&DebugHeader {
+                        dimension,
+                        scale_factor,
+                        seed: settings.seed,
+                        svg_link_target: settings.svg_link_target.clone(),
+                        hover_path_color_rgb: None,
+                        preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
+                    })
+                    .into_bytes(),
+            ]
         }
-        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg(false).into_bytes(),
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => vec![svg(false).into_bytes()],
         ImageFormat::Png => {
             let limit = image_size_limit(host);
             // A gradient is painted by the drawing itself.
@@ -353,23 +397,26 @@ pub fn export_image(
                 HColor::Simple(_) => backcolor.to_color(settings.color_mapper),
                 _ => HColor::NONE.as_xcolor(),
             };
-            png::rasterize(
-                &svg(true),
-                (
-                    ((dimension.width * scale_factor) as u32).min(limit),
-                    ((dimension.height * scale_factor) as u32).min(limit),
-                ),
-                png_back_color,
-                fonts,
-                source_metadata.as_deref(),
-            )
+            let size = (
+                ((dimension.width * scale_factor) as u32).min(limit),
+                ((dimension.height * scale_factor) as u32).min(limit),
+            );
+            let metadata = source_metadata.as_deref();
+            match settings.split.as_ref().filter(|_| cut) {
+                Some(split) => {
+                    png::rasterize_pieces(&svg(true), size, png_back_color, fonts, metadata, split)
+                }
+                None => vec![png::rasterize(
+                    &svg(true),
+                    size,
+                    png_back_color,
+                    fonts,
+                    metadata,
+                )],
+            }
         }
     };
-    Ok(ExportedImage {
-        data,
-        width: dimension.width as i32,
-        height: dimension.height as i32,
-    })
+    Ok((files, dimension.width as i32, dimension.height as i32))
 }
 
 /// PlantUML crops images to `PLANTUML_LIMIT_SIZE` pixels each way. rockuml also refuses limits that would make

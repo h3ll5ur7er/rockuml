@@ -15,7 +15,7 @@ use super::common_commands::{
     add_common_commands2, add_common_hides, add_common_scale_commands, add_title_commands,
 };
 use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram, EntityDiagram};
-use super::cuca_commands::{self, note};
+use super::cuca_commands::{self, Newpaged, note, on_each_page};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
@@ -33,6 +33,7 @@ pub(super) struct ClassDiagram {
     diagram: AbstractClassOrObjectDiagram,
     /// Description elements may appear among the classes.
     allow_mixing: bool,
+    previous_pages: Vec<ClassDiagram>,
 }
 
 /// Reads class and object diagrams (PlantUML's `ClassDiagramFactory`).
@@ -49,6 +50,7 @@ impl CommandFactory for ClassDiagramFactory {
             source: source.clone(),
             diagram: AbstractClassOrObjectDiagram::new(titled),
             allow_mixing: false,
+            previous_pages: Vec::new(),
         }
     }
 
@@ -118,8 +120,14 @@ impl AbstractDiagram for ClassDiagram {
         self.diagram.cuca.starting_pass();
     }
 
-    /// Links between the same entities all get the length 1 if one of them has it.
     fn check_final_error(&mut self) -> Option<String> {
+        on_each_page(self, Self::check_page_final_error)
+    }
+}
+
+impl ClassDiagram {
+    /// Links between the same entities all get the length 1 if one of them has it.
+    fn check_page_final_error(&mut self) -> Option<String> {
         let cuca = &mut self.diagram.cuca;
         let links = cuca.get_link_ids().to_vec();
         for &link in &links {
@@ -143,6 +151,20 @@ impl AbstractDiagram for ClassDiagram {
         }
         cuca.apply_single_strategy();
         None
+    }
+}
+
+impl Newpaged for ClassDiagram {
+    fn create_empty_diagram(&self) -> Self {
+        ClassDiagramFactory::create_empty_diagram(&self.source)
+    }
+
+    fn previous_pages(&mut self) -> &mut Vec<Self> {
+        &mut self.previous_pages
+    }
+
+    fn previous_pages_ref(&self) -> &[Self] {
+        &self.previous_pages
     }
 }
 
@@ -173,17 +195,31 @@ impl Diagram for ClassDiagram {
 
     fn text_block(
         &self,
-        _page: usize,
+        page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let drawing = self.diagram.cuca.get_text_block(string_bounder.as_ref())?;
-        Ok(self.diagram.cuca.titled.add_chrome(drawing, string_bounder))
+        let cuca = &self.page(page).diagram.cuca;
+        let drawing = cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(cuca.titled.add_chrome(drawing, string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
-        self.diagram
+    fn page_count(&self) -> usize {
+        self.previous_pages.len() + 1
+    }
+
+    fn export_settings(&self, page: usize) -> ExportSettings {
+        let settings = self
+            .page(page)
+            .diagram
             .cuca
             .titled
-            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
+            .export_settings(self.source.seed(), CucaDiagram::get_default_margins());
+        // PlantUML exports diagrams with several pages page by page, without cutting them.
+        let split = if self.previous_pages.is_empty() {
+            settings.split
+        } else {
+            None
+        };
+        ExportSettings { split, ..settings }
     }
 }

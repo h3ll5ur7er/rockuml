@@ -8,7 +8,6 @@ use regex::Regex;
 use super::ClassDiagram;
 use crate::abel::{EntityId, GroupType, LeafType, Link, LinkArg};
 use crate::color::ColorType;
-use crate::command::unported::{self, NotPortedCommands};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
@@ -510,19 +509,26 @@ pub(super) fn allow_mixing() -> Box<dyn Command<ClassDiagram>> {
     )))
 }
 
-/// PlantUML's `CommandCreateElementParenthesis`.
-pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandCreateElementParenthesis",
-        RegexTree::concat(vec![
+/// PlantUML's `CommandCreateElementParenthesis`: `() Name`, an interface drawn as a circle.
+pub(super) fn create_element_parenthesis() -> Box<dyn Command<ClassDiagram>> {
+    Box::new(SingleLine(CreateElementParenthesis(RegexTree::concat(
+        vec![
             RegexTree::start(),
             RegexTree::leaf(r"\(\)[%s]+"),
             color::optional_pattern("COLOR2"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::or(vec![
-                RegexTree::named(1, "CODE1", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])"),
+                RegexTree::named(
+                    1,
+                    "CODE1",
+                    r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])",
+                ),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY2", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY2",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE2", r"(\<\<.+\>\>)"),
@@ -530,10 +536,18 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_zero_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE2", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE2",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "CODE3", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE3",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE3", r"(\<\<.+\>\>)"),
@@ -541,10 +555,18 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_one_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_zero_or_more(),
-                    RegexTree::named(1, "DISPLAY3", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY3",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY4", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%pLN_.]+)"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY4",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%pLN_.]+)",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE4", r"(\<\<.+\>\>)"),
@@ -552,7 +574,11 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_zero_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE4", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE4",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
             ]),
             RegexTree::optional(RegexTree::concat(vec![
@@ -564,10 +590,62 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
             RegexTree::spaces_zero_or_more(),
             color::optional_pattern("COLOR"),
             RegexTree::end(),
-        ]),
-    )
-    .forbidding(is_bare_name)
-    .boxed()
+        ],
+    ))))
+}
+
+struct CreateElementParenthesis(RegexTree);
+
+impl SingleLineCommand<ClassDiagram> for CreateElementParenthesis {
+    fn pattern(&self) -> &RegexTree {
+        &self.0
+    }
+
+    fn is_forbidden(&self, line: &str) -> bool {
+        is_bare_name(line)
+    }
+
+    fn execute_arg(
+        &self,
+        diagram: &mut ClassDiagram,
+        location: &LineLocation,
+        arg: &RegexResult,
+    ) -> CommandResult {
+        let code_raw = arg.get_lazzy("CODE", 0).unwrap_or_default();
+        let cuca = diagram.cuca();
+        let quark = cuca.quark_in_context(false, ClassDiagram::clean_id(code_raw))?;
+        let name = cuca.quark(quark).get_name().to_owned();
+        if cuca.quark(quark).get_data().is_some() {
+            return Err(CommandError::new(format!(
+                "This element ({name}) is already defined"
+            )));
+        }
+        let display = arg.get_lazzy("DISPLAY", 0).unwrap_or(&name);
+        let display = Display::with_newlines(without_quotes_or_brackets(display));
+        let stereotype = arg
+            .get_lazzy("STEREOTYPE", 0)
+            .map(Stereotype::with_spot)
+            .transpose()?;
+        let back = back_color(arg)?;
+        let usymbol = USymbols::from_string_skin_param("interface", cuca.skin());
+        let entity = cuca.really_create_leaf(
+            Some(location),
+            quark,
+            display.clone(),
+            LeafType::Description,
+        );
+        let entity = cuca.entity_mut(entity);
+        entity.usymbol = usymbol;
+        entity.display = display;
+        if stereotype.is_some() {
+            entity.stereotype = stereotype;
+        }
+        if let Some(url) = url_of(arg) {
+            entity.url = Some(url);
+        }
+        entity.colors = entity.colors.with(ColorType::Back, back);
+        Ok(())
+    }
 }
 
 /// PlantUML's `CommandLayoutNewLine`, which counts rows that nothing lays out by.

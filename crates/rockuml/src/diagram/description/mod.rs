@@ -11,7 +11,7 @@ use std::rc::Rc;
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
 use super::cuca::{CucaDiagram, EntityDiagram};
-use super::cuca_commands::{self, note};
+use super::cuca_commands::{self, Newpaged, note, on_each_page};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
@@ -29,6 +29,7 @@ use crate::text::without_quotes_or_brackets;
 pub(super) struct DescriptionDiagram {
     source: Rc<UmlSource>,
     cuca: CucaDiagram,
+    previous_pages: Vec<DescriptionDiagram>,
 }
 
 /// Reads usecase, component and deployment diagrams (PlantUML's `DescriptionDiagramFactory`).
@@ -44,6 +45,7 @@ impl CommandFactory for DescriptionDiagramFactory {
         DescriptionDiagram {
             source: source.clone(),
             cuca: CucaDiagram::new(titled),
+            previous_pages: Vec::new(),
         }
     }
 
@@ -139,8 +141,21 @@ impl AbstractDiagram for DescriptionDiagram {
         self.cuca.starting_pass();
     }
 
-    /// Names only links mention are actors in use case diagrams, and interfaces elsewhere.
     fn make_diagram_ready(&mut self) {
+        on_each_page(self, |page| {
+            page.make_page_ready();
+            None
+        });
+    }
+
+    fn check_final_error(&mut self) -> Option<String> {
+        on_each_page(self, Self::check_page_final_error)
+    }
+}
+
+impl DescriptionDiagram {
+    /// Names only links mention are actors in use case diagrams, and interfaces elsewhere.
+    fn make_page_ready(&mut self) {
         let default_symbol = if self.is_usecase() {
             self.cuca.skin().actor_style().to_u_symbol()
         } else {
@@ -155,7 +170,7 @@ impl AbstractDiagram for DescriptionDiagram {
         }
     }
 
-    fn check_final_error(&mut self) -> Option<String> {
+    fn check_page_final_error(&mut self) -> Option<String> {
         if self
             .cuca
             .titled
@@ -166,6 +181,20 @@ impl AbstractDiagram for DescriptionDiagram {
         }
         self.cuca.apply_single_strategy();
         None
+    }
+}
+
+impl Newpaged for DescriptionDiagram {
+    fn create_empty_diagram(&self) -> Self {
+        DescriptionDiagramFactory::create_empty_diagram(&self.source)
+    }
+
+    fn previous_pages(&mut self) -> &mut Vec<Self> {
+        &mut self.previous_pages
+    }
+
+    fn previous_pages_ref(&self) -> &[Self] {
+        &self.previous_pages
     }
 }
 
@@ -190,16 +219,30 @@ impl Diagram for DescriptionDiagram {
 
     fn text_block(
         &self,
-        _page: usize,
+        page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
-        Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
+        let cuca = &self.page(page).cuca;
+        let drawing = cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(cuca.titled.add_chrome(drawing, string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
-        self.cuca
+    fn page_count(&self) -> usize {
+        self.previous_pages.len() + 1
+    }
+
+    fn export_settings(&self, page: usize) -> ExportSettings {
+        let settings = self
+            .page(page)
+            .cuca
             .titled
-            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
+            .export_settings(self.source.seed(), CucaDiagram::get_default_margins());
+        // PlantUML exports diagrams with several pages page by page, without cutting them.
+        let split = if self.previous_pages.is_empty() {
+            settings.split
+        } else {
+            None
+        };
+        ExportSettings { split, ..settings }
     }
 }

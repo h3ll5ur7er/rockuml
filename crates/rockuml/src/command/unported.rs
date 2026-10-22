@@ -21,27 +21,13 @@ pub(crate) trait NotPortedCommands {
 pub(crate) struct Unported {
     name: &'static str,
     pattern: RegexTree,
-    forbidden: Option<fn(&str) -> bool>,
 }
 
 pub(crate) fn single_line(name: &'static str, pattern: RegexTree) -> Unported {
-    Unported {
-        name,
-        pattern,
-        forbidden: None,
-    }
+    Unported { name, pattern }
 }
 
 impl Unported {
-    /// Lines `forbidden` holds for are accepted, and fail as syntax errors when executed.
-    #[must_use]
-    pub(crate) fn forbidding(self, forbidden: fn(&str) -> bool) -> Self {
-        Self {
-            forbidden: Some(forbidden),
-            ..self
-        }
-    }
-
     pub(crate) fn boxed<D: NotPortedCommands>(self) -> Box<dyn Command<D>> {
         Box::new(SingleLine(self))
     }
@@ -55,10 +41,6 @@ impl<D: NotPortedCommands> SingleLineCommand<D> for Unported {
     fn execute_arg(&self, diagram: &mut D, _: &LineLocation, _: &RegexResult) -> CommandResult {
         diagram.command_not_ported(self.name);
         Ok(())
-    }
-
-    fn is_forbidden(&self, line: &str) -> bool {
-        self.forbidden.is_some_and(|forbidden| forbidden(line))
     }
 }
 

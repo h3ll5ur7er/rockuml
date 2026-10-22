@@ -1,0 +1,6 @@
+@startuml
+<style file=style-import.css>
+actor Neo
+usecase "Take the red pill" as red
+Neo --> red
+@enduml

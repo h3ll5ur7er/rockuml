@@ -1,0 +1,130 @@
+DPI: 96
+dimension: [ 223.0000 ; 151.0000 ]
+scaleFactor: 1.0000
+seed: -4812145845278945609
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity ds
+RECTANGLE:
+  pt1: [ 23.0000 ; 12.0000 ]
+  pt2: [ 191.1145 ; 56.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 171.1145 ; 17.0000 ]
+  pt2: [ 186.1145 ; 27.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 169.1145 ; 19.0000 ]
+  pt2: [ 173.1145 ; 21.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 169.1145 ; 23.0000 ]
+  pt2: [ 173.1145 ; 25.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Death Star
+  position: [ 38.0000 ; 42.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity port
+RECTANGLE:
+  pt1: [ 6.0000 ; 92.0000 ]
+  pt2: [ 207.6100 ; 136.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 187.6100 ; 97.0000 ]
+  pt2: [ 202.6100 ; 107.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 185.6100 ; 99.0000 ]
+  pt2: [ 189.6100 ; 101.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 185.6100 ; 103.0000 ]
+  pt2: [ 189.6100 ; 105.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Exhaust port
+  position: [ 21.0000 ; 122.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 107.0000 ; 91.9820 ]
+   - [ 111.0000 ; 82.9820 ]
+   - [ 107.0000 ; 86.9820 ]
+   - [ 103.0000 ; 82.9820 ]
+   - [ 107.0000 ; 91.9820 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 101.0000 ; 50.3138 ]
+   - type: SEG_CUBICTO
+     pt1: [ 101.0000 ; 61.4100 ]
+     pt2: [ 101.0000 ; 69.9294 ]
+     pt3: [ 101.0000 ; 80.9820 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

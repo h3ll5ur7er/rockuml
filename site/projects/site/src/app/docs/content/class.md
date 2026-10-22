@@ -257,6 +257,18 @@ CentralPerk ()- Gunther : serves coffee
 @enduml
 ```
 
+`()` before a name declares such an interface on its own, drawn as a circle, with a display name, a stereotype and a colour if you like:
+
+```rockuml
+@startuml
+class Fry
+() Delivery
+() "Planet Express" as pe <<company>> #FFD700
+Fry --> Delivery
+Fry --> pe
+@enduml
+```
+
 ### Relation styles and directions
 
 Like other links, relations take colours and styles, `#red;line.dashed`, and directions: `-up-|>`, `-left->`. `left to right direction` turns the whole layout.
