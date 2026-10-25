@@ -96,6 +96,7 @@ impl Ftile for FtileDiamondSquare {
         let wip = &self.wip;
         let ug = wip.styled(ug);
         ug.draw(&hexagon::as_polygon_square(
+            wip.shadowing,
             dim_total.width,
             dim_total.height,
         ));

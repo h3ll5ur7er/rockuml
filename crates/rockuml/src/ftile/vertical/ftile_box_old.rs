@@ -19,6 +19,7 @@ pub(crate) struct FtileBoxOld {
     tb: SheetBlock2,
     sheet: Rc<SheetBlock1>,
     round_corner: f64,
+    shadowing: f64,
     horizontal_alignment: Option<HorizontalAlignment>,
     /// Shared with the stencil; a work breakdown widens boxes to match their siblings'.
     minimum_width: Rc<Cell<f64>>,
@@ -82,6 +83,7 @@ impl FtileBoxOld {
             tb: SheetBlock2::with_stencil(sheet.clone(), stencil, UStroke::with_thickness(1.0)),
             sheet,
             round_corner: style.value(PName::RoundCorner).as_double(),
+            shadowing: style.shadowing(),
             horizontal_alignment,
             minimum_width,
             box_style,
@@ -134,8 +136,13 @@ impl TextBlock for FtileBoxOld {
             .apply(self.border_color.clone())
             .with_backcolor(self.back_color.clone())
             .apply(self.stroke);
-        self.box_style
-            .draw_me(&ug, dim_total.width, dim_total.height, self.round_corner);
+        self.box_style.draw_me(
+            &ug,
+            dim_total.width,
+            dim_total.height,
+            self.shadowing,
+            self.round_corner,
+        );
         // PlantUML draws no text for an alignment it does not know.
         match self.horizontal_alignment {
             Some(HorizontalAlignment::Left) => self.tb.draw_u(&ug),

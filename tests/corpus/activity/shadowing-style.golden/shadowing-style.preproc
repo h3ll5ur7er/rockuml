@@ -1,0 +1,35 @@
+@startuml
+<style>
+activityDiagram {
+  Shadowing 3
+}
+</style>
+start
+note: alone
+:Read the sensor; <<input>>
+:Send the alarm; <<output>>
+:Compute; <<procedure>>
+:Load; <<load>>
+:Save; <<save>>
+:Poll; <<continuous>>
+:Task; <<task>>
+:Order placed; <<objectSignal>>
+:Payment; <<acceptEvent>>
+:Every hour; <<timeEvent>>
+if (ready?) then (yes)
+  note left: left note
+  :go;
+else (no)
+  note right: right note
+  :wait;
+endif
+while (more?) is (yes)
+  :work;
+  floating note right: floating
+endwhile (no)
+(A)
+detach
+(A)
+:resume;
+end
+@enduml

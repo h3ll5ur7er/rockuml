@@ -108,7 +108,9 @@ impl Ftile for FtileBlackBlock {
         let color_bar = self.colors.get_color_of(&style, PName::BackGroundColor);
         ug.apply(color_bar.clone())
             .with_backcolor(color_bar)
-            .draw(&UShape::Rectangle(rect));
+            .draw(&UShape::Rectangle(
+                rect.with_delta_shadow(style.shadowing()),
+            ));
         if let Some(label) = &self.label {
             let dim_label = label.calculate_dimension(ug.string_bounder());
             label.draw_u(&ug.apply(UTranslate::new(

@@ -85,7 +85,8 @@ impl FtileWithNoteOpale {
             Box::new(text),
             style.stroke(),
             0.0,
-        );
+        )
+        .with_shadowing(style.shadowing());
         Self {
             tile,
             opale,

@@ -113,8 +113,15 @@ impl BoxStyle {
             .map(|name| Stereotype::new(&format!("<<{name}>>")))
     }
 
-    /// Draws the outline of a box `width` wide, less the shield (`drawMe`). PlantUML's shadow is not drawn.
-    pub(crate) fn draw_me(self, ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
+    /// Draws the outline of a box `width` wide, less the shield (`drawMe`).
+    pub(crate) fn draw_me(
+        self,
+        ug: &UGraphic,
+        width: f64,
+        height: f64,
+        shadowing: f64,
+        round_corner: f64,
+    ) {
         let width = width - self.get_shield();
         let input = || {
             UShape::polygon(vec![
@@ -139,7 +146,9 @@ impl BoxStyle {
             Self::SdlInput | Self::UmlTrigger => input(),
             Self::SdlOutput | Self::UmlSendSignal => output(),
             Self::SdlProcedure => {
-                ug.draw(&UShape::Rectangle(URectangle::new(width, height)));
+                ug.draw(&UShape::Rectangle(
+                    URectangle::new(width, height).with_delta_shadow(shadowing),
+                ));
                 let vline = UShape::Line {
                     dx: 0.0,
                     dy: height,
@@ -195,13 +204,51 @@ impl BoxStyle {
                 ])
             }
         };
-        ug.draw(&shape);
+        ug.draw(&shape.with_delta_shadow(shadowing));
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
     use super::*;
+    use crate::color::HColor;
+    use crate::klimt::debug::StringBounderDebug;
+    use crate::klimt::ugraphic::{UGraphicBackend, UParam};
+
+    /// The shadow of each shape drawn, by its PlantUML class.
+    #[derive(Default)]
+    struct Shadows(Vec<(&'static str, f64)>);
+
+    impl UGraphicBackend for Shadows {
+        fn draw(&mut self, shape: &UShape, _at: UTranslate, _param: &UParam) {
+            self.0.push((shape.java_class_name(), shape.delta_shadow()));
+        }
+    }
+
+    fn shadows_drawn(style: BoxStyle, round_corner: f64) -> Vec<(&'static str, f64)> {
+        let shadows = Rc::new(RefCell::new(Shadows::default()));
+        let ug = UGraphic::new(shadows.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
+        style.draw_me(&ug, 100.0, 40.0, 3.0, round_corner);
+        shadows.take().0
+    }
+
+    #[test]
+    fn outlines_cast_the_shadow_even_when_rounded() {
+        for style in BoxStyle::VALUES {
+            assert_eq!(shadows_drawn(style, 25.0)[0].1, 3.0, "{style:?}");
+        }
+    }
+
+    #[test]
+    fn the_lines_of_a_procedure_cast_none() {
+        assert_eq!(
+            shadows_drawn(BoxStyle::SdlProcedure, 0.0),
+            [("URectangle", 3.0), ("ULine", 0.0), ("ULine", 0.0)]
+        );
+    }
 
     #[test]
     fn styles_are_found_by_stereotype_ignoring_case_and_dashes() {

@@ -32,6 +32,7 @@ pub(crate) struct FtileGroup {
     border_color: HColor,
     back_color: HColor,
     stroke: UStroke,
+    shadowing: f64,
     type_: USymbol,
     round_corner: f64,
     cached_inner_dimension: OnceCell<FtileGeometry>,
@@ -72,6 +73,7 @@ impl FtileGroup {
             back_color: back_color
                 .unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
             stroke: style.stroke(),
+            shadowing: style.shadowing(),
             type_,
             round_corner: style.value(PName::RoundCorner).as_double(),
             cached_inner_dimension: OnceCell::new(),
@@ -180,6 +182,7 @@ impl Ftile for FtileGroup {
         let string_bounder = ug.string_bounder();
         let dim_total = self.calculate_dimension(string_bounder);
         let fashion = Fashion::new(self.back_color.clone(), self.border_color.clone())
+            .with_delta_shadow(self.shadowing)
             .with_stroke(self.stroke)
             .with_corner(self.round_corner, 0.0);
         let frame = self.type_.as_big(
