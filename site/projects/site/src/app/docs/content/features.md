@@ -67,18 +67,18 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Diagram | Status | Reference diagrams | Notes | In PlantUML |
 |---|---|---|---|---|
-| [Sequence diagrams](docs/sequence) | ✅ Ported | 91 of 91 match PlantUML |  | `SequenceDiagramFactory` |
-| [Class and object diagrams](docs/class) | ✅ Ported | 82 of 82 match PlantUML |  | `ClassDiagramFactory` |
-| [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 77 of 77 match PlantUML |  | `DescriptionDiagramFactory` |
-| [State diagrams](docs/state) | ✅ Ported | 35 of 35 match PlantUML |  | `StateDiagramFactory` |
-| [Activity diagrams](docs/activity) | ✅ Ported | 106 of 106 match PlantUML |  | `ActivityDiagramFactory3` |
+| [Sequence diagrams](docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
+| [Class and object diagrams](docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
+| [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
+| [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
+| [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
 | [Wireframes (Salt)](docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
-| [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 12 of 12 match PlantUML |  | `NwDiagramFactory` |
-| [Mind maps](docs/mindmap) | ✅ Ported | 19 of 19 match PlantUML |  | `MindMapDiagramFactory` |
-| [Work breakdown structures](docs/wbs) | ✅ Ported | 17 of 17 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
+| [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
+| [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
+| [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
 | [Creole text (`@startcreole`)](docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
-| [Gantt charts](docs/gantt) | ✅ Ported | 22 of 22 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
-| [Timing diagrams](docs/timing) | ✅ Ported | 20 of 20 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
+| [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
+| [Timing diagrams](docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
 | [YAML data](docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |

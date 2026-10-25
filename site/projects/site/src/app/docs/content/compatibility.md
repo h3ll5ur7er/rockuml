@@ -43,7 +43,7 @@ The [feature status](docs/features) lists every diagram type, command, function,
 | Output formats | PDF, EPS, LaTeX, ASCII art (`-ttxt`, `-tutxt`), HTML, SCXML, XMI, VDX and braille |
 | Gantt charts | working hours (`from 9:00 to 17:00 are working hours`) |
 | Salt | the `salt` keyword inside `@startuml`, and `{{ … }}` diagrams embedded in notes or labels |
-| Drawing | handwritten drawing (`!option handwritten true`), and shadows (`skinparam shadowing true`, the `Shadowing` style property, the `rose` skin's shadows) |
+| Drawing | handwritten drawing (`!option handwritten true`) |
 | Command line | `-pipemap`, `--verbose`, `-stdlib`, `--list-keywords`, compressed sprites |
 
 A diagram type that isn't ported yet is reported with a message and exit status 1, never drawn wrong. The rest is ordered by what people use; the [plan](https://github.com/h3ll5ur7er/rockuml/blob/main/PLAN.md) in the repository says what comes next.

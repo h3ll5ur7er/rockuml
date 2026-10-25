@@ -69,18 +69,18 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Diagram | Status | Reference diagrams | Notes | In PlantUML |
 |---|---|---|---|---|
-| [Sequence diagrams](https://h3ll5ur7er.github.io/rockuml/docs/sequence) | ✅ Ported | 91 of 91 match PlantUML |  | `SequenceDiagramFactory` |
-| [Class and object diagrams](https://h3ll5ur7er.github.io/rockuml/docs/class) | ✅ Ported | 82 of 82 match PlantUML |  | `ClassDiagramFactory` |
-| [Use case, component, deployment and ArchiMate diagrams](https://h3ll5ur7er.github.io/rockuml/docs/component) | ✅ Ported | 77 of 77 match PlantUML |  | `DescriptionDiagramFactory` |
-| [State diagrams](https://h3ll5ur7er.github.io/rockuml/docs/state) | ✅ Ported | 35 of 35 match PlantUML |  | `StateDiagramFactory` |
-| [Activity diagrams](https://h3ll5ur7er.github.io/rockuml/docs/activity) | ✅ Ported | 106 of 106 match PlantUML |  | `ActivityDiagramFactory3` |
+| [Sequence diagrams](https://h3ll5ur7er.github.io/rockuml/docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
+| [Class and object diagrams](https://h3ll5ur7er.github.io/rockuml/docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
+| [Use case, component, deployment and ArchiMate diagrams](https://h3ll5ur7er.github.io/rockuml/docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
+| [State diagrams](https://h3ll5ur7er.github.io/rockuml/docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
+| [Activity diagrams](https://h3ll5ur7er.github.io/rockuml/docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
 | [Wireframes (Salt)](https://h3ll5ur7er.github.io/rockuml/docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
-| [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | ✅ Ported | 12 of 12 match PlantUML |  | `NwDiagramFactory` |
-| [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | ✅ Ported | 19 of 19 match PlantUML |  | `MindMapDiagramFactory` |
-| [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | ✅ Ported | 17 of 17 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
+| [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
+| [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
+| [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
 | [Creole text (`@startcreole`)](https://h3ll5ur7er.github.io/rockuml/docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
-| [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | ✅ Ported | 22 of 22 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
-| [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 20 of 20 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
+| [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
+| [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](https://h3ll5ur7er.github.io/rockuml/docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
 | [YAML data](https://h3ll5ur7er.github.io/rockuml/docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |

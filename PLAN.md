@@ -633,8 +633,12 @@ Measured in the reference sources, about 45k Java lines in four groups. Each pha
 examples of the PlantUML language reference. Goldens can be generated on Linux (`tools/oracle/setup-linux-jdk.sh`).
 
 ### Phase 17 — Shadows
-- `Shadowing`, `skinparam shadowing`, the `rose` skin: the blurred shadows PlantUML draws under shapes, in SVG
-  (`filter`) and PNG. BPM and legacy activity diagrams draw them too.
+- **Status: done.** `Shadowing`, `skinparam shadowing` and the `rose` skin draw PlantUML's blurred shadows, in SVG
+  (`filter`) and PNG, in every ported diagram that has them. 21 shadowing cases and the `rose` skin case pass every output, except the class
+  case's font-measured SVG, whose glyph outlines differ as in every class diagram.
+  - Rectangles, ellipses, polygons and paths carry `deltaShadow`. Like PlantUML, `rounded()`, `halfRounded()` and the
+    compression flags give a new shape without it, so the order of the calls matters.
+  - Legends never shadow (`TextBlockBordered` hard-codes it off); timing diagrams shadow only notes.
 
 ### Phase 18 — Legacy activity diagrams (~2.6k)
 - `(*) --> "Action"`: `ActivityDiagramFactory`, a command layer over the ported cucadiagram and Smetana.

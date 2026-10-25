@@ -382,6 +382,7 @@ debug nwdiag/group-twice.puml
 debug nwdiag/group.puml
 debug nwdiag/multiple-addresses.puml
 debug nwdiag/peer-network.puml
+debug nwdiag/shadowing.puml
 debug nwdiag/shapes.puml
 debug nwdiag/standalone.puml
 debug nwdiag/styles.puml
@@ -508,6 +509,7 @@ debug sequence/reverse-arrows.puml
 debug sequence/secondary-group.puml
 debug sequence/self-message-several-notes.puml
 debug sequence/self-messages.puml
+debug sequence/shadowing.puml
 debug sequence/short-arrows.puml
 debug sequence/skinparam-basic.puml
 debug sequence/skinparam-colors.puml
@@ -1012,6 +1014,7 @@ dsvg nwdiag/group-twice.puml
 dsvg nwdiag/group.puml
 dsvg nwdiag/multiple-addresses.puml
 dsvg nwdiag/peer-network.puml
+dsvg nwdiag/shadowing.puml
 dsvg nwdiag/shapes.puml
 dsvg nwdiag/standalone.puml
 dsvg nwdiag/styles.puml
@@ -1136,6 +1139,7 @@ dsvg sequence/reverse-arrows.puml
 dsvg sequence/secondary-group.puml
 dsvg sequence/self-message-several-notes.puml
 dsvg sequence/self-messages.puml
+dsvg sequence/shadowing.puml
 dsvg sequence/short-arrows.puml
 dsvg sequence/skinparam-basic.puml
 dsvg sequence/skinparam-colors.puml
@@ -2837,6 +2841,7 @@ svg nwdiag/group-twice.puml
 svg nwdiag/group.puml
 svg nwdiag/multiple-addresses.puml
 svg nwdiag/peer-network.puml
+svg nwdiag/shadowing.puml
 svg nwdiag/shapes.puml
 svg nwdiag/standalone.puml
 svg nwdiag/styles.puml
@@ -2960,6 +2965,7 @@ svg sequence/reverse-arrows.puml
 svg sequence/secondary-group.puml
 svg sequence/self-message-several-notes.puml
 svg sequence/self-messages.puml
+svg sequence/shadowing.puml
 svg sequence/short-arrows.puml
 svg sequence/skinparam-basic.puml
 svg sequence/skinparam-colors.puml

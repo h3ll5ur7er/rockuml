@@ -95,7 +95,7 @@ A few settings change more than colours:
 | `skinparam defaultFontName Courier` | the font of all texts |
 | `skinparam defaultFontSize 14` | the size of all texts |
 | `skinparam roundCorner 12` | rounds the corners of boxes |
-| `skinparam shadowing false` | removes shadows |
+| `skinparam shadowing true` | draws shadows under boxes (`false` removes them) |
 
 ```rockuml
 @startuml
@@ -106,6 +106,29 @@ actor Neo
 participant "The Matrix" as M
 Neo -> M : there is no spoon
 M --> Neo : wake up
+@enduml
+```
+
+### Shadows
+
+Shadows fall below and to the right of boxes, notes and figures, blurred, in SVG and PNG alike. `skinparam shadowing
+true` turns them on everywhere, the `rose` skin draws them, and the `Shadowing` style property sets them for one kind
+of element:
+
+```rockuml
+@startuml
+skinparam shadowing true
+<style>
+note {
+  Shadowing 0
+}
+</style>
+actor Frodo
+participant "The Ring" as Ring
+database Mordor
+Frodo -> Ring : put on
+Ring -> Mordor : here I am
+note right of Ring : no shadow, it hides
 @enduml
 ```
 
@@ -179,7 +202,7 @@ The common properties are:
 | `Padding`, `Margin` | `8` |
 | `MaximumWidth` | `150` (wraps longer texts) |
 | `HorizontalAlignment` | `left`, `center`, `right` |
-| `Shadowing` | `0` for none |
+| `Shadowing` | `4` (how far the shadow falls), `0` for none |
 
 ### Stereotypes
 
