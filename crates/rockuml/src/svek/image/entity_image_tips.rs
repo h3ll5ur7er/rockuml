@@ -61,7 +61,8 @@ impl EntityImageTips {
                     text_block,
                     style.stroke(),
                     0.0,
-                );
+                )
+                .with_shadowing(style.shadowing());
                 (member.clone(), opale)
             })
             .collect();

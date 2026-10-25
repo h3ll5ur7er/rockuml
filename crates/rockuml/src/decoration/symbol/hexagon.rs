@@ -32,22 +32,30 @@ impl TextBlock for SmallHexagon {
     }
 }
 
-fn draw_rect(ug: &UGraphic, width: f64, height: f64) {
+fn draw_rect(ug: &UGraphic, width: f64, height: f64, shadowing: f64) {
     let dx = width / 8.0;
-    ug.draw(&UShape::path(vec![
-        USegment::MoveTo(0.0, height / 2.0),
-        USegment::LineTo(dx, 0.0),
-        USegment::LineTo(width - dx, 0.0),
-        USegment::LineTo(width, height / 2.0),
-        USegment::LineTo(width - dx, height),
-        USegment::LineTo(dx, height),
-        USegment::LineTo(0.0, height / 2.0),
-    ]));
+    ug.draw(
+        &UShape::path(vec![
+            USegment::MoveTo(0.0, height / 2.0),
+            USegment::LineTo(dx, 0.0),
+            USegment::LineTo(width - dx, 0.0),
+            USegment::LineTo(width, height / 2.0),
+            USegment::LineTo(width - dx, height),
+            USegment::LineTo(dx, height),
+            USegment::LineTo(0.0, height / 2.0),
+        ])
+        .with_delta_shadow(shadowing),
+    );
 }
 
 impl BigShape for USymbolHexagon {
     fn draw_big(&self, ug: &UGraphic, content: &BigContent) {
-        draw_rect(ug, content.width, content.height);
+        draw_rect(
+            ug,
+            content.width,
+            content.height,
+            content.fashion.delta_shadow,
+        );
         content.draw_stereotype_top_and_title(
             ug,
             Margin::new(10.0, 10.0, 10.0, 10.0),

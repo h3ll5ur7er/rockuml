@@ -16,7 +16,9 @@ impl SmallShape for USymbolComponent1 {
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
         ug.draw(&UShape::Rectangle(
-            URectangle::new(dimension.width, dimension.height).rounded(fashion.round_corner),
+            URectangle::new(dimension.width, dimension.height)
+                .rounded(fashion.round_corner)
+                .with_delta_shadow(fashion.delta_shadow),
         ));
         let small = UShape::Rectangle(URectangle::new(10.0, 5.0));
         ug.translated(-5.0, 5.0).draw(&small);

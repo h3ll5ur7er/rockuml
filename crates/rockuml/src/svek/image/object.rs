@@ -38,6 +38,7 @@ pub(crate) struct EntityImageObject {
     group: UGroup,
     round_corner: f64,
     minimum_width: f64,
+    shadowing: f64,
     border_color: HColor,
     header_backcolor: HColor,
     backcolor: HColor,
@@ -130,6 +131,7 @@ impl EntityImageObject {
             group: entity_group(entity, diagram, "entity", entity.get_location()),
             round_corner: style.value(PName::RoundCorner).as_double(),
             minimum_width: style.value(PName::MinimumWidth).as_double(),
+            shadowing: style.shadowing(),
             border_color: style.value(PName::LineColor).as_color(),
             header_backcolor,
             backcolor: backcolor.unwrap_or_else(|| style.value(PName::BackGroundColor).as_color()),
@@ -206,7 +208,9 @@ impl TextBlock for EntityImageObject {
         }
         ug.start_group(&self.group);
         ug.with_stroke(self.stroke).draw(&UShape::Rectangle(
-            URectangle::new(total.width, total.height).rounded(self.round_corner),
+            URectangle::new(total.width, total.height)
+                .rounded(self.round_corner)
+                .with_delta_shadow(self.shadowing),
         ));
         if self.backcolor != self.header_backcolor {
             ug.with_backcolor(self.header_backcolor.clone())

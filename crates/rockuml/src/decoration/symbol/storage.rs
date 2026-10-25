@@ -8,9 +8,11 @@ use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolStorage;
 
-fn draw_storage(ug: &UGraphic, width: f64, height: f64) {
+fn draw_storage(ug: &UGraphic, width: f64, height: f64, shadowing: f64) {
     ug.draw(&UShape::Rectangle(
-        URectangle::new(width, height).rounded(70.0),
+        URectangle::new(width, height)
+            .rounded(70.0)
+            .with_delta_shadow(shadowing),
     ));
 }
 
@@ -19,14 +21,19 @@ impl SmallShape for USymbolStorage {
         Margin::new(10.0, 10.0, 10.0, 10.0)
     }
 
-    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, _fashion: &Fashion) {
-        draw_storage(ug, dimension.width, dimension.height);
+    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
+        draw_storage(ug, dimension.width, dimension.height, fashion.delta_shadow);
     }
 }
 
 impl BigShape for USymbolStorage {
     fn draw_big(&self, ug: &UGraphic, content: &BigContent) {
-        draw_storage(ug, content.width, content.height);
+        draw_storage(
+            ug,
+            content.width,
+            content.height,
+            content.fashion.delta_shadow,
+        );
         let string_bounder = ug.string_bounder();
         let dim_stereo = content.stereotype.calculate_dimension(string_bounder);
         content

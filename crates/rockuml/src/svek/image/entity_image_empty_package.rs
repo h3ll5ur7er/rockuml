@@ -28,6 +28,7 @@ pub(crate) struct EntityImageEmptyPackage {
     url: Option<Url>,
     border_color: HColor,
     stroke: UStroke,
+    shadowing: f64,
     round_corner: f64,
     diagonal_corner: f64,
     back: HColor,
@@ -83,6 +84,7 @@ impl EntityImageEmptyPackage {
             url: entity.url.clone(),
             border_color: style.value(PName::LineColor).as_color(),
             stroke: style.stroke_with(colors),
+            shadowing: style.shadowing(),
             round_corner: style.value(PName::RoundCorner).as_double(),
             diagonal_corner: style.value(PName::DiagonalCorner).as_double(),
             back: colors
@@ -123,6 +125,7 @@ impl TextBlock for EntityImageEmptyPackage {
             ug,
             self.back.clone(),
             self.border_color.clone(),
+            self.shadowing,
             self.round_corner,
             self.title_alignment,
             self.stereotype_alignment,

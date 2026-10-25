@@ -24,11 +24,18 @@ const MARGIN: Margin = Margin::new(10.0, 10.0 + 10.0, 10.0 + 3.0, 10.0);
 /// The size taken by the tab of a folder without a title.
 const UNTITLED: XDimension2D = XDimension2D::new(40.0, 15.0);
 
-fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, round_corner: f64) {
+fn draw_folder(
+    ug: &UGraphic,
+    width: f64,
+    height: f64,
+    dim_title: XDimension2D,
+    shadowing: f64,
+    round_corner: f64,
+) {
     let wtitle = get_w_title(width, dim_title);
     let htitle = get_h_title(dim_title);
-    if round_corner == 0.0 {
-        ug.draw(&UShape::polygon(vec![
+    let shape = if round_corner == 0.0 {
+        UShape::polygon(vec![
             (0.0, 0.0),
             (wtitle, 0.0),
             (wtitle + MARGIN_TITLE_X3, htitle),
@@ -36,10 +43,10 @@ fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, 
             (width, height),
             (0.0, height),
             (0.0, 0.0),
-        ]));
+        ])
     } else {
         let r = round_corner / 2.0;
-        ug.draw(&UShape::path(vec![
+        UShape::path(vec![
             USegment::MoveTo(r, 0.0),
             USegment::LineTo(wtitle - r, 0.0),
             USegment::arc_to((wtitle, r), r * 1.5, true),
@@ -52,8 +59,9 @@ fn draw_folder(ug: &UGraphic, width: f64, height: f64, dim_title: XDimension2D, 
             USegment::arc_to((0.0, height - r), r, true),
             USegment::LineTo(0.0, r),
             USegment::arc_to((r, 0.0), r, true),
-        ]));
-    }
+        ])
+    };
+    ug.draw(&shape.with_delta_shadow(shadowing));
     ug.translated(0.0, htitle).draw(&UShape::Line {
         dx: wtitle + MARGIN_TITLE_X3,
         dy: 0.0,
@@ -150,6 +158,7 @@ impl TextBlock for SmallFolder {
             dimension.width,
             dimension.height,
             dim_title,
+            self.content.fashion.delta_shadow,
             self.content.fashion.round_corner,
         );
         if self.show_title {
@@ -183,6 +192,7 @@ impl BigShape for USymbolFolder {
             content.width,
             content.height,
             dim_title,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.title.draw_u(&ug.translated(4.0, 2.0));

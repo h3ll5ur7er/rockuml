@@ -231,6 +231,24 @@ impl SkinParam {
         self.value_is("style", "strictuml")
     }
 
+    /// `shadowing`, or `shadowing<<stereotype>>`: whether shapes the style does not shadow cast one anyway,
+    /// as they do by default unless the style is strict UML.
+    pub(crate) fn shadowing(&self, stereotype: Option<&Stereotype>) -> bool {
+        if let Some(value) = stereotype.and_then(|stereotype| {
+            self.value(&format!(
+                "shadowing{}",
+                stereotype.label_double_comparator()
+            ))
+        }) {
+            return value.eq_ignore_ascii_case("true");
+        }
+        match self.value("shadowing") {
+            Some(value) if value.eq_ignore_ascii_case("false") => false,
+            Some(value) if value.eq_ignore_ascii_case("true") => true,
+            _ => !self.strict_uml_style(),
+        }
+    }
+
     pub(crate) fn response_message_below_arrow(&self) -> bool {
         self.value_is("responsemessagebelowarrow", "true")
     }
@@ -551,6 +569,27 @@ mod tests {
         let element = StyleSignature::of(&[SName::Root, SName::Element]);
         let shadowing = skin.merged_style(&element).unwrap();
         assert_eq!(shadowing.value(PName::Shadowing).as_string(), "0.0");
+    }
+
+    #[test]
+    fn shapes_cast_shadows_unless_skinparams_or_strict_uml_say_otherwise() {
+        let shadowing = |params: &[(&str, &str)], stereotype: Option<&str>| {
+            let mut skin = SkinParam::default();
+            for (key, value) in params {
+                skin.set_param(key, value);
+            }
+            skin.shadowing(stereotype.map(Stereotype::new).as_ref())
+        };
+        assert!(shadowing(&[], None));
+        assert!(!shadowing(&[("shadowing", "false")], None));
+        assert!(!shadowing(&[("style", "strictuml")], None));
+        assert!(shadowing(
+            &[("style", "strictuml"), ("shadowing", "true")],
+            None
+        ));
+        let by_stereotype = [("shadowing", "true"), ("shadowing<<flat>>", "no")];
+        assert!(!shadowing(&by_stereotype, Some("<<flat>>")));
+        assert!(shadowing(&by_stereotype, Some("<<other>>")));
     }
 
     #[test]

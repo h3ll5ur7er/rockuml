@@ -10,7 +10,7 @@ use crate::klimt::ugraphic::UGraphic;
 pub(super) struct USymbolStack;
 
 /// The inside is filled without an outline; the outline leaves the top open.
-fn draw_stack(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
+fn draw_stack(ug: &UGraphic, width: f64, height: f64, shadowing: f64, round_corner: f64) {
     const BORDER: f64 = 15.0;
     ug.with_color(HColor::NONE)
         .translated(BORDER, 0.0)
@@ -41,7 +41,8 @@ fn draw_stack(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
             USegment::LineTo(width, 0.0),
         ]
     };
-    ug.with_backcolor(HColor::NONE).draw(&UShape::path(outline));
+    ug.with_backcolor(HColor::NONE)
+        .draw(&UShape::path(outline).with_delta_shadow(shadowing));
 }
 
 impl SmallShape for USymbolStack {
@@ -50,7 +51,13 @@ impl SmallShape for USymbolStack {
     }
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
-        draw_stack(ug, dimension.width, dimension.height, fashion.round_corner);
+        draw_stack(
+            ug,
+            dimension.width,
+            dimension.height,
+            fashion.delta_shadow,
+            fashion.round_corner,
+        );
     }
 }
 
@@ -60,6 +67,7 @@ impl BigShape for USymbolStack {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.draw_centered_stereotype_and_title(ug, 13.0);

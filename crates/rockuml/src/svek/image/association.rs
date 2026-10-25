@@ -17,6 +17,7 @@ pub(crate) struct EntityImageAssociation {
     border_color: HColor,
     background_color: HColor,
     stroke: UStroke,
+    shadow: f64,
 }
 
 impl EntityImageAssociation {
@@ -35,6 +36,7 @@ impl EntityImageAssociation {
             border_color: style.value(PName::LineColor).as_color(),
             background_color: style.value(PName::BackGroundColor).as_color(),
             stroke: style.stroke(),
+            shadow: style.shadowing(),
         }
     }
 }
@@ -52,7 +54,8 @@ impl TextBlock for EntityImageAssociation {
             (size, size * 2.0),
             (0.0, size),
             (size, 0.0),
-        ]);
+        ])
+        .with_delta_shadow(self.shadow);
         ug.with_color(self.border_color.clone())
             .with_backcolor(self.background_color.clone())
             .with_stroke(self.stroke)

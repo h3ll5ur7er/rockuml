@@ -210,43 +210,31 @@ impl BoxStyle {
 
 #[cfg(test)]
 mod tests {
-    use std::cell::RefCell;
-    use std::rc::Rc;
-
     use super::*;
-    use crate::color::HColor;
-    use crate::klimt::debug::StringBounderDebug;
-    use crate::klimt::ugraphic::{UGraphicBackend, UParam};
+    use crate::klimt::ugraphic::tests::recording;
 
-    /// The shadow of each shape drawn, by its PlantUML class.
-    #[derive(Default)]
-    struct Shadows(Vec<(&'static str, f64)>);
-
-    impl UGraphicBackend for Shadows {
-        fn draw(&mut self, shape: &UShape, _at: UTranslate, _param: &UParam) {
-            self.0.push((shape.java_class_name(), shape.delta_shadow()));
-        }
-    }
-
-    fn shadows_drawn(style: BoxStyle, round_corner: f64) -> Vec<(&'static str, f64)> {
-        let shadows = Rc::new(RefCell::new(Shadows::default()));
-        let ug = UGraphic::new(shadows.clone(), Rc::new(StringBounderDebug), HColor::WHITE);
+    fn drawn(style: BoxStyle, round_corner: f64) -> Vec<String> {
+        let (ug, recorder) = recording();
         style.draw_me(&ug, 100.0, 40.0, 3.0, round_corner);
-        shadows.take().0
+        recorder.take().lines
     }
 
     #[test]
     fn outlines_cast_the_shadow_even_when_rounded() {
         for style in BoxStyle::VALUES {
-            assert_eq!(shadows_drawn(style, 25.0)[0].1, 3.0, "{style:?}");
+            assert!(drawn(style, 25.0)[0].ends_with(" shadow 3"), "{style:?}");
         }
     }
 
     #[test]
     fn the_lines_of_a_procedure_cast_none() {
         assert_eq!(
-            shadows_drawn(BoxStyle::SdlProcedure, 0.0),
-            [("URectangle", 3.0), ("ULine", 0.0), ("ULine", 0.0)]
+            drawn(BoxStyle::SdlProcedure, 0.0),
+            [
+                "rect 0,0 100x40 shadow 3",
+                "line 5,0 0,40",
+                "line 95,0 0,40"
+            ]
         );
     }
 

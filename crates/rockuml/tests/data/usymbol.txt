@@ -245,6 +245,29 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ACTION plain center shadowed
+dimension: 104.49083327465158 34.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 0.0000 ]
+   - [ 94.4908 ; 0.0000 ]
+   - [ 104.4908 ; 17.0000 ]
+   - [ 94.4908 ; 34.0000 ]
+   - [ 0.0000 ; 34.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big ACTION titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -331,6 +354,29 @@ POLYGON:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big ACTION titled 200 120 center center shadowed
+dimension: 200.0 120.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 0.0000 ]
+   - [ 190.0000 ; 0.0000 ]
+   - [ 200.0000 ; 60.0000 ]
+   - [ 190.0000 ; 120.0000 ]
+   - [ 0.0000 ; 120.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -763,6 +809,65 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ACTOR_AWESOME plain center shadowed
+dimension: 74.49083327465158 77.0
+ELLIPSE:
+  pt1: [ 21.2454 ; 1.5000 ]
+  pt2: [ 53.2454 ; 33.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 4.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 4.0000 ; 4.0000 ]
+     pt2: [ 7.0000 ; 4.0000 ]
+     pt3: [ 11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.0000 ; 0.0000 ]
+     pt2: [ 27.0000 ; 8.0000 ]
+     pt3: [ 27.0000 ; 16.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 27.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.0000 ; 24.0000 ]
+     pt2: [ 23.0000 ; 28.0000 ]
+     pt3: [ 19.0000 ; 28.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -19.0000 ; 28.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -23.0000 ; 28.0000 ]
+     pt2: [ -27.0000 ; 24.0000 ]
+     pt3: [ -27.0000 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -27.0000 ; 16.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -27.0000 ; 8.0000 ]
+     pt2: [ -19.0000 ; 0.0000 ]
+     pt3: [ -11.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ -7.0000 ; 4.0000 ]
+     pt2: [ -4.0000 ; 4.0000 ]
+     pt3: [ 0.0000 ; 4.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 77.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small ACTOR_HOLLOW plain center plain
 dimension: 74.49083327465158 49.0
 ELLIPSE:
@@ -1169,6 +1274,61 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ACTOR_HOLLOW plain center shadowed
+dimension: 74.49083327465158 52.0
+ELLIPSE:
+  pt1: [ 32.7454 ; 1.5000 ]
+  pt2: [ 41.7454 ; 10.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ -12.5000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -12.5000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -3.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -3.0000 ; 7.2574 ]
+   - type: SEG_LINETO
+     pt1: [ -12.5000 ; 16.7574 ]
+   - type: SEG_LINETO
+     pt1: [ -8.2574 ; 21.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.7426 ]
+   - type: SEG_LINETO
+     pt1: [ 8.2574 ; 21.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.5000 ; 16.7574 ]
+   - type: SEG_LINETO
+     pt1: [ 3.0000 ; 7.2574 ]
+   - type: SEG_LINETO
+     pt1: [ 3.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.5000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 12.5000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -12.5000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 52.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small ACTOR_STICKMAN plain center plain
 dimension: 74.49083327465158 76.0
 ELLIPSE:
@@ -1509,6 +1669,49 @@ TEXT:
 TEXT:
   text: Sixth
   position: [ 0.0000 ; 146.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== small ACTOR_STICKMAN plain center shadowed
+dimension: 74.49083327465158 79.0
+ELLIPSE:
+  pt1: [ 29.2454 ; 1.5000 ]
+  pt2: [ 45.2454 ; 17.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 79.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -1896,6 +2099,56 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ACTOR_STICKMAN_BUSINESS plain center shadowed
+dimension: 74.49083327465158 79.0
+ELLIPSE:
+  pt1: [ 29.2454 ; 1.5000 ]
+  pt2: [ 45.2454 ; 17.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 35.3016 ; 17.2603 ]
+  pt2: [ 45.0057 ; 7.5562 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 79.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small AGENT plain center plain
 dimension: 94.49083327465158 34.0
 RECTANGLE:
@@ -2146,6 +2399,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small AGENT plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big AGENT titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -2238,6 +2512,27 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big AGENT titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -2494,6 +2789,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ARCHIMATE plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big ARCHIMATE titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -2586,6 +2902,27 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big ARCHIMATE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -2963,6 +3300,54 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small ARTIFACT plain center shadowed
+dimension: 104.49083327465158 37.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 104.4908 ; 37.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+POLYGON:
+  points:
+   - [ 87.4908 ; 5.0000 ]
+   - [ 87.4908 ; 19.0000 ]
+   - [ 99.4908 ; 19.0000 ]
+   - [ 99.4908 ; 11.0000 ]
+   - [ 93.4908 ; 5.0000 ]
+   - [ 87.4908 ; 5.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 93.4908 ; 5.0000 ]
+  pt2: [ 93.4908 ; 11.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 99.4908 ; 11.0000 ]
+  pt2: [ 93.4908 ; 11.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big ARTIFACT titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -3149,6 +3534,54 @@ LINE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big ARTIFACT titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+POLYGON:
+  points:
+   - [ 183.0000 ; 5.0000 ]
+   - [ 183.0000 ; 19.0000 ]
+   - [ 195.0000 ; 19.0000 ]
+   - [ 195.0000 ; 11.0000 ]
+   - [ 189.0000 ; 5.0000 ]
+   - [ 183.0000 ; 5.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 189.0000 ; 5.0000 ]
+  pt2: [ 189.0000 ; 11.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 195.0000 ; 11.0000 ]
+  pt2: [ 189.0000 ; 11.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -3461,6 +3894,41 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small BOUNDARY plain center shadowed
+dimension: 74.49083327465158 46.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 24.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 17.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ff112233
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 33.7454 ; 4.0000 ]
+  pt2: [ 57.7454 ; 28.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 46.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small CARD plain center plain
 dimension: 94.49083327465158 20.0
 RECTANGLE:
@@ -3697,6 +4165,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small CARD plain center shadowed
+dimension: 94.49083327465158 20.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 20.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 17.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big CARD titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -3803,6 +4292,34 @@ LINE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big CARD titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 0.0000 ; 18.0000 ]
+  pt2: [ 200.0000 ; 18.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -4691,6 +5208,105 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small CLOUD plain center shadowed
+dimension: 104.49083327465158 44.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 9.2792 ; 10.1094 ]
+   - type: SEG_CUBICTO
+     pt1: [ 12.0452 ; 4.1216 ]
+     pt2: [ 15.8069 ; 4.6504 ]
+     pt3: [ 20.0017 ; 8.5615 ]
+   - type: SEG_CUBICTO
+     pt1: [ 23.4064 ; 2.1267 ]
+     pt2: [ 27.5797 ; 1.7283 ]
+     pt3: [ 31.9764 ; 7.5958 ]
+   - type: SEG_CUBICTO
+     pt1: [ 35.1749 ; 3.5359 ]
+     pt2: [ 38.0141 ; 2.7949 ]
+     pt3: [ 41.2377 ; 7.5694 ]
+   - type: SEG_CUBICTO
+     pt1: [ 44.3427 ; 1.9105 ]
+     pt2: [ 49.8794 ; 2.2195 ]
+     pt3: [ 52.5693 ; 7.9813 ]
+   - type: SEG_CUBICTO
+     pt1: [ 56.1389 ; 2.1041 ]
+     pt2: [ 61.2499 ; 2.9825 ]
+     pt3: [ 63.9767 ; 8.8032 ]
+   - type: SEG_CUBICTO
+     pt1: [ 67.4519 ; 3.1458 ]
+     pt2: [ 72.4157 ; 3.6470 ]
+     pt3: [ 76.1755 ; 8.4720 ]
+   - type: SEG_CUBICTO
+     pt1: [ 78.8260 ; 3.8750 ]
+     pt2: [ 83.0320 ; 3.9159 ]
+     pt3: [ 85.8479 ; 8.2937 ]
+   - type: SEG_CUBICTO
+     pt1: [ 89.7297 ; 2.5959 ]
+     pt2: [ 95.5047 ; 2.7486 ]
+     pt3: [ 98.6152 ; 9.1103 ]
+   - type: SEG_CUBICTO
+     pt1: [ 107.0311 ; 10.6966 ]
+     pt2: [ 109.3666 ; 15.2759 ]
+     pt3: [ 104.0455 ; 22.4530 ]
+   - type: SEG_CUBICTO
+     pt1: [ 109.2927 ; 29.3642 ]
+     pt2: [ 105.6318 ; 35.6210 ]
+     pt3: [ 97.5601 ; 36.2892 ]
+   - type: SEG_CUBICTO
+     pt1: [ 95.1584 ; 43.1064 ]
+     pt2: [ 90.2036 ; 43.0358 ]
+     pt3: [ 86.0060 ; 38.0467 ]
+   - type: SEG_CUBICTO
+     pt1: [ 83.5636 ; 43.4041 ]
+     pt2: [ 80.0380 ; 42.8611 ]
+     pt3: [ 76.3908 ; 39.3533 ]
+   - type: SEG_CUBICTO
+     pt1: [ 72.0846 ; 44.1911 ]
+     pt2: [ 67.4588 ; 45.5547 ]
+     pt3: [ 64.0067 ; 38.4664 ]
+   - type: SEG_CUBICTO
+     pt1: [ 61.0147 ; 43.4288 ]
+     pt2: [ 57.7576 ; 43.9421 ]
+     pt3: [ 54.3555 ; 38.8606 ]
+   - type: SEG_CUBICTO
+     pt1: [ 50.8721 ; 44.2603 ]
+     pt2: [ 44.9245 ; 44.3971 ]
+     pt3: [ 41.9752 ; 38.2861 ]
+   - type: SEG_CUBICTO
+     pt1: [ 38.9915 ; 42.5019 ]
+     pt2: [ 35.0323 ; 43.4687 ]
+     pt3: [ 32.0537 ; 38.2808 ]
+   - type: SEG_CUBICTO
+     pt1: [ 27.5074 ; 44.7008 ]
+     pt2: [ 23.4743 ; 44.4575 ]
+     pt3: [ 19.6674 ; 37.5915 ]
+   - type: SEG_CUBICTO
+     pt1: [ 15.9572 ; 41.6706 ]
+     pt2: [ 11.8045 ; 42.0599 ]
+     pt3: [ 9.5043 ; 36.1561 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.2323 ; 33.3676 ]
+     pt2: [ 2.0009 ; 28.4781 ]
+     pt3: [ 7.1479 ; 23.5543 ]
+   - type: SEG_CUBICTO
+     pt1: [ 1.5919 ; 18.3111 ]
+     pt2: [ 2.0575 ; 13.3270 ]
+     pt3: [ 9.2792 ; 10.1094 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 29.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big CLOUD titled 200 120 center center plain
 dimension: 200.0 120.0
 PATH:
@@ -5295,6 +5911,185 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== big CLOUD titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 17.3083 ; 9.5942 ]
+   - type: SEG_CUBICTO
+     pt1: [ 20.2696 ; 2.5230 ]
+     pt2: [ 27.0079 ; 2.9447 ]
+     pt3: [ 31.0826 ; 8.3667 ]
+   - type: SEG_CUBICTO
+     pt1: [ 35.9032 ; 2.3396 ]
+     pt2: [ 42.0570 ; 3.1678 ]
+     pt3: [ 45.8261 ; 9.6099 ]
+   - type: SEG_CUBICTO
+     pt1: [ 48.6680 ; 2.8369 ]
+     pt2: [ 54.2936 ; 2.4020 ]
+     pt3: [ 58.0976 ; 8.7071 ]
+   - type: SEG_CUBICTO
+     pt1: [ 63.0403 ; 1.7046 ]
+     pt2: [ 68.6521 ; 0.5577 ]
+     pt3: [ 73.7154 ; 8.5816 ]
+   - type: SEG_CUBICTO
+     pt1: [ 77.8892 ; 0.8082 ]
+     pt2: [ 82.8187 ; 2.2767 ]
+     pt3: [ 87.8210 ; 7.6958 ]
+   - type: SEG_CUBICTO
+     pt1: [ 90.7349 ; 1.1800 ]
+     pt2: [ 96.4827 ; 1.4873 ]
+     pt3: [ 100.2958 ; 6.7429 ]
+   - type: SEG_CUBICTO
+     pt1: [ 104.9777 ; 0.1757 ]
+     pt2: [ 110.9541 ; -0.4312 ]
+     pt3: [ 115.1320 ; 7.2670 ]
+   - type: SEG_CUBICTO
+     pt1: [ 118.6131 ; -0.2937 ]
+     pt2: [ 125.1955 ; 1.0870 ]
+     pt3: [ 129.0714 ; 6.8543 ]
+   - type: SEG_CUBICTO
+     pt1: [ 134.6421 ; 0.1988 ]
+     pt2: [ 139.1969 ; 1.6531 ]
+     pt3: [ 142.7385 ; 8.8555 ]
+   - type: SEG_CUBICTO
+     pt1: [ 146.5214 ; 2.1674 ]
+     pt2: [ 153.1217 ; 2.3275 ]
+     pt3: [ 157.3317 ; 8.3657 ]
+   - type: SEG_CUBICTO
+     pt1: [ 161.3377 ; 1.3649 ]
+     pt2: [ 166.7825 ; 2.4783 ]
+     pt3: [ 170.8999 ; 8.2475 ]
+   - type: SEG_CUBICTO
+     pt1: [ 179.8133 ; 1.7666 ]
+     pt2: [ 188.7710 ; 3.7180 ]
+     pt3: [ 192.0000 ; 15.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 192.2896 ; 14.7407 ]
+     pt2: [ 192.5492 ; 14.8871 ]
+     pt3: [ 192.5970 ; 15.2370 ]
+   - type: SEG_CUBICTO
+     pt1: [ 200.9994 ; 18.9921 ]
+     pt2: [ 201.4853 ; 24.7746 ]
+     pt3: [ 195.7683 ; 31.3147 ]
+   - type: SEG_CUBICTO
+     pt1: [ 203.0223 ; 35.6071 ]
+     pt2: [ 203.7054 ; 42.3417 ]
+     pt3: [ 195.8969 ; 46.7595 ]
+   - type: SEG_CUBICTO
+     pt1: [ 204.0619 ; 49.1766 ]
+     pt2: [ 204.3787 ; 55.2526 ]
+     pt3: [ 198.6201 ; 60.4410 ]
+   - type: SEG_CUBICTO
+     pt1: [ 206.8583 ; 65.5601 ]
+     pt2: [ 206.0404 ; 73.5999 ]
+     pt3: [ 197.0155 ; 77.0512 ]
+   - type: SEG_CUBICTO
+     pt1: [ 203.8721 ; 82.1405 ]
+     pt2: [ 203.2020 ; 89.2199 ]
+     pt3: [ 194.6980 ; 91.9141 ]
+   - type: SEG_CUBICTO
+     pt1: [ 199.6858 ; 102.4293 ]
+     pt2: [ 197.3408 ; 109.8516 ]
+     pt3: [ 185.0000 ; 112.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 185.6451 ; 112.3691 ]
+     pt2: [ 185.5613 ; 112.7857 ]
+     pt3: [ 185.0273 ; 113.1820 ]
+   - type: SEG_CUBICTO
+     pt1: [ 181.8203 ; 119.4658 ]
+     pt2: [ 176.5517 ; 120.2498 ]
+     pt3: [ 172.1311 ; 114.4806 ]
+   - type: SEG_CUBICTO
+     pt1: [ 168.6105 ; 121.8549 ]
+     pt2: [ 164.1034 ; 123.2791 ]
+     pt3: [ 158.1448 ; 116.9732 ]
+   - type: SEG_CUBICTO
+     pt1: [ 153.8644 ; 123.0820 ]
+     pt2: [ 148.4969 ; 123.2118 ]
+     pt3: [ 143.8997 ; 117.3502 ]
+   - type: SEG_CUBICTO
+     pt1: [ 141.3069 ; 124.2381 ]
+     pt2: [ 133.8444 ; 125.9784 ]
+     pt3: [ 128.7420 ; 120.4021 ]
+   - type: SEG_CUBICTO
+     pt1: [ 126.4942 ; 126.3056 ]
+     pt2: [ 120.6346 ; 128.2911 ]
+     pt3: [ 116.3803 ; 122.5282 ]
+   - type: SEG_CUBICTO
+     pt1: [ 112.1262 ; 130.2539 ]
+     pt2: [ 104.9705 ; 129.7129 ]
+     pt3: [ 101.1402 ; 122.1070 ]
+   - type: SEG_CUBICTO
+     pt1: [ 96.6686 ; 130.1274 ]
+     pt2: [ 90.9685 ; 128.4105 ]
+     pt3: [ 86.2520 ; 122.3662 ]
+   - type: SEG_CUBICTO
+     pt1: [ 80.9787 ; 127.9384 ]
+     pt2: [ 76.4084 ; 126.2112 ]
+     pt3: [ 73.0929 ; 120.1514 ]
+   - type: SEG_CUBICTO
+     pt1: [ 66.9957 ; 126.8701 ]
+     pt2: [ 60.6326 ; 125.6804 ]
+     pt3: [ 57.6921 ; 116.9953 ]
+   - type: SEG_CUBICTO
+     pt1: [ 53.3105 ; 122.3409 ]
+     pt2: [ 48.2781 ; 123.3240 ]
+     pt3: [ 44.4471 ; 116.4009 ]
+   - type: SEG_CUBICTO
+     pt1: [ 39.7510 ; 122.8805 ]
+     pt2: [ 34.6319 ; 123.0130 ]
+     pt3: [ 30.8919 ; 115.4763 ]
+   - type: SEG_CUBICTO
+     pt1: [ 19.5042 ; 122.6295 ]
+     pt2: [ 9.1691 ; 120.1754 ]
+     pt3: [ 8.0000 ; 105.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 9.0193 ; 104.6367 ]
+     pt2: [ 9.6885 ; 104.7660 ]
+     pt3: [ 9.7232 ; 106.0377 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.2373 ; 103.1346 ]
+     pt2: [ 1.6957 ; 97.9940 ]
+     pt3: [ 6.4248 ; 92.3820 ]
+   - type: SEG_CUBICTO
+     pt1: [ -1.9052 ; 89.6589 ]
+     pt2: [ -3.9700 ; 82.5837 ]
+     pt3: [ 3.6379 ; 76.9772 ]
+   - type: SEG_CUBICTO
+     pt1: [ -4.6923 ; 73.5801 ]
+     pt2: [ -4.7572 ; 67.1044 ]
+     pt3: [ 2.3779 ; 62.3729 ]
+   - type: SEG_CUBICTO
+     pt1: [ -5.2956 ; 56.9929 ]
+     pt2: [ -4.8693 ; 49.1440 ]
+     pt3: [ 4.6344 ; 46.1538 ]
+   - type: SEG_CUBICTO
+     pt1: [ -1.4889 ; 40.7113 ]
+     pt2: [ -1.6781 ; 35.4436 ]
+     pt3: [ 6.6187 ; 32.0264 ]
+   - type: SEG_CUBICTO
+     pt1: [ -1.1543 ; 20.9342 ]
+     pt2: [ 1.6325 ; 11.7177 ]
+     pt3: [ 15.0000 ; 8.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 16.4287 ; 7.1823 ]
+     pt2: [ 17.3810 ; 8.2378 ]
+     pt3: [ 17.3083 ; 9.5942 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small COLLECTIONS plain center plain
 dimension: 94.49083327465158 34.0
 RECTANGLE:
@@ -5581,6 +6376,37 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small COLLECTIONS plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 4.0000 ; 4.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 90.4908 ; 30.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 8.0000 ; 22.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big COLLECTIONS titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -5699,6 +6525,37 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big COLLECTIONS titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 4.0000 ; 4.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 196.0000 ; 116.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -5955,6 +6812,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small COMPONENT_RECTANGLE plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big COMPONENT_RECTANGLE titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -6047,6 +6925,27 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big COMPONENT_RECTANGLE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -6389,6 +7288,47 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small COMPONENT1 plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ -5.0000 ; 5.0000 ]
+  pt2: [ 5.0000 ; 10.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ -5.0000 ; 24.0000 ]
+  pt2: [ 5.0000 ; 29.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big COMPONENT1 titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -6587,6 +7527,57 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big COMPONENT1 titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 180.0000 ; 5.0000 ]
+  pt2: [ 195.0000 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 178.0000 ; 7.0000 ]
+  pt2: [ 182.0000 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 178.0000 ; 11.0000 ]
+  pt2: [ 182.0000 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 27.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -6979,6 +7970,57 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small COMPONENT2 plain center shadowed
+dimension: 114.49083327465158 44.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 114.4908 ; 44.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 94.4908 ; 5.0000 ]
+  pt2: [ 109.4908 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 92.4908 ; 7.0000 ]
+  pt2: [ 96.4908 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 92.4908 ; 11.0000 ]
+  pt2: [ 96.4908 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 34.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big COMPONENT2 titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -7177,6 +8219,57 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big COMPONENT2 titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 180.0000 ; 5.0000 ]
+  pt2: [ 195.0000 ; 15.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 178.0000 ; 7.0000 ]
+  pt2: [ 182.0000 ; 9.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 178.0000 ; 11.0000 ]
+  pt2: [ 182.0000 ; 13.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 27.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -7473,6 +8566,39 @@ TEXT:
 TEXT:
   text: Sixth
   position: [ 0.0000 ; 116.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== small CONTROL plain center shadowed
+dimension: 74.49083327465158 46.0
+ELLIPSE:
+  pt1: [ 25.2454 ; 4.0000 ]
+  pt2: [ 49.2454 ; 28.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ff112233
+  backcolor: ffffeedd
+
+POLYGON:
+  points:
+   - [ 33.2454 ; 4.0000 ]
+   - [ 39.2454 ; -1.0000 ]
+   - [ 37.2454 ; 4.0000 ]
+   - [ 39.2454 ; 9.0000 ]
+   - [ 33.2454 ; 4.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff112233
+  backcolor: ff112233
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 46.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -7928,6 +9054,65 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small DATABASE plain center shadowed
+dimension: 94.49083327465158 43.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 0.0000 ]
+     pt2: [ 47.2454 ; 0.0000 ]
+     pt3: [ 47.2454 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 47.2454 ; 0.0000 ]
+     pt2: [ 94.4908 ; 0.0000 ]
+     pt3: [ 94.4908 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 94.4908 ; 33.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 94.4908 ; 43.0000 ]
+     pt2: [ 47.2454 ; 43.0000 ]
+     pt3: [ 47.2454 ; 43.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 47.2454 ; 43.0000 ]
+     pt2: [ 0.0000 ; 43.0000 ]
+     pt3: [ 0.0000 ; 33.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 20.0000 ]
+     pt2: [ 47.2454 ; 20.0000 ]
+     pt3: [ 47.2454 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 47.2454 ; 20.0000 ]
+     pt2: [ 94.4908 ; 20.0000 ]
+     pt3: [ 94.4908 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 94.4908 ; 43.0000 ]
+  pt2: [ 104.4908 ; 53.0000 ]
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 38.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big DATABASE titled 200 120 center center plain
 dimension: 200.0 120.0
 PATH:
@@ -8158,6 +9343,65 @@ EMPTY:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 36.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big DATABASE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 0.0000 ]
+     pt2: [ 100.0000 ; 0.0000 ]
+     pt3: [ 100.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 100.0000 ; 0.0000 ]
+     pt2: [ 200.0000 ; 0.0000 ]
+     pt3: [ 200.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 110.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 200.0000 ; 120.0000 ]
+     pt2: [ 100.0000 ; 120.0000 ]
+     pt3: [ 100.0000 ; 120.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 100.0000 ; 120.0000 ]
+     pt2: [ 0.0000 ; 120.0000 ]
+     pt3: [ 0.0000 ; 110.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 10.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 20.0000 ]
+     pt2: [ 100.0000 ; 20.0000 ]
+     pt3: [ 100.0000 ; 20.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 100.0000 ; 20.0000 ]
+     pt2: [ 200.0000 ; 20.0000 ]
+     pt3: [ 200.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 200.0000 ; 120.0000 ]
+  pt2: [ 210.0000 ; 130.0000 ]
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 36.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -8429,6 +9673,34 @@ TEXT:
 TEXT:
   text: Sixth
   position: [ 0.0000 ; 116.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== small ENTITY_DOMAIN plain center shadowed
+dimension: 74.49083327465158 46.0
+ELLIPSE:
+  pt1: [ 25.2454 ; 4.0000 ]
+  pt2: [ 49.2454 ; 28.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 25.2454 ; 30.0000 ]
+  pt2: [ 49.2454 ; 30.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 46.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -8804,6 +10076,71 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small FILE plain center shadowed
+dimension: 94.49083327465158 34.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 29.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 5.0000 ; 34.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 89.4908 ; 34.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 94.4908 ; 29.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 94.4908 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 84.4908 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 5.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 84.4908 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 84.4908 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 89.4908 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 94.4908 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big FILE titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -8971,6 +10308,71 @@ PATH:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big FILE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 115.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 5.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 195.0000 ; 120.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 200.0000 ; 115.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 190.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 5.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 190.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 190.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 195.0000 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -9370,6 +10772,80 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small FOLDER plain center shadowed
+dimension: 104.49083327465158 52.0
+force 40.0 -2.0: 0.0 1.5
+force 45.0 0.0: 0.0 9.0
+force 50.0 -1.0: 0.0 16.5
+force 60.0 10.0: 0.0 21.0
+force 100.0 -5.0: 0.0 21.0
+force 150.0 20.0: 0.0 21.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 41.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 7.5000 ; 7.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 46.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 53.0000 ; 21.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 99.4908 ; 21.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 104.4908 ; 26.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 104.4908 ; 47.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 99.4908 ; 52.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 52.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 47.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 0.0000 ; 21.0000 ]
+  pt2: [ 53.0000 ; 21.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 42.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big FOLDER titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -9538,6 +11014,74 @@ LINE:
 
 TEXT:
   text: A long title text
+  position: [ 4.0000 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big FOLDER titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 211.8826 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 7.5000 ; 7.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 216.8826 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 223.8826 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 195.0000 ; 20.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 200.0000 ; 25.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 115.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 195.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 120.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 115.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 0.0000 ; 20.0000 ]
+  pt2: [ 223.8826 ; 20.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Package title
   position: [ 4.0000 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
@@ -9851,6 +11395,41 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small FRAME plain center shadowed
+dimension: 114.49083327465158 44.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 114.4908 ; 44.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 38.1636 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 38.1636 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 31.1636 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 34.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big FRAME titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -9978,6 +11557,41 @@ PATH:
 
 TEXT:
   text: A long title text
+  position: [ 3.0000 ; 15.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big FRAME titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 220.8826 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 220.8826 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 210.8826 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Package title
   position: [ 3.0000 ; 15.0000 ]
   orientation: 0
   font: Serif.plain/14 []
@@ -10291,6 +11905,41 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small GROUP plain center shadowed
+dimension: 114.49083327465158 44.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 114.4908 ; 44.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 38.1636 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 38.1636 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 31.1636 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 34.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big GROUP titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -10418,6 +12067,41 @@ PATH:
 
 TEXT:
   text: A long title text
+  position: [ 3.0000 ; 15.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big GROUP titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 220.8826 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 220.8826 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 210.8826 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Package title
   position: [ 3.0000 ; 15.0000 ]
   orientation: 0
   font: Serif.plain/14 []
@@ -10570,6 +12254,17 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small HEXAGON plain center shadowed
+dimension: 148.98166654930316 24.0
+TEXT:
+  text: Label
+  position: [ 37.2454 ; 19.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big HEXAGON titled 200 120 center center plain
 dimension: 200.0 120.0
 PATH:
@@ -10688,6 +12383,37 @@ PATH:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big HEXAGON titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 60.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 25.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 175.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 60.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 175.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 25.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 60.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -10930,6 +12656,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small INTERFACE plain center shadowed
+dimension: 74.49083327465158 32.0
+ELLIPSE:
+  pt1: [ 29.2454 ; 1.0000 ]
+  pt2: [ 45.2454 ; 17.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 4
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 0.0000 ; 32.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small LABEL plain center plain
 dimension: 94.49083327465158 34.0
 TEXT:
@@ -11116,6 +12863,17 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small LABEL plain center shadowed
+dimension: 94.49083327465158 34.0
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big LABEL titled 200 120 center center plain
 dimension: 200.0 120.0
 TEXT:
@@ -11154,6 +12912,17 @@ dimension: 120.0 150.0
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big LABEL titled 200 120 center center shadowed
+dimension: 200.0 120.0
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -11558,6 +13327,56 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small NODE plain center shadowed
+dimension: 114.49083327465158 44.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 10.0000 ]
+   - [ 10.0000 ; 0.0000 ]
+   - [ 114.4908 ; 0.0000 ]
+   - [ 114.4908 ; 34.0000 ]
+   - [ 104.4908 ; 44.0000 ]
+   - [ 0.0000 ; 44.0000 ]
+   - [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 104.4908 ; 10.0000 ]
+  pt2: [ 114.4908 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 0.0000 ; 10.0000 ]
+  pt2: [ 104.4908 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 104.4908 ; 10.0000 ]
+  pt2: [ 104.4908 ; 44.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+EMPTY:
+  pt1: [ 0.0000 ; 44.0000 ]
+  pt2: [ 10.0000 ; 54.0000 ]
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 34.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big NODE titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -11752,6 +13571,56 @@ EMPTY:
 TEXT:
   text: A long title text
   position: [ -97.3368 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big NODE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 10.0000 ]
+   - [ 10.0000 ; 0.0000 ]
+   - [ 200.0000 ; 0.0000 ]
+   - [ 200.0000 ; 110.0000 ]
+   - [ 190.0000 ; 120.0000 ]
+   - [ 0.0000 ; 120.0000 ]
+   - [ 0.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 190.0000 ; 10.0000 ]
+  pt2: [ 200.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 0.0000 ; 10.0000 ]
+  pt2: [ 190.0000 ; 10.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+LINE:
+  pt1: [ 190.0000 ; 10.0000 ]
+  pt2: [ 190.0000 ; 120.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+EMPTY:
+  pt1: [ 0.0000 ; 120.0000 ]
+  pt2: [ 10.0000 ; 130.0000 ]
+
+TEXT:
+  text: Package title
+  position: [ -9.4413 ; 27.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -12171,6 +14040,84 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small PACKAGE plain center shadowed
+dimension: 104.49083327465158 51.0
+force 100.0 -5.0: 0.0 20.0
+force 150.0 20.0: 0.0 20.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 67.8039 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 7.5000 ; 7.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 72.8039 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 79.8039 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 99.4908 ; 20.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 104.4908 ; 25.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 104.4908 ; 46.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 99.4908 ; 51.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 51.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 46.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 0.0000 ; 20.0000 ]
+  pt2: [ 79.8039 ; 20.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Name
+  position: [ 4.0000 ; 17.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 41.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big PACKAGE titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -12339,6 +14286,74 @@ LINE:
 
 TEXT:
   text: A long title text
+  position: [ 4.0000 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big PACKAGE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 211.8826 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 7.5000 ; 7.5000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 216.8826 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 223.8826 ; 20.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 195.0000 ; 20.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 200.0000 ; 25.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 115.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 195.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 120.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 0.0000 ; 115.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+LINE:
+  pt1: [ 0.0000 ; 20.0000 ]
+  pt2: [ 223.8826 ; 20.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+TEXT:
+  text: Package title
   position: [ 4.0000 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
@@ -12652,6 +14667,41 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small PARTITION plain center shadowed
+dimension: 114.49083327465158 44.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 114.4908 ; 44.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 38.1636 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 38.1636 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 31.1636 ; 12.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 12.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 15.0000 ; 34.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big PARTITION titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -12779,6 +14829,41 @@ PATH:
 
 TEXT:
   text: A long title text
+  position: [ 3.0000 ; 15.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big PARTITION titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 220.8826 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 220.8826 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 210.8826 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Package title
   position: [ 3.0000 ; 15.0000 ]
   orientation: 0
   font: Serif.plain/14 []
@@ -13072,6 +15157,37 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small PERSON plain center shadowed
+dimension: 94.49083327465158 57.80584427505251
+ELLIPSE:
+  pt1: [ 35.3425 ; 0.0000 ]
+  pt2: [ 59.1483 ; 23.8058 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+RECTANGLE:
+  pt1: [ 0.0000 ; 23.8058 ]
+  pt2: [ 94.4908 ; 57.8058 ]
+  xCorner: 23
+  yCorner: 23
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 47.8058 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === small PROCESS plain center plain
 dimension: 114.49083327465158 34.0
 POLYGON:
@@ -13323,6 +15439,30 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small PROCESS plain center shadowed
+dimension: 114.49083327465158 34.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 0.0000 ]
+   - [ 104.4908 ; 0.0000 ]
+   - [ 114.4908 ; 17.0000 ]
+   - [ 104.4908 ; 34.0000 ]
+   - [ 0.0000 ; 34.0000 ]
+   - [ 10.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 20.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big PROCESS titled 200 120 center center plain
 dimension: 200.0 120.0
 POLYGON:
@@ -13413,6 +15553,30 @@ POLYGON:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big PROCESS titled 200 120 center center shadowed
+dimension: 200.0 120.0
+POLYGON:
+  points:
+   - [ 0.0000 ; 0.0000 ]
+   - [ 190.0000 ; 0.0000 ]
+   - [ 200.0000 ; 60.0000 ]
+   - [ 190.0000 ; 120.0000 ]
+   - [ 0.0000 ; 120.0000 ]
+   - [ 10.0000 ; 60.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -13825,6 +15989,61 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small QUEUE plain center shadowed
+dimension: 94.49083327465158 24.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 89.4908 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 94.4908 ; 0.0000 ]
+     pt2: [ 94.4908 ; 12.0000 ]
+     pt3: [ 94.4908 ; 12.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 94.4908 ; 12.0000 ]
+     pt2: [ 94.4908 ; 24.0000 ]
+     pt3: [ 89.4908 ; 24.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 24.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 24.0000 ]
+     pt2: [ 0.0000 ; 12.0000 ]
+     pt3: [ 0.0000 ; 12.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 12.0000 ]
+     pt2: [ 0.0000 ; 0.0000 ]
+     pt3: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 89.4908 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 84.4908 ; 0.0000 ]
+     pt2: [ 84.4908 ; 12.0000 ]
+     pt3: [ 84.4908 ; 12.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 84.4908 ; 24.0000 ]
+     pt2: [ 89.4908 ; 24.0000 ]
+     pt3: [ 89.4908 ; 24.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 5.0000 ; 19.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big QUEUE titled 200 120 center center plain
 dimension: 200.0 120.0
 PATH:
@@ -14039,6 +16258,61 @@ PATH:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big QUEUE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 195.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 200.0000 ; 0.0000 ]
+     pt2: [ 200.0000 ; 60.0000 ]
+     pt3: [ 200.0000 ; 60.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 200.0000 ; 60.0000 ]
+     pt2: [ 200.0000 ; 120.0000 ]
+     pt3: [ 195.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 120.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 120.0000 ]
+     pt2: [ 0.0000 ; 60.0000 ]
+     pt3: [ 0.0000 ; 60.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.0000 ; 60.0000 ]
+     pt2: [ 0.0000 ; 0.0000 ]
+     pt3: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 195.0000 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 190.0000 ; 0.0000 ]
+     pt2: [ 190.0000 ; 60.0000 ]
+     pt3: [ 190.0000 ; 60.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 190.0000 ; 120.0000 ]
+     pt2: [ 195.0000 ; 120.0000 ]
+     pt3: [ 195.0000 ; 120.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -14295,6 +16569,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small RECTANGLE plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big RECTANGLE titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -14387,6 +16682,27 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 16.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big RECTANGLE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 16.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -14767,6 +17083,69 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small STACK plain center shadowed
+dimension: 124.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 15.0000 ; 0.0000 ]
+  pt2: [ 109.4908 ; 34.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 15.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 29.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 20.0000 ; 34.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 104.4908 ; 34.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 109.4908 ; 29.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 109.4908 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 114.4908 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 124.4908 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Label
+  position: [ 25.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big STACK titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -14941,6 +17320,69 @@ PATH:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 27.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big STACK titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 15.0000 ; 0.0000 ]
+  pt2: [ 185.0000 ; 120.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: NULL_COLOR
+  backcolor: ffffeedd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 15.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 115.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 20.0000 ; 120.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 180.0000 ; 120.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 185.0000 ; 115.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 185.0000 ; 5.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 5.0000 ; 5.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: true
+     dest: [ 190.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 200.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 27.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -15183,6 +17625,27 @@ TEXT:
   extendedColor: NULL_COLOR
 
 
+=== small STORAGE plain center shadowed
+dimension: 94.49083327465158 34.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 94.4908 ; 34.0000 ]
+  xCorner: 70
+  yCorner: 70
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 10.0000 ; 24.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
 === big STORAGE titled 200 120 center center plain
 dimension: 200.0 120.0
 RECTANGLE:
@@ -15261,6 +17724,27 @@ RECTANGLE:
 TEXT:
   text: A long title text
   position: [ -93.3368 ; 21.0000 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== big STORAGE titled 200 120 center center shadowed
+dimension: 200.0 120.0
+RECTANGLE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 200.0000 ; 120.0000 ]
+  xCorner: 70
+  yCorner: 70
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Package title
+  position: [ -5.4413 ; 21.0000 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -15497,6 +17981,27 @@ TEXT:
 TEXT:
   text: Sixth
   position: [ 46.4746 ; 100.8970 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+
+=== small USECASE plain center shadowed
+dimension: 108.21978400462378 26.443956800924756
+ELLIPSE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 108.2198 ; 26.4440 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+TEXT:
+  text: Label
+  position: [ 16.8645 ; 16.7220 ]
   orientation: 0
   font: Serif.plain/14 []
   color: ff000000
@@ -15789,6 +18294,38 @@ TEXT:
 LINE:
   pt1: [ 309.8030 ; 40.6454 ]
   pt2: [ 233.9874 ; 116.4611 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+
+
+=== small USECASE_BUSINESS plain center shadowed
+dimension: 118.83503953358877 28.567007906717755
+ELLIPSE:
+  pt1: [ 0.0000 ; 0.0000 ]
+  pt2: [ 118.8350 ; 28.5670 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff112233
+  backcolor: ffffeedd
+
+EMPTY:
+  pt1: [ 15.5002 ; 5.2006 ]
+  pt2: [ 103.9910 ; 19.2006 ]
+
+TEXT:
+  text: Label
+  position: [ 22.5002 ; 19.2006 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 114.0992 ; 9.3043 ]
+  pt2: [ 98.9153 ; 24.4882 ]
   stroke: 0.0-0.0-1.5
   shadow: 0
   color: ff112233

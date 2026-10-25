@@ -10,10 +10,10 @@ use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolCloud;
 
-fn draw_cloud(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::path(get_specific_frontier_for_cloud(
-        width, height,
-    )));
+fn draw_cloud(ug: &UGraphic, width: f64, height: f64, shadowing: f64) {
+    ug.draw(
+        &UShape::path(get_specific_frontier_for_cloud(width, height)).with_delta_shadow(shadowing),
+    );
 }
 
 fn get_specific_frontier_for_cloud(width: f64, height: f64) -> Vec<USegment> {
@@ -207,14 +207,19 @@ impl SmallShape for USymbolCloud {
         Margin::new(15.0, 15.0, 15.0, 15.0)
     }
 
-    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, _fashion: &Fashion) {
-        draw_cloud(ug, dimension.width, dimension.height);
+    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
+        draw_cloud(ug, dimension.width, dimension.height, fashion.delta_shadow);
     }
 }
 
 impl BigShape for USymbolCloud {
     fn draw_big(&self, ug: &UGraphic, content: &BigContent) {
-        draw_cloud(ug, content.width, content.height);
+        draw_cloud(
+            ug,
+            content.width,
+            content.height,
+            content.fashion.delta_shadow,
+        );
         content.draw_centered_stereotype_and_title(ug, 13.0);
     }
 }

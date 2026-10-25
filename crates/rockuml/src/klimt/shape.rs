@@ -92,6 +92,7 @@ impl UShape {
     }
 
     /// The shadow the shape is drawn with; zero for shapes PlantUML never shadows.
+    #[cfg(test)]
     pub(crate) fn delta_shadow(&self) -> f64 {
         match self {
             Self::Rectangle(shape) => shape.delta_shadow(),

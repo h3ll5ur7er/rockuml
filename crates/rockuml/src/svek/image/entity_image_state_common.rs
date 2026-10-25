@@ -93,7 +93,11 @@ impl EntityImageStateCommon {
     /// The rounded box around the state.
     pub(crate) fn get_shape(&self, dim_total: XDimension2D) -> UShape {
         let corner = self.style_state.value(PName::RoundCorner).as_double();
-        UShape::Rectangle(URectangle::new(dim_total.width, dim_total.height).rounded(corner))
+        UShape::Rectangle(
+            URectangle::new(dim_total.width, dim_total.height)
+                .rounded(corner)
+                .with_delta_shadow(self.style_state.shadowing()),
+        )
     }
 
     /// The border colour, and the state's own background or else `style`'s.

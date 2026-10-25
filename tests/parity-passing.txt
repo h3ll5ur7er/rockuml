@@ -185,6 +185,7 @@ debug class/relations-label-arrows.puml
 debug class/relations-lengths.puml
 debug class/relations-styles.puml
 debug class/relations.puml
+debug class/shadowing.puml
 debug class/skinparam-class.puml
 debug class/skinparam-monochrome.puml
 debug class/skinparam-stereotype.puml
@@ -238,6 +239,7 @@ debug component/ports-in-out.puml
 debug component/ports.puml
 debug component/rectangle-style.puml
 debug component/rectangles-groups.puml
+debug component/shadowing.puml
 debug component/skinparam.puml
 debug component/stereotypes.puml
 debug component/uml1-style.puml
@@ -276,6 +278,7 @@ debug deployment/nesting.puml
 debug deployment/notes.puml
 debug deployment/port-like-links.puml
 debug deployment/rectangles-mixed.puml
+debug deployment/shadowing.puml
 debug deployment/skinparam.puml
 debug deployment/stereotypes.puml
 debug deployment/style.puml
@@ -397,6 +400,7 @@ debug object/map-to-object.puml
 debug object/notes.puml
 debug object/packages.puml
 debug object/relations.puml
+debug object/shadowing.puml
 debug object/stereotypes-colors.puml
 debug preprocessor/builtins-color.puml
 debug preprocessor/builtins-date.puml
@@ -548,6 +552,7 @@ debug state/notes-on-link.puml
 debug state/notes.puml
 debug state/pins-expansion.puml
 debug state/self-transitions.puml
+debug state/shadowing.puml
 debug state/simple.puml
 debug state/skinparam.puml
 debug state/stereotype-inline-style.puml
@@ -594,6 +599,7 @@ debug usecase/multiline-usecase.puml
 debug usecase/notes.puml
 debug usecase/packages.puml
 debug usecase/rectangle-system.puml
+debug usecase/shadowing.puml
 debug usecase/skinparam.puml
 debug usecase/stereotypes.puml
 debug usecase/title-legend.puml
@@ -810,6 +816,7 @@ dsvg class/relations-label-arrows.puml
 dsvg class/relations-lengths.puml
 dsvg class/relations-styles.puml
 dsvg class/relations.puml
+dsvg class/shadowing.puml
 dsvg class/skinparam-class.puml
 dsvg class/skinparam-monochrome.puml
 dsvg class/skinparam-stereotype.puml
@@ -863,6 +870,7 @@ dsvg component/ports-in-out.puml
 dsvg component/ports.puml
 dsvg component/rectangle-style.puml
 dsvg component/rectangles-groups.puml
+dsvg component/shadowing.puml
 dsvg component/skinparam.puml
 dsvg component/stereotypes.puml
 dsvg component/uml1-style.puml
@@ -901,6 +909,7 @@ dsvg deployment/nesting.puml
 dsvg deployment/notes.puml
 dsvg deployment/port-like-links.puml
 dsvg deployment/rectangles-mixed.puml
+dsvg deployment/shadowing.puml
 dsvg deployment/skinparam.puml
 dsvg deployment/stereotypes.puml
 dsvg deployment/style.puml
@@ -1021,6 +1030,7 @@ dsvg object/map-to-object.puml
 dsvg object/notes.puml
 dsvg object/packages.puml
 dsvg object/relations.puml
+dsvg object/shadowing.puml
 dsvg object/stereotypes-colors.puml
 dsvg preprocessor/builtins-color.puml
 dsvg preprocessor/builtins-date.puml
@@ -1170,6 +1180,7 @@ dsvg state/notes-on-link.puml
 dsvg state/notes.puml
 dsvg state/pins-expansion.puml
 dsvg state/self-transitions.puml
+dsvg state/shadowing.puml
 dsvg state/simple.puml
 dsvg state/skinparam.puml
 dsvg state/stereotype-inline-style.puml
@@ -1216,6 +1227,7 @@ dsvg usecase/multiline-usecase.puml
 dsvg usecase/notes.puml
 dsvg usecase/packages.puml
 dsvg usecase/rectangle-system.puml
+dsvg usecase/shadowing.puml
 dsvg usecase/skinparam.puml
 dsvg usecase/stereotypes.puml
 dsvg usecase/title-legend.puml
@@ -1526,6 +1538,7 @@ png deployment/nesting.puml
 png deployment/notes.puml
 png deployment/port-like-links.puml
 png deployment/rectangles-mixed.puml
+png deployment/shadowing.puml
 png deployment/skinparam.puml
 png deployment/stereotypes.puml
 png deployment/style.puml
@@ -1847,6 +1860,7 @@ png usecase/multiline-usecase.puml
 png usecase/notes.puml
 png usecase/packages.puml
 png usecase/rectangle-system.puml
+png usecase/shadowing.puml
 png usecase/skinparam.puml
 png usecase/stereotypes.puml
 png usecase/title-legend.puml
@@ -2686,6 +2700,7 @@ svg component/ports-in-out.puml
 svg component/ports.puml
 svg component/rectangle-style.puml
 svg component/rectangles-groups.puml
+svg component/shadowing.puml
 svg component/skinparam.puml
 svg component/stereotypes.puml
 svg component/uml1-style.puml
@@ -2723,6 +2738,7 @@ svg deployment/nesting.puml
 svg deployment/notes.puml
 svg deployment/port-like-links.puml
 svg deployment/rectangles-mixed.puml
+svg deployment/shadowing.puml
 svg deployment/skinparam.puml
 svg deployment/stereotypes.puml
 svg deployment/style.puml
@@ -2839,6 +2855,7 @@ svg object/map-to-object.puml
 svg object/notes.puml
 svg object/packages.puml
 svg object/relations.puml
+svg object/shadowing.puml
 svg object/stereotypes-colors.puml
 svg preprocessor/builtins-color.puml
 svg preprocessor/builtins-date.puml
@@ -2986,6 +3003,7 @@ svg state/notes-on-link.puml
 svg state/notes.puml
 svg state/pins-expansion.puml
 svg state/self-transitions.puml
+svg state/shadowing.puml
 svg state/simple.puml
 svg state/skinparam.puml
 svg state/stereotype-inline-style.puml
@@ -3032,6 +3050,7 @@ svg usecase/multiline-usecase.puml
 svg usecase/notes.puml
 svg usecase/packages.puml
 svg usecase/rectangle-system.puml
+svg usecase/shadowing.puml
 svg usecase/skinparam.puml
 svg usecase/stereotypes.puml
 svg usecase/title-legend.puml

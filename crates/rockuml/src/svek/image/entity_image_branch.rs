@@ -20,6 +20,7 @@ pub(crate) struct EntityImageBranch {
     border: HColor,
     back: HColor,
     stroke: UStroke,
+    shadowing: f64,
 }
 
 impl EntityImageBranch {
@@ -37,6 +38,7 @@ impl EntityImageBranch {
             border: style.value(PName::LineColor).as_color(),
             back: style.value(PName::BackGroundColor).as_color(),
             stroke: style.stroke(),
+            shadowing: style.shadowing(),
         }
     }
 }
@@ -53,7 +55,8 @@ impl TextBlock for EntityImageBranch {
             (SIZE, SIZE * 2.0),
             (0.0, SIZE),
             (SIZE, 0.0),
-        ]);
+        ])
+        .with_delta_shadow(self.shadowing);
         ug.start_group(&self.group);
         ug.with_color(self.border.clone())
             .with_backcolor(self.back.clone())

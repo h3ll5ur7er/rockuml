@@ -10,19 +10,19 @@ pub(super) struct USymbolFile;
 
 const CORNERSIZE: f64 = 10.0;
 
-fn draw_file(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
-    if round_corner == 0.0 {
-        ug.draw(&UShape::polygon(vec![
+fn draw_file(ug: &UGraphic, width: f64, height: f64, shadowing: f64, round_corner: f64) {
+    let out = if round_corner == 0.0 {
+        UShape::polygon(vec![
             (0.0, 0.0),
             (0.0, height),
             (width, height),
             (width, CORNERSIZE),
             (width - CORNERSIZE, 0.0),
             (0.0, 0.0),
-        ]));
+        ])
     } else {
         let r = round_corner / 2.0;
-        ug.draw(&UShape::path(vec![
+        UShape::path(vec![
             USegment::MoveTo(0.0, r),
             USegment::LineTo(0.0, height - r),
             USegment::arc_to((r, height), r, false),
@@ -32,8 +32,9 @@ fn draw_file(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
             USegment::LineTo(width - CORNERSIZE, 0.0),
             USegment::LineTo(r, 0.0),
             USegment::arc_to((0.0, r), r, false),
-        ]));
-    }
+        ])
+    };
+    ug.draw(&out.with_delta_shadow(shadowing));
     let mut fold = vec![USegment::MoveTo(width - CORNERSIZE, 0.0)];
     if round_corner == 0.0 {
         fold.push(USegment::LineTo(width - CORNERSIZE, CORNERSIZE));
@@ -56,7 +57,13 @@ impl SmallShape for USymbolFile {
     }
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
-        draw_file(ug, dimension.width, dimension.height, fashion.round_corner);
+        draw_file(
+            ug,
+            dimension.width,
+            dimension.height,
+            fashion.delta_shadow,
+            fashion.round_corner,
+        );
     }
 }
 
@@ -66,6 +73,7 @@ impl BigShape for USymbolFile {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.draw_centered_stereotype_and_title(ug, 2.0);
