@@ -641,7 +641,16 @@ examples of the PlantUML language reference. Goldens can be generated on Linux (
   - Legends never shadow (`TextBlockBordered` hard-codes it off); timing diagrams shadow only notes.
 
 ### Phase 18 — Legacy activity diagrams (~2.6k)
-- `(*) --> "Action"`: `ActivityDiagramFactory`, a command layer over the ported cucadiagram and Smetana.
+- **Status: done.** Every corpus case (15 legacy-activity) passes L1, L2, L3, PNG size, URL and preprocessor
+  outputs, and makes the Smetana graph PlantUML makes (`diagram/activity/graph_tests.rs`).
+  - Ported: `ActivityDiagramFactory` and its commands over the ported cucadiagram and Smetana: `(*)` starts and
+    ends (`(*top)`, `(*n)`), quoted and named actions, `as`, actions on several lines, synchronization bars, arrows
+    with directions, lengths, labels, styles, `*` and URLs, `if`/`else`/`endif` branches, partitions with colours
+    and stereotypes, notes on actions and on links, `hide`, `left to right direction`; `EntityImageActivity`
+    with its shadow. A generic `UBrexSingleLine` command replaces the Gantt chart's own.
+  - Deviations: `skinparam activityShape octagon` draws rounded boxes, as PlantUML does with Smetana (only
+    Graphviz gives the node an octagon).
+  - Not ported: inner activities (`-->{` ... `}`), reported as not ported.
 
 ### Phases 19+ — The self-contained Tier 3 diagrams (~33k)
 Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer), flow (1k), boards (1.3k),

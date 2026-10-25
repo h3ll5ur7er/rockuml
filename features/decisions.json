@@ -188,8 +188,16 @@
     },
     "ActivityDiagramFactory": {
       "title": "Legacy activity diagrams (`(*) --> \"Action\"`)",
-      "status": "later",
-      "reason": "Tier 3 of the plan: the current activity syntax covers the same diagrams."
+      "rust": [
+        "diagram/activity",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "legacy-activity"
+      ],
+      "docs": "activity"
     },
     "BpmDiagramFactory": {
       "title": "BPM diagrams",

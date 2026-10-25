@@ -1,7 +1,6 @@
 //! `@startuml` diagram types rockuml cannot read yet. Their commands recognise the lines PlantUML's do, so
 //! that a source is read as the diagram type it is in PlantUML, or fails with the same error.
 
-mod activity;
 mod help;
 mod list_sprite;
 
@@ -64,23 +63,6 @@ impl Diagram for UnportedDiagram {
     fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
-    }
-}
-
-/// Reads legacy activity diagrams (PlantUML's `ActivityDiagramFactory`).
-pub(super) struct ActivityDiagramFactory;
-
-impl CommandFactory for ActivityDiagramFactory {
-    type Diagram = UnportedDiagram;
-
-    const DIAGRAM_TYPE: DiagramType = DiagramType::Activity;
-
-    fn create_empty_diagram(source: &Rc<UmlSource>) -> UnportedDiagram {
-        UnportedDiagram::new(source, SName::ActivityDiagram, "legacy activity diagrams")
-    }
-
-    fn init_commands_list() -> Vec<Box<dyn Command<UnportedDiagram>>> {
-        activity::init_commands_list()
     }
 }
 

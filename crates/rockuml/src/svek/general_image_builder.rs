@@ -2,7 +2,7 @@
 
 use super::IEntityImage;
 use super::image::{
-    EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
+    EntityImageActivity, EntityImageAssociation, EntityImageAssociationPoint, EntityImageBranch,
     EntityImageChenAttribute, EntityImageChenCircle, EntityImageChenEntity,
     EntityImageChenRelationship, EntityImageCircleEnd, EntityImageCircleStart, EntityImageClass,
     EntityImageDescription, EntityImageEmptyPackage, EntityImageJson, EntityImageLollipopInterface,
@@ -35,7 +35,7 @@ pub(crate) fn create_entity_image_block(
     }
     match leaf_type {
         LeafType::Note => Ok(Box::new(EntityImageNote::new(entity, diagram))),
-        LeafType::Activity => not_ported("EntityImageActivity"),
+        LeafType::Activity => Ok(Box::new(EntityImageActivity::new(entity, diagram))),
         LeafType::Portin | LeafType::Portout => Ok(Box::new(EntityImagePort::new(entity, diagram))),
         LeafType::State => Ok(state_image(entity, diagram)),
         LeafType::CircleStart => Ok(Box::new(EntityImageCircleStart::new(entity, diagram))),

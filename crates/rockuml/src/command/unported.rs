@@ -2,14 +2,9 @@
 //! accept, so that the diagram type a source is read as, and the errors it gets, come out as in PlantUML;
 //! executing one leaves the diagram not ported.
 
-use regex::Regex;
-
-use super::{
-    BlocLines, Command, CommandControl, CommandResult, Multiline, SingleLine, SingleLineCommand,
-};
+use super::{Command, CommandResult, SingleLine, SingleLineCommand};
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
-use crate::ubrex::UnicodeBracketedExpression;
 
 /// A diagram told that it holds something rockuml cannot draw yet.
 pub(crate) trait NotPortedCommands {
@@ -39,48 +34,6 @@ impl<D: NotPortedCommands> SingleLineCommand<D> for Unported {
     }
 
     fn execute_arg(&self, diagram: &mut D, _: &LineLocation, _: &RegexResult) -> CommandResult {
-        diagram.command_not_ported(self.name);
-        Ok(())
-    }
-}
-
-/// A multi-line command (`CommandMultilines2`): from a line `start` accepts to one `end` matches whole.
-pub(crate) fn multi_line<D: NotPortedCommands + 'static>(
-    name: &'static str,
-    start: RegexTree,
-    end: &Regex,
-) -> Multiline<D> {
-    Multiline::starting_with_owned(start, end, move |diagram: &mut D, _: &BlocLines| {
-        diagram.command_not_ported(name);
-        Ok(())
-    })
-}
-
-/// A single-line command recognised by a Unicode bracketed expression matching the whole trimmed line
-/// (`UBrexSingleLineCommand2`).
-pub(crate) fn ubrex_single_line<D: NotPortedCommands>(
-    name: &'static str,
-    pattern: UnicodeBracketedExpression,
-) -> Box<dyn Command<D>> {
-    Box::new(UnportedUBrex { name, pattern })
-}
-
-struct UnportedUBrex {
-    name: &'static str,
-    pattern: UnicodeBracketedExpression,
-}
-
-impl<D: NotPortedCommands> Command<D> for UnportedUBrex {
-    fn is_valid(&self, lines: &BlocLines) -> CommandControl {
-        match (lines.first(), lines.len()) {
-            (Some(first), 1) if self.pattern.exact_match(first.trimmed().text()) => {
-                CommandControl::Ok
-            }
-            _ => CommandControl::NotOk,
-        }
-    }
-
-    fn execute(&self, diagram: &mut D, _: BlocLines) -> CommandResult {
         diagram.command_not_ported(self.name);
         Ok(())
     }

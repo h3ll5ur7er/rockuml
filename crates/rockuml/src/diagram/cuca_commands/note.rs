@@ -26,8 +26,7 @@ static END_NOTE_ON_ENTITY: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^[%s]*(end[%s]?note)$"));
 static END_WITH_BRACKET: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"^(\})$"));
 /// The last line of a note on a link (`CommandFactoryNoteOnLink.END`).
-pub(in crate::diagram) static END_NOTE_ON_LINK: LazyLock<Regex> =
-    LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
+static END_NOTE_ON_LINK: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
 
 /// A single-line command that runs in `pass`.
 fn single_line<D: 'static>(
@@ -305,7 +304,7 @@ fn note_on_link_head() -> Vec<RegexTree> {
 }
 
 /// The pattern of `note on link : text`.
-pub(in crate::diagram) fn note_on_link_pattern() -> RegexTree {
+fn note_on_link_pattern() -> RegexTree {
     let mut pattern = note_on_link_head();
     pattern.extend([
         RegexTree::spaces_zero_or_more(),
@@ -318,7 +317,7 @@ pub(in crate::diagram) fn note_on_link_pattern() -> RegexTree {
 }
 
 /// The pattern of the first line of `note on link` ... `end note`.
-pub(in crate::diagram) fn note_on_link_multi_line_pattern() -> RegexTree {
+fn note_on_link_multi_line_pattern() -> RegexTree {
     let mut pattern = note_on_link_head();
     pattern.push(RegexTree::end());
     RegexTree::concat(pattern)

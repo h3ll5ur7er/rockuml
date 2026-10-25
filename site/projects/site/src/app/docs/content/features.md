@@ -8,9 +8,10 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 15 diagram types <<ported>>
+** Ported: 16 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
+*** Legacy activity diagrams <<ported>>
 *** Use case, component, deployment and ArchiMate diagrams <<ported>>
 *** State diagrams <<ported>>
 *** Activity diagrams <<ported>>
@@ -26,7 +27,6 @@ mindmapDiagram {
 *** Entity relationship diagrams <<ported>>
 left side
 ** Planned <<planned>>
-*** Legacy activity diagrams <<planned>>
 *** BPM diagrams <<planned>>
 *** Graphviz sources <<planned>>
 *** Charts <<planned>>
@@ -34,7 +34,8 @@ left side
 *** Ditaa diagrams <<planned>>
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
-*** and 10 more <<planned>>
+*** LaTeX math <<planned>>
+*** and 9 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -56,8 +57,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 15 of 52 ported, 29 planned, 8 not planned |
-| Commands of the ported diagrams | 752 of 752 ported |
+| Diagram types | 16 of 52 ported, 28 planned, 8 not planned |
+| Commands of the ported diagrams | 809 of 809 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -69,6 +70,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 |---|---|---|---|---|
 | [Sequence diagrams](docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
 | [Class and object diagrams](docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
+| [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 15 of 15 match PlantUML |  | `ActivityDiagramFactory` |
 | [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
@@ -84,7 +86,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | The welcome screen of an empty diagram | 🗓️ Planned later |  | A reference card; low priority. | `PSystemWelcomeFactory` |
 | The colour chart (`colors`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemColorsFactory` |
-| Legacy activity diagrams (`(*) --> "Action"`) | 🗓️ Planned later |  | Tier 3 of the plan: the current activity syntax covers the same diagrams. | `ActivityDiagramFactory` |
 | BPM diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BpmDiagramFactory` |
 | The license diagram (`license`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemLicenseFactory` |
 | The version diagram (`version`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemVersionFactory` |

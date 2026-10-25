@@ -5,12 +5,14 @@ mod decorator_multine;
 pub(crate) mod factory;
 mod multiline;
 mod single_line;
+mod ubrex_single_line;
 pub(crate) mod unported;
 
 pub(crate) use bloc_lines::BlocLines;
 pub(crate) use decorator_multine::DecoratorMultine;
 pub(crate) use multiline::Multiline;
 pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
+pub(crate) use ubrex_single_line::UBrexSingleLine;
 
 use crate::color::NoSuchColor;
 
