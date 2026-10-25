@@ -12,6 +12,7 @@ mod cuca_commands;
 mod description;
 mod diagram_type;
 mod error;
+mod files;
 mod gantt;
 mod json;
 mod mindmap;
@@ -179,6 +180,7 @@ pub fn create(
         Some(DiagramType::Gantt) => |source, _| builder::create_gantt(source),
         Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
+        Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

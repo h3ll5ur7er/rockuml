@@ -8,7 +8,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 15 diagram types <<ported>>
+** Ported: 16 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Use case, component, deployment and ArchiMate diagrams <<ported>>
@@ -22,6 +22,7 @@ mindmapDiagram {
 *** Gantt charts <<ported>>
 *** Timing diagrams <<ported>>
 *** JSON data <<ported>>
+*** File trees <<ported>>
 *** YAML data <<ported>>
 *** Entity relationship diagrams <<ported>>
 left side
@@ -34,7 +35,7 @@ left side
 *** Ditaa diagrams <<planned>>
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
-*** and 10 more <<planned>>
+*** and 9 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -56,7 +57,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 15 of 52 ported, 29 planned, 8 not planned |
+| Diagram types | 16 of 52 ported, 28 planned, 8 not planned |
 | Commands of the ported diagrams | 752 of 752 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
@@ -80,6 +81,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
 | [Timing diagrams](docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
+| [File trees](docs/files) | ✅ Ported | 9 of 9 match PlantUML |  | `FilesDiagramFactory` |
 | [YAML data](docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | The welcome screen of an empty diagram | 🗓️ Planned later |  | A reference card; low priority. | `PSystemWelcomeFactory` |
@@ -106,7 +108,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Help diagrams (`help keywords`, …) | 🗓️ Planned later |  | PlantUML's built-in reference cards; low priority. | `HelpFactory` |
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
 | Git diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `GitDiagramFactory` |
-| File trees | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `FilesDiagramFactory` |
 | Boards | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BoardDiagramFactory` |
 | HCL data | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `HclDiagramFactory` |
 | EBNF diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemEbnfFactory` |

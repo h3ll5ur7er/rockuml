@@ -12,7 +12,7 @@ use std::rc::Rc;
 
 use highlighted::Highlighted;
 use smetana_for_json::SmetanaForJson;
-use style_extractor::StyleExtractor;
+pub(super) use style_extractor::StyleExtractor;
 
 use super::common_commands::add_common_scale_commands;
 use super::titled::{Titled, TitledDiagram};
@@ -126,15 +126,9 @@ fn create(
             .titled
             .not_ported(NotYetPorted("the skin directive"));
     }
-    if !extractor.style.is_empty() {
-        let body: Vec<&str> = extractor
-            .style
-            .iter()
-            .map(String::as_str)
-            .filter(|line| !matches!(crate::java::trim(line), "<style>" | "</style>"))
-            .collect();
+    if let Some(rules) = extractor.style_rules() {
         // PlantUML reports a style it cannot parse and draws without it.
-        let _ = diagram.titled.skin.apply_style_sheet(&body);
+        let _ = diagram.titled.skin.apply_style_sheet(&rules);
     }
     if let Some(title) = &extractor.title {
         diagram

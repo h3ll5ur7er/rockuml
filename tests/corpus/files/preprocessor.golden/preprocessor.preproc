@@ -1,0 +1,15 @@
+@startfiles
+/app/modules/auth/index.js
+/app/modules/auth/README.md
+/app/modules/billing/index.js
+/app/modules/billing/README.md
+<note>
+<color:red>two</color> modules, shadowed
+</note>
+<style>
+note {
+  Shadowing 4
+  RoundCorner 10
+}
+</style>
+@endfiles

@@ -1,0 +1,25 @@
+@startfiles
+<style>
+filesDiagram {
+  FontColor #1F4E79
+  FontSize 16
+  FontName Monospaced
+  note {
+    BackGroundColor #E0F0FF
+    LineColor #1F4E79
+    FontColor #333333
+    FontSize 11
+    LineThickness 2
+  }
+}
+document {
+  BackGroundColor #FAFAF0
+}
+</style>
+/home/alice/notes.txt
+/home/bob/
+<note>
+bob's home
+</note>
+/var/log/syslog
+@endfiles

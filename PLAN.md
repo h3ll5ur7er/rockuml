@@ -648,6 +648,13 @@ Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer
 git (2k), regex and EBNF together (2k + 6.2k, both railroad diagrams), packet (2.7k), wire (3.5k), BPM (5.7k),
 charts (6.3k).
 
+### Phase 19 — File trees
+- **Status: done.** Every corpus case (9 files) passes L1, L2, L3, PNG, URL and preprocessor outputs.
+  - Ported: `@startfiles` (`FilesDiagramFactory`): `/paths` that share their folders, files that repeat, notes
+    between `<note>` and `</note>` placed beside the last file, `filesDiagram` and `note` styles. Like PlantUML,
+    lines that do not start with `/` are ignored, `title` and `scale` among them.
+  - The wasm build, which leaves out the emoji, keeps the folder and the page that file trees draw.
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

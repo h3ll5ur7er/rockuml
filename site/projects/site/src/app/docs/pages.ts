@@ -133,6 +133,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/yaml.md')),
       },
       {
+        slug: 'files',
+        title: 'File trees',
+        summary: 'Folders and files drawn as an indented tree, with notes.',
+        load: text(() => import('./content/files.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',

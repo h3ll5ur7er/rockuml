@@ -1,0 +1,18 @@
+@startfiles
+!$root = "/app"
+!procedure $module($name)
+$root/modules/$name/index.js
+$root/modules/$name/README.md
+!endprocedure
+$module("auth")
+$module("billing")
+<note>
+<color:red>two</color> modules, shadowed
+</note>
+<style>
+note {
+  Shadowing 4
+  RoundCorner 10
+}
+</style>
+@endfiles
