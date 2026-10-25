@@ -18,6 +18,7 @@ pub(crate) struct RoundedContainer {
     pub south_backcolor: HColor,
     pub stroke: UStroke,
     pub rounded: f64,
+    pub shadowing: f64,
 }
 
 impl RoundedContainer {
@@ -26,7 +27,11 @@ impl RoundedContainer {
             .with_color(self.border_color.clone())
             .with_stroke(self.stroke);
         let width = self.dim.width;
-        let rect = UShape::Rectangle(URectangle::new(width, self.dim.height).rounded(self.rounded));
+        let rect = URectangle::new(width, self.dim.height).rounded(self.rounded);
+        if self.shadowing > 0.0 {
+            ug.with_backcolor(HColor::NONE)
+                .draw(&UShape::Rectangle(rect.with_delta_shadow(self.shadowing)));
+        }
         RoundedNorth {
             width,
             height: self.name_height,
@@ -43,7 +48,8 @@ impl RoundedContainer {
             rounded: self.rounded,
         }
         .draw_u(&ug.translated(0.0, south_top));
-        ug.with_backcolor(HColor::NONE).draw(&rect);
+        ug.with_backcolor(HColor::NONE)
+            .draw(&UShape::Rectangle(rect));
         if self.name_height > 0.0 {
             ug.translated(0.0, self.name_height)
                 .draw(&UShape::Line { dx: width, dy: 0.0 });

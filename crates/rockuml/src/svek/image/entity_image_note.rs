@@ -42,6 +42,7 @@ pub(crate) struct EntityImageNote {
     border_color: HColor,
     stroke: UStroke,
     round_corner: f64,
+    shadowing: f64,
     text_block: Box<dyn TextBlock>,
     /// The link drawn as a callout, and the entity at its other end.
     opale_link: Option<(LinkId, EntityId)>,
@@ -83,6 +84,7 @@ impl EntityImageNote {
             border_color: style.value(PName::LineColor).as_color(),
             stroke: style.stroke(),
             round_corner: skin.get_round_corner(),
+            shadowing: style.shadowing(),
             text_block,
             opale_link: None,
             base,
@@ -131,7 +133,8 @@ impl EntityImageNote {
         let ug = ug
             .with_backcolor(self.note_background_color.clone())
             .with_color(self.border_color.clone());
-        ug.with_stroke(self.stroke).draw(&UShape::path(polygon));
+        ug.with_stroke(self.stroke)
+            .draw(&UShape::path(polygon).with_delta_shadow(self.shadowing));
         ug.draw(&UShape::path(opale::get_corner(
             self.get_text_width(string_bounder),
             self.round_corner,
@@ -164,7 +167,8 @@ impl EntityImageNote {
             Box::new(&*self.text_block),
             self.stroke,
             self.round_corner,
-        );
+        )
+        .with_shadowing(self.shadowing);
         opale.draw_opale(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
     }
 }

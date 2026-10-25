@@ -20,6 +20,7 @@ pub(crate) struct EntityImagePseudoState {
     border_color: HColor,
     background_color: HColor,
     stroke: UStroke,
+    shadow: f64,
 }
 
 impl EntityImagePseudoState {
@@ -56,6 +57,7 @@ impl EntityImagePseudoState {
             border_color: style.value(PName::LineColor).as_color(),
             background_color: style.value(PName::BackGroundColor).as_color(),
             stroke: style.stroke(),
+            shadow: style.shadowing(),
         }
     }
 }
@@ -70,7 +72,9 @@ impl TextBlock for EntityImagePseudoState {
             .with_stroke(self.stroke)
             .with_backcolor(self.background_color.clone())
             .with_color(self.border_color.clone());
-        ug.draw(&UShape::Ellipse(UEllipse::new(SIZE, SIZE)));
+        ug.draw(&UShape::Ellipse(
+            UEllipse::new(SIZE, SIZE).with_delta_shadow(self.shadow),
+        ));
         let dim_desc = self.desc.calculate_dimension(ug.string_bounder());
         let x = (SIZE - dim_desc.width) / 2.0;
         let y = (SIZE - dim_desc.height) / 2.0;

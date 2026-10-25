@@ -12,8 +12,8 @@ use crate::klimt::ugraphic::{UGraphic, UStroke};
 const MARGIN: f64 = 4.0;
 const RADIUS: f64 = 12.0;
 
-fn circle() -> UShape {
-    UShape::Ellipse(UEllipse::new(RADIUS * 2.0, RADIUS * 2.0))
+fn circle(delta_shadow: f64) -> UShape {
+    UShape::Ellipse(UEllipse::new(RADIUS * 2.0, RADIUS * 2.0).with_delta_shadow(delta_shadow))
 }
 
 /// A circle with a vertical bar on its left.
@@ -47,8 +47,9 @@ impl TextBlock for Boundary {
         ];
         ug.translated(MARGIN, MARGIN)
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::path(bar));
-        ug.translated(MARGIN + Self::LEFT, MARGIN).draw(&circle());
+            .draw(&UShape::path(bar).with_delta_shadow(self.fashion.delta_shadow));
+        ug.translated(MARGIN + Self::LEFT, MARGIN)
+            .draw(&circle(self.fashion.delta_shadow));
     }
 }
 
@@ -73,7 +74,8 @@ impl TextBlock for Control {
         const Y_APERTURE: f64 = 5.0;
         const X_CONTACT: f64 = 4.0;
         let ug = self.fashion.apply(ug);
-        ug.translated(MARGIN, MARGIN).draw(&circle());
+        ug.translated(MARGIN, MARGIN)
+            .draw(&circle(self.fashion.delta_shadow));
         let arrowhead = vec![
             (0.0, 0.0),
             (X_WING, -Y_APERTURE),
@@ -108,7 +110,8 @@ impl TextBlock for EntityDomain {
 
     fn draw_u(&self, ug: &UGraphic) {
         let ug = self.fashion.apply(ug);
-        ug.translated(MARGIN, MARGIN).draw(&circle());
+        ug.translated(MARGIN, MARGIN)
+            .draw(&circle(self.fashion.delta_shadow));
         ug.translated(MARGIN, MARGIN + 2.0 * RADIUS + Self::SUPP_Y)
             .draw(&UShape::Line {
                 dx: 2.0 * RADIUS,
@@ -121,16 +124,22 @@ impl TextBlock for EntityDomain {
 pub(crate) struct CircleInterface2 {
     background_color: HColor,
     foreground_color: HColor,
+    delta_shadow: f64,
 }
 
 impl CircleInterface2 {
     const MARGIN: f64 = 1.0;
     const RADIUS: f64 = 8.0;
 
-    pub(crate) fn new(background_color: HColor, foreground_color: HColor) -> Self {
+    pub(crate) fn new(
+        background_color: HColor,
+        foreground_color: HColor,
+        delta_shadow: f64,
+    ) -> Self {
         Self {
             background_color,
             foreground_color,
+            delta_shadow,
         }
     }
 }
@@ -147,10 +156,10 @@ impl TextBlock for CircleInterface2 {
         ug.with_backcolor(self.background_color.clone())
             .with_color(self.foreground_color.clone())
             .translated(Self::MARGIN, Self::MARGIN)
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::RADIUS * 2.0,
-                Self::RADIUS * 2.0,
-            )));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(Self::RADIUS * 2.0, Self::RADIUS * 2.0)
+                    .with_delta_shadow(self.delta_shadow),
+            ));
     }
 }
 

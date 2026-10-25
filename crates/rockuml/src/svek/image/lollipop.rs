@@ -24,6 +24,8 @@ pub(crate) struct EntityImageLollipopInterface {
     url: Option<Url>,
     group: UGroup,
     half: bool,
+    /// Only a whole circle casts it, and only when the skin parameters let it.
+    shadow: f64,
     background_color: HColor,
     border_color: HColor,
 }
@@ -45,12 +47,18 @@ impl EntityImageLollipopInterface {
             0.0,
             CreoleMode::Full,
         );
+        let shadow = if skin.shadowing(entity.stereotype.as_ref()) {
+            style.shadowing()
+        } else {
+            0.0
+        };
         Self {
             image: AbstractEntityImage::new(entity, diagram),
             desc: Box::new(desc),
             url: entity.url.clone(),
             group: entity_group(entity, diagram, "entity", entity.get_location()),
             half: entity.get_leaf_type() == Some(LeafType::LollipopHalf),
+            shadow,
             background_color: style.value(PName::BackGroundColor).as_color(),
             border_color: style.value(PName::LineColor).as_color(),
         }
@@ -67,7 +75,7 @@ impl TextBlock for EntityImageLollipopInterface {
         let circle = if self.half {
             UEllipse::arc(SIZE, SIZE, -90.0, 180.0)
         } else {
-            UEllipse::new(SIZE, SIZE)
+            UEllipse::new(SIZE, SIZE).with_delta_shadow(self.shadow)
         };
         let ug = ug
             .with_backcolor(self.background_color.clone())

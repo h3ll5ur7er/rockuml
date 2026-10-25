@@ -14,8 +14,8 @@ const MARGIN: Margin = Margin::new(10.0, 10.0, 10.0, 10.0);
 
 fn draw_rect(ug: &UGraphic, width: f64, height: f64, fashion: &Fashion) {
     let diagonal = fashion.diagonal_corner;
-    if diagonal > 0.0 {
-        ug.draw(&UShape::path(vec![
+    let shape = if diagonal > 0.0 {
+        UShape::path(vec![
             USegment::MoveTo(diagonal, 0.0),
             USegment::LineTo(width - diagonal, 0.0),
             USegment::LineTo(width, diagonal),
@@ -25,12 +25,11 @@ fn draw_rect(ug: &UGraphic, width: f64, height: f64, fashion: &Fashion) {
             USegment::LineTo(0.0, height - diagonal),
             USegment::LineTo(0.0, diagonal),
             USegment::LineTo(diagonal, 0.0),
-        ]));
+        ])
     } else {
-        ug.draw(&UShape::Rectangle(
-            URectangle::new(width, height).rounded(fashion.round_corner),
-        ));
-    }
+        UShape::Rectangle(URectangle::new(width, height).rounded(fashion.round_corner))
+    };
+    ug.draw(&shape.with_delta_shadow(fashion.delta_shadow));
 }
 
 impl SmallShape for USymbolRectangle {

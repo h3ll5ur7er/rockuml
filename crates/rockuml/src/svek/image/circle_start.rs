@@ -14,6 +14,7 @@ pub(crate) struct CircleStart {
     back_color: HColor,
     line_color: HColor,
     stroke: UStroke,
+    shadowing: f64,
 }
 
 impl CircleStart {
@@ -23,6 +24,7 @@ impl CircleStart {
             back_color: colors.get_color_of(style, PName::BackGroundColor),
             line_color: colors.get_color_of(style, PName::LineColor),
             stroke: style.stroke(),
+            shadowing: style.shadowing(),
         }
     }
 }
@@ -36,6 +38,8 @@ impl TextBlock for CircleStart {
         ug.with_color(self.line_color.clone())
             .with_backcolor(self.back_color.clone())
             .with_stroke(self.stroke)
-            .draw(&UShape::Ellipse(UEllipse::new(SIZE, SIZE)));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(SIZE, SIZE).with_delta_shadow(self.shadowing),
+            ));
     }
 }

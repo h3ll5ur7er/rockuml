@@ -33,6 +33,7 @@ pub(crate) struct EntityImageClass {
     comment: String,
     round_corner: f64,
     minimum_width: f64,
+    shadow: f64,
     border_color: HColor,
     header_backcolor: HColor,
     backcolor: HColor,
@@ -79,6 +80,7 @@ impl EntityImageClass {
             comment: format!("class {}", entity.get_name(diagram)),
             round_corner: style.value(PName::RoundCorner).as_double(),
             minimum_width: style.value(PName::MinimumWidth).as_double(),
+            shadow: style.shadowing(),
             border_color: colors
                 .get(ColorType::Line)
                 .cloned()
@@ -94,16 +96,17 @@ impl EntityImageClass {
         let dim_total = self.calculate_dimension(string_bounder);
         let dim_header = self.header.get_dimension(string_bounder);
         let (width, height) = (dim_total.width, dim_total.height);
-        let rect = UShape::Rectangle(URectangle::new(width, height).rounded(self.round_corner));
+        let rect = URectangle::new(width, height).rounded(self.round_corner);
+        let shadowed = UShape::Rectangle(rect.with_delta_shadow(self.shadow));
         let ug = ug
             .with_color(self.border_color.clone())
             .with_backcolor(self.backcolor.clone());
         let ug_stroke = ug.with_stroke(self.stroke);
         let mut ug_header = ug.clone();
         if self.backcolor == self.header_backcolor {
-            ug_stroke.draw(&rect);
+            ug_stroke.draw(&shadowed);
         } else if self.round_corner == 0.0 {
-            ug_stroke.draw(&rect);
+            ug_stroke.draw(&shadowed);
             ug_header = ug_header.with_backcolor(self.header_backcolor.clone());
             ug_header
                 .with_stroke(self.stroke)
@@ -112,7 +115,7 @@ impl EntityImageClass {
                     dim_header.height,
                 )));
         } else {
-            ug_stroke.draw(&rect);
+            ug_stroke.draw(&shadowed);
             let rect2 = URectangle::new(width, dim_header.height).rounded(self.round_corner);
             let rect3 = URectangle::new(width, self.round_corner / 2.0);
             ug_header = ug_header
@@ -123,7 +126,9 @@ impl EntityImageClass {
             header_stroke
                 .translated(0.0, dim_header.height - rect3.height)
                 .draw(&UShape::Rectangle(rect3));
-            ug_stroke.with_backcolor(HColor::NONE).draw(&rect);
+            ug_stroke
+                .with_backcolor(HColor::NONE)
+                .draw(&UShape::Rectangle(rect));
         }
         self.header.draw_u(&ug_header, width, dim_header.height);
         if let Some(body) = &self.body {

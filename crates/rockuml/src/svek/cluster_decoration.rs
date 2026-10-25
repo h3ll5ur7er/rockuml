@@ -40,6 +40,7 @@ impl ClusterDecoration {
         ug: &UGraphic,
         back_color: HColor,
         border_color: HColor,
+        shadowing: f64,
         round_corner: f64,
         title_alignment: HorizontalAlignment,
         stereo_alignment: HorizontalAlignment,
@@ -48,6 +49,7 @@ impl ClusterDecoration {
         if let Some(as_big) = self.get_text_block(
             back_color,
             border_color,
+            shadowing,
             round_corner,
             title_alignment,
             stereo_alignment,
@@ -60,16 +62,19 @@ impl ClusterDecoration {
 
     /// The symbol around the cluster's area; `None` for a style or symbol without a big form, which PlantUML
     /// fails to draw and so leaves out.
+    #[expect(clippy::too_many_arguments, reason = "PlantUML's getTextBlock")]
     pub(crate) fn get_text_block(
         &self,
         back_color: HColor,
         border_color: HColor,
+        shadowing: f64,
         round_corner: f64,
         title_alignment: HorizontalAlignment,
         stereo_alignment: HorizontalAlignment,
         diagonal_corner: f64,
     ) -> Option<Box<dyn TextBlock>> {
         let symbol_context = Fashion::new(back_color, border_color)
+            .with_delta_shadow(shadowing)
             .with_stroke(self.default_stroke)
             .with_corner(round_corner, diagonal_corner);
         self.symbol?.as_big(

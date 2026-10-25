@@ -181,6 +181,7 @@ debug class/relations-label-arrows.puml
 debug class/relations-lengths.puml
 debug class/relations-styles.puml
 debug class/relations.puml
+debug class/shadowing.puml
 debug class/skinparam-class.puml
 debug class/skinparam-monochrome.puml
 debug class/skinparam-stereotype.puml
@@ -232,6 +233,7 @@ debug component/ports-in-out.puml
 debug component/ports.puml
 debug component/rectangle-style.puml
 debug component/rectangles-groups.puml
+debug component/shadowing.puml
 debug component/skinparam.puml
 debug component/stereotypes.puml
 debug component/uml1-style.puml
@@ -270,6 +272,7 @@ debug deployment/nesting.puml
 debug deployment/notes.puml
 debug deployment/port-like-links.puml
 debug deployment/rectangles-mixed.puml
+debug deployment/shadowing.puml
 debug deployment/skinparam.puml
 debug deployment/stereotypes.puml
 debug deployment/style.puml
@@ -387,6 +390,7 @@ debug object/map-to-object.puml
 debug object/notes.puml
 debug object/packages.puml
 debug object/relations.puml
+debug object/shadowing.puml
 debug object/stereotypes-colors.puml
 debug preprocessor/builtins-color.puml
 debug preprocessor/builtins-date.puml
@@ -538,6 +542,7 @@ debug state/notes-on-link.puml
 debug state/notes.puml
 debug state/pins-expansion.puml
 debug state/self-transitions.puml
+debug state/shadowing.puml
 debug state/simple.puml
 debug state/skinparam.puml
 debug state/stereotype-inline-style.puml
@@ -564,6 +569,7 @@ debug timing/rectangle.puml
 debug timing/relative-time.puml
 debug timing/robust-concise.puml
 debug timing/scale.puml
+debug timing/shadowing.puml
 debug usecase/actor-styles-awesome.puml
 debug usecase/actor-styles-hollow.puml
 debug usecase/actors-syntax.puml
@@ -582,6 +588,7 @@ debug usecase/multiline-usecase.puml
 debug usecase/notes.puml
 debug usecase/packages.puml
 debug usecase/rectangle-system.puml
+debug usecase/shadowing.puml
 debug usecase/skinparam.puml
 debug usecase/stereotypes.puml
 debug usecase/title-legend.puml
@@ -792,6 +799,7 @@ dsvg class/relations-label-arrows.puml
 dsvg class/relations-lengths.puml
 dsvg class/relations-styles.puml
 dsvg class/relations.puml
+dsvg class/shadowing.puml
 dsvg class/skinparam-class.puml
 dsvg class/skinparam-monochrome.puml
 dsvg class/skinparam-stereotype.puml
@@ -843,6 +851,7 @@ dsvg component/ports-in-out.puml
 dsvg component/ports.puml
 dsvg component/rectangle-style.puml
 dsvg component/rectangles-groups.puml
+dsvg component/shadowing.puml
 dsvg component/skinparam.puml
 dsvg component/stereotypes.puml
 dsvg component/uml1-style.puml
@@ -881,6 +890,7 @@ dsvg deployment/nesting.puml
 dsvg deployment/notes.puml
 dsvg deployment/port-like-links.puml
 dsvg deployment/rectangles-mixed.puml
+dsvg deployment/shadowing.puml
 dsvg deployment/skinparam.puml
 dsvg deployment/stereotypes.puml
 dsvg deployment/style.puml
@@ -997,6 +1007,7 @@ dsvg object/map-to-object.puml
 dsvg object/notes.puml
 dsvg object/packages.puml
 dsvg object/relations.puml
+dsvg object/shadowing.puml
 dsvg object/stereotypes-colors.puml
 dsvg preprocessor/builtins-color.puml
 dsvg preprocessor/builtins-date.puml
@@ -1146,6 +1157,7 @@ dsvg state/notes-on-link.puml
 dsvg state/notes.puml
 dsvg state/pins-expansion.puml
 dsvg state/self-transitions.puml
+dsvg state/shadowing.puml
 dsvg state/simple.puml
 dsvg state/skinparam.puml
 dsvg state/stereotype-inline-style.puml
@@ -1172,6 +1184,7 @@ dsvg timing/rectangle.puml
 dsvg timing/relative-time.puml
 dsvg timing/robust-concise.puml
 dsvg timing/scale.puml
+dsvg timing/shadowing.puml
 dsvg usecase/actor-styles-awesome.puml
 dsvg usecase/actor-styles-hollow.puml
 dsvg usecase/actors-syntax.puml
@@ -1190,6 +1203,7 @@ dsvg usecase/multiline-usecase.puml
 dsvg usecase/notes.puml
 dsvg usecase/packages.puml
 dsvg usecase/rectangle-system.puml
+dsvg usecase/shadowing.puml
 dsvg usecase/skinparam.puml
 dsvg usecase/stereotypes.puml
 dsvg usecase/title-legend.puml
@@ -1291,6 +1305,7 @@ png activity/repeat-basic.puml
 png activity/repeat-break.puml
 png activity/repeat-labels.puml
 png activity/repeat-unclosed-arrow.puml
+png activity/shadowing.puml
 png activity/skinparam-activity.puml
 png activity/skinparam-monochrome.puml
 png activity/skinparam-reversecolor-dark.puml
@@ -1401,6 +1416,7 @@ png class/relations-label-arrows.puml
 png class/relations-lengths.puml
 png class/relations-styles.puml
 png class/relations.puml
+png class/shadowing.puml
 png class/skinparam-class.puml
 png class/skinparam-monochrome.puml
 png class/skinparam-stereotype.puml
@@ -1452,6 +1468,7 @@ png component/ports-in-out.puml
 png component/ports.puml
 png component/rectangle-style.puml
 png component/rectangles-groups.puml
+png component/shadowing.puml
 png component/skinparam.puml
 png component/stereotypes.puml
 png component/uml1-style.puml
@@ -1490,6 +1507,7 @@ png deployment/nesting.puml
 png deployment/notes.puml
 png deployment/port-like-links.puml
 png deployment/rectangles-mixed.puml
+png deployment/shadowing.puml
 png deployment/skinparam.puml
 png deployment/stereotypes.puml
 png deployment/style.puml
@@ -1522,6 +1540,7 @@ png gantt/printscale-monthly.puml
 png gantt/printscale-weekly.puml
 png gantt/resources.puml
 png gantt/separators.puml
+png gantt/shadowing.puml
 png gantt/start-date.puml
 png gantt/styles.puml
 png gantt/today.puml
@@ -1575,6 +1594,7 @@ png mindmap/monochrome.puml
 png mindmap/multiline.puml
 png mindmap/multiroot.puml
 png mindmap/right-to-left.puml
+png mindmap/shadowing.puml
 png mindmap/starts-deeper.puml
 png mindmap/stereotype-styles.puml
 png mindmap/subtree-styles.puml
@@ -1589,6 +1609,7 @@ png nwdiag/group-twice.puml
 png nwdiag/group.puml
 png nwdiag/multiple-addresses.puml
 png nwdiag/peer-network.puml
+png nwdiag/shadowing.puml
 png nwdiag/shapes.puml
 png nwdiag/standalone.puml
 png nwdiag/styles.puml
@@ -1607,6 +1628,7 @@ png object/map-to-object.puml
 png object/notes.puml
 png object/packages.puml
 png object/relations.puml
+png object/shadowing.puml
 png object/stereotypes-colors.puml
 png preprocessor/builtins-color.puml
 png preprocessor/builtins-date.puml
@@ -1757,6 +1779,7 @@ png state/notes-on-link.puml
 png state/notes.puml
 png state/pins-expansion.puml
 png state/self-transitions.puml
+png state/shadowing.puml
 png state/simple.puml
 png state/skinparam.puml
 png state/stereotype-inline-style.puml
@@ -1783,6 +1806,7 @@ png timing/rectangle.puml
 png timing/relative-time.puml
 png timing/robust-concise.puml
 png timing/scale.puml
+png timing/shadowing.puml
 png usecase/actor-styles-awesome.puml
 png usecase/actor-styles-hollow.puml
 png usecase/actors-syntax.puml
@@ -1801,6 +1825,7 @@ png usecase/multiline-usecase.puml
 png usecase/notes.puml
 png usecase/packages.puml
 png usecase/rectangle-system.puml
+png usecase/shadowing.puml
 png usecase/skinparam.puml
 png usecase/stereotypes.puml
 png usecase/title-legend.puml
@@ -1819,6 +1844,7 @@ png wbs/links.puml
 png wbs/multiline.puml
 png wbs/old-order.puml
 png wbs/pseudo.puml
+png wbs/shadowing.puml
 png wbs/stereotype-styles.puml
 png wbs/styles.puml
 png wbs/subtree-styles.puml
@@ -1902,6 +1928,7 @@ preproc activity/repeat-basic.puml
 preproc activity/repeat-break.puml
 preproc activity/repeat-labels.puml
 preproc activity/repeat-unclosed-arrow.puml
+preproc activity/shadowing.puml
 preproc activity/skinparam-activity.puml
 preproc activity/skinparam-monochrome.puml
 preproc activity/skinparam-reversecolor-dark.puml
@@ -2012,6 +2039,7 @@ preproc class/relations-label-arrows.puml
 preproc class/relations-lengths.puml
 preproc class/relations-styles.puml
 preproc class/relations.puml
+preproc class/shadowing.puml
 preproc class/skinparam-class.puml
 preproc class/skinparam-monochrome.puml
 preproc class/skinparam-stereotype.puml
@@ -2031,6 +2059,7 @@ preproc common/page-split.puml
 preproc common/scale-max-width.puml
 preproc common/scale.puml
 preproc common/separator-title-newline.puml
+preproc common/shadowing-style.puml
 preproc common/skin-debug.puml
 preproc common/skin-rose.puml
 preproc common/skinparam-jaws.puml
@@ -2064,6 +2093,7 @@ preproc component/ports-in-out.puml
 preproc component/ports.puml
 preproc component/rectangle-style.puml
 preproc component/rectangles-groups.puml
+preproc component/shadowing.puml
 preproc component/skinparam.puml
 preproc component/stereotypes.puml
 preproc component/uml1-style.puml
@@ -2102,6 +2132,7 @@ preproc deployment/nesting.puml
 preproc deployment/notes.puml
 preproc deployment/port-like-links.puml
 preproc deployment/rectangles-mixed.puml
+preproc deployment/shadowing.puml
 preproc deployment/skinparam.puml
 preproc deployment/stereotypes.puml
 preproc deployment/style.puml
@@ -2134,6 +2165,7 @@ preproc gantt/printscale-monthly.puml
 preproc gantt/printscale-weekly.puml
 preproc gantt/resources.puml
 preproc gantt/separators.puml
+preproc gantt/shadowing.puml
 preproc gantt/start-date.puml
 preproc gantt/styles.puml
 preproc gantt/today.puml
@@ -2188,6 +2220,7 @@ preproc mindmap/monochrome.puml
 preproc mindmap/multiline.puml
 preproc mindmap/multiroot.puml
 preproc mindmap/right-to-left.puml
+preproc mindmap/shadowing.puml
 preproc mindmap/starts-deeper.puml
 preproc mindmap/stereotype-styles.puml
 preproc mindmap/subtree-styles.puml
@@ -2202,6 +2235,7 @@ preproc nwdiag/group-twice.puml
 preproc nwdiag/group.puml
 preproc nwdiag/multiple-addresses.puml
 preproc nwdiag/peer-network.puml
+preproc nwdiag/shadowing.puml
 preproc nwdiag/shapes.puml
 preproc nwdiag/standalone.puml
 preproc nwdiag/styles.puml
@@ -2220,6 +2254,7 @@ preproc object/map-to-object.puml
 preproc object/notes.puml
 preproc object/packages.puml
 preproc object/relations.puml
+preproc object/shadowing.puml
 preproc object/stereotypes-colors.puml
 preproc preprocessor/builtins-color.puml
 preproc preprocessor/builtins-date.puml
@@ -2332,6 +2367,7 @@ preproc sequence/reverse-arrows.puml
 preproc sequence/secondary-group.puml
 preproc sequence/self-message-several-notes.puml
 preproc sequence/self-messages.puml
+preproc sequence/shadowing.puml
 preproc sequence/short-arrows.puml
 preproc sequence/skinparam-basic.puml
 preproc sequence/skinparam-colors.puml
@@ -2376,6 +2412,7 @@ preproc state/notes-on-link.puml
 preproc state/notes.puml
 preproc state/pins-expansion.puml
 preproc state/self-transitions.puml
+preproc state/shadowing.puml
 preproc state/simple.puml
 preproc state/skinparam.puml
 preproc state/stereotype-inline-style.puml
@@ -2402,6 +2439,7 @@ preproc timing/rectangle.puml
 preproc timing/relative-time.puml
 preproc timing/robust-concise.puml
 preproc timing/scale.puml
+preproc timing/shadowing.puml
 preproc usecase/actor-styles-awesome.puml
 preproc usecase/actor-styles-hollow.puml
 preproc usecase/actors-syntax.puml
@@ -2420,6 +2458,7 @@ preproc usecase/multiline-usecase.puml
 preproc usecase/notes.puml
 preproc usecase/packages.puml
 preproc usecase/rectangle-system.puml
+preproc usecase/shadowing.puml
 preproc usecase/skinparam.puml
 preproc usecase/stereotypes.puml
 preproc usecase/title-legend.puml
@@ -2438,6 +2477,7 @@ preproc wbs/links.puml
 preproc wbs/multiline.puml
 preproc wbs/old-order.puml
 preproc wbs/pseudo.puml
+preproc wbs/shadowing.puml
 preproc wbs/stereotype-styles.puml
 preproc wbs/styles.puml
 preproc wbs/subtree-styles.puml
@@ -2611,6 +2651,7 @@ svg component/ports-in-out.puml
 svg component/ports.puml
 svg component/rectangle-style.puml
 svg component/rectangles-groups.puml
+svg component/shadowing.puml
 svg component/skinparam.puml
 svg component/stereotypes.puml
 svg component/uml1-style.puml
@@ -2648,6 +2689,7 @@ svg deployment/nesting.puml
 svg deployment/notes.puml
 svg deployment/port-like-links.puml
 svg deployment/rectangles-mixed.puml
+svg deployment/shadowing.puml
 svg deployment/skinparam.puml
 svg deployment/stereotypes.puml
 svg deployment/style.puml
@@ -2760,6 +2802,7 @@ svg object/map-to-object.puml
 svg object/notes.puml
 svg object/packages.puml
 svg object/relations.puml
+svg object/shadowing.puml
 svg object/stereotypes-colors.puml
 svg preprocessor/builtins-color.puml
 svg preprocessor/builtins-date.puml
@@ -2907,6 +2950,7 @@ svg state/notes-on-link.puml
 svg state/notes.puml
 svg state/pins-expansion.puml
 svg state/self-transitions.puml
+svg state/shadowing.puml
 svg state/simple.puml
 svg state/skinparam.puml
 svg state/stereotype-inline-style.puml
@@ -2933,6 +2977,7 @@ svg timing/rectangle.puml
 svg timing/relative-time.puml
 svg timing/robust-concise.puml
 svg timing/scale.puml
+svg timing/shadowing.puml
 svg usecase/actor-styles-awesome.puml
 svg usecase/actor-styles-hollow.puml
 svg usecase/actors-syntax.puml
@@ -2951,6 +2996,7 @@ svg usecase/multiline-usecase.puml
 svg usecase/notes.puml
 svg usecase/packages.puml
 svg usecase/rectangle-system.puml
+svg usecase/shadowing.puml
 svg usecase/skinparam.puml
 svg usecase/stereotypes.puml
 svg usecase/title-legend.puml
@@ -3052,6 +3098,7 @@ url activity/repeat-basic.puml
 url activity/repeat-break.puml
 url activity/repeat-labels.puml
 url activity/repeat-unclosed-arrow.puml
+url activity/shadowing.puml
 url activity/skinparam-activity.puml
 url activity/skinparam-monochrome.puml
 url activity/skinparam-reversecolor-dark.puml
@@ -3162,6 +3209,7 @@ url class/relations-label-arrows.puml
 url class/relations-lengths.puml
 url class/relations-styles.puml
 url class/relations.puml
+url class/shadowing.puml
 url class/skinparam-class.puml
 url class/skinparam-monochrome.puml
 url class/skinparam-stereotype.puml
@@ -3181,6 +3229,7 @@ url common/page-split.puml
 url common/scale-max-width.puml
 url common/scale.puml
 url common/separator-title-newline.puml
+url common/shadowing-style.puml
 url common/skin-debug.puml
 url common/skin-rose.puml
 url common/skinparam-jaws.puml
@@ -3214,6 +3263,7 @@ url component/ports-in-out.puml
 url component/ports.puml
 url component/rectangle-style.puml
 url component/rectangles-groups.puml
+url component/shadowing.puml
 url component/skinparam.puml
 url component/stereotypes.puml
 url component/uml1-style.puml
@@ -3252,6 +3302,7 @@ url deployment/nesting.puml
 url deployment/notes.puml
 url deployment/port-like-links.puml
 url deployment/rectangles-mixed.puml
+url deployment/shadowing.puml
 url deployment/skinparam.puml
 url deployment/stereotypes.puml
 url deployment/style.puml
@@ -3284,6 +3335,7 @@ url gantt/printscale-monthly.puml
 url gantt/printscale-weekly.puml
 url gantt/resources.puml
 url gantt/separators.puml
+url gantt/shadowing.puml
 url gantt/start-date.puml
 url gantt/styles.puml
 url gantt/today.puml
@@ -3338,6 +3390,7 @@ url mindmap/monochrome.puml
 url mindmap/multiline.puml
 url mindmap/multiroot.puml
 url mindmap/right-to-left.puml
+url mindmap/shadowing.puml
 url mindmap/starts-deeper.puml
 url mindmap/stereotype-styles.puml
 url mindmap/subtree-styles.puml
@@ -3352,6 +3405,7 @@ url nwdiag/group-twice.puml
 url nwdiag/group.puml
 url nwdiag/multiple-addresses.puml
 url nwdiag/peer-network.puml
+url nwdiag/shadowing.puml
 url nwdiag/shapes.puml
 url nwdiag/standalone.puml
 url nwdiag/styles.puml
@@ -3370,6 +3424,7 @@ url object/map-to-object.puml
 url object/notes.puml
 url object/packages.puml
 url object/relations.puml
+url object/shadowing.puml
 url object/stereotypes-colors.puml
 url preprocessor/builtins-color.puml
 url preprocessor/builtins-date.puml
@@ -3482,6 +3537,7 @@ url sequence/reverse-arrows.puml
 url sequence/secondary-group.puml
 url sequence/self-message-several-notes.puml
 url sequence/self-messages.puml
+url sequence/shadowing.puml
 url sequence/short-arrows.puml
 url sequence/skinparam-basic.puml
 url sequence/skinparam-colors.puml
@@ -3526,6 +3582,7 @@ url state/notes-on-link.puml
 url state/notes.puml
 url state/pins-expansion.puml
 url state/self-transitions.puml
+url state/shadowing.puml
 url state/simple.puml
 url state/skinparam.puml
 url state/stereotype-inline-style.puml
@@ -3552,6 +3609,7 @@ url timing/rectangle.puml
 url timing/relative-time.puml
 url timing/robust-concise.puml
 url timing/scale.puml
+url timing/shadowing.puml
 url usecase/actor-styles-awesome.puml
 url usecase/actor-styles-hollow.puml
 url usecase/actors-syntax.puml
@@ -3570,6 +3628,7 @@ url usecase/multiline-usecase.puml
 url usecase/notes.puml
 url usecase/packages.puml
 url usecase/rectangle-system.puml
+url usecase/shadowing.puml
 url usecase/skinparam.puml
 url usecase/stereotypes.puml
 url usecase/title-legend.puml
@@ -3588,6 +3647,7 @@ url wbs/links.puml
 url wbs/multiline.puml
 url wbs/old-order.puml
 url wbs/pseudo.puml
+url wbs/shadowing.puml
 url wbs/stereotype-styles.puml
 url wbs/styles.puml
 url wbs/subtree-styles.puml

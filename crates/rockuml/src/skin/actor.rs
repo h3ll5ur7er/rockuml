@@ -87,7 +87,12 @@ impl TextBlock for ActorStickMan {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
         XDimension2D::new(
             Self::ARMS_LENGTH.max(Self::LEGS_X) * 2.0 + 2.0 * self.thickness(),
-            Self::HEAD_DIAM + Self::BODY_LENGTH + Self::LEGS_Y + 2.0 * self.thickness() + 1.0,
+            Self::HEAD_DIAM
+                + Self::BODY_LENGTH
+                + Self::LEGS_Y
+                + 2.0 * self.thickness()
+                + self.fashion.delta_shadow
+                + 1.0,
         )
     }
 
@@ -107,10 +112,10 @@ impl TextBlock for ActorStickMan {
         ];
         let ug = self.fashion.apply(ug);
         ug.translated(start_x, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(Self::HEAD_DIAM, Self::HEAD_DIAM)
+                    .with_delta_shadow(self.fashion.delta_shadow),
+            ));
         if self.actor_business {
             Self::special_business(&ug.translated(
                 start_x + Self::HEAD_DIAM / 2.0,
@@ -119,7 +124,7 @@ impl TextBlock for ActorStickMan {
         }
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::path(body));
+            .draw(&UShape::path(body).with_delta_shadow(self.fashion.delta_shadow));
     }
 }
 
@@ -201,12 +206,12 @@ impl TextBlock for ActorAwesome {
         let center_x = self.preferred_width() / 2.0;
         let ug = self.fashion.apply(ug);
         ug.translated(center_x - Self::HEAD_DIAM / 2.0, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(Self::HEAD_DIAM, Self::HEAD_DIAM)
+                    .with_delta_shadow(self.fashion.delta_shadow),
+            ));
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
-            .draw(&UShape::path(Self::body()));
+            .draw(&UShape::path(Self::body()).with_delta_shadow(self.fashion.delta_shadow));
     }
 }
 
@@ -261,7 +266,11 @@ impl TextBlock for ActorHollow {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
         XDimension2D::new(
             self.preferred_width(),
-            Self::HEAD_DIAM + Self::NECK_HEIGHT + Self::BODY_HEIGHT + self.thickness() * 2.0,
+            Self::HEAD_DIAM
+                + Self::NECK_HEIGHT
+                + Self::BODY_HEIGHT
+                + self.thickness() * 2.0
+                + self.fashion.delta_shadow,
         )
     }
 
@@ -269,15 +278,15 @@ impl TextBlock for ActorHollow {
         let center_x = self.preferred_width() / 2.0;
         let ug = self.fashion.apply(ug);
         ug.translated(center_x - Self::HEAD_DIAM / 2.0, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(Self::HEAD_DIAM, Self::HEAD_DIAM)
+                    .with_delta_shadow(self.fashion.delta_shadow),
+            ));
         ug.translated(
             center_x,
             Self::HEAD_DIAM + self.thickness() + Self::NECK_HEIGHT,
         )
-        .draw(&UShape::path(Self::body()));
+        .draw(&UShape::path(Self::body()).with_delta_shadow(self.fashion.delta_shadow));
     }
 }
 
