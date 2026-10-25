@@ -10,6 +10,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::activity::ActivityDiagramFactory;
 use super::activity3::ActivityDiagramFactory3;
 use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
@@ -23,7 +24,7 @@ use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
-use super::unported::{ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory};
+use super::unported::{HelpFactory, ListSpriteDiagramFactory};
 use super::wbs::WbsDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
@@ -413,7 +414,7 @@ mod tests {
                 "\"First\" --> (*)",
                 "@enduml"
             ]),
-            "legacy activity diagrams"
+            "ACTIVITY"
         );
         assert_eq!(
             read_as(&["@startuml", "actor User", "User --> (Login)", "@enduml"]),

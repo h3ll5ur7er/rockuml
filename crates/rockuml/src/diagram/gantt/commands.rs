@@ -7,8 +7,8 @@ use super::time::day_of_week_from_string;
 use super::{Column, GanttDiagram, PrintScale, WeeklyHeaderStrategy};
 use crate::color::HColor;
 use crate::command::{
-    BlocLines, Command, CommandControl, CommandError, CommandResult, Multiline, PatternCommand,
-    SingleLine,
+    BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
+    UBrexSingleLine,
 };
 use crate::decoration::WithLinkType;
 use crate::diagram::chrome::Warning;
@@ -19,8 +19,8 @@ use crate::diagram::description::arrow_style;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{self, Stereotype};
 use crate::text::LineLocation;
+use crate::ubrex::UMatcher;
 use crate::ubrex::builder::UBrexPart;
-use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
 /// The commands in PlantUML's order.
 pub(super) fn all() -> Vec<Box<dyn Command<GanttDiagram>>> {
@@ -66,42 +66,18 @@ fn command(
     )))
 }
 
-/// A one-line command matched whole by a Unicode bracketed expression (`UBrexSingleLineCommand2`).
-struct UBrexCommand {
-    pattern: UnicodeBracketedExpression,
-    apply: fn(&mut GanttDiagram, &UMatcher) -> CommandResult,
-}
-
-impl Command<GanttDiagram> for UBrexCommand {
-    fn is_valid(&self, lines: &BlocLines) -> CommandControl {
-        match (lines.first(), lines.len()) {
-            (Some(first), 1) if self.pattern.exact_match(first.trimmed().text()) => {
-                CommandControl::Ok
-            }
-            _ => CommandControl::NotOk,
-        }
-    }
-
-    fn execute(&self, diagram: &mut GanttDiagram, lines: BlocLines) -> CommandResult {
-        let line = lines.first().expect("a command has its line").trimmed();
-        let matcher = self
-            .pattern
-            .match_at(line.text())
-            .expect("the line matched when the command was chosen");
-        (self.apply)(diagram, &matcher)
-    }
-}
-
 fn ubrex_command(
     parts: Vec<UBrexPart>,
     apply: fn(&mut GanttDiagram, &UMatcher) -> CommandResult,
 ) -> Box<dyn Command<GanttDiagram>> {
     let mut parts = parts;
     parts.push(UBrexPart::end());
-    Box::new(UBrexCommand {
-        pattern: UBrexPart::concat(parts).build(),
-        apply,
-    })
+    Box::new(UBrexSingleLine::new(
+        UBrexPart::concat(parts).build(),
+        move |diagram: &mut GanttDiagram, _: &LineLocation, matcher: &UMatcher| {
+            apply(diagram, matcher)
+        },
+    ))
 }
 
 fn no_such_task(code: &str) -> CommandError {

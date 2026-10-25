@@ -322,3 +322,40 @@ stop
 ```
 
 The older form with the colour in front, `#pink:Do something;`, still works, but PlantUML 1.2026.8 marks it as deprecated with a note in the diagram.
+
+## The legacy syntax
+
+PlantUML's first activity syntax still works: `(*)` is the start, or the end after an arrow, quoted texts are actions, and an arrow without a source starts from the last action. An arrow names its direction (`-left->`), its label in brackets (`-->[yes]`) and its style (`-[#blue,dashed]->`); `as` names an action, so that later arrows can start from it.
+
+```rockuml
+@startuml
+(*) --> "Search for the TV remote" as search
+if "Found it?" then
+  -->[yes] "Watch the documentary"
+  --> (*)
+else
+  ->[no] "Look under the cat"
+  -->[still no] search
+endif
+@enduml
+```
+
+`===B1===` is a synchronization bar, where flows fork and join. `partition Name {` ... `}` groups actions, and `note left` puts a note on the last action.
+
+```rockuml
+@startuml
+partition Kitchen #LightYellow {
+  (*) --> ===FORK===
+  --> "Boil the pasta"
+  --> ===JOIN===
+  ===FORK=== --> "Heat the sauce"
+  note right: stir now and then
+  --> ===JOIN===
+}
+===JOIN=== --> "Serve dinner"
+--> (*)
+@enduml
+```
+
+Inner activities (`-->{` ... `}`) are not drawn yet: a diagram that has one is reported as not ported.
+

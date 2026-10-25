@@ -5,6 +5,7 @@ mod chen;
 mod circle_end;
 mod circle_start;
 mod class;
+mod entity_image_activity;
 mod entity_image_branch;
 mod entity_image_circle_end;
 mod entity_image_circle_start;
@@ -35,6 +36,7 @@ pub(crate) use chen::{
 pub(crate) use circle_end::CircleEnd;
 pub(crate) use circle_start::CircleStart;
 pub(crate) use class::EntityImageClass;
+pub(crate) use entity_image_activity::EntityImageActivity;
 pub(crate) use entity_image_branch::EntityImageBranch;
 pub(crate) use entity_image_circle_end::EntityImageCircleEnd;
 pub(crate) use entity_image_circle_start::EntityImageCircleStart;
