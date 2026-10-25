@@ -365,7 +365,9 @@ impl<'a> Grid<'a> {
                 ug.translated(network.xmin.get(), y)
                     .apply(style.value(PName::LineColor).as_color())
                     .with_backcolor(back_color)
-                    .draw(&UShape::Rectangle(URectangle::new(width, NETWORK_THIN)));
+                    .draw(&UShape::Rectangle(
+                        URectangle::new(width, NETWORK_THIN).with_delta_shadow(style.shadowing()),
+                    ));
             }
             y += self.line_height(string_bounder, i);
         }

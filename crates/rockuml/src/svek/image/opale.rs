@@ -281,3 +281,28 @@ impl TextBlock for Opale<'_> {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::klimt::ugraphic::tests::recording;
+    use crate::skin::component::TextBlockEmpty;
+
+    #[test]
+    fn the_outline_casts_the_shadow_and_the_fold_does_not() {
+        let (ug, recorder) = recording();
+        let text = TextBlockEmpty {
+            dimension: XDimension2D::new(20.0, 10.0),
+        };
+        Opale::new(
+            HColor::BLACK,
+            HColor::WHITE,
+            Box::new(text),
+            UStroke::SIMPLE,
+            0.0,
+        )
+        .with_shadowing(4.0)
+        .draw_u(&ug);
+        assert_eq!(recorder.take().lines, ["UPath 0,0 shadow 4", "UPath 0,0"]);
+    }
+}

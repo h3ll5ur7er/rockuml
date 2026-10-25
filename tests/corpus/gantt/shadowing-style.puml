@@ -1,0 +1,13 @@
+@startgantt
+<style>
+ganttDiagram {
+  note {
+    Shadowing 6
+  }
+}
+</style>
+[Design] lasts 5 days
+note bottom
+  shadowed
+end note
+@endgantt

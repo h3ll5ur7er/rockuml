@@ -5,7 +5,7 @@ use super::*;
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::shape::URectangle;
 
-/// Lists what reaches it, one line per shape: its kind, absolute position and size.
+/// Lists what reaches it, one line per shape: its kind, absolute position and size, then any stroke and shadow.
 #[derive(Default)]
 pub(crate) struct Recorder {
     pub(crate) lines: Vec<String>,
@@ -26,6 +26,10 @@ impl UGraphicBackend for Recorder {
             line
         } else {
             format!("{line} stroke {}", param.stroke)
+        };
+        let line = match shape.delta_shadow() {
+            0.0 => line,
+            shadow => format!("{line} shadow {shadow}"),
         };
         self.lines.push(line);
     }

@@ -308,6 +308,8 @@ debug gantt/printscale-monthly.puml
 debug gantt/printscale-weekly.puml
 debug gantt/resources.puml
 debug gantt/separators.puml
+debug gantt/shadowing-style.puml
+debug gantt/shadowing.puml
 debug gantt/start-date.puml
 debug gantt/styles.puml
 debug gantt/today.puml
@@ -361,6 +363,7 @@ debug mindmap/monochrome.puml
 debug mindmap/multiline.puml
 debug mindmap/multiroot.puml
 debug mindmap/right-to-left.puml
+debug mindmap/shadowing-style.puml
 debug mindmap/shadowing.puml
 debug mindmap/starts-deeper.puml
 debug mindmap/stereotype-styles.puml
@@ -571,6 +574,7 @@ debug timing/rectangle.puml
 debug timing/relative-time.puml
 debug timing/robust-concise.puml
 debug timing/scale.puml
+debug timing/shadowing-style.puml
 debug timing/shadowing.puml
 debug usecase/actor-styles-awesome.puml
 debug usecase/actor-styles-hollow.puml
@@ -608,6 +612,7 @@ debug wbs/links.puml
 debug wbs/multiline.puml
 debug wbs/old-order.puml
 debug wbs/pseudo.puml
+debug wbs/shadowing-style.puml
 debug wbs/shadowing.puml
 debug wbs/stereotype-styles.puml
 debug wbs/styles.puml
@@ -928,6 +933,8 @@ dsvg gantt/printscale-monthly.puml
 dsvg gantt/printscale-weekly.puml
 dsvg gantt/resources.puml
 dsvg gantt/separators.puml
+dsvg gantt/shadowing-style.puml
+dsvg gantt/shadowing.puml
 dsvg gantt/start-date.puml
 dsvg gantt/styles.puml
 dsvg gantt/today.puml
@@ -980,6 +987,7 @@ dsvg mindmap/monochrome.puml
 dsvg mindmap/multiline.puml
 dsvg mindmap/multiroot.puml
 dsvg mindmap/right-to-left.puml
+dsvg mindmap/shadowing-style.puml
 dsvg mindmap/shadowing.puml
 dsvg mindmap/starts-deeper.puml
 dsvg mindmap/stereotype-styles.puml
@@ -1188,6 +1196,7 @@ dsvg timing/rectangle.puml
 dsvg timing/relative-time.puml
 dsvg timing/robust-concise.puml
 dsvg timing/scale.puml
+dsvg timing/shadowing-style.puml
 dsvg timing/shadowing.puml
 dsvg usecase/actor-styles-awesome.puml
 dsvg usecase/actor-styles-hollow.puml
@@ -1225,6 +1234,7 @@ dsvg wbs/links.puml
 dsvg wbs/multiline.puml
 dsvg wbs/old-order.puml
 dsvg wbs/pseudo.puml
+dsvg wbs/shadowing-style.puml
 dsvg wbs/shadowing.puml
 dsvg wbs/stereotype-styles.puml
 dsvg wbs/styles.puml
@@ -1548,6 +1558,7 @@ png gantt/printscale-monthly.puml
 png gantt/printscale-weekly.puml
 png gantt/resources.puml
 png gantt/separators.puml
+png gantt/shadowing-style.puml
 png gantt/shadowing.puml
 png gantt/start-date.puml
 png gantt/styles.puml
@@ -1602,6 +1613,7 @@ png mindmap/monochrome.puml
 png mindmap/multiline.puml
 png mindmap/multiroot.puml
 png mindmap/right-to-left.puml
+png mindmap/shadowing-style.puml
 png mindmap/shadowing.puml
 png mindmap/starts-deeper.puml
 png mindmap/stereotype-styles.puml
@@ -1815,6 +1827,7 @@ png timing/rectangle.puml
 png timing/relative-time.puml
 png timing/robust-concise.puml
 png timing/scale.puml
+png timing/shadowing-style.puml
 png timing/shadowing.puml
 png usecase/actor-styles-awesome.puml
 png usecase/actor-styles-hollow.puml
@@ -1852,6 +1865,7 @@ png wbs/links.puml
 png wbs/multiline.puml
 png wbs/old-order.puml
 png wbs/pseudo.puml
+png wbs/shadowing-style.puml
 png wbs/shadowing.puml
 png wbs/stereotype-styles.puml
 png wbs/styles.puml
@@ -2176,6 +2190,7 @@ preproc gantt/printscale-monthly.puml
 preproc gantt/printscale-weekly.puml
 preproc gantt/resources.puml
 preproc gantt/separators.puml
+preproc gantt/shadowing-style.puml
 preproc gantt/shadowing.puml
 preproc gantt/start-date.puml
 preproc gantt/styles.puml
@@ -2231,6 +2246,7 @@ preproc mindmap/monochrome.puml
 preproc mindmap/multiline.puml
 preproc mindmap/multiroot.puml
 preproc mindmap/right-to-left.puml
+preproc mindmap/shadowing-style.puml
 preproc mindmap/shadowing.puml
 preproc mindmap/starts-deeper.puml
 preproc mindmap/stereotype-styles.puml
@@ -2450,6 +2466,7 @@ preproc timing/rectangle.puml
 preproc timing/relative-time.puml
 preproc timing/robust-concise.puml
 preproc timing/scale.puml
+preproc timing/shadowing-style.puml
 preproc timing/shadowing.puml
 preproc usecase/actor-styles-awesome.puml
 preproc usecase/actor-styles-hollow.puml
@@ -2488,6 +2505,7 @@ preproc wbs/links.puml
 preproc wbs/multiline.puml
 preproc wbs/old-order.puml
 preproc wbs/pseudo.puml
+preproc wbs/shadowing-style.puml
 preproc wbs/shadowing.puml
 preproc wbs/stereotype-styles.puml
 preproc wbs/styles.puml
@@ -2737,6 +2755,8 @@ svg gantt/printscale-monthly.puml
 svg gantt/printscale-weekly.puml
 svg gantt/resources.puml
 svg gantt/separators.puml
+svg gantt/shadowing-style.puml
+svg gantt/shadowing.puml
 svg gantt/start-date.puml
 svg gantt/styles.puml
 svg gantt/today.puml
@@ -2785,6 +2805,7 @@ svg mindmap/monochrome.puml
 svg mindmap/multiline.puml
 svg mindmap/multiroot.puml
 svg mindmap/right-to-left.puml
+svg mindmap/shadowing-style.puml
 svg mindmap/shadowing.puml
 svg mindmap/starts-deeper.puml
 svg mindmap/stereotype-styles.puml
@@ -2991,6 +3012,7 @@ svg timing/rectangle.puml
 svg timing/relative-time.puml
 svg timing/robust-concise.puml
 svg timing/scale.puml
+svg timing/shadowing-style.puml
 svg timing/shadowing.puml
 svg usecase/actor-styles-awesome.puml
 svg usecase/actor-styles-hollow.puml
@@ -3028,6 +3050,7 @@ svg wbs/links.puml
 svg wbs/multiline.puml
 svg wbs/old-order.puml
 svg wbs/pseudo.puml
+svg wbs/shadowing-style.puml
 svg wbs/shadowing.puml
 svg wbs/stereotype-styles.puml
 svg wbs/styles.puml
@@ -3352,6 +3375,7 @@ url gantt/printscale-monthly.puml
 url gantt/printscale-weekly.puml
 url gantt/resources.puml
 url gantt/separators.puml
+url gantt/shadowing-style.puml
 url gantt/shadowing.puml
 url gantt/start-date.puml
 url gantt/styles.puml
@@ -3407,6 +3431,7 @@ url mindmap/monochrome.puml
 url mindmap/multiline.puml
 url mindmap/multiroot.puml
 url mindmap/right-to-left.puml
+url mindmap/shadowing-style.puml
 url mindmap/shadowing.puml
 url mindmap/starts-deeper.puml
 url mindmap/stereotype-styles.puml
@@ -3626,6 +3651,7 @@ url timing/rectangle.puml
 url timing/relative-time.puml
 url timing/robust-concise.puml
 url timing/scale.puml
+url timing/shadowing-style.puml
 url timing/shadowing.puml
 url usecase/actor-styles-awesome.puml
 url usecase/actor-styles-hollow.puml
@@ -3664,6 +3690,7 @@ url wbs/links.puml
 url wbs/multiline.puml
 url wbs/old-order.puml
 url wbs/pseudo.puml
+url wbs/shadowing-style.puml
 url wbs/shadowing.puml
 url wbs/stereotype-styles.puml
 url wbs/styles.puml

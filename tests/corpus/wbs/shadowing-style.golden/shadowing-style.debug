@@ -1,0 +1,90 @@
+DPI: 96
+dimension: [ 203.5277 ; 144.0000 ]
+scaleFactor: 1.0000
+seed: 8960526274227211478
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 55.9458 ; 72.0000 ]
+  pt2: [ 55.9458 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 92.0000 ]
+  pt2: [ 91.8917 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 2
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Plan
+  position: [ 30.0000 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 147.7097 ; 72.0000 ]
+  pt2: [ 147.7097 ; 92.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 111.8917 ; 92.0000 ]
+  pt2: [ 183.5277 ; 124.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 2
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Build
+  position: [ 121.8917 ; 111.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 55.9458 ; 72.0000 ]
+  pt2: [ 147.7097 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 57.6645 ; 20.0000 ]
+  pt2: [ 145.9910 ; 52.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 2
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Project
+  position: [ 67.6645 ; 39.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 101.8278 ; 52.0000 ]
+  pt2: [ 101.8278 ; 72.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+
