@@ -1,0 +1,104 @@
+DPI: 96
+dimension: [ 249.0000 ; 179.0000 ]
+scaleFactor: 1.0000
+seed: 2282279103382480640
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+ELLIPSE:
+  pt1: [ 110.0000 ; 12.0000 ]
+  pt2: [ 130.0000 ; 32.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff222222
+  backcolor: ff222222
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 72.0000 ]
+  pt2: [ 234.0959 ; 104.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: First Activity
+  position: [ 16.0000 ; 91.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 109.0000 ; 140.0000 ]
+  pt2: [ 131.0000 ; 162.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff222222
+  backcolor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 114.0000 ; 145.0000 ]
+  pt2: [ 126.0000 ; 157.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: middle(ff222222 & ff222222 )
+  backcolor: ff222222
+
+POLYGON:
+  points:
+   - [ 120.0000 ; 71.5870 ]
+   - [ 124.0000 ; 62.5870 ]
+   - [ 120.0000 ; 66.5870 ]
+   - [ 116.0000 ; 62.5870 ]
+   - [ 120.0000 ; 71.5870 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 114.0000 ; 30.0844 ]
+   - type: SEG_CUBICTO
+     pt1: [ 114.0000 ; 39.9763 ]
+     pt2: [ 114.0000 ; 49.5600 ]
+     pt3: [ 114.0000 ; 60.5870 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 120.0000 ; 139.8216 ]
+   - [ 124.0000 ; 130.8216 ]
+   - [ 120.0000 ; 134.8216 ]
+   - [ 116.0000 ; 130.8216 ]
+   - [ 120.0000 ; 139.8216 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 114.0000 ; 98.0085 ]
+   - type: SEG_CUBICTO
+     pt1: [ 114.0000 ; 109.0466 ]
+     pt2: [ 114.0000 ; 118.8096 ]
+     pt3: [ 114.0000 ; 128.8216 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
