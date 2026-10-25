@@ -12,7 +12,7 @@ use graphics::{SvgGraphics, SvgText};
 use super::font::{FontStyle, StringBounder};
 use super::geom::UTranslate;
 use super::group::UGroup;
-use super::shape::{UCenteredCharacter, UEllipse, UImage, UPath, UShape, UText};
+use super::shape::{UCenteredCharacter, UEllipse, UImage, UShape, UText};
 use super::typeface::FontRegistry;
 use super::ugraphic::{UGraphicBackend, UParam, UStroke};
 use super::url::Url;
@@ -149,6 +149,7 @@ impl UGraphicSvg {
                         dimension.height,
                         0.0,
                         0.0,
+                        0.0,
                     );
                 }
                 Some(color) => back_color = Some(color.to_rgb(self.color_mapper)),
@@ -221,7 +222,8 @@ impl UGraphicSvg {
         let (x_radius, y_radius) = (ellipse.width / 2.0, ellipse.height / 2.0);
         let (cx, cy) = (at.dx + x_radius, at.dy + y_radius);
         if !ellipse.is_arc() {
-            self.svg().ellipse(cx, cy, x_radius, y_radius);
+            self.svg()
+                .ellipse(cx, cy, x_radius, y_radius, ellipse.delta_shadow());
             return;
         }
         // With sine for x and cosine for y, a quarter turn more keeps AWT's angles: counter-clockwise from
@@ -295,8 +297,15 @@ impl UGraphicBackend for UGraphicSvg {
                     return;
                 }
                 self.apply_colors_and_stroke(param);
-                self.svg()
-                    .rectangle(x, y, width, height, rectangle.rx / 2.0, rectangle.ry / 2.0);
+                self.svg().rectangle(
+                    x,
+                    y,
+                    width,
+                    height,
+                    rectangle.rx / 2.0,
+                    rectangle.ry / 2.0,
+                    rectangle.delta_shadow(),
+                );
             }
             UShape::Ellipse(ellipse) => {
                 if !inside(at.dx, at.dy) || !inside(at.dx + ellipse.width, at.dy + ellipse.height) {
@@ -330,9 +339,10 @@ impl UGraphicBackend for UGraphicSvg {
                     return;
                 }
                 self.apply_colors_and_stroke(param);
-                self.svg().polygon(&points);
+                self.svg().polygon(&points, polygon.delta_shadow());
             }
-            UShape::Path(UPath { segments, .. }) => {
+            UShape::Path(path) => {
+                let segments = &path.segments;
                 if clip.is_some_and(|clip| !clip.is_path_inside(at.dx, at.dy, segments)) {
                     return;
                 }
@@ -346,7 +356,7 @@ impl UGraphicBackend for UGraphicSvg {
                 } else {
                     self.apply_colors_and_stroke(param);
                 }
-                self.svg().path(at.dx, at.dy, segments);
+                self.svg().path(at.dx, at.dy, segments, path.delta_shadow());
             }
             UShape::Image(image) => {
                 if inside(at.dx, at.dy) && inside(at.dx + image.width(), at.dy + image.height()) {

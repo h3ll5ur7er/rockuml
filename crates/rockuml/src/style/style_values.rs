@@ -130,6 +130,12 @@ impl Style {
         max_width(&self.value(PName::MaximumWidth).as_string())
     }
 
+    /// `getShadowing`: the shadow's offset, none when the style sets none. PlantUML's fallback for unreadable
+    /// values never applies (it compares with `NaN`), so those read as NaN, which draws no shadow.
+    pub(crate) fn shadowing(&self) -> f64 {
+        self.value(PName::Shadowing).as_double()
+    }
+
     /// `getSymbolContext`: the element's own colours win over the style's.
     pub(crate) fn symbol_context(&self, colors: &Colors) -> Fashion {
         let back_color = colors
@@ -142,6 +148,7 @@ impl Style {
             .unwrap_or_else(|| self.value(PName::LineColor).as_color());
         Fashion::new(back_color, fore_color)
             .with_stroke(self.stroke())
+            .with_delta_shadow(self.shadowing())
             .with_corner(
                 self.value(PName::RoundCorner).as_double(),
                 self.value(PName::DiagonalCorner).as_double(),

@@ -108,7 +108,7 @@ impl UGraphicDebug {
             format!("  start: {}", java::double_to_string(ellipse.start)),
             format!("  extend: {}", java::double_to_string(ellipse.extend)),
         ]);
-        self.out_style(param);
+        self.out_style(param, ellipse.delta_shadow());
     }
 
     fn out_rectangle(&mut self, rectangle: &URectangle, at: UTranslate, param: &UParam) {
@@ -122,13 +122,13 @@ impl UGraphicDebug {
             format!("  xCorner: {}", rectangle.rx as i32),
             format!("  yCorner: {}", rectangle.ry as i32),
         ]);
-        self.out_style(param);
+        self.out_style(param, rectangle.delta_shadow());
     }
 
     /// PlantUML lists a path's points without the current translation.
-    fn out_path(&mut self, segments: &[USegment], param: &UParam) {
+    fn out_path(&mut self, path: &UPath, param: &UParam) {
         self.lines.push("PATH:".to_owned());
-        for segment in segments {
+        for segment in &path.segments {
             match *segment {
                 USegment::MoveTo(x, y) => self.out_segment("SEG_MOVETO", &[(x, y)]),
                 USegment::LineTo(x, y) => self.out_segment("SEG_LINETO", &[(x, y)]),
@@ -151,7 +151,7 @@ impl UGraphicDebug {
                 ]),
             }
         }
-        self.out_style(param);
+        self.out_style(param, path.delta_shadow());
     }
 
     fn out_segment(&mut self, kind: &str, points: &[(f64, f64)]) {
@@ -164,11 +164,10 @@ impl UGraphicDebug {
         );
     }
 
-    /// Shadows are not ported yet, so every shape is listed without one.
-    fn out_style(&mut self, param: &UParam) {
+    fn out_style(&mut self, param: &UParam, delta_shadow: f64) {
         self.lines.extend([
             format!("  stroke: {}", param.stroke),
-            "  shadow: 0".to_owned(),
+            format!("  shadow: {}", delta_shadow as i32),
             format!(
                 "  color: {}",
                 color_to_string(Some(&param.color), &self.render_date)
@@ -234,9 +233,9 @@ impl UGraphicBackend for UGraphicDebug {
                         .iter()
                         .map(|(x, y)| format!("   - {}", point(at.dx + x, at.dy + y))),
                 );
-                self.out_style(param);
+                self.out_style(param, polygon.delta_shadow());
             }
-            UShape::Path(UPath { segments, .. }) => self.out_path(segments, param),
+            UShape::Path(path) => self.out_path(path, param),
             UShape::CenteredCharacter(centered) => self.lines.extend([
                 "CENTERED_CHAR:".to_owned(),
                 format!("  char: {}", centered.character),

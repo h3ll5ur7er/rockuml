@@ -68,6 +68,9 @@ pub(super) struct SvgGraphics {
     /// Text background colours and the filters that paint them.
     back_color_filters: HashMap<String, String>,
     gradient_id: String,
+    shadow_id: String,
+    /// Whether the shadow filter is defined yet.
+    with_shadow: bool,
     /// Gradients and the ids they are defined under.
     gradients: Vec<(Gradient, String)>,
     /// The background as the `<svg>` style gives it; none for gradients, which a rectangle paints instead.
@@ -94,6 +97,8 @@ impl SvgGraphics {
             filter_uid: format!("b{}", radix36(seed.unsigned_abs())),
             back_color_filters: HashMap::new(),
             gradient_id: format!("g{}", radix36(seed.unsigned_abs())),
+            shadow_id: format!("f{}", radix36(seed.unsigned_abs())),
+            with_shadow: false,
             gradients: Vec::new(),
             background_style: None,
             painted_background: false,
@@ -204,17 +209,32 @@ impl SvgGraphics {
         element
     }
 
-    pub(super) fn rectangle(&mut self, x: f64, y: f64, width: f64, height: f64, rx: f64, ry: f64) {
+    #[allow(clippy::too_many_arguments, reason = "PlantUML's svgRectangle")]
+    pub(super) fn rectangle(
+        &mut self,
+        x: f64,
+        y: f64,
+        width: f64,
+        height: f64,
+        rx: f64,
+        ry: f64,
+        delta_shadow: f64,
+    ) {
         if height <= 0.0 || width <= 0.0 {
             return;
         }
+        self.manage_shadow(delta_shadow);
         let mut element = self.rectangle_element(x, y, width, height);
+        self.add_filter_shadow_id(&mut element, delta_shadow);
         if rx > 0.0 && ry > 0.0 {
             element.set_attribute("rx", self.length(rx));
             element.set_attribute("ry", self.length(ry));
         }
         self.current_group().append_child(element);
-        self.ensure_visible(x + width, y + height);
+        self.ensure_visible(
+            x + width + 2.0 * delta_shadow,
+            y + height + 2.0 * delta_shadow,
+        );
     }
 
     pub(super) fn line(&mut self, x1: f64, y1: f64, x2: f64, y2: f64) {
@@ -229,7 +249,15 @@ impl SvgGraphics {
         self.ensure_visible(x2, y2);
     }
 
-    pub(super) fn ellipse(&mut self, x: f64, y: f64, x_radius: f64, y_radius: f64) {
+    pub(super) fn ellipse(
+        &mut self,
+        x: f64,
+        y: f64,
+        x_radius: f64,
+        y_radius: f64,
+        delta_shadow: f64,
+    ) {
+        self.manage_shadow(delta_shadow);
         let mut element = XmlNode::new("ellipse");
         element.set_attribute("cx", self.length(x));
         element.set_attribute("cy", self.length(y));
@@ -237,8 +265,12 @@ impl SvgGraphics {
         element.set_attribute("ry", self.length(y_radius));
         self.fill_me(&mut element);
         self.style_me(&mut element, "");
+        self.add_filter_shadow_id(&mut element, delta_shadow);
         self.current_group().append_child(element);
-        self.ensure_visible(x + x_radius, y + y_radius);
+        self.ensure_visible(
+            x + x_radius + delta_shadow * 2.0,
+            y + y_radius + delta_shadow * 2.0,
+        );
     }
 
     /// The arc of an ellipse with these radii from `from` to `to`, drawn counter-clockwise.
@@ -267,7 +299,8 @@ impl SvgGraphics {
         self.ensure_visible(x2, y2);
     }
 
-    pub(super) fn polygon(&mut self, points: &[(f64, f64)]) {
+    pub(super) fn polygon(&mut self, points: &[(f64, f64)], delta_shadow: f64) {
+        self.manage_shadow(delta_shadow);
         let mut element = XmlNode::new("polygon");
         let coordinates: Vec<String> = points
             .iter()
@@ -276,24 +309,31 @@ impl SvgGraphics {
         element.set_attribute("points", coordinates.join(","));
         self.fill_me(&mut element);
         self.style_me(&mut element, "stroke-linejoin:miter;stroke-miterlimit:10;");
+        self.add_filter_shadow_id(&mut element, delta_shadow);
         self.current_group().append_child(element);
         for &(x, y) in points {
-            self.ensure_visible(x, y);
+            self.ensure_visible(x + 2.0 * delta_shadow, y + 2.0 * delta_shadow);
         }
     }
 
-    pub(super) fn path(&mut self, x: f64, y: f64, segments: &[USegment]) {
+    pub(super) fn path(&mut self, x: f64, y: f64, segments: &[USegment], delta_shadow: f64) {
+        self.manage_shadow(delta_shadow);
         self.ensure_visible(x, y);
+        let shadow = 2.0 * delta_shadow;
         let mut d = Vec::with_capacity(segments.len());
         for segment in segments {
             d.push(match *segment {
-                USegment::MoveTo(dx, dy) => format!("M{}", self.visible_point(x + dx, y + dy)),
-                USegment::LineTo(dx, dy) => format!("L{}", self.visible_point(x + dx, y + dy)),
+                USegment::MoveTo(dx, dy) => {
+                    format!("M{}", self.visible_point(x + dx, y + dy, shadow))
+                }
+                USegment::LineTo(dx, dy) => {
+                    format!("L{}", self.visible_point(x + dx, y + dy, shadow))
+                }
                 USegment::CubicTo { ctrl1, ctrl2, end } => format!(
                     "C{} {} {}",
-                    self.visible_point(x + ctrl1.0, y + ctrl1.1),
-                    self.visible_point(x + ctrl2.0, y + ctrl2.1),
-                    self.visible_point(x + end.0, y + end.1)
+                    self.visible_point(x + ctrl1.0, y + ctrl1.1, shadow),
+                    self.visible_point(x + ctrl2.0, y + ctrl2.1, shadow),
+                    self.visible_point(x + end.0, y + end.1, shadow)
                 ),
                 USegment::ArcTo {
                     radius,
@@ -302,7 +342,10 @@ impl SvgGraphics {
                     sweep,
                     end,
                 } => {
-                    self.ensure_visible(end.0 + radius.0 + x, end.1 + radius.1 + y);
+                    self.ensure_visible(
+                        end.0 + radius.0 + x + shadow,
+                        end.1 + radius.1 + y + shadow,
+                    );
                     format!(
                         "A{},{} {} {} {} {},{}",
                         self.length(radius.0),
@@ -320,6 +363,7 @@ impl SvgGraphics {
         element.set_attribute("d", d.join(" "));
         self.style_me(&mut element, "");
         self.fill_me(&mut element);
+        self.add_filter_shadow_id(&mut element, delta_shadow);
         self.current_group().append_child(element);
     }
 
@@ -339,7 +383,7 @@ impl SvgGraphics {
             };
             let points: Vec<String> = points
                 .into_iter()
-                .map(|(x, y)| self.visible_point(x, y))
+                .map(|(x, y)| self.visible_point(x, y, 0.0))
                 .collect();
             write!(d, "{command}{} ", points.join(" ")).expect("writing to a string");
         }
@@ -350,9 +394,75 @@ impl SvgGraphics {
     }
 
     /// `x,y`, after growing the image to show the point.
-    fn visible_point(&mut self, x: f64, y: f64) -> String {
-        self.ensure_visible(x, y);
+    /// A point of a path, which the document grows to cover with `shadow` to spare.
+    fn visible_point(&mut self, x: f64, y: f64, shadow: f64) -> String {
+        self.ensure_visible(x + shadow, y + shadow);
         format!("{},{}", self.length(x), self.length(y))
+    }
+
+    /// Defines the shadow filter when the first shadowed shape is drawn (`manageShadow`).
+    fn manage_shadow(&mut self, delta_shadow: f64) {
+        if delta_shadow == 0.0 || self.with_shadow {
+            return;
+        }
+        self.with_shadow = true;
+        let mut filter = XmlNode::new("filter");
+        for (name, value) in [
+            ("id", self.shadow_id.as_str()),
+            ("x", "-1"),
+            ("y", "-1"),
+            ("width", "300%"),
+            ("height", "300%"),
+        ] {
+            filter.set_attribute(name, value);
+        }
+        let (blur, offset) = (self.length(2.0), self.length(4.0));
+        let effects: [(&str, &[(&str, &str)]); 4] = [
+            (
+                "feGaussianBlur",
+                &[("result", "blurOut"), ("stdDeviation", &blur)],
+            ),
+            (
+                "feColorMatrix",
+                &[
+                    ("type", "matrix"),
+                    ("in", "blurOut"),
+                    ("result", "blurOut2"),
+                    ("values", "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"),
+                ],
+            ),
+            (
+                "feOffset",
+                &[
+                    ("result", "blurOut3"),
+                    ("in", "blurOut2"),
+                    ("dx", &offset),
+                    ("dy", &offset),
+                ],
+            ),
+            (
+                "feBlend",
+                &[
+                    ("in", "SourceGraphic"),
+                    ("in2", "blurOut3"),
+                    ("mode", "normal"),
+                ],
+            ),
+        ];
+        for (name, attributes) in effects {
+            let mut effect = XmlNode::new(name);
+            for &(attribute, value) in attributes {
+                effect.set_attribute(attribute, value);
+            }
+            filter.append_child(effect);
+        }
+        self.defs.append_child(filter);
+    }
+
+    fn add_filter_shadow_id(&self, element: &mut XmlNode, delta_shadow: f64) {
+        if delta_shadow > 0.0 {
+            element.set_attribute("filter", format!("url(#{})", self.shadow_id));
+        }
     }
 
     pub(super) fn text(&mut self, text: &SvgText) {
@@ -823,7 +933,7 @@ mod tests {
         let mut graphics = graphics();
         graphics.set_fill_color(Some("#FF0000"));
         graphics.set_stroke_color(Some("#000000"));
-        graphics.rectangle(1.0, 2.0, 40.5, 3.0, 0.0, 0.0);
+        graphics.rectangle(1.0, 2.0, 40.5, 3.0, 0.0, 0.0, 0.0);
         let xml = graphics.into_xml(None);
         let size =
             r#"style="width:42px;height:31px;background:#FFFFFF;" width="42px" height="31px""#;
@@ -836,9 +946,9 @@ mod tests {
     fn links_cannot_nest_and_reopen_around_groups() {
         let mut graphics = graphics();
         graphics.open_link("https://a", "A");
-        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0);
         graphics.start_group(&UGroup::default());
-        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0);
+        graphics.rectangle(0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0);
         graphics.close_group();
         graphics.close_link();
         let xml = graphics.into_xml(None);

@@ -1,0 +1,31 @@
+@startuml
+skinparam shadowing true
+start
+:read input;
+note right: from stdin
+if (valid?) then (yes)
+  :process;
+else (no)
+  #pink:reject;
+  stop
+endif
+:prepare;
+fork
+  :a;
+fork again
+  :b;
+end fork
+partition Output {
+  repeat
+    :write;
+  repeat while (more?)
+}
+switch (kind)
+case (x)
+  :x;
+case (y)
+  :y;
+endswitch
+:done;
+end
+@enduml

@@ -1,0 +1,24 @@
+@startuml
+skinparam shadowing true
+actor actor
+agent agent
+artifact artifact
+boundary boundary
+card card
+circle circle
+collections collections
+control control
+entity entity
+file file
+hexagon hexagon
+interface interface
+label label
+person person
+queue queue
+rectangle rectangle
+stack stack
+storage storage
+usecase usecase
+action action
+process process
+@enduml

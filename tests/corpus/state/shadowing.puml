@@ -1,0 +1,16 @@
+@startuml
+skinparam shadowing true
+[*] --> Idle
+state Idle : waiting
+state Busy {
+  [*] --> Working
+  Working --> [*]
+}
+state choice <<choice>>
+state fork <<fork>>
+Idle --> Busy
+Busy --> choice
+choice --> fork
+fork --> [*]
+note right of Idle : start here
+@enduml

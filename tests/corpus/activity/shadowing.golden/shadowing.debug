@@ -1,0 +1,920 @@
+DPI: 96
+dimension: [ 834.3878 ; 777.5556 ]
+scaleFactor: 1.0000
+seed: 4439377225791099140
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 13.0000 ; 13.0000 ]
+  pt2: [ 817.3878 ; 28.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-3.0
+  shadow: 0
+  color: ffffdd88
+  backcolor: ffffffcc
+
+TEXT:
+  text: This syntax is deprecated, you must add <<#pink>> at the end of the line, after the ';'
+  position: [ 20.0000 ; 22.0000 ]
+  orientation: 0
+  font: Monospaced.plain/10 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 128.2720 ; 35.0000 ]
+  pt2: [ 148.2720 ; 55.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 3
+  color: ff222222
+  backcolor: ff222222
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 7.5000 ]
+   - type: SEG_LINETO
+     pt1: [ -20.0000 ; 11.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 15.5000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 23.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 161.5553 ; 23.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 161.5553 ; 23.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 161.5553 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 151.5553 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_ARCTO
+     radius: [ 0.0000 ; 0.0000 ]
+     angle: 0.0
+     largeArcFlag: false
+     sweepFlag: false
+     dest: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fffeffdd
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 151.5553 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 151.5553 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 161.5553 ; 10.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 151.5553 ; 0.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fffeffdd
+
+TEXT:
+  text: from stdin
+  position: [ 222.7386 ; 94.6111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 79.8054 ; 75.0000 ]
+  pt2: [ 196.7386 ; 107.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: read input
+  position: [ 89.8054 ; 94.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 108.3901 ; 127.0000 ]
+   - [ 168.1539 ; 127.0000 ]
+   - [ 180.1539 ; 139.0000 ]
+   - [ 168.1539 ; 151.0000 ]
+   - [ 108.3901 ; 151.0000 ]
+   - [ 96.3901 ; 139.0000 ]
+   - [ 108.3901 ; 127.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: valid?
+  position: [ 108.3901 ; 142.0556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: yes
+  position: [ 64.1979 ; 136.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: no
+  position: [ 180.1539 ; 136.5556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 16.0000 ; 161.0000 ]
+  pt2: [ 121.0902 ; 193.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: process
+  position: [ 26.0000 ; 180.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 152.6250 ; 161.0000 ]
+  pt2: [ 263.3728 ; 229.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: reject;
+  position: [ 162.6250 ; 180.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:   stop
+  position: [ 162.6250 ; 192.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: endif
+  position: [ 162.6250 ; 204.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: :prepare
+  position: [ 162.6250 ; 216.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 148.5281 ; 249.0000 ]
+  pt2: [ 267.4697 ; 255.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 3
+  color: ff555555
+  backcolor: ff555555
+
+RECTANGLE:
+  pt1: [ 162.5281 ; 275.0000 ]
+  pt2: [ 193.9992 ; 307.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: a
+  position: [ 172.5281 ; 294.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 221.9992 ; 275.0000 ]
+  pt2: [ 253.4697 ; 307.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: b
+  position: [ 231.9992 ; 294.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 148.5281 ; 327.0000 ]
+  pt2: [ 267.4697 ; 333.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-1.0
+  shadow: 3
+  color: ff555555
+  backcolor: ff555555
+
+RECTANGLE:
+  pt1: [ 154.1341 ; 343.0000 ]
+  pt2: [ 285.8637 ; 509.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff000000
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 79.7828 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 79.7828 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 69.7828 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+UGraphicDebug SpecialText <timestamp>
+RECTANGLE:
+  pt1: [ 173.7757 ; 421.0000 ]
+  pt2: [ 242.2221 ; 453.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: write
+  position: [ 183.7757 ; 440.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 207.9989 ; 377.0000 ]
+   - [ 219.9989 ; 389.0000 ]
+   - [ 207.9989 ; 401.0000 ]
+   - [ 195.9989 ; 389.0000 ]
+   - [ 207.9989 ; 377.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+POLYGON:
+  points:
+   - [ 176.1341 ; 473.0000 ]
+   - [ 239.8637 ; 473.0000 ]
+   - [ 251.8637 ; 485.0000 ]
+   - [ 239.8637 ; 497.0000 ]
+   - [ 176.1341 ; 497.0000 ]
+   - [ 164.1341 ; 485.0000 ]
+   - [ 176.1341 ; 473.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: more?
+  position: [ 176.1341 ; 488.0556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 183.8207 ; 529.0000 ]
+   - [ 232.1771 ; 529.0000 ]
+   - [ 244.1771 ; 541.0000 ]
+   - [ 232.1771 ; 553.0000 ]
+   - [ 183.8207 ; 553.0000 ]
+   - [ 171.8207 ; 541.0000 ]
+   - [ 183.8207 ; 529.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: kind
+  position: [ 183.8207 ; 544.0556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 141.0902 ; 593.5556 ]
+  pt2: [ 172.5511 ; 625.5556 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: x
+  position: [ 151.0902 ; 612.8889 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 243.4480 ; 593.5556 ]
+  pt2: [ 274.9062 ; 625.5556 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: y
+  position: [ 253.4480 ; 612.8889 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 207.9989 ; 635.5556 ]
+   - [ 207.9989 ; 635.5556 ]
+   - [ 219.9989 ; 647.5556 ]
+   - [ 207.9989 ; 659.5556 ]
+   - [ 207.9989 ; 659.5556 ]
+   - [ 195.9989 ; 647.5556 ]
+   - [ 207.9989 ; 635.5556 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 168.3775 ; 679.5556 ]
+  pt2: [ 247.6203 ; 711.5556 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: done
+  position: [ 178.3775 ; 698.8889 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 197.9989 ; 731.5556 ]
+  pt2: [ 217.9989 ; 751.5556 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.5
+  shadow: 3
+  color: ff222222
+  backcolor: NULL_COLOR
+
+LINE:
+  pt1: [ 201.8117 ; 735.3684 ]
+  pt2: [ 214.1861 ; 747.7427 ]
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff222222
+
+LINE:
+  pt1: [ 214.1861 ; 735.3684 ]
+  pt2: [ 201.8117 ; 747.7427 ]
+  stroke: 0.0-0.0-2.5
+  shadow: 0
+  color: ff222222
+
+LINE:
+  pt1: [ 138.2720 ; 55.0000 ]
+  pt2: [ 138.2720 ; 75.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.2720 ; 65.0000 ]
+   - [ 138.2720 ; 75.0000 ]
+   - [ 142.2720 ; 65.0000 ]
+   - [ 138.2720 ; 69.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 178.2636 ; 255.0000 ]
+  pt2: [ 178.2636 ; 275.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 174.2636 ; 265.0000 ]
+   - [ 178.2636 ; 275.0000 ]
+   - [ 182.2636 ; 265.0000 ]
+   - [ 178.2636 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 237.7345 ; 255.0000 ]
+  pt2: [ 237.7345 ; 275.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 233.7345 ; 265.0000 ]
+   - [ 237.7345 ; 275.0000 ]
+   - [ 241.7345 ; 265.0000 ]
+   - [ 237.7345 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 178.2636 ; 307.0000 ]
+  pt2: [ 178.2636 ; 327.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 174.2636 ; 317.0000 ]
+   - [ 178.2636 ; 327.0000 ]
+   - [ 182.2636 ; 317.0000 ]
+   - [ 178.2636 ; 321.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 237.7345 ; 307.0000 ]
+  pt2: [ 237.7345 ; 327.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 233.7345 ; 317.0000 ]
+   - [ 237.7345 ; 327.0000 ]
+   - [ 241.7345 ; 317.0000 ]
+   - [ 237.7345 ; 321.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 229.0000 ]
+  pt2: [ 207.9989 ; 249.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 239.0000 ]
+   - [ 207.9989 ; 249.0000 ]
+   - [ 211.9989 ; 239.0000 ]
+   - [ 207.9989 ; 243.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 401.0000 ]
+  pt2: [ 207.9989 ; 421.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 411.0000 ]
+   - [ 207.9989 ; 421.0000 ]
+   - [ 211.9989 ; 411.0000 ]
+   - [ 207.9989 ; 415.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 251.8637 ; 485.0000 ]
+  pt2: [ 263.8637 ; 485.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 259.8637 ; 447.0000 ]
+   - [ 263.8637 ; 437.0000 ]
+   - [ 267.8637 ; 447.0000 ]
+   - [ 263.8637 ; 443.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 263.8637 ; 389.0000 ]
+  pt2: [ 263.8637 ; 485.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 263.8637 ; 389.0000 ]
+  pt2: [ 219.9989 ; 389.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 229.9989 ; 385.0000 ]
+   - [ 219.9989 ; 389.0000 ]
+   - [ 229.9989 ; 393.0000 ]
+   - [ 225.9989 ; 389.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 453.0000 ]
+  pt2: [ 207.9989 ; 473.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 463.0000 ]
+   - [ 207.9989 ; 473.0000 ]
+   - [ 211.9989 ; 463.0000 ]
+   - [ 207.9989 ; 467.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 333.0000 ]
+  pt2: [ 207.9989 ; 377.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 367.0000 ]
+   - [ 207.9989 ; 377.0000 ]
+   - [ 211.9989 ; 367.0000 ]
+   - [ 207.9989 ; 371.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 171.8207 ; 541.0000 ]
+  pt2: [ 156.8207 ; 541.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 156.8207 ; 541.0000 ]
+  pt2: [ 156.8207 ; 593.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 152.8207 ; 583.5556 ]
+   - [ 156.8207 ; 593.5556 ]
+   - [ 160.8207 ; 583.5556 ]
+   - [ 156.8207 ; 587.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+TEXT:
+  text: x
+  position: [ 156.8207 ; 572.0556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 244.1771 ; 541.0000 ]
+  pt2: [ 259.1771 ; 541.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 259.1771 ; 541.0000 ]
+  pt2: [ 259.1771 ; 593.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 255.1771 ; 583.5556 ]
+   - [ 259.1771 ; 593.5556 ]
+   - [ 263.1771 ; 583.5556 ]
+   - [ 259.1771 ; 587.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+TEXT:
+  text: y
+  position: [ 259.1771 ; 572.0556 ]
+  orientation: 0
+  font: SansSerif.plain/11 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 156.8207 ; 625.5556 ]
+  pt2: [ 156.8207 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 156.8207 ; 647.5556 ]
+  pt2: [ 195.9989 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 185.9989 ; 643.5556 ]
+   - [ 195.9989 ; 647.5556 ]
+   - [ 185.9989 ; 651.5556 ]
+   - [ 189.9989 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 259.1771 ; 625.5556 ]
+  pt2: [ 259.1771 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 259.1771 ; 647.5556 ]
+  pt2: [ 219.9989 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 229.9989 ; 643.5556 ]
+   - [ 219.9989 ; 647.5556 ]
+   - [ 229.9989 ; 651.5556 ]
+   - [ 225.9989 ; 647.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 497.0000 ]
+  pt2: [ 207.9989 ; 529.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 519.0000 ]
+   - [ 207.9989 ; 529.0000 ]
+   - [ 211.9989 ; 519.0000 ]
+   - [ 207.9989 ; 523.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 659.5556 ]
+  pt2: [ 207.9989 ; 679.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 669.5556 ]
+   - [ 207.9989 ; 679.5556 ]
+   - [ 211.9989 ; 669.5556 ]
+   - [ 207.9989 ; 673.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 711.5556 ]
+  pt2: [ 207.9989 ; 731.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 721.5556 ]
+   - [ 207.9989 ; 731.5556 ]
+   - [ 211.9989 ; 721.5556 ]
+   - [ 207.9989 ; 725.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 96.3901 ; 139.0000 ]
+  pt2: [ 68.5451 ; 139.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 68.5451 ; 139.0000 ]
+  pt2: [ 68.5451 ; 161.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 64.5451 ; 151.0000 ]
+   - [ 68.5451 ; 161.0000 ]
+   - [ 72.5451 ; 151.0000 ]
+   - [ 68.5451 ; 155.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 180.1539 ; 139.0000 ]
+  pt2: [ 207.9989 ; 139.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 207.9989 ; 139.0000 ]
+  pt2: [ 207.9989 ; 161.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 203.9989 ; 151.0000 ]
+   - [ 207.9989 ; 161.0000 ]
+   - [ 211.9989 ; 151.0000 ]
+   - [ 207.9989 ; 155.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+LINE:
+  pt1: [ 68.5451 ; 193.0000 ]
+  pt2: [ 68.5451 ; 757.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 68.5451 ; 757.5556 ]
+  pt2: [ 138.2720 ; 757.5556 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 138.2720 ; 107.0000 ]
+  pt2: [ 138.2720 ; 127.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 134.2720 ; 117.0000 ]
+   - [ 138.2720 ; 127.0000 ]
+   - [ 142.2720 ; 117.0000 ]
+   - [ 138.2720 ; 121.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
