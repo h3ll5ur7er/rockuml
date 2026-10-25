@@ -15,10 +15,10 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::svg_parser::SvgNanoParser;
 
 /// The bundle `tools/bundle-emoji.sh` builds: one `<code>[;<shortcut>] <svg>` line per emoji. Builds without
-/// the `emoji` feature know no emoji.
+/// the `emoji` feature know only the folder and the file that file trees draw.
 static TWEMOJI: LazyLock<String> = LazyLock::new(|| {
     let Some(compressed) = crate::assets::get("emoji/twemoji.br") else {
-        return String::new();
+        return include_str!("file_tree.txt").to_owned();
     };
     let mut text = String::new();
     brotli_decompressor::Decompressor::new(compressed, 4096)

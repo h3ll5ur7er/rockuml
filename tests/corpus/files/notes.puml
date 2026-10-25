@@ -1,0 +1,21 @@
+@startfiles
+<note>
+A note before any entry
+</note>
+/project/Cargo.toml
+<note>
+The **manifest**:
+* name
+* version
+</note>
+/project/src/
+<note>
+After a folder, the note
+goes to the root
+</note>
+/project/src/lib.rs
+/project/src/main.rs
+<note>
+//binary// entry point
+</note>
+@endfiles

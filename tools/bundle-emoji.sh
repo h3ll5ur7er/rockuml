@@ -17,3 +17,8 @@ while IFS= read -r entry || [[ -n "$entry" ]]; do
 	svg="$(head -n 1 "$data/${entry%%;*}.svg")"
 	printf '%s %s\n' "$entry" "$svg"
 done < "$data/emoji.txt" | brotli --best --large_window=24 --force --output="$target"
+
+# Builds without the emoji feature still draw the folders and files of file trees.
+for entry in "1f4c2;open_file_folder" "1f4c4;page_facing_up"; do
+	printf '%s %s\n' "$entry" "$(head -n 1 "$data/${entry%%;*}.svg")"
+done > "$repo_root/crates/rockuml/src/emoji/file_tree.txt"

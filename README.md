@@ -59,6 +59,7 @@ Add `:stop` to let `GET /stopserver` stop it.
   (`(*) --> "action"`) is not ported yet.
 - Mind maps (`@startmindmap`) and work breakdown structures (`@startwbs`).
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
+- File trees (`@startfiles`), with notes.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).
 - Gantt charts (`@startgantt`), except working hours.
@@ -145,7 +146,8 @@ ported yet throw a `RockumlError` (with `notPorted` set for the latter). In Node
 
 The wasm build has no files, URLs or environment variables, so `!include` of files and URLs fails; dates are local
 time. To keep the download small it leaves out the standard library (`!include <C4/...>` fails like a library that
-does not exist) and the emoji: these are the engine's `stdlib` and `emoji` cargo features, on by default.
+does not exist) and the emoji but the two file trees draw: these are the engine's `stdlib` and `emoji` cargo features,
+on by default.
 
 Its tests render corpus cases and compare them with the goldens:
 
