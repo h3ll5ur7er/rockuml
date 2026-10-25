@@ -6,8 +6,13 @@ to regenerate goldens. Building and testing rockuml never needs it.
 ## One-time setup
 
 1. Put the reference sources in `reference/plantuml-lgpl-1.2026.8-sources` (git-ignored).
+   Maven Central has them as `net.sourceforge.plantuml:plantuml-lgpl:1.2026.8:sources`; that jar was built 47 minutes
+   later than the sources the goldens come from, so set `COMPILE_TIMESTAMP` in
+   `net/sourceforge/plantuml/version/CompilationInfo.java` to `1788623957000L` (error images print it).
 2. Unpack a portable JDK 21 into `tools/jdk/` (git-ignored), for example the Temurin zip from
    `https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse`.
+   On Linux, `bash tools/oracle/setup-linux-jdk.sh` sets up `tools/jdk/linux` from an installed JDK 21 instead (see
+   below).
 3. `bash tools/oracle/build-reference.sh` builds `tools/oracle/build/plantuml-ref.jar`.
 
 **Do not install Graphviz** and do not set `GRAPHVIZ_DOT`. Without `dot`, PlantUML lays out graphs with Smetana,
@@ -36,8 +41,11 @@ one per block (`x.preproc`, `x_001.preproc`, …), one per page, or a name chose
 | `.png` | `-tpng` | by size (antialiasing differs) |
 | `.dsvg` | `-f svg-deterministic` (oracle-only name: SVG measured with PlantUML's font-independent width table) | exactly |
 
-The `.svg` and `.png` goldens must be generated on Windows: elsewhere Java measures with other fonts. rockuml's embedded
-Liberation fonts have the Windows fonts' metrics.
+The `.svg` and `.png` goldens measure text with the fonts Java finds on Windows. rockuml's embedded Liberation fonts
+have the Windows fonts' metrics, and `setup-linux-jdk.sh` makes Java on Linux measure with them, the logical fonts'
+ascent and descent raised as on Windows. Its goldens are the same as the Windows ones, except where the fonts
+themselves differ: the outlines of glyphs drawn as paths (the letter of a class's circle) and characters Liberation has
+no glyph for, which fall back on other fonts. Elsewhere, generate the `.svg` and `.png` goldens on Windows.
 
 Where PlantUML crashes it draws a crash report with a random quote; the generator drops such goldens (and the PNG of a crashed
 SVG), because rockuml renders the diagram instead.

@@ -628,6 +628,34 @@ nwdiag, timing and gantt.
     accepted and ignored, as in PlantUML.
   - Found on the way: rockuml draws no shadows (`Shadowing`, `skinparam shadowing`, the `rose` skin). Next phase.
 
+### Phases 17+ — The remaining planned diagram types
+Measured in the reference sources, about 45k Java lines in four groups. Each phase grows the corpus first, from the
+examples of the PlantUML language reference. Goldens can be generated on Linux (`tools/oracle/setup-linux-jdk.sh`).
+
+### Phase 17 — Shadows
+- `Shadowing`, `skinparam shadowing`, the `rose` skin: the blurred shadows PlantUML draws under shapes, in SVG
+  (`filter`) and PNG. BPM and legacy activity diagrams draw them too.
+
+### Phase 18 — Legacy activity diagrams (~2.6k)
+- `(*) --> "Action"`: `ActivityDiagramFactory`, a command layer over the ported cucadiagram and Smetana.
+
+### Phases 19+ — The self-contained Tier 3 diagrams (~33k)
+Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer), flow (1k), boards (1.3k),
+git (2k), regex and EBNF together (2k + 6.2k, both railroad diagrams), packet (2.7k), wire (3.5k), BPM (5.7k),
+charts (6.3k).
+
+### Then — Reference cards (~3.5k)
+The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
+`listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,
+`license` and `listfonts` tell rockuml's facts, not PlantUML's.
+
+### Last — The diagrams that cannot match byte for byte (approach to be chosen)
+- Ditaa: port the vendored `org/stathissideris` (10k); its output is a bitmap drawn by Java2D, compared by pixels.
+- `@startdot`: PlantUML runs Graphviz's `dot`. Lay it out with rockuml's Smetana, run an external `dot` from the
+  CLI, or not at all.
+- `@startmath`/`@startlatex`: JLaTeXMath is not in the sources. Port it, use a Rust math layout crate, or leave
+  math out.
+
 ---
 
 ## 8. Known risks and mitigations
