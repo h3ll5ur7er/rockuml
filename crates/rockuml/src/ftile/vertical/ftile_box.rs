@@ -21,6 +21,7 @@ pub(crate) struct FtileBox {
     padding: ClockwiseTopRightBottomLeft,
     tb: SheetBlock1,
     round_corner: f64,
+    shadowing: f64,
     horizontal_alignment: Option<HorizontalAlignment>,
     minimum_width: f64,
     in_rendering: LinkRendering,
@@ -83,6 +84,7 @@ impl FtileBox {
             padding: colored.padding(),
             tb: SheetBlock1::new(sheet, skin_param.get_padding()).wrapped_at(colored.wrap_width()),
             round_corner: colored.value(PName::RoundCorner).as_double(),
+            shadowing: colored.shadowing(),
             horizontal_alignment,
             minimum_width: colored.value(PName::MinimumWidth).as_double(),
             in_rendering,
@@ -181,6 +183,7 @@ impl Ftile for FtileBox {
             &ug,
             dim_total.get_width(),
             dim_total.get_height(),
+            self.shadowing,
             self.round_corner,
         );
         let translate = match self.horizontal_alignment {

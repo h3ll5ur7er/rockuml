@@ -102,7 +102,8 @@ impl Ftile for FtileDiamond {
         let string_bounder = ug.string_bounder();
         let supp_y1 = self.wip.north.calculate_dimension(string_bounder).height;
         let ug = ug.apply(UTranslate::new(0.0, supp_y1));
-        self.wip.draw_outline(&ug, &hexagon::as_polygon());
+        self.wip
+            .draw_outline(&ug, &hexagon::as_polygon(self.wip.shadowing));
         self.wip
             .north
             .draw_u(&ug.apply(UTranslate::new(HEXAGON_HALF_SIZE * 1.5, -supp_y1)));

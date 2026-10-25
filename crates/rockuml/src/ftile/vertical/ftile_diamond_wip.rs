@@ -22,6 +22,7 @@ pub(crate) struct FtileDiamondWIP {
     pub(super) base: AbstractFtile,
     back_color: HColor,
     border_color: HColor,
+    pub(super) shadowing: f64,
     swimlane: Option<SwimlaneId>,
     pub(super) north: Rc<dyn TextBlock>,
     pub(super) south: Rc<dyn TextBlock>,
@@ -43,10 +44,14 @@ impl FtileDiamondWIP {
         border_color: HColor,
         swimlane: Option<SwimlaneId>,
     ) -> Self {
+        let shadowing = Self::get_style_signature()
+            .get_merged_style(&skin_param.current_style_builder())
+            .shadowing();
         Self {
             base: AbstractFtile::new(skin_param),
             back_color,
             border_color,
+            shadowing,
             swimlane,
             north: empty_label(),
             south: empty_label(),
@@ -85,7 +90,7 @@ impl FtileDiamondWIP {
         self.east_west_swapped.set(!self.east_west_swapped.get());
     }
 
-    fn get_style(&self) -> Style {
+    fn get_style_signature() -> StyleSignature {
         StyleSignature::of(&[
             SName::Root,
             SName::Element,
@@ -93,7 +98,11 @@ impl FtileDiamondWIP {
             SName::Activity,
             SName::Diamond,
         ])
-        .get_merged_style(&self.base.skin_param().current_style_builder())
+    }
+
+    fn get_style(&self) -> Style {
+        Self::get_style_signature()
+            .get_merged_style(&self.base.skin_param().current_style_builder())
     }
 
     /// `ug` drawing outlines in the border colour and the diamond style's stroke, filled with the back

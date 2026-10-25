@@ -15,6 +15,7 @@ const DELTA: f64 = 5.0;
 pub(crate) struct CircleEnd {
     back_color: HColor,
     line_color: HColor,
+    shadowing: f64,
     stroke: UStroke,
 }
 
@@ -24,6 +25,7 @@ impl CircleEnd {
         Self {
             back_color: colors.get_color_of(style, PName::BackGroundColor),
             line_color: colors.get_color_of(style, PName::LineColor),
+            shadowing: style.shadowing(),
             stroke: style.stroke(),
         }
     }
@@ -38,7 +40,9 @@ impl TextBlock for CircleEnd {
         ug.with_backcolor(HColor::NONE)
             .with_color(self.line_color.clone())
             .with_stroke(self.stroke)
-            .draw(&UShape::Ellipse(UEllipse::new(SIZE, SIZE)));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(SIZE, SIZE).with_delta_shadow(self.shadowing),
+            ));
         // Antialiasing would blur a disc into a ring of the same colour, so PlantUML outlines it with the
         // colour halfway between the two.
         let outline = if self.line_color == self.back_color {

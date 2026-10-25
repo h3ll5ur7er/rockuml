@@ -71,6 +71,10 @@ debug activity/repeat-basic.puml
 debug activity/repeat-break.puml
 debug activity/repeat-labels.puml
 debug activity/repeat-unclosed-arrow.puml
+debug activity/shadowing-condition-diamond.puml
+debug activity/shadowing-condition-inside.puml
+debug activity/shadowing-style.puml
+debug activity/shadowing.puml
 debug activity/skinparam-activity.puml
 debug activity/skinparam-monochrome.puml
 debug activity/skinparam-reversecolor-dark.puml
@@ -357,6 +361,7 @@ debug mindmap/monochrome.puml
 debug mindmap/multiline.puml
 debug mindmap/multiroot.puml
 debug mindmap/right-to-left.puml
+debug mindmap/shadowing.puml
 debug mindmap/starts-deeper.puml
 debug mindmap/stereotype-styles.puml
 debug mindmap/subtree-styles.puml
@@ -603,6 +608,7 @@ debug wbs/links.puml
 debug wbs/multiline.puml
 debug wbs/old-order.puml
 debug wbs/pseudo.puml
+debug wbs/shadowing.puml
 debug wbs/stereotype-styles.puml
 debug wbs/styles.puml
 debug wbs/subtree-styles.puml
@@ -685,6 +691,10 @@ dsvg activity/repeat-basic.puml
 dsvg activity/repeat-break.puml
 dsvg activity/repeat-labels.puml
 dsvg activity/repeat-unclosed-arrow.puml
+dsvg activity/shadowing-condition-diamond.puml
+dsvg activity/shadowing-condition-inside.puml
+dsvg activity/shadowing-style.puml
+dsvg activity/shadowing.puml
 dsvg activity/skinparam-activity.puml
 dsvg activity/skinparam-monochrome.puml
 dsvg activity/skinparam-reversecolor-dark.puml
@@ -970,6 +980,7 @@ dsvg mindmap/monochrome.puml
 dsvg mindmap/multiline.puml
 dsvg mindmap/multiroot.puml
 dsvg mindmap/right-to-left.puml
+dsvg mindmap/shadowing.puml
 dsvg mindmap/starts-deeper.puml
 dsvg mindmap/stereotype-styles.puml
 dsvg mindmap/subtree-styles.puml
@@ -1214,6 +1225,7 @@ dsvg wbs/links.puml
 dsvg wbs/multiline.puml
 dsvg wbs/old-order.puml
 dsvg wbs/pseudo.puml
+dsvg wbs/shadowing.puml
 dsvg wbs/stereotype-styles.puml
 dsvg wbs/styles.puml
 dsvg wbs/subtree-styles.puml
@@ -1297,6 +1309,9 @@ png activity/repeat-basic.puml
 png activity/repeat-break.puml
 png activity/repeat-labels.puml
 png activity/repeat-unclosed-arrow.puml
+png activity/shadowing-condition-diamond.puml
+png activity/shadowing-condition-inside.puml
+png activity/shadowing-style.puml
 png activity/shadowing.puml
 png activity/skinparam-activity.puml
 png activity/skinparam-monochrome.puml
@@ -1921,6 +1936,9 @@ preproc activity/repeat-basic.puml
 preproc activity/repeat-break.puml
 preproc activity/repeat-labels.puml
 preproc activity/repeat-unclosed-arrow.puml
+preproc activity/shadowing-condition-diamond.puml
+preproc activity/shadowing-condition-inside.puml
+preproc activity/shadowing-style.puml
 preproc activity/shadowing.puml
 preproc activity/skinparam-activity.puml
 preproc activity/skinparam-monochrome.puml
@@ -2552,6 +2570,10 @@ svg activity/repeat-basic.puml
 svg activity/repeat-break.puml
 svg activity/repeat-labels.puml
 svg activity/repeat-unclosed-arrow.puml
+svg activity/shadowing-condition-diamond.puml
+svg activity/shadowing-condition-inside.puml
+svg activity/shadowing-style.puml
+svg activity/shadowing.puml
 svg activity/skinparam-activity.puml
 svg activity/skinparam-monochrome.puml
 svg activity/skinparam-reversecolor-dark.puml
@@ -2763,6 +2785,7 @@ svg mindmap/monochrome.puml
 svg mindmap/multiline.puml
 svg mindmap/multiroot.puml
 svg mindmap/right-to-left.puml
+svg mindmap/shadowing.puml
 svg mindmap/starts-deeper.puml
 svg mindmap/stereotype-styles.puml
 svg mindmap/subtree-styles.puml
@@ -3005,6 +3028,7 @@ svg wbs/links.puml
 svg wbs/multiline.puml
 svg wbs/old-order.puml
 svg wbs/pseudo.puml
+svg wbs/shadowing.puml
 svg wbs/stereotype-styles.puml
 svg wbs/styles.puml
 svg wbs/subtree-styles.puml
@@ -3088,6 +3112,9 @@ url activity/repeat-basic.puml
 url activity/repeat-break.puml
 url activity/repeat-labels.puml
 url activity/repeat-unclosed-arrow.puml
+url activity/shadowing-condition-diamond.puml
+url activity/shadowing-condition-inside.puml
+url activity/shadowing-style.puml
 url activity/shadowing.puml
 url activity/skinparam-activity.puml
 url activity/skinparam-monochrome.puml

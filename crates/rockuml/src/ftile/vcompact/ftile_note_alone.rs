@@ -56,7 +56,8 @@ impl FtileNoteAlone {
             Box::new(text),
             style.stroke(),
             0.0,
-        );
+        )
+        .with_shadowing(style.shadowing());
         Self {
             base: AbstractFtile::new(skin_param),
             opale,

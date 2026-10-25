@@ -75,6 +75,7 @@ pub(crate) fn create_opale(note: &PositionedNote, skin_param: &SkinParam) -> Opa
         style.stroke(),
         0.0,
     )
+    .with_shadowing(style.shadowing())
 }
 
 impl FtileIfWithLinks {

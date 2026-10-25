@@ -61,7 +61,8 @@ impl FtileWithNotes {
                 Box::new(text),
                 style.stroke(),
                 0.0,
-            );
+            )
+            .with_shadowing(style.shadowing());
             let opale_marged: Box<dyn TextBlock> = Box::new(TextBlockMarged::new(
                 opale,
                 ClockwiseTopRightBottomLeft::same(NOTE_MARGIN),
