@@ -1,5 +1,5 @@
-//! The Smetana graphs JSON and YAML documents make, against the traces PlantUML's layouts write
-//! (`tests/smetana/{json,yaml}/<case>/NN.trace`).
+//! The Smetana graphs JSON, YAML and HCL documents make, against the traces PlantUML's layouts write
+//! (`tests/smetana/{json,yaml,hcl}/<case>/NN.trace`).
 
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -59,7 +59,7 @@ fn graph_of(family: &str, case: &str) -> Vec<Vec<String>> {
 #[test]
 fn every_document_makes_the_graph_plantuml_lays_out() {
     let mut cases = 0;
-    for family in ["json", "yaml"] {
+    for family in ["json", "yaml", "hcl"] {
         for directory in sorted_entries(&repository_tests().join(format!("smetana/{family}"))) {
             let case = directory.file_name().unwrap().to_str().unwrap().to_owned();
             let graphs = graph_of(family, &case);
@@ -74,5 +74,5 @@ fn every_document_makes_the_graph_plantuml_lays_out() {
             cases += 1;
         }
     }
-    assert_eq!(cases, 16);
+    assert_eq!(cases, 25);
 }

@@ -243,8 +243,14 @@
     },
     "HclDiagramFactory": {
       "title": "HCL data",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/hcl.rs",
+        "diagram/json"
+      ],
+      "corpus": [
+        "hcl"
+      ],
+      "docs": "hcl"
     },
     "PSystemEbnfFactory": {
       "title": "EBNF diagrams",

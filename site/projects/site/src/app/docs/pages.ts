@@ -133,6 +133,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/yaml.md')),
       },
       {
+        slug: 'hcl',
+        title: 'HCL data',
+        summary: 'Terraform and other HCL files drawn as nested tables.',
+        load: text(() => import('./content/hcl.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',

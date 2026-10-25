@@ -1,0 +1,17 @@
+@starthcl
+resource "aws_security_group" "allow_tls" {
+  cidr_blocks = ["10.0.0.0/16", "10.1.0.0/16"]
+  ports       = [80, 443]
+  empty       = []
+  ingress = [
+    {
+      from_port = 443
+      to_port   = 443
+    },
+    {
+      from_port = 80
+      to_port   = 80
+    }
+  ]
+}
+@endhcl

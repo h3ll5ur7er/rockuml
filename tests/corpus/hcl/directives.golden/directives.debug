@@ -1,0 +1,97 @@
+DPI: 96
+dimension: [ 530.4380 ; 57.0000 ]
+scaleFactor: 1.5000
+seed: 8820657851543601424
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 519.4380 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: fff1f1f1
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 105.2720 ; 28.0000 ]
+
+TEXT:
+  text: source
+  position: [ 15.0000 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 105.2720 ; 10.0000 ]
+  pt2: [ 519.4380 ; 28.0000 ]
+
+TEXT:
+  text: terraform-aws-modules/vpc/aws
+  position: [ 110.2720 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 105.2720 ; 10.0000 ]
+  pt2: [ 105.2720 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 519.4380 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+EMPTY:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 87.6664 ; 46.0000 ]
+
+TEXT:
+  text: cidr
+  position: [ 15.0000 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 105.2720 ; 28.0000 ]
+  pt2: [ 254.1919 ; 46.0000 ]
+
+TEXT:
+  text: 10.0.0.0/16
+  position: [ 110.2720 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 105.2720 ; 28.0000 ]
+  pt2: [ 105.2720 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 519.4380 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+

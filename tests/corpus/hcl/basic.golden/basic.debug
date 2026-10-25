@@ -1,0 +1,135 @@
+DPI: 96
+dimension: [ 449.9759 ; 75.0000 ]
+scaleFactor: 1.0000
+seed: 4027179599245892585
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 438.9759 ; 64.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: fff1f1f1
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 70.6337 ; 28.0000 ]
+
+TEXT:
+  text: ami
+  position: [ 15.0000 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 220.0348 ; 10.0000 ]
+  pt2: [ 438.9759 ; 28.0000 ]
+
+TEXT:
+  text: ami-a1b2c3d4
+  position: [ 225.0348 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 220.0348 ; 10.0000 ]
+  pt2: [ 220.0348 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 438.9759 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+EMPTY:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 220.0348 ; 46.0000 ]
+
+TEXT:
+  text: instance_type
+  position: [ 15.0000 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 220.0348 ; 28.0000 ]
+  pt2: [ 333.3156 ; 46.0000 ]
+
+TEXT:
+  text: t2.micro
+  position: [ 225.0348 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 220.0348 ; 28.0000 ]
+  pt2: [ 220.0348 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 46.0000 ]
+  pt2: [ 438.9759 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+EMPTY:
+  pt1: [ 10.0000 ; 46.0000 ]
+  pt2: [ 192.2744 ; 64.0000 ]
+
+TEXT:
+  text: monitoring
+  position: [ 15.0000 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 220.0348 ; 46.0000 ]
+  pt2: [ 299.6533 ; 64.0000 ]
+
+TEXT:
+  text: true
+  position: [ 225.0348 ; 58.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 220.0348 ; 46.0000 ]
+  pt2: [ 220.0348 ; 64.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 438.9759 ; 64.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+

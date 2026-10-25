@@ -1,0 +1,15 @@
+@starthcl
+title PlantUML ignores the title of HCL data
+scale 1.5
+<style>
+yamlDiagram {
+  node {
+    BackGroundColor lightblue
+  }
+}
+</style>
+module "vpc" {
+  source = "terraform-aws-modules/vpc/aws"
+  cidr   = "10.0.0.0/16"
+}
+@endhcl

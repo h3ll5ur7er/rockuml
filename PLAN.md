@@ -648,6 +648,13 @@ Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer
 git (2k), regex and EBNF together (2k + 6.2k, both railroad diagrams), packet (2.7k), wire (3.5k), BPM (5.7k),
 charts (6.3k).
 
+### Phase 20 — HCL data
+- **Status: done.** `@starthcl`: `HclDiagramFactory` and `HclParser` read the file into JSON, drawn by the JSON
+  diagram's tables and Smetana layout. 11 cases match every output.
+  - Faithful to PlantUML's small subset: lines are joined without a separator, nested blocks need `=`, lists keep
+    only quoted strings and maps, a lone block is drawn as its attributes, and `title`, `skin` and `<style>` are
+    taken out of the data and ignored (only `scale` applies).
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

@@ -1,0 +1,9 @@
+@starthcl
+locals {
+  created   = timestamp()
+  key       = file("~/.ssh/id_rsa.pub")
+  ami       = lookup(var.amis, var.region)
+  subnet    = cidrsubnet("10.0.0.0/16", 8, 1)
+  merged    = merge({ a = "1" }, ["x", "y"])
+}
+@endhcl

@@ -13,6 +13,7 @@ mod description;
 mod diagram_type;
 mod error;
 mod gantt;
+mod hcl;
 mod json;
 mod mindmap;
 mod nwdiag;
@@ -179,6 +180,7 @@ pub fn create(
         Some(DiagramType::Gantt) => |source, _| builder::create_gantt(source),
         Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
+        Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

@@ -1,5 +1,5 @@
-//! JSON and YAML documents drawn as linked tables, `@startjson` and `@startyaml` (PlantUML's `jsondiagram`
-//! package and `YamlDiagramFactory`).
+//! JSON, YAML and HCL documents drawn as linked tables, `@startjson`, `@startyaml` and `@starthcl` (PlantUML's
+//! `jsondiagram` package, `YamlDiagramFactory` and `HclDiagramFactory`).
 
 mod highlighted;
 mod smetana_for_json;
@@ -16,8 +16,8 @@ use style_extractor::StyleExtractor;
 
 use super::common_commands::add_common_scale_commands;
 use super::titled::{Titled, TitledDiagram};
-use super::yaml;
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use super::{hcl, yaml};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{BlocLines, CommandControl, ParserPass};
 use crate::creole::Display;
@@ -36,6 +36,7 @@ use crate::text::StringLocated;
 enum Language {
     Json,
     Yaml,
+    Hcl,
 }
 
 impl Language {
@@ -43,13 +44,14 @@ impl Language {
         match self {
             Self::Json => "JSON",
             Self::Yaml => "YAML",
+            Self::Hcl => "HCL",
         }
     }
 
     fn style_name(self) -> SName {
         match self {
             Self::Json => SName::JsonDiagram,
-            Self::Yaml => SName::YamlDiagram,
+            Self::Yaml | Self::Hcl => SName::YamlDiagram,
         }
     }
 }
@@ -79,7 +81,9 @@ pub(super) fn create_json(source: UmlSource) -> Box<dyn Diagram> {
         }
     }
     let json = crate::json::parse(&text).ok();
-    create(source, Language::Json, json, highlighted, &extractor)
+    let mut diagram = JsonDiagram::new(source, Language::Json, json, highlighted, &extractor);
+    diagram.apply_styles(&extractor);
+    Box::new(diagram)
 }
 
 /// A `@startyaml` diagram (`YamlDiagramFactory`).
@@ -95,53 +99,23 @@ pub(super) fn create_yaml(source: UmlSource) -> Box<dyn Diagram> {
         }
     }
     let yaml = yaml::parse(&lines);
-    create(source, Language::Yaml, yaml, highlighted, &extractor)
+    let mut diagram = JsonDiagram::new(source, Language::Yaml, yaml, highlighted, &extractor);
+    diagram.apply_styles(&extractor);
+    Box::new(diagram)
 }
 
-fn create(
-    source: UmlSource,
-    language: Language,
-    json: Option<JsonValue>,
-    highlighted: Vec<Highlighted>,
-    extractor: &StyleExtractor,
-) -> Box<dyn Diagram> {
-    let source = Rc::new(source);
-    let mut diagram = JsonDiagram {
-        titled: Titled::new(language.style_name(), language.name(), &source),
+/// A `@starthcl` diagram (`HclDiagramFactory`). PlantUML leaves out its styles, skin and title: their lines
+/// are taken out of the data and then ignored.
+pub(super) fn create_hcl(source: UmlSource) -> Box<dyn Diagram> {
+    let extractor = StyleExtractor::new(source.lines());
+    let hcl = hcl::parse(extractor.data());
+    Box::new(JsonDiagram::new(
         source,
-        language,
-        root: json.map(wrap_root),
-        highlighted,
-    };
-    if extractor.handwritten {
-        diagram
-            .titled
-            .not_ported(NotYetPorted("handwritten drawing"));
-    }
-    if let Some(scale) = &extractor.scale {
-        diagram.apply_scale(scale);
-    }
-    if extractor.new_skin.is_some() {
-        diagram
-            .titled
-            .not_ported(NotYetPorted("the skin directive"));
-    }
-    if !extractor.style.is_empty() {
-        let body: Vec<&str> = extractor
-            .style
-            .iter()
-            .map(String::as_str)
-            .filter(|line| !matches!(crate::java::trim(line), "<style>" | "</style>"))
-            .collect();
-        // PlantUML reports a style it cannot parse and draws without it.
-        let _ = diagram.titled.skin.apply_style_sheet(&body);
-    }
-    if let Some(title) = &extractor.title {
-        diagram
-            .titled
-            .set_title_without_source(Display::with_newlines(title));
-    }
-    Box::new(diagram)
+        Language::Hcl,
+        hcl,
+        Vec::new(),
+        &extractor,
+    ))
 }
 
 /// A plain value is drawn as a one-row array, an empty container as an array holding an empty string.
@@ -161,6 +135,53 @@ fn wrap_root(json: JsonValue) -> JsonValue {
 }
 
 impl JsonDiagram {
+    fn new(
+        source: UmlSource,
+        language: Language,
+        json: Option<JsonValue>,
+        highlighted: Vec<Highlighted>,
+        extractor: &StyleExtractor,
+    ) -> Self {
+        let source = Rc::new(source);
+        let mut diagram = Self {
+            titled: Titled::new(language.style_name(), language.name(), &source),
+            source,
+            language,
+            root: json.map(wrap_root),
+            highlighted,
+        };
+        if extractor.handwritten {
+            diagram
+                .titled
+                .not_ported(NotYetPorted("handwritten drawing"));
+        }
+        if let Some(scale) = &extractor.scale {
+            diagram.apply_scale(scale);
+        }
+        diagram
+    }
+
+    /// The skin, `<style>` blocks and title before the data (`StyleExtractor.applyStyles`).
+    fn apply_styles(&mut self, extractor: &StyleExtractor) {
+        if extractor.new_skin.is_some() {
+            self.titled.not_ported(NotYetPorted("the skin directive"));
+        }
+        if !extractor.style.is_empty() {
+            let body: Vec<&str> = extractor
+                .style
+                .iter()
+                .map(String::as_str)
+                .filter(|line| !matches!(crate::java::trim(line), "<style>" | "</style>"))
+                .collect();
+            // PlantUML reports a style it cannot parse and draws without it.
+            let _ = self.titled.skin.apply_style_sheet(&body);
+        }
+        if let Some(title) = &extractor.title {
+            self.titled
+                .set_title_without_source(Display::with_newlines(title));
+        }
+    }
+
     /// `scale ...` read like the line of any diagram.
     fn apply_scale(&mut self, scale: &StringLocated) {
         let lines = BlocLines::single(scale.clone());

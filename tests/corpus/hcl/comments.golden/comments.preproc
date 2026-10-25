@@ -1,0 +1,11 @@
+@starthcl
+# A comment line is skipped
+terraform {
+  # so is an indented one
+  required_version = ">= 1.0"
+  backend = {
+    # and one in a nested map
+    bucket = "state"
+  }
+}
+@endhcl

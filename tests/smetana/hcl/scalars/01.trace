@@ -1,0 +1,21 @@
+smetana-trace 1
+agopen "g"
+agnode graph "g" "N0"
+agsafeset node "N0" "shape" "record" ""
+agsafeset node "N0" "height" "5.3433084624786416" ""
+agsafeset node "N0" "width" "2.25" ""
+agsafeset node "N0" "label" "{_dim_162.0_176.09694672705757_|{<P0>_dim_18.0_192.62126257140463_|<P1>_dim_18.0_192.62126257140463_|<P2>_dim_18.0_192.62126257140463_|<P3>_dim_18.0_192.62126257140463_|<P4>_dim_18.0_192.62126257140463_|<P5>_dim_18.0_192.62126257140463_|<P6>_dim_18.0_192.62126257140463_|<P7>_dim_18.0_192.62126257140463_|<P8>_dim_18.0_192.62126257140463_}}" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 0
+node "N0" rank 0
+phase mincross
+rank 0 "N0"
+phase position
+node "N0" rank 0 coord 0.0 193.0 lw 81.0 rw 81.0 ht 386.0
+graph "g" bb -81.0 0.0 81.0 386.0
+phase splines
+phase final
+graph "g" bb 0.0 0.0 162.0 386.0
+node "N0" coord 81.0 193.0 width 2.25 height 5.361111111111111 lw 81.0 rw 81.0 ht 386.0
