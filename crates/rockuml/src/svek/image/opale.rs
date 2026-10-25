@@ -77,6 +77,7 @@ pub(crate) struct Opale<'a> {
     text_block: Box<dyn TextBlock + 'a>,
     stroke: UStroke,
     round_corner: f64,
+    shadowing: f64,
 }
 
 impl<'a> Opale<'a> {
@@ -93,7 +94,15 @@ impl<'a> Opale<'a> {
             text_block,
             stroke,
             round_corner,
+            shadowing: 0.0,
         }
+    }
+
+    /// The note casting a shadow `shadowing` wide (PlantUML's `shadowing` constructor argument).
+    #[must_use]
+    pub(crate) fn with_shadowing(mut self, shadowing: f64) -> Self {
+        self.shadowing = shadowing;
+        self
     }
 
     fn get_width(&self, string_bounder: &dyn StringBounder) -> f64 {
@@ -130,7 +139,7 @@ impl<'a> Opale<'a> {
             .with_backcolor(self.note_background_color.clone())
             .with_color(self.border_color.clone())
             .with_stroke(self.stroke);
-        ug.draw(&UShape::path(polygon));
+        ug.draw(&UShape::path(polygon).with_delta_shadow(self.shadowing));
         ug.draw(&UShape::path(get_corner(
             self.get_width(string_bounder),
             self.round_corner,
@@ -271,5 +280,30 @@ impl TextBlock for Opale<'_> {
                 self.round_corner,
             ),
         );
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::klimt::ugraphic::tests::recording;
+    use crate::skin::component::TextBlockEmpty;
+
+    #[test]
+    fn the_outline_casts_the_shadow_and_the_fold_does_not() {
+        let (ug, recorder) = recording();
+        let text = TextBlockEmpty {
+            dimension: XDimension2D::new(20.0, 10.0),
+        };
+        Opale::new(
+            HColor::BLACK,
+            HColor::WHITE,
+            Box::new(text),
+            UStroke::SIMPLE,
+            0.0,
+        )
+        .with_shadowing(4.0)
+        .draw_u(&ug);
+        assert_eq!(recorder.take().lines, ["UPath 0,0 shadow 4", "UPath 0,0"]);
     }
 }

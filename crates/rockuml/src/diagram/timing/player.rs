@@ -547,6 +547,7 @@ impl TimingNote {
             self.style.stroke(),
             0.0,
         )
+        .with_shadowing(self.style.shadowing())
     }
 
     pub(super) fn draw_u(&self, ug: &UGraphic, skin: &SkinParam) {

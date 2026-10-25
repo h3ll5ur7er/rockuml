@@ -113,8 +113,15 @@ impl BoxStyle {
             .map(|name| Stereotype::new(&format!("<<{name}>>")))
     }
 
-    /// Draws the outline of a box `width` wide, less the shield (`drawMe`). PlantUML's shadow is not drawn.
-    pub(crate) fn draw_me(self, ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
+    /// Draws the outline of a box `width` wide, less the shield, casting a shadow `shadowing` wide (`drawMe`).
+    pub(crate) fn draw_me(
+        self,
+        ug: &UGraphic,
+        width: f64,
+        height: f64,
+        shadowing: f64,
+        round_corner: f64,
+    ) {
         let width = width - self.get_shield();
         let input = || {
             UShape::polygon(vec![
@@ -139,7 +146,9 @@ impl BoxStyle {
             Self::SdlInput | Self::UmlTrigger => input(),
             Self::SdlOutput | Self::UmlSendSignal => output(),
             Self::SdlProcedure => {
-                ug.draw(&UShape::Rectangle(URectangle::new(width, height)));
+                ug.draw(&UShape::Rectangle(
+                    URectangle::new(width, height).with_delta_shadow(shadowing),
+                ));
                 let vline = UShape::Line {
                     dx: 0.0,
                     dy: height,
@@ -195,13 +204,14 @@ impl BoxStyle {
                 ])
             }
         };
-        ug.draw(&shape);
+        ug.draw(&shape.with_delta_shadow(shadowing));
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::klimt::ugraphic::tests::recording;
 
     #[test]
     fn styles_are_found_by_stereotype_ignoring_case_and_dashes() {
@@ -214,5 +224,19 @@ mod tests {
         assert_eq!(BoxStyle::Plain.get_stereotype(), None);
         assert_eq!(BoxStyle::SdlTask.get_shield(), 0.0);
         assert_eq!(BoxStyle::UmlTimeEvent.get_shield(), 10.0);
+    }
+
+    #[test]
+    fn boxes_cast_their_shadow_but_procedure_bars_do_not() {
+        let drawn = |box_style: BoxStyle| {
+            let (ug, recorder) = recording();
+            box_style.draw_me(&ug, 40.0, 20.0, 3.0, 0.0);
+            recorder.take().lines
+        };
+        assert_eq!(drawn(BoxStyle::Plain), ["rect 0,0 40x20 shadow 3"]);
+        assert_eq!(
+            drawn(BoxStyle::SdlProcedure),
+            ["rect 0,0 40x20 shadow 3", "line 5,0 0,20", "line 35,0 0,20"]
+        );
     }
 }
