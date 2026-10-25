@@ -47,6 +47,15 @@ impl ActorStyle {
     }
 }
 
+/// Each figure's head and body carry the fashion's shadow.
+fn shadowed(shape: UShape, fashion: &Fashion) -> UShape {
+    shape.with_delta_shadow(fashion.delta_shadow)
+}
+
+fn head(diameter: f64, fashion: &Fashion) -> UShape {
+    shadowed(UShape::Ellipse(UEllipse::new(diameter, diameter)), fashion)
+}
+
 pub(crate) struct ActorStickMan {
     fashion: Fashion,
     /// A business actor's head is crossed by a chord.
@@ -87,7 +96,12 @@ impl TextBlock for ActorStickMan {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
         XDimension2D::new(
             Self::ARMS_LENGTH.max(Self::LEGS_X) * 2.0 + 2.0 * self.thickness(),
-            Self::HEAD_DIAM + Self::BODY_LENGTH + Self::LEGS_Y + 2.0 * self.thickness() + 1.0,
+            Self::HEAD_DIAM
+                + Self::BODY_LENGTH
+                + Self::LEGS_Y
+                + 2.0 * self.thickness()
+                + self.fashion.delta_shadow
+                + 1.0,
         )
     }
 
@@ -107,10 +121,7 @@ impl TextBlock for ActorStickMan {
         ];
         let ug = self.fashion.apply(ug);
         ug.translated(start_x, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&head(Self::HEAD_DIAM, &self.fashion));
         if self.actor_business {
             Self::special_business(&ug.translated(
                 start_x + Self::HEAD_DIAM / 2.0,
@@ -119,7 +130,7 @@ impl TextBlock for ActorStickMan {
         }
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
             .with_backcolor(HColor::NONE)
-            .draw(&UShape::path(body));
+            .draw(&shadowed(UShape::path(body), &self.fashion));
     }
 }
 
@@ -201,12 +212,9 @@ impl TextBlock for ActorAwesome {
         let center_x = self.preferred_width() / 2.0;
         let ug = self.fashion.apply(ug);
         ug.translated(center_x - Self::HEAD_DIAM / 2.0, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&head(Self::HEAD_DIAM, &self.fashion));
         ug.translated(center_x, Self::HEAD_DIAM + self.thickness())
-            .draw(&UShape::path(Self::body()));
+            .draw(&shadowed(UShape::path(Self::body()), &self.fashion));
     }
 }
 
@@ -261,7 +269,11 @@ impl TextBlock for ActorHollow {
     fn calculate_dimension(&self, _string_bounder: &dyn StringBounder) -> XDimension2D {
         XDimension2D::new(
             self.preferred_width(),
-            Self::HEAD_DIAM + Self::NECK_HEIGHT + Self::BODY_HEIGHT + self.thickness() * 2.0,
+            Self::HEAD_DIAM
+                + Self::NECK_HEIGHT
+                + Self::BODY_HEIGHT
+                + self.thickness() * 2.0
+                + self.fashion.delta_shadow,
         )
     }
 
@@ -269,15 +281,12 @@ impl TextBlock for ActorHollow {
         let center_x = self.preferred_width() / 2.0;
         let ug = self.fashion.apply(ug);
         ug.translated(center_x - Self::HEAD_DIAM / 2.0, self.thickness())
-            .draw(&UShape::Ellipse(UEllipse::new(
-                Self::HEAD_DIAM,
-                Self::HEAD_DIAM,
-            )));
+            .draw(&head(Self::HEAD_DIAM, &self.fashion));
         ug.translated(
             center_x,
             Self::HEAD_DIAM + self.thickness() + Self::NECK_HEIGHT,
         )
-        .draw(&UShape::path(Self::body()));
+        .draw(&shadowed(UShape::path(Self::body()), &self.fashion));
     }
 }
 
@@ -286,6 +295,7 @@ mod tests {
     use super::*;
     use crate::klimt::debug::StringBounderDebug;
     use crate::klimt::ugraphic::UStroke;
+    use crate::skin::test_drawing::drawn_shadows;
 
     fn dimension(style: ActorStyle) -> XDimension2D {
         let fashion =
@@ -306,6 +316,41 @@ mod tests {
             XDimension2D::new(55.0, 61.0)
         );
         assert_eq!(dimension(ActorStyle::Hollow), XDimension2D::new(26.0, 33.0));
+    }
+
+    fn shadowed(style: ActorStyle) -> Box<dyn TextBlock> {
+        style.text_block(Fashion::new(HColor::WHITE, HColor::BLACK).with_delta_shadow(3.0))
+    }
+
+    #[test]
+    fn a_shadow_makes_stickmen_and_hollow_actors_taller() {
+        let height = |style| {
+            shadowed(style)
+                .calculate_dimension(&StringBounderDebug)
+                .height
+        };
+        assert_eq!(height(ActorStyle::Stickman), 64.0);
+        assert_eq!(height(ActorStyle::Awesome), 62.0);
+        assert_eq!(height(ActorStyle::Hollow), 37.0);
+    }
+
+    #[test]
+    fn each_figure_shadows_its_head_and_body() {
+        for style in [
+            ActorStyle::Stickman,
+            ActorStyle::Awesome,
+            ActorStyle::Hollow,
+        ] {
+            assert_eq!(
+                drawn_shadows(|ug| shadowed(style).draw_u(ug)),
+                ["3", "3"],
+                "{style:?}"
+            );
+        }
+        assert_eq!(
+            drawn_shadows(|ug| shadowed(ActorStyle::StickmanBusiness).draw_u(ug)),
+            ["3", "0", "3"]
+        );
     }
 
     #[test]

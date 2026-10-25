@@ -14,6 +14,7 @@ pub(crate) struct ComponentRoseDivider {
     border: HColor,
     stroke: UStroke,
     round_corner: f64,
+    shadow: f64,
     empty: bool,
 }
 
@@ -24,6 +25,7 @@ impl ComponentRoseDivider {
         border: HColor,
         stroke: UStroke,
         round_corner: f64,
+        shadow: f64,
         empty: bool,
     ) -> Self {
         Self {
@@ -32,6 +34,7 @@ impl ComponentRoseDivider {
             border,
             stroke,
             round_corner,
+            shadow,
             empty,
         }
     }
@@ -41,7 +44,9 @@ impl ComponentRoseDivider {
         ug.translated(0.0, -1.0)
             .with_stroke(UStroke::SIMPLE)
             .draw(&UShape::Rectangle(
-                URectangle::new(width, 3.0).rounded(self.round_corner),
+                URectangle::new(width, 3.0)
+                    .rounded(self.round_corner)
+                    .with_delta_shadow(self.shadow),
             ));
         let line = UShape::Line { dx: width, dy: 0.0 };
         let ug = ug
@@ -76,7 +81,9 @@ impl Component for ComponentRoseDivider {
         let y = (dimension.height - text_height) / 2.0;
         let ug = ug.with_color(self.border.clone()).with_stroke(self.stroke);
         ug.translated(x, y).draw(&UShape::Rectangle(
-            URectangle::new(text_width + DELTA_X, text_height).rounded(self.round_corner),
+            URectangle::new(text_width + DELTA_X, text_height)
+                .rounded(self.round_corner)
+                .with_delta_shadow(self.shadow),
         ));
         self.text
             .text_block()

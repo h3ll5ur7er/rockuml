@@ -74,6 +74,7 @@ impl Component for ComponentRoseReference {
             .text_width(string_bounder)
             .max(self.header_width(string_bounder))
             + X_MARGIN * 2.0
+            + self.body.delta_shadow
     }
 
     fn preferred_height(&self, string_bounder: &dyn StringBounder) -> f64 {
@@ -86,12 +87,13 @@ impl Component for ComponentRoseReference {
         let header_width = self.header_width(string_bounder).trunc();
         let header_height = self.header_height(string_bounder).trunc();
         let mut rectangle = URectangle::new(
-            dimension.width - X_MARGIN * 2.0,
+            dimension.width - X_MARGIN * 2.0 - self.body.delta_shadow,
             dimension.height - HEIGHT_FOOTER,
         );
         if self.body.round_corner != 0.0 {
             rectangle = rectangle.rounded(self.body.round_corner);
         }
+        let rectangle = rectangle.with_delta_shadow(self.body.delta_shadow);
         let ug = self.body.apply(ug);
         ug.translated(X_MARGIN, 0.0)
             .draw(&UShape::Rectangle(rectangle));

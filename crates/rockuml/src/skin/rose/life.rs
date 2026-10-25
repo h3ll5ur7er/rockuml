@@ -43,7 +43,11 @@ impl Component for ComponentRoseActiveLine {
             return;
         }
         ug.start_group(&UGroup::singleton(UGroupType::Title, ""));
-        let rectangle = UShape::Rectangle(URectangle::new(Self::WIDTH, dimension.height));
+        let mut rectangle = URectangle::new(Self::WIDTH, dimension.height);
+        if self.fashion.is_shadowing() {
+            rectangle = rectangle.with_delta_shadow(1.0);
+        }
+        let rectangle = UShape::Rectangle(rectangle);
         let ug = ug.with_color(self.fashion.fore_color.clone());
         let back = self.fashion.back_color.clone();
         if self.close_up && self.close_down {
@@ -138,5 +142,28 @@ impl Component for ComponentRoseDelayLine {
                 dx: 0.0,
                 dy: area.dimension.height,
             });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::skin::test_drawing::drawn_shadows;
+
+    fn activation_shadows(delta_shadow: f64, close_down: bool) -> Vec<String> {
+        let fashion = Fashion::new(HColor::WHITE, HColor::BLACK).with_delta_shadow(delta_shadow);
+        let activation = ComponentRoseActiveLine::new(fashion, true, close_down);
+        drawn_shadows(|ug| activation.draw_internal(ug, &Area::new(20.0, 50.0)))
+    }
+
+    #[test]
+    fn a_shadowed_activation_box_casts_a_one_pixel_shadow() {
+        assert_eq!(activation_shadows(4.0, true), ["1"]);
+        assert_eq!(activation_shadows(0.0, true), ["0"]);
+    }
+
+    #[test]
+    fn only_the_box_of_an_open_activation_is_shadowed() {
+        assert_eq!(activation_shadows(4.0, false), ["1", "0", "0", "0"]);
     }
 }

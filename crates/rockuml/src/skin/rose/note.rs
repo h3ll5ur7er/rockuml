@@ -67,11 +67,11 @@ impl Stencil for NoteStencil {
 
 impl Component for ComponentRoseNote {
     fn preferred_width(&self, string_bounder: &dyn StringBounder) -> f64 {
-        self.text.text_width(string_bounder) + 2.0 * Self::PADDING_X
+        self.text.text_width(string_bounder) + 2.0 * Self::PADDING_X + self.fashion.delta_shadow
     }
 
     fn preferred_height(&self, string_bounder: &dyn StringBounder) -> f64 {
-        self.text.text_height(string_bounder) + 2.0 * Self::PADDING_Y
+        self.text.text_height(string_bounder) + 2.0 * Self::PADDING_Y + self.fashion.delta_shadow
     }
 
     fn padding_x(&self) -> f64 {
@@ -98,11 +98,10 @@ impl Component for ComponentRoseNote {
         }
         let ug = self.fashion.apply(ug);
         let round_corner = self.fashion.round_corner;
-        ug.draw(&UShape::path(get_polygon_normal(
-            x2,
-            text_height,
-            round_corner,
-        )));
+        ug.draw(
+            &UShape::path(get_polygon_normal(x2, text_height, round_corner))
+                .with_delta_shadow(self.fashion.delta_shadow),
+        );
         ug.draw(&UShape::path(get_corner(x2, round_corner)));
         let ug = ug.with_stencil(Rc::new(NoteStencil { text_width }));
         let padding = self.text.padding();
@@ -165,7 +164,9 @@ impl Component for ComponentRoseNoteBox {
         }
         let ug = self.fashion.apply(ug);
         ug.draw(&UShape::Rectangle(
-            URectangle::new(x2, text_height).rounded(self.fashion.round_corner),
+            URectangle::new(x2, text_height)
+                .rounded(self.fashion.round_corner)
+                .with_delta_shadow(self.fashion.delta_shadow),
         ));
         let padding = self.text.padding();
         self.text.text_block().draw_u(
@@ -231,7 +232,7 @@ impl Component for ComponentRoseNoteHexagonal {
             (CORNER_SIZE, 0.0),
         ];
         let ug = self.fashion.apply(ug);
-        ug.draw(&UShape::polygon(polygon));
+        ug.draw(&UShape::polygon(polygon).with_delta_shadow(self.fashion.delta_shadow));
         let padding = self.text.padding();
         self.text.text_block().draw_u(
             &ug.with_stroke(UStroke::SIMPLE)

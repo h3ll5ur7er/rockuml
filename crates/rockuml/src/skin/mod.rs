@@ -10,6 +10,9 @@ pub(crate) mod rose;
 pub(crate) mod symbol;
 pub(crate) mod visibility_modifier;
 
+#[cfg(test)]
+pub(crate) mod test_drawing;
+
 use actor::ActorStyle;
 use component_style::ComponentStyle;
 use font_param::FontParam;
