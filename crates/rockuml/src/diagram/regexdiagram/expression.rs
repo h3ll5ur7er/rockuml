@@ -88,6 +88,9 @@ pub(super) enum Failure {
 impl Failure {
     /// Taking from an empty stack.
     pub(super) const NO_SUCH_ELEMENT: Self = Self::Thrown("java.util.NoSuchElementException");
+    /// Reading the first element of an empty list.
+    pub(super) const INDEX_OUT_OF_BOUNDS: Self =
+        Self::Thrown("java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0");
 }
 
 impl From<PastTheEnd> for Failure {

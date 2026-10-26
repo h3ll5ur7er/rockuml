@@ -2,14 +2,14 @@
 
 use super::expression::{Symbol, Token};
 use super::tile::{
-    BoxKind, ETile, ETileAlternation, ETileBox, ETileConcatenation, ETileNot, ETileWithCircles,
-    TileStyle,
+    BoxKind, ETile, ETileBox, ETileConcatenation, ETileNot, ETileWithCircles, TileStyle,
 };
 use crate::skin::SkinParam;
 
-/// An operator found too few tiles, where PlantUML's stack throws.
+/// Where PlantUML's engine throws, which draws the rule as a syntax error: an operator finds too few tiles, or
+/// a symbol is left that no tile draws, such as an unclosed `(`.
 #[derive(Debug)]
-pub(super) struct MissingTile;
+pub(super) struct Thrown;
 
 pub(super) struct EbnfEngine<'a> {
     /// Its top is last.
@@ -28,14 +28,14 @@ impl<'a> EbnfEngine<'a> {
     }
 
     /// The tiles `tokens` make, or `None` when they do not make one rule.
-    pub(super) fn run(mut self, tokens: &[Token]) -> Result<Option<ETileWithCircles>, MissingTile> {
+    pub(super) fn run(mut self, tokens: &[Token]) -> Result<Option<ETileWithCircles>, Thrown> {
         for token in tokens {
             self.apply(token)?;
         }
         Ok(self.get_text_block())
     }
 
-    fn apply(&mut self, token: &Token) -> Result<(), MissingTile> {
+    fn apply(&mut self, token: &Token) -> Result<(), Thrown> {
         let data = token.data.as_deref().unwrap_or_default();
         let skin_param = self.skin_param;
         match token.symbol {
@@ -64,7 +64,7 @@ impl<'a> EbnfEngine<'a> {
                 self.stack.push(ETile::one_or_more(arg1, None));
             }
             Symbol::RepetitionSymbol => self.repetition_symbol()?,
-            _ => unreachable!("the shunting yard puts out no other symbol"),
+            _ => return Err(Thrown),
         }
         Ok(())
     }
@@ -77,16 +77,16 @@ impl<'a> EbnfEngine<'a> {
         )));
     }
 
-    fn pop(&mut self) -> Result<ETile, MissingTile> {
-        self.stack.pop().ok_or(MissingTile)
+    fn pop(&mut self) -> Result<ETile, Thrown> {
+        self.stack.pop().ok_or(Thrown)
     }
 
-    fn top(&mut self) -> Result<&mut ETile, MissingTile> {
-        self.stack.last_mut().ok_or(MissingTile)
+    fn top(&mut self) -> Result<&mut ETile, Thrown> {
+        self.stack.last_mut().ok_or(Thrown)
     }
 
     /// `3 * x`: the count above a loop, which may be skipped when the count is 0.
-    fn repetition_symbol(&mut self) -> Result<(), MissingTile> {
+    fn repetition_symbol(&mut self) -> Result<(), Thrown> {
         let arg1 = self.pop()?;
         let repetition_label = self.pop()?.repetition_label().to_owned();
         let label = format!("{repetition_label}\u{00D7}");
@@ -98,23 +98,14 @@ impl<'a> EbnfEngine<'a> {
         Ok(())
     }
 
-    fn alternation(&mut self) -> Result<(), MissingTile> {
-        let mut arg1 = self.pop()?;
-        let mut arg2 = self.pop()?;
-        if matches!(arg1, ETile::Alternation(_)) {
-            arg1.push(arg2);
-            self.stack.push(arg1);
-        } else if matches!(arg2, ETile::Alternation(_)) {
-            arg2.push(arg1);
-            self.stack.push(arg2);
-        } else {
-            self.stack
-                .push(ETile::Alternation(ETileAlternation::of(arg2, arg1)));
-        }
+    fn alternation(&mut self) -> Result<(), Thrown> {
+        let arg1 = self.pop()?;
+        let arg2 = self.pop()?;
+        self.stack.push(ETile::alternation(arg1, arg2));
         Ok(())
     }
 
-    fn concatenation(&mut self) -> Result<(), MissingTile> {
+    fn concatenation(&mut self) -> Result<(), Thrown> {
         let mut arg1 = self.pop()?;
         let arg2 = self.pop()?;
         if matches!(arg1, ETile::Concatenation(_)) {
