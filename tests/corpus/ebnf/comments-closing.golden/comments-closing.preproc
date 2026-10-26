@@ -1,0 +1,3 @@
+@startebnf
+r = [ a ] (* after optional *), ( b ) (* after group *), { c } (* after repetition *) ;
+@endebnf

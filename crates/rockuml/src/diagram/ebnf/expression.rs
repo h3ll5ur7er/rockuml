@@ -209,8 +209,9 @@ fn read_comment(it: &mut CharInspector) -> Result<String, PastTheEnd> {
     }
 }
 
+/// A supplementary character is no letter to Java, and makes the rule unparsable.
 fn is_letter_or_digit(ch: char) -> bool {
-    ch == '-' || ch == '_' || java::is_letter_or_digit(ch)
+    ch == '-' || ch == '_' || java::is_one_char(ch) && java::is_letter_or_digit(ch)
 }
 
 /// Where PlantUML's `ShuntingYard` throws, which draws the rule as a syntax error.
@@ -391,6 +392,11 @@ mod tests {
     #[test]
     fn an_unknown_character_leaves_no_token() {
         assert_eq!(tokens(&["a = b # c;"]), []);
+    }
+
+    #[test]
+    fn a_supplementary_character_is_no_letter() {
+        assert_eq!(tokens(&["r = x\u{1D49C}y ;"]), []);
     }
 
     #[test]

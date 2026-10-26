@@ -11,8 +11,8 @@ use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
 use super::diagram_type::DiagramType;
 use super::ebnf::tile::{
-    BoxKind, ETile, ETileAlternation, ETileBox, ETileConcatenation, ETileLookAheadOrBehind,
-    ETileNamedGroup, ETileRegexGroup, ETileRegexGroupAllBut, TileStyle,
+    BoxKind, ETile, ETileBox, ETileConcatenation, ETileLookAheadOrBehind, ETileNamedGroup,
+    ETileRegexGroup, ETileRegexGroupAllBut, TileStyle,
 };
 use super::ebnf::tile_style;
 use super::json::StyleExtractor;
@@ -120,7 +120,7 @@ impl PSystemRegex {
         match token.token_type {
             T::SimpleChar | T::EscapedChar => self.push_etile_box(data, BoxKind::Terminal),
             T::Class | T::Anchor => self.push_etile_box(data, BoxKind::Literal),
-            T::Group => self.push_regex_group(data),
+            T::Group => self.push_regex_group(data)?,
             T::LookAhead | T::LookBehind => {
                 let arg1 = self.pop()?;
                 self.stack
@@ -172,16 +172,17 @@ impl PSystemRegex {
         )));
     }
 
-    /// `[^…]` lists what it excludes apart.
-    fn push_regex_group(&mut self, group: &str) {
+    /// `[^…]` lists what it excludes apart; PlantUML reads the first element of an empty class `[]` anyway.
+    fn push_regex_group(&mut self, group: &str) -> Result<(), Failure> {
         let elements = expression::split_group(group);
+        let first = elements.first().ok_or(Failure::INDEX_OUT_OF_BOUNDS)?;
         let style = self.style.clone();
-        self.stack
-            .push(if elements.first().is_some_and(|first| first == "^") {
-                ETile::RegexGroupAllBut(ETileRegexGroupAllBut::new(elements, style))
-            } else {
-                ETile::RegexGroup(ETileRegexGroup::new(elements, style))
-            });
+        self.stack.push(if first == "^" {
+            ETile::RegexGroupAllBut(ETileRegexGroupAllBut::new(elements, style))
+        } else {
+            ETile::RegexGroup(ETileRegexGroup::new(elements, style))
+        });
+        Ok(())
     }
 
     /// `{n}`, `{n,}` or `{n,m}`: an optional part for no minimum, labelled with the count.
@@ -204,18 +205,9 @@ impl PSystemRegex {
     }
 
     fn alternation(&mut self) -> Result<(), Failure> {
-        let mut arg1 = self.pop()?;
-        let mut arg2 = self.pop()?;
-        if matches!(arg1, ETile::Alternation(_)) {
-            arg1.push(arg2);
-            self.stack.push(arg1);
-        } else if matches!(arg2, ETile::Alternation(_)) {
-            arg2.push(arg1);
-            self.stack.push(arg2);
-        } else {
-            self.stack
-                .push(ETile::Alternation(ETileAlternation::of(arg2, arg1)));
-        }
+        let arg1 = self.pop()?;
+        let arg2 = self.pop()?;
+        self.stack.push(ETile::alternation(arg1, arg2));
         Ok(())
     }
 

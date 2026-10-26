@@ -115,6 +115,20 @@ impl ETile {
         Self::optional(Self::one_or_more(orig, None))
     }
 
+    /// `arg2 | arg1`, where `arg1` was on top of the engine's stack: an alternation on either side takes the
+    /// other in (the engines' `alternation`).
+    pub(crate) fn alternation(mut arg1: ETile, mut arg2: ETile) -> Self {
+        if matches!(arg1, Self::Alternation(_)) {
+            arg1.push(arg2);
+            arg1
+        } else if matches!(arg2, Self::Alternation(_)) {
+            arg2.push(arg1);
+            arg2
+        } else {
+            Self::Alternation(ETileAlternation::of(arg2, arg1))
+        }
+    }
+
     /// The first of a concatenation or an alternation, the others moving after it (`push`). Other tiles
     /// hold no list, and PlantUML throws.
     pub(crate) fn push(&mut self, tile: ETile) {

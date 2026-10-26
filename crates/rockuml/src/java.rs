@@ -43,6 +43,20 @@ pub(crate) fn is_letter_or_digit(c: char) -> bool {
     is_letter(c) || get_general_category(c) == GeneralCategory::DecimalNumber
 }
 
+/// Whether `c` fits in one Java `char`. Java holds a supplementary character as two surrogate halves, and
+/// `Character`'s tests on a `char` take neither half for a letter, digit or space.
+pub(crate) fn is_one_char(c: char) -> bool {
+    u32::from(c) <= 0xFFFF
+}
+
+/// A Java string from its UTF-16 units, as PlantUML writes it out: an unpaired surrogate half becomes `?`.
+/// Java measures the half itself, which is wider.
+pub(crate) fn string_from_utf16(units: &[u16]) -> String {
+    char::decode_utf16(units.iter().copied())
+        .map(|unit| unit.unwrap_or('?'))
+        .collect()
+}
+
 /// The regex class `\s`, which in Java is ASCII-only.
 pub(crate) fn is_regex_whitespace(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')
@@ -285,15 +299,39 @@ pub(crate) fn double_to_string(value: f64) -> String {
     if magnitude == 0.0 || (1e-3..1e7).contains(&magnitude) {
         return format!("{value:?}");
     }
-    let scientific = format!("{value:e}");
+    let (significant, exponent) = java_decimal(magnitude);
+    let digits: String = significant
+        .iter()
+        .map(|digit| char::from(b'0' + digit))
+        .collect();
+    let (integer, fraction) = digits.split_at(1);
+    let fraction = if fraction.is_empty() { "0" } else { fraction };
+    let sign = if value.is_sign_negative() { "-" } else { "" };
+    format!("{sign}{integer}.{fraction}E{exponent}")
+}
+
+/// The significant digits and decimal exponent of a finite `magnitude` that `Double.toString` writes, and
+/// `String.format` rounds: the shortest that read back the same, except that a single digit gives way to the
+/// closest pair of digits (`4.9E-324`, where the shortest is `5E-324`), which only subnormals tell apart.
+fn java_decimal(magnitude: f64) -> (Vec<u8>, i32) {
+    let shortest = format!("{magnitude:e}");
+    let scientific = if shortest.find('e') == Some(1) {
+        format!("{magnitude:.1e}")
+    } else {
+        shortest
+    };
     let (mantissa, exponent) = scientific
         .split_once('e')
         .expect("{:e} always has an exponent");
-    if mantissa.contains('.') {
-        format!("{mantissa}E{exponent}")
-    } else {
-        format!("{mantissa}.0E{exponent}")
-    }
+    let significant = mantissa
+        .bytes()
+        .filter(u8::is_ascii_digit)
+        .map(|digit| digit - b'0')
+        .collect();
+    (
+        significant,
+        exponent.parse().expect("{:e} exponents are integers"),
+    )
 }
 
 /// `String.format(Locale.US, "%.Nf", value)`. Java rounds the shortest decimal representation half-up, so
@@ -305,16 +343,7 @@ pub(crate) fn format_fixed(value: f64, decimals: usize) -> String {
     if value.is_infinite() {
         return if value > 0.0 { "Infinity" } else { "-Infinity" }.to_owned();
     }
-    let scientific = format!("{:e}", value.abs());
-    let (mantissa, exponent) = scientific
-        .split_once('e')
-        .expect("{:e} always has an exponent");
-    let exponent: i32 = exponent.parse().expect("{:e} exponents are integers");
-    let significant: Vec<u8> = mantissa
-        .bytes()
-        .filter(u8::is_ascii_digit)
-        .map(|digit| digit - b'0')
-        .collect();
+    let (significant, exponent) = java_decimal(value.abs());
 
     // Digits of the integer part and the first `decimals` fraction digits, as one number scaled by 10^decimals.
     let kept_len = exponent + 1 + decimals as i32;
@@ -350,16 +379,7 @@ pub(crate) fn format_fixed(value: f64, decimals: usize) -> String {
 /// `String.format(Locale.US, "%.Ne", value)` for a finite value: like [`format_fixed`], the shortest decimal
 /// representation rounded half-up, then an exponent of at least two digits (`1.25e-03`).
 pub(crate) fn format_scientific(value: f64, decimals: usize) -> String {
-    let scientific = format!("{:e}", value.abs());
-    let (mantissa, exponent) = scientific
-        .split_once('e')
-        .expect("{:e} always has an exponent");
-    let mut exponent: i32 = exponent.parse().expect("{:e} exponents are integers");
-    let significant: Vec<u8> = mantissa
-        .bytes()
-        .filter(u8::is_ascii_digit)
-        .map(|digit| digit - b'0')
-        .collect();
+    let (significant, mut exponent) = java_decimal(value.abs());
     let mut kept: Vec<u8> = (0..=decimals)
         .map(|index| significant.get(index).copied().unwrap_or(0))
         .collect();
@@ -384,8 +404,8 @@ pub(crate) fn format_scientific(value: f64, decimals: usize) -> String {
     )
 }
 
-/// `Double.parseDouble`: surrounding control characters and spaces are ignored, and a trailing `f` or `d`
-/// is allowed. Hexadecimal notation is not read.
+/// `Double.parseDouble`: surrounding control characters and spaces are ignored, a trailing `f` or `d` is
+/// allowed, and so is hexadecimal notation (`0x1.8p1`).
 pub(crate) fn parse_double(text: &str) -> Option<f64> {
     let text = trim(text);
     let unsigned = text.strip_prefix(['+', '-']).unwrap_or(text);
@@ -395,6 +415,17 @@ pub(crate) fn parse_double(text: &str) -> Option<f64> {
     let number = unsigned
         .strip_suffix(['f', 'F', 'd', 'D'])
         .unwrap_or(unsigned);
+    if let Some(hexadecimal) = number
+        .strip_prefix("0x")
+        .or_else(|| number.strip_prefix("0X"))
+    {
+        let magnitude = parse_hexadecimal(hexadecimal)?;
+        return Some(if text.starts_with('-') {
+            -magnitude
+        } else {
+            magnitude
+        });
+    }
     let (mantissa, exponent) = match number.find(['e', 'E']) {
         Some(at) => (&number[..at], Some(&number[at + 1..])),
         None => (number, None),
@@ -454,6 +485,90 @@ fn decimal_digit(c: char) -> Option<u8> {
         .map_while(|code| char::from_u32(code).filter(|&digit| is_digit(digit)))
         .count();
     Some(u8::try_from((digits_up_to_c - 1) % 10).expect("a digit is below ten"))
+}
+
+/// `1.8p1`: hexadecimal digits around an optional point, then a binary exponent, rounded to the nearest
+/// double, ties to even.
+fn parse_hexadecimal(text: &str) -> Option<f64> {
+    // Far beyond the double range already, so that the arithmetic below cannot overflow.
+    const EXPONENT_LIMIT: i64 = 1 << 20;
+    let (significand, exponent) = text.split_once(['p', 'P'])?;
+    let exponent_digits = exponent.strip_prefix(['+', '-']).unwrap_or(exponent);
+    if exponent_digits.is_empty() || !exponent_digits.bytes().all(|byte| byte.is_ascii_digit()) {
+        return None;
+    }
+    let magnitude = exponent_digits.bytes().fold(0_i64, |magnitude, digit| {
+        (magnitude * 10 + i64::from(digit - b'0')).min(EXPONENT_LIMIT)
+    });
+    let exponent = if exponent.starts_with('-') {
+        -magnitude
+    } else {
+        magnitude
+    };
+
+    let (integer, fraction) = significand.split_once('.').unwrap_or((significand, ""));
+    if integer.is_empty() && fraction.is_empty() {
+        return None;
+    }
+    // A double has 53 significant bits; 15 hexadecimal digits keep 57 or more, and a sticky bit the rest.
+    let mut mantissa = 0_u64;
+    let mut kept_digits = 0;
+    let mut dropped_digits = 0_i64;
+    let mut sticky = false;
+    for ch in integer.chars().chain(fraction.chars()) {
+        let digit = u64::from(ch.to_digit(16)?);
+        if kept_digits < 15 {
+            mantissa = mantissa * 16 + digit;
+            if mantissa > 0 {
+                kept_digits += 1;
+            }
+        } else {
+            dropped_digits += 1;
+            sticky |= digit != 0;
+        }
+    }
+    let fraction_len = i64::try_from(fraction.len()).ok()?;
+    Some(round_to_double(
+        mantissa,
+        exponent + 4 * (dropped_digits - fraction_len),
+        sticky,
+    ))
+}
+
+/// `mantissa × 2^exponent`, plus a little more if `sticky`, rounded to the nearest double, ties to even.
+fn round_to_double(mantissa: u64, exponent: i64, sticky: bool) -> f64 {
+    if mantissa == 0 {
+        return 0.0;
+    }
+    let leading_bit = exponent + i64::from(mantissa.ilog2());
+    if leading_bit > 1023 {
+        return f64::INFINITY;
+    }
+    // The weight of the last bit the double keeps, never below the smallest subnormal.
+    let last_bit = (leading_bit - 52).max(-1074);
+    let shift = last_bit - exponent;
+    let kept = if shift <= 0 {
+        mantissa << -shift
+    } else {
+        let mantissa = u128::from(mantissa);
+        let shift = shift.min(127) as u32;
+        let kept = mantissa >> shift;
+        let rest = mantissa & ((1 << shift) - 1);
+        let half = 1 << (shift - 1);
+        let rounds_up = rest > half || rest == half && (sticky || kept & 1 == 1);
+        u64::try_from(kept).expect("a double's bits fit") + u64::from(rounds_up)
+    };
+    // `kept` has at most 54 bits and is exact; the product only overflows into infinity.
+    kept as f64 * power_of_two(last_bit)
+}
+
+/// `2^exponent` for an exponent a double reaches exactly, subnormals included.
+fn power_of_two(exponent: i64) -> f64 {
+    if exponent >= -1022 {
+        f64::from_bits(((exponent + 1023) as u64) << 52)
+    } else {
+        f64::from_bits(1 << (exponent + 1074))
+    }
 }
 
 fn round_up(digits: &mut Vec<u8>) {
@@ -554,6 +669,10 @@ mod tests {
             (-1.25e-5, "-1.25E-5"),
             (9_999_999.0, "9999999.0"),
             (108.388_888_888_888_89, "108.38888888888889"),
+            (1.0e23, "1.0E23"),
+            (f64::from_bits(1), "4.9E-324"),
+            (f64::from_bits(2), "9.9E-324"),
+            (f64::from_bits(100), "4.94E-322"),
         ];
         for (value, expected) in cases {
             assert_eq!(double_to_string(value), expected);
@@ -598,6 +717,11 @@ mod tests {
             (0.001_235, "1.24e-03"),
             (1.5e-12, "1.50e-12"),
             (123_456.0, "1.23e+05"),
+            (0.0, "0.00e+00"),
+            (f64::from_bits(1), "4.90e-324"),
+            (f64::from_bits(2), "9.90e-324"),
+            (f64::from_bits(3), "1.50e-323"),
+            (f64::from_bits(100), "4.94e-322"),
         ];
         for (value, expected) in cases {
             assert_eq!(format_scientific(value, 2), expected, "{value}");
@@ -627,6 +751,49 @@ mod tests {
             assert_eq!(parse_double(text), expected, "{text:?}");
         }
         assert!(parse_double("NaN").is_some_and(f64::is_nan));
+    }
+
+    /// Expectations printed by the JDK's `Double.parseDouble`.
+    #[test]
+    fn hexadecimal_doubles_parse_like_java() {
+        let cases = [
+            ("0x1p4", Some(16.0)),
+            ("0X1.8P1", Some(3.0)),
+            ("0x.8p1", Some(1.0)),
+            ("-0x1p-2d", Some(-0.25)),
+            ("0x1P+3f", Some(8.0)),
+            (" 0x1p4 ", Some(16.0)),
+            ("0x1.p0", Some(1.0)),
+            ("+0x10p0", Some(16.0)),
+            ("0x1.fffffffffffff8p0", Some(2.0)),
+            ("0x1.0000000000000801p0", Some(1.000_000_000_000_000_2)),
+            ("0x1.00000000000008p0", Some(1.0)),
+            ("0x1.00000000000018p0", Some(1.000_000_000_000_000_4)),
+            ("0x123456789abcdef0p0", Some(1.311_768_467_463_790_3e18)),
+            ("0x00000000000000000000001p0", Some(1.0)),
+            ("0x1.00000000000000000000001p0", Some(1.0)),
+            ("0x1p-1074", Some(f64::from_bits(1))),
+            ("0x1.8p-1075", Some(f64::from_bits(1))),
+            ("0x0.0000000000001p-1022", Some(f64::from_bits(1))),
+            ("0x1p-1075", Some(0.0)),
+            ("0x1p-99999999999", Some(0.0)),
+            ("0x1.fffffffffffff7ffp1023", Some(f64::MAX)),
+            ("0x1.fffffffffffff8p1023", Some(f64::INFINITY)),
+            ("0x1p99999999999", Some(f64::INFINITY)),
+            ("0x1", None),
+            ("0xp0", None),
+            ("0x.p0", None),
+            ("0x1.0p", None),
+            ("0x1p+", None),
+            ("0x1_0p0", None),
+            ("0xGp0", None),
+            ("0x1p4x", None),
+        ];
+        for (text, expected) in cases {
+            assert_eq!(parse_double(text), expected, "{text:?}");
+        }
+        let negative_zero = parse_double("-0x0p0").expect("a number");
+        assert!(negative_zero == 0.0 && negative_zero.is_sign_negative());
     }
 
     /// Orders observed on the JDK for maps built like PlantUML's regex results: putAll of child maps.

@@ -188,6 +188,18 @@ enum SeriesType {
     Scatter,
 }
 
+impl SeriesType {
+    /// The command that adds such a series, which also names a series left unnamed.
+    fn keyword(self) -> &'static str {
+        match self {
+            Self::Bar => "bar",
+            Self::Line => "line",
+            Self::Area => "area",
+            Self::Scatter => "scatter",
+        }
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum MarkerShape {
     Circle,

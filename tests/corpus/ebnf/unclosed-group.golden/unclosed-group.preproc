@@ -1,0 +1,6 @@
+@startebnf
+title Unclosed groups
+opened = ( a ;
+nested = a, ( b | c ;
+good = ( a | b ), c ;
+@endebnf

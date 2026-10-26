@@ -1,5 +1,9 @@
 //! Reads a block's trimmed lines one character at a time, as one text without line breaks (PlantUML's
 //! `CharInspectorImpl` without newlines).
+//!
+//! PlantUML reads UTF-16 units, so a supplementary character is two surrogate halves to it. Here it comes
+//! whole, which keeps the text it is read into whole; readers test letters with `java::is_one_char` to
+//! decide as PlantUML does. Where PlantUML parts the pair, it draws lone halves that no `&str` holds.
 
 use super::BlocLines;
 
