@@ -1,0 +1,15 @@
+@startpacketdiag
+title Packet layout
+header page header
+footer page footer
+caption the caption
+legend right
+  a legend
+endlegend
+skinparam backgroundColor #fefee0
+packetdiag {
+  colwidth = 16
+  0-7: first
+  8-15: second
+}
+@endpacketdiag

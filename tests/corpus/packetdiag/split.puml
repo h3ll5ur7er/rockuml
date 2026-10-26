@@ -1,0 +1,10 @@
+@startpacketdiag
+packetdiag {
+  colwidth = 8
+  0-5: Head
+  6-21: Spans exactly two rows
+  22-40: Spans with a rest
+  41-47: Tail
+  48-60: Open end
+}
+@endpacketdiag

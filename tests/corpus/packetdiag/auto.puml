@@ -1,0 +1,15 @@
+@startpacketdiag
+packetdiag {
+  * Version [len = 4]
+  * IHL [len = 4]
+  * Type of Service [len = 8]
+  * Total Length [len = 16]
+  * Identification [len = 16]
+  * Flags [len = 3]
+  * Fragment Offset [len = 13]
+  20 TTL [len = 8]
+  28: Protocol [len=8]
+  * Header Checksum [len = 16, height = 2]
+  * Source
+}
+@endpacketdiag

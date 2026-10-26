@@ -1,0 +1,11 @@
+@startpacketdiag
+packetdiag {
+  colwidth = 16;
+  same_height = true;
+  node_height = 40;
+  0-7: short
+  8-15: tall [height = 3]
+  16-23: alone
+  24-31: also [height = 2]
+}
+@endpacketdiag
