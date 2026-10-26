@@ -20,10 +20,10 @@ pub(super) fn all() -> Vec<Box<dyn Command<ChartDiagram>>> {
     vec![
         h_axis(),
         v_axis(),
-        series_command("bar", SeriesType::Bar),
-        series_command("line", SeriesType::Line),
-        series_command("area", SeriesType::Area),
-        series_command("scatter", SeriesType::Scatter),
+        series_command(SeriesType::Bar),
+        series_command(SeriesType::Line),
+        series_command(SeriesType::Area),
+        series_command(SeriesType::Scatter),
         legend(),
         stack_mode(),
         orientation(),
@@ -34,7 +34,7 @@ pub(super) fn all() -> Vec<Box<dyn Command<ChartDiagram>>> {
 /// A one-line command made of `parts`, between optional spaces at the line's start and end.
 fn command(
     parts: Vec<RegexTree>,
-    apply: fn(&mut ChartDiagram, &RegexResult) -> CommandResult,
+    apply: impl Fn(&mut ChartDiagram, &RegexResult) -> CommandResult + 'static,
 ) -> Box<dyn Command<ChartDiagram>> {
     let mut pattern = vec![RegexTree::start(), RegexTree::spaces_zero_or_more()];
     pattern.extend(parts);
@@ -256,12 +256,9 @@ fn parse_custom_ticks(ticks: &str) -> Option<Vec<(f64, String)>> {
 /// PlantUML's `CommandChartBar`, `CommandChartLine`, `CommandChartArea` and `CommandChartScatter`:
 /// `bar <<stereo>> "name" [values] #color labels`. Lines, areas and scatters may use the secondary axis
 /// (`v2`), lines and scatters coordinate pairs (`[(x,y), ...]`), and scatters a marker (`<<square>>`).
-fn series_command(
-    keyword: &'static str,
-    series_type: SeriesType,
-) -> Box<dyn Command<ChartDiagram>> {
+fn series_command(series_type: SeriesType) -> Box<dyn Command<ChartDiagram>> {
     let mut parts = vec![
-        RegexTree::leaf(keyword),
+        RegexTree::leaf(series_type.keyword()),
         RegexTree::spaces_zero_or_more(),
         optional_named("STEREO", r"(\<\<.+?\>\>)"),
         RegexTree::spaces_zero_or_more(),
@@ -278,23 +275,17 @@ fn series_command(
     if series_type == SeriesType::Scatter {
         parts.push(optional_flag("MARKER", "<<(circle|square|triangle)>>"));
     }
-    let apply: fn(&mut ChartDiagram, &RegexResult) -> CommandResult = match series_type {
-        SeriesType::Bar => |diagram, arg| add_series(diagram, arg, "bar", SeriesType::Bar),
-        SeriesType::Line => |diagram, arg| add_series(diagram, arg, "line", SeriesType::Line),
-        SeriesType::Area => |diagram, arg| add_series(diagram, arg, "area", SeriesType::Area),
-        SeriesType::Scatter => {
-            |diagram, arg| add_series(diagram, arg, "scatter", SeriesType::Scatter)
-        }
-    };
-    command(parts, apply)
+    command(parts, move |diagram, arg| {
+        add_series(diagram, arg, series_type)
+    })
 }
 
 fn add_series(
     diagram: &mut ChartDiagram,
     arg: &RegexResult,
-    keyword: &str,
     series_type: SeriesType,
 ) -> CommandResult {
+    let keyword = series_type.keyword();
     let data = arg.get("DATA", 0).unwrap_or_default();
     let name = arg.get("NAME", 0).map_or_else(
         || format!("{keyword}{}", diagram.series.len()),
