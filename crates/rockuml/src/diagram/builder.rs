@@ -20,6 +20,7 @@ use super::error::ErrorDiagram;
 use super::gantt::GanttDiagramFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
+use super::packetdiag::PacketDiagramFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
@@ -165,6 +166,11 @@ pub(super) fn create_gantt(source: UmlSource) -> Result<Box<dyn Diagram>, NotYet
 /// A `@startnwdiag` diagram.
 pub(super) fn create_nwdiag(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<NwDiagramFactory>])
+}
+
+/// A `@startpacketdiag` diagram.
+pub(super) fn create_packet(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PacketDiagramFactory>])
 }
 
 /// A `@startwbs` diagram.

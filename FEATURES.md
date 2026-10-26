@@ -10,7 +10,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 18 diagram types <<ported>>
+** Ported: 19 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -21,6 +21,7 @@ mindmapDiagram {
 *** Network diagrams <<ported>>
 *** Mind maps <<ported>>
 *** Work breakdown structures <<ported>>
+*** Packet diagrams <<ported>>
 *** Creole text <<ported>>
 *** Gantt charts <<ported>>
 *** Timing diagrams <<ported>>
@@ -34,12 +35,12 @@ left side
 *** BPM diagrams <<planned>>
 *** Graphviz sources <<planned>>
 *** Charts <<planned>>
-*** Packet diagrams <<planned>>
 *** Ditaa diagrams <<planned>>
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
-*** and 7 more <<planned>>
+*** Flow diagrams <<planned>>
+*** and 6 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -61,8 +62,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 18 of 52 ported, 26 planned, 8 not planned |
-| Commands of the ported diagrams | 809 of 809 ported |
+| Diagram types | 19 of 52 ported, 25 planned, 8 not planned |
+| Commands of the ported diagrams | 860 of 860 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -82,6 +83,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
+| [Packet diagrams](https://h3ll5ur7er.github.io/rockuml/docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
 | [Creole text (`@startcreole`)](https://h3ll5ur7er.github.io/rockuml/docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
 | [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
 | [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
@@ -103,7 +105,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | The ArchiMate sprite list | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListArchimateSpritesFactory` |
 | Graphviz sources (`@startdot`) | 🗓️ Planned later |  | Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz. | `PSystemDotFactory` |
 | Charts | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `ChartDiagramFactory` |
-| Packet diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PacketDiagramFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines. | `PSystemDitaaFactory` |
 | Definitions drawn on their own (`@startdef`) | 🗓️ Planned later |  | Definitions work with `!includedef`; drawing them on their own is rarely needed. | `PSystemDefinitionFactory` |
 | The sprite list (`listsprites`) | 🗓️ Planned later |  | A reference card; low priority. | `ListSpriteDiagramFactory` |

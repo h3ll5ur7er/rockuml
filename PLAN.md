@@ -671,6 +671,17 @@ charts (6.3k).
     only quoted strings and maps, a lone block is drawn as its attributes, and `title`, `skin` and `<style>` are
     taken out of the data and ignored (only `scale` applies).
 
+### Phase 22 — Packet diagrams
+- **Status: done.** `@startpacketdiag`: `PacketDiagramFactory` and its commands (fields by bit range, single bit or
+  `*` with `len`, `colwidth`, `node_height`, `scale_interval`, `scale_direction`, `same_height`, `height`), the
+  bit scale (`PacketIndicator`) and the fields (`PacketBlock`, labels cut short with `...`, `packetdiagDiagram`
+  and `rectangle` styles with corners and shadows). 10 cases match every output.
+  - Faithful to PlantUML's quirks: a field continued after full rows keeps a full row's width, so rows can grow
+    wider than `colwidth`; a row is as high as its last field; `rotate` has no effect, and the open edges of split
+    fields are drawn closed.
+  - Deviation: a first row without width, which makes PlantUML fail on a remainder by zero, draws a short
+    unnumbered tick.
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

@@ -8,9 +8,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use grid::{Grid, MAGIC, NETWORK_THIN, NServerDraw};
-use model::{
-    BarId, BoxId, NBar, NBox, NPlayField, NServer, NTetris, Network, NetworkId, NwGroup, Properties,
-};
+pub(super) use model::Properties;
+use model::{BarId, BoxId, NBar, NBox, NPlayField, NServer, NTetris, Network, NetworkId, NwGroup};
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;

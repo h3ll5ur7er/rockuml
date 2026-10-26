@@ -61,6 +61,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
 - File trees (`@startfiles`), with notes.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
+- Packet diagrams (`@startpacketdiag`): fields laid out bit by bit under a bit scale.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).
 - Gantt charts (`@startgantt`), except working hours.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).

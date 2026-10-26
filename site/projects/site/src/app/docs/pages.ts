@@ -151,6 +151,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/network.md')),
       },
       {
+        slug: 'packet',
+        title: 'Packet diagrams',
+        summary: 'Protocol headers and other records laid out bit by bit.',
+        load: text(() => import('./content/packet.md')),
+      },
+      {
         slug: 'salt',
         title: 'Wireframes',
         summary: 'Sketch user interfaces in text with Salt.',
