@@ -1,0 +1,66 @@
+DPI: 96
+dimension: [ 200.0000 ; 70.0000 ]
+scaleFactor: 1.0000
+seed: -1420067985057333974
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ -204.2312 ; 18.0000 ]
+  pt2: [ 404.2312 ; 52.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ffa80036
+  backcolor: fffefece
+
+TEXT:
+  text: Order
+  position: [ -194.2312 ; 38.8889 ]
+  orientation: 0
+  font: Serif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ -120.3071 ; 38.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: received
+  position: [ -107.0414 ; 38.8889 ]
+  orientation: 0
+  font: Serif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  with 
+  position: [ -11.4187 ; 38.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: colour
+  position: [ 78.6286 ; 38.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff0000ff
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  and \n kept as is
+  position: [ 178.8347 ; 38.8889 ]
+  orientation: 0
+  font: Serif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

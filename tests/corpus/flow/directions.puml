@@ -1,0 +1,7 @@
+@startflow
+start "Start here"
+e second "Second"
+s third "Third box"
+w fourth "Fourth"
+n start
+@endflow

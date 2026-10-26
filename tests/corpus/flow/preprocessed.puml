@@ -1,0 +1,10 @@
+@startflow
+!$verb = "Validate"
+!procedure $step($dir, $id, $label)
+$dir $id "$label"
+!endprocedure
+check "$verb input"
+$step("s", "store", "Store it")
+!$owner = "owner"
+$step("e", "notify", "Notify %upper($owner)")
+@endflow

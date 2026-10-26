@@ -767,6 +767,19 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
     the link is read, spots when drawn. Prints are measured as for PNG whatever the output, as PlantUML does
     (`FileFormat.PNG.getDefaultStringBounder()`), with the embedded fonts. A line indented deeper than the blocks
     go reports PlantUML's `NullPointerException`, word for word.
+
+### Phase 30 — Flow diagrams
+- **Status: done.** `@startflow` (`FlowDiagramFactory`, `CommandLineSimple`, `CommandLink`): boxes on the grid of
+  PlantUML's `golem` package (`TilesField`, `Position`, `TileGeometry`), each two cells from the last one, the boxes
+  in its way moved east (`moveAllToEast`), links between facing sides or westwards along a row, and the boxes
+  (`ActivityBox`). 11 cases: 8 match every output; `directions`, `links` and `crowded` match their PNG, preprocessor
+  and URL outputs, and draw the same shapes as the debug and SVG goldens in another order.
+  - Faithful to PlantUML: no common commands, so `title`, styles and empty lines are syntax errors; a link to an
+    unknown id or between sides that do not face each other reports the `IllegalArgumentException` PlantUML throws.
+  - Deviation: PlantUML keeps tiles in `HashMap`s keyed by identity hash codes, so the order it draws boxes in
+    changes with the Java machine, between `-pipe` and file runs and even between two output formats of one case
+    (`crowded`'s SVG golden swaps two boxes its debug golden does not). rockuml takes the tiles in the order they
+    were declared.
 ---
 
 ## 8. Known risks and mitigations

@@ -21,6 +21,7 @@ mod ebnf;
 mod emoji_list;
 mod error;
 mod files;
+mod flow;
 mod gantt;
 mod git;
 mod hcl;
@@ -216,6 +217,7 @@ pub fn create(
         Some(DiagramType::Regex) => |source, _| builder::create_regex(source),
         Some(DiagramType::Definition) => |source, _| Ok(definition::create(source)),
         Some(DiagramType::Wire) => |source, _| builder::create_wire(source),
+        Some(DiagramType::Flow) => |source, _| builder::create_flow(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);
