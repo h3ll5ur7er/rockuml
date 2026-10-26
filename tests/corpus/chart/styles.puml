@@ -1,0 +1,51 @@
+@startchart
+<style>
+chartDiagram {
+  FontColor #333333
+  LineColor #555555
+  bar {
+    BackGroundColor #8FBC8F
+    LineColor #2F4F4F
+    LineThickness 2
+    BarWidth 0.8
+  }
+  .warm {
+    BackGroundColor #FF8C00
+  }
+  line {
+    LineColor #800080
+  }
+  scatter {
+    MarkerColor #DC143C
+    MarkerShape square
+    MarkerSize 12
+  }
+  axis {
+    LineColor #0000FF
+    FontSize 12
+    FontColor #000080
+  }
+  grid {
+    LineColor #DDDDDD
+    LineThickness 0.5
+  }
+  legend {
+    FontSize 11
+    FontStyle italic
+  }
+  annotation {
+    FontColor #8B0000
+    LineColor #8B0000
+    LineThickness 1.5
+  }
+}
+</style>
+h-axis "Team" [Red, Blue, Green]
+v-axis "Points" 0 --> 50 grid
+bar "Plain" [20, 35, 25]
+bar <<warm>> "Warm" [15, 28, 40]
+line "Trend" [18, 30, 33]
+scatter "Hits" [10, 20, 30]
+annotation "Best" at (Green, 40) <<arrow>>
+legend right
+@endchart

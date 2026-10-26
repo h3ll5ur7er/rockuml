@@ -1,0 +1,10 @@
+@startchart
+h-axis [Jan, Feb, Mar, Apr, May]
+v-axis "Users" 0 --> 1000
+line "Signups" [120, 300, 650, 900, 820]
+annotation "Launch" at (Mar, 650) <<arrow>>
+annotation "Peak" at (Apr, 900) <<arrow>>
+annotation "Dip" at (May, 820)
+annotation "Ignored" at (Dec, 500)
+annotation "Numeric" at (25, 100)
+@endchart

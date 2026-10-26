@@ -1,0 +1,13 @@
+@startchart
+title Yearly results
+header Confidential
+footer Page 1
+caption Figure 1: results per region
+legend top left
+Figures in thousands
+endlegend
+h-axis "Region" [East, West]
+v-axis "Result" 0 --> 10
+bar "2025" [4, 7]
+bar "2026" [6, 9]
+@endchart

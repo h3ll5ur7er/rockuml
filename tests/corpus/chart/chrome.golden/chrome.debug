@@ -1,0 +1,268 @@
+DPI: 96
+dimension: [ 500.0000 ; 573.0000 ]
+scaleFactor: 1.0000
+seed: -3301250954684123039
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 356.3839 ; 10.0000 ]
+  pt2: [ 490.0000 ; 21.0000 ]
+
+TEXT:
+  text: Confidential
+  position: [ 356.3839 ; 17.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 136.8029 ; 21.0000 ]
+  pt2: [ 363.1971 ; 56.0000 ]
+
+TEXT:
+  text: Yearly results
+  position: [ 146.8029 ; 41.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 10.0000 ; 56.0000 ]
+  pt2: [ 336.6397 ; 105.0000 ]
+
+RECTANGLE:
+  pt1: [ 22.0000 ; 68.0000 ]
+  pt2: [ 323.6397 ; 92.0000 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: Figures in thousands
+  position: [ 27.0000 ; 83.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 155.0000 ]
+  pt2: [ 70.0000 ; 455.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 70.0000 ; 455.0000 ]
+  pt2: [ 65.0000 ; 455.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 0
+  position: [ 46.7644 ; 458.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 395.0000 ]
+  pt2: [ 65.0000 ; 395.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 2
+  position: [ 46.7682 ; 398.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 335.0000 ]
+  pt2: [ 65.0000 ; 335.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 4
+  position: [ 46.7669 ; 338.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 275.0000 ]
+  pt2: [ 65.0000 ; 275.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 6
+  position: [ 46.7506 ; 278.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 215.0000 ]
+  pt2: [ 65.0000 ; 215.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 8
+  position: [ 46.7493 ; 218.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 155.0000 ]
+  pt2: [ 65.0000 ; 155.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: 10
+  position: [ 33.3583 ; 158.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Result
+  position: [ 27.0000 ; 349.6382 ]
+  orientation: 90
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 455.0000 ]
+  pt2: [ 470.0000 ; 455.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 170.0000 ; 455.0000 ]
+  pt2: [ 170.0000 ; 460.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: East
+  position: [ 144.5267 ; 475.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 370.0000 ; 455.0000 ]
+  pt2: [ 370.0000 ; 460.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: West
+  position: [ 336.1504 ; 475.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Region
+  position: [ 233.4461 ; 495.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 90.0000 ; 335.0000 ]
+  pt2: [ 170.0000 ; 455.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 170.0000 ; 275.0000 ]
+  pt2: [ 250.0000 ; 455.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 290.0000 ; 245.0000 ]
+  pt2: [ 370.0000 ; 455.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+RECTANGLE:
+  pt1: [ 370.0000 ; 185.0000 ]
+  pt2: [ 450.0000 ; 455.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 20.2792 ; 535.0000 ]
+  pt2: [ 479.7208 ; 552.0000 ]
+
+TEXT:
+  text: Figure 1: results per region
+  position: [ 21.2792 ; 546.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 225.2100 ; 552.0000 ]
+  pt2: [ 274.7900 ; 563.0000 ]
+
+TEXT:
+  text: Page 1
+  position: [ 225.2100 ; 559.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

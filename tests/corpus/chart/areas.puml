@@ -1,0 +1,8 @@
+@startchart
+h-axis [Mon, Tue, Wed, Thu, Fri]
+v-axis "Visitors" 0 --> 300
+area "Mobile" [50, 80, 65, 90, 120] labels
+area "Desktop" [40, 60, 70, 55, 80] #2ca02c
+area "Tablet" [10, 20, 15, 25, 30] labels
+legend right
+@endchart

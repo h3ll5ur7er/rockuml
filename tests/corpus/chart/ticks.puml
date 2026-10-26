@@ -1,0 +1,5 @@
+@startchart
+h-axis "Day" [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] spacing 2 label-right grid
+v-axis "Load" 0 --> 100 ticks [0:"Idle", 50:"Busy", 80:"High", 100:"Full"] label-top
+line "CPU" [10, 35, 50, 45, 80, 95, 60, 40, 30, 20]
+@endchart

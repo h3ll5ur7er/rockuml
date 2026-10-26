@@ -1,0 +1,7 @@
+@startchart
+h-axis "x" -5 --> 5 spacing 1 grid
+v-axis "y" -10 --> 30 grid
+line "Square" [(-5,25), (-4,16), (-3,9), (-2,4), (-1,1), (0,0), (1,1), (2,4), (3,9), (4,16), (5,25)]
+scatter "Samples" [(-4.5,20), (-2.5, 5), (0.5, -2), (3.5, 14)] #d62728 labels
+legend right
+@endchart

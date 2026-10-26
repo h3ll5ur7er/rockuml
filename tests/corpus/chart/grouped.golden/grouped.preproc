@@ -1,0 +1,8 @@
+@startchart
+h-axis "Quarter" [Q1, Q2, Q3, Q4, Q5, Q6, Q7, Q8]
+v-axis "Units" 0 --> 120
+bar "North" [40, 55, 60, 72, 80, 95, 100, 110] #4472C4
+bar "South" [30, 45, 50, 66, 70, 85, 90, 105] #ED7D31
+bar [20, 25, 35, 40, 45, 50, 55, 60] #green
+legend right
+@endchart

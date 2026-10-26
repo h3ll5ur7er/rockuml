@@ -1,0 +1,7 @@
+@startchart
+orientation horizontal
+v-axis [Apples, Oranges, Pears]
+h-axis "Kilograms" 0 --> 50
+bar "Harvest" [32, 18.25, 44] labels
+legend top
+@endchart
