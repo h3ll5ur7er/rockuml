@@ -671,6 +671,18 @@ charts (6.3k).
     only quoted strings and maps, a lone block is drawn as its attributes, and `title`, `skin` and `<style>` are
     taken out of the data and ignored (only `scale` applies).
 
+### Phase 21 — EBNF and regex diagrams
+- **Status: done.** `@startebnf` (`PSystemEbnfFactory`) and `@startregex` (`PSystemRegexFactory`) draw railroad
+  diagrams with the same `ETile` tiles. 14 EBNF and 15 regex cases match every output.
+  - EBNF: rules on one line or several, `,` `|` `( )` `[ ]` `{ }` `{ }-` `n *` and `-`, the three kinds of
+    terminal, `(* *)` comments as notes on boxes, rule names and between rules, `Syntax error!` for rules the
+    engine cannot build, "Unparsable expression" for unknown characters.
+  - Regex: letters merged into boxes, classes, sets, POSIX classes, anchors, escapes, quantifiers with counts,
+    named groups and lookarounds; "Error parsing: …" and PlantUML's `ProtectedCommand` message where its reader
+    throws. Like PlantUML, only the last expression is drawn, and `<style>` applies before any line is read.
+  - Not ported: `!option use_descriptive_names` (the preprocessor has no `!option`), and the crash report of a
+    regex diagram without expression.
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

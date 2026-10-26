@@ -1,0 +1,6 @@
+@startebnf
+expr = term, { ( "+" | "-" ), term } ;
+term = factor, { ( "*" | "/" ), factor } ;
+factor = number | "(", expr, ")" ;
+choice = ( a, b ) | ( c | d ), e ;
+@endebnf

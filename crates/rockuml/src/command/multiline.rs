@@ -3,6 +3,7 @@ use regex::Regex;
 use super::{BlocLines, Command, CommandControl, CommandResult, ParserPass};
 use crate::pattern::RegexTree;
 use crate::text::StringLocated;
+use crate::ubrex::UnicodeBracketedExpression;
 
 /// How the first line is recognised.
 enum Start {
@@ -11,6 +12,8 @@ enum Start {
     /// A command pattern, which may use lookarounds; it anchors itself.
     Tree(&'static RegexTree),
     OwnedTree(RegexTree),
+    /// Matched against the whole trimmed line (`UBrexCommandMultilines2`).
+    UBrex(UnicodeBracketedExpression),
 }
 
 impl Start {
@@ -19,6 +22,7 @@ impl Start {
             Start::Regex(regex) => regex.is_match(line),
             Start::Tree(tree) => tree.is_match(line),
             Start::OwnedTree(tree) => tree.is_match(line),
+            Start::UBrex(ubrex) => ubrex.exact_match(line),
         }
     }
 }
@@ -29,6 +33,8 @@ enum End {
     Regex(Regex),
     /// A command pattern, matched anywhere in the line, trimmed or not (`CommandMultilines3`).
     Tree { tree: RegexTree, trimmed: bool },
+    /// Matched against the whole trimmed line (`UBrexCommandMultilines2`).
+    UBrex(UnicodeBracketedExpression),
 }
 
 impl End {
@@ -47,6 +53,7 @@ impl End {
                 tree,
                 trimmed: false,
             } => tree.is_match(line.text()),
+            End::UBrex(ubrex) => ubrex.exact_match(line.trimmed().text()),
         }
     }
 }
@@ -54,7 +61,7 @@ impl End {
 type Apply<D> = Box<dyn Fn(&mut D, &BlocLines) -> CommandResult>;
 
 /// A command spanning lines from one matching `start` to one matching `end` (PlantUML's
-/// `CommandMultilines`, `CommandMultilines2` and `CommandMultilines3`).
+/// `CommandMultilines`, `CommandMultilines2`, `CommandMultilines3` and `UBrexCommandMultilines2`).
 pub(crate) struct Multiline<D> {
     start: Start,
     end: End,
@@ -107,6 +114,15 @@ impl<D> Multiline<D> {
             End::Tree { tree: end, trimmed },
             apply,
         )
+    }
+
+    /// Both expressions must match whole trimmed lines.
+    pub(crate) fn between_ubrex(
+        start: UnicodeBracketedExpression,
+        end: UnicodeBracketedExpression,
+        apply: impl Fn(&mut D, &BlocLines) -> CommandResult + 'static,
+    ) -> Self {
+        Self::with(Start::UBrex(start), End::UBrex(end), apply)
     }
 
     fn with(

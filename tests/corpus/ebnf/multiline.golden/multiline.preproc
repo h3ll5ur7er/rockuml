@@ -1,0 +1,8 @@
+@startebnf
+statement =
+  assignment
+  | call
+  | "return", [ expression ] ;
+assignment = identifier, "=",
+  expression ;
+@endebnf

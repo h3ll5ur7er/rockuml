@@ -1,0 +1,26 @@
+DPI: 96
+dimension: [ 275.9331 ; 54.0000 ]
+scaleFactor: 1.0000
+seed: -1385072818569279062
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 15.0000 ; 15.0000 ]
+  pt2: [ 260.9331 ; 39.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: .*\()[]{}?|^$<>
+  position: [ 20.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

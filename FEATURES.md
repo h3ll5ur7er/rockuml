@@ -10,7 +10,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 18 diagram types <<ported>>
+** Ported: 20 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -28,6 +28,8 @@ mindmapDiagram {
 *** File trees <<ported>>
 *** YAML data <<ported>>
 *** HCL data <<ported>>
+*** EBNF diagrams <<ported>>
+*** Regular expression diagrams <<ported>>
 *** Entity relationship diagrams <<ported>>
 left side
 ** Planned <<planned>>
@@ -39,7 +41,7 @@ left side
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
-*** and 7 more <<planned>>
+*** and 5 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -61,8 +63,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 18 of 52 ported, 26 planned, 8 not planned |
-| Commands of the ported diagrams | 809 of 809 ported |
+| Diagram types | 20 of 52 ported, 24 planned, 8 not planned |
+| Commands of the ported diagrams | 901 of 901 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -89,6 +91,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [File trees](https://h3ll5ur7er.github.io/rockuml/docs/files) | ✅ Ported | 9 of 9 match PlantUML |  | `FilesDiagramFactory` |
 | [YAML data](https://h3ll5ur7er.github.io/rockuml/docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [HCL data](https://h3ll5ur7er.github.io/rockuml/docs/hcl) | ✅ Ported | 11 of 11 match PlantUML |  | `HclDiagramFactory` |
+| [EBNF diagrams](https://h3ll5ur7er.github.io/rockuml/docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
+| [Regular expression diagrams](https://h3ll5ur7er.github.io/rockuml/docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | The welcome screen of an empty diagram | 🗓️ Planned later |  | A reference card; low priority. | `PSystemWelcomeFactory` |
 | The colour chart (`colors`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemColorsFactory` |
@@ -114,8 +118,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
 | Git diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `GitDiagramFactory` |
 | Boards | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BoardDiagramFactory` |
-| EBNF diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemEbnfFactory` |
-| Regular expression diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemRegexFactory` |
 | PlantUML's donors | ⛔ Not planned |  | About PlantUML itself, not about diagrams. | `PSystemDonorsFactory` |
 | Easter egg | ⛔ Not planned |  | Easter eggs are PlantUML's own. | `PSystemEggFactory` |
 | Easter egg | ⛔ Not planned |  | Easter eggs are PlantUML's own. | `PSystemAppleTwoFactory` |

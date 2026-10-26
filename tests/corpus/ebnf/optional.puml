@@ -1,0 +1,5 @@
+@startebnf
+signed = [ "+" | "-" ], integer ;
+decimal = integer, [ ".", [ fraction ] ] ;
+exponent = [ ( "e" | "E" ), [ sign ], digits ] ;
+@endebnf

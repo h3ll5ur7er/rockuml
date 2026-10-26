@@ -145,6 +145,18 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/files.md')),
       },
       {
+        slug: 'ebnf',
+        title: 'EBNF grammars',
+        summary: 'Grammar rules drawn as railroad diagrams.',
+        load: text(() => import('./content/ebnf.md')),
+      },
+      {
+        slug: 'regex',
+        title: 'Regular expressions',
+        summary: 'Regular expressions drawn as railroad diagrams.',
+        load: text(() => import('./content/regex.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',

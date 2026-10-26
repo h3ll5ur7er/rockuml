@@ -1,0 +1,7 @@
+@startebnf
+list = item, { ",", item } ;
+word = { letter }- ;
+triple = 3 * "a" ;
+maybe = 0 * "b" ;
+nested = { "(", { inner }, ")" } ;
+@endebnf
