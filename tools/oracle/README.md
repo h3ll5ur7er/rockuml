@@ -45,7 +45,9 @@ The `.svg` and `.png` goldens measure text with the fonts Java finds on Windows.
 have the Windows fonts' metrics, and `setup-linux-jdk.sh` makes Java on Linux measure with them, the logical fonts'
 ascent and descent raised as on Windows. Its goldens are the same as the Windows ones, except where the fonts
 themselves differ: the outlines of glyphs drawn as paths (the letter of a class's circle) and characters Liberation has
-no glyph for, which fall back on other fonts. Elsewhere, generate the `.svg` and `.png` goldens on Windows.
+no glyph for, which fall back on other fonts. Font names Windows does not have (`Courier`, `Helvetica`,
+`TimesRoman`) fall back on `Dialog` there but find a font on Linux, so cases generated on Linux avoid them.
+Elsewhere, generate the `.svg` and `.png` goldens on Windows.
 
 Where PlantUML crashes it draws a crash report with a random quote; the generator drops such goldens (and the PNG of a crashed
 SVG), because rockuml renders the diagram instead.

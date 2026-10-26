@@ -37,11 +37,12 @@ generate_case() {
 	drop_crash_reports "$golden_dir"
 }
 
-# Where PlantUML crashes it draws a crash report with a random quote instead of the diagram. rockuml
-# renders the diagram, so such a golden would be neither stable nor a target.
+# Where PlantUML crashes it draws a crash report with a random quote instead of the diagram, after a failed
+# layout ("An error has occurred") or a failed parse ("Fatal crash error"). rockuml renders the diagram or
+# reports what it cannot, so such a golden would be neither stable nor a target.
 drop_crash_reports() {
 	local report
-	grep -lr --null 'An error has occurred : java\.' "$1" | while IFS= read -r -d '' report; do
+	grep -lrE --null 'An error has occurred : java\.|Fatal crash error' "$1" | while IFS= read -r -d '' report; do
 		rm -f "$report"
 		# A PNG, measured like the SVG, draws the same report, which grep cannot read.
 		if [[ "$report" == *.svg ]]; then
