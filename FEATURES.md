@@ -10,7 +10,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 26 diagram types <<ported>>
+** Ported: 27 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -26,6 +26,7 @@ mindmapDiagram {
 *** Definitions drawn on their own <<ported>>
 *** Creole text <<ported>>
 *** Gantt charts <<ported>>
+*** Flow diagrams <<ported>>
 *** Timing diagrams <<ported>>
 *** JSON data <<ported>>
 *** Git diagrams <<ported>>
@@ -44,7 +45,6 @@ left side
 *** Ditaa diagrams <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
-*** Flow diagrams <<planned>>
 *** Wire diagrams <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
@@ -67,8 +67,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 37 of 52 ported, 7 planned, 8 not planned |
-| Commands of the ported diagrams | 1098 of 1098 ported |
+| Diagram types | 38 of 52 ported, 6 planned, 8 not planned |
+| Commands of the ported diagrams | 1100 of 1100 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -104,6 +104,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [The sprite list (`listsprites`)](https://h3ll5ur7er.github.io/rockuml/docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `ListSpriteDiagramFactory` |
 | [Creole text (`@startcreole`)](https://h3ll5ur7er.github.io/rockuml/docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
 | [Gantt charts](https://h3ll5ur7er.github.io/rockuml/docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
+| [Flow diagrams](https://h3ll5ur7er.github.io/rockuml/docs/flow) | ✅ Ported | 8 of 11 match PlantUML |  | `FlowDiagramFactory` |
 | [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [Help diagrams (`help keywords`, …)](https://h3ll5ur7er.github.io/rockuml/docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `help fonts` lists the fonts rockuml always has, not those of the machine. | `HelpFactory` |
 | [JSON data](https://h3ll5ur7er.github.io/rockuml/docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
@@ -120,7 +121,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
 | Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |
 | LaTeX math (`@startlatex`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemLatexFactory` |
-| Flow diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `FlowDiagramFactory` |
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
 | PlantUML's donors | ⛔ Not planned |  | About PlantUML itself, not about diagrams. | `PSystemDonorsFactory` |
 | Easter egg | ⛔ Not planned |  | Easter eggs are PlantUML's own. | `PSystemEggFactory` |

@@ -24,6 +24,7 @@ use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::ebnf::PSystemEbnfFactory;
 use super::error::ErrorDiagram;
+use super::flow::FlowDiagramFactory;
 use super::gantt::GanttDiagramFactory;
 use super::help::HelpFactory;
 use super::mindmap::MindMapDiagramFactory;
@@ -206,6 +207,11 @@ pub(super) fn create_ebnf(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetP
 /// A `@startregex` diagram.
 pub(super) fn create_regex(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<PSystemRegexFactory>])
+}
+
+/// A `@startflow` diagram.
+pub(super) fn create_flow(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<FlowDiagramFactory>])
 }
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.
