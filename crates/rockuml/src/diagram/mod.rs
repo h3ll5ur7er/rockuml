@@ -43,6 +43,7 @@ mod timing;
 mod titled;
 mod ug_diagram;
 mod wbs;
+mod wire;
 mod yaml;
 
 pub(crate) use source::{BASE64_TAG_REPLACEMENT, BASE64_TAG_START};
@@ -214,6 +215,7 @@ pub fn create(
         Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),
         Some(DiagramType::Regex) => |source, _| builder::create_regex(source),
         Some(DiagramType::Definition) => |source, _| Ok(definition::create(source)),
+        Some(DiagramType::Wire) => |source, _| builder::create_wire(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

@@ -36,6 +36,7 @@ use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
 use super::wbs::WbsDiagramFactory;
+use super::wire::WireDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
 use super::{emoji_list, openiconic, sprite_list};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
@@ -186,6 +187,11 @@ pub(super) fn create_packet(source: UmlSource) -> Result<Box<dyn Diagram>, NotYe
 /// A `@startboard` diagram.
 pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<BoardDiagramFactory>])
+}
+
+/// A `@startwire` diagram.
+pub(super) fn create_wire(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<WireDiagramFactory>])
 }
 
 /// A `@startchart` diagram.
