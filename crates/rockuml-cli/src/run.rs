@@ -205,7 +205,7 @@ impl Settings {
         } else {
             FontRegistry::default()
         };
-        let host = SystemHost::with_limit_size(options.limit_size());
+        let host = SystemHost::new(options.limit_size(), options.graphviz_dot());
         Ok(Self {
             options,
             format,

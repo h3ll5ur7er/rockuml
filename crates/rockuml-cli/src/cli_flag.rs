@@ -195,7 +195,7 @@ cli_flags! {
         doc_with_usage("Decode a PlantUML encoded URL back to its source", 1, "--decode-url <string>"), None;
     Language: "--list-keywords" ["-language"] UnaryImmediateAction NotPorted
         doc("Print the list of PlantUML language keywords", 1), None;
-    GraphvizDot: "--dot-path" ["-graphvizdot", "-graphviz_dot"] BinaryNextArgumentValue Dropped
+    GraphvizDot: "--dot-path" ["-graphvizdot", "-graphviz_dot"] BinaryNextArgumentValue Ported
         doc_with_usage("Specify the path to the Graphviz 'dot' executable", 1, "--dot-path <path-to-dot-exe>"), None;
     Ftp: "--ftp-server" ["-ftp"] UnaryOptionalColon Dropped
         doc("Start a local FTP server for diagram rendering (rarely used)", 1), None;

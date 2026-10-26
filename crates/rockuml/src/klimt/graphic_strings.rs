@@ -1,7 +1,8 @@
 //! Lines of creole text drawn black on white, with an optional image beside or below them: the text of
 //! PlantUML's reference cards and messages (PlantUML's `GraphicStrings`).
 
-use super::font::{FontConfiguration, StringBounder, UFont, UFontFace};
+use super::blocks::TextBlockRaw;
+use super::font::{FontConfiguration, FontStyle, StringBounder, UFont, UFontFace};
 use super::geom::XDimension2D;
 use super::image::PortableImage;
 use super::shape::{UImage, UShape};
@@ -9,7 +10,7 @@ use super::sprite::SpriteContainerEmpty;
 use super::ugraphic::UGraphic;
 use super::{HorizontalAlignment, TextBlock};
 use crate::color::HColor;
-use crate::creole::{CreoleMode, Display, SheetBlock2};
+use crate::creole::{CreoleMode, Display};
 
 /// Where the image goes (PlantUML's `GraphicPosition`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -19,7 +20,9 @@ pub(crate) enum GraphicPosition {
 }
 
 pub(crate) struct GraphicStrings {
-    text: SheetBlock2,
+    text: Box<dyn TextBlock>,
+    color: HColor,
+    background: HColor,
     image: Option<(PortableImage, GraphicPosition)>,
 }
 
@@ -40,6 +43,24 @@ impl GraphicStrings {
         Self::new(strings, CreoleMode::FullButUnderscore, image)
     }
 
+    /// `createForError` without red: the lines in bold green `SansSerif` 14 on black, read without creole, as
+    /// PlantUML reports what went wrong outside the diagram.
+    pub(crate) fn create_for_error(strings: &[&str]) -> Self {
+        let color = HColor::MY_GREEN;
+        let font = FontConfiguration::new(
+            UFont::new("SansSerif", UFontFace::NORMAL, 14),
+            color.clone(),
+            8,
+        )
+        .with_style(FontStyle::Bold);
+        Self {
+            text: Box::new(TextBlockRaw::new(strings.iter().copied(), font)),
+            color,
+            background: HColor::BLACK,
+            image: None,
+        }
+    }
+
     fn new(
         strings: &[impl AsRef<str>],
         mode: CreoleMode,
@@ -52,7 +73,12 @@ impl GraphicStrings {
             0.0,
             mode,
         );
-        Self { text, image }
+        Self {
+            text: Box::new(text),
+            color: HColor::BLACK,
+            background: HColor::WHITE,
+            image,
+        }
     }
 
     fn calculate_dimension_internal(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
@@ -79,7 +105,7 @@ impl TextBlock for GraphicStrings {
     fn draw_u(&self, ug: &UGraphic) {
         let ug = ug.translated(Self::MARGIN, Self::MARGIN);
         let size = self.calculate_dimension_internal(ug.string_bounder());
-        self.text.draw_u(&ug.with_color(HColor::BLACK));
+        self.text.draw_u(&ug.with_color(self.color.clone()));
         let Some((image, position)) = &self.image else {
             return;
         };
@@ -95,6 +121,6 @@ impl TextBlock for GraphicStrings {
     }
 
     fn backcolor(&self) -> Option<HColor> {
-        Some(HColor::WHITE)
+        Some(self.background.clone())
     }
 }

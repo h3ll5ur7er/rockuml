@@ -4,17 +4,24 @@ use std::net::{IpAddr, ToSocketAddrs};
 use std::path::{Path, PathBuf};
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-use rockuml::host::Host;
+use rockuml::host::{Graphviz, Host};
+
+use crate::graphviz::{AbstractGraphviz, getenv_graphviz_dot};
 
 #[derive(Default)]
 pub(crate) struct SystemHost {
     /// `-DPLANTUML_LIMIT_SIZE=...`, which PlantUML sets as a system property, ahead of the environment.
     limit_size: Option<String>,
+    /// The `dot` the command line names, ahead of the environment's `GRAPHVIZ_DOT`.
+    graphviz_dot: Option<String>,
 }
 
 impl SystemHost {
-    pub(crate) fn with_limit_size(limit_size: Option<String>) -> Self {
-        Self { limit_size }
+    pub(crate) fn new(limit_size: Option<String>, graphviz_dot: Option<String>) -> Self {
+        Self {
+            limit_size,
+            graphviz_dot,
+        }
     }
 }
 
@@ -59,6 +66,15 @@ impl Host for SystemHost {
 
     fn local_time_zone(&self) -> Option<String> {
         jiff::tz::TimeZone::system().iana_name().map(str::to_owned)
+    }
+
+    fn create_for_system_dot(&self, dot_string: &str, format: &str) -> Option<Box<dyn Graphviz>> {
+        let getenv_graphviz_dot = getenv_graphviz_dot(self.graphviz_dot.as_deref());
+        Some(Box::new(AbstractGraphviz::new(
+            getenv_graphviz_dot,
+            dot_string,
+            format,
+        )))
     }
 }
 

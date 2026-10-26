@@ -214,6 +214,17 @@ mod tests {
     }
 
     #[test]
+    fn graphviz_sources_are_not_available_without_programs() {
+        let (status, message, _) = render_text(
+            "@startdot\ndigraph G {\n  a -> b;\n}\n@enddot",
+            Format::Svg,
+            0,
+        );
+        assert_eq!(status, Status::NotPorted);
+        assert_eq!(message, "Graphviz's dot in the browser is not ported yet");
+    }
+
+    #[test]
     fn missing_pages_are_reported() {
         assert_eq!(
             render_text("no diagram", Format::Svg, 0),

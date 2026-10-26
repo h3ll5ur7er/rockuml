@@ -239,15 +239,9 @@ fn check_basic_error(
     source: &Rc<UmlSource>,
     located_lines: &[StringLocated],
 ) -> Option<PSystemError> {
-    static DOT_HEADER: LazyLock<Regex> = LazyLock::new(|| {
-        java_regex(
-            r#"^\s*(strict\s+)?(di)?graph\s+([_\p{L}][_\p{L}\p{N}]*|-?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)|"([^"\\]|\\")*")?\s*\{\s*$"#,
-            false,
-        )
-    });
     let second = located_lines.get(1)?.text();
     let trimmed = crate::java::trim(second);
-    let message = if DOT_HEADER.is_match(second) {
+    let message = if super::dot::is_graphviz_dot_header(second) {
         "This looks like a DOT diagram. Please use @startdot instead of @startuml."
     } else if trimmed == "ditaa" {
         "This looks like a DITAA diagram. Please use @startditaa instead of @startuml."

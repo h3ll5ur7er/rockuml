@@ -171,8 +171,13 @@ impl<'a> SourceFileReader<'a> {
                 )
             });
             let files = match files {
+                Ok(exported) if exported.crashed => {
+                    // The image says what failed, yet the diagram is not drawn.
+                    status.goes_has_errors();
+                    exported.files
+                }
                 Ok(_) if format == FileFormat::Null => vec![Vec::new()],
-                Ok(files) => files,
+                Ok(exported) => exported.files,
                 Err(unrendered) => {
                     let file = suggested.file(written, format);
                     unrendered.report(&file.display().to_string(), status, console);

@@ -89,6 +89,21 @@ impl CliOptions {
             .map(|(_, value)| value)
     }
 
+    /// The `dot` that `--dot-path`, or else `-DGRAPHVIZ_DOT=...`, names, ahead of the environment.
+    pub(crate) fn graphviz_dot(&self) -> Option<String> {
+        let dot_executable = self.get_string(CliFlag::GraphvizDot).map(|path| {
+            eventually_remove_starting_and_ending_double_quote(path)
+                .trim()
+                .to_owned()
+        });
+        dot_executable.filter(|path| !path.is_empty()).or_else(|| {
+            self.defines()
+                .into_iter()
+                .find(|(key, _)| key == crate::graphviz::GRAPHVIZ_DOT)
+                .map(|(_, value)| value)
+        })
+    }
+
     /// `-f` wins over flags such as `-tsvg`; of those, PlantUML takes the first in its order that is given
     /// once. PNG is the default.
     pub(crate) fn file_format(&self) -> Result<FileFormat, String> {
@@ -212,7 +227,7 @@ fn java_string(value: Option<&str>) -> &str {
     value.unwrap_or("null")
 }
 
-fn eventually_remove_starting_and_ending_double_quote(text: &str) -> &str {
+pub(crate) fn eventually_remove_starting_and_ending_double_quote(text: &str) -> &str {
     text.strip_prefix('"')
         .and_then(|inner| inner.strip_suffix('"'))
         .unwrap_or(text)

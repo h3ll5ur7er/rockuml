@@ -17,6 +17,7 @@ mod definition;
 mod description;
 mod diagram_type;
 mod donors;
+mod dot;
 mod ebnf;
 mod emoji_list;
 mod error;
@@ -120,6 +121,20 @@ pub trait Diagram {
     fn is_error(&self) -> bool {
         self.error().is_some()
     }
+
+    /// The image of a diagram that asks a program for it instead of drawing it (PlantUML's
+    /// `DirectOsDiagram.exportDiagramNow`); `None` for the others, and where the host runs no such program.
+    fn export_diagram_now(&self, _format: ImageFormat, _host: &dyn Host) -> Option<DirectImage> {
+        None
+    }
+}
+
+/// What a diagram that asks a program for its image exports.
+pub enum DirectImage {
+    /// The program's output, written as it is.
+    Bytes(Vec<u8>),
+    /// Why there is no such output, drawn without the diagram's source: the image reports a crash.
+    Drawing(Box<dyn TextBlock>),
 }
 
 /// What an error image reports, as PlantUML's `PSystemError` tells it to the command line.
@@ -214,6 +229,7 @@ pub fn create(
         Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),
         Some(DiagramType::Regex) => |source, _| builder::create_regex(source),
         Some(DiagramType::Definition) => |source, _| Ok(definition::create(source)),
+        Some(DiagramType::Dot) => |source, _| dot::create(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);
@@ -302,6 +318,8 @@ pub struct ExportedImage {
     pub data: Vec<u8>,
     pub width: i32,
     pub height: i32,
+    /// Whether the image reports that a program the diagram ran failed (PlantUML's `FileImageData.CRASH`).
+    pub crashed: bool,
 }
 
 /// Like [`export_with`], with the image's size.
@@ -317,17 +335,34 @@ pub fn export_image(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
 ) -> Result<ExportedImage, NotYetPorted> {
-    let (mut files, width, height) =
+    let (mut exported, width, height) =
         export_pieces(diagram, page, format, metadata, fonts, host, false)?;
     Ok(ExportedImage {
-        data: files.remove(0),
+        data: exported.files.remove(0),
         width,
         height,
+        crashed: exported.crashed,
     })
 }
 
 /// The files PlantUML's command line writes for a page: its image, or for PNG the pieces `page 2x3` cuts
 /// it into, across then down.
+pub struct ExportedFiles {
+    pub files: Vec<Vec<u8>>,
+    /// Like [`ExportedImage::crashed`].
+    pub crashed: bool,
+}
+
+impl ExportedFiles {
+    fn single(file: Vec<u8>) -> Self {
+        Self {
+            files: vec![file],
+            crashed: false,
+        }
+    }
+}
+
+/// The [`ExportedFiles`] of a page.
 ///
 /// # Panics
 ///
@@ -339,8 +374,8 @@ pub fn export_files(
     metadata: Metadata,
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
-) -> Result<Vec<Vec<u8>>, NotYetPorted> {
-    export_pieces(diagram, page, format, metadata, fonts, host, true).map(|(files, ..)| files)
+) -> Result<ExportedFiles, NotYetPorted> {
+    export_pieces(diagram, page, format, metadata, fonts, host, true).map(|(exported, ..)| exported)
 }
 
 /// The image, or its pieces when `cut` and the diagram asks for them; with the size of the whole.
@@ -352,15 +387,21 @@ fn export_pieces(
     fonts: &Arc<FontRegistry>,
     host: &dyn Host,
     cut: bool,
-) -> Result<(Vec<Vec<u8>>, i32, i32), NotYetPorted> {
-    let source_metadata = (metadata == Metadata::Embedded).then(|| diagram.source().metadata());
-    let settings = diagram.export_settings(page);
-    let string_bounder: Rc<dyn StringBounder> = match format {
-        ImageFormat::Debug => Rc::new(StringBounderDebug),
-        ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
-        ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
+) -> Result<(ExportedFiles, i32, i32), NotYetPorted> {
+    let direct_drawing = match diagram.export_diagram_now(format, host) {
+        Some(DirectImage::Bytes(data)) => return Ok((ExportedFiles::single(data), 0, 0)),
+        Some(DirectImage::Drawing(drawing)) => Some(drawing),
+        None => None,
     };
-    let text_block = diagram.text_block_with_fonts(page, &string_bounder, fonts)?;
+    let crashed = direct_drawing.is_some();
+    let source_metadata =
+        (metadata == Metadata::Embedded && !crashed).then(|| diagram.source().metadata());
+    let settings = diagram.export_settings(page);
+    let string_bounder = string_bounder(format, fonts);
+    let text_block = match direct_drawing {
+        Some(drawing) => drawing,
+        None => diagram.text_block_with_fonts(page, &string_bounder, fonts)?,
+    };
     let margin = settings.margin;
     let dimension = text_block
         .calculate_dimension(string_bounder.as_ref())
@@ -410,19 +451,15 @@ fn export_pieces(
             let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
             let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
             draw(output.clone(), HColor::WHITE);
-            vec![
-                output
-                    .borrow()
-                    .document(&DebugHeader {
-                        dimension,
-                        scale_factor,
-                        seed: settings.seed,
-                        svg_link_target: settings.svg_link_target.clone(),
-                        hover_path_color_rgb: None,
-                        preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
-                    })
-                    .into_bytes(),
-            ]
+            let header = DebugHeader {
+                dimension,
+                scale_factor,
+                seed: settings.seed,
+                svg_link_target: settings.svg_link_target.clone(),
+                hover_path_color_rgb: None,
+                preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
+            };
+            vec![output.borrow().document(&header).into_bytes()]
         }
         ImageFormat::Svg | ImageFormat::DeterministicSvg => vec![svg(false).into_bytes()],
         ImageFormat::Png => {
@@ -451,7 +488,17 @@ fn export_pieces(
             }
         }
     };
-    Ok((files, dimension.width as i32, dimension.height as i32))
+    let (width, height) = (dimension.width as i32, dimension.height as i32);
+    Ok((ExportedFiles { files, crashed }, width, height))
+}
+
+/// How text is measured for `format`.
+fn string_bounder(format: ImageFormat, fonts: &Arc<FontRegistry>) -> Rc<dyn StringBounder> {
+    match format {
+        ImageFormat::Debug => Rc::new(StringBounderDebug),
+        ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
+        ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
+    }
 }
 
 /// PlantUML crops images to `PLANTUML_LIMIT_SIZE` pixels each way. rockuml also refuses limits that would make

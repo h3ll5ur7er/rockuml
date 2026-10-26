@@ -162,7 +162,7 @@ fn output_image(
                 .image_format()
                 .expect("drawing formats export images");
             let exported = crash::render(|| {
-                rockuml::diagram::export_with(
+                rockuml::diagram::export_image(
                     diagram.as_ref(),
                     num_image,
                     image_format,
@@ -172,9 +172,16 @@ fn output_image(
                 )
             });
             return match exported {
+                Ok(image) if image.crashed => {
+                    status.goes_has_errors();
+                    (format != FileFormat::Null).then_some(Image {
+                        bytes: image.data,
+                        is_error: diagram.is_error(),
+                    })
+                }
                 Ok(_) if format == FileFormat::Null => None,
-                Ok(bytes) => Some(Image {
-                    bytes,
+                Ok(image) => Some(Image {
+                    bytes: image.data,
                     is_error: diagram.is_error(),
                 }),
                 Err(unrendered) => {
