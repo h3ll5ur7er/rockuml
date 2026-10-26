@@ -221,11 +221,10 @@ impl SkinParam {
             self.value(key)
                 .map(|name| HColor::parse_or_white(&name).to_color(ColorMapper::Identity))
         };
-        let margin = self.as_int("pagemargin").unwrap_or(0);
         SplitParam::new(
             color("pagebordercolor"),
             color("pageexternalcolor"),
-            u32::try_from(margin).unwrap_or(0),
+            self.as_int("pagemargin").unwrap_or(0),
         )
     }
 

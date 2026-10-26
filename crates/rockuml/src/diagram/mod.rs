@@ -56,7 +56,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::color::{ColorMapper, HColor};
+use crate::color::{ColorMapper, HColor, XColor};
 use crate::host::{Host, IsolatedHost};
 use crate::klimt::TextBlock;
 use crate::klimt::debug::{DebugHeader, StringBounderDebug, UGraphicDebug};
@@ -344,7 +344,7 @@ pub fn export_image(
     let (mut exported, width, height) =
         export_pieces(diagram, page, format, metadata, fonts, host, false)?;
     Ok(ExportedImage {
-        data: exported.files.remove(0),
+        data: exported.files.next().expect("an uncut image is one file"),
         width,
         height,
         crashed: exported.crashed,
@@ -352,18 +352,18 @@ pub fn export_image(
 }
 
 /// The files PlantUML's command line writes for a page: its image, or for PNG the pieces `page 2x3` cuts
-/// it into, across then down.
+/// it into, across then down, each made when it is asked for.
 pub struct ExportedFiles {
-    pub files: Vec<Vec<u8>>,
+    pub files: Box<dyn Iterator<Item = Vec<u8>>>,
     /// Like [`ExportedImage::crashed`].
     pub crashed: bool,
 }
 
 impl ExportedFiles {
-    fn single(file: Vec<u8>) -> Self {
+    fn single(file: Vec<u8>, crashed: bool) -> Self {
         Self {
-            files: vec![file],
-            crashed: false,
+            files: Box::new(std::iter::once(file)),
+            crashed,
         }
     }
 }
@@ -395,7 +395,7 @@ fn export_pieces(
     cut: bool,
 ) -> Result<(ExportedFiles, i32, i32), NotYetPorted> {
     let direct_drawing = match diagram.export_diagram_now(format, host) {
-        Some(DirectImage::Bytes(data)) => return Ok((ExportedFiles::single(data), 0, 0)),
+        Some(DirectImage::Bytes(data)) => return Ok((ExportedFiles::single(data, false), 0, 0)),
         Some(DirectImage::Drawing(drawing)) => Some(drawing),
         None => None,
     };
@@ -452,7 +452,8 @@ fn export_pieces(
         output.borrow_mut().take_document(encoded.as_deref())
     };
 
-    let files = match format {
+    let (width, height) = (dimension.width as i32, dimension.height as i32);
+    let file = match format {
         ImageFormat::Debug => {
             let render_date = crate::tim::java_date_string(host.current_time_millis(), host);
             let output = Rc::new(RefCell::new(UGraphicDebug::new(render_date)));
@@ -465,9 +466,9 @@ fn export_pieces(
                 hover_path_color_rgb: None,
                 preserve_aspect_ratio: settings.preserve_aspect_ratio.clone(),
             };
-            vec![output.borrow().document(&header).into_bytes()]
+            output.borrow().document(&header).into_bytes()
         }
-        ImageFormat::Svg | ImageFormat::DeterministicSvg => vec![svg(false).into_bytes()],
+        ImageFormat::Svg | ImageFormat::DeterministicSvg => svg(false).into_bytes(),
         ImageFormat::Png => {
             let limit = image_size_limit(host);
             // A gradient is painted by the drawing itself.
@@ -480,22 +481,41 @@ fn export_pieces(
                 ((dimension.height * scale_factor) as u32).min(limit),
             );
             let metadata = source_metadata.as_deref();
-            match settings.split.as_ref().filter(|_| cut) {
-                Some(split) => {
-                    png::rasterize_pieces(&svg(true), size, png_back_color, fonts, metadata, split)
-                }
-                None => vec![png::rasterize(
-                    &svg(true),
-                    size,
-                    png_back_color,
-                    fonts,
-                    metadata,
-                )],
-            }
+            let split = settings.split.filter(|_| cut);
+            return png_files(
+                &svg(true),
+                size,
+                png_back_color,
+                fonts,
+                metadata,
+                split,
+                limit,
+            )
+            .map(|files| (ExportedFiles { files, crashed }, width, height));
         }
     };
-    let (width, height) = (dimension.width as i32, dimension.height as i32);
-    Ok((ExportedFiles { files, crashed }, width, height))
+    Ok((ExportedFiles::single(file, crashed), width, height))
+}
+
+/// The PNG image, or the pieces `split` cuts it into.
+fn png_files(
+    svg: &str,
+    size: (u32, u32),
+    background: XColor,
+    fonts: &Arc<FontRegistry>,
+    metadata: Option<&str>,
+    split: Option<PageSplit>,
+    limit: u32,
+) -> Result<Box<dyn Iterator<Item = Vec<u8>>>, NotYetPorted> {
+    let Some(split) = split else {
+        let image = png::rasterize(svg, size, background, fonts, metadata);
+        return Ok(Box::new(std::iter::once(image)));
+    };
+    let pieces = png::rasterize_pieces(svg, size, background, fonts, metadata, split, limit)
+        .ok_or(NotYetPorted(
+            "the crash report of a page cut into pieces PlantUML cannot make",
+        ))?;
+    Ok(Box::new(pieces))
 }
 
 /// How text is measured for `format`.

@@ -170,10 +170,10 @@ impl<'a> SourceFileReader<'a> {
                     &self.settings.host,
                 )
             });
-            let files = match files {
+            let files: Box<dyn Iterator<Item = Vec<u8>>> = match files {
                 // PlantUML's `TextBlockExporter` draws nothing for the null format, not even a crash report,
                 // and so drops its status.
-                Ok(_) if format == FileFormat::Null => vec![Vec::new()],
+                Ok(_) if format == FileFormat::Null => Box::new(std::iter::once(Vec::new())),
                 Ok(exported) if exported.crashed => {
                     // The image says what failed, yet the diagram is not drawn.
                     status.goes_has_errors();
@@ -186,7 +186,7 @@ impl<'a> SourceFileReader<'a> {
                     break;
                 }
             };
-            for (piece, content) in files.into_iter().enumerate() {
+            for (piece, content) in files.enumerate() {
                 let file = suggested.file(written, format);
                 if piece > 0 && !can_file_be_written(&file, overwrite, console) {
                     break 'pages;

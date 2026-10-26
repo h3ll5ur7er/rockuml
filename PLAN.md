@@ -620,7 +620,10 @@ nwdiag, timing and gantt.
     URL; `<style>…</style>` fits on one line; a `skinparam` block may come on one line (`%newline()`). Files a
     source names are read before the diagram is built, as images are, so that the engine does no I/O.
   - `page 2x3` cuts the PNG files the command line writes, framed by `pageMargin`, `pageBorderColor` and
-    `pageExternalColor` (Gantt charts frame them their own way), like PlantUML's `PngSplitter`.
+    `pageExternalColor` (Gantt charts frame them their own way), like PlantUML's `PngSplitter`, one piece at
+    a time and with Java's wrapping `int` margins. Where PlantUML throws (a piece less than a pixel long, a
+    frame it cannot allocate) rockuml reports its crash report as not ported, and it refuses frames beyond
+    `PLANTUML_LIMIT_SIZE`, where Java would run out of memory sooner or later.
   - `newpage` in class, object and description diagrams: every page is a diagram of its own. PlantUML 1.2026.8
     writes only the first page (`NewpagedDiagram` lost its `getNbImages`); the oracle is built with that fixed
     (`tools/oracle/fixes.patch`) and rockuml writes every page.

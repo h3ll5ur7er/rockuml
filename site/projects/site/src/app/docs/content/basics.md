@@ -167,7 +167,7 @@ Rocket o-- Groot
 @enduml
 ```
 
-`page 2x3` cuts a large diagram's PNG image into pages to print, 2 across and 3 down, written as numbered files like the pages above. `skinparam pageMargin 5`, `pageBorderColor` and `pageExternalColor` frame each piece.
+`page 2x3` cuts a large diagram's PNG image into pages to print, 2 across and 3 down, written as numbered files like the pages above. `skinparam pageMargin 5`, `pageBorderColor` and `pageExternalColor` frame each piece. As in PlantUML, a piece must be at least a pixel each way, so more pages than the image has pixels fail; rockuml also refuses framed pieces larger than `PLANTUML_LIMIT_SIZE`.
 
 ```plantuml
 @startuml
