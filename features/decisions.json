@@ -242,8 +242,13 @@
     },
     "GitDiagramFactory": {
       "title": "Git diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/git"
+      ],
+      "corpus": [
+        "git"
+      ],
+      "docs": "git"
     },
     "FilesDiagramFactory": {
       "title": "File trees",

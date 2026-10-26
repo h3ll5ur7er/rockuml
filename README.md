@@ -61,6 +61,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
 - File trees (`@startfiles`), with notes.
 - Boards (`@startboard`): story maps of activities and their releases.
+- Git commit graphs (`@startgit`) from `git log --graph` output.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
 - Packet diagrams (`@startpacketdiag`): fields laid out bit by bit under a bit scale.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).

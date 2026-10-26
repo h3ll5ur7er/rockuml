@@ -12,6 +12,7 @@ use std::rc::Rc;
 
 use highlighted::Highlighted;
 use smetana_for_json::SmetanaForJson;
+pub(super) use smetana_for_json::{Mirror, draw_arrow};
 pub(super) use style_extractor::StyleExtractor;
 
 use super::common_commands::add_common_scale_commands;

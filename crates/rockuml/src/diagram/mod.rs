@@ -16,6 +16,7 @@ mod diagram_type;
 mod error;
 mod files;
 mod gantt;
+mod git;
 mod hcl;
 mod json;
 mod mindmap;
@@ -188,6 +189,7 @@ pub fn create(
         Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
         Some(DiagramType::Board) => |source, _| builder::create_board(source),
+        Some(DiagramType::Git) => |source, _| git::create(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

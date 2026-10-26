@@ -682,6 +682,14 @@ charts (6.3k).
   - Deviation: a first row without width, which makes PlantUML fail on a remainder by zero, draws a short
     unnumbered tick.
 
+### Phase 23 — Git diagrams
+- **Status: done.** `@startgit`: `GitDiagramFactory` reads `git log --graph` text (`GitTextArea`, `CursorPosition`,
+  `Commit`), merges straight runs of commits into one box (`GNodeBuilder`) and lays the graph out with Smetana
+  (`SmetanaForGit`, `MagicBox`, `GitCurve`). 10 cases match every output and make PlantUML's Smetana graph.
+  - Faithful to PlantUML: lines without a `*` are ignored, `title`, `skinparam` and `<style>` among them, and a
+    `|\` at the end of a line joins the next line, as everywhere. A graph PlantUML cannot follow crashes it; rockuml
+    reports it as not ported. Deviation: a loop of commits named twice, on which PlantUML never stops, is drawn.
+
 ### Phase 24 — Boards
 - **Status: done.** `@startboard` (`BoardDiagramFactory`, `CommandBoardPlus`): activities with their releases
   one `+` per row, columns from `BNode.computeX`, cards drawn in the order of `BArray`'s `HashMap`, dashed lines

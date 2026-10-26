@@ -88,7 +88,7 @@ impl<'a> SmetanaForJson<'a> {
                 data.center.y + data.height * 72.0 / 2.0
             })
             .fold(0.0, f64::max);
-        Mirror { max }
+        Mirror::new(max)
     }
 
     fn get_position(&self, node: Node, mirror: Mirror) -> UTranslate {
@@ -236,13 +236,22 @@ fn get_dot_label_map(width_a: f64, width_b: f64, line_heights: &[f64]) -> String
 
 /// Flips y around the drawing's lowest point (`Mirror`).
 #[derive(Clone, Copy)]
-struct Mirror {
+pub(in crate::diagram) struct Mirror {
     max: f64,
 }
 
 impl Mirror {
-    fn inv(self, v: f64) -> f64 {
+    pub(in crate::diagram) fn new(max: f64) -> Self {
+        Self { max }
+    }
+
+    pub(in crate::diagram) fn inv(self, v: f64) -> f64 {
         self.max - v
+    }
+
+    /// The point flipped, without turning the drawing (`invGit`).
+    pub(in crate::diagram) fn inv_git(self, point: Point) -> XPoint2D {
+        XPoint2D::new(point.x, self.inv(point.y))
     }
 
     /// The point in the turned drawing (`invAndXYSwitch`).
@@ -321,7 +330,7 @@ fn supp(center: XPoint2D, direction: XPoint2D, len: f64) -> XPoint2D {
 }
 
 /// The arrowhead from `p1` to its tip `p2` (`Arrow.drawArrow`).
-fn draw_arrow(p1: XPoint2D, p2: XPoint2D, ug: &UGraphic) {
+pub(in crate::diagram) fn draw_arrow(p1: XPoint2D, p2: XPoint2D, ug: &UGraphic) {
     const FACTOR: f64 = 0.4;
     const FACTOR2: f64 = 0.3;
     let ug = ug.apply(UStroke::with_thickness(1.0));

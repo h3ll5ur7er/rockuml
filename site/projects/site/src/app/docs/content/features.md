@@ -8,7 +8,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 20 diagram types <<ported>>
+** Ported: 21 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -24,6 +24,7 @@ mindmapDiagram {
 *** Gantt charts <<ported>>
 *** Timing diagrams <<ported>>
 *** JSON data <<ported>>
+*** Git diagrams <<ported>>
 *** File trees <<ported>>
 *** Boards <<ported>>
 *** YAML data <<ported>>
@@ -39,7 +40,7 @@ left side
 *** Math <<planned>>
 *** LaTeX math <<planned>>
 *** Flow diagrams <<planned>>
-*** and 5 more <<planned>>
+*** and 4 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -61,7 +62,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 20 of 52 ported, 24 planned, 8 not planned |
+| Diagram types | 21 of 52 ported, 23 planned, 8 not planned |
 | Commands of the ported diagrams | 904 of 904 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
@@ -87,6 +88,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
 | [Timing diagrams](docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
+| [Git diagrams](docs/git) | ✅ Ported | 10 of 10 match PlantUML |  | `GitDiagramFactory` |
 | [File trees](docs/files) | ✅ Ported | 9 of 9 match PlantUML |  | `FilesDiagramFactory` |
 | [Boards](docs/board) | ✅ Ported | 9 of 9 match PlantUML |  | `BoardDiagramFactory` |
 | [YAML data](docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
@@ -113,7 +115,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Flow diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `FlowDiagramFactory` |
 | Help diagrams (`help keywords`, …) | 🗓️ Planned later |  | PlantUML's built-in reference cards; low priority. | `HelpFactory` |
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
-| Git diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `GitDiagramFactory` |
 | EBNF diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemEbnfFactory` |
 | Regular expression diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemRegexFactory` |
 | PlantUML's donors | ⛔ Not planned |  | About PlantUML itself, not about diagrams. | `PSystemDonorsFactory` |
