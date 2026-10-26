@@ -325,14 +325,25 @@
     },
     "PSystemDefinitionFactory": {
       "title": "Definitions drawn on their own (`@startdef`)",
-      "status": "later",
-      "reason": "Definitions work with `!includedef`; drawing them on their own is rarely needed."
+      "rust": [
+        "diagram/definition.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards"
     },
     "HelpFactory": {
       "title": "Help diagrams (`help keywords`, …)",
-      "status": "later",
-      "reason": "PlantUML's built-in reference cards; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/help"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "`help fonts` lists the fonts rockuml always has, not those of the machine."
     },
     "PSystemWelcomeFactory": {
       "title": "The welcome screen of an empty diagram",
@@ -372,32 +383,60 @@
     },
     "PSystemListEmojiFactory": {
       "title": "The emoji list (`emoji`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/emoji_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "The browser build has no emoji but the two that file trees draw, so it lists no more."
     },
     "PSystemOpenIconicFactory": {
       "title": "An Open Iconic icon on its own (`openiconic`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/openiconic.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "An unknown icon, on which PlantUML crashes, is reported as not ported."
     },
     "PSystemListOpenIconicFactory": {
       "title": "The Open Iconic list (`listopeniconic`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/openiconic.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemListArchimateSpritesFactory": {
       "title": "The ArchiMate sprite list",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/sprite_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "ListSpriteDiagramFactory": {
       "title": "The sprite list (`listsprites`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/sprite_list.rs",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemDonorsFactory": {

@@ -21,17 +21,19 @@ use super::diagram_type::DiagramType;
 use super::ebnf::PSystemEbnfFactory;
 use super::error::ErrorDiagram;
 use super::gantt::GanttDiagramFactory;
+use super::help::HelpFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
 use super::packetdiag::PacketDiagramFactory;
 use super::regexdiagram::PSystemRegexFactory;
 use super::sequence::SequenceDiagramFactory;
+use super::sprite_list::ListSpriteDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
-use super::unported::{HelpFactory, ListSpriteDiagramFactory};
 use super::wbs::WbsDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
+use super::{emoji_list, openiconic, sprite_list};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
 use crate::command::{Command, CommandError};
 use crate::pattern::java_regex;
@@ -271,11 +273,22 @@ fn welcome(source: &Rc<UmlSource>) -> Outcome {
     }
 }
 
-/// A diagram of a single keyword line, which `accepts` recognises (PlantUML's `PSystemSingleLineFactory`).
+/// A diagram of a single keyword line, which `accepts` recognises, that rockuml cannot draw yet.
 fn single_line(
     source: &Rc<UmlSource>,
     accepts: impl Fn(&str) -> bool,
     what: &'static str,
+) -> Outcome {
+    single_line_diagram(source, |_, line| {
+        accepts(line).then_some(Err(NotYetPorted(what)))
+    })
+}
+
+/// The diagram `execute_line` makes of a source of a single line, or else a syntax error (PlantUML's
+/// `PSystemSingleLineFactory`). It is given the source without its initial noise.
+fn single_line_diagram(
+    source: &Rc<UmlSource>,
+    execute_line: impl Fn(&Rc<UmlSource>, &str) -> Option<Result<Box<dyn Diagram>, NotYetPorted>>,
 ) -> Outcome {
     if source.lines().len() - source.initial_noise() != 3 {
         return Outcome::Nothing;
@@ -297,11 +310,11 @@ fn single_line(
     }
     let line = lines[1].text();
     if start_utils::is_end_directive(line) {
-        failure("Empty description", &lines[..2])
-    } else if accepts(line) {
-        Outcome::Diagram(Err(NotYetPorted(what)))
-    } else {
-        failure("Syntax Error?", &lines[..2])
+        return failure("Empty description", &lines[..2]);
+    }
+    match execute_line(&source, line) {
+        Some(diagram) => Outcome::Diagram(diagram),
+        None => failure("Syntax Error?", &lines[..2]),
     }
 }
 
@@ -362,38 +375,25 @@ fn list_fonts(source: &Rc<UmlSource>) -> Outcome {
 }
 
 fn list_emoji(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| {
-            let line = line.to_lowercase();
-            line == "emoji" || line.starts_with("emoji ")
-        },
-        "the emoji list",
-    )
+    single_line_diagram(source, |source, line| {
+        emoji_list::execute_line(source, line).map(Ok)
+    })
 }
 
 fn open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("openiconic "),
-        "the OpenIconic diagram",
-    )
+    single_line_diagram(source, openiconic::execute_line)
 }
 
 fn list_open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("listopeniconic"),
-        "the OpenIconic list",
-    )
+    single_line_diagram(source, |source, line| {
+        openiconic::execute_list_line(source, line).map(Ok)
+    })
 }
 
 fn list_archimate_sprites(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("listsprite"),
-        "the Archimate sprite list",
-    )
+    single_line_diagram(source, |source, line| {
+        sprite_list::execute_line(source, line).map(Ok)
+    })
 }
 
 #[cfg(test)]
@@ -468,6 +468,36 @@ mod tests {
         assert_eq!(
             read_as(&["@startuml", "license", "@enduml"]),
             "the license diagram"
+        );
+    }
+
+    #[test]
+    fn reference_cards_read_their_keyword_lines() {
+        assert_eq!(read_as(&["@startuml", "help fonts", "@enduml"]), "HELP");
+        assert_eq!(
+            read_as(&[
+                "@startuml",
+                "sprite foo <svg></svg>",
+                "listsprites",
+                "@enduml"
+            ]),
+            "HELP"
+        );
+        for card in [
+            "emoji 1f6",
+            "openiconic heart",
+            "listopeniconic",
+            "listsprite",
+        ] {
+            assert_eq!(
+                read_as(&["@startuml", card, "@enduml"]),
+                "a drawable diagram",
+                "{card}"
+            );
+        }
+        assert_eq!(
+            read_as(&["@startuml", "openiconic no-such-icon", "@enduml"]),
+            "the crash report of an unknown Open Iconic icon"
         );
     }
 

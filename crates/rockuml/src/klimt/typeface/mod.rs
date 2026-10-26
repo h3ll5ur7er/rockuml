@@ -89,6 +89,26 @@ impl Default for FontRegistry {
 }
 
 impl FontRegistry {
+    /// The families every build has, as Java lists the fonts it has (`getAvailableFontFamilyNames`), sorted
+    /// regardless of case: the logical fonts, and the embedded fonts by their own names and by the Windows
+    /// families they stand in for.
+    pub(crate) fn embedded_family_names() -> Vec<String> {
+        let registry = Self::default();
+        let mut names: Vec<String> = ["Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif"]
+            .into_iter()
+            .chain(EMBEDDED.iter().map(|&(_, stands_in_for)| stands_in_for))
+            .map(str::to_owned)
+            .collect();
+        for registered in &registry.faces {
+            if let Ok(face) = Face::parse(registered.data.bytes(), registered.index_in_collection) {
+                names.extend(family_names(&face));
+            }
+        }
+        names.sort_by_key(|name| name.to_lowercase());
+        names.dedup();
+        names
+    }
+
     /// Makes the fonts in a TrueType or OpenType file (or collection) available under their family names.
     /// Returns those names. Fonts registered later take precedence over earlier ones of the same family.
     pub fn register(&mut self, data: Vec<u8>) -> Result<Vec<String>, NotAFont> {
@@ -327,6 +347,26 @@ mod tests {
 
     fn resolved_name(registry: &FontRegistry, family: &str) -> Vec<String> {
         family_names(registry.resolve(family, UFontFace::NORMAL).face())
+    }
+
+    #[test]
+    fn every_build_has_the_logical_embedded_and_stood_in_for_families() {
+        assert_eq!(
+            FontRegistry::embedded_family_names(),
+            [
+                "Arial",
+                "Courier New",
+                "Dialog",
+                "DialogInput",
+                "Liberation Mono",
+                "Liberation Sans",
+                "Liberation Serif",
+                "Monospaced",
+                "SansSerif",
+                "Serif",
+                "Times New Roman"
+            ]
+        );
     }
 
     #[test]

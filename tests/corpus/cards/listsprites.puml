@@ -1,0 +1,13 @@
+@startuml
+sprite $zeta {
+  FFFFFFFFFFFFFFF
+  F0123456789ABCF
+  F0123456789ABCF
+  F0123456789ABCF
+  FFFFFFFFFFFFFFF
+}
+sprite $ring [16x16/16z] ROz50e0m40EvBk7_twsjXmvK9lNdWhm7CTrzODUkE6WWMxy5S9OStVDEiFte2OuZ7Up_-RmVdyVtuVloUvW9
+sprite alpha <svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#3070C0"/></svg>
+title Sprites of this diagram
+listsprites
+@enduml

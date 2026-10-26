@@ -1,0 +1,56 @@
+DPI: 96
+dimension: [ 371.1199 ; 85.0000 ]
+scaleFactor: 1.0000
+seed: -7164992598304555979
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 361.1199 ; 45.0000 ]
+
+TEXT:
+  text: Sprites of this diagram
+  position: [ 20.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+ELLIPSE:
+  pt1: [ 81.6997 ; 46.0000 ]
+  pt2: [ 89.6997 ; 54.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff3070c0
+  backcolor: ff3070c0
+
+TEXT:
+  text: alpha
+  position: [ 49.3843 ; 65.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text: ring
+  position: [ 152.0150 ; 71.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text: zeta
+  position: [ 243.2766 ; 60.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
