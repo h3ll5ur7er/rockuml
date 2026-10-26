@@ -14,6 +14,7 @@ use crate::command::{Command, ParserPass, PatternCommand, SingleLine};
 use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont};
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::typeface::FontRegistry;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::pattern::{RegexResult, RegexTree};
 use crate::style::SName;
@@ -51,17 +52,21 @@ fn command_help_color() -> Box<dyn Command<Help>> {
     help_command(
         "colors?",
         ["<b>Help on colors", " The possible colors are :"],
-        crate::color::names,
+        |_| {
+            crate::color::names()
+                .into_iter()
+                .map(str::to_owned)
+                .collect()
+        },
     )
 }
 
-/// PlantUML's `CommandHelpFont`: the font families. PlantUML lists those of the machine, rockuml those it
-/// always has.
+/// PlantUML's `CommandHelpFont`: the font families, the same that `listfonts` lists.
 fn command_help_font() -> Box<dyn Command<Help>> {
     help_command(
         "fonts?",
         ["<b>Help on font", " The possible font on your system are :"],
-        crate::fonts::FontRegistry::embedded_family_names,
+        FontRegistry::available_font_family_names,
     )
 }
 
@@ -70,7 +75,7 @@ fn command_help_keyword() -> Box<dyn Command<Help>> {
     help_command(
         "keywords?",
         ["<b>Help on keywords", " The possible keywords are :"],
-        || language_descriptor::get_keyword().into_iter().collect(),
+        |_| language_descriptor::get_keyword().into_iter().collect(),
     )
 }
 
@@ -79,7 +84,7 @@ fn command_help_type() -> Box<dyn Command<Help>> {
     help_command(
         "types?",
         ["<b>Help on types", " The possible types are :"],
-        || language_descriptor::get_type().into_iter().collect(),
+        |_| language_descriptor::get_type().into_iter().collect(),
     )
 }
 
@@ -88,7 +93,7 @@ fn command_help_theme() -> Box<dyn Command<Help>> {
     help_command(
         "themes?",
         ["<b>Help on themes", " The possible themes are :"],
-        crate::assets::theme_names,
+        |_| crate::assets::theme_names(),
     )
 }
 
@@ -96,7 +101,7 @@ fn command_help_theme() -> Box<dyn Command<Help>> {
 fn help_command(
     topic: &'static str,
     [heading, introduction]: [&'static str; 2],
-    names: fn() -> Vec<String>,
+    names: fn(&FontRegistry) -> Vec<String>,
 ) -> Box<dyn Command<Help>> {
     Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
@@ -109,10 +114,8 @@ fn help_command(
         move |diagram: &mut Help, _: &LineLocation, _: &RegexResult| {
             diagram
                 .lines
-                .extend([heading, " ", introduction].map(str::to_owned));
-            diagram
-                .lines
-                .extend(names().into_iter().map(|name| format!("* {name}")));
+                .extend([heading, " ", introduction].map(HelpLine::Text));
+            diagram.lines.push(HelpLine::Names(names));
             Ok(())
         },
     )))
@@ -122,7 +125,29 @@ fn help_command(
 pub(super) struct Help {
     source: Rc<UmlSource>,
     titled: Titled,
-    lines: Vec<String>,
+    lines: Vec<HelpLine>,
+}
+
+/// A line of the help, or a bullet per name it lists. The names are only known once the fonts that draw
+/// the help are, which `help fonts` lists.
+enum HelpLine {
+    Text(&'static str),
+    Names(fn(&FontRegistry) -> Vec<String>),
+}
+
+impl Help {
+    fn lines(&self, fonts: &FontRegistry) -> Vec<String> {
+        let mut lines = Vec::new();
+        for line in &self.lines {
+            match line {
+                HelpLine::Text(text) => lines.push((*text).to_owned()),
+                HelpLine::Names(names) => {
+                    lines.extend(names(fonts).into_iter().map(|name| format!("* {name}")));
+                }
+            }
+        }
+        lines
+    }
 }
 
 impl AbstractDiagram for Help {
@@ -142,8 +167,17 @@ impl Diagram for Help {
 
     fn text_block(
         &self,
+        page: usize,
+        string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+        self.text_block_with_fonts(page, string_bounder, &FontRegistry::default())
+    }
+
+    fn text_block_with_fonts(
+        &self,
         _page: usize,
         string_bounder: &Rc<dyn StringBounder>,
+        fonts: &FontRegistry,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
         let font = FontConfiguration::black_blue_true(UFont::serif(16));
         let sheet = CreoleParser::with_mode(
@@ -152,7 +186,7 @@ impl Diagram for Help {
             CreoleMode::Full,
             &self.titled.skin,
         )
-        .create_sheet(&self.lines);
+        .create_sheet(&self.lines(fonts));
         let sheet = SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none());
         Ok(self.titled.add_chrome(Box::new(sheet), string_bounder))
     }
@@ -160,5 +194,22 @@ impl Diagram for Help {
     fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::diagram::test_support::debug_of;
+    use crate::klimt::typeface::{FontRegistry, renamed_liberation_sans};
+
+    #[test]
+    fn help_fonts_lists_the_registered_fonts_as_listfonts_does() {
+        let mut fonts = FontRegistry::default();
+        fonts
+            .register(renamed_liberation_sans("Liberation Test"))
+            .unwrap();
+        let debug = debug_of("@startuml\nhelp fonts\n@enduml\n", fonts);
+        assert!(debug.contains("Liberation Test"), "{debug}");
+        assert!(debug.contains("Times New Roman"), "{debug}");
     }
 }

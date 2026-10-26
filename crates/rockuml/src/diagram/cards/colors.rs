@@ -6,8 +6,8 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
-use super::{Card, UgDiagram};
-use crate::color::{HColor, XColor, color_names};
+use super::UgDiagram;
+use crate::color::{self, HColor, XColor};
 use crate::creole::{CreoleMode, Display, SheetBlock2};
 use crate::diagram::builder::{PSystemSingleLineFactory, whole_line};
 use crate::diagram::{Diagram, NotYetPorted, UmlSource};
@@ -15,7 +15,6 @@ use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{XDimension2D, XPoint2D};
 use crate::klimt::shape::{UPolygon, URectangle, UShape};
 use crate::klimt::sprite::SpriteContainerEmpty;
-use crate::klimt::typeface::FontRegistry;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 
@@ -30,7 +29,7 @@ impl PSystemSingleLineFactory for PSystemColorsFactory {
         static PATTERN: LazyLock<Regex> = LazyLock::new(|| whole_line(r"colors?\s*(#?\w+)?\s*"));
         let captures = PATTERN.captures(line)?;
         let option = captures.get(1).map(|option| option.as_str());
-        Some(Ok(UgDiagram::boxed(source, PSystemColors::new(option))))
+        Some(Ok(UgDiagram::create(source, PSystemColors::new(option))))
     }
 }
 
@@ -85,7 +84,7 @@ impl PSystemColors {
     }
 
     fn calculate_dimension_full() -> XDimension2D {
-        let nb_columns = color_names().len().div_ceil(Self::NB_ROWS);
+        let nb_columns = color::names().len().div_ceil(Self::NB_ROWS);
         XDimension2D::new(
             nb_columns as f64 * Self::RECTANGLE_WIDTH,
             Self::NB_ROWS as f64 * Self::RECTANGLE_HEIGHT,
@@ -110,7 +109,6 @@ impl PSystemColors {
         )
     }
 
-    /// The width of a hexagon.
     fn width() -> f64 {
         3.0_f64.sqrt() / 2.0 * 2.0 * Self::SIZE
     }
@@ -129,7 +127,7 @@ impl PSystemColors {
 
     fn draw_full(ug: &UGraphic) {
         let ug = ug.with_color(HColor::BLACK);
-        for (index, name) in color_names().into_iter().enumerate() {
+        for (index, name) in color::names().into_iter().enumerate() {
             let i = index / Self::NB_ROWS;
             let j = index % Self::NB_ROWS;
             let tmp = ug.translated(
@@ -147,12 +145,6 @@ impl PSystemColors {
             let dx = (Self::RECTANGLE_WIDTH - dim_text.width) / 2.0;
             tt.draw_u(&tmp.translated(dx, dy));
         }
-    }
-}
-
-impl Card for PSystemColors {
-    fn get_text_block(&self, _fonts: &FontRegistry) -> Box<dyn TextBlock + '_> {
-        Box::new(self)
     }
 }
 
@@ -244,7 +236,7 @@ fn simple_color(name: &str) -> XColor {
 
 /// Every colour name but the `Gray` spellings of `Grey` ones, and `other`, from the closest to `center` on.
 fn colors_close_to(other: &str, center: XColor) -> Vec<String> {
-    let names = color_names();
+    let names = color::names();
     let mut result: Vec<String> = names
         .iter()
         .filter(|candidate| {

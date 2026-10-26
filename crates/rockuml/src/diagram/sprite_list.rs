@@ -4,7 +4,7 @@
 use std::collections::BTreeSet;
 use std::rc::Rc;
 
-use super::builder::CommandFactory;
+use super::builder::{CommandFactory, PSystemSingleLineFactory};
 use super::common_commands::{
     add_common_commands1, add_common_commands2, add_common_scale_commands,
 };
@@ -27,12 +27,18 @@ use crate::pattern::{RegexResult, RegexTree};
 use crate::style::SName;
 use crate::text::LineLocation;
 
-/// PlantUML's `PSystemListArchimateSpritesFactory`: a line that starts with `listsprite`.
-pub(super) fn execute_line(source: &Rc<UmlSource>, line: &str) -> Option<Box<dyn Diagram>> {
-    if !line.to_lowercase().starts_with("listsprite") {
-        return None;
+/// A line that starts with `listsprite` (PlantUML's `PSystemListArchimateSpritesFactory`).
+pub(super) struct PSystemListArchimateSpritesFactory;
+
+impl PSystemSingleLineFactory for PSystemListArchimateSpritesFactory {
+    fn execute_line(
+        source: &Rc<UmlSource>,
+        line: &str,
+    ) -> Option<Result<Box<dyn Diagram>, NotYetPorted>> {
+        line.to_lowercase()
+            .starts_with("listsprite")
+            .then(|| Ok(UgDiagram::create(source, list_archimate_sprites())))
     }
-    Some(UgDiagram::create(source, list_archimate_sprites()))
 }
 
 /// Every built-in sprite beside its name, folder by folder in four columns (`PSystemListArchimateSprites`).
@@ -65,7 +71,7 @@ fn list_archimate_sprites() -> TextBlockHorizontal<'static> {
             ));
         }
     }
-    TextBlockHorizontal::new(get_cols(&lines, 4, 0), VerticalAlignment::Top)
+    TextBlockHorizontal::new(get_cols(&lines, 4), VerticalAlignment::Top)
 }
 
 /// Reads sprite lists (PlantUML's `ListSpriteDiagramFactory`).

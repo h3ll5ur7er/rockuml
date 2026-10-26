@@ -8,11 +8,11 @@ use regex::Regex;
 
 use super::{Card, UgDiagram};
 use crate::diagram::builder::{PSystemSingleLineFactory, whole_line};
+use crate::diagram::donors::get_cols;
 use crate::diagram::{Diagram, NotYetPorted, UmlSource};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
-use crate::klimt::graphic_strings::GraphicStrings;
 use crate::klimt::typeface::FontRegistry;
 use crate::klimt::ugraphic::UGraphic;
 
@@ -27,7 +27,7 @@ impl PSystemSingleLineFactory for PSystemSkinparameterListFactory {
         static PATTERN: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)(skinparameters)\s*"));
         PATTERN
             .is_match(line)
-            .then(|| Ok(UgDiagram::boxed(source, PSystemSkinparameterList)))
+            .then(|| Ok(UgDiagram::create(source, PSystemSkinparameterList)))
     }
 }
 
@@ -40,16 +40,8 @@ impl Card for PSystemSkinparameterList {
     }
 }
 
-/// The lines cut into `nb_col` columns of equal length, the last one shorter.
-fn get_cols(lines: &[String], nb_col: usize) -> Vec<GraphicStrings> {
-    lines
-        .chunks(lines.len().div_ceil(nb_col))
-        .map(GraphicStrings::create_black_on_white)
-        .collect()
-}
-
 /// Blocks side by side, each followed by a gap.
-struct Columns(Vec<GraphicStrings>);
+struct Columns(Vec<Box<dyn TextBlock>>);
 
 impl Columns {
     const GAP: f64 = 10.0;

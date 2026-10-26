@@ -24,23 +24,24 @@ use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
 use super::ebnf::PSystemEbnfFactory;
+use super::emoji_list::PSystemListEmojiFactory;
 use super::error::ErrorDiagram;
 use super::flow::FlowDiagramFactory;
 use super::gantt::GanttDiagramFactory;
 use super::help::HelpFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
+use super::openiconic::{PSystemListOpenIconicFactory, PSystemOpenIconicFactory};
 use super::packetdiag::PacketDiagramFactory;
 use super::regexdiagram::PSystemRegexFactory;
 use super::sequence::SequenceDiagramFactory;
-use super::sprite_list::ListSpriteDiagramFactory;
+use super::sprite_list::{ListSpriteDiagramFactory, PSystemListArchimateSpritesFactory};
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
 use super::wbs::WbsDiagramFactory;
 use super::wire::WireDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
-use super::{emoji_list, openiconic, sprite_list};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
 use crate::command::{Command, CommandError};
 use crate::pattern::java_regex;
@@ -140,10 +141,10 @@ const UML_FACTORIES: [Factory; 20] = [
     donors,
     create_single_line_system::<PSystemSkinparameterListFactory>,
     create_single_line_system::<PSystemListFontsFactory>,
-    list_emoji,
-    open_iconic,
-    list_open_iconic,
-    list_archimate_sprites,
+    create_single_line_system::<PSystemListEmojiFactory>,
+    create_single_line_system::<PSystemOpenIconicFactory>,
+    create_single_line_system::<PSystemListOpenIconicFactory>,
+    create_single_line_system::<PSystemListArchimateSpritesFactory>,
     create_system::<ListSpriteDiagramFactory>,
     create_system::<TimingDiagramFactory>,
     create_system::<HelpFactory>,
@@ -350,28 +351,6 @@ pub(super) fn whole_line(pattern: &str) -> Regex {
 fn donors(source: &Rc<UmlSource>) -> Outcome {
     static DONORS: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)(donors)\s*"));
     single_line(source, |line| DONORS.is_match(line), "the donors diagram")
-}
-
-fn list_emoji(source: &Rc<UmlSource>) -> Outcome {
-    single_line_with(source, |source, line| {
-        emoji_list::execute_line(source, line).map(Ok)
-    })
-}
-
-fn open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line_with(source, openiconic::execute_line)
-}
-
-fn list_open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line_with(source, |source, line| {
-        openiconic::execute_list_line(source, line).map(Ok)
-    })
-}
-
-fn list_archimate_sprites(source: &Rc<UmlSource>) -> Outcome {
-    single_line_with(source, |source, line| {
-        sprite_list::execute_line(source, line).map(Ok)
-    })
 }
 
 #[cfg(test)]

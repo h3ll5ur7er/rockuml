@@ -69,13 +69,13 @@ version
 @enduml
 ```
 
-PlantUML's card also tells the Java runtime, the operating system, the memory and the Graphviz installation it uses. rockuml runs without Java and without Graphviz, so it tells none of those; `testdot`, which in PlantUML checks the Graphviz installation, says the same.
+PlantUML's card also tells the Java runtime, the operating system, the memory and the Graphviz installation it uses. rockuml runs without Java and lays out its diagrams itself, so it tells none of those; only `@startdot` runs Graphviz's `dot` (see [Graphviz sources](docs/dot)). `testdot`, which in PlantUML checks the Graphviz installation, says the same.
 
 `authors` (or `about`) tells where rockuml comes from: a port of PlantUML, by Arnaud Roques and its contributors.
 
 `stdlib` lists the libraries of the [standard library](docs/preprocessor) rockuml embeds, with their versions and where they come from, as PlantUML does. The browser build leaves the standard library out, so the list is empty there.
 
-The `keygen`, `keyimport`, `keycheck` and `keydistributor` lines of PlantUML's professional edition are recognised and reported as not ported: rockuml has no license keys.
+The `keygen`, `keyimport`, `keycheck` and `keydistributor` lines are recognised and reported as not ported. PlantUML draws cards for them that request, import or check a license key for its professional edition; rockuml has no license keys.
 
 ## License
 
@@ -98,7 +98,7 @@ help colors
 @enduml
 ```
 
-PlantUML lists the fonts installed on the machine it runs on. rockuml lists the fonts it always has: Java's logical fonts (`SansSerif`, `Serif`, `Monospaced`, `Dialog`, `DialogInput`), the embedded Liberation fonts and the Windows families they stand in for. Fonts added with `--font` or `ROCKUML_FONTS` work in diagrams but are not listed.
+`help fonts` lists the same fonts as `listfonts`: Java's logical fonts (`SansSerif`, `Serif`, `Monospaced`, `Dialog`, `DialogInput`), the embedded Liberation fonts and the Windows families they stand in for, and the fonts added with `--font` or `ROCKUML_FONTS`, where PlantUML lists the fonts installed on the machine it runs on.
 
 ## Open Iconic icons
 

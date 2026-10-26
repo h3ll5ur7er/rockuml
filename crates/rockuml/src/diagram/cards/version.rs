@@ -11,8 +11,9 @@ use crate::diagram::builder::{PSystemSingleLineFactory, whole_line};
 use crate::diagram::{Diagram, NotYetPorted, UmlSource};
 use crate::stdlib::{Stdlib, library_names};
 
-/// `version`, `authors`, `stdlib`… (PlantUML's `PSystemVersionFactory`). License keys, which only
-/// PlantUML's professional edition has, are recognised and not drawn.
+/// `version`, `authors`, `stdlib`… (PlantUML's `PSystemVersionFactory`). The license key lines are
+/// recognised and not drawn: PlantUML draws cards that request, import or check a key for its professional
+/// edition, which rockuml has no use for.
 pub(in crate::diagram) struct PSystemVersionFactory;
 
 impl PSystemSingleLineFactory for PSystemVersionFactory {
@@ -42,7 +43,7 @@ impl PSystemSingleLineFactory for PSystemVersionFactory {
         } else {
             return None;
         };
-        Some(Ok(UgDiagram::boxed(source, card)))
+        Some(Ok(UgDiagram::create(source, card)))
     }
 }
 
@@ -65,15 +66,19 @@ fn create_show_version() -> PlainStringsDiagram {
 fn add_dot_status(strings: &mut Vec<String>) {
     strings.extend([
         "Layout: Smetana, ported from PlantUML's port of Graphviz's dot".to_owned(),
-        "rockuml lays out every diagram itself: it needs no GraphViz installation.".to_owned(),
+        LAYS_OUT_ITSELF.to_owned(),
     ]);
 }
+
+/// Shared with the license card.
+pub(super) const LAYS_OUT_ITSELF: &str =
+    "rockuml lays out its diagrams itself; only @startdot runs Graphviz's dot.";
 
 /// `authors` and `about`.
 fn create_show_authors() -> PlainStringsDiagram {
     let strings = [
         format!("<b>rockuml version {ROCKUML_VERSION}</b>"),
-        "(LGPL source distribution)".to_owned(),
+        "(LGPL-3.0-or-later)".to_owned(),
         " ".to_owned(),
         format!("A port of PlantUML {} to Rust.", crate::PLANTUML_VERSION),
         "<u>PlantUML</u>: Arnaud Roques and its contributors".to_owned(),
@@ -114,4 +119,58 @@ fn create_test_dot() -> PlainStringsDiagram {
     )];
     add_dot_status(&mut strings);
     PlainStringsDiagram::new(strings)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const LAYOUT: [&str; 2] = [
+        "Layout: Smetana, ported from PlantUML's port of Graphviz's dot",
+        "rockuml lays out its diagrams itself; only @startdot runs Graphviz's dot.",
+    ];
+
+    #[test]
+    fn version_tells_rockuml_s_version_and_layout() {
+        let version = format!(r#"<b>rockuml</b> ""{ROCKUML_VERSION}"""#);
+        assert_eq!(
+            create_show_version().strings,
+            [
+                version.as_str(),
+                r#"<b>PlantUML</b> ""1.2026.8"""#,
+                r#"<b>License</b> ""LGPL"""#,
+                " ",
+                LAYOUT[0],
+                LAYOUT[1],
+            ]
+        );
+    }
+
+    #[test]
+    fn testdot_tells_the_version_and_layout() {
+        let version = format!("rockuml version {ROCKUML_VERSION} (PlantUML 1.2026.8 compatible)");
+        assert_eq!(
+            create_test_dot().strings,
+            [version.as_str(), LAYOUT[0], LAYOUT[1]]
+        );
+    }
+
+    #[test]
+    fn authors_credit_plantuml() {
+        let version = format!("<b>rockuml version {ROCKUML_VERSION}</b>");
+        assert_eq!(
+            create_show_authors().strings,
+            [
+                version.as_str(),
+                "(LGPL-3.0-or-later)",
+                " ",
+                "A port of PlantUML 1.2026.8 to Rust.",
+                "<u>PlantUML</u>: Arnaud Roques and its contributors",
+                " ",
+                "https://github.com/h3ll5ur7er/rockuml",
+                "https://plantuml.com",
+                " ",
+            ]
+        );
+    }
 }

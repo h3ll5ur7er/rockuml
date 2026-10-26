@@ -3,8 +3,9 @@
 
 use std::rc::Rc;
 
+use super::builder::PSystemSingleLineFactory;
 use super::ug_diagram::UgDiagram;
-use super::{Diagram, UmlSource};
+use super::{Diagram, NotYetPorted, UmlSource};
 use crate::emoji::Emoji;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
@@ -15,17 +16,24 @@ use crate::klimt::ugraphic::UGraphic;
 /// Each column is this wide, whatever it holds.
 const COLUMN_WIDTH: f64 = 500.0;
 
-/// PlantUML's `PSystemListEmojiFactory`: `emoji`, or `emoji` and the start of the codes to list.
-pub(super) fn execute_line(source: &Rc<UmlSource>, line: &str) -> Option<Box<dyn Diagram>> {
-    let line_lower = line.to_lowercase();
-    if line_lower != "emoji" && !line_lower.starts_with("emoji ") {
-        return None;
+/// `emoji`, or `emoji` and the start of the codes to list (PlantUML's `PSystemListEmojiFactory`).
+pub(super) struct PSystemListEmojiFactory;
+
+impl PSystemSingleLineFactory for PSystemListEmojiFactory {
+    fn execute_line(
+        source: &Rc<UmlSource>,
+        line: &str,
+    ) -> Option<Result<Box<dyn Diagram>, NotYetPorted>> {
+        let line_lower = line.to_lowercase();
+        if line_lower != "emoji" && !line_lower.starts_with("emoji ") {
+            return None;
+        }
+        let code = line.find(' ').map_or("26", |idx| &line[idx + 1..]);
+        Some(Ok(UgDiagram::create(
+            source,
+            PSystemListEmoji::new(&code.to_lowercase()),
+        )))
     }
-    let code = line.find(' ').map_or("26", |idx| &line[idx + 1..]);
-    Some(UgDiagram::create(
-        source,
-        PSystemListEmoji::new(&code.to_lowercase()),
-    ))
 }
 
 /// The emoji whose names start with a text.

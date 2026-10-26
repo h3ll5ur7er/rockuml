@@ -27,7 +27,7 @@ impl PSystemSingleLineFactory for PSystemListFontsFactory {
             Some(index) => crate::java::trim(&line[index..]).to_owned(),
             None => "This is a test".to_owned(),
         };
-        Some(Ok(UgDiagram::boxed(source, PSystemListFonts { text })))
+        Some(Ok(UgDiagram::create(source, PSystemListFonts { text })))
     }
 }
 

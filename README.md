@@ -8,7 +8,7 @@
 [![Documentation](https://img.shields.io/badge/docs-live%20examples-ea580c?logo=readthedocs&logoColor=white)](https://h3ll5ur7er.github.io/rockuml/)
 
 A PlantUML-compatible diagram renderer written in Rust: one self-contained binary for Windows, Linux and macOS
-(and a WebAssembly build), with no Java and no Graphviz required.
+(and a WebAssembly build), with no Java required and no Graphviz except for raw `@startdot` sources.
 
 Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the porting plan and the definition of
 "compatible".

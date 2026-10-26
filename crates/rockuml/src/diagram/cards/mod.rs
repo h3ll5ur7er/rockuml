@@ -8,8 +8,6 @@ mod skinparameter_list;
 mod version;
 mod welcome;
 
-use std::rc::Rc;
-
 pub(super) use colors::PSystemColorsFactory;
 pub(super) use license::PSystemLicenseFactory;
 pub(super) use list_fonts::PSystemListFontsFactory;
@@ -17,59 +15,11 @@ pub(super) use skinparameter_list::PSystemSkinparameterListFactory;
 pub(super) use version::PSystemVersionFactory;
 pub(super) use welcome::{PSystemWelcome, PSystemWelcomeFactory};
 
-use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
+use super::ug_diagram::{Card, UgDiagram};
 use crate::klimt::TextBlock;
-use crate::klimt::font::StringBounder;
 use crate::klimt::graphic_strings::{GraphicPosition, GraphicStrings};
 use crate::klimt::image::PortableImage;
 use crate::klimt::typeface::FontRegistry;
-
-/// What a card draws, given the fonts rockuml draws with.
-trait Card {
-    fn get_text_block(&self, fonts: &FontRegistry) -> Box<dyn TextBlock + '_>;
-}
-
-/// A card's diagram: one page, drawn without skin or margin (PlantUML's `UgDiagram`).
-struct UgDiagram<C> {
-    source: Rc<UmlSource>,
-    card: C,
-}
-
-impl<C: Card + 'static> UgDiagram<C> {
-    fn boxed(source: &Rc<UmlSource>, card: C) -> Box<dyn Diagram> {
-        Box::new(Self {
-            source: source.clone(),
-            card,
-        })
-    }
-}
-
-impl<C: Card> Diagram for UgDiagram<C> {
-    fn source(&self) -> &UmlSource {
-        &self.source
-    }
-
-    fn text_block(
-        &self,
-        page: usize,
-        string_bounder: &Rc<dyn StringBounder>,
-    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        self.text_block_with_fonts(page, string_bounder, &FontRegistry::default())
-    }
-
-    fn text_block_with_fonts(
-        &self,
-        _page: usize,
-        _string_bounder: &Rc<dyn StringBounder>,
-        fonts: &FontRegistry,
-    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        Ok(self.card.get_text_block(fonts))
-    }
-
-    fn export_settings(&self, _page: usize) -> ExportSettings {
-        ExportSettings::without_skin(self.source.seed())
-    }
-}
 
 /// Lines of creole text with an optional image in a corner (PlantUML's `PlainStringsDiagram`).
 struct PlainStringsDiagram {
