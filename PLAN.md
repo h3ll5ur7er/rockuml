@@ -682,6 +682,12 @@ charts (6.3k).
   - Deviation: a first row without width, which makes PlantUML fail on a remainder by zero, draws a short
     unnumbered tick.
 
+### Phase 24 — Boards
+- **Status: done.** `@startboard` (`BoardDiagramFactory`, `CommandBoardPlus`): activities with their releases
+  one `+` per row, columns from `BNode.computeX`, cards drawn in the order of `BArray`'s `HashMap`, dashed lines
+  between the rows, and the common commands (title, legend, styles, scale, sprites). 9 cases match every output.
+  - A release before any activity crashes PlantUML; rockuml reports it as not ported.
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

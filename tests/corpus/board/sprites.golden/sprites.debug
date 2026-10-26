@@ -1,0 +1,149 @@
+DPI: 96
+dimension: [ 201.0000 ; 282.0000 ]
+scaleFactor: 1.0000
+seed: -2545337648613998137
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 160.0000 ; 80.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 1
+  color: ff000000
+  backcolor: ffc0c0c0
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  Starred
+  position: [ 21.6154 ; 23.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 160.0000 ; 80.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 1
+  color: ff000000
+  backcolor: ffc0c0c0
+
+UGraphicDebug UImage <timestamp>
+TEXT:
+  text:  Starred
+  position: [ 21.6154 ; 23.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 100.0000 ]
+  pt2: [ 160.0000 ; 170.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 1
+  color: ff000000
+  backcolor: ffc0c0c0
+
+TEXT:
+  text: Story 
+  position: [ 13.0000 ; 113.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+UGraphicDebug UImage <timestamp>
+RECTANGLE:
+  pt1: [ 10.0000 ; 190.0000 ]
+  pt2: [ 160.0000 ; 260.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 1
+  color: ff000000
+  backcolor: ffc0c0c0
+
+EMPTY:
+  pt1: [ 13.0000 ; 194.1667 ]
+  pt2: [ 24.3333 ; 203.5000 ]
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 4.6667 ; 0.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.3833 ; 0.0000 ]
+     pt2: [ 2.3333 ; 1.3067 ]
+     pt3: [ 2.3333 ; 2.9167 ]
+   - type: SEG_CUBICTO
+     pt1: [ 2.3333 ; 4.5267 ]
+     pt2: [ 3.3833 ; 5.8333 ]
+     pt3: [ 4.6667 ; 5.8333 ]
+   - type: SEG_CUBICTO
+     pt1: [ 5.9500 ; 5.8333 ]
+     pt2: [ 7.0000 ; 4.5267 ]
+     pt3: [ 7.0000 ; 2.9167 ]
+   - type: SEG_CUBICTO
+     pt1: [ 7.0000 ; 1.3067 ]
+     pt2: [ 5.9500 ; 0.0000 ]
+     pt3: [ 4.6667 ; 0.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 2.2283 ; 5.8333 ]
+   - type: SEG_CUBICTO
+     pt1: [ 0.9917 ; 5.8917 ]
+     pt2: [ 0.0000 ; 6.9067 ]
+     pt3: [ 0.0000 ; 8.1667 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 9.3333 ]
+   - type: SEG_LINETO
+     pt1: [ 9.3333 ; 9.3333 ]
+   - type: SEG_LINETO
+     pt1: [ 9.3333 ; 8.1667 ]
+   - type: SEG_CUBICTO
+     pt1: [ 9.3333 ; 6.9067 ]
+     pt2: [ 8.3533 ; 5.8917 ]
+     pt3: [ 7.1050 ; 5.8333 ]
+   - type: SEG_CUBICTO
+     pt1: [ 6.4750 ; 6.5450 ]
+     pt2: [ 5.6117 ; 7.0000 ]
+     pt3: [ 4.6667 ; 7.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 3.7217 ; 7.0000 ]
+     pt2: [ 2.8583 ; 6.5450 ]
+     pt3: [ 2.2283 ; 5.8333 ]
+  stroke: 0.0-0.0-0.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+TEXT:
+  text:  Release
+  position: [ 24.3333 ; 203.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 10.0000 ; 90.0000 ]
+  pt2: [ 180.0000 ; 90.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 180.0000 ]
+  pt2: [ 180.0000 ; 180.0000 ]
+  stroke: 5.0-5.0-0.5
+  shadow: 0
+  color: ff000000
+

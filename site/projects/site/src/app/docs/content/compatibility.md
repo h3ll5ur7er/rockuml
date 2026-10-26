@@ -39,7 +39,7 @@ The [feature status](docs/features) lists every diagram type, command, function,
 
 | Area | What's missing |
 |---|---|
-| Diagram types | ditaa, EBNF, regex, charts, git, board, wire, BPM and flow diagrams; inner activities `-->{` in the legacy activity syntax; math with `@startmath`, `<math>` and `<latex>` |
+| Diagram types | ditaa, EBNF, regex, charts, git, wire, BPM and flow diagrams; inner activities `-->{` in the legacy activity syntax; math with `@startmath`, `<math>` and `<latex>` |
 | Output formats | PDF, EPS, LaTeX, ASCII art (`-ttxt`, `-tutxt`), HTML, SCXML, XMI, VDX and braille |
 | Gantt charts | working hours (`from 9:00 to 17:00 are working hours`) |
 | Salt | the `salt` keyword inside `@startuml`, and `{{ … }}` diagrams embedded in notes or labels |

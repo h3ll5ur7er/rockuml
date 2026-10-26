@@ -1,0 +1,16 @@
+@startboard
+skinparam shadowing false
+sprite $star [8x8/16] {
+00088000
+00888800
+88888888
+08888880
+00888800
+08800880
+88000088
+00000000
+}
+<$star> Starred
++Story <$star>
+++<&person> Release
+@endboard

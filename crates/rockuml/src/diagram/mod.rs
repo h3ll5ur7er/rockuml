@@ -2,6 +2,7 @@
 
 mod activity;
 pub(crate) mod activity3;
+mod board;
 mod builder;
 mod chen;
 mod chrome;
@@ -186,6 +187,7 @@ pub fn create(
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
+        Some(DiagramType::Board) => |source, _| builder::create_board(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);
