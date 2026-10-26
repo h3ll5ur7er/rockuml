@@ -100,7 +100,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Network diagrams (nwdiag)](https://h3ll5ur7er.github.io/rockuml/docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](https://h3ll5ur7er.github.io/rockuml/docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](https://h3ll5ur7er.github.io/rockuml/docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
-| [Charts](https://h3ll5ur7er.github.io/rockuml/docs/chart) | ✅ Ported | 16 of 16 match PlantUML |  | `ChartDiagramFactory` |
+| [Charts](https://h3ll5ur7er.github.io/rockuml/docs/chart) | ✅ Ported | 22 of 22 match PlantUML |  | `ChartDiagramFactory` |
 | [Packet diagrams](https://h3ll5ur7er.github.io/rockuml/docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
 | [Definitions drawn on their own (`@startdef`)](https://h3ll5ur7er.github.io/rockuml/docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemDefinitionFactory` |
 | [The sprite list (`listsprites`)](https://h3ll5ur7er.github.io/rockuml/docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `ListSpriteDiagramFactory` |
@@ -116,8 +116,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Boards](https://h3ll5ur7er.github.io/rockuml/docs/board) | ✅ Ported | 9 of 9 match PlantUML |  | `BoardDiagramFactory` |
 | [YAML data](https://h3ll5ur7er.github.io/rockuml/docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [HCL data](https://h3ll5ur7er.github.io/rockuml/docs/hcl) | ✅ Ported | 11 of 11 match PlantUML |  | `HclDiagramFactory` |
-| [EBNF diagrams](https://h3ll5ur7er.github.io/rockuml/docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
-| [Regular expression diagrams](https://h3ll5ur7er.github.io/rockuml/docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
+| [EBNF diagrams](https://h3ll5ur7er.github.io/rockuml/docs/ebnf) | ✅ Ported | 19 of 19 match PlantUML |  | `PSystemEbnfFactory` |
+| [Regular expression diagrams](https://h3ll5ur7er.github.io/rockuml/docs/regex) | ✅ Ported | 22 of 22 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
 | Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |

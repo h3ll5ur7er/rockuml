@@ -1,0 +1,83 @@
+DPI: 96
+dimension: [ 288.2845 ; 54.0000 ]
+scaleFactor: 1.0000
+seed: -1385005061858611869
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 15.0000 ; 27.0000 ]
+  pt2: [ 15.0000 ; 27.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 15.0000 ; 15.0000 ]
+  pt2: [ 128.6239 ; 39.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: \u0041
+  position: [ 20.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 128.6239 ; 27.0000 ]
+  pt2: [ 148.6239 ; 27.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 148.6239 ; 15.0000 ]
+  pt2: [ 171.9950 ; 39.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: x
+  position: [ 153.6239 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 171.9950 ; 27.0000 ]
+  pt2: [ 191.9950 ; 27.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+RECTANGLE:
+  pt1: [ 191.9950 ; 15.0000 ]
+  pt2: [ 273.2845 ; 39.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: \u00e9
+  position: [ 196.9950 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -1,0 +1,5 @@
+@startchart
+h-axis [a, b, c]
+v-axis 0 --> 100 ticks [0:"Low\nend", 50:"<b>Mid</b>", 100:"**Top**"]
+line "L" [10, 50, 90]
+@endchart

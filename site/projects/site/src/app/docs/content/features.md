@@ -98,7 +98,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
-| [Charts](docs/chart) | ✅ Ported | 16 of 16 match PlantUML |  | `ChartDiagramFactory` |
+| [Charts](docs/chart) | ✅ Ported | 22 of 22 match PlantUML |  | `ChartDiagramFactory` |
 | [Packet diagrams](docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
 | [Definitions drawn on their own (`@startdef`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemDefinitionFactory` |
 | [The sprite list (`listsprites`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `ListSpriteDiagramFactory` |
@@ -114,8 +114,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Boards](docs/board) | ✅ Ported | 9 of 9 match PlantUML |  | `BoardDiagramFactory` |
 | [YAML data](docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [HCL data](docs/hcl) | ✅ Ported | 11 of 11 match PlantUML |  | `HclDiagramFactory` |
-| [EBNF diagrams](docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
-| [Regular expression diagrams](docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
+| [EBNF diagrams](docs/ebnf) | ✅ Ported | 19 of 19 match PlantUML |  | `PSystemEbnfFactory` |
+| [Regular expression diagrams](docs/regex) | ✅ Ported | 22 of 22 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
 | Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |

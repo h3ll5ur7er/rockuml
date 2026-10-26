@@ -1,0 +1,3 @@
+@startregex
+(?!ab)c(?<=d)e(?<!f)g
+@endregex
