@@ -172,14 +172,16 @@ fn output_image(
                 )
             });
             return match exported {
+                // PlantUML's `TextBlockExporter` draws nothing for the null format, not even a crash report,
+                // and so drops its status.
+                Ok(_) if format == FileFormat::Null => None,
                 Ok(image) if image.crashed => {
                     status.goes_has_errors();
-                    (format != FileFormat::Null).then_some(Image {
+                    Some(Image {
                         bytes: image.data,
                         is_error: diagram.is_error(),
                     })
                 }
-                Ok(_) if format == FileFormat::Null => None,
                 Ok(image) => Some(Image {
                     bytes: image.data,
                     is_error: diagram.is_error(),

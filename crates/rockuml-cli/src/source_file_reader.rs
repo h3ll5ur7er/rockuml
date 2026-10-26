@@ -171,12 +171,14 @@ impl<'a> SourceFileReader<'a> {
                 )
             });
             let files = match files {
+                // PlantUML's `TextBlockExporter` draws nothing for the null format, not even a crash report,
+                // and so drops its status.
+                Ok(_) if format == FileFormat::Null => vec![Vec::new()],
                 Ok(exported) if exported.crashed => {
                     // The image says what failed, yet the diagram is not drawn.
                     status.goes_has_errors();
                     exported.files
                 }
-                Ok(_) if format == FileFormat::Null => vec![Vec::new()],
                 Ok(exported) => exported.files,
                 Err(unrendered) => {
                     let file = suggested.file(written, format);
