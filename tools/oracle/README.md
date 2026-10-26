@@ -22,6 +22,22 @@ which is the engine rockuml ports, so the goldens stay comparable.
 `reference/` stays as it is. Each fix says why. So far there is one: `newpage` in class and description
 diagrams exports every page again, not only the first.
 
+### Graphviz for `@startdot`
+
+`@startdot` diagrams (`tests/corpus/dot`) are drawn by an external `dot`, in PlantUML and in rockuml alike.
+`bash tools/oracle/setup-graphviz.sh` unpacks Ubuntu 24.04's Graphviz into `tools/graphviz` (git-ignored) without
+installing it and prints the path of a `dot` that measures text with rockuml's Liberation fonts only
+(`graphviz-fonts.conf`). Generate those goldens, and run the parity suite, with `GRAPHVIZ_DOT` set to it:
+
+```bash
+export GRAPHVIZ_DOT="$(bash tools/oracle/setup-graphviz.sh)"
+bash tools/oracle/generate-goldens.sh tests/corpus/dot/*.puml
+cargo test --release -p rockuml-cli --test parity
+```
+
+Without it the parity suite skips the `dot` cases with a note; `ROCKUML_PARITY_REQUIRE_GRAPHVIZ=1`, which CI sets
+on Linux, makes that a failure. Leave `GRAPHVIZ_DOT` unset for every other golden.
+
 ## Usage
 
 ```bash

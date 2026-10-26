@@ -1,0 +1,20 @@
+@startdot
+digraph clusters {
+  compound=true;
+  subgraph cluster_frontend {
+    label="Frontend";
+    style=filled;
+    color=lightgrey;
+    ui -> api_client;
+  }
+  subgraph cluster_backend {
+    label="Backend";
+    color=blue;
+    server -> worker;
+    server -> cache;
+  }
+  api_client -> server [lhead=cluster_backend];
+  worker -> db;
+  {rank=same; cache; db}
+}
+@enddot
