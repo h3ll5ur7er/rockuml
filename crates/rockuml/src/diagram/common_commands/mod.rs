@@ -4,7 +4,7 @@ mod skin_block;
 mod sprite;
 mod style_sheets;
 
-pub(crate) use style_sheets::style_file_named;
+pub(crate) use style_sheets::{StyleFile, style_file_named};
 
 use std::marker::PhantomData;
 use std::sync::LazyLock;

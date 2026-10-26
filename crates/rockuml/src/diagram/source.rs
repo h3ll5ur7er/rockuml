@@ -1,7 +1,7 @@
 use std::collections::HashMap;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
-use crate::diagram::common_commands::style_file_named;
+use crate::diagram::common_commands::{StyleFile, style_file_named};
 use crate::host::Host;
 use crate::java;
 use crate::preproc::start_utils;
@@ -157,17 +157,24 @@ impl UmlSource {
 
     /// Reads the files and URLs the source names, which commands and creole cannot read themselves: the
     /// images `<img>`s show, and the style sheets and skins it loads. Relative paths resolve against
-    /// `directory`, the diagram file's, as PlantUML's `FileSystem` does. What cannot be read is left out.
+    /// `directory`, the diagram file's, as PlantUML's `FileSystem` does, a skin's against the working
+    /// directory first. What cannot be read is left out.
     pub(crate) fn read_named_files(&mut self, directory: &Path, host: &dyn Host) {
+        let in_directory = [directory.to_path_buf()];
+        let working_directory_first = [host.current_directory(), directory.to_path_buf()];
         for line in &self.lines {
             let images = crate::creole::image_sources(line.text())
                 .filter(|src| !src.starts_with("data:"))
-                .map(str::to_owned);
-            for name in images.chain(style_file_named(line.text())) {
+                .map(|src| (src.to_owned(), &in_directory[..]));
+            let style_file = style_file_named(line.text()).map(|file| match file {
+                StyleFile::Import(name) => (name, &in_directory[..]),
+                StyleFile::Skin(name) => (name, &working_directory_first[..]),
+            });
+            for (name, directories) in images.chain(style_file) {
                 if self.files.contains_key(&name) {
                     continue;
                 }
-                let content = read_named_file(&name, directory, host);
+                let content = read_named_file(&name, directories, host);
                 self.files.insert(name, content);
             }
         }
@@ -178,16 +185,19 @@ impl UmlSource {
     }
 }
 
-fn read_named_file(name: &str, directory: &Path, host: &dyn Host) -> Option<Vec<u8>> {
+/// The URL `name`, or the file `name` in the first of `directories` that has it.
+fn read_named_file(name: &str, directories: &[PathBuf], host: &dyn Host) -> Option<Vec<u8>> {
     if name.starts_with("http:") || name.starts_with("https:") {
         return (!crate::url_policy::is_forbidden(name))
             .then(|| host.read_url(name))
             .flatten();
     }
-    let path = directory.join(name);
-    (!crate::file_policy::is_forbidden(&path, host))
-        .then(|| host.read_file(&path))
-        .flatten()
+    directories.iter().find_map(|directory| {
+        let path = directory.join(name);
+        (!crate::file_policy::is_forbidden(&path, host))
+            .then(|| host.read_file(&path))
+            .flatten()
+    })
 }
 
 fn patch_base64_line(line: &str, md5_map: &mut HashMap<String, String>) -> Option<String> {
@@ -299,6 +309,22 @@ mod tests {
         assert_eq!(styles.files()["dark.css"], Some(vec![1]));
         assert_eq!(styles.files()["rose.skin"], None);
         assert!(styles.files().contains_key("debug.skin"));
+    }
+
+    #[test]
+    fn skins_are_looked_for_in_the_working_directory_first() {
+        let mut styles = source(&["skin both", "skin beside"]);
+        let mut host = FakeHost::default();
+        host.files.insert("both.skin".into(), vec![1]);
+        host.files.insert(Path::new("d").join("both.skin"), vec![2]);
+        host.files
+            .insert(Path::new("d").join("beside.skin"), vec![3]);
+        styles.read_named_files(Path::new("d"), &host);
+        assert_eq!(styles.files()["both.skin"], Some(vec![1]));
+        assert_eq!(styles.files()["beside.skin"], Some(vec![3]));
+        let mut import = source(&["<style file=\"both.skin\">"]);
+        import.read_named_files(Path::new("d"), &host);
+        assert_eq!(import.files()["both.skin"], Some(vec![2]));
     }
 
     #[test]
