@@ -43,6 +43,20 @@ pub(crate) fn is_letter_or_digit(c: char) -> bool {
     is_letter(c) || get_general_category(c) == GeneralCategory::DecimalNumber
 }
 
+/// Whether `c` fits in one Java `char`. Java holds a supplementary character as two surrogate halves, and
+/// `Character`'s tests on a `char` take neither half for a letter, digit or space.
+pub(crate) fn is_one_char(c: char) -> bool {
+    u32::from(c) <= 0xFFFF
+}
+
+/// A Java string from its UTF-16 units, as PlantUML writes it out: an unpaired surrogate half becomes `?`.
+/// Java measures the half itself, which is wider.
+pub(crate) fn string_from_utf16(units: &[u16]) -> String {
+    char::decode_utf16(units.iter().copied())
+        .map(|unit| unit.unwrap_or('?'))
+        .collect()
+}
+
 /// The regex class `\s`, which in Java is ASCII-only.
 pub(crate) fn is_regex_whitespace(c: char) -> bool {
     matches!(c, ' ' | '\t' | '\n' | '\u{0B}' | '\u{0C}' | '\r')

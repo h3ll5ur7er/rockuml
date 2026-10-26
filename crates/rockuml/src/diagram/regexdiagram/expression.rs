@@ -167,7 +167,7 @@ fn is_start_posix_group(it: &CharInspector) -> bool {
     it.peek(0) == '[' && it.peek(1) == '[' && it.peek(2) == ':'
 }
 
-/// `(?<name>`, the name of letters only.
+/// `(?<name>`, the name of letters only, which a supplementary character is not to Java.
 fn is_start_named_capturing_group(it: &CharInspector) -> bool {
     if it.peek(0) != '(' || it.peek(1) != '?' || it.peek(2) != '<' {
         return false;
@@ -177,7 +177,8 @@ fn is_start_named_capturing_group(it: &CharInspector) -> bool {
         if it.peek(i) == '>' {
             return i > 3;
         }
-        if !java::is_letter(it.peek(i)) {
+        let ch = it.peek(i);
+        if !(java::is_one_char(ch) && java::is_letter(ch)) {
             return false;
         }
         i += 1;
@@ -453,25 +454,26 @@ pub(super) fn shunting_yard(tokens: Vec<ReToken>) -> Result<Vec<ReToken>, Failur
 }
 
 /// The characters and ranges of a class `[…]`, an escaped punctuation without its backslash
-/// (`GroupSplitter`).
+/// (`GroupSplitter`). PlantUML splits UTF-16 units, which parts a surrogate pair.
 pub(super) fn split_group(group: &str) -> Vec<String> {
-    let chars: Vec<char> = group.chars().collect();
+    let units: Vec<u16> = group.encode_utf16().collect();
     let mut result = Vec::new();
     let mut i = 0;
-    while i < chars.len() {
-        if i + 2 < chars.len() && chars[i + 1] == '-' {
-            result.push(chars[i..i + 3].iter().collect());
+    while i < units.len() {
+        if i + 2 < units.len() && units[i + 1] == u16::from(b'-') {
+            result.push(java::string_from_utf16(&units[i..i + 3]));
             i += 2;
-        } else if i + 1 < chars.len() && chars[i] == '\\' {
-            let escaped = chars[i + 1];
-            result.push(if java::is_letter(escaped) {
-                format!("\\{escaped}")
+        } else if i + 1 < units.len() && units[i] == u16::from(b'\\') {
+            let escaped = &units[i + 1..i + 2];
+            let is_letter = char::from_u32(u32::from(escaped[0])).is_some_and(java::is_letter);
+            result.push(java::string_from_utf16(if is_letter {
+                &units[i..i + 2]
             } else {
-                escaped.to_string()
-            });
+                escaped
+            }));
             i += 1;
         } else {
-            result.push(chars[i].to_string());
+            result.push(java::string_from_utf16(&units[i..=i]));
         }
         i += 1;
     }
@@ -545,5 +547,15 @@ mod tests {
     #[test]
     fn groups_split_into_characters_and_ranges() {
         assert_eq!(split_group(r"a-z_\]\w"), ["a-z", "_", "]", "\\w"]);
+    }
+
+    #[test]
+    fn a_supplementary_character_is_two_units_and_no_letter() {
+        assert_eq!(split_group("\u{1F600}-a"), ["?", "?-a"]);
+        assert!(
+            postfix("(?<\u{1D49C}b>x)")
+                .unwrap()
+                .starts_with("QUANTIFIER[?] SIMPLE_CHAR[<]")
+        );
     }
 }
