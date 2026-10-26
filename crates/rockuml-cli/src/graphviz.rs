@@ -5,7 +5,8 @@
 use std::fs;
 use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
+use std::process::{Child, Command, ExitStatus, Stdio};
+use std::time::{Duration, Instant};
 
 use rockuml::host::Graphviz;
 
@@ -24,20 +25,31 @@ pub(crate) fn getenv_graphviz_dot(named: Option<&str>) -> Option<String> {
         .map(|path| eventually_remove_starting_and_ending_double_quote(path).to_owned())
 }
 
+/// How long `dot` may go on once its output has ended, unless `--graphviz-timeout` says otherwise
+/// (`GlobalConfigKey.TIMEOUT_MS`).
+pub(crate) const TIMEOUT_MS: Duration = Duration::from_secs(30);
+
 /// One run of `dot` on a Graphviz source (`AbstractGraphviz`).
 pub(crate) struct AbstractGraphviz {
     dot_exe: Option<PathBuf>,
     dot_string: String,
     format: String,
+    timeout: Duration,
 }
 
 impl AbstractGraphviz {
     /// Without `getenv_graphviz_dot`, `dot` is looked for on the `PATH`, then where installers put it.
-    pub(crate) fn new(getenv_graphviz_dot: Option<String>, dot_string: &str, format: &str) -> Self {
+    pub(crate) fn new(
+        getenv_graphviz_dot: Option<String>,
+        dot_string: &str,
+        format: &str,
+        timeout: Duration,
+    ) -> Self {
         Self {
             dot_exe: search_dot_exe(getenv_graphviz_dot),
             dot_string: dot_string.to_owned(),
             format: format.to_owned(),
+            timeout,
         }
     }
 }
@@ -67,8 +79,25 @@ impl Graphviz for AbstractGraphviz {
         let mut result = Vec::new();
         let read = output.read_to_end(&mut result);
         let written = writer.join();
-        child.wait().ok()?;
+        wait_for(&mut child, self.timeout)?;
         (read.is_ok() && matches!(written, Ok(Ok(())))).then_some(result)
+    }
+}
+
+/// `ProcessRunner.run`'s `waitFor` with a timeout, after which the process is killed. Java first asks it to
+/// stop and kills it half a second later; the standard library can only kill it.
+fn wait_for(child: &mut Child, timeout: Duration) -> Option<ExitStatus> {
+    let deadline = Instant::now() + timeout;
+    loop {
+        if let Some(status) = child.try_wait().ok()? {
+            return Some(status);
+        }
+        if Instant::now() >= deadline {
+            let _ = child.kill();
+            let _ = child.wait();
+            return None;
+        }
+        std::thread::sleep(Duration::from_millis(10));
     }
 }
 
@@ -186,8 +215,12 @@ mod tests {
 
     #[test]
     fn a_named_dot_that_does_not_exist_is_no_installation() {
-        let graphviz =
-            AbstractGraphviz::new(Some("no/such/dot".to_owned()), "digraph G {\n}\n", "svg");
+        let graphviz = AbstractGraphviz::new(
+            Some("no/such/dot".to_owned()),
+            "digraph G {\n}\n",
+            "svg",
+            TIMEOUT_MS,
+        );
         assert!(!graphviz.exe_state_is_ok());
     }
 
@@ -195,7 +228,7 @@ mod tests {
     fn a_folder_is_no_installation() {
         let folder = tempfile::tempdir().unwrap();
         let named = folder.path().to_string_lossy().into_owned();
-        assert!(!AbstractGraphviz::new(Some(named), "", "svg").exe_state_is_ok());
+        assert!(!AbstractGraphviz::new(Some(named), "", "svg", TIMEOUT_MS).exe_state_is_ok());
     }
 
     #[cfg(unix)]
@@ -210,11 +243,31 @@ mod tests {
             Some(dot.to_string_lossy().into_owned()),
             "digraph G {\n}\n",
             "svg",
+            TIMEOUT_MS,
         );
         assert!(graphviz.exe_state_is_ok());
         assert_eq!(
             graphviz.create_file3().as_deref(),
             Some(&b"format -Tsvg\ndigraph G {\n}\n"[..])
         );
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_dot_still_running_after_the_timeout_is_killed() {
+        use std::os::unix::fs::PermissionsExt;
+        let folder = tempfile::tempdir().unwrap();
+        let dot = folder.path().join("dot");
+        fs::write(&dot, "#!/bin/sh\ncat\nexec sleep 60 > /dev/null 2>&1\n").unwrap();
+        fs::set_permissions(&dot, fs::Permissions::from_mode(0o755)).unwrap();
+        let graphviz = AbstractGraphviz::new(
+            Some(dot.to_string_lossy().into_owned()),
+            "digraph G {\n}\n",
+            "svg",
+            Duration::from_millis(200),
+        );
+        let started = Instant::now();
+        assert_eq!(graphviz.create_file3(), None);
+        assert!(started.elapsed() < Duration::from_secs(10));
     }
 }

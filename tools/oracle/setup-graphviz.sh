@@ -16,12 +16,24 @@ source_dir="$(cd "$(dirname "$0")" && pwd)"
 target="$(cd "$source_dir/../.." && pwd)/tools/graphviz"
 dot="$target/dot"
 
+is_installed() {
+	dpkg-query -W -f='${Status}' "$1" 2> /dev/null | grep -q 'install ok installed'
+}
+
+# Built from the graphviz source package, whose own binary package carries no Source field.
+is_graphviz_package() {
+	local source
+	source="$(apt-cache show --no-all-versions "$1" | sed -n 's/^Source: \([^ ]*\).*/\1/p')"
+	[[ "${source:-$1}" == graphviz ]]
+}
+
 if [[ ! -x "$dot" ]]; then
 	mkdir -p "$target/packages" "$target/root"
-	# The packages graphviz needs that this machine lacks: those it has are found where they are.
+	# Graphviz's own packages always, so that `dot`, its libraries and its plugins all come from here; of the
+	# others, those this machine lacks, the ones it has being found where they are.
 	packages=()
 	while read -r package; do
-		if ! dpkg-query -W -f='${Status}' "$package" 2> /dev/null | grep -q 'install ok installed'; then
+		if is_graphviz_package "$package" || ! is_installed "$package"; then
 			packages+=("$package")
 		fi
 	done < <(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks \
@@ -30,7 +42,12 @@ if [[ ! -x "$dot" ]]; then
 	for deb in "$target"/packages/*.deb; do
 		dpkg -x "$deb" "$target/root"
 	done
-	libraries="$(dirname "$(find "$target/root" -name 'libgvc.so.6' | head -n 1)")"
+	libgvc="$(find "$target/root" -name 'libgvc.so.6' | head -n 1)"
+	if [[ ! -x "$target/root/usr/bin/dot" || -z "$libgvc" ]]; then
+		echo "setup-graphviz.sh: the unpacked packages lack usr/bin/dot or libgvc.so.6" >&2
+		exit 1
+	fi
+	libraries="$(dirname "$libgvc")"
 	cat > "$dot" <<-EOF
 		#!/bin/sh
 		# Graphviz unpacked by tools/oracle/setup-graphviz.sh.

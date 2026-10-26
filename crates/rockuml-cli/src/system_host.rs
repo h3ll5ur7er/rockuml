@@ -6,7 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use rockuml::host::{Graphviz, Host};
 
-use crate::graphviz::{AbstractGraphviz, getenv_graphviz_dot};
+use crate::graphviz::{AbstractGraphviz, TIMEOUT_MS, getenv_graphviz_dot};
 
 #[derive(Default)]
 pub(crate) struct SystemHost {
@@ -14,13 +14,20 @@ pub(crate) struct SystemHost {
     limit_size: Option<String>,
     /// The `dot` the command line names, ahead of the environment's `GRAPHVIZ_DOT`.
     graphviz_dot: Option<String>,
+    /// `--graphviz-timeout`.
+    graphviz_timeout: Option<Duration>,
 }
 
 impl SystemHost {
-    pub(crate) fn new(limit_size: Option<String>, graphviz_dot: Option<String>) -> Self {
+    pub(crate) fn new(
+        limit_size: Option<String>,
+        graphviz_dot: Option<String>,
+        graphviz_timeout: Option<Duration>,
+    ) -> Self {
         Self {
             limit_size,
             graphviz_dot,
+            graphviz_timeout,
         }
     }
 }
@@ -74,6 +81,7 @@ impl Host for SystemHost {
             getenv_graphviz_dot,
             dot_string,
             format,
+            self.graphviz_timeout.unwrap_or(TIMEOUT_MS),
         )))
     }
 }

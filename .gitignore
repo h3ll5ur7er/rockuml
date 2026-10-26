@@ -19,3 +19,6 @@
 
 # Graphviz unpacked by tools/oracle/setup-graphviz.sh for the @startdot goldens
 /tools/graphviz/
+
+# Python bytecode
+__pycache__/

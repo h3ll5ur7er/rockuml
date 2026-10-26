@@ -226,6 +226,18 @@ fn images_scaled_beyond_what_rockuml_draws_are_left_out() {
     ]);
 }
 
+/// PlantUML throws cutting pieces less than a pixel long, or framing them beyond what Java can allocate.
+#[test]
+fn pages_plantuml_cannot_cut_are_given_up_promptly() {
+    renders_promptly(&["page 1000x1000", "class A"]);
+    renders_promptly(&[
+        "skinparam pageMargin 30000",
+        "skinparam pageExternalColor red",
+        "page 2x1",
+        "class A",
+    ]);
+}
+
 #[test]
 fn a_gif_takes_the_size_of_its_frame_not_of_its_screen() {
     renders_promptly(&[

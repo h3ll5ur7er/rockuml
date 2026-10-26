@@ -172,7 +172,7 @@ cli_flags! {
         doc("Pre-check syntax of all inputs and stop faster on error", 0), None;
     NoErrorImage: "--no-error-image" ["-noerror"] UnaryBoolean Ported
         doc("Do not generate error images for diagrams with syntax errors", 0), None;
-    Timeout: "--graphviz-timeout" ["-timeout"] BinaryNextArgumentValue Ignored
+    Timeout: "--graphviz-timeout" ["-timeout"] BinaryNextArgumentValue Ported
         doc_with_usage("Set Graphviz processing timeout (in seconds)", 1, "--graphviz-timeout <seconds>"), None;
     IgnoreStartumlFilename: "--ignore-startuml-filename" [] UnaryBoolean Ported
         doc("Ignore '@startuml <name>' and always derive output filenames from input files", 1), None;

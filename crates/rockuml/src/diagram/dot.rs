@@ -73,8 +73,11 @@ pub(super) fn create(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted
         data.push_str(text);
         data.push('\n');
     }
+    // PlantUML's factory gives no diagram for blank lines alone, so `PSystemErrorUtils.merge` throws out of
+    // `createPSystem`, uncaught: the command line then writes no image for any block of the file and exits 0,
+    // and `-pipe` dies with the exception's stack trace.
     let data = data.ok_or(NotYetPorted(
-        "the crash report of a @startdot block without a graph",
+        "the exception PlantUML throws on a @startdot block of blank lines",
     ))?;
     Ok(Box::new(PSystemDot { source, data }))
 }
@@ -315,6 +318,22 @@ mod tests {
         assert!(diagram(&["@startdot", "a -> b", "@enddot"]).is_error());
         assert!(diagram(&["@startdot", "@enddot"]).is_error());
         assert!(!graph().is_error());
+    }
+
+    #[test]
+    fn blank_lines_alone_are_no_diagram() {
+        let location = LineLocation::new("test", None);
+        let lines = ["@startdot", "  ", "\t", "@enddot"]
+            .iter()
+            .map(|text| StringLocated::new(*text, location.clone()))
+            .collect();
+        let Err(not_ported) = create(UmlSource::new(lines, Vec::new())) else {
+            panic!("a diagram");
+        };
+        assert_eq!(
+            not_ported.to_string(),
+            "the exception PlantUML throws on a @startdot block of blank lines is not ported yet"
+        );
     }
 
     #[test]

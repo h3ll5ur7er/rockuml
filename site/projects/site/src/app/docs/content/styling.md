@@ -235,7 +235,7 @@ In mind maps and work breakdowns, `:depth(1)` selects the nodes of one level, an
 
 ## Skins
 
-`skin name` starts the diagram from another of PlantUML's style sheets instead of its default one: `rose` (PlantUML's old colours), `debug` (big fonts and loud colours, to see which style applies where) and `sonyxperiadev`. It must come before anything that styles the diagram. A file `name.skin` beside the diagram, a style sheet that styles everything, is a skin too.
+`skin name` starts the diagram from another of PlantUML's style sheets instead of its default one: `rose` (PlantUML's old colours), `debug` (big fonts and loud colours, to see which style applies where) and `sonyxperiadev`. It must come before anything that styles the diagram. A file `name.skin` in the working directory or else beside the diagram, a style sheet that styles everything, is a skin too.
 
 ```rockuml
 @startuml

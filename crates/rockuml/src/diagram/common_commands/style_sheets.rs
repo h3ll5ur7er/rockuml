@@ -80,17 +80,29 @@ pub(super) fn skin<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     })
 }
 
+/// A file a line of the source loads as a style sheet or a skin.
+pub(crate) enum StyleFile {
+    /// Looked for as `FileSystem` does (`CommandStyleImport`).
+    Import(String),
+    /// Looked for in the working directory, then as `FileSystem` does (`StyleLoader.getInputStreamForStyle`).
+    Skin(String),
+}
+
 /// The style sheet or skin file a line of the source loads, so that it can be read before the diagram is
 /// built.
-pub(crate) fn style_file_named(line: &str) -> Option<String> {
+pub(crate) fn style_file_named(line: &str) -> Option<StyleFile> {
     static IMPORT: LazyLock<RegexTree> = LazyLock::new(import_pattern);
     static SKIN: LazyLock<RegexTree> = LazyLock::new(skin_pattern);
     let line = line.trim();
     if let Some(arg) = IMPORT.matcher(line) {
-        return arg.get("PATH", 0).map(str::to_owned);
+        return arg
+            .get("PATH", 0)
+            .map(|path| StyleFile::Import(path.to_owned()));
     }
-    SKIN.matcher(line)
-        .and_then(|arg| arg.get("SKIN", 0).map(skin_file_name))
+    SKIN.matcher(line).and_then(|arg| {
+        arg.get("SKIN", 0)
+            .map(|name| StyleFile::Skin(skin_file_name(name)))
+    })
 }
 
 fn command<D: TitledDiagram + 'static>(
