@@ -1,0 +1,8 @@
+@startflow
+a "Draft"
+e b "Review"
+e c "Publish"
+w a
+s d "Archive"
+n c
+@endflow
