@@ -395,7 +395,6 @@ impl SvgGraphics {
         self.current_group().append_child(element);
     }
 
-    /// `x,y`, after growing the image to show the point.
     /// A point of a path, which the document grows to cover with `shadow` to spare.
     fn visible_point(&mut self, x: f64, y: f64, shadow: f64) -> String {
         self.ensure_visible(x + shadow, y + shadow);

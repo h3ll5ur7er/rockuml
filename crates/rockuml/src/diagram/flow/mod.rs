@@ -11,7 +11,7 @@ use super::builder::CommandFactory;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
-use crate::color::{HColor, XColor};
+use crate::color::HColor;
 use crate::command::factory::AbstractDiagram;
 use crate::command::{
     Command, CommandError, CommandResult, ParserPass, PatternCommand, SingleLine,
@@ -30,9 +30,6 @@ use crate::text::LineLocation;
 /// The room of one grid cell.
 const SINGLE_SIZE_X: f64 = 100.0;
 const SINGLE_SIZE_Y: f64 = 35.0;
-
-const MY_RED: HColor = HColor::Simple(XColor::rgb(0xA8, 0x00, 0x36));
-const MY_YELLOW: HColor = HColor::Simple(XColor::rgb(0xFE, 0xFE, 0xCE));
 
 /// Reads flow diagrams (PlantUML's `FlowDiagramFactory`).
 pub(super) struct FlowDiagramFactory;
@@ -277,7 +274,7 @@ impl TextBlock for Drawing<'_> {
                 y + f64::from(position.ymin) * SINGLE_SIZE_Y + delta_y / 2.0,
             ));
         }
-        let ug = ug.with_color(MY_RED).with_backcolor(MY_RED);
+        let ug = ug.with_color(HColor::MY_RED).with_backcolor(HColor::MY_RED);
         for path in self.field.get_paths() {
             self.draw_path(&ug, (x, y), path);
         }
@@ -320,7 +317,9 @@ impl TextBlock for ActivityBox {
     fn draw_u(&self, ug: &UGraphic) {
         let dim_total = self.calculate_dimension(ug.string_bounder());
         let rect = URectangle::new(dim_total.width, dim_total.height).rounded(Self::CORNER);
-        let ug = ug.with_color(MY_RED).with_backcolor(MY_YELLOW);
+        let ug = ug
+            .with_color(HColor::MY_RED)
+            .with_backcolor(HColor::MY_YELLOW);
         ug.with_stroke(UStroke::with_thickness(1.5))
             .draw(&UShape::Rectangle(rect));
         self.tb.draw_u(&ug.translated(Self::MARGIN, Self::MARGIN));

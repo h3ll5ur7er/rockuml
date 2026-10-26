@@ -76,8 +76,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Diagram | Status | Reference diagrams | Notes | In PlantUML |
 |---|---|---|---|---|
-| [The welcome screen of an empty diagram](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemWelcomeFactory` |
-| [The colour chart (`colors`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemColorsFactory` |
+| [The welcome screen of an empty diagram](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemWelcomeFactory` |
+| [The colour chart (`colors`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemColorsFactory` |
 | [Sequence diagrams](docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
 | [Class and object diagrams](docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
 | [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 15 of 15 match PlantUML |  | `ActivityDiagramFactory` |
@@ -86,13 +86,13 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
 | [BPM diagrams](docs/bpm) | ✅ Ported | 14 of 14 match PlantUML |  | `BpmDiagramFactory` |
 | [The license diagram (`license`)](docs/reference-cards) | ✅ Ported |  | Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's. | `PSystemLicenseFactory` |
-| [The version diagram (`version`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned. | `PSystemVersionFactory` |
-| [The skin parameter list (`skinparameters`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemSkinparameterListFactory` |
+| [The version diagram (`version`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML | `version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. The license key lines (`keygen`, `keyimport`, `keycheck`, `keydistributor`) are recognised and not planned: PlantUML draws cards for them that request, import or check a key for its professional edition, which rockuml has no use for. | `PSystemVersionFactory` |
+| [The skin parameter list (`skinparameters`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemSkinparameterListFactory` |
 | [The font list (`listfonts`)](docs/reference-cards) | ✅ Ported |  | Lists the fonts rockuml draws with, its embedded Liberation fonts and the fonts registered with `--font` or `ROCKUML_FONTS`, instead of the machine's: rockuml never picks up system fonts. | `PSystemListFontsFactory` |
-| [The emoji list (`emoji`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | The browser build has no emoji but the two that file trees draw, so it lists no more. | `PSystemListEmojiFactory` |
-| [An Open Iconic icon on its own (`openiconic`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | An unknown icon, on which PlantUML crashes, is reported as not ported. | `PSystemOpenIconicFactory` |
-| [The Open Iconic list (`listopeniconic`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemListOpenIconicFactory` |
-| [The ArchiMate sprite list](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemListArchimateSpritesFactory` |
+| [The emoji list (`emoji`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML | The browser build has no emoji but the two that file trees draw, so it lists no more. | `PSystemListEmojiFactory` |
+| [An Open Iconic icon on its own (`openiconic`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML | An unknown icon, on which PlantUML crashes, is reported as not ported. | `PSystemOpenIconicFactory` |
+| [The Open Iconic list (`listopeniconic`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemListOpenIconicFactory` |
+| [The ArchiMate sprite list](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemListArchimateSpritesFactory` |
 | [Wireframes (Salt)](docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
 | [Graphviz sources (`@startdot`)](docs/dot) | ✅ Ported | 11 of 11 match PlantUML | Runs the installed Graphviz `dot`, as PlantUML does, so the command line draws it and the browser build reports it as not available. `-f debug` and `svg-deterministic` always report the crash PlantUML usually reports for them. | `PSystemDotFactory` |
 | [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
@@ -100,13 +100,13 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
 | [Charts](docs/chart) | ✅ Ported | 16 of 16 match PlantUML |  | `ChartDiagramFactory` |
 | [Packet diagrams](docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
-| [Definitions drawn on their own (`@startdef`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemDefinitionFactory` |
-| [The sprite list (`listsprites`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `ListSpriteDiagramFactory` |
+| [Definitions drawn on their own (`@startdef`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemDefinitionFactory` |
+| [The sprite list (`listsprites`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `ListSpriteDiagramFactory` |
 | [Creole text (`@startcreole`)](docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
 | [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
 | [Flow diagrams](docs/flow) | ✅ Ported | 8 of 11 match PlantUML |  | `FlowDiagramFactory` |
 | [Timing diagrams](docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
-| [Help diagrams (`help keywords`, …)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `help fonts` lists the fonts rockuml always has, not those of the machine. | `HelpFactory` |
+| [Help diagrams (`help keywords`, …)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML | `help fonts` lists the fonts rockuml draws with, as `listfonts` does, not those of the machine. | `HelpFactory` |
 | [Wire diagrams](docs/wire) | ✅ Ported | 11 of 11 match PlantUML |  | `WireDiagramFactory` |
 | [JSON data](docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
 | [Git diagrams](docs/git) | ✅ Ported | 10 of 10 match PlantUML |  | `GitDiagramFactory` |

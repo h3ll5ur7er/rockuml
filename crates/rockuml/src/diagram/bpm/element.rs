@@ -4,7 +4,7 @@
 use std::rc::Rc;
 
 use super::grid::{Connections, Where};
-use crate::color::{Colors, HColor, XColor};
+use crate::color::{Colors, HColor};
 use crate::creole::Display;
 use crate::ftile::vertical::{FtileBox, FtileCircleStart, FtileDiamond};
 use crate::ftile::{BoxStyle, Ftile};
@@ -15,11 +15,6 @@ use crate::klimt::shape::UShape;
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::SkinParam;
 use crate::style::{SName, StyleSignature};
-
-/// The defaults of PlantUML's `ColorParam.activityBorder` and `activityBackground`, which no `skinparam`
-/// reaches: the diagram draws with a skin of its own.
-const ACTIVITY_BORDER: HColor = HColor::Simple(XColor::rgb(0xA8, 0x00, 0x36));
-const ACTIVITY_BACKGROUND: HColor = HColor::Simple(XColor::rgb(0xFE, 0xFE, 0xCE));
 
 /// PlantUML's `END` is never made, so it is left out.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -73,10 +68,12 @@ impl BpmElement {
                     &Colors::default(),
                 ))
             }
+            // The defaults of `ColorParam.activityBackground` and `activityBorder`, which no `skinparam`
+            // reaches: the diagram draws with a skin of its own.
             BpmElementType::Merge => Box::new(FtileDiamond::new(
                 skin_param.clone(),
-                ACTIVITY_BACKGROUND,
-                ACTIVITY_BORDER,
+                HColor::MY_YELLOW,
+                HColor::MY_RED,
                 None,
             )),
             BpmElementType::DockedEvent => Box::new(FtileBox::create(

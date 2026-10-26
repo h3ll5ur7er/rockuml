@@ -3,6 +3,7 @@
 
 use std::rc::Rc;
 
+use super::builder::PSystemSingleLineFactory;
 use super::donors::get_cols;
 use super::ug_diagram::UgDiagram;
 use super::{Diagram, NotYetPorted, UmlSource};
@@ -14,30 +15,34 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{TextBlock, VerticalAlignment};
 use crate::openiconic::OpenIconic;
 
-/// PlantUML's `PSystemOpenIconicFactory`: `openiconic` and the icon's name.
-pub(super) fn execute_line(
-    source: &Rc<UmlSource>,
-    line: &str,
-) -> Option<Result<Box<dyn Diagram>, NotYetPorted>> {
-    let line_lower = line.to_lowercase();
-    if !line_lower.starts_with("openiconic ") {
-        return None;
+/// `openiconic` and the icon's name (PlantUML's `PSystemOpenIconicFactory`).
+pub(super) struct PSystemOpenIconicFactory;
+
+impl PSystemSingleLineFactory for PSystemOpenIconicFactory {
+    fn execute_line(
+        source: &Rc<UmlSource>,
+        line: &str,
+    ) -> Option<Result<Box<dyn Diagram>, NotYetPorted>> {
+        let line_lower = line.to_lowercase();
+        if !line_lower.starts_with("openiconic ") {
+            return None;
+        }
+        let icon_name = &line_lower["openiconic ".len()..];
+        // PlantUML crashes on a name it has no icon of.
+        Some(
+            OpenIconic::retrieve(icon_name)
+                .map(|icon| {
+                    UgDiagram::with_margin(
+                        source,
+                        PSystemOpenIconic { icon },
+                        ClockwiseTopRightBottomLeft::same(5.0),
+                    )
+                })
+                .ok_or(NotYetPorted(
+                    "the crash report of an unknown Open Iconic icon",
+                )),
+        )
     }
-    let icon_name = &line_lower["openiconic ".len()..];
-    // PlantUML crashes on a name it has no icon of.
-    Some(
-        OpenIconic::retrieve(icon_name)
-            .map(|icon| {
-                UgDiagram::with_margin(
-                    source,
-                    PSystemOpenIconic { icon },
-                    ClockwiseTopRightBottomLeft::same(5.0),
-                )
-            })
-            .ok_or(NotYetPorted(
-                "the crash report of an unknown Open Iconic icon",
-            )),
-    )
 }
 
 /// The icon in black, at its own size.
@@ -57,12 +62,18 @@ impl TextBlock for PSystemOpenIconic {
     }
 }
 
-/// PlantUML's `PSystemListOpenIconicFactory`: a line that starts with `listopeniconic`.
-pub(super) fn execute_list_line(source: &Rc<UmlSource>, line: &str) -> Option<Box<dyn Diagram>> {
-    if !line.to_lowercase().starts_with("listopeniconic") {
-        return None;
+/// A line that starts with `listopeniconic` (PlantUML's `PSystemListOpenIconicFactory`).
+pub(super) struct PSystemListOpenIconicFactory;
+
+impl PSystemSingleLineFactory for PSystemListOpenIconicFactory {
+    fn execute_line(
+        source: &Rc<UmlSource>,
+        line: &str,
+    ) -> Option<Result<Box<dyn Diagram>, NotYetPorted>> {
+        line.to_lowercase()
+            .starts_with("listopeniconic")
+            .then(|| Ok(UgDiagram::create(source, list_open_iconic())))
     }
-    Some(UgDiagram::create(source, list_open_iconic()))
 }
 
 /// Every icon beside its name, in seven columns (PlantUML's `PSystemListOpenIconic`).
@@ -76,5 +87,5 @@ fn list_open_iconic() -> TextBlockHorizontal<'static> {
     .map(str::to_owned)
     .into();
     lines.extend(OpenIconic::names().map(|s| format!("<&{s}> {s}")));
-    TextBlockHorizontal::new(get_cols(&lines, 7, 0), VerticalAlignment::Top)
+    TextBlockHorizontal::new(get_cols(&lines, 7), VerticalAlignment::Top)
 }

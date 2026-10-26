@@ -80,13 +80,6 @@ impl XColor {
     }
 }
 
-/// The names of the colours PlantUML knows, sorted (`HColorSet.names`).
-pub(crate) fn color_names() -> Vec<&'static str> {
-    let mut names: Vec<&str> = NAMED_COLORS.iter().map(|&(name, _)| name).collect();
-    names.sort_unstable();
-    names
-}
-
 /// How an image format paints colours: as given, as grays (`skinparam monochrome`) or reversed
 /// (`skinparam reversecolor`). The `debug` format describes the drawing and keeps them as given.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -200,6 +193,10 @@ impl HColor {
     pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
     pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
     pub const RED: HColor = HColor::Simple(XColor::rgb(255, 0, 0));
+    /// The borders of PlantUML's original skin.
+    pub const MY_RED: HColor = HColor::Simple(XColor::rgb(0xA8, 0x00, 0x36));
+    /// The backgrounds of PlantUML's original skin.
+    pub const MY_YELLOW: HColor = HColor::Simple(XColor::rgb(0xFE, 0xFE, 0xCE));
     /// The green of PlantUML's error and crash reports.
     pub const MY_GREEN: HColor = HColor::Simple(XColor::rgb(0x33, 0xFF, 0x02));
     /// No colour: nothing is painted.
@@ -462,12 +459,9 @@ fn parse_simple_color(text: &str) -> Option<XColor> {
     from_hex.or_else(|| named_color(text))
 }
 
-/// The colour names, sorted as PlantUML's `HColorSet.names` lists them.
-pub(crate) fn names() -> Vec<String> {
-    let mut names: Vec<String> = NAMED_COLORS
-        .iter()
-        .map(|&(name, _)| name.to_owned())
-        .collect();
+/// The names of the colours PlantUML knows, sorted (`HColorSet.names`).
+pub(crate) fn names() -> Vec<&'static str> {
+    let mut names: Vec<&str> = NAMED_COLORS.iter().map(|&(name, _)| name).collect();
     names.sort_unstable();
     names
 }

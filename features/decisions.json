@@ -365,7 +365,7 @@
       ],
       "docs": "reference-cards",
       "group": "Reference cards",
-      "notes": "`help fonts` lists the fonts rockuml always has, not those of the machine."
+      "notes": "`help fonts` lists the fonts rockuml draws with, as `listfonts` does, not those of the machine."
     },
     "PSystemWelcomeFactory": {
       "title": "The welcome screen of an empty diagram",
@@ -398,7 +398,7 @@
         "cards"
       ],
       "docs": "reference-cards",
-      "notes": "`version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned.",
+      "notes": "`version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. The license key lines (`keygen`, `keyimport`, `keycheck`, `keydistributor`) are recognised and not planned: PlantUML draws cards for them that request, import or check a key for its professional edition, which rockuml has no use for.",
       "group": "Reference cards"
     },
     "PSystemLicenseFactory": {

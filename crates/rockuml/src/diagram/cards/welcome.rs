@@ -15,7 +15,7 @@ pub(in crate::diagram) struct PSystemWelcomeFactory;
 impl PSystemWelcomeFactory {
     pub(in crate::diagram) fn create_system(source: &Rc<UmlSource>) -> Outcome {
         if source.lines().len() == 2 {
-            Outcome::Diagram(Ok(UgDiagram::boxed(
+            Outcome::Diagram(Ok(UgDiagram::create(
                 source,
                 PSystemWelcome::new(GraphicPosition::BackgroundCornerBottomRight),
             )))

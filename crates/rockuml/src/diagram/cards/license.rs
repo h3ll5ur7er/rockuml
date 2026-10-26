@@ -5,6 +5,7 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::version::LAYS_OUT_ITSELF;
 use super::{Card, UgDiagram};
 use crate::diagram::builder::{PSystemSingleLineFactory, whole_line};
 use crate::diagram::{Diagram, NotYetPorted, UmlSource};
@@ -23,7 +24,7 @@ impl PSystemSingleLineFactory for PSystemLicenseFactory {
         static PATTERN: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)li[sc][ea]n[sc]e\s*"));
         PATTERN
             .is_match(line)
-            .then(|| Ok(UgDiagram::boxed(source, PSystemLicense)))
+            .then(|| Ok(UgDiagram::create(source, PSystemLicense)))
     }
 }
 
@@ -88,7 +89,7 @@ impl License {
             "by any license, then the generated images are logically covered",
             "by the very same license.",
             " ",
-            "rockuml lays out every diagram itself: it needs no GraphViz installation.",
+            LAYS_OUT_ITSELF,
             " ",
             "Fonts Liberation Sans, Serif and Mono (c) Red Hat, Inc., under the SIL Open Font License 1.1",
             "Icons provided by OpenIconic :  https://useiconic.com/open",
