@@ -104,6 +104,16 @@ impl CliOptions {
         })
     }
 
+    /// `--graphviz-timeout`, in whole seconds.
+    pub(crate) fn graphviz_timeout(&self) -> Option<std::time::Duration> {
+        let timeout = self.get_string(CliFlag::Timeout)?;
+        if !timeout.bytes().all(|byte| byte.is_ascii_digit()) {
+            return None;
+        }
+        let seconds: u32 = timeout.parse().ok()?;
+        Some(std::time::Duration::from_secs(seconds.into()))
+    }
+
     /// `-f` wins over flags such as `-tsvg`; of those, PlantUML takes the first in its order that is given
     /// once. PNG is the default.
     pub(crate) fn file_format(&self) -> Result<FileFormat, String> {

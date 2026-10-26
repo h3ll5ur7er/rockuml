@@ -768,11 +768,11 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
     where it runs the same script, so the cases must run there.
   - Faithful to PlantUML: a dot syntax error or warning ends up in the image file, a missing `dot` or a failed
     run draws PlantUML's green-on-black message and exits with status 200 (503 from the server), and
-    `INSECURE`/`INTERNET_WITH_DOTSVG` write the "feature has been suppressed" SVG.
+    `INSECURE`/`INTERNET_WITH_DOTSVG` write the "feature has been suppressed" SVG. As in `ProcessRunner`, a
+    `dot` still running 30 seconds (`--graphviz-timeout`) after its output ends is killed: a crash.
   - Deviations: `-f debug` and `svg-deterministic` ask `dot` for formats it does not have; PlantUML then
     reports a crash or writes `dot`'s complaint, depending on a race that the first diagram of a run usually
-    loses. rockuml always reports the crash, and the generator drops goldens of the complaint. No timeout:
-    `--graphviz-timeout` stays ignored.
+    loses. rockuml always reports the crash, and the generator drops goldens of the complaint.
 
 ### Phase 28 — BPM diagrams
 - **Status: done.** `@startbpm` (`BpmDiagramFactory` and its seven commands): events, merges, `resume`, `goto`
