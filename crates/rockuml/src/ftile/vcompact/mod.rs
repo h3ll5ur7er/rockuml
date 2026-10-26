@@ -5,6 +5,7 @@ mod abstract_parallel_ftiles_builder;
 mod cond;
 mod connection_hline;
 mod connection_vertical_down;
+mod floating_note;
 mod ftile_factory_delegator_add_note;
 mod ftile_factory_delegator_add_url;
 mod ftile_factory_delegator_assembly;
@@ -33,6 +34,7 @@ mod ugraphic_interceptor_one_swimlane;
 mod v_compact_factory;
 
 pub(crate) use connection_vertical_down::ConnectionVerticalDown;
+pub(crate) use floating_note::FloatingNote;
 pub(crate) use ftile_factory_delegator_add_note::FtileFactoryDelegatorAddNote;
 pub(crate) use ftile_factory_delegator_add_url::FtileFactoryDelegatorAddUrl;
 pub(crate) use ftile_factory_delegator_assembly::FtileFactoryDelegatorAssembly;

@@ -1,0 +1,28 @@
+DPI: 96
+dimension: [ 303.8559 ; 69.0000 ]
+scaleFactor: 1.0000
+seed: -1420125708187235986
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 293.8559 ; 45.0000 ]
+
+TEXT:
+  text: Nothing to draw
+  position: [ 20.0000 ; 30.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: Syntax error!
+  position: [ 53.2956 ; 55.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

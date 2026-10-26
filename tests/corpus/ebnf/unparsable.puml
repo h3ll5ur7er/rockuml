@@ -1,0 +1,4 @@
+@startebnf
+good = a ;
+bad = a # b ;
+@endebnf

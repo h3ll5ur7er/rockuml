@@ -13,6 +13,7 @@ pub(crate) mod cuca;
 mod cuca_commands;
 mod description;
 mod diagram_type;
+mod ebnf;
 mod error;
 mod files;
 mod gantt;
@@ -22,6 +23,7 @@ mod json;
 mod mindmap;
 mod nwdiag;
 mod packetdiag;
+mod regexdiagram;
 mod salt;
 mod scale;
 mod sequence;
@@ -190,6 +192,8 @@ pub fn create(
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
         Some(DiagramType::Board) => |source, _| builder::create_board(source),
         Some(DiagramType::Git) => |source, _| git::create(source),
+        Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),
+        Some(DiagramType::Regex) => |source, _| builder::create_regex(source),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

@@ -1,6 +1,7 @@
 //! Diagram commands: each recognises some source lines and applies them to the diagram being built.
 
 mod bloc_lines;
+mod char_inspector;
 mod decorator_multine;
 pub(crate) mod factory;
 mod multiline;
@@ -9,6 +10,7 @@ mod ubrex_single_line;
 pub(crate) mod unported;
 
 pub(crate) use bloc_lines::BlocLines;
+pub(crate) use char_inspector::{CharInspector, PastTheEnd};
 pub(crate) use decorator_multine::DecoratorMultine;
 pub(crate) use multiline::Multiline;
 pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
@@ -66,6 +68,15 @@ impl CommandError {
     /// A colour name no colour has (`CommandExecutionResult.badColor`).
     pub(crate) fn bad_color() -> Self {
         Self::with_score("No such color", 10)
+    }
+
+    /// A command that threw `exception`, a Java exception's class name, as PlantUML's `ProtectedCommand`
+    /// reports it.
+    pub(crate) fn thrown(exception: &str) -> Self {
+        Self::new(format!(
+            "You should send a mail to plantuml@gmail.com with this log (V{}) {exception}",
+            crate::PLANTUML_VERSION
+        ))
     }
 }
 

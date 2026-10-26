@@ -1,0 +1,6 @@
+@startebnf
+quote = '"', text, '"' ;
+space = ? US-ASCII character 32 ? ;
+empty = "" | '' ;
+mixed = 'single', "double", ? special ?, plain_name, with-dash ;
+@endebnf

@@ -17,11 +17,13 @@ use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
+use super::ebnf::PSystemEbnfFactory;
 use super::error::ErrorDiagram;
 use super::gantt::GanttDiagramFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
 use super::packetdiag::PacketDiagramFactory;
+use super::regexdiagram::PSystemRegexFactory;
 use super::sequence::SequenceDiagramFactory;
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
@@ -182,6 +184,16 @@ pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYet
 /// A `@startwbs` diagram.
 pub(super) fn create_wbs(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<WbsDiagramFactory>])
+}
+
+/// A `@startebnf` diagram.
+pub(super) fn create_ebnf(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PSystemEbnfFactory>])
+}
+
+/// A `@startregex` diagram.
+pub(super) fn create_regex(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PSystemRegexFactory>])
 }
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.

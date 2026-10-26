@@ -77,6 +77,7 @@ Every diagram sits between a start line and an end line. `@startuml` and `@endum
 | File trees | `@startfiles` |
 | Boards | `@startboard` |
 | Git commit graphs | `@startgit` |
+| EBNF grammars and regular expressions | `@startebnf`, `@startregex` |
 | Network diagrams | `@startnwdiag` |
 | Packet diagrams | `@startpacketdiag` |
 | Wireframes | `@startsalt` |

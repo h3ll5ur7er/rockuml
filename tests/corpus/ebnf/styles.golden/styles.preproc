@@ -1,0 +1,22 @@
+@startebnf
+<style>
+element {
+  ebnf {
+    LineColor #2E5C8A
+    BackGroundColor #E8F0FA
+    FontColor #102030
+    FontSize 14
+    note {
+      BackGroundColor #FFF4D0
+      LineColor #A08020
+    }
+  }
+}
+document {
+  BackGroundColor #FCFCF8
+}
+</style>
+caption Styled rules
+(* the entry point *)
+program = "begin", { statement (* any number *) }, "end" ;
+@endebnf

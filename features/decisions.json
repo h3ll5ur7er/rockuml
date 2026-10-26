@@ -284,13 +284,28 @@
     },
     "PSystemEbnfFactory": {
       "title": "EBNF diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/ebnf",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "ebnf"
+      ],
+      "docs": "ebnf"
     },
     "PSystemRegexFactory": {
       "title": "Regular expression diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/regexdiagram",
+        "diagram/ebnf",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "regex"
+      ],
+      "docs": "regex"
     },
     "PSystemMathFactory": {
       "title": "Math (`@startmath`)",

@@ -1,0 +1,6 @@
+@startebnf
+header Generated
+footer page footer
+args = arg, { ",", arg } ;
+params = param, { ",", param } ;
+@endebnf

@@ -1,0 +1,10 @@
+@startebnf
+!$sep = '","'
+!function $list($item)
+!return $item + ", { " + $sep + ", " + $item + " }"
+!endfunction
+header Generated
+footer page footer
+args = $list("arg") ;
+params = $list("param") ;
+@endebnf
