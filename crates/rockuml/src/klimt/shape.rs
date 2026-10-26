@@ -284,6 +284,8 @@ impl USegment {
 pub struct UText {
     pub text: String,
     pub font: FontConfiguration,
+    /// Degrees: 90 reads upwards, 270 downwards; anything else is drawn level.
+    pub orientation: i32,
 }
 
 impl UText {
@@ -291,6 +293,15 @@ impl UText {
         Self {
             text: crate::jaws::make_newlines_visible(text),
             font,
+            orientation: 0,
+        }
+    }
+
+    #[must_use]
+    pub fn with_orientation(self, orientation: i32) -> Self {
+        Self {
+            orientation,
+            ..self
         }
     }
 }

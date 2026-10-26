@@ -171,6 +171,7 @@ impl UGraphicSvg {
             text_decoration: (!decorations.is_empty()).then(|| decorations.join(" ")),
             text_length: dimension.width,
             back_color,
+            orientation: shape.orientation,
         });
         for (color, delta_y) in extra_lines {
             svg.set_stroke_color(Some(&color.to_svg(mapper)));
@@ -215,6 +216,7 @@ impl UGraphicSvg {
             text_decoration: None,
             text_length: 0.0,
             back_color: None,
+            orientation: 0,
         });
     }
 

@@ -347,6 +347,79 @@ pub(crate) fn format_fixed(value: f64, decimals: usize) -> String {
     text
 }
 
+/// `String.format(Locale.US, "%.Ne", value)` for a finite value: like [`format_fixed`], the shortest decimal
+/// representation rounded half-up, then an exponent of at least two digits (`1.25e-03`).
+pub(crate) fn format_scientific(value: f64, decimals: usize) -> String {
+    let scientific = format!("{:e}", value.abs());
+    let (mantissa, exponent) = scientific
+        .split_once('e')
+        .expect("{:e} always has an exponent");
+    let mut exponent: i32 = exponent.parse().expect("{:e} exponents are integers");
+    let significant: Vec<u8> = mantissa
+        .bytes()
+        .filter(u8::is_ascii_digit)
+        .map(|digit| digit - b'0')
+        .collect();
+    let mut kept: Vec<u8> = (0..=decimals)
+        .map(|index| significant.get(index).copied().unwrap_or(0))
+        .collect();
+    if significant
+        .get(decimals + 1)
+        .is_some_and(|&digit| digit >= 5)
+    {
+        round_up(&mut kept);
+        if kept.len() > decimals + 1 {
+            kept.pop();
+            exponent += 1;
+        }
+    }
+    let digits: String = kept.iter().map(|digit| char::from(b'0' + digit)).collect();
+    let (integer, fraction) = digits.split_at(1);
+    let sign = if value.is_sign_negative() { "-" } else { "" };
+    let point = if decimals > 0 { "." } else { "" };
+    let exponent_sign = if exponent < 0 { '-' } else { '+' };
+    format!(
+        "{sign}{integer}{point}{fraction}e{exponent_sign}{:02}",
+        exponent.abs()
+    )
+}
+
+/// `Double.parseDouble`: surrounding control characters and spaces are ignored, and a trailing `f` or `d`
+/// is allowed. Hexadecimal notation is not read.
+pub(crate) fn parse_double(text: &str) -> Option<f64> {
+    let text = trim(text);
+    let unsigned = text.strip_prefix(['+', '-']).unwrap_or(text);
+    if unsigned == "NaN" || unsigned == "Infinity" {
+        return text.replace("Infinity", "inf").parse().ok();
+    }
+    let number = unsigned
+        .strip_suffix(['f', 'F', 'd', 'D'])
+        .unwrap_or(unsigned);
+    let (mantissa, exponent) = match number.find(['e', 'E']) {
+        Some(at) => (&number[..at], Some(&number[at + 1..])),
+        None => (number, None),
+    };
+    let (integer, fraction) = mantissa.split_once('.').unwrap_or((mantissa, ""));
+    let all_digits = |part: &str| part.bytes().all(|byte| byte.is_ascii_digit());
+    let valid_mantissa =
+        all_digits(integer) && all_digits(fraction) && !(integer.is_empty() && fraction.is_empty());
+    let valid_exponent = exponent.is_none_or(|exponent| {
+        let digits = exponent.strip_prefix(['+', '-']).unwrap_or(exponent);
+        !digits.is_empty() && all_digits(digits)
+    });
+    if !(valid_mantissa && valid_exponent) {
+        return None;
+    }
+    let sign = if text.starts_with('-') { "-" } else { "" };
+    let exponent = exponent.map(|exponent| format!("e{exponent}"));
+    format!(
+        "{sign}{integer}.{fraction}0{}",
+        exponent.unwrap_or_default()
+    )
+    .parse()
+    .ok()
+}
+
 fn round_up(digits: &mut Vec<u8>) {
     for digit in digits.iter_mut().rev() {
         if *digit == 9 {
@@ -477,6 +550,47 @@ mod tests {
                 "{value} with {decimals} decimals"
             );
         }
+    }
+
+    /// Expectations printed by the JDK's `String.format(Locale.US, "%.2e", ...)`.
+    #[test]
+    fn scientific_formatting_rounds_like_java() {
+        let cases = [
+            (0.005, "5.00e-03"),
+            (-0.001_234_5, "-1.23e-03"),
+            (0.009_995, "1.00e-02"),
+            (0.001_235, "1.24e-03"),
+            (1.5e-12, "1.50e-12"),
+            (123_456.0, "1.23e+05"),
+        ];
+        for (value, expected) in cases {
+            assert_eq!(format_scientific(value, 2), expected, "{value}");
+        }
+    }
+
+    #[test]
+    fn doubles_parse_like_java() {
+        let cases = [
+            ("1", Some(1.0)),
+            (" -2.5 ", Some(-2.5)),
+            ("1.", Some(1.0)),
+            (".5", Some(0.5)),
+            ("+3e2", Some(300.0)),
+            ("4d", Some(4.0)),
+            ("1E-2f", Some(0.01)),
+            ("-Infinity", Some(f64::NEG_INFINITY)),
+            (".", None),
+            ("", None),
+            ("1.2.3", None),
+            ("inf", None),
+            ("1e", None),
+            ("(1", None),
+            ("Mar", None),
+        ];
+        for (text, expected) in cases {
+            assert_eq!(parse_double(text), expected, "{text:?}");
+        }
+        assert!(parse_double("NaN").is_some_and(f64::is_nan));
     }
 
     /// Orders observed on the JDK for maps built like PlantUML's regex results: putAll of child maps.

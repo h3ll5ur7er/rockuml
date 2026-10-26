@@ -47,6 +47,8 @@ pub(super) struct SvgText<'a> {
     pub text_decoration: Option<String>,
     pub text_length: f64,
     pub back_color: Option<String>,
+    /// [`UText::orientation`](crate::klimt::shape::UText::orientation).
+    pub orientation: i32,
 }
 
 pub(super) struct SvgGraphics {
@@ -470,6 +472,19 @@ impl SvgGraphics {
         element.set_attribute("x", self.length(text.x));
         element.set_attribute("y", self.length(text.y));
         self.fill_me(&mut element);
+        let rotation = match text.orientation {
+            90 => Some(-90),
+            270 => Some(90),
+            _ => None,
+        };
+        if let Some(degrees) = rotation {
+            let transform = format!(
+                "rotate({degrees} {} {})",
+                self.length(text.x),
+                self.length(text.y)
+            );
+            element.set_attribute("transform", transform);
+        }
         element.set_attribute("font-size", self.length(f64::from(text.font_size)));
         if text.text.encode_utf16().nth(1).is_some() {
             element.set_attribute("textLength", self.length(text.text_length));

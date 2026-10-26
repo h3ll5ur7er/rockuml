@@ -8,7 +8,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 23 diagram types <<ported>>
+** Ported: 24 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -19,6 +19,7 @@ mindmapDiagram {
 *** Network diagrams <<ported>>
 *** Mind maps <<ported>>
 *** Work breakdown structures <<ported>>
+*** Charts <<ported>>
 *** Packet diagrams <<ported>>
 *** Creole text <<ported>>
 *** Gantt charts <<ported>>
@@ -36,13 +37,13 @@ left side
 ** Planned <<planned>>
 *** BPM diagrams <<planned>>
 *** Graphviz sources <<planned>>
-*** Charts <<planned>>
 *** Ditaa diagrams <<planned>>
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
 *** Flow diagrams <<planned>>
-*** and 2 more <<planned>>
+*** Wire diagrams <<planned>>
+*** and 1 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -64,8 +65,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 23 of 52 ported, 21 planned, 8 not planned |
-| Commands of the ported diagrams | 996 of 996 ported |
+| Diagram types | 24 of 52 ported, 20 planned, 8 not planned |
+| Commands of the ported diagrams | 1049 of 1049 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -85,6 +86,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
+| [Charts](docs/chart) | ✅ Ported | 16 of 16 match PlantUML |  | `ChartDiagramFactory` |
 | [Packet diagrams](docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
 | [Creole text (`@startcreole`)](docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
 | [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
@@ -110,7 +112,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | The Open Iconic list (`listopeniconic`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListOpenIconicFactory` |
 | The ArchiMate sprite list | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListArchimateSpritesFactory` |
 | Graphviz sources (`@startdot`) | 🗓️ Planned later |  | Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz. | `PSystemDotFactory` |
-| Charts | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `ChartDiagramFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines. | `PSystemDitaaFactory` |
 | Definitions drawn on their own (`@startdef`) | 🗓️ Planned later |  | Definitions work with `!includedef`; drawing them on their own is rarely needed. | `PSystemDefinitionFactory` |
 | The sprite list (`listsprites`) | 🗓️ Planned later |  | A reference card; low priority. | `ListSpriteDiagramFactory` |

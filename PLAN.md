@@ -708,6 +708,16 @@ charts (6.3k).
   between the rows, and the common commands (title, legend, styles, scale, sprites). 9 cases match every output.
   - A release before any activity crashes PlantUML; rockuml reports it as not ported.
 
+### Phase 25 — Charts
+- **Status: done.** `@startchart` (`ChartDiagramFactory` and its ten commands): bar, line, area and scatter series
+  by category or as coordinate pairs, grouped and stacked bars, horizontal bars, a second value axis, custom
+  ticks, spacing, grids, legends on four sides, annotations with arrows, the `chartDiagram` styles with
+  stereotypes, and the common commands. Rotated axis titles (`UText` orientation) are drawn in every output.
+  16 cases match every output.
+  - Faithful to PlantUML's quirks: series without a colour take their style's grey, scatter markers are black
+    unless `MarkerColor` says otherwise, and grid lines fall at tenths of the axes' ranges, not at their ticks.
+    Numbers print as `String.format` does (`%.2f`, `%.2e`).
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

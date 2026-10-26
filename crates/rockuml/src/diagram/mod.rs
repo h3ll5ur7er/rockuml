@@ -4,6 +4,7 @@ mod activity;
 pub(crate) mod activity3;
 mod board;
 mod builder;
+mod chart;
 mod chen;
 mod chrome;
 mod class;
@@ -191,6 +192,7 @@ pub fn create(
         Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
         Some(DiagramType::Board) => |source, _| builder::create_board(source),
+        Some(DiagramType::Chart) => |source, _| builder::create_chart(source),
         Some(DiagramType::Git) => |source, _| git::create(source),
         Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),
         Some(DiagramType::Regex) => |source, _| builder::create_regex(source),

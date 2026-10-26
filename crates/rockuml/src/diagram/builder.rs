@@ -13,6 +13,7 @@ use regex::Regex;
 use super::activity::ActivityDiagramFactory;
 use super::activity3::ActivityDiagramFactory3;
 use super::board::BoardDiagramFactory;
+use super::chart::ChartDiagramFactory;
 use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
@@ -179,6 +180,11 @@ pub(super) fn create_packet(source: UmlSource) -> Result<Box<dyn Diagram>, NotYe
 /// A `@startboard` diagram.
 pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<BoardDiagramFactory>])
+}
+
+/// A `@startchart` diagram.
+pub(super) fn create_chart(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<ChartDiagramFactory>])
 }
 
 /// A `@startwbs` diagram.

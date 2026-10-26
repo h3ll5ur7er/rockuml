@@ -169,6 +169,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/regex.md')),
       },
       {
+        slug: 'chart',
+        title: 'Charts',
+        summary: 'Bar, line, area and scatter charts, with axes, legends and annotations.',
+        load: text(() => import('./content/chart.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',
