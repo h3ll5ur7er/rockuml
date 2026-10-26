@@ -84,7 +84,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
-| [BPM diagrams](docs/bpm) | ✅ Ported | 14 of 14 match PlantUML |  | `BpmDiagramFactory` |
+| [BPM diagrams](docs/bpm) | ✅ Ported | 15 of 15 match PlantUML |  | `BpmDiagramFactory` |
 | [The license diagram (`license`)](docs/reference-cards) | ✅ Ported |  | Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's. | `PSystemLicenseFactory` |
 | [The version diagram (`version`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned. | `PSystemVersionFactory` |
 | [The skin parameter list (`skinparameters`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemSkinparameterListFactory` |
@@ -99,21 +99,21 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
 | [Charts](docs/chart) | ✅ Ported | 16 of 16 match PlantUML |  | `ChartDiagramFactory` |
-| [Packet diagrams](docs/packet) | ✅ Ported | 10 of 10 match PlantUML |  | `PacketDiagramFactory` |
+| [Packet diagrams](docs/packet) | ✅ Ported | 12 of 12 match PlantUML |  | `PacketDiagramFactory` |
 | [Definitions drawn on their own (`@startdef`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemDefinitionFactory` |
 | [The sprite list (`listsprites`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `ListSpriteDiagramFactory` |
 | [Creole text (`@startcreole`)](docs/creole) | ✅ Ported | 17 of 17 match PlantUML |  | `PSystemCreoleFactory` |
 | [Gantt charts](docs/gantt) | ✅ Ported | 24 of 24 match PlantUML | Working hours are not ported yet; `today` without a date is today in UTC. | `GanttDiagramFactory` |
-| [Flow diagrams](docs/flow) | ✅ Ported | 8 of 11 match PlantUML |  | `FlowDiagramFactory` |
+| [Flow diagrams](docs/flow) | ✅ Ported | 8 of 11 match PlantUML | PlantUML keeps the boxes in a `HashMap` keyed by identity hash codes, so the order it draws them in, and where boxes it moves east to make room end up when one lands on another, change with the Java machine; rockuml takes them in the order they were declared. | `FlowDiagramFactory` |
 | [Timing diagrams](docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [Help diagrams (`help keywords`, …)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `help fonts` lists the fonts rockuml always has, not those of the machine. | `HelpFactory` |
 | [Wire diagrams](docs/wire) | ✅ Ported | 11 of 11 match PlantUML |  | `WireDiagramFactory` |
 | [JSON data](docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
-| [Git diagrams](docs/git) | ✅ Ported | 10 of 10 match PlantUML |  | `GitDiagramFactory` |
-| [File trees](docs/files) | ✅ Ported | 9 of 9 match PlantUML |  | `FilesDiagramFactory` |
-| [Boards](docs/board) | ✅ Ported | 9 of 9 match PlantUML |  | `BoardDiagramFactory` |
-| [YAML data](docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
-| [HCL data](docs/hcl) | ✅ Ported | 11 of 11 match PlantUML |  | `HclDiagramFactory` |
+| [Git diagrams](docs/git) | ✅ Ported | 12 of 12 match PlantUML |  | `GitDiagramFactory` |
+| [File trees](docs/files) | ✅ Ported | 10 of 10 match PlantUML |  | `FilesDiagramFactory` |
+| [Boards](docs/board) | ✅ Ported | 10 of 10 match PlantUML |  | `BoardDiagramFactory` |
+| [YAML data](docs/yaml) | ✅ Ported | 9 of 9 match PlantUML |  | `YamlDiagramFactory` |
+| [HCL data](docs/hcl) | ✅ Ported | 13 of 13 match PlantUML |  | `HclDiagramFactory` |
 | [EBNF diagrams](docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
 | [Regular expression diagrams](docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |

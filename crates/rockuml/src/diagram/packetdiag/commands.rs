@@ -3,6 +3,7 @@
 use super::{PacketDiagram, ScaleDirection};
 use crate::command::{Command, CommandError, CommandResult, PatternCommand, SingleLine};
 use crate::diagram::nwdiag::Properties;
+use crate::java;
 use crate::pattern::{RegexResult, RegexTree};
 use crate::text::LineLocation;
 
@@ -146,7 +147,7 @@ fn num_range() -> Box<dyn Command<PacketDiagram>> {
             let attr = Properties::parse(arg.get("ATTRIBUTE", 0));
             let int_attribute = |name, default: i32| {
                 attr.get(name)
-                    .map_or(default, |value| value.parse().unwrap_or(default))
+                    .map_or(default, |value| java::parse_int(value).unwrap_or(default))
             };
             let after_length =
                 |start: i32| start.wrapping_add(int_attribute("len", 1)).wrapping_sub(1);

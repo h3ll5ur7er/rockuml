@@ -222,7 +222,7 @@ pub fn create(
         Some(DiagramType::NwDiag) => |source, _| builder::create_nwdiag(source),
         Some(DiagramType::Packet) => |source, _| builder::create_packet(source),
         Some(DiagramType::Gantt) => |source, _| builder::create_gantt(source),
-        Some(DiagramType::Json) => |source, _| Ok(json::create_json(source)),
+        Some(DiagramType::Json) => |source, _| json::create_json(source),
         Some(DiagramType::Yaml) => |source, _| Ok(json::create_yaml(source)),
         Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),

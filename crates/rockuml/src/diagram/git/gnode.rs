@@ -75,19 +75,18 @@ impl GNodeBuilder {
         }
     }
 
-    /// The node has one parent and one child, and so has its child (`canEatTheNextOne`). A child that leads
-    /// back to the node, which commits named twice can make, is left alone: PlantUML eats it into a loop
-    /// and never stops.
+    /// The node has one parent and one child, and so has its child (`canEatTheNextOne`).
     fn can_eat_the_next_one(&self, index: usize) -> bool {
         let node = &self.arena[index];
         if node.up.len() != 1 || node.down.len() != 1 {
             return false;
         }
         let next = &self.arena[node.down[0]];
-        next.up.len() == 1 && next.down.len() == 1 && next.down[0] != index
+        next.up.len() == 1 && next.down.len() == 1
     }
 
-    /// Takes the child's commits and links to the child's child (`eatTheNextOne`).
+    /// Takes the child's commits and links to the child's child (`eatTheNextOne`). A loop of commits named
+    /// twice shrinks to a node that is its own child, which then eats itself and so leaves the graph.
     fn eat_the_next_one(&mut self, node: usize) -> usize {
         let removed = self.arena[node].down[0];
         let new_next = self.arena[removed].down[0];
@@ -148,8 +147,8 @@ mod tests {
     }
 
     #[test]
-    fn a_loop_is_not_eaten() {
-        let lines = ["* b First", "* a", "* b Again"];
-        assert_eq!(nodes(&lines), ["b", "a"]);
+    fn a_loop_eats_itself_away() {
+        assert_eq!(nodes(&["* a", "* a"]), [""; 0]);
+        assert_eq!(nodes(&["* b First", "* a", "* b Again"]), [""; 0]);
     }
 }

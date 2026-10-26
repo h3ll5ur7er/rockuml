@@ -36,7 +36,7 @@ impl PacketBlock {
         }
     }
 
-    fn draw_width(&self, scale: f64) -> f64 {
+    pub(super) fn draw_width(&self, scale: f64) -> f64 {
         f64::from(self.width) * scale
     }
 

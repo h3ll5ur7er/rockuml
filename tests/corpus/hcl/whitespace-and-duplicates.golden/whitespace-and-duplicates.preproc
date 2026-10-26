@@ -1,0 +1,11 @@
+@starthcl
+variable "region" {
+	default = "eu-west-1"
+	type	= string
+}
+locals {
+  name = "a b"
+  name = "again"
+  tags = merge({ owner = "me", team = "ops" }, var.tags)
+}
+@endhcl

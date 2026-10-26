@@ -4,6 +4,7 @@
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
+use crate::diagram::test_support::not_ported_of;
 use crate::host::IsolatedHost;
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::font::StringBounder;
@@ -75,4 +76,11 @@ fn every_document_makes_the_graph_plantuml_lays_out() {
         }
     }
     assert_eq!(cases, 25);
+}
+
+/// PlantUML reads past the lines of a JSON document whose end line a `<style>` left open took in.
+#[test]
+fn json_without_an_end_line_is_a_plantuml_crash() {
+    assert!(not_ported_of("@startjson\n<style>\n@endjson").is_some());
+    assert!(not_ported_of("@startjson\n<style>\n</style>\n@endjson").is_none());
 }

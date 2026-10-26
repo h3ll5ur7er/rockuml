@@ -4,10 +4,11 @@
 //!
 //! PlantUML keeps the cells in a `HashMap` keyed by the identity of its lines and columns. Its order shows
 //! nowhere: every walk over it either sets flags or finds the one cell holding something, except
-//! `getById` when two merges share a name, where PlantUML picks either. rockuml keeps the cells in the order
-//! they were made and picks the first.
+//! `getById` when two merges share a name, where PlantUML picks either. rockuml keeps the order the cells
+//! were made in and picks the first.
 
 use std::cmp::Ordering;
+use std::collections::HashMap;
 
 use super::element::BpmElement;
 use crate::diagram::NotYetPorted;
@@ -107,13 +108,13 @@ impl Placeable {
 /// Which placeable of the grid, by identity.
 type PlaceableId = usize;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(super) struct Line(usize);
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(super) struct Col(usize);
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub(super) struct Coord {
     pub(super) line: Line,
     pub(super) col: Col,
@@ -179,7 +180,9 @@ pub(super) struct Grid {
     lines: Chain<Line>,
     cols: Chain<Col>,
     root: Coord,
-    cells: Vec<(Coord, Cell)>,
+    cells: HashMap<Coord, Cell>,
+    /// The places of the cells in the order they were made.
+    made: Vec<Coord>,
     placeables: Vec<Option<Placeable>>,
     /// Numbers the lines and columns made, which PlantUML tells apart by identity.
     created: usize,
@@ -192,7 +195,8 @@ impl Grid {
             lines: Chain::new(root.line),
             cols: Chain::new(root.col),
             root,
-            cells: vec![(root, Cell::default())],
+            cells: HashMap::from([(root, Cell::default())]),
+            made: vec![root],
             placeables: Vec::new(),
             created: 2,
         }
@@ -219,20 +223,19 @@ impl Grid {
     }
 
     fn get_cell(&mut self, coord: Coord) -> &mut Cell {
-        let index = if let Some(index) = self.cells.iter().position(|(key, _)| *key == coord) {
-            index
-        } else {
-            self.cells.push((coord, Cell::default()));
-            self.cells.len() - 1
-        };
-        &mut self.cells[index].1
+        self.cells.entry(coord).or_insert_with(|| {
+            self.made.push(coord);
+            Cell::default()
+        })
     }
 
     fn data(&self, coord: Coord) -> Option<PlaceableId> {
-        self.cells
-            .iter()
-            .find(|(key, _)| *key == coord)
-            .and_then(|(_, cell)| cell.data)
+        self.cells.get(&coord).and_then(|cell| cell.data)
+    }
+
+    /// The cells in the order they were made.
+    fn cells_in_order(&self) -> impl Iterator<Item = (Coord, &Cell)> {
+        self.made.iter().map(|coord| (*coord, &self.cells[coord]))
     }
 
     fn placeable_mut(&mut self, id: PlaceableId) -> &mut Placeable {
@@ -264,10 +267,10 @@ impl Grid {
 
     /// Where the element named `id` is.
     pub(super) fn get_by_id(&self, id: &str) -> Option<Coord> {
-        self.cells.iter().find_map(|(coord, cell)| {
+        self.cells_in_order().find_map(|(coord, cell)| {
             let placeable = self.placeables[cell.data?].as_ref()?;
             match placeable {
-                Placeable::Element(element) if element.id.as_deref() == Some(id) => Some(*coord),
+                Placeable::Element(element) if element.id.as_deref() == Some(id) => Some(coord),
                 _ => None,
             }
         })
@@ -284,9 +287,8 @@ impl Grid {
     /// Routes every connection: the first one from an element leaves sideways, the others up or down.
     pub(super) fn add_connections(&mut self) -> Result<(), NotYetPorted> {
         let connections: Vec<(Coord, Vec<PlaceableId>)> = self
-            .cells
-            .iter()
-            .map(|(coord, cell)| (*coord, cell.destinations.clone()))
+            .cells_in_order()
+            .map(|(coord, cell)| (coord, cell.destinations.clone()))
             .collect();
         for (src, destinations) in connections {
             for (i, &destination) in destinations.iter().enumerate() {
@@ -418,7 +420,8 @@ impl Grid {
     }
 
     fn remove_line(&mut self, line: Line) {
-        self.cells.retain(|(coord, _)| coord.line != line);
+        self.cells.retain(|coord, _| coord.line != line);
+        self.made.retain(|coord| coord.line != line);
         self.lines.remove(line);
     }
 

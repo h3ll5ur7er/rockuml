@@ -71,5 +71,5 @@ rockuml reads HCL exactly as PlantUML 1.2026.8 does, which is a small part of th
 - Nested blocks need an equals sign: `tags = { ... }`, not `tags { ... }`. Their attributes go on lines of their own, without commas.
 - Lines are joined without a separator, so attributes must be indented or end with a quoted value: `count = 2` on a line of its own at the start of the line runs into the next one.
 - Lists keep only quoted strings and maps; `[80, 443]` is drawn empty.
-- `//` and `/* */` comments, heredocs and expressions are not read. HCL that PlantUML cannot read gives "Your data does not sound like HCL data".
+- `//` and `/* */` comments, heredocs and expressions are not read. HCL that PlantUML cannot read gives "Your data does not sound like HCL data", and so does a `<style>` left open, which takes in the end line.
 - PlantUML ignores a `title` or a `<style>` block in HCL data; `scale` still applies.

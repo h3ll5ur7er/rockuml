@@ -20,7 +20,7 @@ use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use super::{hcl, yaml};
 use crate::command::factory::AbstractDiagram;
-use crate::command::{BlocLines, CommandControl, ParserPass};
+use crate::command::{BlocLines, CommandControl};
 use crate::creole::Display;
 use crate::json::JsonValue;
 use crate::klimt::blocks::TextBlockMarged;
@@ -67,11 +67,14 @@ pub(super) struct JsonDiagram {
 }
 
 /// A `@startjson` diagram (`JsonDiagramFactory`).
-pub(super) fn create_json(source: UmlSource) -> Box<dyn Diagram> {
+pub(super) fn create_json(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     let extractor = StyleExtractor::new(source.lines());
+    let data = extractor.data().ok_or(NotYetPorted(
+        "the crash report of JSON without an end line, where PlantUML reads past the lines",
+    ))?;
     let mut highlighted = Vec::new();
     let mut text = String::new();
-    for line in extractor.data() {
+    for line in data {
         if line.starts_with('#') {
             if Highlighted::matches_definition(line) {
                 highlighted.extend(Highlighted::build(line));
@@ -84,22 +87,24 @@ pub(super) fn create_json(source: UmlSource) -> Box<dyn Diagram> {
     let json = crate::json::parse(&text).ok();
     let mut diagram = JsonDiagram::new(source, Language::Json, json, highlighted, &extractor);
     diagram.apply_styles(&extractor);
-    Box::new(diagram)
+    Ok(Box::new(diagram))
 }
 
 /// A `@startyaml` diagram (`YamlDiagramFactory`).
 pub(super) fn create_yaml(source: UmlSource) -> Box<dyn Diagram> {
     let extractor = StyleExtractor::new(source.lines());
     let mut highlighted = Vec::new();
-    let mut lines = Vec::new();
-    for line in extractor.data() {
-        if Highlighted::matches_definition(line) {
-            highlighted.extend(Highlighted::build(line));
-        } else {
-            lines.push(line.as_str());
+    let yaml = extractor.data().and_then(|data| {
+        let mut lines = Vec::new();
+        for line in data {
+            if Highlighted::matches_definition(line) {
+                highlighted.extend(Highlighted::build(line));
+            } else {
+                lines.push(line.as_str());
+            }
         }
-    }
-    let yaml = yaml::parse(&lines);
+        yaml::parse(&lines)
+    });
     let mut diagram = JsonDiagram::new(source, Language::Yaml, yaml, highlighted, &extractor);
     diagram.apply_styles(&extractor);
     Box::new(diagram)
@@ -109,7 +114,7 @@ pub(super) fn create_yaml(source: UmlSource) -> Box<dyn Diagram> {
 /// are taken out of the data and then ignored.
 pub(super) fn create_hcl(source: UmlSource) -> Box<dyn Diagram> {
     let extractor = StyleExtractor::new(source.lines());
-    let hcl = hcl::parse(extractor.data());
+    let hcl = extractor.data().and_then(hcl::parse);
     Box::new(JsonDiagram::new(
         source,
         Language::Hcl,
@@ -210,9 +215,7 @@ impl TextBlock for Drawing<'_> {
     }
 }
 
-impl AbstractDiagram for JsonDiagram {
-    fn starting_pass(&mut self, _pass: ParserPass) {}
-}
+impl AbstractDiagram for JsonDiagram {}
 
 impl TitledDiagram for JsonDiagram {
     fn titled(&mut self) -> &mut Titled {

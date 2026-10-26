@@ -71,4 +71,4 @@ some text between the commits
 @endgit
 ```
 
-A graph whose lines lead nowhere, such as a `|` that stops without a commit below it, cannot be followed: PlantUML draws a crash report for it, and rockuml reports it as not ported.
+A graph whose lines lead nowhere, such as a `|` that stops without a commit below it, cannot be followed: PlantUML draws a crash report for it, and rockuml reports it as not ported. A commit named twice can close a loop, which merges into one box that then swallows itself: like PlantUML, rockuml draws nothing of it.

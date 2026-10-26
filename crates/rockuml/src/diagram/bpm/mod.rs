@@ -19,9 +19,7 @@ use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::command::factory::AbstractDiagram;
-use crate::command::{
-    Command, CommandError, CommandResult, ParserPass, PatternCommand, SingleLine,
-};
+use crate::command::{Command, CommandError, CommandResult, PatternCommand, SingleLine};
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
@@ -306,9 +304,7 @@ impl BpmDiagram {
     }
 }
 
-impl AbstractDiagram for BpmDiagram {
-    fn starting_pass(&mut self, _pass: ParserPass) {}
-}
+impl AbstractDiagram for BpmDiagram {}
 
 impl TitledDiagram for BpmDiagram {
     fn titled(&mut self) -> &mut Titled {
@@ -383,6 +379,15 @@ mod tests {
     fn a_goto_back_along_its_line_crashes_plantuml() {
         assert_eq!(
             export_debug("m<+>\n:A;\n:B;\ngoto m").err(),
+            Some(grid::CRASH)
+        );
+    }
+
+    /// PlantUML looks a goto's merge up before it is made.
+    #[test]
+    fn a_goto_to_a_later_merge_crashes_plantuml() {
+        assert_eq!(
+            export_debug(":A;\ngoto m\n:B;\nm<+>\n:C;").err(),
             Some(grid::CRASH)
         );
     }

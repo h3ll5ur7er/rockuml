@@ -255,7 +255,8 @@
       "corpus": [
         "flow"
       ],
-      "docs": "flow"
+      "docs": "flow",
+      "notes": "PlantUML keeps the boxes in a `HashMap` keyed by identity hash codes, so the order it draws them in, and where boxes it moves east to make room end up when one lands on another, change with the Java machine; rockuml takes them in the order they were declared."
     },
     "WireDiagramFactory": {
       "title": "Wire diagrams",

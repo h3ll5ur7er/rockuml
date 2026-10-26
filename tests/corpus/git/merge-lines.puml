@@ -1,0 +1,44 @@
+@startgit
+*   e5e5e5e (HEAD -> main) Merge branch 'feature'
+|\
+| * d4d4d4d (feature) Feature work
+* | c3c3c3c Main work
+|/
+* b2b2b2b Base
+@endgit
+
+@startgit
+*-.   f6f6f6f Octopus
+|\ \ x
+| | * e5e5e5e Three
+| * | d4d4d4d Two
+| |/ x
+* | c3c3c3c One
+| | x
+|/ x
+* a1a1a1a Base
+@endgit
+
+@startgit
+*-.   f6f6f6f Octopus
+|\ \
+| | * e5e5e5e Three
+| * | d4d4d4d Two
+| | * c3c3c3c Three base
+| * b2b2b2b Two base
+* a1a1a1a One
+@endgit
+
+@startgit
+* d4d4d4d Top
+| * c3c3c3c Other
+| | * e5e5e5e Third
+| | | * f6f6f6f Fourth
+| | | | x
+| |_|/ x
+|/| | x
+* | | b2b2b2b Main
+| | * 3333333 Lane
+| * 2222222 Side
+* 1111111 Base
+@endgit

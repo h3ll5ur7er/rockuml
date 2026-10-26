@@ -167,14 +167,15 @@ impl PacketDiagram {
         StyleSignature::of(names).get_merged_style(&self.titled.skin.current_style_builder())
     }
 
-    fn build(&mut self) {
+    fn build(&mut self) -> Result<(), NotYetPorted> {
         if self.use_default_scale_interval {
             self.update_scale_interval(self.col_width / 2);
         }
         self.adjust_layout();
         self.adjust_col_width();
-        self.adjust_indicators();
+        self.adjust_indicators()?;
         self.adjust_bit_width();
+        Ok(())
     }
 
     /// No wider than the first row.
@@ -185,19 +186,25 @@ impl PacketDiagram {
         }
     }
 
-    fn adjust_indicators(&mut self) {
+    /// PlantUML fails on a scale of no bits, numbering it by a remainder by zero, and on one of fewer, of
+    /// which it cannot take that many indicators; only fields ending before they start make those.
+    fn adjust_indicators(&mut self) -> Result<(), NotYetPorted> {
+        if self.col_width == 0 || self.col_width < -1 {
+            return Err(NotYetPorted(
+                "a first row of no bits or fewer, where PlantUML crashes",
+            ));
+        }
         let full_length_interval = self.full_indicator_interval();
-        // PlantUML fails on a remainder by zero, which only rows without width cause.
-        let divides = |i: i32, interval: i32| i.checked_rem(interval) == Some(0);
         let indicator = |i| PacketIndicator {
-            full: divides(i, full_length_interval),
-            numbered: divides(i, self.scale_interval),
+            full: i % full_length_interval == 0,
+            numbered: i % self.scale_interval == 0,
             bit_number: i,
         };
         self.packet_indicators = match self.scale_direction {
             ScaleDirection::Ltr => (0..=self.col_width).map(indicator).collect(),
             ScaleDirection::Rtl => (0..=self.col_width).rev().map(indicator).collect(),
         };
+        Ok(())
     }
 
     /// Lays the fields out in rows, splitting those that overflow their row (`adjustLayout`). A field
@@ -361,7 +368,9 @@ impl TextBlock for Drawing<'_> {
 
 impl AbstractDiagram for PacketDiagram {
     fn check_final_error(&mut self) -> Option<String> {
-        self.build();
+        if let Err(crash) = self.build() {
+            self.titled.not_ported(crash);
+        }
         None
     }
 }
@@ -382,6 +391,13 @@ impl Diagram for PacketDiagram {
         _page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+        // PlantUML measures a field ending before it starts as negatively wide, which `XDimension2D` rejects.
+        let mut blocks = self.packet_grid.iter().flatten();
+        if blocks.any(|block| block.draw_width(self.bit_width) < 0.0) {
+            return Err(NotYetPorted(
+                "a field ending before it starts, where PlantUML crashes",
+            ));
+        }
         let drawing = Drawing {
             diagram: self,
             style: self.style(),
@@ -399,6 +415,7 @@ impl Diagram for PacketDiagram {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::diagram::test_support::not_ported_of;
 
     fn diagram(col_width: i32, ranges: &[(i32, i32)]) -> PacketDiagram {
         let source = Rc::new(UmlSource::new(Vec::new(), Vec::new()));
@@ -407,7 +424,7 @@ mod tests {
         for &(start, end) in ranges {
             diagram.add_packet_item_range(start, end, 1, "");
         }
-        diagram.build();
+        diagram.build().unwrap();
         diagram
     }
 
@@ -441,5 +458,24 @@ mod tests {
         assert_eq!(diagram.col_width, 4);
         assert_eq!(diagram.packet_indicators.len(), 5);
         assert_eq!(diagram.scale_interval, 8);
+    }
+
+    /// Whether PlantUML crashes on the packet diagram of these fields.
+    fn crashes(fields: &str) -> bool {
+        not_ported_of(&format!("@startpacketdiag\n{fields}\n@endpacketdiag")).is_some()
+    }
+
+    #[test]
+    fn fields_ending_before_they_start_are_plantuml_crashes() {
+        assert!(crashes("5-3: neg\n0-7: x"));
+        assert!(crashes("0-7: x\n9-3: neg"));
+        assert!(crashes("999999-0: back"));
+        assert!(!crashes("0-7: x"));
+    }
+
+    #[test]
+    fn a_first_row_without_width_is_a_plantuml_crash() {
+        assert!(crashes("5-4: zero"));
+        assert!(!crashes("5-4: zero\n0-7: x"));
     }
 }

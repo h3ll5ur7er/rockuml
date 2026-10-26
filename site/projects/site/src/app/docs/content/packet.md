@@ -80,7 +80,9 @@ packetdiag {
 @endpacketdiag
 ```
 
-PlantUML reads a `rotate` attribute as well, but draws every label upright, and so does rockuml.
+PlantUML reads a `rotate` attribute as well, but draws every label upright, and so does rockuml. Numbers in attributes may be written in any script's digits (`[len = ٣]`); one that is no number leaves the default.
+
+A field that ends before it starts, such as `5-3`, and a first row without bits, such as one made of `5-4` alone, make PlantUML draw a crash report; rockuml reports them as not ported.
 
 ## Styles and decorations
 

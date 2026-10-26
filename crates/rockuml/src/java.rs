@@ -420,6 +420,42 @@ pub(crate) fn parse_double(text: &str) -> Option<f64> {
     .ok()
 }
 
+/// `Integer.parseInt`: an optional sign, then decimal digits of any script; `None` where it throws, past
+/// `int` too.
+pub(crate) fn parse_int(text: &str) -> Option<i32> {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(digits) => (true, digits),
+        None => (false, text.strip_prefix('+').unwrap_or(text)),
+    };
+    if digits.is_empty() {
+        return None;
+    }
+    let mut magnitude = 0_i64;
+    for c in digits.chars() {
+        magnitude = magnitude * 10 + i64::from(decimal_digit(c)?);
+        if magnitude > -i64::from(i32::MIN) {
+            return None;
+        }
+    }
+    i32::try_from(if negative { -magnitude } else { magnitude }).ok()
+}
+
+/// `Character.digit(c, 10)` of a UTF-16 unit: the value of a decimal digit of the Basic Multilingual Plane.
+fn decimal_digit(c: char) -> Option<u8> {
+    let is_digit = |c: char| {
+        u32::from(c) <= 0xFFFF && get_general_category(c) == GeneralCategory::DecimalNumber
+    };
+    if !is_digit(c) {
+        return None;
+    }
+    // Unicode assigns decimal digits in runs from 0 to 9, some runs right after others.
+    let digits_up_to_c = (0..=u32::from(c))
+        .rev()
+        .map_while(|code| char::from_u32(code).filter(|&digit| is_digit(digit)))
+        .count();
+    Some(u8::try_from((digits_up_to_c - 1) % 10).expect("a digit is below ten"))
+}
+
 fn round_up(digits: &mut Vec<u8>) {
     for digit in digits.iter_mut().rev() {
         if *digit == 9 {
@@ -682,5 +718,38 @@ mod tests {
         assert_eq!(split("a\n\nb\n\n", "\n"), ["a", "", "b"]);
         assert_eq!(split("", "\n"), [""]);
         assert_eq!(split("\n\n", "\n"), Vec::<String>::new());
+    }
+
+    #[test]
+    fn parse_int_reads_decimal_digits_of_any_script_like_java() {
+        assert_eq!(parse_int("42"), Some(42));
+        assert_eq!(parse_int("+7"), Some(7));
+        assert_eq!(parse_int("-0012"), Some(-12));
+        assert_eq!(parse_int("\u{663}"), Some(3));
+        assert_eq!(parse_int("\u{FF11}\u{FF10}"), Some(10));
+        assert_eq!(parse_int("\u{966}\u{96F}"), Some(9));
+        assert_eq!(parse_int("2147483647"), Some(i32::MAX));
+        assert_eq!(parse_int("-2147483648"), Some(i32::MIN));
+    }
+
+    #[test]
+    fn parse_int_rejects_what_java_throws_on() {
+        for text in [
+            "",
+            "+",
+            "-",
+            " 1",
+            "1 ",
+            "1.0",
+            "abc",
+            "\u{BD}",
+            "\u{2163}",
+            "\u{1D7CE}",
+            "2147483648",
+            "-2147483649",
+            "99999999999999999999",
+        ] {
+            assert_eq!(parse_int(text), None, "{text:?}");
+        }
     }
 }

@@ -78,11 +78,12 @@ impl StyleExtractor {
         )
     }
 
-    /// The data lines: between the start line and the last line, which ends the diagram.
-    pub(super) fn data(&self) -> &[String] {
+    /// The data lines: between the start line and the last line, which ends the diagram. `None` where there
+    /// are not both, an end line taken in by a `<style>` left open: PlantUML then reads past the lines.
+    pub(super) fn data(&self) -> Option<&[String]> {
         match self.list.as_slice() {
-            [_start, data @ .., _end] => data,
-            _ => &[],
+            [_start, data @ .., _end] => Some(data),
+            _ => None,
         }
     }
 }

@@ -13,9 +13,7 @@ use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::color::{HColor, XColor};
 use crate::command::factory::AbstractDiagram;
-use crate::command::{
-    Command, CommandError, CommandResult, ParserPass, PatternCommand, SingleLine,
-};
+use crate::command::{Command, CommandError, CommandResult, PatternCommand, SingleLine};
 use crate::creole::{CreoleMode, Display, SheetBlock2};
 use crate::klimt::font::{FontConfiguration, StringBounder, UFont, UFontFace};
 use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D, XPoint2D};
@@ -118,8 +116,8 @@ fn illegal_argument(message: Option<&str>) -> CommandError {
 /// A `@startflow` diagram (PlantUML's `FlowDiagram`).
 ///
 /// PlantUML keeps the boxes in a `HashMap` keyed by tiles, which hash by identity: the order it draws them
-/// in, and the box an id finds when two share it, change from one Java machine to another. Here the boxes
-/// come in the order they were declared.
+/// in, the box an id finds when two share it, and where boxes moved east to make room end up change from one
+/// Java machine to another. Here the boxes come in the order they were declared.
 pub(super) struct FlowDiagram {
     source: Rc<UmlSource>,
     titled: Titled,
@@ -327,9 +325,7 @@ impl TextBlock for ActivityBox {
     }
 }
 
-impl AbstractDiagram for FlowDiagram {
-    fn starting_pass(&mut self, _pass: ParserPass) {}
-}
+impl AbstractDiagram for FlowDiagram {}
 
 impl TitledDiagram for FlowDiagram {
     fn titled(&mut self) -> &mut Titled {

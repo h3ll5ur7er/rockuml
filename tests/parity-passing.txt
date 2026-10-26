@@ -124,6 +124,7 @@ debug blocks/yaml-header.puml
 debug board/basic.puml
 debug board/chrome.puml
 debug board/columns.puml
+debug board/creole-stages.puml
 debug board/edges.puml
 debug board/empty.puml
 debug board/levels.puml
@@ -138,6 +139,7 @@ debug bpm/empty.puml
 debug bpm/error.puml
 debug bpm/goto.puml
 debug bpm/labels.puml
+debug bpm/merges.puml
 debug bpm/nested.puml
 debug bpm/orphan-else.puml
 debug bpm/resume.puml
@@ -392,6 +394,7 @@ debug files/ignored-lines.puml
 debug files/names.puml
 debug files/nesting.puml
 debug files/notes.puml
+debug files/odd-paths.puml
 debug files/preprocessor.puml
 debug files/styles.puml
 debug files/unterminated-note.puml
@@ -433,6 +436,8 @@ debug git/decorations.puml
 debug git/empty.puml
 debug git/ignored-lines.puml
 debug git/linear.puml
+debug git/loops.puml
+debug git/merge-lines.puml
 debug git/merge.puml
 debug git/roots.puml
 debug git/separate.puml
@@ -447,7 +452,9 @@ debug hcl/invalid.puml
 debug hcl/lists.puml
 debug hcl/nested.puml
 debug hcl/scalars.puml
+debug hcl/unclosed-style.puml
 debug hcl/unindented.puml
+debug hcl/whitespace-and-duplicates.puml
 debug images/emoji-note-title.puml
 debug images/emoji-scale-color.puml
 debug images/emoji-transforms.puml
@@ -549,12 +556,14 @@ debug object/packages.puml
 debug object/relations.puml
 debug object/shadowing.puml
 debug object/stereotypes-colors.puml
+debug packetdiag/attributes.puml
 debug packetdiag/auto.puml
 debug packetdiag/chrome.puml
 debug packetdiag/empty.puml
 debug packetdiag/error.puml
 debug packetdiag/rtl.puml
 debug packetdiag/same-height.puml
+debug packetdiag/settings.puml
 debug packetdiag/split.puml
 debug packetdiag/style.puml
 debug packetdiag/tcp.puml
@@ -816,6 +825,7 @@ debug yaml/list-of-maps.puml
 debug yaml/list.puml
 debug yaml/mixed.puml
 debug yaml/plain-dash.puml
+debug yaml/unclosed-style.puml
 dsvg activity/action-list.puml
 dsvg activity/action-sdl-shapes.puml
 dsvg activity/action-uml-shapes.puml
@@ -940,6 +950,7 @@ dsvg blocks/yaml-header.puml
 dsvg board/basic.puml
 dsvg board/chrome.puml
 dsvg board/columns.puml
+dsvg board/creole-stages.puml
 dsvg board/edges.puml
 dsvg board/empty.puml
 dsvg board/levels.puml
@@ -954,6 +965,7 @@ dsvg bpm/empty.puml
 dsvg bpm/error.puml
 dsvg bpm/goto.puml
 dsvg bpm/labels.puml
+dsvg bpm/merges.puml
 dsvg bpm/nested.puml
 dsvg bpm/orphan-else.puml
 dsvg bpm/resume.puml
@@ -1208,6 +1220,7 @@ dsvg files/ignored-lines.puml
 dsvg files/names.puml
 dsvg files/nesting.puml
 dsvg files/notes.puml
+dsvg files/odd-paths.puml
 dsvg files/preprocessor.puml
 dsvg files/styles.puml
 dsvg files/unterminated-note.puml
@@ -1249,6 +1262,8 @@ dsvg git/decorations.puml
 dsvg git/empty.puml
 dsvg git/ignored-lines.puml
 dsvg git/linear.puml
+dsvg git/loops.puml
+dsvg git/merge-lines.puml
 dsvg git/merge.puml
 dsvg git/roots.puml
 dsvg git/separate.puml
@@ -1263,7 +1278,9 @@ dsvg hcl/invalid.puml
 dsvg hcl/lists.puml
 dsvg hcl/nested.puml
 dsvg hcl/scalars.puml
+dsvg hcl/unclosed-style.puml
 dsvg hcl/unindented.puml
+dsvg hcl/whitespace-and-duplicates.puml
 dsvg images/emoji-note-title.puml
 dsvg images/emoji-scale-color.puml
 dsvg images/emoji-transforms.puml
@@ -1364,12 +1381,14 @@ dsvg object/packages.puml
 dsvg object/relations.puml
 dsvg object/shadowing.puml
 dsvg object/stereotypes-colors.puml
+dsvg packetdiag/attributes.puml
 dsvg packetdiag/auto.puml
 dsvg packetdiag/chrome.puml
 dsvg packetdiag/empty.puml
 dsvg packetdiag/error.puml
 dsvg packetdiag/rtl.puml
 dsvg packetdiag/same-height.puml
+dsvg packetdiag/settings.puml
 dsvg packetdiag/split.puml
 dsvg packetdiag/style.puml
 dsvg packetdiag/tcp.puml
@@ -1628,6 +1647,7 @@ dsvg yaml/list-of-maps.puml
 dsvg yaml/list.puml
 dsvg yaml/mixed.puml
 dsvg yaml/plain-dash.puml
+dsvg yaml/unclosed-style.puml
 png activity/action-emoji.puml
 png activity/action-list.puml
 png activity/action-sdl-shapes.puml
@@ -1753,6 +1773,7 @@ png blocks/yaml-header.puml
 png board/basic.puml
 png board/chrome.puml
 png board/columns.puml
+png board/creole-stages.puml
 png board/edges.puml
 png board/empty.puml
 png board/levels.puml
@@ -1767,6 +1788,7 @@ png bpm/empty.puml
 png bpm/error.puml
 png bpm/goto.puml
 png bpm/labels.puml
+png bpm/merges.puml
 png bpm/nested.puml
 png bpm/orphan-else.puml
 png bpm/resume.puml
@@ -2021,6 +2043,7 @@ png files/ignored-lines.puml
 png files/names.puml
 png files/nesting.puml
 png files/notes.puml
+png files/odd-paths.puml
 png files/preprocessor.puml
 png files/styles.puml
 png files/unterminated-note.puml
@@ -2065,6 +2088,8 @@ png git/decorations.puml
 png git/empty.puml
 png git/ignored-lines.puml
 png git/linear.puml
+png git/loops.puml
+png git/merge-lines.puml
 png git/merge.puml
 png git/roots.puml
 png git/separate.puml
@@ -2079,7 +2104,9 @@ png hcl/invalid.puml
 png hcl/lists.puml
 png hcl/nested.puml
 png hcl/scalars.puml
+png hcl/unclosed-style.puml
 png hcl/unindented.puml
+png hcl/whitespace-and-duplicates.puml
 png images/emoji-note-title.puml
 png images/emoji-scale-color.puml
 png images/emoji-transforms.puml
@@ -2181,12 +2208,14 @@ png object/packages.puml
 png object/relations.puml
 png object/shadowing.puml
 png object/stereotypes-colors.puml
+png packetdiag/attributes.puml
 png packetdiag/auto.puml
 png packetdiag/chrome.puml
 png packetdiag/empty.puml
 png packetdiag/error.puml
 png packetdiag/rtl.puml
 png packetdiag/same-height.puml
+png packetdiag/settings.puml
 png packetdiag/split.puml
 png packetdiag/style.puml
 png packetdiag/tcp.puml
@@ -2447,6 +2476,7 @@ png yaml/list-of-maps.puml
 png yaml/list.puml
 png yaml/mixed.puml
 png yaml/plain-dash.puml
+png yaml/unclosed-style.puml
 preproc activity/action-emoji.puml
 preproc activity/action-list.puml
 preproc activity/action-sdl-shapes.puml
@@ -2572,6 +2602,7 @@ preproc blocks/yaml-header.puml
 preproc board/basic.puml
 preproc board/chrome.puml
 preproc board/columns.puml
+preproc board/creole-stages.puml
 preproc board/edges.puml
 preproc board/empty.puml
 preproc board/levels.puml
@@ -2586,6 +2617,7 @@ preproc bpm/empty.puml
 preproc bpm/error.puml
 preproc bpm/goto.puml
 preproc bpm/labels.puml
+preproc bpm/merges.puml
 preproc bpm/nested.puml
 preproc bpm/orphan-else.puml
 preproc bpm/resume.puml
@@ -2840,6 +2872,7 @@ preproc files/ignored-lines.puml
 preproc files/names.puml
 preproc files/nesting.puml
 preproc files/notes.puml
+preproc files/odd-paths.puml
 preproc files/preprocessor.puml
 preproc files/styles.puml
 preproc files/unterminated-note.puml
@@ -2884,6 +2917,8 @@ preproc git/decorations.puml
 preproc git/empty.puml
 preproc git/ignored-lines.puml
 preproc git/linear.puml
+preproc git/loops.puml
+preproc git/merge-lines.puml
 preproc git/merge.puml
 preproc git/roots.puml
 preproc git/separate.puml
@@ -2898,7 +2933,9 @@ preproc hcl/invalid.puml
 preproc hcl/lists.puml
 preproc hcl/nested.puml
 preproc hcl/scalars.puml
+preproc hcl/unclosed-style.puml
 preproc hcl/unindented.puml
+preproc hcl/whitespace-and-duplicates.puml
 preproc images/emoji-note-title.puml
 preproc images/emoji-scale-color.puml
 preproc images/emoji-transforms.puml
@@ -3000,12 +3037,14 @@ preproc object/packages.puml
 preproc object/relations.puml
 preproc object/shadowing.puml
 preproc object/stereotypes-colors.puml
+preproc packetdiag/attributes.puml
 preproc packetdiag/auto.puml
 preproc packetdiag/chrome.puml
 preproc packetdiag/empty.puml
 preproc packetdiag/error.puml
 preproc packetdiag/rtl.puml
 preproc packetdiag/same-height.puml
+preproc packetdiag/settings.puml
 preproc packetdiag/split.puml
 preproc packetdiag/style.puml
 preproc packetdiag/tcp.puml
@@ -3271,6 +3310,7 @@ preproc yaml/list-of-maps.puml
 preproc yaml/list.puml
 preproc yaml/mixed.puml
 preproc yaml/plain-dash.puml
+preproc yaml/unclosed-style.puml
 svg activity/action-emoji.puml
 svg activity/action-list.puml
 svg activity/action-sdl-shapes.puml
@@ -3394,6 +3434,7 @@ svg blocks/yaml-header.puml
 svg board/basic.puml
 svg board/chrome.puml
 svg board/columns.puml
+svg board/creole-stages.puml
 svg board/edges.puml
 svg board/empty.puml
 svg board/levels.puml
@@ -3408,6 +3449,7 @@ svg bpm/empty.puml
 svg bpm/error.puml
 svg bpm/goto.puml
 svg bpm/labels.puml
+svg bpm/merges.puml
 svg bpm/nested.puml
 svg bpm/orphan-else.puml
 svg bpm/resume.puml
@@ -3632,6 +3674,8 @@ svg git/decorations.puml
 svg git/empty.puml
 svg git/ignored-lines.puml
 svg git/linear.puml
+svg git/loops.puml
+svg git/merge-lines.puml
 svg git/merge.puml
 svg git/roots.puml
 svg git/separate.puml
@@ -3646,7 +3690,9 @@ svg hcl/invalid.puml
 svg hcl/lists.puml
 svg hcl/nested.puml
 svg hcl/scalars.puml
+svg hcl/unclosed-style.puml
 svg hcl/unindented.puml
+svg hcl/whitespace-and-duplicates.puml
 svg images/emoji-note-title.puml
 svg images/emoji-scale-color.puml
 svg images/emoji-transforms.puml
@@ -3743,12 +3789,14 @@ svg object/packages.puml
 svg object/relations.puml
 svg object/shadowing.puml
 svg object/stereotypes-colors.puml
+svg packetdiag/attributes.puml
 svg packetdiag/auto.puml
 svg packetdiag/chrome.puml
 svg packetdiag/empty.puml
 svg packetdiag/error.puml
 svg packetdiag/rtl.puml
 svg packetdiag/same-height.puml
+svg packetdiag/settings.puml
 svg packetdiag/split.puml
 svg packetdiag/style.puml
 svg packetdiag/tcp.puml
@@ -4006,6 +4054,7 @@ svg yaml/list-of-maps.puml
 svg yaml/list.puml
 svg yaml/mixed.puml
 svg yaml/plain-dash.puml
+svg yaml/unclosed-style.puml
 url activity/action-emoji.puml
 url activity/action-list.puml
 url activity/action-sdl-shapes.puml
@@ -4131,6 +4180,7 @@ url blocks/yaml-header.puml
 url board/basic.puml
 url board/chrome.puml
 url board/columns.puml
+url board/creole-stages.puml
 url board/edges.puml
 url board/empty.puml
 url board/levels.puml
@@ -4145,6 +4195,7 @@ url bpm/empty.puml
 url bpm/error.puml
 url bpm/goto.puml
 url bpm/labels.puml
+url bpm/merges.puml
 url bpm/nested.puml
 url bpm/orphan-else.puml
 url bpm/resume.puml
@@ -4399,6 +4450,7 @@ url files/ignored-lines.puml
 url files/names.puml
 url files/nesting.puml
 url files/notes.puml
+url files/odd-paths.puml
 url files/preprocessor.puml
 url files/styles.puml
 url files/unterminated-note.puml
@@ -4443,6 +4495,8 @@ url git/decorations.puml
 url git/empty.puml
 url git/ignored-lines.puml
 url git/linear.puml
+url git/loops.puml
+url git/merge-lines.puml
 url git/merge.puml
 url git/roots.puml
 url git/separate.puml
@@ -4457,7 +4511,9 @@ url hcl/invalid.puml
 url hcl/lists.puml
 url hcl/nested.puml
 url hcl/scalars.puml
+url hcl/unclosed-style.puml
 url hcl/unindented.puml
+url hcl/whitespace-and-duplicates.puml
 url images/emoji-note-title.puml
 url images/emoji-scale-color.puml
 url images/emoji-transforms.puml
@@ -4559,12 +4615,14 @@ url object/packages.puml
 url object/relations.puml
 url object/shadowing.puml
 url object/stereotypes-colors.puml
+url packetdiag/attributes.puml
 url packetdiag/auto.puml
 url packetdiag/chrome.puml
 url packetdiag/empty.puml
 url packetdiag/error.puml
 url packetdiag/rtl.puml
 url packetdiag/same-height.puml
+url packetdiag/settings.puml
 url packetdiag/split.puml
 url packetdiag/style.puml
 url packetdiag/tcp.puml
@@ -4830,3 +4888,4 @@ url yaml/list-of-maps.puml
 url yaml/list.puml
 url yaml/mixed.puml
 url yaml/plain-dash.puml
+url yaml/unclosed-style.puml

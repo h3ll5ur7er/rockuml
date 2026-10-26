@@ -691,8 +691,8 @@ charts (6.3k).
   - Faithful to PlantUML's quirks: a field continued after full rows keeps a full row's width, so rows can grow
     wider than `colwidth`; a row is as high as its last field; `rotate` has no effect, and the open edges of split
     fields are drawn closed.
-  - Deviation: a first row without width, which makes PlantUML fail on a remainder by zero, draws a short
-    unnumbered tick.
+  - A field ending before it starts, drawn negatively wide, and a first row without width, numbered by a
+    remainder by zero, crash PlantUML; rockuml reports them as not ported.
 
 ### Phase 23 — Git diagrams
 - **Status: done.** `@startgit`: `GitDiagramFactory` reads `git log --graph` text (`GitTextArea`, `CursorPosition`,
@@ -700,7 +700,8 @@ charts (6.3k).
   (`SmetanaForGit`, `MagicBox`, `GitCurve`). 10 cases match every output and make PlantUML's Smetana graph.
   - Faithful to PlantUML: lines without a `*` are ignored, `title`, `skinparam` and `<style>` among them, and a
     `|\` at the end of a line joins the next line, as everywhere. A graph PlantUML cannot follow crashes it; rockuml
-    reports it as not ported. Deviation: a loop of commits named twice, on which PlantUML never stops, is drawn.
+    reports it as not ported. A loop of commits named twice ends in a node eating itself, which leaves the
+    graph, so PlantUML draws nothing of the loop.
 
 ### Phase 24 — Boards
 - **Status: done.** `@startboard` (`BoardDiagramFactory`, `CommandBoardPlus`): activities with their releases
@@ -809,8 +810,10 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
     unknown id or between sides that do not face each other reports the `IllegalArgumentException` PlantUML throws.
   - Deviation: PlantUML keeps tiles in `HashMap`s keyed by identity hash codes, so the order it draws boxes in
     changes with the Java machine, between `-pipe` and file runs and even between two output formats of one case
-    (`crowded`'s SVG golden swaps two boxes its debug golden does not). rockuml takes the tiles in the order they
-    were declared.
+    (`crowded`'s SVG golden swaps two boxes its debug golden does not). So does where boxes go when making room
+    moves one onto another still to move (`moveAllToEast` finds each again by its position): `a "A"`, `e b "B"`,
+    `e c "C"`, `w d "D"` puts B east of C on one machine and C east of B on another. rockuml takes the tiles in
+    the order they were declared, for drawing and for moving; moving each tile once instead would follow neither.
 ---
 
 ## 8. Known risks and mitigations

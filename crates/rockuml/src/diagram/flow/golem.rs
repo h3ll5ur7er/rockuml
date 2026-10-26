@@ -89,7 +89,8 @@ pub(super) struct Path {
 /// The tiles and the links between them (`TilesField`).
 ///
 /// PlantUML keeps the positions in a `HashMap` keyed by tiles, which hash by identity, so their order changes
-/// from one Java machine to another; the positions here come in the order of the tiles.
+/// from one Java machine to another, and with it the place of tiles moved onto one another to make room; the
+/// positions here come in the order of the tiles.
 pub(super) struct TilesField {
     positions: Vec<Position>,
     paths: Vec<Path>,
