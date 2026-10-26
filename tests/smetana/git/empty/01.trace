@@ -1,0 +1,7 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "ranksep" "0.35" ""
+gvContext
+gvLayoutJobs graph "g"
+phase final
+graph "g" bb 0.0 0.0 0.0 0.0

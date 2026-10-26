@@ -671,6 +671,14 @@ charts (6.3k).
     only quoted strings and maps, a lone block is drawn as its attributes, and `title`, `skin` and `<style>` are
     taken out of the data and ignored (only `scale` applies).
 
+### Phase 23 — Git diagrams
+- **Status: done.** `@startgit`: `GitDiagramFactory` reads `git log --graph` text (`GitTextArea`, `CursorPosition`,
+  `Commit`), merges straight runs of commits into one box (`GNodeBuilder`) and lays the graph out with Smetana
+  (`SmetanaForGit`, `MagicBox`, `GitCurve`). 10 cases match every output and make PlantUML's Smetana graph.
+  - Faithful to PlantUML: lines without a `*` are ignored, `title`, `skinparam` and `<style>` among them, and a
+    `|\` at the end of a line joins the next line, as everywhere. A graph PlantUML cannot follow crashes it; rockuml
+    reports it as not ported. Deviation: a loop of commits named twice, on which PlantUML never stops, is drawn.
+
 ### Then — Reference cards (~3.5k)
 The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
 `listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,

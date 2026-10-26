@@ -145,6 +145,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/files.md')),
       },
       {
+        slug: 'git',
+        title: 'Git graphs',
+        summary: 'Commit graphs drawn from git log --graph output.',
+        load: text(() => import('./content/git.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',

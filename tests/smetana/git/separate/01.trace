@@ -1,0 +1,49 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "ranksep" "0.35" ""
+agnode graph "g" "N0"
+agsafeset node "N0" "shape" "box" ""
+agsafeset node "N0" "height" "0.4166666666666667" ""
+agsafeset node "N0" "width" "1.9722203395744329" ""
+agnode graph "g" "N1"
+agsafeset node "N1" "shape" "box" ""
+agsafeset node "N1" "height" "0.2361111111111111" ""
+agsafeset node "N1" "width" "1.5796920968267771" ""
+agnode graph "g" "N2"
+agsafeset node "N2" "shape" "box" ""
+agsafeset node "N2" "height" "0.4166666666666667" ""
+agsafeset node "N2" "width" "1.9023435524951542" ""
+agnode graph "g" "N3"
+agsafeset node "N3" "shape" "box" ""
+agsafeset node "N3" "height" "0.2361111111111111" ""
+agsafeset node "N3" "width" "1.5429732919087717" ""
+agedge graph "g" node "N2" node "N3"
+agsafeset edge e1 "arrowsize" ".7" ""
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "normal" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 1
+node "N0" rank 0
+node "N1" rank 0
+node "N2" rank 0
+node "N3" rank 1
+phase mincross
+rank 0 "N0" "N1" "N2"
+rank 1 "N3"
+phase position
+node "N0" rank 0 coord 0.0 64.0 lw 71.0 rw 71.0 ht 30.0
+node "N1" rank 0 coord 146.0 64.0 lw 57.0 rw 57.0 ht 24.0
+node "N2" rank 0 coord 290.0 64.0 lw 68.5 rw 68.5 ht 30.0
+node "N3" rank 1 coord 290.0 12.0 lw 55.5 rw 55.5 ht 24.0
+graph "g" bb -71.0 0.0 358.5 79.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 290.0 24.050102293665987 points 4 290.0 48.80574989318848 290.0 43.40678584948182 290.0 37.175247185667104 290.0 31.43950465407751
+phase final
+graph "g" bb 0.0 0.0 429.5 79.0
+node "N0" coord 71.0 64.0 width 1.9722222222222223 height 0.4166666666666667 lw 71.0 rw 71.0 ht 30.0
+node "N1" coord 217.0 64.0 width 1.5833333333333333 height 0.3333333333333333 lw 57.0 rw 57.0 ht 24.0
+node "N2" coord 361.0 64.0 width 1.9027777777777777 height 0.4166666666666667 lw 68.5 rw 68.5 ht 30.0
+node "N3" coord 361.0 12.0 width 1.5416666666666667 height 0.3333333333333333 lw 55.5 rw 55.5 ht 24.0
+edge e1 bezier 0 sflag 0 eflag 1 sp 0.0 0.0 ep 361.0 24.050102293665987 points 4 361.0 48.80574989318848 361.0 43.40678584948182 361.0 37.175247185667104 361.0 31.43950465407751
