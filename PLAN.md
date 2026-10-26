@@ -719,7 +719,10 @@ charts (6.3k).
     Numbers print as `String.format` does (`%.2f`, `%.2e`).
 
 ### Phase 26 — Reference cards
-- **Status: done** for the icon, sprite, help and definition cards. 19 cases (`tests/corpus/cards`) match every
+The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
+`listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,
+`license` and `listfonts` tell rockuml's facts, not PlantUML's.
+- **Status: done.** Icon, sprite, help and definition cards: 19 cases (`tests/corpus/cards`) match every
   output, and so does the preprocessor's `includedef-and-subs`, which draws a `@startdef` block.
   - Ported, on `GraphicStrings`, the donors card's columns (`PSystemDonors.getCols`) and the ported creole and
     sprites: `emoji` and `emoji <start of a name>` (`PSystemListEmojiFactory`), `openiconic <name>`
@@ -733,6 +736,17 @@ charts (6.3k).
     Windows families they stand in for), not those of the machine, so it has a unit test and no corpus case. An
     unknown `openiconic` name crashes PlantUML; rockuml reports it as not ported. The browser build has no emoji
     but the two that file trees draw, so its emoji list shows no more.
+- Welcome screen, colours, skin parameters, fonts, version and license: 10 cases (`cards`)
+  match every output: the welcome screen, a blank diagram's error, the colour chart and the hexagons around a
+  colour (`PSystemColors`), `skinparameters` (`SkinParam.getPossibleValues`) and `stdlib`. `GraphicStrings`
+  draws the cards and the welcome text of short error images.
+  - rockuml's own facts, in PlantUML's layout, tested by unit and command line tests: `version` and `testdot`
+    tell rockuml's version, the PlantUML release it reproduces, its license and its Smetana layout, not Java,
+    memory or Graphviz; `authors` that it ports PlantUML; `license` its LGPL, the EPL of its layout code and
+    the licenses of what it embeds; `listfonts` the embedded Liberation fonts, Java's logical fonts and the
+    fonts registered with `--font` or `ROCKUML_FONTS`. These cards draw no PlantUML logo.
+  - Not planned: the license keys of PlantUML's professional edition (`keygen`, `keycheck`…), reported as not
+    ported.
 
 ### Last — The diagrams that cannot match byte for byte (approach to be chosen)
 - Ditaa: port the vendored `org/stathissideris` (10k); its output is a bitmap drawn by Java2D, compared by pixels.

@@ -61,6 +61,30 @@ impl XColor {
         let gray = 255 - self.gray_scale() as u8;
         Self::rgb(gray, gray, gray)
     }
+
+    /// Black on light colours, white on dark ones (`HColorSimple.opposite`).
+    pub(crate) fn opposite(self) -> Self {
+        let gray = if 255 - self.gray_scale_color().green > 127 {
+            255
+        } else {
+            0
+        };
+        Self::rgb(gray, gray, gray)
+    }
+
+    /// The brightness of the difference between the colours (`ColorUtils.distance`).
+    pub(crate) fn distance(self, other: Self) -> u32 {
+        u32::from(self.red.abs_diff(other.red)) * 299
+            + u32::from(self.green.abs_diff(other.green)) * 587
+            + u32::from(self.blue.abs_diff(other.blue)) * 114
+    }
+}
+
+/// The names of the colours PlantUML knows, sorted (`HColorSet.names`).
+pub(crate) fn color_names() -> Vec<&'static str> {
+    let mut names: Vec<&str> = NAMED_COLORS.iter().map(|&(name, _)| name).collect();
+    names.sort_unstable();
+    names
 }
 
 /// How an image format paints colours: as given, as grays (`skinparam monochrome`) or reversed

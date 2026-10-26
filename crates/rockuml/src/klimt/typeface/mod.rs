@@ -22,6 +22,8 @@ pub struct FontRegistry {
 
 #[derive(Clone)]
 struct RegisteredFace {
+    /// As the font file and the aliases spell them.
+    names: Vec<String>,
     /// Lowercase, as Java looks fonts up regardless of case.
     families: Vec<String>,
     bold: bool,
@@ -132,6 +134,7 @@ impl FontRegistry {
             added.extend(families.iter().cloned());
             families.extend(aliases.iter().map(|alias| (*alias).to_owned()));
             let registered = RegisteredFace {
+                names: families.clone(),
                 families: families
                     .iter()
                     .map(|family| family.to_lowercase())
@@ -146,6 +149,23 @@ impl FontRegistry {
         added.sort();
         added.dedup();
         Ok(added)
+    }
+
+    /// The family names diagrams can draw with, sorted regardless of case: Java's logical fonts and every
+    /// font's (`GraphicsEnvironment.getAvailableFontFamilyNames`).
+    pub(crate) fn available_font_family_names(&self) -> Vec<String> {
+        let mut names: Vec<String> = LogicalFont::NAMES
+            .iter()
+            .map(|&name| name.to_owned())
+            .collect();
+        names.extend(
+            self.faces
+                .iter()
+                .flat_map(|face| face.names.iter().cloned()),
+        );
+        names.sort_by_cached_key(|name| (name.to_lowercase(), name.clone()));
+        names.dedup_by(|name, previous| name.to_lowercase() == previous.to_lowercase());
+        names
     }
 
     /// The face of a family closest to the asked one: the exact style, else the same boldness, else any.
@@ -252,6 +272,9 @@ enum LogicalFont {
 }
 
 impl LogicalFont {
+    /// As Java lists them.
+    const NAMES: [&str; 5] = ["Dialog", "DialogInput", "Monospaced", "SansSerif", "Serif"];
+
     fn named(family: &str) -> Option<Self> {
         match family.to_lowercase().as_str() {
             "sansserif" | "dialog" => Some(Self::SansSerif),
@@ -399,6 +422,52 @@ mod tests {
         assert!(bold.face().is_bold());
         let italic = registry.resolve("Arial", UFontFace::ITALIC);
         assert!(italic.face().is_italic() && !italic.face().is_bold());
+    }
+
+    /// Liberation Sans, renamed in its name table, which no checksum guards.
+    fn renamed_liberation_sans(name: &str) -> Vec<u8> {
+        fn replace(data: &mut [u8], from: &[u8], to: &[u8]) {
+            for at in 0..=data.len() - from.len() {
+                if data[at..].starts_with(from) {
+                    data[at..at + to.len()].copy_from_slice(to);
+                }
+            }
+        }
+        let utf16 =
+            |text: &str| -> Vec<u8> { text.encode_utf16().flat_map(u16::to_be_bytes).collect() };
+        let mut data = crate::assets::get("fonts/LiberationSans-Regular.ttf")
+            .unwrap()
+            .to_vec();
+        replace(&mut data, b"Liberation Sans", name.as_bytes());
+        replace(&mut data, &utf16("Liberation Sans"), &utf16(name));
+        data
+    }
+
+    #[test]
+    fn the_available_families_are_the_logical_fonts_and_every_fonts() {
+        let mut registry = FontRegistry::default();
+        assert_eq!(
+            registry.available_font_family_names(),
+            [
+                "Arial",
+                "Courier New",
+                "Dialog",
+                "DialogInput",
+                "Liberation Mono",
+                "Liberation Sans",
+                "Liberation Serif",
+                "Monospaced",
+                "SansSerif",
+                "Serif",
+                "Times New Roman",
+            ]
+        );
+        registry
+            .register(renamed_liberation_sans("Liberation Test"))
+            .unwrap();
+        let names = registry.available_font_family_names();
+        assert_eq!(names[7], "Liberation Test");
+        assert_eq!(names.len(), 12);
     }
 
     #[test]

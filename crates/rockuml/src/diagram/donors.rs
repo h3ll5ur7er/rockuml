@@ -14,9 +14,7 @@ pub(super) fn get_cols(
     lines
         .chunks(max_line.max(1))
         .map(|current| {
-            Box::new(GraphicStrings::create_black_on_white(
-                current.iter().cloned(),
-            )) as Box<dyn TextBlock>
+            Box::new(GraphicStrings::create_black_on_white(current)) as Box<dyn TextBlock>
         })
         .collect()
 }

@@ -36,7 +36,7 @@ struct PSystemListEmoji {
 
 impl PSystemListEmoji {
     fn new(text: &str) -> Self {
-        let header = GraphicStrings::create_black_on_white([
+        let header = GraphicStrings::create_black_on_white(&[
             format!("<b><size:16>Emoji available on Unicode Block {text}"),
             "(Blocks available: 26, 27, 1F3, 1F4, 1F5, 1F6, 1F9)".to_owned(),
         ]);
@@ -47,7 +47,7 @@ impl PSystemListEmoji {
                     .shortcut()
                     .map(|shortcut| format!(" \"\"<U+003C>:{shortcut}:<U+003E> \"\""))
                     .unwrap_or_default();
-                GraphicStrings::create_black_on_white([format!(
+                GraphicStrings::create_black_on_white(&[format!(
                     "<size:13>\"\"<U+003C>:{code}:<U+003E> \"\"<:{code}:> <#0:{code}:>{shortcut}"
                 )])
             })

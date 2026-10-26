@@ -222,16 +222,16 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/sprites.md')),
       },
       {
+        slug: 'reference-cards',
+        title: 'Reference cards',
+        summary: 'One keyword, one card: colours, fonts, version, help, icons, sprites and emoji.',
+        load: text(() => import('./content/reference-cards.md')),
+      },
+      {
         slug: 'preprocessor',
         title: 'Preprocessor',
         summary: 'Variables, functions, conditions, loops and includes.',
         load: text(() => import('./content/preprocessor.md')),
-      },
-      {
-        slug: 'reference-cards',
-        title: 'Reference cards',
-        summary: 'Built-in cards: help on the language, and the icons, sprites and emoji to use.',
-        load: text(() => import('./content/reference-cards.md')),
       },
     ],
   },

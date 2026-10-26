@@ -4,6 +4,7 @@ mod activity;
 pub(crate) mod activity3;
 mod board;
 mod builder;
+mod cards;
 mod chart;
 mod chen;
 mod chrome;
@@ -91,6 +92,16 @@ pub trait Diagram {
         page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted>;
+
+    /// Like [`Diagram::text_block`], when `fonts` are the fonts rockuml draws with, which the font list shows.
+    fn text_block_with_fonts(
+        &self,
+        page: usize,
+        string_bounder: &Rc<dyn StringBounder>,
+        _fonts: &FontRegistry,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+        self.text_block(page, string_bounder)
+    }
 
     /// How many images the diagram makes: `newpage` breaks diagrams into pages.
     fn page_count(&self) -> usize {
@@ -349,7 +360,7 @@ fn export_pieces(
         ImageFormat::Svg | ImageFormat::Png => Rc::new(StringBounderFonts::new(fonts.clone())),
         ImageFormat::DeterministicSvg => Rc::new(StringBounderFromWidthTable),
     };
-    let text_block = diagram.text_block(page, &string_bounder)?;
+    let text_block = diagram.text_block_with_fonts(page, &string_bounder, fonts)?;
     let margin = settings.margin;
     let dimension = text_block
         .calculate_dimension(string_bounder.as_ref())
