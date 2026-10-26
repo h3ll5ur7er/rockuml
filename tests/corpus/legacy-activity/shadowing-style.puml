@@ -1,0 +1,17 @@
+@startuml
+<style>
+activityDiagram {
+  activity {
+    Shadowing 5
+  }
+  partition {
+    Shadowing 2
+  }
+}
+</style>
+(*) --> "A"
+partition P {
+  "A" --> "B"
+}
+"B" --> (*)
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+(*) --> "A"
+"A" --> "B" in "Part"
+"B" --> "Long
+activity" as LB in "Other part" #red
+LB --> "C"
+"C" -*-> D in P3
+D --> (*)
+@enduml

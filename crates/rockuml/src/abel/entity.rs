@@ -119,8 +119,14 @@ impl Entity {
         self.location.as_ref()
     }
 
-    pub(crate) fn style_builder(&self) -> Option<&Rc<StyleBuilder>> {
-        self.style_builder.as_ref()
+    /// The rules in force when the entity was declared, which local styles rely on. Once the diagram uses a
+    /// `skinparam`, the skin's latest rules instead, as PlantUML did before it styled entities locally (its
+    /// issue 2171).
+    pub(crate) fn get_current_style_builder(&self, diagram: &CucaDiagram) -> Rc<StyleBuilder> {
+        match &self.style_builder {
+            Some(builder) if !diagram.is_skin_param_used() => builder.clone(),
+            _ => diagram.skin().current_style_builder(),
+        }
     }
 
     /// `None` for groups.

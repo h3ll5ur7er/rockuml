@@ -43,7 +43,7 @@ pub(crate) struct EntityImageClass {
 impl EntityImageClass {
     pub(crate) fn new(entity: &Entity, diagram: &CucaDiagram) -> Self {
         let skin = diagram.skin();
-        let entity_builder = entity_style_builder(entity, skin);
+        let entity_builder = entity.get_current_style_builder(diagram);
         let style = class_signature(entity, &[])
             .get_merged_style_with(&entity_builder, entity.stereotype.as_ref());
         // The header's text takes the rules in force at the end, its background those of the declaration.
@@ -193,14 +193,6 @@ fn class_signature(entity: &Entity, more: &[SName]) -> StyleSignature {
     ];
     names.extend_from_slice(more);
     StyleSignature::of(&names).with_stereostyles(&entity.stereostyles)
-}
-
-/// The rules in force when the entity was declared.
-fn entity_style_builder(entity: &Entity, skin: &SkinParam) -> Rc<crate::style::StyleBuilder> {
-    entity
-        .style_builder()
-        .cloned()
-        .unwrap_or_else(|| skin.current_style_builder())
 }
 
 /// `EntityImageClassHeader`.

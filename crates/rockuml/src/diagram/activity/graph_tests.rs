@@ -45,7 +45,7 @@ fn every_layout_makes_the_graph_plantuml_lays_out() {
         })
         .collect();
     cases.sort();
-    assert_eq!(cases.len(), 15);
+    assert_eq!(cases.len(), 22);
     for path in cases {
         let case = path.file_stem().unwrap().to_str().unwrap().to_owned();
         let text = std::fs::read_to_string(&path).unwrap();

@@ -1,6 +1,6 @@
 //! A note drawn on its own, in the note style of a diagram (PlantUML's `FloatingNote`).
 
-use super::note_sheet::NoteSheet;
+use super::note_sheet::note_opale;
 use crate::creole::Display;
 use crate::direction::Direction;
 use crate::klimt::font::StringBounder;
@@ -8,7 +8,7 @@ use crate::klimt::geom::{XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::style::{SName, StyleSignature};
 use crate::svek::image::Opale;
 
 pub(crate) struct FloatingNote {
@@ -20,21 +20,12 @@ impl FloatingNote {
     pub(crate) fn create(note: &Display, skin_param: &SkinParam, sname: SName) -> Self {
         let style = StyleSignature::of(&[SName::Root, SName::Element, sname, SName::Note])
             .get_merged_style(&skin_param.current_style_builder());
-        let text = NoteSheet::new(
+        let opale = note_opale(
             note,
-            &style.font_configuration(),
+            &style,
             skin_param.get_default_text_alignment(HorizontalAlignment::Left),
-            style.wrap_width(),
             skin_param,
         );
-        let opale = Opale::new(
-            style.value(PName::LineColor).as_color(),
-            style.value(PName::BackGroundColor).as_color(),
-            Box::new(text),
-            style.stroke(),
-            0.0,
-        )
-        .with_shadowing(style.shadowing());
         Self { opale }
     }
 

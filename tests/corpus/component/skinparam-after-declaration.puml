@@ -1,0 +1,14 @@
+@startuml
+() I2 <<flat>>
+() I3
+actor Bob
+[Web] <<flat>>
+node Server
+Bob --> I2
+I2 - Web
+Web --> Server
+Server - I3
+skinparam shadowing<<flat>> false
+skinparam shadowing true
+skinparam componentBackgroundColor red
+@enduml

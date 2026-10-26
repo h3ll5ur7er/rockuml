@@ -21,7 +21,7 @@ use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::abel::DisplayPositioned;
 use crate::command::factory::AbstractDiagram;
-use crate::command::{Command, ParserPass};
+use crate::command::{Command, CommandResult, ParserPass};
 use crate::klimt::TextBlock;
 use crate::klimt::VerticalAlignment;
 use crate::klimt::font::StringBounder;
@@ -159,6 +159,10 @@ impl Newpaged for ClassDiagram {
         ClassDiagramFactory::create_empty_diagram(&self.source)
     }
 
+    fn cuca_diagram(&self) -> &CucaDiagram {
+        &self.diagram.cuca
+    }
+
     fn previous_pages(&mut self) -> &mut Vec<Self> {
         &mut self.previous_pages
     }
@@ -183,8 +187,12 @@ impl TitledDiagram for ClassDiagram {
         Some(&mut self.diagram.cuca)
     }
 
-    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
-        self.diagram.set_legend(legend, vertical);
+    fn set_legend(
+        &mut self,
+        legend: DisplayPositioned,
+        vertical: VerticalAlignment,
+    ) -> CommandResult {
+        self.diagram.set_legend(legend, vertical)
     }
 }
 
@@ -198,28 +206,14 @@ impl Diagram for ClassDiagram {
         page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let cuca = &self.page(page).diagram.cuca;
-        let drawing = cuca.get_text_block(string_bounder.as_ref())?;
-        Ok(cuca.titled.add_chrome(drawing, string_bounder))
+        self.page_text_block(page, string_bounder)
     }
 
     fn page_count(&self) -> usize {
-        self.previous_pages.len() + 1
+        self.get_nb_images()
     }
 
     fn export_settings(&self, page: usize) -> ExportSettings {
-        let settings = self
-            .page(page)
-            .diagram
-            .cuca
-            .titled
-            .export_settings(self.source.seed(), CucaDiagram::get_default_margins());
-        // PlantUML exports diagrams with several pages page by page, without cutting them.
-        let split = if self.previous_pages.is_empty() {
-            settings.split
-        } else {
-            None
-        };
-        ExportSettings { split, ..settings }
+        self.page_export_settings(page)
     }
 }

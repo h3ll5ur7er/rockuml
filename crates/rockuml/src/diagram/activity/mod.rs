@@ -67,14 +67,14 @@ impl ActivityDiagram {
         quark: QuarkId,
         display: Display,
         leaf_type: LeafType,
-    ) -> EntityId {
+    ) -> Result<EntityId, CommandError> {
         let result = self
             .cuca
-            .really_create_leaf(Some(location), quark, display, leaf_type);
+            .really_create_leaf(Some(location), quark, display, leaf_type)?;
         if leaf_type != LeafType::Note {
             self.last_entity_consulted = Some(result);
         }
-        result
+        Ok(result)
     }
 
     /// The entity `quark` holds, or a new leaf of `leaf_type` showing `display`.
@@ -84,9 +84,9 @@ impl ActivityDiagram {
         quark: QuarkId,
         display: Display,
         leaf_type: LeafType,
-    ) -> EntityId {
+    ) -> Result<EntityId, CommandError> {
         match self.cuca.quark(quark).get_data() {
-            Some(existing) => existing,
+            Some(existing) => Ok(existing),
             None => self.really_create_leaf(location, quark, display, leaf_type),
         }
     }
@@ -94,12 +94,12 @@ impl ActivityDiagram {
     /// `(*)` where a link starts.
     fn get_start(&mut self, location: &LineLocation) -> Result<EntityId, CommandError> {
         let quark = self.cuca.quark_in_context(true, "start")?;
-        Ok(self.leaf_named(
+        self.leaf_named(
             location,
             quark,
             Display::with_newlines("start"),
             LeafType::CircleStart,
-        ))
+        )
     }
 
     /// `(*)` where a link ends, or `(*supp_id)` for one of several ends.
@@ -110,12 +110,12 @@ impl ActivityDiagram {
     ) -> Result<EntityId, CommandError> {
         let name = supp_id.map_or_else(|| "end".to_owned(), |supp_id| format!("end${supp_id}"));
         let quark = self.cuca.quark_in_context(true, &name)?;
-        Ok(self.leaf_named(
+        self.leaf_named(
             location,
             quark,
             Display::with_newlines("end"),
             LeafType::CircleEnd,
-        ))
+        )
     }
 
     /// A new branch, `#<n>` unless the `if` names it, which the commands are now inside.
@@ -134,7 +134,7 @@ impl ActivityDiagram {
             quark,
             Display::with_newlines(""),
             LeafType::Branch,
-        );
+        )?;
         self.conditional_contexts.push(branch);
         Ok(())
     }
@@ -147,7 +147,7 @@ impl ActivityDiagram {
         self.cuca
             .goto_group(Some(location), quark, display, GroupType::InnerActivity);
         self.last_entity_consulted = None;
-        Ok(self.cuca.get_current_group())
+        self.cuca.get_current_group()
     }
 
     /// The branch of the innermost `if`.

@@ -15,7 +15,9 @@ fn diagram(separator: Option<&str>) -> CucaDiagram {
 /// Declares a leaf the way commands do: its quark resolved in the current group.
 fn leaf(diagram: &mut CucaDiagram, name: &str, leaf_type: LeafType) -> EntityId {
     let quark = diagram.quark_in_context(false, name).unwrap();
-    diagram.really_create_leaf(None, quark, Display::create([name]), leaf_type)
+    diagram
+        .really_create_leaf(None, quark, Display::create([name]), leaf_type)
+        .unwrap()
 }
 
 fn class(diagram: &mut CucaDiagram, name: &str) -> EntityId {
@@ -32,7 +34,7 @@ fn link(diagram: &mut CucaDiagram, from: EntityId, to: EntityId) -> LinkId {
 fn enter_package(diagram: &mut CucaDiagram, name: &str) -> EntityId {
     let quark = diagram.quark_in_context(false, name).unwrap();
     diagram.goto_group(None, quark, Display::create([name]), GroupType::Package);
-    diagram.get_current_group()
+    diagram.get_current_group().unwrap()
 }
 
 fn qualified(diagram: &CucaDiagram, quark: QuarkId) -> &str {
@@ -155,7 +157,7 @@ fn the_second_counter_restarts_with_every_pass() {
     diagram.starting_pass();
     assert_eq!(diagram.get_unique_sequence2("CONC"), "CONC1");
     assert_eq!(diagram.get_last_entity(), None);
-    assert_eq!(diagram.get_current_group(), diagram.get_root_group());
+    assert_eq!(diagram.get_current_group(), Ok(diagram.get_root_group()));
     assert_eq!(diagram.current_together(), None);
     assert_eq!(uid(&diagram, a), "ent0001");
     assert_eq!(diagram.get_unique_sequence("x"), "x3");
@@ -209,13 +211,24 @@ fn groups_are_entered_left_and_listed_in_name_order() {
 }
 
 #[test]
+fn a_stray_end_leaves_the_root_and_the_next_group_lookup_throws() {
+    let mut diagram = diagram(None);
+    assert!(diagram.end_group());
+    assert!(!diagram.end_group());
+    assert_eq!(
+        diagram.get_current_group(),
+        Err(CommandError::thrown("java.lang.IllegalStateException"))
+    );
+}
+
+#[test]
 fn reentering_a_group_keeps_it_and_its_type() {
     let mut diagram = diagram(Some("."));
     let first = enter_package(&mut diagram, "s");
     diagram.end_group();
     let quark = diagram.quark_in_context(false, "s").unwrap();
     diagram.goto_group(None, quark, Display::create(["other"]), GroupType::State);
-    assert_eq!(diagram.get_current_group(), first);
+    assert_eq!(diagram.get_current_group(), Ok(first));
     assert_eq!(diagram.entity(first).get_group_type(), GroupType::State);
     assert_eq!(diagram.entity(first).display.lines(), ["s"]);
 }
@@ -315,11 +328,11 @@ fn hide_and_show_by_name_stereotype_and_tag_the_last_one_winning() {
         .add_stereotag(crate::stereo::Stereotag {
             name: "gen".to_owned(),
         });
-    diagram.hide_or_show2("Fo*", false);
-    diagram.hide_or_show2("<<Big>>", false);
-    diagram.hide_or_show2("$gen", false);
+    diagram.hide_or_show2("Fo*", false).unwrap();
+    diagram.hide_or_show2("<<Big>>", false).unwrap();
+    diagram.hide_or_show2("$gen", false).unwrap();
     assert!(diagram.is_hidden(foo) && diagram.is_hidden(bar) && diagram.is_hidden(tagged));
-    diagram.hide_or_show2("Foo", true);
+    diagram.hide_or_show2("Foo", true).unwrap();
     assert!(!diagram.entity(foo).is_hidden(&diagram));
     assert!(!diagram.is_removed(foo));
 }
@@ -329,10 +342,10 @@ fn hiding_a_package_hides_what_is_in_it() {
     let mut diagram = diagram(Some("."));
     let p = enter_package(&mut diagram, "p");
     let inner = class(&mut diagram, "Inner");
-    diagram.hide_or_show2("Inner2", false);
+    diagram.hide_or_show2("Inner2", false).unwrap();
     diagram.end_group();
     let outer = class(&mut diagram, "Inner2");
-    diagram.hide_or_show2("p", false);
+    diagram.hide_or_show2("p", false).unwrap();
     assert!(diagram.entity(inner).is_hidden(&diagram));
     assert!(!diagram.is_hidden(inner));
     assert!(diagram.is_hidden(p));
@@ -349,8 +362,8 @@ fn a_note_on_a_single_entity_shares_its_fate() {
     let dashed = LinkType::new(LinkDecor::None, LinkDecor::None);
     let on_a = diagram.new_link(None, note, a, dashed, LinkArg::no_display(1));
     diagram.add_link(on_a);
-    diagram.remove_or_restore("A", false);
-    diagram.hide_or_show2("A", false);
+    diagram.remove_or_restore("A", false).unwrap();
+    diagram.hide_or_show2("A", false).unwrap();
     assert!(diagram.is_removed(note) && diagram.is_hidden(note));
     let on_b = diagram.new_link(None, note, b, dashed, LinkArg::no_display(1));
     diagram.add_link(on_b);
@@ -368,11 +381,11 @@ fn removing_unlinked_entities_keeps_linked_ones() {
     let hidden_type = LinkType::new(LinkDecor::None, LinkDecor::None).get_invisible();
     let hidden = diagram.new_link(None, invisible, a, hidden_type, LinkArg::no_display(1));
     diagram.add_link(hidden);
-    diagram.remove_or_restore("@unlinked", false);
+    diagram.remove_or_restore("@unlinked", false).unwrap();
     assert!(!diagram.is_removed(a) && !diagram.is_removed(b));
     assert!(diagram.is_removed(alone) && diagram.is_removed(invisible));
     assert!(!diagram.is_removed_ignore_unlinked(alone));
-    diagram.remove_or_restore("<<Old>>", false);
+    diagram.remove_or_restore("<<Old>>", false).unwrap();
     assert!(diagram.is_stereotype_removed(&Stereotype::new("<<Old>>")));
     diagram.link_mut(hidden).stereotype = Some(Stereotype::new("<<Old>>"));
     assert!(diagram.link(hidden).is_removed(&diagram));

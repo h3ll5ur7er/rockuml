@@ -1,0 +1,9 @@
+@startuml
+actor Admin
+usecase (Log in) as U
+Admin --> U
+skinparam usecase {
+  BackgroundColor red
+  BorderColor blue
+}
+@enduml

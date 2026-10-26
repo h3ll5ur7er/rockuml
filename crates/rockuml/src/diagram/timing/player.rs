@@ -541,13 +541,13 @@ impl TimingNote {
         )
         .create_display_sheet(&self.note, &font_configuration);
         Opale::new(
+            self.style.shadowing(),
             self.style.value(PName::LineColor).as_color(),
             self.style.value(PName::BackGroundColor).as_color(),
             Box::new(SheetBlock1::new(sheet, skin.get_padding())),
             self.style.stroke(),
             0.0,
         )
-        .with_shadowing(self.style.shadowing())
     }
 
     pub(super) fn draw_u(&self, ug: &UGraphic, skin: &SkinParam) {

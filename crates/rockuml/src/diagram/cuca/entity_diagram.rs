@@ -104,21 +104,21 @@ impl AbstractClassOrObjectDiagram {
         }
         let tmp1 = self.cuca.get_unique_sequence("apoint");
         let tmp2 = self.cuca.get_unique_sequence("apoint");
-        let current = self.cuca.entity(self.cuca.get_current_group()).get_quark();
+        let current = self.cuca.entity(self.cuca.get_current_group()?).get_quark();
         let code1 = self.cuca.child(current, &tmp1);
         let point1 = self.cuca.really_create_leaf(
             location,
             code1,
             Display::with_newlines(""),
             LeafType::PointForAssociation,
-        );
+        )?;
         let code2 = self.cuca.child(current, &tmp2);
         let point2 = self.cuca.really_create_leaf(
             location,
             code2,
             Display::with_newlines(""),
             LeafType::PointForAssociation,
-        );
+        )?;
         self.insert_point_between(location, entity1_a, entity1_b, point1);
         self.insert_point_between(location, entity2_a, entity2_b, point2);
         let point1_to_point2 = self.cuca.new_link(
@@ -252,7 +252,7 @@ impl AbstractClassOrObjectDiagram {
             quark,
             Display::with_newlines(""),
             LeafType::PointForAssociation,
-        );
+        )?;
         Ok(Association {
             entity1,
             entity2,
@@ -448,13 +448,18 @@ impl AbstractClassOrObjectDiagram {
     }
 
     /// A legend inside a package goes with the package.
-    pub(crate) fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
-        let current_group = self.cuca.get_current_group();
+    pub(crate) fn set_legend(
+        &mut self,
+        legend: DisplayPositioned,
+        vertical: VerticalAlignment,
+    ) -> CommandResult {
+        let current_group = self.cuca.get_current_group()?;
         if self.cuca.entity(current_group).is_root() {
             self.cuca.titled.set_legend(legend, vertical);
-            return;
+        } else {
+            self.cuca.entity_mut(current_group).legend = Some((legend, vertical));
         }
-        self.cuca.entity_mut(current_group).legend = Some((legend, vertical));
+        Ok(())
     }
 }
 

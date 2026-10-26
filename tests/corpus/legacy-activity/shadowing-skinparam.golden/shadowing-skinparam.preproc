@@ -1,0 +1,12 @@
+@startuml
+skinparam activityShadowing false
+skinparam noteShadowing true
+(*) --> "A"
+note right : a note
+"A" --> === S ===
+=== S === --> "B"
+partition P {
+  "B" --> "C"
+}
+"C" --> (*)
+@enduml

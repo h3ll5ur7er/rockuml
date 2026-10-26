@@ -78,10 +78,10 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 |---|---|---|---|---|
 | [The welcome screen of an empty diagram](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemWelcomeFactory` |
 | [The colour chart (`colors`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemColorsFactory` |
-| [Sequence diagrams](docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
-| [Class and object diagrams](docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
-| [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 15 of 15 match PlantUML |  | `ActivityDiagramFactory` |
-| [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
+| [Sequence diagrams](docs/sequence) | ✅ Ported | 94 of 94 match PlantUML |  | `SequenceDiagramFactory` |
+| [Class and object diagrams](docs/class) | ✅ Ported | 91 of 91 match PlantUML |  | `ClassDiagramFactory` |
+| [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 22 of 22 match PlantUML | Inner activities (`-->{` … `}`, PlantUML's `InnerActivity`) are read but reported as not ported yet: planned soon, they need `GroupMakerActivity`, which lays each one out as a graph of its own and draws it as one action. | `ActivityDiagramFactory` |
+| [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 84 of 84 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
 | [BPM diagrams](docs/bpm) | ✅ Ported | 14 of 14 match PlantUML |  | `BpmDiagramFactory` |

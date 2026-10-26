@@ -14,7 +14,7 @@ pub(crate) use char_inspector::{CharInspector, PastTheEnd};
 pub(crate) use decorator_multine::DecoratorMultine;
 pub(crate) use multiline::Multiline;
 pub(crate) use single_line::{PatternCommand, SingleLine, SingleLineCommand};
-pub(crate) use ubrex_single_line::UBrexSingleLine;
+pub(crate) use ubrex_single_line::{UBrexSingleLine, ubrex_single_line};
 
 use crate::color::NoSuchColor;
 

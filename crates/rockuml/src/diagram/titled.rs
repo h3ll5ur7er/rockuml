@@ -7,6 +7,7 @@ use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, NotYetPorted, UmlSource, parse_digits};
 use crate::abel::DisplayPositioned;
+use crate::command::CommandResult;
 use crate::command::unported::NotPortedCommands;
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
@@ -42,6 +43,8 @@ pub(super) struct Titled {
     mainframe: Option<Display>,
     scale: Option<Scale>,
     pub split_pages: SplitPages,
+    /// Whether a `skinparam` command ran, which makes entities take the skin's latest styles.
+    skin_param_used: bool,
     /// Without repeats, in the order they came.
     warnings: Vec<Warning>,
     /// The first thing the diagram holds that rockuml cannot draw yet.
@@ -172,8 +175,13 @@ pub(super) trait TitledDiagram {
     /// `hide empty description`, which only state diagrams heed.
     fn set_hide_empty_description(&mut self, _hide: bool) {}
 
-    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
+    fn set_legend(
+        &mut self,
+        legend: DisplayPositioned,
+        vertical: VerticalAlignment,
+    ) -> CommandResult {
         self.titled().set_legend(legend, vertical);
+        Ok(())
     }
 }
 
@@ -203,9 +211,18 @@ impl Titled {
             mainframe: None,
             scale: None,
             split_pages: SplitPages::default(),
+            skin_param_used: false,
             warnings: Vec::new(),
             not_ported: None,
         }
+    }
+
+    pub(super) fn is_skin_param_used(&self) -> bool {
+        self.skin_param_used
+    }
+
+    pub(super) fn set_skin_param_used(&mut self, skin_param_used: bool) {
+        self.skin_param_used = skin_param_used;
     }
 
     /// Keeps the first thing not ported, which the diagram is reported by.

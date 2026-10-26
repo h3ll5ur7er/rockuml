@@ -3,7 +3,7 @@
 use std::cell::OnceCell;
 use std::rc::Rc;
 
-use super::note_sheet::NoteSheet;
+use super::note_sheet::note_opale;
 use crate::diagram::activity3::{
     LinkRendering, NotePosition, PositionedNote, SwimlaneId, SwimlaneSet,
 };
@@ -15,8 +15,7 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
 use crate::skin::component::TextBlockEmpty;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
-use crate::svek::image::Opale;
+use crate::style::{SName, StyleSignature};
 
 /// The room around each note.
 const NOTE_MARGIN: f64 = 10.0;
@@ -48,21 +47,12 @@ impl FtileWithNotes {
             ])
             .get_merged_style(&skin_param.current_style_builder())
             .eventually_override_colors(&note.colors);
-            let text = NoteSheet::new(
+            let opale = note_opale(
                 &note.display,
-                &style.font_configuration(),
+                &style,
                 skin_param.get_default_text_alignment(HorizontalAlignment::Left),
-                style.wrap_width(),
                 skin_param,
             );
-            let opale = Opale::new(
-                style.value(PName::LineColor).as_color(),
-                style.value(PName::BackGroundColor).as_color(),
-                Box::new(text),
-                style.stroke(),
-                0.0,
-            )
-            .with_shadowing(style.shadowing());
             let opale_marged: Box<dyn TextBlock> = Box::new(TextBlockMarged::new(
                 opale,
                 ClockwiseTopRightBottomLeft::same(NOTE_MARGIN),

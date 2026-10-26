@@ -82,6 +82,7 @@ pub(crate) struct Opale<'a> {
 
 impl<'a> Opale<'a> {
     pub(crate) fn new(
+        shadowing: f64,
         border_color: HColor,
         note_background_color: HColor,
         text_block: Box<dyn TextBlock + 'a>,
@@ -94,14 +95,8 @@ impl<'a> Opale<'a> {
             text_block,
             stroke,
             round_corner,
-            shadowing: 0.0,
+            shadowing,
         }
-    }
-
-    /// The note casting a shadow `shadowing` deep (`Opale`'s `shadowing` argument).
-    #[must_use]
-    pub(crate) fn with_shadowing(self, shadowing: f64) -> Self {
-        Self { shadowing, ..self }
     }
 
     fn get_width(&self, string_bounder: &dyn StringBounder) -> f64 {
@@ -295,13 +290,13 @@ mod tests {
             dimension: XDimension2D::new(20.0, 10.0),
         };
         Opale::new(
+            4.0,
             HColor::BLACK,
             HColor::WHITE,
             Box::new(text),
             UStroke::SIMPLE,
             0.0,
         )
-        .with_shadowing(4.0)
         .draw_u(&ug);
         assert_eq!(recorder.take().lines, ["UPath 0,0 shadow 4", "UPath 0,0"]);
     }

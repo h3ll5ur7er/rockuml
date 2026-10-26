@@ -10,20 +10,19 @@ use crate::abel::{EntityId, GroupType, LeafType, LinkArg, Position};
 use crate::color::{self, ColorType, Colors, HColor};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, ParserPass, PatternCommand,
-    SingleLine, UBrexSingleLine,
+    SingleLine, ubrex_single_line,
 };
 use crate::creole::Display;
 use crate::decoration::{LinkDecor, LinkType, WithLinkType};
 use crate::diagram::common_commands::add_common_commands1;
 use crate::diagram::cuca::EntityDiagram;
-use crate::diagram::cuca_commands::note;
+use crate::diagram::cuca_commands::{self, note};
 use crate::diagram::description::arrow_style;
 use crate::direction::Direction;
 use crate::java;
 use crate::jaws::BLOCK_E1_NEWLINE;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
-use crate::skin::Rankdir;
 use crate::stereo::{self, Stereotype};
 use crate::text::{LineLocation, unquoted};
 use crate::ubrex::UMatcher;
@@ -31,10 +30,10 @@ use crate::ubrex::builder::UBrexPart;
 
 /// `ActivityDiagramFactory.initCommandsList`, which leaves concurrent inner activities out.
 pub(super) fn init_commands_list() -> Vec<Box<dyn Command<ActivityDiagram>>> {
-    let mut commands = vec![footbox_ignored()];
+    let mut commands = vec![cuca_commands::ubrex_footbox_ignored()];
     commands.extend(add_common_commands1());
     commands.extend([
-        rank_dir(),
+        cuca_commands::ubrex_rank_dir(),
         partition(),
         end_partition(),
         link_long_activity(),
@@ -51,23 +50,6 @@ pub(super) fn init_commands_list() -> Vec<Box<dyn Command<ActivityDiagram>>> {
     commands
 }
 
-fn ubrex_command(
-    parts: Vec<UBrexPart>,
-    apply: fn(&mut ActivityDiagram, &LineLocation, &UMatcher) -> CommandResult,
-) -> Box<dyn Command<ActivityDiagram>> {
-    let mut parts = parts;
-    parts.push(UBrexPart::end());
-    Box::new(UBrexSingleLine::new(
-        UBrexPart::concat(parts).build(),
-        apply,
-    ))
-}
-
-/// The first value `key` captured (`RegexResult.get(key, 0)` on a match).
-fn value<'a>(matcher: &UMatcher<'a>, key: &str) -> Option<&'a str> {
-    matcher.find_values_by_key(key).first().copied()
-}
-
 /// The first value captured under a key starting with `prefix` (`RegexResult.getLazzy(prefix, 0)`).
 fn lazzy<'a>(matcher: &UMatcher<'a>, prefix: &str) -> Option<&'a str> {
     matcher
@@ -76,45 +58,9 @@ fn lazzy<'a>(matcher: &UMatcher<'a>, prefix: &str) -> Option<&'a str> {
         .copied()
 }
 
-/// PlantUML's `UBrexCommandFootboxIgnored`: `hide footbox` means nothing here.
-fn footbox_ignored() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
-        vec![
-            UBrexPart::leaf("【 hide┇show 】"),
-            UBrexPart::space_zero_or_more(),
-            UBrexPart::leaf("footbox"),
-        ],
-        |_, _, _| Ok(()),
-    )
-}
-
-/// PlantUML's `UBrexCommandRankDir`: `left to right direction` lays the diagram out sideways.
-fn rank_dir() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
-        vec![
-            UBrexPart::named(
-                "DIRECTION",
-                UBrexPart::leaf("【 left∙to∙right ┇ top∙to∙bottom 】"),
-            ),
-            UBrexPart::space_one_or_more(),
-            UBrexPart::leaf("direction"),
-        ],
-        |diagram, _, matcher| {
-            let direction = value(matcher, "DIRECTION").unwrap_or_default();
-            let rankdir = if direction.to_ascii_lowercase().starts_with("left") {
-                Rankdir::LeftToRight
-            } else {
-                Rankdir::TopToBottom
-            };
-            diagram.cuca.titled.skin.set_rankdir(rankdir);
-            Ok(())
-        },
-    )
-}
-
 /// PlantUML's `UBrexCommandHideShow2`: `hide Foo`, `show <<Stereo>>`.
 fn hide_show2() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
+    ubrex_single_line(
         vec![
             UBrexPart::named(
                 "COMMAND",
@@ -123,19 +69,19 @@ fn hide_show2() -> Box<dyn Command<ActivityDiagram>> {
             UBrexPart::space_one_or_more(),
             UBrexPart::named("WHAT", UBrexPart::leaf("【 << 〇*「〤<>」>> ┇ 〇+〴S 】 ")),
         ],
-        |diagram, _, matcher| {
-            let show =
-                value(matcher, "COMMAND").is_some_and(|command| command.starts_with(['s', 'S']));
-            let what = java::trim(value(matcher, "WHAT").unwrap_or_default());
-            diagram.cuca.hide_or_show2(what, show);
-            Ok(())
+        |diagram: &mut ActivityDiagram, _, matcher| {
+            let show = matcher
+                .find_first_value_by_key("COMMAND")
+                .is_some_and(|command| command.starts_with(['s', 'S']));
+            let what = java::trim(matcher.find_first_value_by_key("WHAT").unwrap_or_default());
+            diagram.cuca.hide_or_show2(what, show)
         },
     )
 }
 
 /// PlantUML's `UBrexCommandPartition`: `partition Name #color <<stereo>> {`.
 fn partition() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
+    ubrex_single_line(
         vec![
             UBrexPart::leaf("partition"),
             UBrexPart::space_one_or_more(),
@@ -159,8 +105,8 @@ fn partition() -> Box<dyn Command<ActivityDiagram>> {
             UBrexPart::space_zero_or_more(),
             UBrexPart::optional(UBrexPart::leaf("{")),
         ],
-        |diagram, location, matcher| {
-            let name = value(matcher, "NAME").unwrap_or_default();
+        |diagram: &mut ActivityDiagram, location, matcher| {
+            let name = matcher.find_first_value_by_key("NAME").unwrap_or_default();
             let cuca = &mut diagram.cuca;
             let quark = cuca.quark_in_context(true, ActivityDiagram::clean_id(name))?;
             let display = Display::with_newlines(cuca.quark(quark).get_name());
@@ -169,12 +115,14 @@ fn partition() -> Box<dyn Command<ActivityDiagram>> {
                 .map(|data| Colors::parse(data, ColorType::Back))
                 .transpose()?
                 .unwrap_or_default();
-            let group = cuca.get_current_group();
+            let group = cuca.get_current_group()?;
             let p = cuca.entity_mut(group);
             if !colors.is_empty() {
                 p.colors = colors;
             }
-            p.stereotype = value(matcher, "STEREOTYPE").map(Stereotype::new);
+            p.stereotype = matcher
+                .find_first_value_by_key("STEREOTYPE")
+                .map(Stereotype::new);
             Ok(())
         },
     )
@@ -182,7 +130,7 @@ fn partition() -> Box<dyn Command<ActivityDiagram>> {
 
 /// PlantUML's `UBrexCommandEndPartition`: `end partition` or `}`.
 fn end_partition() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
+    ubrex_single_line(
         vec![UBrexPart::or(vec![
             UBrexPart::concat(vec![
                 UBrexPart::leaf("end"),
@@ -191,7 +139,7 @@ fn end_partition() -> Box<dyn Command<ActivityDiagram>> {
             ]),
             UBrexPart::leaf("}"),
         ])],
-        |diagram, _, _| {
+        |diagram: &mut ActivityDiagram, _, _| {
             if diagram.cuca.end_group() {
                 Ok(())
             } else {
@@ -241,7 +189,7 @@ fn if_command() -> Box<dyn Command<ActivityDiagram>> {
             ]),
         ])
     };
-    ubrex_command(
+    ubrex_single_line(
         vec![UBrexPart::or(vec![
             simple(),
             UBrexPart::concat(vec![
@@ -277,23 +225,30 @@ fn execute_if(
 ) -> CommandResult {
     let entity1 = ubrex_get_entity_for_if_only(location, diagram, arg)?
         .ok_or_else(|| CommandError::new("No if possible at this point"))?;
-    let (if_code, if_label) = match value(arg, "IF2") {
-        None => (value(arg, "ASIF1"), value(arg, "IF1")),
+    let (if_code, if_label) = match arg.find_first_value_by_key("IF2") {
+        None => (
+            arg.find_first_value_by_key("ASIF1"),
+            arg.find_first_value_by_key("IF1"),
+        ),
         Some(if2) => (None, Some(if2)),
     };
     diagram.start_if(location, if_code)?;
-    let length = if value(arg, "ARROW_BODY1").is_some() {
+    let length = if arg.find_first_value_by_key("ARROW_BODY1").is_some() {
         arrow_length(
-            value(arg, "ARROW_BODY1"),
-            value(arg, "ARROW_DIRECTION"),
-            value(arg, "ARROW_BODY2"),
+            arg.find_first_value_by_key("ARROW_BODY1"),
+            arg.find_first_value_by_key("ARROW_DIRECTION"),
+            arg.find_first_value_by_key("ARROW_BODY2"),
         )
     } else {
         2
     };
     let branch = diagram.current_branch().expect("an if was just started");
-    let link_arg = LinkArg::build(value(arg, "BRACKET").map(Display::with_newlines), length)
-        .with_quantifier(None, if_label.map(str::to_owned));
+    let link_arg = LinkArg::build(
+        arg.find_first_value_by_key("BRACKET")
+            .map(Display::with_newlines),
+        length,
+    )
+    .with_quantifier(None, if_label.map(str::to_owned));
     let cuca = &mut diagram.cuca;
     let link = cuca.new_link(
         Some(location),
@@ -314,17 +269,17 @@ fn ubrex_get_entity_for_if_only(
     diagram: &mut ActivityDiagram,
     arg: &UMatcher,
 ) -> Result<Option<EntityId>, CommandError> {
-    if value(arg, "STAR").is_some() {
+    if arg.find_first_value_by_key("STAR").is_some() {
         return diagram.get_start(location).map(Some);
     }
-    if let Some(id_short) = value(arg, "CODE") {
+    if let Some(id_short) = arg.find_first_value_by_key("CODE") {
         return activity(diagram, location, id_short, id_short).map(Some);
     }
-    if let Some(bar) = value(arg, "BAR") {
+    if let Some(bar) = arg.find_first_value_by_key("BAR") {
         return synchro_bar(diagram, location, bar).map(Some);
     }
-    if let Some(quoted1) = value(arg, "QUOTED1") {
-        let quoted_string = value(arg, "QUOTED2").unwrap_or(quoted1);
+    if let Some(quoted1) = arg.find_first_value_by_key("QUOTED1") {
+        let quoted_string = arg.find_first_value_by_key("QUOTED2").unwrap_or(quoted1);
         return activity(diagram, location, quoted_string, quoted1).map(Some);
     }
     Ok(diagram.last_entity_consulted)
@@ -332,25 +287,28 @@ fn ubrex_get_entity_for_if_only(
 
 /// PlantUML's `UBrexCommandElse`: the next links start from the branch of the innermost `if`.
 fn else_command() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(vec![UBrexPart::leaf("else")], |diagram, _, _| {
-        let branch = diagram
-            .last_entity_consulted
-            .and(diagram.current_branch())
-            .ok_or_else(|| CommandError::new("No if for this else"))?;
-        diagram.last_entity_consulted = Some(branch);
-        Ok(())
-    })
+    ubrex_single_line(
+        vec![UBrexPart::leaf("else")],
+        |diagram: &mut ActivityDiagram, _, _| {
+            let branch = diagram
+                .last_entity_consulted
+                .and(diagram.current_branch())
+                .ok_or_else(|| CommandError::new("No if for this else"))?;
+            diagram.last_entity_consulted = Some(branch);
+            Ok(())
+        },
+    )
 }
 
 /// PlantUML's `UBrexCommandEndif`.
 fn endif() -> Box<dyn Command<ActivityDiagram>> {
-    ubrex_command(
+    ubrex_single_line(
         vec![
             UBrexPart::leaf("end"),
             UBrexPart::space_zero_or_more(),
             UBrexPart::leaf("if"),
         ],
-        |diagram, _, _| {
+        |diagram: &mut ActivityDiagram, _, _| {
             if diagram.last_entity_consulted.is_none() || diagram.current_branch().is_none() {
                 return Err(CommandError::new("No if for this endif"));
             }
@@ -619,7 +577,7 @@ fn get_entity(
                 .cuca
                 .quark_in_context(true, ActivityDiagram::clean_id(invisible))?;
             let display = Display::with_newlines(diagram.cuca.quark(quark).get_name());
-            Ok(diagram.leaf_named(location, quark, display, LeafType::Activity))
+            diagram.leaf_named(location, quark, display, LeafType::Activity)
         })
         .map(Some);
     }
@@ -665,12 +623,12 @@ fn activity(
     let quark = diagram
         .cuca
         .quark_in_context(true, ActivityDiagram::clean_id(id_short))?;
-    Ok(diagram.leaf_named(
+    diagram.leaf_named(
         location,
         quark,
         Display::with_newlines(display),
         LeafType::Activity,
-    ))
+    )
 }
 
 /// The synchronization bar `===bar===`, created if new.
@@ -682,12 +640,12 @@ fn synchro_bar(
     let quark = diagram
         .cuca
         .quark_in_context(true, ActivityDiagram::clean_id(bar))?;
-    Ok(diagram.leaf_named(
+    diagram.leaf_named(
         location,
         quark,
         Display::with_newlines(bar),
         LeafType::SynchroBar,
-    ))
+    )
 }
 
 /// The last line of a long action: the end of its text, then maybe `as` a name, a stereotype, `in` a
@@ -805,7 +763,7 @@ fn execute_link_long_activity(
         quark,
         Display::with_newlines(&display_string),
         LeafType::Activity,
-    );
+    )?;
     diagram.last_entity_consulted = Some(entity2);
     if partition.is_some() {
         diagram.cuca.end_group();
@@ -855,7 +813,7 @@ fn note_activity() -> Box<dyn Command<ActivityDiagram>> {
                 .cuca
                 .quark_in_context(true, ActivityDiagram::clean_id(&tmp))?;
             let display = Display::with_newlines(arg.get("NOTE", 0).unwrap_or_default());
-            let note = diagram.really_create_leaf(location, quark, display, LeafType::Note);
+            let note = diagram.really_create_leaf(location, quark, display, LeafType::Note)?;
             add_note_activity(diagram, location, arg, note)
         },
     )))
@@ -893,7 +851,7 @@ fn note_activity_multi_line() -> Box<dyn Command<ActivityDiagram>> {
             }
             let code_string = diagram.cuca.get_unique_sequence("GMN");
             let quark = diagram.cuca.quark_in_context(true, &code_string)?;
-            let note = diagram.really_create_leaf(&location, quark, strings, LeafType::Note);
+            let note = diagram.really_create_leaf(&location, quark, strings, LeafType::Note)?;
             diagram.cuca.entity_mut(note).url = url;
             add_note_activity(diagram, &location, &arg, note)
         },

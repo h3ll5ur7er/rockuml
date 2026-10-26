@@ -18,7 +18,7 @@ use crate::abel::{
     Bag, Entity, EntityGender, EntityId, EntityPortion, EntityType, GroupType, LeafType, Link,
     LinkArg, LinkId, TogetherId, is_pure_inner_link12,
 };
-use crate::command::CommandError;
+use crate::command::{CommandError, CommandResult};
 use crate::creole::Display;
 use crate::decoration::LinkType;
 use crate::klimt::TextBlock;
@@ -85,6 +85,11 @@ pub(crate) struct CucaDiagram {
     svek_images: Vec<(EntityId, Rc<dyn IEntityImage>)>,
 }
 
+/// What PlantUML throws when a command finds the diagram in a state it cannot work with.
+fn illegal_state() -> CommandError {
+    CommandError::thrown("java.lang.IllegalStateException")
+}
+
 impl CucaDiagram {
     pub(in crate::diagram) fn new(titled: Titled) -> Self {
         let mut diagram = Self {
@@ -118,6 +123,10 @@ impl CucaDiagram {
 
     pub(crate) fn skin(&self) -> &SkinParam {
         &self.titled.skin
+    }
+
+    pub(crate) fn is_skin_param_used(&self) -> bool {
+        self.titled.is_skin_param_used()
     }
 
     /// The diagram's style name, like `classDiagram`, which its elements' styles start from.
@@ -175,8 +184,9 @@ impl CucaDiagram {
         id.rfind("::").map_or(id, |x| &id[..x])
     }
 
-    /// The innermost group the commands are in.
-    pub(crate) fn get_current_group(&self) -> EntityId {
+    /// The innermost group the commands are in. A stray `}` pops even the root, after which PlantUML throws
+    /// here.
+    pub(crate) fn get_current_group(&self) -> Result<EntityId, CommandError> {
         self.stacks
             .iter()
             .rev()
@@ -184,7 +194,7 @@ impl CucaDiagram {
                 Bag::Group(group) => Some(*group),
                 Bag::Together(_) => None,
             })
-            .expect("the root is always on the stack")
+            .ok_or_else(illegal_state)
     }
 
     /// The `together` block the commands are directly in.
@@ -228,20 +238,19 @@ impl CucaDiagram {
         id
     }
 
-    /// A leaf for `ident`, which holds no entity yet, as the latest entity and in the current `together`.
-    /// Class-like leaves turn every quark above them that holds nothing into a package.
+    /// A leaf for `ident`, as the latest entity and in the current `together`; PlantUML throws when `ident`
+    /// already holds an entity. Class-like leaves turn every quark above them that holds nothing into a
+    /// package.
     pub(crate) fn really_create_leaf(
         &mut self,
         location: Option<&LineLocation>,
         ident: QuarkId,
         display: Display,
         leaf_type: LeafType,
-    ) -> EntityId {
-        assert!(
-            self.quark(ident).get_data().is_none(),
-            "{} is already an entity",
-            self.quark(ident).get_qualified_name()
-        );
+    ) -> Result<EntityId, CommandError> {
+        if self.quark(ident).get_data().is_some() {
+            return Err(illegal_state());
+        }
         let result = self.create_leaf(location, ident, leaf_type);
         self.last_entity = Some(result);
         let together = self.current_together();
@@ -251,7 +260,7 @@ impl CucaDiagram {
         if leaf_type.is_like_class() {
             self.eventually_build_phantom_groups(location);
         }
-        result
+        Ok(result)
     }
 
     /// The quark a name written in the current group means (`quarkInContextSafe`). With a separator, `.a.b`
@@ -266,7 +275,7 @@ impl CucaDiagram {
             if let Some(result) = self.namespace.first_with_name(full) {
                 return Ok(result);
             }
-            let current = self.entity(self.get_current_group()).get_quark();
+            let current = self.entity(self.get_current_group()?).get_quark();
             return Ok(self.namespace.child(current, full));
         };
         if full.ends_with(&sep) || full.contains(&format!("{sep}{sep}")) {
@@ -275,7 +284,7 @@ impl CucaDiagram {
                 3,
             ));
         }
-        let current_quark = self.entity(self.get_current_group()).get_quark();
+        let current_quark = self.entity(self.get_current_group()?).get_quark();
         let root = QuarkId::ROOT;
         if let Some(from_root) = full.strip_prefix(&sep) {
             return Ok(self.namespace.child(root, from_root));
@@ -349,16 +358,9 @@ impl CucaDiagram {
         self.stacks.push(Bag::Group(group));
     }
 
-    /// Leaves the innermost group or `together` block; whether there was one. The root is never left.
+    /// Leaves the innermost group or `together` block, the root too; whether there was one.
     pub(crate) fn end_group(&mut self) -> bool {
-        // PlantUML pops the root too, after which any command needing the current group crashes; a stray
-        // `}` is an error here instead.
-        if self.stacks.len() > 1 {
-            self.stacks.pop();
-            true
-        } else {
-            false
-        }
+        self.stacks.pop().is_some()
     }
 
     /// The entity of the first quark named `code`.
@@ -455,26 +457,28 @@ impl CucaDiagram {
     }
 
     /// `hide what` or `show what`; inside a group, names are relative to it.
-    pub(crate) fn hide_or_show2(&mut self, what: &str, show: bool) {
-        let what = self.fix_what(what);
+    pub(crate) fn hide_or_show2(&mut self, what: &str, show: bool) -> CommandResult {
+        let what = self.fix_what(what)?;
         self.hides2.push(HideOrShow::new(what, show));
+        Ok(())
     }
 
     /// `remove what` or `restore what`; inside a group, names are relative to it.
-    pub(crate) fn remove_or_restore(&mut self, what: &str, show: bool) {
-        let what = self.fix_what(what);
+    pub(crate) fn remove_or_restore(&mut self, what: &str, show: bool) -> CommandResult {
+        let what = self.fix_what(what)?;
         self.removed.push(HideOrShow::new(what, show));
+        Ok(())
     }
 
-    fn fix_what(&self, what: &str) -> String {
+    fn fix_what(&self, what: &str) -> Result<String, CommandError> {
         if let Some(sep) = self.get_namespace_separator() {
-            let current_quark = self.entity(self.get_current_group()).get_quark();
+            let current_quark = self.entity(self.get_current_group()?).get_quark();
             let qualified_name = self.quark(current_quark).get_qualified_name();
             if !qualified_name.is_empty() {
-                return format!("{qualified_name}{sep}{what}");
+                return Ok(format!("{qualified_name}{sep}{what}"));
             }
         }
-        what.to_owned()
+        Ok(what.to_owned())
     }
 
     /// Whether no link touches `ent`.

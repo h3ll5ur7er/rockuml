@@ -57,7 +57,10 @@ pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Co
             .skipping_quote_lines(),
         ),
         // CommandLegend
-        single(labelled("legend", "LEGEND1", "LEGEND2"), set_legend),
+        Box::new(SingleLine(PatternCommand::new(
+            labelled("legend", "LEGEND1", "LEGEND2"),
+            set_legend,
+        ))),
         // CommandFooter
         single(Ribbon::Footer.pattern(), |diagram, arg, location| {
             Ribbon::Footer.set_from_line(diagram, arg, location);
@@ -447,6 +450,7 @@ fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineL
         diagram.titled().add_warning(Warning(warning.to_owned()));
     }
     diagram.titled().skin.set_param(name, value);
+    diagram.titled().set_skin_param_used(true);
 }
 
 /// The warning for a deprecated skin parameter. As in PlantUML, `skinparam` blocks do not warn.
@@ -570,13 +574,17 @@ fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &
 }
 
 /// Unlike the other one-line commands, PlantUML does not remember where a one-line legend was written.
-fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
+fn set_legend<D: TitledDiagram>(
+    diagram: &mut D,
+    _: &LineLocation,
+    arg: &RegexResult,
+) -> CommandResult {
     let legend = DisplayPositioned {
         display: label(arg, "LEGEND"),
         alignment: HorizontalAlignment::Center,
         location: None,
     };
-    diagram.set_legend(legend, VerticalAlignment::Bottom);
+    diagram.set_legend(legend, VerticalAlignment::Bottom)
 }
 
 /// The lines between a block's first and last line, without their common indentation.
@@ -628,8 +636,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
         Some(top) if top.eq_ignore_ascii_case("top") => VerticalAlignment::Top,
         _ => VerticalAlignment::Bottom,
     };
-    diagram.set_legend(legend, vertical);
-    Ok(())
+    diagram.set_legend(legend, vertical)
 }
 
 /// Headers and footers.

@@ -108,7 +108,7 @@ impl StateDiagram {
         let Some(existing) = cuca.quark(quark).get_data() else {
             return Ok(true);
         };
-        let current = cuca.get_current_group();
+        let current = cuca.get_current_group()?;
         let parent = cuca.entity(existing).get_parent_container(cuca);
         if is_concurrent_state(cuca, current)? && Some(current) != parent {
             return Ok(false);
@@ -127,7 +127,7 @@ impl StateDiagram {
         prefix: &str,
         leaf_type: LeafType,
     ) -> Result<EntityId, CommandError> {
-        let group = self.cuca.get_current_group();
+        let group = self.cuca.get_current_group()?;
         let id_short = if self.cuca.entity(group).is_root() {
             prefix.to_owned()
         } else {
@@ -161,7 +161,8 @@ impl StateDiagram {
             Some(existing) => existing,
             None => self
                 .cuca
-                .really_create_leaf(Some(location), quark, display, leaf_type),
+                .really_create_leaf(Some(location), quark, display, leaf_type)
+                .expect("the quark holds no entity yet"),
         }
     }
 
@@ -197,7 +198,7 @@ impl StateDiagram {
         let display = Display::with_newlines(self.cuca.quark(quark).get_name());
         self.cuca
             .goto_group(Some(location), quark, display, GroupType::State);
-        let group = self.cuca.get_current_group();
+        let group = self.cuca.get_current_group()?;
         let name = format!("{prefix}{}", self.cuca.entity(group).get_name(&self.cuca));
         let ident = self.cuca.quark_in_context(true, Self::clean_id(&name))?;
         let result = self.leaf_of(location, ident, leaf_type);
@@ -208,7 +209,7 @@ impl StateDiagram {
     /// `--` or `||`: the current state's next concurrent region starts, separated by a horizontal or a
     /// vertical line.
     fn concurrent_state(&mut self, location: &LineLocation, direction: char) -> CommandResult {
-        let current = self.cuca.get_current_group();
+        let current = self.cuca.get_current_group()?;
         self.cuca.entity_mut(current).concurrent_separator = Some(direction);
         if is_concurrent_state(&self.cuca, current)? {
             self.cuca.end_group();
@@ -221,14 +222,14 @@ impl StateDiagram {
             Display::create([""]),
             GroupType::ConcurrentState,
         );
-        let region = self.cuca.get_current_group();
+        let region = self.cuca.get_current_group()?;
         self.cuca.entity_mut(region).concurrent_separator = Some(direction);
         Ok(())
     }
 
     /// Leaves the current state, and the concurrent region the commands were in; whether there was a state.
     fn end_group(&mut self) -> Result<bool, CommandError> {
-        let current = self.cuca.get_current_group();
+        let current = self.cuca.get_current_group()?;
         if is_concurrent_state(&self.cuca, current)? {
             self.cuca.end_group();
         }
