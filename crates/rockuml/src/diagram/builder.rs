@@ -13,6 +13,7 @@ use regex::Regex;
 use super::activity::ActivityDiagramFactory;
 use super::activity3::ActivityDiagramFactory3;
 use super::board::BoardDiagramFactory;
+use super::bpm::BpmDiagramFactory;
 use super::cards::{
     PSystemColorsFactory, PSystemLicenseFactory, PSystemListFontsFactory,
     PSystemSkinparameterListFactory, PSystemVersionFactory, PSystemWelcomeFactory,
@@ -186,6 +187,11 @@ pub(super) fn create_packet(source: UmlSource) -> Result<Box<dyn Diagram>, NotYe
 /// A `@startboard` diagram.
 pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<BoardDiagramFactory>])
+}
+
+/// A `@startbpm` diagram.
+pub(super) fn create_bpm(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<BpmDiagramFactory>])
 }
 
 /// A `@startchart` diagram.
