@@ -106,6 +106,13 @@ impl SkinParam {
         Rc::make_mut(&mut self.sprites).insert(name, sprite);
     }
 
+    /// The names of the sprites the source defines, sorted (`getAllSpriteNames`).
+    pub(crate) fn get_all_sprite_names(&self) -> Vec<&str> {
+        let mut names: Vec<&str> = self.sprites.keys().map(String::as_str).collect();
+        names.sort_unstable();
+        names
+    }
+
     fn style_builder(&self) -> &StyleBuilder {
         self.style_builder.get_or_init(|| {
             self.default_skin

@@ -60,6 +60,13 @@ impl SpriteImage {
         }
     }
 
+    /// The paths of PlantUML's built-in sprite files, such as `archimate/actor.svg`, sorted.
+    pub(crate) fn internal_paths() -> Vec<&'static str> {
+        let mut paths: Vec<&'static str> = INTERNAL_SPRITE_FILES.keys().copied().collect();
+        paths.sort_unstable();
+        paths
+    }
+
     /// One of PlantUML's built-in sprites, such as `archimate/actor`: an SVG one if there is, else a PNG.
     pub(crate) fn from_internal(name: &str) -> Option<Rc<dyn Sprite>> {
         // Per thread, as sprites are `Rc`s.

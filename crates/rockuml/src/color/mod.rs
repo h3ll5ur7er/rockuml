@@ -436,6 +436,16 @@ fn parse_simple_color(text: &str) -> Option<XColor> {
     from_hex.or_else(|| named_color(text))
 }
 
+/// The colour names, sorted as PlantUML's `HColorSet.names` lists them.
+pub(crate) fn names() -> Vec<String> {
+    let mut names: Vec<String> = NAMED_COLORS
+        .iter()
+        .map(|&(name, _)| name.to_owned())
+        .collect();
+    names.sort_unstable();
+    names
+}
+
 fn named_color(name: &str) -> Option<XColor> {
     if name.is_empty() || !name.bytes().all(|byte| byte.is_ascii_alphabetic()) {
         return None;

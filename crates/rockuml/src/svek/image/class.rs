@@ -236,13 +236,13 @@ fn header(entity: &Entity, diagram: &CucaDiagram, style_header: &Style) -> Heade
             back,
             false,
         );
-        name = Box::new(TextBlockHorizontal {
-            left: Box::new(TextBlockMarged::new(
+        name = Box::new(TextBlockHorizontal::merge_lr(
+            Box::new(TextBlockMarged::new(
                 icon,
                 ClockwiseTopRightBottomLeft::top_right_bottom_left(4.0, 0.0, 0.0, 0.0),
             )),
-            right: name,
-        });
+            name,
+        ));
     }
     let name = Box::new(TextBlockMarged::new(
         name,

@@ -61,13 +61,13 @@ fn message_text(
         max_width,
         skin,
     );
-    Box::new(TextBlockHorizontal {
-        left: with_margin(
+    Box::new(TextBlockHorizontal::merge_lr(
+        with_margin(
             number,
             ClockwiseTopRightBottomLeft::top_right_bottom_left(0.0, 4.0, 0.0, 0.0),
         ),
-        right: creole_text(label.display.lines(), font, alignment, max_width, skin),
-    })
+        creole_text(label.display.lines(), font, alignment, max_width, skin),
+    ))
 }
 
 /// The label and style every message arrow shares. The style's wrap width wins over `maxMessageSize`.

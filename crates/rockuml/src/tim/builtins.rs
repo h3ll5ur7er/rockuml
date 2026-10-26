@@ -635,16 +635,11 @@ fn optional_string(value: Option<String>) -> JsonValue {
 }
 
 fn get_all_theme(_: &mut Call) -> TimResult<TValue> {
-    let mut names: Vec<String> = crate::assets::names()
-        .filter_map(|path| {
-            path.strip_prefix("themes/puml-theme-")?
-                .strip_suffix(".puml")
-        })
-        .map(str::to_owned)
-        .collect();
-    names.sort();
     Ok(TValue::Json(JsonValue::Array(
-        names.into_iter().map(JsonValue::String).collect(),
+        crate::assets::theme_names()
+            .into_iter()
+            .map(JsonValue::String)
+            .collect(),
     )))
 }
 

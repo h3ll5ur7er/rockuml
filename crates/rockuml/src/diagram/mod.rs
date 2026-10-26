@@ -11,29 +11,35 @@ mod common_commands;
 mod creole;
 pub(crate) mod cuca;
 mod cuca_commands;
+mod definition;
 mod description;
 mod diagram_type;
+mod donors;
 mod ebnf;
+mod emoji_list;
 mod error;
 mod files;
 mod gantt;
 mod git;
 mod hcl;
+mod help;
 mod json;
 mod mindmap;
 mod nwdiag;
+mod openiconic;
 mod packetdiag;
 mod regexdiagram;
 mod salt;
 mod scale;
 mod sequence;
 mod source;
+mod sprite_list;
 mod state;
 #[cfg(test)]
 mod test_support;
 mod timing;
 mod titled;
-mod unported;
+mod ug_diagram;
 mod wbs;
 mod yaml;
 
@@ -194,6 +200,7 @@ pub fn create(
         Some(DiagramType::Git) => |source, _| git::create(source),
         Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),
         Some(DiagramType::Regex) => |source, _| builder::create_regex(source),
+        Some(DiagramType::Definition) => |source, _| Ok(definition::create(source)),
         _ => return Err(NotYetPorted("this diagram type")),
     };
     source.read_named_files(block.directory(), host);

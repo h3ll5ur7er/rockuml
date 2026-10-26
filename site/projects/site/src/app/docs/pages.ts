@@ -221,6 +221,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         summary: 'Variables, functions, conditions, loops and includes.',
         load: text(() => import('./content/preprocessor.md')),
       },
+      {
+        slug: 'reference-cards',
+        title: 'Reference cards',
+        summary: 'Built-in cards: help on the language, and the icons, sprites and emoji to use.',
+        load: text(() => import('./content/reference-cards.md')),
+      },
     ],
   },
   {

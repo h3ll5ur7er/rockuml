@@ -708,10 +708,21 @@ charts (6.3k).
   between the rows, and the common commands (title, legend, styles, scale, sprites). 9 cases match every output.
   - A release before any activity crashes PlantUML; rockuml reports it as not ported.
 
-### Then — Reference cards (~3.5k)
-The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
-`listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,
-`license` and `listfonts` tell rockuml's facts, not PlantUML's.
+### Phase 26 — Reference cards
+- **Status: done** for the icon, sprite, help and definition cards. 19 cases (`tests/corpus/cards`) match every
+  output, and so does the preprocessor's `includedef-and-subs`, which draws a `@startdef` block.
+  - Ported, on `GraphicStrings`, the donors card's columns (`PSystemDonors.getCols`) and the ported creole and
+    sprites: `emoji` and `emoji <start of a name>` (`PSystemListEmojiFactory`), `openiconic <name>`
+    (`PSystemOpenIconicFactory`), `listopeniconic` (`PSystemListOpenIconicFactory`), `listsprites` alone, which
+    lists the built-in ArchiMate sprites (`PSystemListArchimateSpritesFactory`), and after sprite definitions,
+    which draws them (`ListSpriteDiagramFactory`), `help keywords|types|colors|themes|fonts` (`HelpFactory`,
+    `LanguageDescriptor`), and `@startdef` (`PSystemDefinitionFactory`), which draws its start line only.
+  - Faithful to PlantUML: `emoji` lists the shortcuts that start with its text as well as the codes; the whole
+    emoji list and the Open Iconic list are corpus cases (2 MB and 0.7 MB of goldens).
+  - Deviations: `help fonts` lists the fonts rockuml always has (Java's logical fonts, the Liberation fonts and the
+    Windows families they stand in for), not those of the machine, so it has a unit test and no corpus case. An
+    unknown `openiconic` name crashes PlantUML; rockuml reports it as not ported. The browser build has no emoji
+    but the two that file trees draw, so its emoji list shows no more.
 
 ### Last — The diagrams that cannot match byte for byte (approach to be chosen)
 - Ditaa: port the vendored `org/stathissideris` (10k); its output is a bitmap drawn by Java2D, compared by pixels.

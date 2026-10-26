@@ -29,6 +29,12 @@ impl OpenIconic {
         ))
     }
 
+    /// The names of every icon, sorted as PlantUML's `openiconic/all.txt` lists them.
+    pub(crate) fn names() -> impl Iterator<Item = &'static str> {
+        crate::assets::names()
+            .filter_map(|path| path.strip_prefix("openiconic/")?.strip_suffix(".svg"))
+    }
+
     /// Icon files are a `<svg>` line with the size and a `<path>` with an optional `transform`.
     fn new(svg: &str) -> Self {
         let raw_data: Vec<&str> = svg.lines().collect();
@@ -117,9 +123,8 @@ mod tests {
 
     #[test]
     fn every_bundled_icon_parses() {
-        let names = crate::assets::names()
-            .filter_map(|path| path.strip_prefix("openiconic/")?.strip_suffix(".svg"));
-        for name in names {
+        assert_eq!(OpenIconic::names().count(), 223);
+        for name in OpenIconic::names() {
             let icon = OpenIconic::retrieve(name).expect("a bundled icon");
             assert!(!icon.svg_path.to_upath(1.0).is_empty(), "{name}");
         }
