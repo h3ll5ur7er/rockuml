@@ -151,6 +151,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/board.md')),
       },
       {
+        slug: 'bpm',
+        title: 'BPM diagrams',
+        summary: 'Events, merges and branches on a grid, a diagram PlantUML does not document.',
+        load: text(() => import('./content/bpm.md')),
+      },
+      {
         slug: 'git',
         title: 'Git graphs',
         summary: 'Commit graphs drawn from git log --graph output.',

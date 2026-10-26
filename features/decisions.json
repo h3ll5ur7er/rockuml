@@ -201,8 +201,13 @@
     },
     "BpmDiagramFactory": {
       "title": "BPM diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/bpm"
+      ],
+      "corpus": [
+        "bpm"
+      ],
+      "docs": "bpm"
     },
     "PSystemDitaaFactory": {
       "title": "Ditaa diagrams",

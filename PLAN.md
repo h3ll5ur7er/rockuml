@@ -755,6 +755,19 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
 - On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
   by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
   layout crate).
+
+### Phase 28 — BPM diagrams
+- **Status: done.** `@startbpm` (`BpmDiagramFactory` and its seven commands): events, merges, `resume`, `goto`
+  and branches with `else` and `end branch`, placed on PlantUML's `Grid`, its connectors routed and its lines
+  merged by `CleanerEmptyLine` and `CleanerInterleavingLines`, drawn by `GridArray` with the activity diagram's
+  tiles. 14 cases match every output; of 1900 random diagrams, the 685 PlantUML draws match its debug output
+  and the others fail in both.
+  - Faithful to PlantUML's sketch: the grid's lines, red stubs and blue connectors are drawn, the factory has no
+    common commands, and the elements ignore skins, as PlantUML draws them with a skin of their own (no
+    shadows). An `else` or `end branch` without a branch is PlantUML's `NoSuchElementException` syntax error.
+  - Where PlantUML's layout throws (a connector through an element, a `goto` or `resume` to an unknown merge,
+    a connection back to its own line or column), rockuml reports the diagram as not ported. Deviation: of
+    two merges with the same name, `goto` and `resume` take the first, where PlantUML's `HashMap` takes either.
 ---
 
 ## 8. Known risks and mitigations

@@ -76,6 +76,7 @@ Every diagram sits between a start line and an end line. `@startuml` and `@endum
 | JSON and YAML data | `@startjson`, `@startyaml` |
 | File trees | `@startfiles` |
 | Boards | `@startboard` |
+| BPM diagrams | `@startbpm` |
 | Charts | `@startchart` |
 | Git commit graphs | `@startgit` |
 | EBNF grammars and regular expressions | `@startebnf`, `@startregex` |
