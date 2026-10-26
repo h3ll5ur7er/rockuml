@@ -216,6 +216,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/sprites.md')),
       },
       {
+        slug: 'reference-cards',
+        title: 'Reference cards',
+        summary: 'One keyword, one card: colours, skin parameters, fonts, version and license.',
+        load: text(() => import('./content/reference-cards.md')),
+      },
+      {
         slug: 'preprocessor',
         title: 'Preprocessor',
         summary: 'Variables, functions, conditions, loops and includes.',

@@ -8,7 +8,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 23 diagram types <<ported>>
+** Ported: 24 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -32,6 +32,7 @@ mindmapDiagram {
 *** EBNF diagrams <<ported>>
 *** Regular expression diagrams <<ported>>
 *** Entity relationship diagrams <<ported>>
+*** Reference cards <<ported>>
 left side
 ** Planned <<planned>>
 *** BPM diagrams <<planned>>
@@ -64,7 +65,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 23 of 52 ported, 21 planned, 8 not planned |
+| Diagram types | 29 of 52 ported, 15 planned, 8 not planned |
 | Commands of the ported diagrams | 996 of 996 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
@@ -75,12 +76,18 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Diagram | Status | Reference diagrams | Notes | In PlantUML |
 |---|---|---|---|---|
+| [The welcome screen of an empty diagram](docs/reference-cards) | ✅ Ported | 10 of 10 match PlantUML |  | `PSystemWelcomeFactory` |
+| [The colour chart (`colors`)](docs/reference-cards) | ✅ Ported | 10 of 10 match PlantUML |  | `PSystemColorsFactory` |
 | [Sequence diagrams](docs/sequence) | ✅ Ported | 92 of 92 match PlantUML |  | `SequenceDiagramFactory` |
 | [Class and object diagrams](docs/class) | ✅ Ported | 84 of 84 match PlantUML |  | `ClassDiagramFactory` |
 | [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 15 of 15 match PlantUML |  | `ActivityDiagramFactory` |
 | [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
+| [The license diagram (`license`)](docs/reference-cards) | ✅ Ported |  | Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's. | `PSystemLicenseFactory` |
+| [The version diagram (`version`)](docs/reference-cards) | ✅ Ported | 10 of 10 match PlantUML | `version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned. | `PSystemVersionFactory` |
+| [The skin parameter list (`skinparameters`)](docs/reference-cards) | ✅ Ported | 10 of 10 match PlantUML |  | `PSystemSkinparameterListFactory` |
+| [The font list (`listfonts`)](docs/reference-cards) | ✅ Ported |  | Lists the fonts rockuml draws with, its embedded Liberation fonts and the fonts registered with `--font` or `ROCKUML_FONTS`, instead of the machine's: rockuml never picks up system fonts. | `PSystemListFontsFactory` |
 | [Wireframes (Salt)](docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
 | [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
@@ -98,13 +105,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [EBNF diagrams](docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
 | [Regular expression diagrams](docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
-| The welcome screen of an empty diagram | 🗓️ Planned later |  | A reference card; low priority. | `PSystemWelcomeFactory` |
-| The colour chart (`colors`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemColorsFactory` |
 | BPM diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BpmDiagramFactory` |
-| The license diagram (`license`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemLicenseFactory` |
-| The version diagram (`version`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemVersionFactory` |
-| The skin parameter list (`skinparameters`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemSkinparameterListFactory` |
-| The font list (`listfonts`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListFontsFactory` |
 | The emoji list (`emoji`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListEmojiFactory` |
 | An Open Iconic icon on its own (`openiconic`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemOpenIconicFactory` |
 | The Open Iconic list (`listopeniconic`) | 🗓️ Planned later |  | A reference card; low priority. | `PSystemListOpenIconicFactory` |

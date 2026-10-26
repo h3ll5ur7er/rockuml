@@ -330,38 +330,65 @@
     },
     "PSystemWelcomeFactory": {
       "title": "The welcome screen of an empty diagram",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/welcome.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemColorsFactory": {
       "title": "The colour chart (`colors`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/colors.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemVersionFactory": {
       "title": "The version diagram (`version`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/version.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "notes": "`version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned.",
       "group": "Reference cards"
     },
     "PSystemLicenseFactory": {
       "title": "The license diagram (`license`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/license.rs"
+      ],
+      "docs": "reference-cards",
+      "notes": "Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's.",
       "group": "Reference cards"
     },
     "PSystemSkinparameterListFactory": {
       "title": "The skin parameter list (`skinparameters`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/skinparameter_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemListFontsFactory": {
       "title": "The font list (`listfonts`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/list_fonts.rs"
+      ],
+      "docs": "reference-cards",
+      "notes": "Lists the fonts rockuml draws with, its embedded Liberation fonts and the fonts registered with `--font` or `ROCKUML_FONTS`, instead of the machine's: rockuml never picks up system fonts.",
       "group": "Reference cards"
     },
     "PSystemListEmojiFactory": {
