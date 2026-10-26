@@ -350,7 +350,18 @@ fn expected_label_sizes(trace: &trace::Trace) -> String {
 /// Replays every trace's input through the ported cgraph, lays its graph out with `run`, then compares the text
 /// it returns with `expected`'s.
 fn check_all(run: fn(&mut Replay) -> String, expected: fn(&trace::Trace) -> String) {
+    check_phase(None, run, expected);
+}
+
+/// Like [`check_all`], on the traces whose layout reaches `phase`: dot lays out a graph without nodes before
+/// ranking it, so its trace has none of the phases.
+fn check_phase(
+    phase: Option<&str>,
+    run: fn(&mut Replay) -> String,
+    expected: fn(&trace::Trace) -> String,
+) {
     check_all_traces(
+        phase,
         |t| {
             let mut replay = trace::replay(&t.input);
             run(&mut replay)
@@ -359,13 +370,20 @@ fn check_all(run: fn(&mut Replay) -> String, expected: fn(&trace::Trace) -> Stri
     );
 }
 
-/// Runs `run` on every trace, then compares the text it returns with `expected`'s.
-fn check_all_traces(run: impl Fn(&trace::Trace) -> String, expected: fn(&trace::Trace) -> String) {
+/// Runs `run` on every trace that reaches `phase`, then compares the text it returns with `expected`'s.
+fn check_all_traces(
+    phase: Option<&str>,
+    run: impl Fn(&trace::Trace) -> String,
+    expected: fn(&trace::Trace) -> String,
+) {
     let traces = trace::files(&trace::repo_tests_dir().join("smetana"), "trace");
     assert!(!traces.is_empty(), "no traces");
     let mut failures = Vec::new();
     for path in &traces {
         let trace = trace::parse(&std::fs::read_to_string(path).unwrap());
+        if phase.is_some_and(|phase| !trace.phases.iter().any(|(p, _)| p == phase)) {
+            continue;
+        }
         let want = expected(&trace);
         let got = catch_unwind(AssertUnwindSafe(|| run(&trace)));
         match got {
@@ -395,7 +413,8 @@ fn check_all_traces(run: impl Fn(&trace::Trace) -> String, expected: fn(&trace::
 
 #[test]
 fn ranks_match_java() {
-    check_all(
+    check_phase(
+        Some("rank"),
         |r| {
             layout_until_rank(r);
             dump_ranks(r)
@@ -406,7 +425,8 @@ fn ranks_match_java() {
 
 #[test]
 fn mincross_orders_match_java() {
-    check_all(
+    check_phase(
+        Some("mincross"),
         |r| {
             layout_until_mincross(r);
             dump_orders(&r.zz, r.root, &mut Names::default())
@@ -417,7 +437,8 @@ fn mincross_orders_match_java() {
 
 #[test]
 fn positions_match_java() {
-    check_all(
+    check_phase(
+        Some("position"),
         |r| {
             layout_until_mincross(r);
             // Virtual nodes are named in the mincross dump first.
@@ -508,7 +529,8 @@ fn expected_section(trace: &trace::Trace, phase: &str) -> String {
 
 #[test]
 fn splines_match_java() {
-    check_all(
+    check_phase(
+        Some("splines"),
         |r| {
             layout_until_mincross(r);
             dot_position(&mut r.zz, r.root);
@@ -735,7 +757,7 @@ fn expected_drawing(trace: &trace::Trace) -> String {
 
 #[test]
 fn layouts_through_the_api_match_java() {
-    check_all_traces(dump_drawing, expected_drawing);
+    check_all_traces(None, dump_drawing, expected_drawing);
 }
 
 /// Graphs that make Java's Smetana loop forever in mincross (`tests/smetana-hangs`, random seeds traced until

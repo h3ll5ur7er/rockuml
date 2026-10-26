@@ -217,13 +217,16 @@ fn dump_attributes(r: &mut Replay, input: &[Call], out: &mut String) {
 /// (phase rank), the clusters depth first (phase rank, in `GD_clust` order, which follows `agfstsubg`), and the
 /// edges numbered 1 to n.
 fn check_against_trace(path: &Path, r: &mut Replay, trace: &trace::Trace) {
-    let rank = &trace
-        .phases
-        .iter()
-        .find(|(p, _)| p == "rank")
-        .expect("phase rank")
-        .1;
     let zz = &mut r.zz;
+    // dot lays out a graph without nodes before ranking it, so its trace has no rank phase.
+    let Some((_, rank)) = trace.phases.iter().find(|(p, _)| p == "rank") else {
+        assert!(
+            nodes(zz, r.root).is_empty(),
+            "{}: phase rank",
+            path.display()
+        );
+        return;
+    };
     let want_nodes: Vec<&str> = rank
         .iter()
         .filter_map(|l| l.strip_prefix("node ")?.rsplit_once(" rank "))
