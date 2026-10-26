@@ -241,13 +241,13 @@ impl Drawing<'_> {
         )
         .create_display_sheet(&Display::create(note.iter().cloned()), &font);
         Opale::new(
+            style.shadowing(),
             style.value(PName::LineColor).as_color(),
             style.value(PName::BackGroundColor).as_color(),
             Box::new(SheetBlock1::new(sheet, self.skin.get_padding())),
             style.stroke(),
             0.0,
         )
-        .with_shadowing(style.shadowing())
     }
 }
 

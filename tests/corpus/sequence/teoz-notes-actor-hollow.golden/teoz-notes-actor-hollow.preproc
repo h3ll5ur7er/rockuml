@@ -1,0 +1,16 @@
+@startuml
+!pragma teoz true
+skinparam actorStyle hollow
+skinparam roundCorner 8
+actor Alice
+actor Bob
+Alice -> Bob : hello
+rnote over Alice, Bob : together
+== Divider ==
+ref over Bob
+  a longer
+  reference
+end ref
+hnote left of Alice : waits
+Bob --> Alice : bye
+@enduml

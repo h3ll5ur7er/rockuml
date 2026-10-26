@@ -67,9 +67,7 @@ impl EntityImageDescription {
         } else {
             element(&[SName::Title])
         };
-        let builder = entity
-            .style_builder()
-            .expect("only the root has no style builder");
+        let builder = &entity.get_current_style_builder(diagram);
         let stereotype = entity.stereotype.as_ref();
         let style_title = signature_title
             .get_merged_style_with(builder, stereotype)

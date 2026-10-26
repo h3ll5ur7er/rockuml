@@ -1,0 +1,178 @@
+DPI: 96
+dimension: [ 202.5074 ; 176.0000 ]
+scaleFactor: 1.0000
+seed: -6823574055139544884
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Bilbo
+RECTANGLE:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 121.4005 ; 60.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffbfdbfe
+
+EMPTY:
+  pt1: [ 6.0000 ; 12.0000 ]
+  pt2: [ 32.0000 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 10.0000 ; 17.0000 ]
+  pt2: [ 32.0000 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 21.0000 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 32.0000 ; 21.0000 ]
+  pt2: [ 121.4005 ; 35.0000 ]
+
+TEXT:
+  text: Bilbo
+  position: [ 35.0000 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 7.0000 ; 44.0000 ]
+  pt2: [ 120.4005 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 44.0000 ]
+  pt2: [ 18.0000 ; 52.0000 ]
+
+LINE:
+  pt1: [ 7.0000 ; 52.0000 ]
+  pt2: [ 120.4005 ; 52.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 52.0000 ]
+  pt2: [ 18.0000 ; 60.0000 ]
+
+COMMENT: class Frodo
+RECTANGLE:
+  pt1: [ 17.0000 ; 113.0000 ]
+  pt2: [ 109.9363 ; 161.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffbfdbfe
+
+EMPTY:
+  pt1: [ 17.0000 ; 113.0000 ]
+  pt2: [ 43.0000 ; 145.0000 ]
+
+ELLIPSE:
+  pt1: [ 21.0000 ; 118.0000 ]
+  pt2: [ 43.0000 ; 140.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 32.0000 ; 129.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 43.0000 ; 122.0000 ]
+  pt2: [ 109.9363 ; 136.0000 ]
+
+TEXT:
+  text: Frodo
+  position: [ 46.0000 ; 132.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 18.0000 ; 145.0000 ]
+  pt2: [ 108.9363 ; 145.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 17.0000 ; 145.0000 ]
+  pt2: [ 29.0000 ; 153.0000 ]
+
+LINE:
+  pt1: [ 18.0000 ; 153.0000 ]
+  pt2: [ 108.9363 ; 153.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 17.0000 ; 153.0000 ]
+  pt2: [ 29.0000 ; 161.0000 ]
+
+POLYGON:
+  points:
+   - [ 63.5000 ; 112.9343 ]
+   - [ 67.5000 ; 103.9343 ]
+   - [ 63.5000 ; 107.9343 ]
+   - [ 59.5000 ; 103.9343 ]
+   - [ 63.5000 ; 112.9343 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 57.5000 ; 54.2111 ]
+   - type: SEG_CUBICTO
+     pt1: [ 57.5000 ; 70.0991 ]
+     pt2: [ 57.5000 ; 86.0775 ]
+     pt3: [ 57.5000 ; 101.9343 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 63.5000 ; 78.0000 ]
+  pt2: [ 197.5074 ; 95.0000 ]
+
+EMPTY:
+  pt1: [ 64.5000 ; 79.0000 ]
+  pt2: [ 196.5074 ; 94.0000 ]
+
+TEXT:
+  text: the Ring
+  position: [ 65.5000 ; 90.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

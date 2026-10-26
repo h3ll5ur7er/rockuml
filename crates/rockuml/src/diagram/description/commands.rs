@@ -249,7 +249,8 @@ fn create_leaf(
 ) -> EntityId {
     let entity = diagram
         .cuca
-        .really_create_leaf(Some(location), quark, display, leaf_type);
+        .really_create_leaf(Some(location), quark, display, leaf_type)
+        .expect("the quark holds no entity yet");
     diagram.cuca.entity_mut(entity).usymbol = usymbol;
     entity
 }
@@ -394,7 +395,7 @@ impl SingleLineCommand<DescriptionDiagram> for CreateElementFull {
             return Err(already_defined(&name));
         }
         if matches!(leaf_type, LeafType::Portin | LeafType::Portout)
-            && cuca.entity(cuca.get_current_group()).is_root()
+            && cuca.entity(cuca.get_current_group()?).is_root()
         {
             return Err(CommandError::new(
                 "Port can only be used inside an element and not at root level",
@@ -641,7 +642,7 @@ pub(super) fn archimate_package() -> Box<dyn Command<DescriptionDiagram>> {
             cuca.goto_group(Some(location), quark, display.clone(), GroupType::Package);
             let stereotype = archimate_stereotype(arg)?;
             let colors = colors(arg, ColorType::Back)?;
-            let group = cuca.get_current_group();
+            let group = cuca.get_current_group()?;
             let entity = cuca.entity_mut(group);
             entity.usymbol = Some(USymbols::ARCHIMATE);
             entity.display = display;
@@ -693,9 +694,9 @@ pub(super) fn create_domain() -> Box<dyn Command<DescriptionDiagram>> {
             // No symbol is named `domain` or `requirement`: their images draw them.
             let entity = if arg.get("GROUP", 0).is_some() {
                 cuca.goto_group(Some(location), quark, display, group_type);
-                cuca.get_current_group()
+                cuca.get_current_group()?
             } else {
-                cuca.really_create_leaf(Some(location), quark, display, leaf_type)
+                cuca.really_create_leaf(Some(location), quark, display, leaf_type)?
             };
             if let Some(stereotype) = stereotype {
                 diagram.cuca.entity_mut(entity).stereotype =

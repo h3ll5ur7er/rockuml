@@ -167,7 +167,7 @@ fn create_class_entity(
     let entity = match cuca.quark(quark).get_data() {
         None => {
             let display = display_or_name(display_string, cuca.quark(quark).get_name());
-            cuca.really_create_leaf(Some(location), quark, display, leaf_type)
+            cuca.really_create_leaf(Some(location), quark, display, leaf_type)?
         }
         Some(entity) => {
             if !cuca
@@ -450,7 +450,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                         quark,
                         display,
                         LeafType::Object,
-                    )
+                    )?
                 };
                 decorate_object(cuca, entity, &header)?;
                 let bodier = &mut cuca.entity_mut(entity).bodier;
@@ -482,7 +482,8 @@ pub(super) fn create_entity_object() -> Box<dyn Command<ClassDiagram>> {
             }
             let display =
                 display_or_name(arg.get_lazzy("DISPLAY", 0), cuca.quark(quark).get_name());
-            let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Object);
+            let entity =
+                cuca.really_create_leaf(Some(location), quark, display, LeafType::Object)?;
             decorate_object(cuca, entity, arg)?;
             if let Some(url) = url_of(arg) {
                 cuca.entity_mut(entity).url = Some(url);
@@ -633,7 +634,7 @@ impl SingleLineCommand<ClassDiagram> for CreateElementParenthesis {
             quark,
             display.clone(),
             LeafType::Description,
-        );
+        )?;
         let entity = cuca.entity_mut(entity);
         entity.usymbol = usymbol;
         entity.display = display;
@@ -740,7 +741,7 @@ impl SingleLineCommand<ClassDiagram> for Package {
             GroupType::Package,
         );
         let colors = colors(arg, ColorType::Back)?;
-        let group = cuca.get_current_group();
+        let group = cuca.get_current_group()?;
         let entity = cuca.entity_mut(group);
         if usymbol.is_some() {
             entity.usymbol = usymbol;
@@ -794,7 +795,7 @@ pub(super) fn package_empty() -> Box<dyn Command<ClassDiagram>> {
             let quark = cuca.quark_in_context(false, ClassDiagram::clean_id(&id_short))?;
             cuca.goto_group(Some(location), quark, display, GroupType::Package);
             let back = back_color(arg)?;
-            let group = cuca.get_current_group();
+            let group = cuca.get_current_group()?;
             let entity = cuca.entity_mut(group);
             entity.colors = entity.colors.with(ColorType::Back, back);
             cuca.end_group();
@@ -908,7 +909,8 @@ impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
         let entity = if let Some(entity) = cuca.quark(quark).get_data() {
             entity
         } else {
-            let entity = cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type);
+            let entity =
+                cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type)?;
             cuca.entity_mut(entity).usymbol = usymbol;
             entity
         };
@@ -945,7 +947,7 @@ fn goto_namespace(
 ) -> CommandResult {
     cuca.goto_group(Some(location), quark, display, GroupType::Package);
     let back = back_color(arg)?;
-    let group = cuca.get_current_group();
+    let group = cuca.get_current_group()?;
     let entity = cuca.entity_mut(group);
     if usymbol.is_some() {
         entity.usymbol = usymbol;
@@ -1261,6 +1263,7 @@ fn get_or_create(
     }
     let display = Display::with_newlines(cuca.quark(quark).get_name());
     cuca.really_create_leaf(Some(location), quark, display, leaf_type)
+        .expect("the quark holds no entity yet")
 }
 
 /// The two entities of `(A, B)`, which must exist.
@@ -1449,7 +1452,7 @@ fn execute_link_lollipop(
         id_new_long,
         Display::with_newlines(named),
         lollipop_type(desc.unwrap_or_default()),
-    );
+    )?;
     let (cl1, cl2) = if lollipop_first {
         (lollipop, normal_entity)
     } else {
@@ -1547,7 +1550,7 @@ pub(super) fn diamond_association() -> Box<dyn Command<ClassDiagram>> {
                 quark,
                 Display::with_newlines(""),
                 LeafType::Association,
-            );
+            )?;
             Ok(())
         },
     )))

@@ -135,7 +135,7 @@ fn create_note<D: EntityDiagram>(
             cuca.quark(quark).get_name()
         )));
     }
-    let entity = cuca.really_create_leaf(location, quark, display, LeafType::Note);
+    let entity = cuca.really_create_leaf(location, quark, display, LeafType::Note)?;
     let back = back_color(arg)?;
     let note = cuca.entity_mut(entity);
     note.colors = note.colors.with(ColorType::Back, back);
@@ -258,7 +258,7 @@ fn add_note_on_entity<D: EntityDiagram>(
     let colors = colors(arg, ColorType::Back)?;
     let tmp = cuca.get_unique_sequence("GMN");
     let quark = cuca.quark_in_context(true, &tmp)?;
-    let note = cuca.really_create_leaf(location, quark, display, LeafType::Note);
+    let note = cuca.really_create_leaf(location, quark, display, LeafType::Note)?;
     let entity = cuca.entity_mut(note);
     if let Some(stereotype) = arg.get("STEREO", 0) {
         entity.stereotype = Some(Stereotype::new(stereotype));
@@ -445,12 +445,14 @@ fn create_tips(
     target: EntityId,
     position: Position,
 ) -> EntityId {
-    let tips = cuca.really_create_leaf(
-        location,
-        ident_tip,
-        Display::with_newlines(""),
-        LeafType::Tips,
-    );
+    let tips = cuca
+        .really_create_leaf(
+            location,
+            ident_tip,
+            Display::with_newlines(""),
+            LeafType::Tips,
+        )
+        .expect("the quark holds no entity yet");
     let link_type = LinkType::new(LinkDecor::None, LinkDecor::None).get_invisible();
     let (entity1, entity2) = if position == Position::Right {
         (target, tips)

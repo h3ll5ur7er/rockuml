@@ -1,0 +1,92 @@
+DPI: 96
+dimension: [ 126.0000 ; 163.0000 ]
+scaleFactor: 1.0000
+seed: -6102716625094749272
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Admin
+ELLIPSE:
+  pt1: [ 50.4213 ; 12.5000 ]
+  pt2: [ 66.4213 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Admin
+  position: [ 14.0000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity U
+ELLIPSE:
+  pt1: [ 6.0000 ; 122.0000 ]
+  pt2: [ 111.2559 ; 147.8512 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff0000ff
+  backcolor: ffff0000
+
+TEXT:
+  text: Log in
+  position: [ 23.4437 ; 138.4256 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 58.5000 ; 121.8754 ]
+   - [ 62.5000 ; 112.8754 ]
+   - [ 58.5000 ; 116.8754 ]
+   - [ 54.5000 ; 112.8754 ]
+   - [ 58.5000 ; 121.8754 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 52.5000 ; 80.1111 ]
+   - type: SEG_CUBICTO
+     pt1: [ 52.5000 ; 92.9174 ]
+     pt2: [ 52.5000 ; 101.4690 ]
+     pt3: [ 52.5000 ; 110.8754 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

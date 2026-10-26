@@ -187,6 +187,26 @@ Neo --> red
 @enduml
 ```
 
+### Where a style sheet applies
+
+Classes and the elements of component, deployment and use case diagrams take the style sheets in force where they are declared, so each part of a diagram can have its own:
+
+```rockuml
+@startuml
+<style>
+class { BackgroundColor #FEF3C7 }
+</style>
+class Bilbo
+<style>
+class { BackgroundColor #BFDBFE }
+</style>
+class Frodo
+Bilbo --> Frodo : the Ring
+@enduml
+```
+
+A `skinparam` anywhere in the diagram ends that, as in PlantUML: every element then takes the styles in force at the diagram's end, and Bilbo turns blue too.
+
 ### Properties
 
 The common properties are:

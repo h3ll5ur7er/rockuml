@@ -1,0 +1,7 @@
+@startuml
+skinparam shadowing true
+class A
+() I2
+A - I2
+skinparam shadowing false
+@enduml

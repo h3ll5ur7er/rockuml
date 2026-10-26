@@ -6,7 +6,8 @@ use crate::klimt::geom::XDimension2D;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
-use crate::svek::image::{MARGIN_X1, MARGIN_X2};
+use crate::style::{PName, Style, ValueReading};
+use crate::svek::image::{MARGIN_X1, MARGIN_X2, Opale};
 
 /// A note's text, wrapped at the style's width, whose separators span the note's outline: PlantUML's
 /// `SheetBlock2` with the tile, or an anonymous stencil, reaching from 6 before the text to 15 after it.
@@ -37,6 +38,30 @@ impl NoteSheet {
             ),
         }
     }
+}
+
+/// The note in the outline, font and colours of `style`, its text aligned by `alignment`.
+pub(super) fn note_opale(
+    note: &Display,
+    style: &Style,
+    alignment: HorizontalAlignment,
+    skin_param: &SkinParam,
+) -> Opale<'static> {
+    let text = NoteSheet::new(
+        note,
+        &style.font_configuration(),
+        alignment,
+        style.wrap_width(),
+        skin_param,
+    );
+    Opale::new(
+        style.shadowing(),
+        style.value(PName::LineColor).as_color(),
+        style.value(PName::BackGroundColor).as_color(),
+        Box::new(text),
+        style.stroke(),
+        0.0,
+    )
 }
 
 impl TextBlock for NoteSheet {

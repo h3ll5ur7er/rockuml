@@ -1,0 +1,18 @@
+@startuml
+!pragma teoz true
+skinparam actorStyle awesome
+skinparam roundCorner 15
+actor Alice
+actor Bob
+participant Server
+Alice -> Bob : hello
+hnote over Alice : idle
+rnote right of Bob : thinking
+== Phase two ==
+ref over Alice, Server : init
+Bob -> Server : request
+hnote over Bob, Server
+  two lines
+  of hexagon
+end hnote
+@enduml

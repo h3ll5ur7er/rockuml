@@ -1,0 +1,12 @@
+@startuml
+<style>
+class { BackgroundColor #FEF3C7 }
+</style>
+class Bilbo
+<style>
+class { BackgroundColor #BFDBFE }
+</style>
+class Frodo
+Bilbo --> Frodo : the Ring
+skinparam roundCorner 10
+@enduml

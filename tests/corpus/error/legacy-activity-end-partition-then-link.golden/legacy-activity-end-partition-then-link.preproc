@@ -1,0 +1,5 @@
+@startuml
+(*) --> "A"
+end partition
+"A" --> "C"
+@enduml

@@ -296,16 +296,14 @@ impl TaskDraw {
             &ctx.diagram.titled.skin,
         )
         .create_display_sheet(note, &font);
-        Some(
-            Opale::new(
-                style.value(PName::LineColor).as_color(),
-                style.value(PName::BackGroundColor).as_color(),
-                Box::new(SheetBlock1::new(sheet, style.padding())),
-                style.stroke(),
-                0.0,
-            )
-            .with_shadowing(style.shadowing()),
-        )
+        Some(Opale::new(
+            style.shadowing(),
+            style.value(PName::LineColor).as_color(),
+            style.value(PName::BackGroundColor).as_color(),
+            Box::new(SheetBlock1::new(sheet, style.padding())),
+            style.stroke(),
+            0.0,
+        ))
     }
 
     fn y_note_position(&self, ctx: &DrawContext, string_bounder: &dyn StringBounder) -> f64 {

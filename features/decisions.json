@@ -197,7 +197,8 @@
       "corpus": [
         "legacy-activity"
       ],
-      "docs": "activity"
+      "docs": "activity",
+      "notes": "Inner activities (`-->{` … `}`, PlantUML's `InnerActivity`) are read but reported as not ported yet: planned soon, they need `GroupMakerActivity`, which lays each one out as a graph of its own and draws it as one action."
     },
     "BpmDiagramFactory": {
       "title": "BPM diagrams",

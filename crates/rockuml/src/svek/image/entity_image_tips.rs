@@ -56,13 +56,13 @@ impl EntityImageTips {
                     skin,
                 );
                 let opale = Opale::new(
+                    style.shadowing(),
                     style.value(PName::LineColor).as_color(),
                     note_background_color,
                     text_block,
                     style.stroke(),
                     0.0,
-                )
-                .with_shadowing(style.shadowing());
+                );
                 (member.clone(), opale)
             })
             .collect();

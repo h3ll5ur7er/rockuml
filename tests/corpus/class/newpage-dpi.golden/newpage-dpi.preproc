@@ -1,0 +1,9 @@
+@startuml
+skinparam dpi 120
+class A
+A --> B
+newpage
+class C
+interface D
+C ..|> D
+@enduml

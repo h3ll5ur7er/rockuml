@@ -162,13 +162,13 @@ impl EntityImageNote {
         }
         let strategy = get_opale_strategy(text_width, text_height, pp2);
         let opale = Opale::new(
+            self.shadowing,
             self.border_color.clone(),
             self.note_background_color.clone(),
             Box::new(&*self.text_block),
             self.stroke,
             self.round_corner,
-        )
-        .with_shadowing(self.shadowing);
+        );
         opale.draw_opale(&ug.with_stroke(self.stroke), strategy, pp2, pp1);
     }
 }

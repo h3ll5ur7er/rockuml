@@ -120,7 +120,7 @@ fn execute_create_state(
             quark,
             Display::with_newlines(&display),
             leaf_type,
-        ),
+        )?,
     };
     diagram.ensure_parent_state(location, quark);
     if diagram.current_pass != ParserPass::One {
@@ -347,7 +347,7 @@ fn get_entity(
             LeafType::SynchroBar,
         )));
     }
-    let current = diagram.cuca.get_current_group();
+    let current = diagram.cuca.get_current_group()?;
     if diagram.cuca.entity(current).get_name(&diagram.cuca) == code {
         return Ok(Some(current));
     }
@@ -374,7 +374,7 @@ fn get_entity(
         quark,
         display,
         LeafType::State,
-    )))
+    )?))
 }
 
 /// `CODE1 as "display"` or `"display" as CODE2` or `CODE2`, then what ends a group's first line.
@@ -444,7 +444,7 @@ fn execute_create_package_state(
         .goto_group(Some(location), quark, shown, GroupType::State);
     let stereogroup = Stereogroup::build(arg.get("STEREOGROUP", 0));
     let colors = colors_with_line(arg)?.merge_with(&stereogroup.get_inner_colors()?);
-    let group = diagram.cuca.get_current_group();
+    let group = diagram.cuca.get_current_group()?;
     let entity = diagram.cuca.entity_mut(group);
     if let Some(display) = display {
         entity.display = Display::with_newlines(display);
@@ -496,7 +496,7 @@ fn execute_create_package2(
         .cuca
         .goto_group(Some(location), quark, display, GroupType::Package);
     let colors = colors_with_line(arg)?;
-    let group = diagram.cuca.get_current_group();
+    let group = diagram.cuca.get_current_group()?;
     let entity = diagram.cuca.entity_mut(group);
     entity.usymbol = Some(USymbols::FRAME);
     if let Some(stereotype) = arg.get("STEREOTYPE", 0) {
@@ -519,7 +519,7 @@ pub(super) fn end_state() -> Box<dyn Command<StateDiagram>> {
         ]),
         ALL_PASSES,
         |diagram, _, _| {
-            let current = diagram.cuca.get_current_group();
+            let current = diagram.cuca.get_current_group()?;
             if diagram.cuca.entity(current).is_root() {
                 return Err(CommandError::new("No inner state defined"));
             }
@@ -547,7 +547,7 @@ pub(super) fn add_field() -> Box<dyn Command<StateDiagram>> {
         ParserPass::One.alone(),
         |diagram, location, arg| {
             let code = arg.get_lazzy("CODE", 0).unwrap_or_default();
-            let current = diagram.cuca.get_current_group();
+            let current = diagram.cuca.get_current_group()?;
             let quark = if diagram.cuca.entity(current).get_name(&diagram.cuca) == code {
                 diagram.cuca.entity(current).get_quark()
             } else {

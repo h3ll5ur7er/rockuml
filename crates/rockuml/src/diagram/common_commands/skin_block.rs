@@ -71,6 +71,7 @@ impl<D: TitledDiagram> Command<D> for SkinParamBlock {
             .and_then(|captures| captures.get(1))
             .map(|group| vec![group.as_str().to_owned()])
             .unwrap_or_default();
+        diagram.titled().set_skin_param_used(true);
         let body = lines.sub_extract(1, 1).trimmed();
         for line in body.iter().filter(|line| !line.text().is_empty()) {
             if line.text() == "}" {
@@ -123,6 +124,7 @@ pub(super) fn jaws<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
                     return Err(CommandError::new("Syntax Error?"));
                 }
             }
+            diagram.titled().set_skin_param_used(true);
             Ok(())
         },
     )))
