@@ -251,6 +251,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/server.md')),
       },
       {
+        slug: 'dot',
+        title: 'Graphviz graphs',
+        summary: 'Graphviz sources drawn by your installed dot (command line only).',
+        load: text(() => import('./content/dot.md')),
+      },
+      {
         slug: 'javascript',
         title: 'JavaScript and WebAssembly',
         summary: 'Render diagrams in browsers and Node with rockuml.wasm.',

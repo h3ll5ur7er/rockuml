@@ -8,7 +8,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 26 diagram types <<ported>>
+** Ported: 27 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -16,6 +16,7 @@ mindmapDiagram {
 *** State diagrams <<ported>>
 *** Activity diagrams <<ported>>
 *** Wireframes <<ported>>
+*** Graphviz sources <<ported>>
 *** Network diagrams <<ported>>
 *** Mind maps <<ported>>
 *** Work breakdown structures <<ported>>
@@ -38,7 +39,6 @@ mindmapDiagram {
 left side
 ** Planned <<planned>>
 *** BPM diagrams <<planned>>
-*** Graphviz sources <<planned>>
 *** Ditaa diagrams <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
@@ -65,10 +65,10 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 37 of 52 ported, 7 planned, 8 not planned |
+| Diagram types | 38 of 52 ported, 6 planned, 8 not planned |
 | Commands of the ported diagrams | 1098 of 1098 ported |
 | Preprocessor functions | 74 of 74 ported |
-| Command line flags | 48 of 92 ported |
+| Command line flags | 49 of 92 ported |
 | Output formats | 6 of 29 ported |
 | Style names and properties | 187 of 187 known |
 
@@ -93,6 +93,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [The Open Iconic list (`listopeniconic`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemListOpenIconicFactory` |
 | [The ArchiMate sprite list](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemListArchimateSpritesFactory` |
 | [Wireframes (Salt)](docs/salt) | ✅ Ported | 14 of 14 match PlantUML | `salt` inside `@startuml` and `{{ … }}` embedded diagrams are not ported yet. | `PSystemSaltFactory` |
+| [Graphviz sources (`@startdot`)](docs/dot) | ✅ Ported | 11 of 11 match PlantUML | Runs the installed Graphviz `dot`, as PlantUML does, so the command line draws it and the browser build reports it as not available. `-f debug` and `svg-deterministic` always report the crash PlantUML usually reports for them. | `PSystemDotFactory` |
 | [Network diagrams (nwdiag)](docs/network) | ✅ Ported | 13 of 13 match PlantUML |  | `NwDiagramFactory` |
 | [Mind maps](docs/mindmap) | ✅ Ported | 21 of 21 match PlantUML |  | `MindMapDiagramFactory` |
 | [Work breakdown structures](docs/wbs) | ✅ Ported | 19 of 19 match PlantUML | The ASCII-art output is not ported (txt formats are planned later). | `WBSDiagramFactory` |
@@ -114,7 +115,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Regular expression diagrams](docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | BPM diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BpmDiagramFactory` |
-| Graphviz sources (`@startdot`) | 🗓️ Planned later |  | Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz. | `PSystemDotFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
 | Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |
 | LaTeX math (`@startlatex`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemLatexFactory` |
@@ -143,7 +143,7 @@ All 74 are ported.
 
 ## Command line flags
 
-48 of 92 ported. Not ported:
+49 of 92 ported. Not ported:
 
 | Name | Status | Notes |
 |---|---|---|
@@ -155,7 +155,6 @@ All 74 are ported.
 | `--check-graphviz` | ⛔ Not planned | Belongs to PlantUML's Java runtime or GUI, which rockuml does not have. |
 | `-pipemap` | 🗓️ Planned later | Recognised and refused with a message; ported on demand. |
 | `--list-keywords` | 🗓️ Planned later | Recognised and refused with a message; ported on demand. |
-| `--dot-path` | ⛔ Not planned | Belongs to PlantUML's Java runtime or GUI, which rockuml does not have. |
 | `--ftp-server` | ⛔ Not planned | Belongs to PlantUML's Java runtime or GUI, which rockuml does not have. |
 | `--clipboard` | ⛔ Not planned | Belongs to PlantUML's Java runtime or GUI, which rockuml does not have. |
 | `--clipboardloop` | ⛔ Not planned | Belongs to PlantUML's Java runtime or GUI, which rockuml does not have. |

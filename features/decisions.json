@@ -211,8 +211,14 @@
     },
     "PSystemDotFactory": {
       "title": "Graphviz sources (`@startdot`)",
-      "status": "later",
-      "reason": "Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz."
+      "rust": [
+        "diagram/dot.rs"
+      ],
+      "corpus": [
+        "dot"
+      ],
+      "docs": "dot",
+      "notes": "Runs the installed Graphviz `dot`, as PlantUML does, so the command line draws it and the browser build reports it as not available. `-f debug` and `svg-deterministic` always report the crash PlantUML usually reports for them."
     },
     "ChartDiagramFactory": {
       "title": "Charts",

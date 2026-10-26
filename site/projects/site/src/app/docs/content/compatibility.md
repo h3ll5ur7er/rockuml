@@ -59,7 +59,7 @@ A diagram type that isn't ported yet is reported with a message and exit status 
 
 ## The browser build
 
-The WebAssembly build that runs this site has no files, so `!include` of files and URLs, images from files, and themes from folders don't work in it. To keep it small, it also leaves out the standard library and emoji. The [JavaScript page](docs/javascript#what-the-browser-build-leaves-out) has the details.
+The WebAssembly build that runs this site has no files, so `!include` of files and URLs, images from files, and themes from folders don't work in it. To keep it small, it also leaves out the standard library and emoji. It cannot run programs either, so [Graphviz graphs](docs/dot) (`@startdot`), which need an installed `dot`, are reported as not available. The [JavaScript page](docs/javascript#what-the-browser-build-leaves-out) has the details.
 
 ## Reporting a difference
 
