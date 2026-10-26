@@ -1,0 +1,15 @@
+@startbpm
+new branch
+:Collect;
+a:<+>
+b<+>
+resume a
+:Sort;
+else
+new branch
+resume b
+resume a
+else
+end branch
+end branch
+@endbpm

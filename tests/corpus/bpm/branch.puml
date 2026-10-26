@@ -1,0 +1,9 @@
+@startbpm
+:Request;
+new branch
+:Approve;
+else
+:Reject;
+end branch
+:Notify;
+@endbpm

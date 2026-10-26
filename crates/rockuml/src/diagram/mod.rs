@@ -3,6 +3,7 @@
 mod activity;
 pub(crate) mod activity3;
 mod board;
+mod bpm;
 mod builder;
 mod cards;
 mod chart;
@@ -211,6 +212,7 @@ pub fn create(
         Some(DiagramType::Hcl) => |source, _| Ok(json::create_hcl(source)),
         Some(DiagramType::Files) => |source, _| Ok(files::create(source)),
         Some(DiagramType::Board) => |source, _| builder::create_board(source),
+        Some(DiagramType::Bpm) => |source, _| builder::create_bpm(source),
         Some(DiagramType::Chart) => |source, _| builder::create_chart(source),
         Some(DiagramType::Git) => |source, _| git::create(source),
         Some(DiagramType::Ebnf) => |source, _| builder::create_ebnf(source),

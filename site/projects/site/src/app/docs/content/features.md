@@ -8,13 +8,14 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 28 diagram types <<ported>>
+** Ported: 29 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
 *** Use case, component, deployment and ArchiMate diagrams <<ported>>
 *** State diagrams <<ported>>
 *** Activity diagrams <<ported>>
+*** BPM diagrams <<ported>>
 *** Wireframes <<ported>>
 *** Network diagrams <<ported>>
 *** Mind maps <<ported>>
@@ -39,7 +40,6 @@ mindmapDiagram {
 *** Reference cards <<ported>>
 left side
 ** Planned <<planned>>
-*** BPM diagrams <<planned>>
 *** Graphviz sources <<planned>>
 *** Ditaa diagrams <<planned>>
 *** Math <<planned>>
@@ -65,8 +65,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 39 of 52 ported, 5 planned, 8 not planned |
-| Commands of the ported diagrams | 1150 of 1150 ported |
+| Diagram types | 40 of 52 ported, 4 planned, 8 not planned |
+| Commands of the ported diagrams | 1157 of 1157 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -84,6 +84,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 80 of 80 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |
+| [BPM diagrams](docs/bpm) | ✅ Ported | 14 of 14 match PlantUML |  | `BpmDiagramFactory` |
 | [The license diagram (`license`)](docs/reference-cards) | ✅ Ported |  | Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's. | `PSystemLicenseFactory` |
 | [The version diagram (`version`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML | `version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. License keys (`keygen`, `keycheck`…) belong to PlantUML's professional edition and are not planned. | `PSystemVersionFactory` |
 | [The skin parameter list (`skinparameters`)](docs/reference-cards) | ✅ Ported | 29 of 29 match PlantUML |  | `PSystemSkinparameterListFactory` |
@@ -115,7 +116,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [EBNF diagrams](docs/ebnf) | ✅ Ported | 14 of 14 match PlantUML |  | `PSystemEbnfFactory` |
 | [Regular expression diagrams](docs/regex) | ✅ Ported | 15 of 15 match PlantUML |  | `PSystemRegexFactory` |
 | [Entity relationship diagrams (Chen)](docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
-| BPM diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BpmDiagramFactory` |
 | Graphviz sources (`@startdot`) | 🗓️ Planned later |  | Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz. | `PSystemDotFactory` |
 | Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
 | Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |

@@ -78,6 +78,7 @@ Every diagram sits between a start line and an end line. `@startuml` and `@endum
 | Boards | `@startboard` |
 | Wire diagrams | `@startwire` |
 | Flow diagrams | `@startflow` |
+| BPM diagrams | `@startbpm` |
 | Charts | `@startchart` |
 | Git commit graphs | `@startgit` |
 | EBNF grammars and regular expressions | `@startebnf`, `@startregex` |

@@ -63,6 +63,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - Boards (`@startboard`): story maps of activities and their releases.
 - Wire diagrams (`@startwire`, undocumented in PlantUML): nested blocks joined by wires and buses.
 - Flow diagrams (`@startflow`, undocumented in PlantUML): boxes on a grid, each a step from the one before.
+- BPM diagrams (`@startbpm`), which PlantUML has but does not document: events, merges and branches on a grid.
 - Charts (`@startchart`): bar, line, area and scatter series, with legends and annotations.
 - Git commit graphs (`@startgit`) from `git log --graph` output.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
