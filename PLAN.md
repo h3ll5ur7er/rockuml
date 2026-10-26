@@ -749,12 +749,30 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
     ported.
 
 ### Phases 27+ — The rest
-- `@startdot`: run an external Graphviz `dot` from the command line, as PlantUML does; the engine asks its host
-  for the layout, so the browser build reports it as not available.
 - The undocumented flow, wire and BPM diagrams, ported faithfully like the others.
 - On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
   by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
   layout crate).
+
+### Phase 27 — Graphviz sources
+- **Status: done.** `@startdot` (`PSystemDotFactory`, `PSystemDot`): the lines from a graph's header on go to an
+  external Graphviz `dot`, run as PlantUML runs it (`-Tsvg`, `-Tpng`, its error stream joined to its output),
+  found through `--dot-path`, `-DGRAPHVIZ_DOT`, `GRAPHVIZ_DOT`, the `PATH` and the usual install places. The
+  engine asks its host (`Host::create_for_system_dot`); the command line runs `dot`, the browser build has none
+  and reports the diagram as not available. 11 cases (`tests/corpus/dot`) match every output, and 3 command line
+  scenarios cover a missing `dot` and the security profiles that suppress `dot`'s SVG.
+  - Goldens and parity need the oracle's Graphviz: `tools/oracle/setup-graphviz.sh` unpacks Ubuntu's Graphviz
+    2.42 into `tools/graphviz` (never installed, so the other goldens stay Smetana's) with a font
+    configuration of rockuml's Liberation fonts only. The parity suite skips the `dot` cases, with a note, when
+    the `dot` rockuml finds draws `dot/digraph` differently; CI sets `ROCKUML_PARITY_REQUIRE_GRAPHVIZ` on Linux,
+    where it runs the same script, so the cases must run there.
+  - Faithful to PlantUML: a dot syntax error or warning ends up in the image file, a missing `dot` or a failed
+    run draws PlantUML's green-on-black message and exits with status 200 (503 from the server), and
+    `INSECURE`/`INTERNET_WITH_DOTSVG` write the "feature has been suppressed" SVG.
+  - Deviations: `-f debug` and `svg-deterministic` ask `dot` for formats it does not have; PlantUML then
+    reports a crash or writes `dot`'s complaint, depending on a race that the first diagram of a run usually
+    loses. rockuml always reports the crash, and the generator drops goldens of the complaint. No timeout:
+    `--graphviz-timeout` stays ignored.
 
 ### Phase 28 — BPM diagrams
 - **Status: done.** `@startbpm` (`BpmDiagramFactory` and its seven commands): events, merges, `resume`, `goto`

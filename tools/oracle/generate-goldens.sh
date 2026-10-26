@@ -35,6 +35,14 @@ generate_case() {
 	reference_plantuml -encodeurl "$case_file" > "$golden_dir/$(basename "${case_file%.puml}").url" 2> /dev/null || true
 	mask_render_timestamps "$golden_dir"
 	drop_crash_reports "$golden_dir"
+	drop_dot_races "$golden_dir"
+}
+
+# `@startdot` asks dot for `-Tdebug` or `-Tsvg_deterministic`, which dot rejects before reading its input. PlantUML
+# then reports a crash when its write to dot fails, or else writes dot's complaint: a race, which the first diagram
+# of a run usually loses. rockuml always reports the crash, so a golden of the complaint is no target.
+drop_dot_races() {
+	grep -lrE --null 'Format: "[a-z_]+" not recognized' "$1" | xargs -0 rm -f
 }
 
 # Where PlantUML crashes it draws a crash report with a random quote instead of the diagram, after a failed
@@ -70,7 +78,7 @@ mask_render_timestamps() {
 		's/(Mon|Tue|Wed|Thu|Fri|Sat|Sun) [A-Z][a-z]{2} [0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} [^ ]+ [0-9]{4}/<timestamp>/g' {} +
 }
 
-export -f generate_case generate_deterministic_svg mask_render_timestamps drop_crash_reports reference_plantuml to_native_paths
+export -f generate_case generate_deterministic_svg mask_render_timestamps drop_crash_reports drop_dot_races reference_plantuml to_native_paths
 export jdk_bin reference_jar
 
 list_cases "$@" | xargs -0 -P "$(nproc)" -I {} bash -c 'generate_case "$1"' _ {}

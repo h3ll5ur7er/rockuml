@@ -1,0 +1,8 @@
+@startdot
+
+
+strict digraph "a \"quoted\" name" {
+  a -> b;
+  a -> b;
+}
+@enddot

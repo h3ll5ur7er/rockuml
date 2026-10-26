@@ -1,0 +1,12 @@
+@startdot
+!$colour = "orange"
+!procedure $node($name)
+  $name [style=filled, fillcolor=$colour];
+!endprocedure
+digraph preprocessed {
+  $node(first)
+  $node(second)
+  first -> second;
+  ' a PlantUML comment
+}
+@enddot

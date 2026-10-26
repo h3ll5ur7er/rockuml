@@ -66,6 +66,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - BPM diagrams (`@startbpm`), which PlantUML has but does not document: events, merges and branches on a grid.
 - Charts (`@startchart`): bar, line, area and scatter series, with legends and annotations.
 - Git commit graphs (`@startgit`) from `git log --graph` output.
+- Graphviz sources (`@startdot`), drawn by an installed Graphviz `dot` as PlantUML does (command line only).
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
 - Packet diagrams (`@startpacketdiag`): fields laid out bit by bit under a bit scale.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).

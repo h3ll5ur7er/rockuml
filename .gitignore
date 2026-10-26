@@ -16,3 +16,6 @@
 
 # Built by tools/collect-licenses.sh
 /legal/
+
+# Graphviz unpacked by tools/oracle/setup-graphviz.sh for the @startdot goldens
+/tools/graphviz/

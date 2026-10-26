@@ -1,0 +1,24 @@
+@startdot
+digraph { a -> b }
+@enddot
+
+@startdot
+digraph{
+a -> b
+}
+@enddot
+
+@startdot
+Digraph G {
+}
+@enddot
+
+@startdot
+@enddot
+
+@startdot
+
+@enddot
+
+@startdot
+digraph G {

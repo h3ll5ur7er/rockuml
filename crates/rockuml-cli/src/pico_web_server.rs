@@ -147,6 +147,9 @@ fn handle_get(
     };
     let return_code = if rendered.error.is_some() {
         "400 ERROR"
+    } else if rendered.image.crashed {
+        // PlantUML's `FileImageData.CRASH` status.
+        "503 ERROR"
     } else {
         "200 OK"
     };

@@ -104,6 +104,6 @@ const png: Rendering<Uint8Array> = await rockuml.render(source, { format: 'png' 
 
 ## What the browser build leaves out
 
-The browser has no files, so `!include` of files and URLs fails, and images can come only from data URIs. To keep the download small, the standard library (`!include <C4/…>`) and emoji are left out, except the folder and the page that file trees draw; they fail the way a library or emoji that doesn't exist does. Dates and `%date()` use the browser's time zone. Everything else, including every diagram type, themes, sprites and Open Iconic, works exactly as in the `rockuml` binary.
+The browser has no files, so `!include` of files and URLs fails, and images can come only from data URIs. To keep the download small, the standard library (`!include <C4/…>`) and emoji are left out, except the folder and the page that file trees draw; they fail the way a library or emoji that doesn't exist does. Dates and `%date()` use the browser's time zone. The browser runs no programs, so [Graphviz graphs](docs/dot), which hand their source to an installed `dot`, are reported as not available (status "not ported", with the message "Graphviz's dot in the browser is not ported yet"). Everything else, including every other diagram type, themes, sprites and Open Iconic, works exactly as in the `rockuml` binary.
 
 For Angular applications, the [Angular components](docs/angular) wrap all of this into a diagram tag and a live editor.

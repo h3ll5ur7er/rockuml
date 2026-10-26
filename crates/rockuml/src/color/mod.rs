@@ -200,6 +200,8 @@ impl HColor {
     pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
     pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
     pub const RED: HColor = HColor::Simple(XColor::rgb(255, 0, 0));
+    /// The green of PlantUML's error and crash reports.
+    pub const MY_GREEN: HColor = HColor::Simple(XColor::rgb(0x33, 0xFF, 0x02));
     /// No colour: nothing is painted.
     pub const NONE: HColor = HColor::Simple(XColor {
         red: 0,

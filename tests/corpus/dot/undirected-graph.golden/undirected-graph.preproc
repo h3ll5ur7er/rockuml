@@ -1,0 +1,8 @@
+@startdot
+graph neighbours {
+  a -- b -- c;
+  b -- d;
+  d -- a;
+  e;
+}
+@enddot

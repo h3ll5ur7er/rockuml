@@ -17,7 +17,6 @@ use crate::text::StringLocated;
 /// What PlantUML's error images say they were made by.
 const PLANTUML_DESCRIPTION: &str = "PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]";
 
-const GREEN: HColor = HColor::Simple(crate::color::XColor::rgb(0x33, 0xFF, 0x02));
 const RED: HColor = HColor::Simple(crate::color::XColor::rgb(0xFF, 0x00, 0x00));
 
 pub(super) struct ErrorDiagram {
@@ -121,23 +120,23 @@ impl Diagram for ErrorDiagram {
                 TextBlockRaw::new(self.location_lines(), bold(HColor::BLACK)),
                 margins(1.0, 1.0, 1.0, 4.0),
             ),
-            GREEN,
+            HColor::MY_GREEN,
         );
         let header = TextBlockMarged::new(
             TextBlockRaw::new(
                 [PLANTUML_DESCRIPTION],
-                sans_serif(12, GREEN)
+                sans_serif(12, HColor::MY_GREEN)
                     .with_style(FontStyle::Bold)
                     .with_style(FontStyle::Italic),
             ),
             margins(0.0, 2.0, 0.0, 8.0),
         );
-        let wavy = bold(GREEN)
+        let wavy = bold(HColor::MY_GREEN)
             .with_style(FontStyle::Wave)
             .with_extended_color(RED);
         // Stacked pairwise like PlantUML, which matters: a background spans the width of its own pair.
         let below: [Box<dyn TextBlock>; 3] = [
-            Box::new(TextBlockRaw::new(body, bold(GREEN))),
+            Box::new(TextBlockRaw::new(body, bold(HColor::MY_GREEN))),
             Box::new(TextBlockRaw::new([faulty], wavy)),
             Box::new(TextBlockRaw::new([format!(" {}", self.message)], bold(RED))),
         ];
