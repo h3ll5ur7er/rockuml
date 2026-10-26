@@ -748,13 +748,13 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
   - Not planned: the license keys of PlantUML's professional edition (`keygen`, `keycheck`…), reported as not
     ported.
 
-### Last — The diagrams that cannot match byte for byte (approach to be chosen)
-- Ditaa: port the vendored `org/stathissideris` (10k); its output is a bitmap drawn by Java2D, compared by pixels.
-- `@startdot`: PlantUML runs Graphviz's `dot`. Lay it out with rockuml's Smetana, run an external `dot` from the
-  CLI, or not at all.
-- `@startmath`/`@startlatex`: JLaTeXMath is not in the sources. Port it, use a Rust math layout crate, or leave
-  math out.
-
+### Phases 27+ — The rest
+- `@startdot`: run an external Graphviz `dot` from the command line, as PlantUML does; the engine asks its host
+  for the layout, so the browser build reports it as not available.
+- The undocumented flow, wire and BPM diagrams, ported faithfully like the others.
+- On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
+  by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
+  layout crate).
 ---
 
 ## 8. Known risks and mitigations

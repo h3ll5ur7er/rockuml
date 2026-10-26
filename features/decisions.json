@@ -207,7 +207,7 @@
     "PSystemDitaaFactory": {
       "title": "Ditaa diagrams",
       "status": "later",
-      "reason": "Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines."
+      "reason": "On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels."
     },
     "PSystemDotFactory": {
       "title": "Graphviz sources (`@startdot`)",
@@ -316,12 +316,12 @@
     "PSystemMathFactory": {
       "title": "Math (`@startmath`)",
       "status": "later",
-      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+      "reason": "On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen."
     },
     "PSystemLatexFactory": {
       "title": "LaTeX math (`@startlatex`)",
       "status": "later",
-      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+      "reason": "On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen."
     },
     "PSystemDefinitionFactory": {
       "title": "Definitions drawn on their own (`@startdef`)",

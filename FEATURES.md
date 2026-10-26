@@ -117,9 +117,9 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
 | BPM diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BpmDiagramFactory` |
 | Graphviz sources (`@startdot`) | 🗓️ Planned later |  | Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz. | `PSystemDotFactory` |
-| Ditaa diagrams | 🗓️ Planned later |  | Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines. | `PSystemDitaaFactory` |
-| Math (`@startmath`) | 🗓️ Planned later |  | Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen. | `PSystemMathFactory` |
-| LaTeX math (`@startlatex`) | 🗓️ Planned later |  | Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen. | `PSystemLatexFactory` |
+| Ditaa diagrams | 🗓️ Planned later |  | On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels. | `PSystemDitaaFactory` |
+| Math (`@startmath`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemMathFactory` |
+| LaTeX math (`@startlatex`) | 🗓️ Planned later |  | On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen. | `PSystemLatexFactory` |
 | Flow diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `FlowDiagramFactory` |
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
 | PlantUML's donors | ⛔ Not planned |  | About PlantUML itself, not about diagrams. | `PSystemDonorsFactory` |
