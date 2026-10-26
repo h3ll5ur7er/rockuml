@@ -151,6 +151,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/board.md')),
       },
       {
+        slug: 'wire',
+        title: 'Wire diagrams',
+        summary: 'Nested blocks joined by wires and buses, an undocumented PlantUML diagram.',
+        load: text(() => import('./content/wire.md')),
+      },
+      {
         slug: 'git',
         title: 'Git graphs',
         summary: 'Commit graphs drawn from git log --graph output.',

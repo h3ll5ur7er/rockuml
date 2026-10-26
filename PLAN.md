@@ -755,6 +755,18 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
 - On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
   by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
   layout crate).
+
+### Phase 29 — Wire diagrams
+- **Status: done.** `@startwire` (`WireDiagramFactory` and its seven commands): blocks with sizes and colours
+  (`CommandComponent`), nested by indentation, columns (`CommandNewColumn`), the cursor moved by `goto` and `move`,
+  texts printed at the cursor (`CommandPrint`), spots at pixel and percent offsets (`CommandSpot`), and wires and
+  buses across or down with arrowheads, colours and labels (`CommandWLink`), over the common commands. 11 cases
+  (24 images) match every output.
+  - Faithful to PlantUML's quirks: any space that is not part of four makes a level, so two spaces are two;
+    a name must be new at every level down to its parent; links down draw no label; link starts are fixed when
+    the link is read, spots when drawn. Prints are measured as for PNG whatever the output, as PlantUML does
+    (`FileFormat.PNG.getDefaultStringBounder()`), with the embedded fonts. A line indented deeper than the blocks
+    go reports PlantUML's `NullPointerException`, word for word.
 ---
 
 ## 8. Known risks and mitigations
