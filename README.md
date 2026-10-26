@@ -61,6 +61,7 @@ Add `:stop` to let `GET /stopserver` stop it.
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
 - File trees (`@startfiles`), with notes.
 - Boards (`@startboard`): story maps of activities and their releases.
+- Flow diagrams (`@startflow`, undocumented in PlantUML): boxes on a grid, each a step from the one before.
 - Charts (`@startchart`): bar, line, area and scatter series, with legends and annotations.
 - Git commit graphs (`@startgit`) from `git log --graph` output.
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.

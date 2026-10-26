@@ -151,6 +151,13 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/board.md')),
       },
       {
+        slug: 'flow',
+        title: 'Flow diagrams',
+        summary:
+          'Boxes laid out on a grid, each a step from the one before, with links between them.',
+        load: text(() => import('./content/flow.md')),
+      },
+      {
         slug: 'git',
         title: 'Git graphs',
         summary: 'Commit graphs drawn from git log --graph output.',

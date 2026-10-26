@@ -751,10 +751,23 @@ The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts
 ### Phases 27+ — The rest
 - `@startdot`: run an external Graphviz `dot` from the command line, as PlantUML does; the engine asks its host
   for the layout, so the browser build reports it as not available.
-- The undocumented flow, wire and BPM diagrams, ported faithfully like the others.
+- The undocumented wire and BPM diagrams, ported faithfully like the others (flow diagrams: Phase 30).
 - On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
   by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
   layout crate).
+
+### Phase 30 — Flow diagrams
+- **Status: done.** `@startflow` (`FlowDiagramFactory`, `CommandLineSimple`, `CommandLink`): boxes on the grid of
+  PlantUML's `golem` package (`TilesField`, `Position`, `TileGeometry`), each two cells from the last one, the boxes
+  in its way moved east (`moveAllToEast`), links between facing sides or westwards along a row, and the boxes
+  (`ActivityBox`). 11 cases: 8 match every output; `directions`, `links` and `crowded` match their PNG, preprocessor
+  and URL outputs, and draw the same shapes as the debug and SVG goldens in another order.
+  - Faithful to PlantUML: no common commands, so `title`, styles and empty lines are syntax errors; a link to an
+    unknown id or between sides that do not face each other reports the `IllegalArgumentException` PlantUML throws.
+  - Deviation: PlantUML keeps tiles in `HashMap`s keyed by identity hash codes, so the order it draws boxes in
+    changes with the Java machine, between `-pipe` and file runs and even between two output formats of one case
+    (`crowded`'s SVG golden swaps two boxes its debug golden does not). rockuml takes the tiles in the order they
+    were declared.
 ---
 
 ## 8. Known risks and mitigations
