@@ -1,0 +1,16 @@
+@startwire
+* source [100x160]
+--
+goto(250, 10)
+* target [100x160]
+source -> target : forward
+source <- target : backward
+source <-> target : both ways
+source - target : plain
+source -> target
+source -> target #red : red
+source -=> target : mixed
+source -> target :
+source(100%, 150) -> target : at a point
+source(50%+10, 50%-20) <-> target #blue : multi\nline
+@endwire

@@ -1,0 +1,14 @@
+@startwire
+print("A wire diagram")
+* first [120x40]
+print( "Line one\nline two\nline three" )
+* second [120x40]
+print(“**bold**, //italic// and <color:red>red</color>”)
+print("<size:18>Big</size> text")
+--
+print("Second column")
+* box
+    print("Inside the box")
+    * inner [60x30]
+    print("After inner")
+@endwire

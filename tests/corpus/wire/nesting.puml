@@ -1,0 +1,19 @@
+@startwire
+* board
+    * cpu [60x40]
+    * memory [60x40] #pink
+    --
+    * io
+	* io_two [50x30]
+* rack [300x150] #lightgray
+    * slot_a
+        * card [40x20]
+        * card_two [40x20]
+        --
+        * card_three [30x30]
+    * slot_b [80x60]
+--
+* single
+    * child
+  * two_spaces_are_two_levels [40x20]
+@endwire

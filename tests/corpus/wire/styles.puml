@@ -1,0 +1,18 @@
+@startwire
+skinparam backgroundColor #EEEEFF
+<style>
+document {
+  BackGroundColor #FFFFEE
+}
+title {
+  FontColor blue
+  FontSize 20
+}
+</style>
+title Styled wires
+scale 1.5
+* one [80x40] #yellow
+* two [80x40]
+one --> two
+print("A note")
+@endwire

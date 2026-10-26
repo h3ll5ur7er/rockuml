@@ -1,0 +1,13 @@
+@startwire
+* cpu [100x200]
+--
+goto(260, 10)
+* bus_bridge [100x200]
+cpu => bus_bridge : data
+cpu <= bus_bridge : irq
+cpu <=> bus_bridge : address
+cpu = bus_bridge : control
+cpu => bus_bridge
+cpu => bus_bridge #green : green
+cpu(100%, 190) <=> bus_bridge #FF8800
+@endwire

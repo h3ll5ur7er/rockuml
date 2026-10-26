@@ -1,0 +1,63 @@
+@startwire
+* a
+* a
+@endwire
+
+@startwire
+* a
+    * b
+    * a
+@endwire
+
+@startwire
+* a
+spot b
+@endwire
+
+@startwire
+* a
+* b
+a -> c
+@endwire
+
+@startwire
+* a
+c --> a
+@endwire
+
+@startwire
+* a #nosuchcolor
+@endwire
+
+@startwire
+    * a
+@endwire
+
+@startwire
+* a
+        * b
+@endwire
+
+@startwire
+    --
+@endwire
+
+@startwire
+    goto(1,2)
+@endwire
+
+@startwire
+    move(1,2)
+@endwire
+
+@startwire
+    print("x")
+@endwire
+
+@startwire
+* a
+this is not wire
+@endwire
+
+@startwire
+@endwire
