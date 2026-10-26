@@ -1,0 +1,14 @@
+@startbpm
+in:<+>
+new branch
+:Two\nlines;
+:Then this;
+else
+skip<+>
+else
+:A;
+:B;
+:C;
+:A longer label;
+end branch
+@endbpm

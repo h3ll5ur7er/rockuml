@@ -1,0 +1,9 @@
+@startbpm
+:Start;
+m1<+>
+:Work;
+resume m1
+:Fix;
+goto m1
+:Done;
+@endbpm

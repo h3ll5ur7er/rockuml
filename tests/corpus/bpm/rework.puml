@@ -1,0 +1,11 @@
+@startbpm
+:Submit;
+new branch
+else
+review:<+>
+:Review;
+else
+goto review
+new branch
+goto review
+@endbpm

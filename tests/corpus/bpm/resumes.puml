@@ -1,0 +1,12 @@
+@startbpm
+:A;
+m1<+>
+:B;
+m2<+>
+:C;
+resume m1
+:D;
+resume m2
+:E;
+goto m1
+@endbpm
