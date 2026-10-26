@@ -145,6 +145,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/files.md')),
       },
       {
+        slug: 'board',
+        title: 'Boards',
+        summary: 'Story maps: activities with their releases on cards below them.',
+        load: text(() => import('./content/board.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',

@@ -12,6 +12,7 @@ use regex::Regex;
 
 use super::activity::ActivityDiagramFactory;
 use super::activity3::ActivityDiagramFactory3;
+use super::board::BoardDiagramFactory;
 use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
@@ -165,6 +166,11 @@ pub(super) fn create_gantt(source: UmlSource) -> Result<Box<dyn Diagram>, NotYet
 /// A `@startnwdiag` diagram.
 pub(super) fn create_nwdiag(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<NwDiagramFactory>])
+}
+
+/// A `@startboard` diagram.
+pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<BoardDiagramFactory>])
 }
 
 /// A `@startwbs` diagram.

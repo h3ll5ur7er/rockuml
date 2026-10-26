@@ -251,8 +251,14 @@
     },
     "BoardDiagramFactory": {
       "title": "Boards",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/board.rs",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "board"
+      ],
+      "docs": "board"
     },
     "HclDiagramFactory": {
       "title": "HCL data",

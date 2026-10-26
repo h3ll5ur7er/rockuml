@@ -10,7 +10,7 @@ mindmapDiagram {
 }
 </style>
 * rockuml and PlantUML 1.2026.8
-** Ported: 18 diagram types <<ported>>
+** Ported: 19 diagram types <<ported>>
 *** Sequence diagrams <<ported>>
 *** Class and object diagrams <<ported>>
 *** Legacy activity diagrams <<ported>>
@@ -26,6 +26,7 @@ mindmapDiagram {
 *** Timing diagrams <<ported>>
 *** JSON data <<ported>>
 *** File trees <<ported>>
+*** Boards <<ported>>
 *** YAML data <<ported>>
 *** HCL data <<ported>>
 *** Entity relationship diagrams <<ported>>
@@ -39,7 +40,7 @@ left side
 *** Definitions drawn on their own <<planned>>
 *** Math <<planned>>
 *** LaTeX math <<planned>>
-*** and 7 more <<planned>>
+*** and 6 more <<planned>>
 ** Not planned <<never>>
 *** PlantUML's donors <<never>>
 *** Crash reports <<never>>
@@ -61,8 +62,8 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 
 | Area | rockuml |
 |---|---|
-| Diagram types | 18 of 52 ported, 26 planned, 8 not planned |
-| Commands of the ported diagrams | 809 of 809 ported |
+| Diagram types | 19 of 52 ported, 25 planned, 8 not planned |
+| Commands of the ported diagrams | 853 of 853 ported |
 | Preprocessor functions | 74 of 74 ported |
 | Command line flags | 48 of 92 ported |
 | Output formats | 6 of 29 ported |
@@ -87,6 +88,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [Timing diagrams](https://h3ll5ur7er.github.io/rockuml/docs/timing) | ✅ Ported | 22 of 22 match PlantUML | Dates print in UTC; `use date format` knows the common SimpleDateFormat letters. | `TimingDiagramFactory` |
 | [JSON data](https://h3ll5ur7er.github.io/rockuml/docs/json) | ✅ Ported | 10 of 10 match PlantUML |  | `JsonDiagramFactory` |
 | [File trees](https://h3ll5ur7er.github.io/rockuml/docs/files) | ✅ Ported | 9 of 9 match PlantUML |  | `FilesDiagramFactory` |
+| [Boards](https://h3ll5ur7er.github.io/rockuml/docs/board) | ✅ Ported | 9 of 9 match PlantUML |  | `BoardDiagramFactory` |
 | [YAML data](https://h3ll5ur7er.github.io/rockuml/docs/yaml) | ✅ Ported | 8 of 8 match PlantUML |  | `YamlDiagramFactory` |
 | [HCL data](https://h3ll5ur7er.github.io/rockuml/docs/hcl) | ✅ Ported | 11 of 11 match PlantUML |  | `HclDiagramFactory` |
 | [Entity relationship diagrams (Chen)](https://h3ll5ur7er.github.io/rockuml/docs/chen) | ✅ Ported | 6 of 6 match PlantUML |  | `ChenEerDiagramFactory` |
@@ -113,7 +115,6 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | Help diagrams (`help keywords`, …) | 🗓️ Planned later |  | PlantUML's built-in reference cards; low priority. | `HelpFactory` |
 | Wire diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `WireDiagramFactory` |
 | Git diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `GitDiagramFactory` |
-| Boards | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `BoardDiagramFactory` |
 | EBNF diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemEbnfFactory` |
 | Regular expression diagrams | 🗓️ Planned later |  | Tier 3 of the plan, ported on demand. | `PSystemRegexFactory` |
 | PlantUML's donors | ⛔ Not planned |  | About PlantUML itself, not about diagrams. | `PSystemDonorsFactory` |

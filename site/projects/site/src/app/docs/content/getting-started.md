@@ -75,6 +75,7 @@ Every diagram sits between a start line and an end line. `@startuml` and `@endum
 | Gantt charts | `@startgantt` |
 | JSON and YAML data | `@startjson`, `@startyaml` |
 | File trees | `@startfiles` |
+| Boards | `@startboard` |
 | Network diagrams | `@startnwdiag` |
 | Wireframes | `@startsalt` |
 | Formatted text | `@startcreole` |
