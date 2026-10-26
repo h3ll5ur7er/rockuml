@@ -6,6 +6,7 @@
 mod check;
 mod cli;
 mod corpus;
+mod graphviz;
 mod ratchet;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -75,9 +76,24 @@ fn rockuml_reproduces_the_golden_model() {
     );
 }
 
-/// Every (case, kind) the golden model has output for, checked on all cores.
+/// Every (case, kind) the golden model has output for, checked on all cores; the cases that run Graphviz only
+/// when rockuml finds the Graphviz the goldens were made with.
 fn check_all_in_parallel(rockuml: &Path) -> Vec<(Case, GoldenKind, Outcome)> {
-    let work: Vec<(Case, GoldenKind)> = corpus::discover(&repository_root().join("tests/corpus"))
+    let mut cases = corpus::discover(&repository_root().join("tests/corpus"));
+    if let Err(reason) = graphviz::matches_the_goldens(rockuml, &cases) {
+        assert!(
+            std::env::var_os(graphviz::REQUIRED).is_none(),
+            "{} is set, but {reason}",
+            graphviz::REQUIRED
+        );
+        let skipped = cases.len();
+        cases.retain(|case| !graphviz::runs_graphviz(case));
+        println!(
+            "note: skipping the {} cases that run Graphviz: {reason}",
+            skipped - cases.len()
+        );
+    }
+    let work: Vec<(Case, GoldenKind)> = cases
         .into_iter()
         .flat_map(|case| GoldenKind::ALL.map(|kind| (case.clone(), kind)))
         .collect();
