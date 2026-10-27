@@ -8,9 +8,8 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use grid::{Grid, MAGIC, NETWORK_THIN, NServerDraw};
-use model::{
-    BarId, BoxId, NBar, NBox, NPlayField, NServer, NTetris, Network, NetworkId, NwGroup, Properties,
-};
+pub(super) use model::Properties;
+use model::{BarId, BoxId, NBar, NBox, NPlayField, NServer, NTetris, Network, NetworkId, NwGroup};
 
 use super::builder::CommandFactory;
 use super::common_commands::add_common_commands1;
@@ -640,7 +639,7 @@ impl Diagram for NwDiagram {
             .add_chrome(Box::new(Drawing(self)), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
     }

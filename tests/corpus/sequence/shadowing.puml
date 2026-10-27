@@ -1,0 +1,29 @@
+@startuml
+skinparam shadowing true
+actor User
+participant Web
+database DB
+collections Cache
+queue Jobs
+box "Backend"
+participant API
+end box
+User -> Web : open
+activate Web
+Web -> API : call
+activate API
+API -> DB : query
+API -> Cache : read
+API ->> Jobs : enqueue
+note right of API : cached
+API --> Web : data
+deactivate API
+ref over Web, API : login
+alt ok
+Web --> User : page
+else error
+Web --> User : oops
+end
+== Done ==
+... later ...
+@enduml

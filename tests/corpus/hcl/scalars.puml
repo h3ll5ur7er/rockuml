@@ -1,0 +1,13 @@
+@starthcl
+settings {
+  name: "colon separated"
+  quoted = "say \"hello\" \\ bye"
+  "quoted key" = "value"
+  count = 3
+  ratio = 0.75
+  enabled = false
+  nothing = null
+  reference = var.region
+  punctuation = "a, b = c {d}"
+}
+@endhcl

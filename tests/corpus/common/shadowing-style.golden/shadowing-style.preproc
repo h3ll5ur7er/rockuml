@@ -1,0 +1,15 @@
+@startuml
+<style>
+root {
+  Shadowing 6
+}
+note {
+  Shadowing 0
+}
+</style>
+Alice -> Bob : hi
+note right : no shadow
+legend
+  shadowed legend
+end legend
+@enduml

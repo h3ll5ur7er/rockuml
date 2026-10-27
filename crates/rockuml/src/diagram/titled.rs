@@ -7,12 +7,14 @@ use super::chrome::{MainFrame, Warning, WithWarnings};
 use super::scale::Scale;
 use super::{DEFAULT_DPI, ExportSettings, NotYetPorted, UmlSource, parse_digits};
 use crate::abel::DisplayPositioned;
+use crate::command::CommandResult;
 use crate::command::unported::NotPortedCommands;
 use crate::creole::{CreoleParser, Display, SheetBlock1, SheetBlock2};
 use crate::klimt::blocks::{DecorateEntityImage, Decoration, TextBlockBordered, TextBlockMarged};
 
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
 use crate::klimt::group::{UGroup, UGroupType};
+use crate::klimt::png::{PageSplit, SplitParam};
 use crate::klimt::sprite::SpriteContainer;
 
 use super::cuca::CucaDiagram;
@@ -40,10 +42,39 @@ pub(super) struct Titled {
     footer: Option<DisplayPositioned>,
     mainframe: Option<Display>,
     scale: Option<Scale>,
+    pub split_pages: SplitPages,
+    /// Whether a `skinparam` command ran, which makes entities take the skin's latest styles.
+    skin_param_used: bool,
     /// Without repeats, in the order they came.
     warnings: Vec<Warning>,
     /// The first thing the diagram holds that rockuml cannot draw yet.
     not_ported: Option<NotYetPorted>,
+}
+
+/// `page 2x3`: how many PNG pages across and down the diagram is cut into.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(super) struct SplitPages {
+    pub horizontal: u32,
+    pub vertical: u32,
+}
+
+impl Default for SplitPages {
+    fn default() -> Self {
+        Self {
+            horizontal: 1,
+            vertical: 1,
+        }
+    }
+}
+
+impl SplitPages {
+    fn with(self, param: SplitParam) -> Option<PageSplit> {
+        (self != Self::default()).then_some(PageSplit {
+            horizontal: self.horizontal,
+            vertical: self.vertical,
+            param,
+        })
+    }
 }
 
 /// `!pragma` settings PlantUML knows (PlantUML's `Pragma`); others are ignored.
@@ -144,8 +175,13 @@ pub(super) trait TitledDiagram {
     /// `hide empty description`, which only state diagrams heed.
     fn set_hide_empty_description(&mut self, _hide: bool) {}
 
-    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
+    fn set_legend(
+        &mut self,
+        legend: DisplayPositioned,
+        vertical: VerticalAlignment,
+    ) -> CommandResult {
         self.titled().set_legend(legend, vertical);
+        Ok(())
     }
 }
 
@@ -174,9 +210,19 @@ impl Titled {
             footer: None,
             mainframe: None,
             scale: None,
+            split_pages: SplitPages::default(),
+            skin_param_used: false,
             warnings: Vec::new(),
             not_ported: None,
         }
+    }
+
+    pub(super) fn is_skin_param_used(&self) -> bool {
+        self.skin_param_used
+    }
+
+    pub(super) fn set_skin_param_used(&mut self, skin_param_used: bool) {
+        self.skin_param_used = skin_param_used;
     }
 
     /// Keeps the first thing not ported, which the diagram is reported by.
@@ -347,12 +393,7 @@ impl Titled {
             backcolor: Some(background.value(PName::BackGroundColor).as_color()),
             diagram_type: Some(self.diagram_type),
             scale: self.scale,
-            dpi: self
-                .skin
-                .value("dpi")
-                .as_deref()
-                .and_then(parse_digits)
-                .unwrap_or(DEFAULT_DPI),
+            dpi: self.dpi(),
             svg_link_target: Some(
                 self.skin
                     .value("svglinktarget")
@@ -363,7 +404,17 @@ impl Titled {
                 .value("preserveaspectratio")
                 .unwrap_or_else(|| "none".to_owned()),
             color_mapper: self.mute_color_mapper(),
+            split: self.split_pages.with(self.skin.split_param()),
         }
+    }
+
+    /// The resolution `skinparam dpi` asks for.
+    pub(super) fn dpi(&self) -> u32 {
+        self.skin
+            .value("dpi")
+            .as_deref()
+            .and_then(parse_digits)
+            .unwrap_or(DEFAULT_DPI)
     }
 
     /// PlantUML first checks `skinparam mode dark`, which paints the dark variants of colours; those are not

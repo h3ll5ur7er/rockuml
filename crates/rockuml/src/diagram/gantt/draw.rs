@@ -297,6 +297,7 @@ impl TaskDraw {
         )
         .create_display_sheet(note, &font);
         Some(Opale::new(
+            style.shadowing(),
             style.value(PName::LineColor).as_color(),
             style.value(PName::BackGroundColor).as_color(),
             Box::new(SheetBlock1::new(sheet, style.padding())),

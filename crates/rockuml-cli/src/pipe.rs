@@ -162,7 +162,7 @@ fn output_image(
                 .image_format()
                 .expect("drawing formats export images");
             let exported = crash::render(|| {
-                rockuml::diagram::export_with(
+                rockuml::diagram::export_image(
                     diagram.as_ref(),
                     num_image,
                     image_format,
@@ -172,9 +172,18 @@ fn output_image(
                 )
             });
             return match exported {
+                // PlantUML's `TextBlockExporter` draws nothing for the null format, not even a crash report,
+                // and so drops its status.
                 Ok(_) if format == FileFormat::Null => None,
-                Ok(bytes) => Some(Image {
-                    bytes,
+                Ok(image) if image.crashed => {
+                    status.goes_has_errors();
+                    Some(Image {
+                        bytes: image.data,
+                        is_error: diagram.is_error(),
+                    })
+                }
+                Ok(image) => Some(Image {
+                    bytes: image.data,
                     is_error: diagram.is_error(),
                 }),
                 Err(unrendered) => {

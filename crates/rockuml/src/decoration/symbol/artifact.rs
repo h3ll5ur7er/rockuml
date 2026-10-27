@@ -8,12 +8,20 @@ use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolArtifact;
 
-fn draw_artifact(ug: &UGraphic, width_total: f64, height_total: f64, round_corner: f64) {
+fn draw_artifact(
+    ug: &UGraphic,
+    width_total: f64,
+    height_total: f64,
+    shadowing: f64,
+    round_corner: f64,
+) {
     const HEIGHT_SYMBOL: f64 = 14.0;
     const WIDTH_SYMBOL: f64 = 12.0;
     const CORNERSIZE: f64 = 6.0;
     ug.draw(&UShape::Rectangle(
-        URectangle::new(width_total, height_total).rounded(round_corner),
+        URectangle::new(width_total, height_total)
+            .rounded(round_corner)
+            .with_delta_shadow(shadowing),
     ));
     let sheet = vec![
         (0.0, 0.0),
@@ -45,7 +53,13 @@ impl SmallShape for USymbolArtifact {
     }
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
-        draw_artifact(ug, dimension.width, dimension.height, fashion.round_corner);
+        draw_artifact(
+            ug,
+            dimension.width,
+            dimension.height,
+            fashion.delta_shadow,
+            fashion.round_corner,
+        );
     }
 }
 
@@ -55,6 +69,7 @@ impl BigShape for USymbolArtifact {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.draw_centered_stereotype_and_title(ug, 2.0);

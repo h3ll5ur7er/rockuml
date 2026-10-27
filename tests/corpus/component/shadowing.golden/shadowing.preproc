@@ -1,0 +1,20 @@
+@startuml
+skinparam shadowing true
+package "Front" {
+  [Web] as W
+  () HTTP
+}
+node "Server" {
+  component API
+  portin p1
+}
+cloud Internet
+database Store
+folder Files
+frame Box
+W - HTTP
+HTTP --> API
+API --> Store
+Internet --> W
+Files ..> Box
+@enduml

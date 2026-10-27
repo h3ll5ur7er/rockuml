@@ -1,0 +1,13 @@
+@startuml
+(*) --> "A"
+"A" --> if "z" as ZZ then
+  --> ===BB===
+else
+  --> "C"
+endif
+===BB=== --> if "w" then
+  --> "D"
+else
+  --> "E"
+endif
+@enduml

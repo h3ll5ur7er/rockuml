@@ -1,0 +1,9 @@
+@startchart
+h-axis ["Jan", "Feb", "Mar", "Apr"]
+v-axis "Balance" -50 --> 150
+stackMode stacked
+bar "Income" [60, 70, 55, 80] labels
+bar "Bonus" [20, 15.5, 30, 10] labels
+bar "Costs" [-20, -35, -10, -40] #d62728 labels
+legend bottom
+@endchart

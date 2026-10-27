@@ -1,0 +1,20 @@
+@startuml
+skinparam shadowing true
+package model {
+  abstract class Shape {
+    +area() : double
+  }
+  interface Drawable
+  enum Color {
+    RED
+    GREEN
+  }
+}
+class Circle <<entity>>
+() Port
+Shape <|-- Circle
+Drawable <|.. Shape
+Circle --> Color
+Circle - Port
+note top of Circle : round
+@enduml

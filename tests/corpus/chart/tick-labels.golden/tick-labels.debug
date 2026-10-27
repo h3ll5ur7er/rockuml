@@ -1,0 +1,134 @@
+DPI: 96
+dimension: [ 500.0000 ; 430.0000 ]
+scaleFactor: 1.0000
+seed: 5053121779815820549
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 70.0000 ; 60.0000 ]
+  pt2: [ 70.0000 ; 360.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 70.0000 ; 360.0000 ]
+  pt2: [ 65.0000 ; 360.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Low
+  position: [ 24.0634 ; 356.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: end
+  position: [ 12.0131 ; 370.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 210.0000 ]
+  pt2: [ 65.0000 ; 210.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Mid
+  position: [ 18.7434 ; 213.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 60.0000 ]
+  pt2: [ 65.0000 ; 60.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: Top
+  position: [ 22.8866 ; 63.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 70.0000 ; 360.0000 ]
+  pt2: [ 470.0000 ; 360.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 136.6667 ; 360.0000 ]
+  pt2: [ 136.6667 ; 365.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: a
+  position: [ 129.9752 ; 380.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 270.0000 ; 360.0000 ]
+  pt2: [ 270.0000 ; 365.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: b
+  position: [ 263.3088 ; 380.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 403.3333 ; 360.0000 ]
+  pt2: [ 403.3333 ; 365.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+TEXT:
+  text: c
+  position: [ 396.6412 ; 380.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 136.6667 ; 330.0000 ]
+  pt2: [ 270.0000 ; 210.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 270.0000 ; 210.0000 ]
+  pt2: [ 403.3333 ; 90.0000 ]
+  stroke: 0.0-0.0-2.0
+  shadow: 0
+  color: ff181818
+

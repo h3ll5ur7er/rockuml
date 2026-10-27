@@ -2,25 +2,21 @@
 
 use std::rc::Rc;
 
+use super::cards::PSystemWelcome;
 use super::diagram_type::DiagramType;
 use super::source::UmlSource;
 use super::{Diagram, DiagramError, ExportSettings, NotYetPorted};
 use crate::color::HColor;
-use crate::creole::{CreoleMode, CreoleParser, SheetBlock1};
 use crate::klimt::blocks::{TextBlockMarged, TextBlockRaw, TextBlockVertical, WithBackcolor};
 use crate::klimt::font::{FontConfiguration, FontStyle, StringBounder, UFont, UFontFace};
-use crate::klimt::geom::{ClockwiseTopRightBottomLeft, XDimension2D};
-use crate::klimt::image::PortableImage;
-use crate::klimt::shape::{UImage, UShape};
-use crate::klimt::sprite::SpriteContainerEmpty;
-use crate::klimt::ugraphic::UGraphic;
+use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::graphic_strings::GraphicPosition;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::text::StringLocated;
 
 /// What PlantUML's error images say they were made by.
 const PLANTUML_DESCRIPTION: &str = "PlantUML version 1.2026.8 / 149874a [2026-09-05 15:59:17 UTC]";
 
-const GREEN: HColor = HColor::Simple(crate::color::XColor::rgb(0x33, 0xFF, 0x02));
 const RED: HColor = HColor::Simple(crate::color::XColor::rgb(0xFF, 0x00, 0x00));
 
 pub(super) struct ErrorDiagram {
@@ -124,23 +120,23 @@ impl Diagram for ErrorDiagram {
                 TextBlockRaw::new(self.location_lines(), bold(HColor::BLACK)),
                 margins(1.0, 1.0, 1.0, 4.0),
             ),
-            GREEN,
+            HColor::MY_GREEN,
         );
         let header = TextBlockMarged::new(
             TextBlockRaw::new(
                 [PLANTUML_DESCRIPTION],
-                sans_serif(12, GREEN)
+                sans_serif(12, HColor::MY_GREEN)
                     .with_style(FontStyle::Bold)
                     .with_style(FontStyle::Italic),
             ),
             margins(0.0, 2.0, 0.0, 8.0),
         );
-        let wavy = bold(GREEN)
+        let wavy = bold(HColor::MY_GREEN)
             .with_style(FontStyle::Wave)
             .with_extended_color(RED);
         // Stacked pairwise like PlantUML, which matters: a background spans the width of its own pair.
         let below: [Box<dyn TextBlock>; 3] = [
-            Box::new(TextBlockRaw::new(body, bold(GREEN))),
+            Box::new(TextBlockRaw::new(body, bold(HColor::MY_GREEN))),
             Box::new(TextBlockRaw::new([faulty], wavy)),
             Box::new(TextBlockRaw::new([format!(" {}", self.message)], bold(RED))),
         ];
@@ -158,7 +154,9 @@ impl Diagram for ErrorDiagram {
         let image = TextBlockMarged::new(image, ClockwiseTopRightBottomLeft::same(5.0));
         let image = WithBackcolor::new(image, HColor::BLACK);
         if self.source.lines().len() < 5 {
-            let blocks: Vec<Box<dyn TextBlock>> = vec![Box::new(Welcome::new()), Box::new(image)];
+            let welcome =
+                PSystemWelcome::new(GraphicPosition::BackgroundCornerTopRight).text_block();
+            let blocks: Vec<Box<dyn TextBlock>> = vec![Box::new(welcome), Box::new(image)];
             return Ok(Box::new(TextBlockVertical::new(
                 blocks,
                 HorizontalAlignment::Left,
@@ -167,7 +165,7 @@ impl Diagram for ErrorDiagram {
         Ok(Box::new(image))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         ExportSettings::without_skin(self.source.seed())
     }
 
@@ -182,89 +180,10 @@ impl Diagram for ErrorDiagram {
     }
 }
 
-/// The help PlantUML shows above errors in very short sources, with its logo in the top right corner.
-struct Welcome {
-    text: SheetBlock1,
-    logo: PortableImage,
-}
-
-impl Welcome {
-    const MARGIN: f64 = 5.0;
-    const LOGO_PADDING: f64 = 30.0;
-
-    fn new() -> Self {
-        let lines = [
-            "<b>Welcome to PlantUML!",
-            " ",
-            "You can start with a simple UML Diagram like:",
-            " ",
-            "\"\"Bob->Alice: Hello\"\"",
-            " ",
-            "Or",
-            " ",
-            "\"\"class Example\"\"",
-            " ",
-            "You will find more information about PlantUML syntax on <u>https://plantuml.com</u>",
-            " ",
-            "(Details by typing \"\"license\"\" keyword)",
-            " ",
-        ];
-        let font = sans_serif(12, HColor::BLACK);
-        let sheet = CreoleParser::with_mode(
-            font,
-            HorizontalAlignment::Left,
-            CreoleMode::FullButUnderscore,
-            &SpriteContainerEmpty,
-        )
-        .create_sheet(&lines);
-        Self {
-            text: SheetBlock1::new(sheet, ClockwiseTopRightBottomLeft::none()),
-            logo: PortableImage::from_png(
-                crate::assets::get("images/plantuml-logo.png").expect("the logo is embedded"),
-            )
-            .expect("the logo is a PNG"),
-        }
-    }
-}
-
-impl TextBlock for Welcome {
-    fn calculate_dimension(&self, string_bounder: &dyn StringBounder) -> XDimension2D {
-        let margins = 2.0 * Self::MARGIN;
-        self.text
-            .calculate_dimension(string_bounder)
-            .delta(Self::LOGO_PADDING + self.logo.width() as f64, 0.0)
-            .delta(margins, margins)
-    }
-
-    fn draw_u(&self, ug: &UGraphic) {
-        let ug = ug.translated(Self::MARGIN, Self::MARGIN);
-        let inner_width = self.calculate_dimension(ug.string_bounder()).width - 2.0 * Self::MARGIN;
-        self.text.draw_u(&ug.with_color(HColor::BLACK));
-        ug.translated(inner_width - self.logo.width() as f64 - 1.0, 1.0)
-            .draw(&UShape::Image(UImage::new(self.logo.clone())));
-    }
-
-    fn backcolor(&self) -> Option<HColor> {
-        Some(HColor::WHITE)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::host::IsolatedHost;
-    use crate::preproc::{PreprocessorEnvironment, Source};
-
-    fn error_of(text: &str) -> Option<DiagramError> {
-        let source = Source {
-            text,
-            description: "t",
-            directory: std::path::PathBuf::new(),
-            environment: PreprocessorEnvironment::default(),
-        };
-        let block = crate::preproc::preprocess(&source, &IsolatedHost).remove(0);
-        super::super::create(&block, &IsolatedHost).unwrap().error()
-    }
+    use crate::diagram::test_support::error_of;
 
     #[test]
     fn error_images_tell_the_faulty_line_and_why() {

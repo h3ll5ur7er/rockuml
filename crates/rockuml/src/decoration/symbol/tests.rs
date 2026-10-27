@@ -84,6 +84,7 @@ fn fashion(name: &str) -> Fashion {
     match name {
         "round" => plain.with_corner(10.0, 0.0),
         "diagonal" => plain.with_corner(0.0, 8.0),
+        "shadowed" => plain.with_corner(10.0, 0.0).with_delta_shadow(3.0),
         _ => plain,
     }
 }
@@ -239,7 +240,7 @@ fn fixture_cases() -> BTreeMap<&'static str, String> {
 #[test]
 fn symbols_draw_like_plantuml() {
     let cases = fixture_cases();
-    assert_eq!(cases.len(), 280);
+    assert_eq!(cases.len(), 341);
     let mut failures = Vec::new();
     for (header, expected) in &cases {
         let block = block(header).unwrap();

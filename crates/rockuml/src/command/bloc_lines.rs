@@ -54,6 +54,26 @@ impl BlocLines {
         }
     }
 
+    /// Without the first `nb` characters of the first line and the last `nb` of the last, both then trimmed,
+    /// like the markers around a comment (`removeFewChars`).
+    #[must_use]
+    pub(crate) fn remove_few_chars(&self, nb: usize) -> Self {
+        let (Some(first), Some(last)) = (self.lines.first(), self.lines.last()) else {
+            return self.clone();
+        };
+        let first_text: String = first.text().chars().skip(nb).collect();
+        let last_length = last.text().chars().count();
+        let last_text: String = last
+            .text()
+            .chars()
+            .take(last_length.saturating_sub(nb))
+            .collect();
+        let mut lines = vec![first.with_text(first_text).trimmed()];
+        lines.extend_from_slice(&self.lines[1..self.lines.len() - 1]);
+        lines.push(last.with_text(last_text).trimmed());
+        Self { lines }
+    }
+
     /// Every line trimmed.
     #[must_use]
     pub(crate) fn trimmed(&self) -> Self {

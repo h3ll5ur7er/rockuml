@@ -115,6 +115,7 @@ pub(super) fn draw_hexagon(
     let dim_label = label.calculate_dimension(string_bounder);
     let ug = wip.styled(ug);
     ug.draw(&hexagon::as_polygon_sized(
+        wip.shadowing,
         dim_total.width,
         dim_total.height,
     ));

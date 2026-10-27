@@ -148,7 +148,9 @@ impl DataBox {
         }
         ug.start_group(&self.group);
         ug.with_stroke(self.stroke).draw(&UShape::Rectangle(
-            URectangle::new(total.width, total.height).rounded(self.round_corner),
+            URectangle::new(total.width, total.height)
+                .rounded(self.round_corner)
+                .with_delta_shadow(self.style.shadowing()),
         ));
         if self.backcolor != self.header_backcolor {
             ug.with_backcolor(self.header_backcolor.clone())

@@ -1,0 +1,49 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "0.2777777777777778" ""
+agsafeset node "sh0006" "height" "0.2777777777777778" ""
+agnode graph "g" "sh0007"
+agsafeset node "sh0007" "shape" "box" ""
+agsafeset node "sh0007" "width" "3.1679985369650554" ""
+agsafeset node "sh0007" "height" "0.4444444444444444" ""
+agnode graph "g" "sh0008"
+agsafeset node "sh0008" "shape" "box" ""
+agsafeset node "sh0008" "width" "0.3055555555555556" ""
+agsafeset node "sh0008" "height" "0.3055555555555556" ""
+agedge graph "g" node "sh0006" node "sh0007"
+agsafeset edge e1 "arrowtail" "none" ""
+agsafeset edge e1 "arrowhead" "none" ""
+agsafeset edge e1 "minlen" "1" ""
+agedge graph "g" node "sh0007" node "sh0008"
+agsafeset edge e2 "arrowtail" "none" ""
+agsafeset edge e2 "arrowhead" "none" ""
+agsafeset edge e2 "minlen" "1" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 2
+node "sh0006" rank 0
+node "sh0007" rank 1
+node "sh0008" rank 2
+phase mincross
+rank 0 "sh0006"
+rank 1 "sh0007"
+rank 2 "sh0008"
+phase position
+node "sh0006" rank 0 coord 0.0 140.0 lw 10.0 rw 10.0 ht 24.0
+node "sh0007" rank 1 coord 0.0 76.0 lw 114.0 rw 114.0 ht 32.0
+node "sh0008" rank 2 coord 0.0 12.0 lw 11.0 rw 11.0 ht 24.0
+graph "g" bb -114.0 0.0 114.0 152.0
+phase splines
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 127.9156424999237 0.0 118.02367975376546 0.0 103.43997878934897 0.0 92.41297820887428
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 0.0 59.99152946472168 0.0 48.95341499149799 0.0 34.190357543411665 0.0 24.178373760613795
+phase final
+graph "g" bb 0.0 0.0 228.0 152.0
+node "sh0006" coord 114.0 140.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+node "sh0007" coord 114.0 76.0 width 3.1666666666666665 height 0.4444444444444444 lw 114.0 rw 114.0 ht 32.0
+node "sh0008" coord 114.0 12.0 width 0.3055555555555556 height 0.3333333333333333 lw 11.0 rw 11.0 ht 24.0
+edge e1 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 114.0 127.9156424999237 114.0 118.02367975376546 114.0 103.43997878934897 114.0 92.41297820887428
+edge e2 bezier 0 sflag 0 eflag 0 sp 0.0 0.0 ep 0.0 0.0 points 4 114.0 59.99152946472168 114.0 48.95341499149799 114.0 34.190357543411665 114.0 24.178373760613795

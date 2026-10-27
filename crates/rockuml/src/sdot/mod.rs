@@ -620,14 +620,8 @@ fn get_label(
         return note_only;
     };
     match note.position {
-        Position::Left => Box::new(TextBlockHorizontal {
-            left: note_only,
-            right: label_only,
-        }),
-        Position::Right => Box::new(TextBlockHorizontal {
-            left: label_only,
-            right: note_only,
-        }),
+        Position::Left => Box::new(TextBlockHorizontal::merge_lr(note_only, label_only)),
+        Position::Right => Box::new(TextBlockHorizontal::merge_lr(label_only, note_only)),
         Position::Top => Box::new(TextBlockVertical::new(
             vec![note_only, label_only],
             HorizontalAlignment::Center,
@@ -658,10 +652,7 @@ fn add_visibility_modifier(
         visibility,
         ClockwiseTopRightBottomLeft::top_right_bottom_left(2.0, 1.0, 0.0, 0.0),
     );
-    let block = TextBlockHorizontal {
-        left: Box::new(visibility),
-        right: block,
-    };
+    let block = TextBlockHorizontal::merge_lr(Box::new(visibility), block);
     Box::new(with_margin(block, 1.0))
 }
 

@@ -1,0 +1,20 @@
+Fixes to PlantUML 1.2026.8 that the goldens are made with, each for a regression rockuml does not copy.
+
+NewpagedDiagram counts its pages in getCardinality, but no longer overrides getNbImages, so class and
+description diagrams with `newpage` export their first page only.
+
+diff --git a/net/sourceforge/plantuml/NewpagedDiagram.java b/net/sourceforge/plantuml/NewpagedDiagram.java
+--- a/net/sourceforge/plantuml/NewpagedDiagram.java
++++ b/net/sourceforge/plantuml/NewpagedDiagram.java
+@@ -213,6 +213,11 @@
+ 
+ 	}
+ 
++	@Override
++	public int getNbImages() {
++		return getCardinality();
++	}
++
+ 	public int getCardinality() {
+ 		int nb = 0;
+ 		for (UgDiagram d : diagrams)

@@ -3,7 +3,7 @@
 mod color_resolver;
 mod ugraphic_with_scale;
 
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::io::Read;
 use std::sync::{LazyLock, OnceLock};
 
@@ -15,10 +15,10 @@ use crate::klimt::ugraphic::UGraphic;
 use crate::svg_parser::SvgNanoParser;
 
 /// The bundle `tools/bundle-emoji.sh` builds: one `<code>[;<shortcut>] <svg>` line per emoji. Builds without
-/// the `emoji` feature know no emoji.
+/// the `emoji` feature know only the folder and the file that file trees draw.
 static TWEMOJI: LazyLock<String> = LazyLock::new(|| {
     let Some(compressed) = crate::assets::get("emoji/twemoji.br") else {
-        return String::new();
+        return include_str!("file_tree.txt").to_owned();
     };
     let mut text = String::new();
     brotli_decompressor::Decompressor::new(compressed, 4096)
@@ -35,6 +35,7 @@ static EMOJIS: LazyLock<Vec<(&'static str, Emoji)>> = LazyLock::new(|| {
             let (names, svg) = line.split_once(' ').expect("a name and a picture");
             let emoji = Emoji {
                 svg,
+                shortcut: names.split_once(';').map(|(_, shortcut)| shortcut),
                 parser: OnceLock::new(),
             };
             (names, emoji)
@@ -42,8 +43,9 @@ static EMOJIS: LazyLock<Vec<(&'static str, Emoji)>> = LazyLock::new(|| {
         .collect()
 });
 
-static ALL: LazyLock<HashMap<&'static str, &'static Emoji>> = LazyLock::new(|| {
-    let mut all = HashMap::new();
+/// Sorted by name, as PlantUML lists them.
+static ALL: LazyLock<BTreeMap<&'static str, &'static Emoji>> = LazyLock::new(|| {
+    let mut all = BTreeMap::new();
     for (names, emoji) in EMOJIS.iter() {
         for name in names.split(';') {
             all.insert(name, emoji);
@@ -54,6 +56,7 @@ static ALL: LazyLock<HashMap<&'static str, &'static Emoji>> = LazyLock::new(|| {
 
 pub(crate) struct Emoji {
     svg: &'static str,
+    shortcut: Option<&'static str>,
     /// Read when the emoji is first drawn, as PlantUML does.
     parser: OnceLock<SvgNanoParser>,
 }
@@ -61,6 +64,15 @@ pub(crate) struct Emoji {
 impl Emoji {
     pub(crate) fn retrieve(name: &str) -> Option<&'static Self> {
         ALL.get(name.to_lowercase().as_str()).copied()
+    }
+
+    /// Every emoji by each of its names, sorted by name (`getAll`).
+    pub(crate) fn get_all() -> impl Iterator<Item = (&'static str, &'static Self)> {
+        ALL.iter().map(|(&name, &emoji)| (name, emoji))
+    }
+
+    pub(crate) fn shortcut(&self) -> Option<&'static str> {
+        self.shortcut
     }
 
     /// Draws the picture, 36 units square, at `scale`; a colour turns it into shades of that colour.

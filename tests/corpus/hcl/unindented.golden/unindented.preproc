@@ -1,0 +1,6 @@
+@starthcl
+locals {
+count = 2
+name = "lines are joined without a separator"
+}
+@endhcl

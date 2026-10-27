@@ -1,0 +1,16 @@
+@startdot
+digraph attributes {
+  rankdir=LR;
+  bgcolor="#FFFFF0";
+  node [shape=box, style="rounded,filled", fillcolor=lightblue, fontname="Helvetica"];
+  edge [color=gray40, arrowhead=vee];
+  start [shape=circle, fillcolor=green, label=""];
+  decide [shape=diamond, fillcolor=yellow, label="ok?"];
+  db [shape=cylinder, fillcolor="#E0E0FF", label="Database"];
+  start -> read -> decide;
+  decide -> db [label="yes", color=darkgreen, penwidth=2];
+  decide -> read [label="no", style=dashed, color=red];
+  note [shape=note, fillcolor=white, label="A note\nwith two lines"];
+  html [shape=plaintext, label=<<b>bold</b> and <i>italic</i>>];
+}
+@enddot

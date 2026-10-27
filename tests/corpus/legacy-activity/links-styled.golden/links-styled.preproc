@@ -1,0 +1,17 @@
+@startuml
+(*) --> "A"
+"A" ..> "B"
+"B" --> "C"
+"C" -[#blue,dashed]up-> "A"
+C --> invisible thing
+if "x" then
+  -->[yes] "D"
+  if "y" then
+    -left-> "E"
+  else
+    -->[no] "F"
+  endif
+else
+  -right->[other] "G"
+endif
+@enduml

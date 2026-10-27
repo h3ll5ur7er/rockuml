@@ -226,9 +226,100 @@ fn images_scaled_beyond_what_rockuml_draws_are_left_out() {
     ]);
 }
 
+/// PlantUML throws cutting pieces less than a pixel long, or framing them beyond what Java can allocate.
+#[test]
+fn pages_plantuml_cannot_cut_are_given_up_promptly() {
+    renders_promptly(&["page 1000x1000", "class A"]);
+    renders_promptly(&[
+        "skinparam pageMargin 30000",
+        "skinparam pageExternalColor red",
+        "page 2x1",
+        "class A",
+    ]);
+}
+
 #[test]
 fn a_gif_takes_the_size_of_its_frame_not_of_its_screen() {
     renders_promptly(&[
         "Alice -> Bob : <img:data:image/png;base64,R0lGODlh/////4AAAAAAAP///ywAAAAAAQABAAACAkQBADs=>",
     ]);
+}
+
+/// The image rockuml writes for a diagram of `line` alone, in the format `arguments` ask for.
+fn card_image(line: &str, arguments: &[&str], extension: &str) -> String {
+    let directory = tempfile::tempdir().unwrap();
+    let file = directory.path().join("card.puml");
+    std::fs::write(&file, format!("@startuml\n{line}\n@enduml\n")).unwrap();
+    let output = rockuml().args(arguments).arg(&file).output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    std::fs::read_to_string(directory.path().join(format!("card.{extension}"))).unwrap()
+}
+
+/// The texts of the `-f debug` listing of a diagram of `line` alone, blank ones left out.
+fn debug_texts_of_card(line: &str) -> Vec<String> {
+    card_image(line, &["-f", "debug"], "debug")
+        .lines()
+        .filter_map(|line| line.strip_prefix("  text: "))
+        .filter(|text| !text.trim().is_empty())
+        .map(str::to_owned)
+        .collect()
+}
+
+#[test]
+fn the_version_card_tells_rockuml_s_version() {
+    let texts = debug_texts_of_card("version");
+    assert_eq!(texts[..2], ["rockuml", env!("CARGO_PKG_VERSION")]);
+    assert_eq!(texts[2..4], ["PlantUML", "1.2026.8"]);
+    assert!(!texts.iter().any(|text| text.contains("Java")));
+}
+
+#[test]
+fn the_license_card_tells_rockuml_s_license() {
+    let texts = debug_texts_of_card("license");
+    assert!(texts.contains(
+        &"rockuml is free software; you can redistribute it and/or modify it".to_owned()
+    ));
+    assert!(!texts.iter().any(|text| text.contains("patreon")));
+}
+
+#[test]
+fn the_font_list_card_shows_the_fonts_registered_on_the_command_line() {
+    let directory = tempfile::tempdir().unwrap();
+    let font = directory.path().join("renamed.ttf");
+    std::fs::write(&font, renamed_liberation_sans("Liberation Test")).unwrap();
+    let svg = card_image(
+        "listfonts Sample",
+        &["-tsvg", "--font", font.to_str().unwrap()],
+        "svg",
+    );
+    assert!(svg.contains(">Fonts available:<"));
+    for family in ["Liberation Sans", "Liberation Test"] {
+        assert!(svg.contains(&format!(">{family} :<")));
+        assert!(svg.contains(&format!(r#"font-family="{family}">Sample<"#)));
+    }
+}
+
+/// Liberation Sans, renamed in its name table, which no checksum guards.
+fn renamed_liberation_sans(name: &str) -> Vec<u8> {
+    fn replace(data: &mut [u8], from: &[u8], to: &[u8]) {
+        for at in 0..=data.len() - from.len() {
+            if data[at..].starts_with(from) {
+                data[at..at + to.len()].copy_from_slice(to);
+            }
+        }
+    }
+    let utf16 =
+        |text: &str| -> Vec<u8> { text.encode_utf16().flat_map(u16::to_be_bytes).collect() };
+    let mut data = std::fs::read(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/../rockuml/assets/fonts/LiberationSans-Regular.ttf"
+    ))
+    .unwrap();
+    replace(&mut data, b"Liberation Sans", name.as_bytes());
+    replace(&mut data, &utf16("Liberation Sans"), &utf16(name));
+    data
 }

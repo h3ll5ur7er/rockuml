@@ -113,8 +113,15 @@ impl BoxStyle {
             .map(|name| Stereotype::new(&format!("<<{name}>>")))
     }
 
-    /// Draws the outline of a box `width` wide, less the shield (`drawMe`). PlantUML's shadow is not drawn.
-    pub(crate) fn draw_me(self, ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
+    /// Draws the outline of a box `width` wide, less the shield (`drawMe`).
+    pub(crate) fn draw_me(
+        self,
+        ug: &UGraphic,
+        width: f64,
+        height: f64,
+        shadowing: f64,
+        round_corner: f64,
+    ) {
         let width = width - self.get_shield();
         let input = || {
             UShape::polygon(vec![
@@ -139,7 +146,9 @@ impl BoxStyle {
             Self::SdlInput | Self::UmlTrigger => input(),
             Self::SdlOutput | Self::UmlSendSignal => output(),
             Self::SdlProcedure => {
-                ug.draw(&UShape::Rectangle(URectangle::new(width, height)));
+                ug.draw(&UShape::Rectangle(
+                    URectangle::new(width, height).with_delta_shadow(shadowing),
+                ));
                 let vline = UShape::Line {
                     dx: 0.0,
                     dy: height,
@@ -195,13 +204,39 @@ impl BoxStyle {
                 ])
             }
         };
-        ug.draw(&shape);
+        ug.draw(&shape.with_delta_shadow(shadowing));
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::klimt::ugraphic::tests::recording;
+
+    fn drawn(style: BoxStyle, round_corner: f64) -> Vec<String> {
+        let (ug, recorder) = recording();
+        style.draw_me(&ug, 100.0, 40.0, 3.0, round_corner);
+        recorder.take().lines
+    }
+
+    #[test]
+    fn outlines_cast_the_shadow_even_when_rounded() {
+        for style in BoxStyle::VALUES {
+            assert!(drawn(style, 25.0)[0].ends_with(" shadow 3"), "{style:?}");
+        }
+    }
+
+    #[test]
+    fn the_lines_of_a_procedure_cast_none() {
+        assert_eq!(
+            drawn(BoxStyle::SdlProcedure, 0.0),
+            [
+                "rect 0,0 100x40 shadow 3",
+                "line 5,0 0,40",
+                "line 95,0 0,40"
+            ]
+        );
+    }
 
     #[test]
     fn styles_are_found_by_stereotype_ignoring_case_and_dashes() {

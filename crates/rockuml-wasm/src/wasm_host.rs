@@ -1,4 +1,5 @@
-//! The engine's view of a web page: no files, URLs or environment, and the clock of the JavaScript host.
+//! The engine's view of a web page: no files, URLs, environment or programs (so no Graphviz), and the clock of
+//! the JavaScript host.
 
 use std::path::{Path, PathBuf};
 

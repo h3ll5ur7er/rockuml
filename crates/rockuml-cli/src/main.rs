@@ -8,6 +8,7 @@ mod exit_status;
 mod file_format;
 mod file_group;
 mod fonts;
+mod graphviz;
 mod help_print;
 mod pico_web_server;
 mod pipe;

@@ -151,6 +151,33 @@ Portal --> Morty : wubba lubba dub dub
 @enduml
 ```
 
+Class, object, use case, component and deployment diagrams take `newpage` too: each page is a diagram of its own, with its own title and settings.
+
+```rockuml
+@startuml
+title The Avengers
+class IronMan
+class Hulk
+IronMan -- Hulk
+newpage
+title The Guardians
+class Groot
+class Rocket
+Rocket o-- Groot
+@enduml
+```
+
+`page 2x3` cuts a large diagram's PNG image into pages to print, 2 across and 3 down, written as numbered files like the pages above. `skinparam pageMargin 5`, `pageBorderColor` and `pageExternalColor` frame each piece. As in PlantUML, a piece must be at least a pixel each way, so more pages than the image has pixels fail; rockuml also refuses framed pieces larger than `PLANTUML_LIMIT_SIZE`.
+
+```plantuml
+@startuml
+page 2x1
+class Luffy
+class Zoro
+Luffy -- Zoro
+@enduml
+```
+
 ## Several diagrams in one file
 
 A file can hold any number of diagrams, each between its own start and end lines. Name a diagram by putting the name after the start line, `@startuml checkout`, and the command line writes it to `checkout.png` instead of numbering it.

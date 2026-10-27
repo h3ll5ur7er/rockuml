@@ -1,0 +1,21 @@
+smetana-trace 1
+agopen "g"
+agsafeset graph "g" "margin" "16" ""
+agnode graph "g" "sh0006"
+agsafeset node "sh0006" "shape" "box" ""
+agsafeset node "sh0006" "width" "0.6283680715193404" ""
+agsafeset node "sh0006" "height" "0.6666666666666666" ""
+gvContext
+gvLayoutJobs graph "g"
+phase rank
+graph "g" minrank 0 maxrank 0
+node "sh0006" rank 0
+phase mincross
+rank 0 "sh0006"
+phase position
+node "sh0006" rank 0 coord 0.0 24.0 lw 22.5 rw 22.5 ht 48.0
+graph "g" bb -22.5 0.0 22.5 48.0
+phase splines
+phase final
+graph "g" bb 0.0 0.0 45.0 48.0
+node "sh0006" coord 22.5 24.0 width 0.625 height 0.6666666666666666 lw 22.5 rw 22.5 ht 48.0

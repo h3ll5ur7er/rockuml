@@ -31,6 +31,7 @@ fn class(diagram: &mut Diagram, name: &str) -> EntityId {
     let cuca = diagram.cuca();
     let quark = cuca.quark_in_context(false, name).unwrap();
     cuca.really_create_leaf(None, quark, Display::create([name]), LeafType::Class)
+        .unwrap()
 }
 
 fn link(diagram: &mut Diagram, from: EntityId, to: EntityId) -> LinkId {

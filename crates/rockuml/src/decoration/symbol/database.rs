@@ -18,20 +18,23 @@ fn cubic(ctrl1: (f64, f64), ctrl2: (f64, f64), end: (f64, f64)) -> USegment {
 }
 
 /// The empty square past the bottom right corner makes room for the cylinder's curves.
-fn draw_database(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::path(vec![
-        USegment::MoveTo(0.0, 10.0),
-        cubic((0.0, 0.0), (width / 2.0, 0.0), (width / 2.0, 0.0)),
-        cubic((width / 2.0, 0.0), (width, 0.0), (width, 10.0)),
-        USegment::LineTo(width, height - 10.0),
-        cubic(
-            (width, height),
-            (width / 2.0, height),
-            (width / 2.0, height),
-        ),
-        cubic((width / 2.0, height), (0.0, height), (0.0, height - 10.0)),
-        USegment::LineTo(0.0, 10.0),
-    ]));
+fn draw_database(ug: &UGraphic, width: f64, height: f64, shadowing: f64) {
+    ug.draw(
+        &UShape::path(vec![
+            USegment::MoveTo(0.0, 10.0),
+            cubic((0.0, 0.0), (width / 2.0, 0.0), (width / 2.0, 0.0)),
+            cubic((width / 2.0, 0.0), (width, 0.0), (width, 10.0)),
+            USegment::LineTo(width, height - 10.0),
+            cubic(
+                (width, height),
+                (width / 2.0, height),
+                (width / 2.0, height),
+            ),
+            cubic((width / 2.0, height), (0.0, height), (0.0, height - 10.0)),
+            USegment::LineTo(0.0, 10.0),
+        ])
+        .with_delta_shadow(shadowing),
+    );
     ug.with_backcolor(HColor::NONE)
         .draw(&get_closing_path(width));
     ug.translated(width, height)
@@ -70,8 +73,8 @@ impl SmallShape for USymbolDatabase {
         Margin::new(10.0, 10.0, 24.0, 5.0)
     }
 
-    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, _fashion: &Fashion) {
-        draw_database(ug, dimension.width, dimension.height);
+    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
+        draw_database(ug, dimension.width, dimension.height, fashion.delta_shadow);
     }
 
     fn text_surface(&self, ug: &UGraphic, dimension: XDimension2D) -> UGraphic {
@@ -83,7 +86,12 @@ impl SmallShape for USymbolDatabase {
 
 impl BigShape for USymbolDatabase {
     fn draw_big(&self, ug: &UGraphic, content: &BigContent) {
-        draw_database(ug, content.width, content.height);
+        draw_database(
+            ug,
+            content.width,
+            content.height,
+            content.fashion.delta_shadow,
+        );
         content.draw_centered_stereotype_and_title(ug, 2.0 + 20.0);
     }
 }

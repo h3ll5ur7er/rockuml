@@ -1,0 +1,12 @@
+@startuml
+skinparam shadowing true
+skinparam shadowing<<flat>> false
+class A
+class B <<flat>>
+() I1
+() I2 <<flat>>
+interface J <<flat>>
+A - I1
+B - I2
+A ..|> J
+@enduml

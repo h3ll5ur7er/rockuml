@@ -59,6 +59,19 @@ pub(crate) fn names() -> impl Iterator<Item = &'static str> {
     FILES.iter().map(|asset| asset.name)
 }
 
+/// The names of the bundled themes, sorted (PlantUML's `ThemeUtils.getAllThemeNames`).
+pub(crate) fn theme_names() -> Vec<String> {
+    let mut names: Vec<String> = names()
+        .filter_map(|path| {
+            path.strip_prefix("themes/puml-theme-")?
+                .strip_suffix(".puml")
+        })
+        .map(str::to_owned)
+        .collect();
+    names.sort();
+    names
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

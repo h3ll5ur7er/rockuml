@@ -11,7 +11,7 @@ use crate::diagram::activity3::{
 use crate::direction::Direction;
 use crate::ftile::hexagon::HEXAGON_HALF_SIZE;
 use crate::ftile::vcompact::connection_hline::hline_extent;
-use crate::ftile::vcompact::note_sheet::NoteSheet;
+use crate::ftile::vcompact::note_sheet::note_opale;
 use crate::ftile::vertical::FtileDiamond;
 use crate::ftile::{
     AbstractConnection, AbstractFtile, Connection, ConnectionTranslatable, Ftile, FtileGeometry,
@@ -23,7 +23,7 @@ use crate::klimt::shape::UPolygon;
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock};
 use crate::skin::SkinParam;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::style::{SName, StyleSignature};
 use crate::svek::ConditionEndStyle;
 use crate::svek::image::Opale;
 
@@ -61,19 +61,11 @@ pub(crate) fn create_opale(note: &PositionedNote, skin_param: &SkinParam) -> Opa
     ])
     .get_merged_style(&skin_param.current_style_builder())
     .eventually_override_colors(&note.colors);
-    let text = NoteSheet::new(
+    note_opale(
         &note.display,
-        &style.font_configuration(),
+        &style,
         skin_param.note_text_alignment(HorizontalAlignment::Left),
-        style.wrap_width(),
         skin_param,
-    );
-    Opale::new(
-        style.value(PName::LineColor).as_color(),
-        style.value(PName::BackGroundColor).as_color(),
-        Box::new(text),
-        style.stroke(),
-        0.0,
     )
 }
 

@@ -157,10 +157,10 @@ impl NServer {
 }
 
 /// `[name = value, ...]` after an element (`NwDiagram.toSet`).
-pub(super) struct Properties(Vec<(String, String)>);
+pub(in crate::diagram) struct Properties(Vec<(String, String)>);
 
 impl Properties {
-    pub(super) fn parse(definition: Option<&str>) -> Self {
+    pub(in crate::diagram) fn parse(definition: Option<&str>) -> Self {
         static PATTERN: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
             regex::Regex::new(r#"\s*([a-zA-Z0-9_]+)\s*=\s*("([^"]*)"|[^\s,]+)"#).unwrap()
         });
@@ -176,7 +176,7 @@ impl Properties {
         Self(result)
     }
 
-    pub(super) fn get(&self, name: &str) -> Option<&str> {
+    pub(in crate::diagram) fn get(&self, name: &str) -> Option<&str> {
         self.0
             .iter()
             .find(|(existing, _)| existing == name)

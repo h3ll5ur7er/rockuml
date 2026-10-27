@@ -56,6 +56,7 @@ impl EntityImageTips {
                     skin,
                 );
                 let opale = Opale::new(
+                    style.shadowing(),
                     style.value(PName::LineColor).as_color(),
                     note_background_color,
                     text_block,

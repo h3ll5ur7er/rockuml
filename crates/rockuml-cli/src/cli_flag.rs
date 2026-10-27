@@ -172,7 +172,7 @@ cli_flags! {
         doc("Pre-check syntax of all inputs and stop faster on error", 0), None;
     NoErrorImage: "--no-error-image" ["-noerror"] UnaryBoolean Ported
         doc("Do not generate error images for diagrams with syntax errors", 0), None;
-    Timeout: "--graphviz-timeout" ["-timeout"] BinaryNextArgumentValue Ignored
+    Timeout: "--graphviz-timeout" ["-timeout"] BinaryNextArgumentValue Ported
         doc_with_usage("Set Graphviz processing timeout (in seconds)", 1, "--graphviz-timeout <seconds>"), None;
     IgnoreStartumlFilename: "--ignore-startuml-filename" [] UnaryBoolean Ported
         doc("Ignore '@startuml <name>' and always derive output filenames from input files", 1), None;
@@ -195,7 +195,7 @@ cli_flags! {
         doc_with_usage("Decode a PlantUML encoded URL back to its source", 1, "--decode-url <string>"), None;
     Language: "--list-keywords" ["-language"] UnaryImmediateAction NotPorted
         doc("Print the list of PlantUML language keywords", 1), None;
-    GraphvizDot: "--dot-path" ["-graphvizdot", "-graphviz_dot"] BinaryNextArgumentValue Dropped
+    GraphvizDot: "--dot-path" ["-graphvizdot", "-graphviz_dot"] BinaryNextArgumentValue Ported
         doc_with_usage("Specify the path to the Graphviz 'dot' executable", 1, "--dot-path <path-to-dot-exe>"), None;
     Ftp: "--ftp-server" ["-ftp"] UnaryOptionalColon Dropped
         doc("Start a local FTP server for diagram rendering (rarely used)", 1), None;

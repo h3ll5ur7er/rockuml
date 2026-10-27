@@ -1,0 +1,9 @@
+@startuml
+class Fry
+() Delivery
+() "Planet Express" as pe <<company>> #FFD700
+() hypno as "Hypnotoad"
+Fry --> Delivery
+Fry --> pe
+pe -- hypno
+@enduml

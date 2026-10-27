@@ -211,6 +211,7 @@ pub(crate) enum GroupType {
     Package,
     State,
     ConcurrentState,
+    InnerActivity,
     Domain,
     Requirement,
 }

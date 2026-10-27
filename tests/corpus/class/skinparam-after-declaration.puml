@@ -1,0 +1,7 @@
+@startuml
+class A
+interface B
+A ..|> B
+skinparam shadowing true
+skinparam classBackgroundColor red
+@enduml

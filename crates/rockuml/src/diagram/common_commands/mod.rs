@@ -2,7 +2,9 @@
 
 mod skin_block;
 mod sprite;
-mod unported;
+mod style_sheets;
+
+pub(crate) use style_sheets::{StyleFile, style_file_named};
 
 use std::marker::PhantomData;
 use std::sync::LazyLock;
@@ -11,7 +13,7 @@ use regex::Regex;
 
 use super::chrome::Warning;
 use super::scale::Scale;
-use super::titled::TitledDiagram;
+use super::titled::{SplitPages, TitledDiagram};
 use crate::abel::DisplayPositioned;
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
@@ -55,7 +57,10 @@ pub(super) fn add_title_commands<D: TitledDiagram + 'static>() -> Vec<Box<dyn Co
             .skipping_quote_lines(),
         ),
         // CommandLegend
-        single(labelled("legend", "LEGEND1", "LEGEND2"), set_legend),
+        Box::new(SingleLine(PatternCommand::new(
+            labelled("legend", "LEGEND1", "LEGEND2"),
+            set_legend,
+        ))),
         // CommandFooter
         single(Ribbon::Footer.pattern(), |diagram, arg, location| {
             Ribbon::Footer.set_from_line(diagram, arg, location);
@@ -86,14 +91,25 @@ pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
         // CommandNope
         single(blank_line_pattern(), |_, _, _| {}),
         single(pragma_pattern(), define_pragma),
-        unported::assume_transparent(),
+        // CommandAssumeTransparent, which PlantUML ignores now
+        single(assume_transparent_pattern(), |_, _, _| {}),
         // CommandSkinParam
         single(skinparam_pattern(), set_skinparam),
+        skin_block::jaws(),
         Box::new(skin_block::SkinParamBlock),
-        unported::skin(),
-        unported::minwidth(),
-        unported::page(),
-        unported::rotate(),
+        style_sheets::skin(),
+        // CommandMinwidth, which PlantUML ignores now
+        single(keyword_and_number("minwidth", "VALUE"), |_, _, _| {}),
+        page(),
+        // CommandRotate, which PlantUML ignores now
+        single(
+            RegexTree::concat(vec![
+                RegexTree::start(),
+                RegexTree::leaf("rotate"),
+                RegexTree::end(),
+            ]),
+            |_, _, _| {},
+        ),
         sprite::multi_line(),
         sprite::single_line(),
         sprite::md5(),
@@ -102,7 +118,7 @@ pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
         sprite::stdlib_svg(),
         sprite::svg_multi_line(),
         sprite::file(),
-        unported::style_single_line_css(),
+        style_sheets::single_line_css(),
         // CommandStyleMultilinesCSS
         Box::new(
             Multiline::new(
@@ -112,7 +128,7 @@ pub(super) fn add_common_commands2<D: TitledDiagram + 'static>() -> Vec<Box<dyn 
             )
             .skipping_quote_lines(),
         ),
-        unported::style_import(),
+        style_sheets::import(),
     ]
 }
 
@@ -434,6 +450,7 @@ fn set_skinparam<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineL
         diagram.titled().add_warning(Warning(warning.to_owned()));
     }
     diagram.titled().skin.set_param(name, value);
+    diagram.titled().set_skin_param_used(true);
 }
 
 /// The warning for a deprecated skin parameter. As in PlantUML, `skinparam` blocks do not warn.
@@ -464,13 +481,70 @@ fn apply_style_sheet<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) -> Co
         .titled()
         .skin
         .apply_style_sheet(&texts)
-        .map_err(|error| match error {
-            StyleParsingError::Invalid(message) => {
-                CommandError::new(format!("Error in style definition: {message}"))
-            }
-            // PlantUML reports this as a crash; rockuml reports the style as faulty.
-            StyleParsingError::Unexpected => CommandError::new("Error in style definition"),
-        })
+        .map_err(style_error)
+}
+
+fn style_error(error: StyleParsingError) -> CommandError {
+    match error {
+        StyleParsingError::Invalid(message) => {
+            CommandError::new(format!("Error in style definition: {message}"))
+        }
+        // PlantUML reports this as a crash; rockuml reports the style as faulty.
+        StyleParsingError::Unexpected => CommandError::new("Error in style definition"),
+    }
+}
+
+/// `!assume transparent dark`.
+fn assume_transparent_pattern() -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf("!assume"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::leaf("transparent"),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, "TYPE", "(dark|light)"),
+        RegexTree::end(),
+    ])
+}
+
+fn keyword_and_number(keyword: &'static str, name: &'static str) -> RegexTree {
+    RegexTree::concat(vec![
+        RegexTree::start(),
+        RegexTree::leaf(keyword),
+        RegexTree::spaces_one_or_more(),
+        RegexTree::named(1, name, r"(\d+)"),
+        RegexTree::end(),
+    ])
+}
+
+/// PlantUML's `CommandPage`: `page 2x3` cuts the PNG image into 2 pages across and 3 down.
+fn page<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
+        RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::leaf("page"),
+            RegexTree::spaces_one_or_more(),
+            RegexTree::named(1, "NB1", r"(\d+)"),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::leaf("x*"),
+            RegexTree::spaces_zero_or_more(),
+            RegexTree::named(1, "NB2", r"(\d+)"),
+            RegexTree::end(),
+        ]),
+        |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
+            let pages = |name| {
+                arg.get(name, 0)
+                    .and_then(|digits| digits.parse::<u32>().ok())
+                    .filter(|&count| count > 0)
+                    .ok_or_else(|| CommandError::new("Argument must be positive"))
+            };
+            diagram.titled().split_pages = SplitPages {
+                horizontal: pages("NB1")?,
+                vertical: pages("NB2")?,
+            };
+            Ok(())
+        },
+    )))
 }
 
 fn set_title<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &LineLocation) {
@@ -500,13 +574,17 @@ fn set_caption<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, location: &
 }
 
 /// Unlike the other one-line commands, PlantUML does not remember where a one-line legend was written.
-fn set_legend<D: TitledDiagram>(diagram: &mut D, arg: &RegexResult, _: &LineLocation) {
+fn set_legend<D: TitledDiagram>(
+    diagram: &mut D,
+    _: &LineLocation,
+    arg: &RegexResult,
+) -> CommandResult {
     let legend = DisplayPositioned {
         display: label(arg, "LEGEND"),
         alignment: HorizontalAlignment::Center,
         location: None,
     };
-    diagram.set_legend(legend, VerticalAlignment::Bottom);
+    diagram.set_legend(legend, VerticalAlignment::Bottom)
 }
 
 /// The lines between a block's first and last line, without their common indentation.
@@ -558,8 +636,7 @@ fn set_multiline_legend<D: TitledDiagram>(diagram: &mut D, lines: &BlocLines) ->
         Some(top) if top.eq_ignore_ascii_case("top") => VerticalAlignment::Top,
         _ => VerticalAlignment::Bottom,
     };
-    diagram.set_legend(legend, vertical);
-    Ok(())
+    diagram.set_legend(legend, vertical)
 }
 
 /// Headers and footers.
@@ -667,5 +744,34 @@ impl Ribbon {
         };
         self.set(diagram, positioned);
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::diagram::DiagramError;
+    use crate::diagram::test_support::error_of;
+
+    #[test]
+    fn pages_must_be_positive() {
+        let error = error_of(
+            "@startuml
+page 0x2
+A -> B
+@enduml",
+        );
+        assert_eq!(
+            error.map(|DiagramError { message, .. }| message),
+            Some("Argument must be positive (Assumed diagram type: sequence)".to_owned())
+        );
+    }
+
+    #[test]
+    fn skinparam_blocks_may_come_on_one_line() {
+        let source = "@startuml
+skinparam class {%newline()BackgroundColor red%newline()}
+class A
+@enduml";
+        assert_eq!(error_of(source), None);
     }
 }

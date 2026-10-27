@@ -10,6 +10,7 @@ pub(crate) mod dot_path;
 pub(crate) mod fashion;
 pub(crate) mod font;
 pub(crate) mod geom;
+pub(crate) mod graphic_strings;
 pub(crate) mod group;
 pub(crate) mod image;
 pub(crate) mod limit_finder;

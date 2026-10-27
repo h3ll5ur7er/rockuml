@@ -1,0 +1,186 @@
+DPI: 96
+dimension: [ 295.4193 ; 283.1667 ]
+scaleFactor: 1.0000
+seed: -4838659140739039551
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+EMPTY:
+  pt1: [ 150.7162 ; 10.0000 ]
+  pt2: [ 285.4193 ; 21.0000 ]
+
+TEXT:
+  text: Page header
+  position: [ 150.7162 ; 17.7778 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 26.5085 ; 21.0000 ]
+  pt2: [ 268.9108 ; 56.0000 ]
+
+TEXT:
+  text: Wiring of the board
+  position: [ 36.5085 ; 41.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 15.0000 ; 66.0000 ]
+  pt2: [ 280.4193 ; 186.1667 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 156.8524 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 156.8524 ; 7.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 146.8524 ; 17.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 17.0000 ]
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+UGraphicDebug SpecialText <timestamp>
+RECTANGLE:
+  pt1: [ 30.0000 ; 112.1667 ]
+  pt2: [ 110.0000 ; 172.1667 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: left part
+  position: [ 35.0000 ; 121.5000 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 130.0000 ; 112.1667 ]
+  pt2: [ 210.0000 ; 172.1667 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: right part
+  position: [ 135.0000 ; 121.5000 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 25.0000 ; 101.5000 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+LINE:
+  pt1: [ 111.0000 ; 117.1667 ]
+  pt2: [ 129.0000 ; 117.1667 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 114.0000 ; 112.1667 ]
+  pt2: [ 166.1516 ; 122.1667 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffffffff
+  backcolor: ffffffff
+
+TEXT:
+  text: signal
+  position: [ 114.0000 ; 119.9444 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 69.6013 ; 196.1667 ]
+  pt2: [ 285.4193 ; 245.1667 ]
+
+RECTANGLE:
+  pt1: [ 81.6013 ; 208.1667 ]
+  pt2: [ 272.4193 ; 232.1667 ]
+  xCorner: 15
+  yCorner: 15
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffdddddd
+
+TEXT:
+  text: The legend
+  position: [ 86.6013 ; 224.0556 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 89.9177 ; 245.1667 ]
+  pt2: [ 205.5016 ; 262.1667 ]
+
+TEXT:
+  text: A caption
+  position: [ 90.9177 ; 257.0556 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 82.4159 ; 262.1667 ]
+  pt2: [ 213.0034 ; 273.1667 ]
+
+TEXT:
+  text: Page footer
+  position: [ 82.4159 ; 269.9444 ]
+  orientation: 0
+  font: SansSerif.plain/10 []
+  color: ff888888
+  extendedColor: NULL_COLOR
+

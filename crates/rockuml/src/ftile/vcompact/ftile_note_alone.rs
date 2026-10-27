@@ -51,6 +51,7 @@ impl FtileNoteAlone {
             &skin_param,
         );
         let opale = Opale::new(
+            style.shadowing(),
             style.value(PName::LineColor).as_color(),
             style.value(PName::BackGroundColor).as_color(),
             Box::new(text),

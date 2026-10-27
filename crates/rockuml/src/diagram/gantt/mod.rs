@@ -27,13 +27,14 @@ use super::builder::CommandFactory;
 use super::diagram_type::DiagramType;
 use super::titled::{Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
-use crate::color::HColor;
+use crate::color::{HColor, XColor};
 use crate::command::factory::AbstractDiagram;
 use crate::command::{Command, CommandError, CommandResult, ParserPass};
 use crate::creole::Display;
 use crate::klimt::TextBlock;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::ClockwiseTopRightBottomLeft;
+use crate::klimt::png::{PageSplit, SplitParam};
 use crate::local_date::{DayOfWeek, LocalDate, LocalDateTime};
 use crate::stereo::Stereotype;
 use crate::style::SName;
@@ -603,8 +604,18 @@ impl Diagram for GanttDiagram {
         Ok(self.titled.add_chrome(Box::new(main_block), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
-        self.titled
-            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none())
+    fn export_settings(&self, _page: usize) -> ExportSettings {
+        let settings = self
+            .titled
+            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::none());
+        // PlantUML frames the pieces of Gantt charts its own way, for backwards compatibility.
+        let gantt_frame = SplitParam::new(Some(XColor::rgb(0, 0, 0)), None, 5);
+        ExportSettings {
+            split: settings.split.map(|split| PageSplit {
+                param: gantt_frame,
+                ..split
+            }),
+            ..settings
+        }
     }
 }

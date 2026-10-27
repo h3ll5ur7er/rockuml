@@ -10,13 +10,16 @@ use regex::Regex;
 
 pub(super) use labels::Labels;
 
+use std::rc::Rc;
+
 use super::cuca::{CucaDiagram, EntityDiagram};
 use super::titled::TitledDiagram;
+use super::{DEFAULT_DPI, Diagram, ExportSettings, NotYetPorted};
 use crate::abel::{Entity, EntityId, GroupType, LeafType, LinkArg};
 use crate::color::{ColorType, Colors, HColor};
-use crate::command::unported::{self, NotPortedCommands};
 use crate::command::{
     BlocLines, Command, CommandControl, CommandError, Multiline, PatternCommand, SingleLine,
+    ubrex_single_line,
 };
 use crate::creole::Display;
 use crate::cucadiagram::get_linked_entry;
@@ -24,12 +27,16 @@ use crate::decoration::symbol::{USymbol, USymbols};
 use crate::decoration::{LinkDecor, LinkType};
 use crate::java;
 use crate::json::JsonValue;
+use crate::klimt::TextBlock;
+use crate::klimt::font::StringBounder;
 use crate::klimt::url::Url;
 use crate::pattern::{RegexResult, RegexTree, java_regex, plantuml_regex};
 use crate::plasma::QuarkId;
 use crate::skin::Rankdir;
 use crate::stereo::{Stereotag, Stereotype};
 use crate::text::{LineLocation, StringLocated, without_quotes_or_brackets};
+use crate::ubrex::UMatcher;
+use crate::ubrex::builder::UBrexPart;
 use crate::{color, stereo};
 
 /// The colours of `COLOR`, then the line colour and style of `##[style]color`.
@@ -72,6 +79,19 @@ pub(super) fn footbox_ignored<D: 'static>() -> Box<dyn Command<D>> {
     )))
 }
 
+/// PlantUML's `UBrexCommandFootboxIgnored`, the twin of `CommandFootboxIgnored` legacy activity diagrams
+/// take.
+pub(super) fn ubrex_footbox_ignored<D: 'static>() -> Box<dyn Command<D>> {
+    ubrex_single_line(
+        vec![
+            UBrexPart::leaf("【 hide┇show 】"),
+            UBrexPart::space_zero_or_more(),
+            UBrexPart::leaf("footbox"),
+        ],
+        |_: &mut D, _: &LineLocation, _: &UMatcher| Ok(()),
+    )
+}
+
 /// PlantUML's `CommandRankDir`: `left to right direction` lays the diagram out sideways.
 pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
     Box::new(SingleLine(PatternCommand::new(
@@ -83,29 +103,132 @@ pub(super) fn rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
             RegexTree::end(),
         ]),
         |diagram: &mut D, _: &LineLocation, arg: &RegexResult| {
-            let direction = arg.get("DIRECTION", 0).unwrap_or_default();
-            let rankdir = if direction.to_ascii_lowercase().starts_with("left") {
-                Rankdir::LeftToRight
-            } else {
-                Rankdir::TopToBottom
-            };
-            diagram.titled().skin.set_rankdir(rankdir);
+            set_rankdir(diagram, arg.get("DIRECTION", 0).unwrap_or_default());
             Ok(())
         },
     )))
 }
 
+/// PlantUML's `UBrexCommandRankDir`, the twin of `CommandRankDir` legacy activity diagrams take.
+pub(super) fn ubrex_rank_dir<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    ubrex_single_line(
+        vec![
+            UBrexPart::named(
+                "DIRECTION",
+                UBrexPart::leaf("【 left∙to∙right ┇ top∙to∙bottom 】"),
+            ),
+            UBrexPart::space_one_or_more(),
+            UBrexPart::leaf("direction"),
+        ],
+        |diagram: &mut D, _: &LineLocation, matcher: &UMatcher| {
+            set_rankdir(
+                diagram,
+                matcher
+                    .find_first_value_by_key("DIRECTION")
+                    .unwrap_or_default(),
+            );
+            Ok(())
+        },
+    )
+}
+
+/// `left to right` or `top to bottom`.
+fn set_rankdir<D: TitledDiagram>(diagram: &mut D, direction: &str) {
+    let rankdir = if direction.to_ascii_lowercase().starts_with("left") {
+        Rankdir::LeftToRight
+    } else {
+        Rankdir::TopToBottom
+    };
+    diagram.titled().skin.set_rankdir(rankdir);
+}
+
+/// A diagram that `newpage` goes on with on a new, empty diagram: each is a page of its own (PlantUML's
+/// `NewpagedDiagram`).
+pub(super) trait Newpaged: TitledDiagram + Diagram + Sized {
+    /// An empty diagram of the same type and source.
+    fn create_empty_diagram(&self) -> Self;
+
+    /// The entities and links of this page.
+    fn cuca_diagram(&self) -> &CucaDiagram;
+
+    /// The pages before this one.
+    fn previous_pages(&mut self) -> &mut Vec<Self>;
+
+    fn previous_pages_ref(&self) -> &[Self];
+
+    fn page(&self, page: usize) -> &Self {
+        self.previous_pages_ref().get(page).unwrap_or(self)
+    }
+
+    /// `page` drawn with its own title and decorations.
+    fn page_text_block(
+        &self,
+        page: usize,
+        string_bounder: &Rc<dyn StringBounder>,
+    ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
+        let cuca = self.page(page).cuca_diagram();
+        let drawing = cuca.get_text_block(string_bounder.as_ref())?;
+        Ok(cuca.titled.add_chrome(drawing, string_bounder))
+    }
+
+    fn get_nb_images(&self) -> usize {
+        self.previous_pages_ref().len() + 1
+    }
+
+    fn page_export_settings(&self, page: usize) -> ExportSettings {
+        let settings = self
+            .page(page)
+            .cuca_diagram()
+            .titled
+            .export_settings(self.source().seed(), CucaDiagram::get_default_margins());
+        // PlantUML exports diagrams with several pages page by page, without cutting them.
+        let split = if self.previous_pages_ref().is_empty() {
+            settings.split
+        } else {
+            None
+        };
+        ExportSettings { split, ..settings }
+    }
+}
+
+/// Runs `hook` on every page in turn, up to the first error it finds.
+pub(super) fn on_each_page<D: Newpaged>(
+    diagram: &mut D,
+    mut hook: impl FnMut(&mut D) -> Option<String>,
+) -> Option<String> {
+    let mut pages = std::mem::take(diagram.previous_pages());
+    let error = pages
+        .iter_mut()
+        .find_map(&mut hook)
+        .or_else(|| hook(diagram));
+    *diagram.previous_pages() = pages;
+    error
+}
+
 /// PlantUML's `CommandNewpage`.
-pub(super) fn newpage<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandNewpage",
+pub(super) fn newpage<D: Newpaged + 'static>() -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
         RegexTree::concat(vec![
             RegexTree::start(),
-            RegexTree::leaf(r"newpage"),
+            RegexTree::leaf("newpage"),
             RegexTree::end(),
         ]),
-    )
-    .boxed()
+        |diagram: &mut D, _: &LineLocation, _: &RegexResult| {
+            let mut next = diagram.create_empty_diagram();
+            let dpi = diagram.titled().dpi();
+            if dpi != DEFAULT_DPI {
+                next.titled().skin.set_param("dpi", &dpi.to_string());
+            }
+            let mut finished = std::mem::replace(diagram, next);
+            let mut pages = std::mem::take(finished.previous_pages());
+            if let Some(not_ported) = finished.titled().not_ported_part() {
+                diagram.titled().not_ported(not_ported);
+            }
+            pages.push(finished);
+            *diagram.previous_pages() = pages;
+            Ok(())
+        },
+    )))
 }
 
 /// PlantUML's `CommandHideShow2`: `hide Foo`, `show <<Stereo>>`, `hide $tag`, `hide @unlinked`.
@@ -123,8 +246,7 @@ pub(super) fn hide_show2<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                 .get("COMMAND", 0)
                 .is_some_and(|command| command.starts_with(['s', 'S']));
             let what = java::trim(arg.get("WHAT", 0).unwrap_or_default());
-            diagram.cuca().hide_or_show2(what, show);
-            Ok(())
+            diagram.cuca().hide_or_show2(what, show)
         },
     )))
 }
@@ -144,8 +266,7 @@ pub(super) fn remove_restore<D: EntityDiagram + 'static>() -> Box<dyn Command<D>
                 .get("COMMAND", 0)
                 .is_some_and(|command| command.eq_ignore_ascii_case("restore"));
             let what = java::trim(arg.get("WHAT", 0).unwrap_or_default());
-            diagram.cuca().remove_or_restore(what, show);
-            Ok(())
+            diagram.cuca().remove_or_restore(what, show)
         },
     )))
 }
@@ -196,7 +317,8 @@ pub(super) fn create_map<D: EntityDiagram + 'static>() -> Box<dyn Command<D>> {
                     return Err(CommandError::new(format!("Map already exists: {name}")));
                 }
                 let display = display_or_name(header.get("NAME", 0), name);
-                let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Map);
+                let entity =
+                    cuca.really_create_leaf(Some(location), quark, display, LeafType::Map)?;
                 if let Some(stereo) = header.get("STEREO", 0) {
                     cuca.entity_mut(entity).stereotype = Some(Stereotype::with_spot(stereo)?);
                 }
@@ -265,7 +387,7 @@ fn create_json_entity(
     if cuca.quark(quark).get_data().is_some() {
         return Ok(None);
     }
-    let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Json);
+    let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Json)?;
     if let Some(stereo) = header.get("STEREO", 0) {
         cuca.entity_mut(entity).stereotype = Some(Stereotype::with_spot(stereo)?);
     }
@@ -512,7 +634,7 @@ pub(super) fn package_with_usymbol<D: EntityDiagram + 'static>() -> Box<dyn Comm
                 skin.package_style(),
             );
             cuca.goto_group(Some(location), ident, display, GroupType::Package);
-            let group = cuca.get_current_group();
+            let group = cuca.get_current_group()?;
             let entity = cuca.entity_mut(group);
             if usymbol.is_some() {
                 entity.usymbol = usymbol;
@@ -703,7 +825,8 @@ fn create_element_multilines<D: EntityDiagram + 'static>(
             let entity = if let Some(existing) = cuca.quark(quark).get_data() {
                 existing
             } else {
-                let created = cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type);
+                let created =
+                    cuca.really_create_leaf(location.as_ref(), quark, display, leaf_type)?;
                 cuca.entity_mut(created).usymbol = Some(usymbol);
                 created
             };

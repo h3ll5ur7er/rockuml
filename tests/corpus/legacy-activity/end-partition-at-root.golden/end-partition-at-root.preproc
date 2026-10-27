@@ -1,0 +1,7 @@
+@startuml
+(*) --> "A"
+if "q" then
+--> "B"
+endif
+end partition
+@enduml

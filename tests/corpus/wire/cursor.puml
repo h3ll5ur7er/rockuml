@@ -1,0 +1,17 @@
+@startwire
+goto(40, 0)
+* moved [80x50]
+move(30, -20)
+* shifted [80x50]
+goto ( 300 , 200 )
+* placed
+* below [60x30]
+* frame
+    goto(50,5)
+    * child [30x30]
+    move( -40 , 10 )
+    * second_child [30x30]
+    move(20,0)
+    --
+    * third_child [20x20]
+@endwire

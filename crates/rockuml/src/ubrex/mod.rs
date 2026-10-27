@@ -82,6 +82,16 @@ impl<'a> UMatcher<'a> {
             .map(|&(_, value)| value)
     }
 
+    /// Every value captured under the first key starting with `prefix`, as `RegexResult.getLazzy` reads a
+    /// match (`findFirstValuesByKeyPrefix`).
+    pub(crate) fn find_first_values_by_key_prefix(&self, prefix: &str) -> Vec<&'a str> {
+        self.values
+            .iter()
+            .find(|(key, _)| key.starts_with(prefix))
+            .map(|(key, _)| self.find_values_by_key(key))
+            .unwrap_or_default()
+    }
+
     /// The values captured inside `prefix`, keyed as if it had been matched alone (`extractByPrefix`).
     pub(crate) fn extract_by_prefix(&self, prefix: &str) -> UMatcher<'a> {
         let prefix = format!("{prefix}/");

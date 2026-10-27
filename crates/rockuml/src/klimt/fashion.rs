@@ -8,6 +8,7 @@ pub(crate) struct Fashion {
     pub back_color: HColor,
     pub fore_color: HColor,
     pub stroke: UStroke,
+    pub delta_shadow: f64,
     pub round_corner: f64,
     pub diagonal_corner: f64,
 }
@@ -18,6 +19,7 @@ impl Fashion {
             back_color,
             fore_color,
             stroke: UStroke::SIMPLE,
+            delta_shadow: 0.0,
             round_corner: 0.0,
             diagonal_corner: 0.0,
         }
@@ -29,6 +31,18 @@ impl Fashion {
             stroke,
             ..self.clone()
         }
+    }
+
+    #[must_use]
+    pub(crate) fn with_delta_shadow(&self, delta_shadow: f64) -> Self {
+        Self {
+            delta_shadow,
+            ..self.clone()
+        }
+    }
+
+    pub(crate) fn is_shadowing(&self) -> bool {
+        self.delta_shadow > 0.0
     }
 
     #[must_use]

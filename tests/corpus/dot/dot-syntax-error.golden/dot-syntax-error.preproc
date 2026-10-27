@@ -1,0 +1,7 @@
+@startdot
+digraph broken {
+  a -> b;
+  b -> ;
+  c [label="never drawn"];
+}
+@enddot

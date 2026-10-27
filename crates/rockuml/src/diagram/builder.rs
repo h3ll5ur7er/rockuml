@@ -10,21 +10,37 @@ use std::sync::LazyLock;
 
 use regex::Regex;
 
+use super::activity::ActivityDiagramFactory;
 use super::activity3::ActivityDiagramFactory3;
+use super::board::BoardDiagramFactory;
+use super::bpm::BpmDiagramFactory;
+use super::cards::{
+    PSystemColorsFactory, PSystemLicenseFactory, PSystemListFontsFactory,
+    PSystemSkinparameterListFactory, PSystemVersionFactory, PSystemWelcomeFactory,
+};
+use super::chart::ChartDiagramFactory;
 use super::chen::ChenEerDiagramFactory;
 use super::class::ClassDiagramFactory;
 use super::description::DescriptionDiagramFactory;
 use super::diagram_type::DiagramType;
+use super::ebnf::PSystemEbnfFactory;
+use super::emoji_list::PSystemListEmojiFactory;
 use super::error::ErrorDiagram;
+use super::flow::FlowDiagramFactory;
 use super::gantt::GanttDiagramFactory;
+use super::help::HelpFactory;
 use super::mindmap::MindMapDiagramFactory;
 use super::nwdiag::NwDiagramFactory;
+use super::openiconic::{PSystemListOpenIconicFactory, PSystemOpenIconicFactory};
+use super::packetdiag::PacketDiagramFactory;
+use super::regexdiagram::PSystemRegexFactory;
 use super::sequence::SequenceDiagramFactory;
+use super::sprite_list::{ListSpriteDiagramFactory, PSystemListArchimateSpritesFactory};
 use super::state::StateDiagramFactory;
 use super::timing::TimingDiagramFactory;
 use super::titled::TitledDiagram;
-use super::unported::{ActivityDiagramFactory, HelpFactory, ListSpriteDiagramFactory};
 use super::wbs::WbsDiagramFactory;
+use super::wire::WireDiagramFactory;
 use super::{Diagram, NotYetPorted, UmlSource};
 use crate::command::factory::{self, AbstractDiagram, Created, ParseFailure};
 use crate::command::{Command, CommandError};
@@ -112,23 +128,23 @@ type Factory = fn(&Rc<UmlSource>) -> Outcome;
 /// The factories of the diagram types `@startuml` may stand for, in PlantUML's order. PlantUML's easter eggs
 /// are left out.
 const UML_FACTORIES: [Factory; 20] = [
-    welcome,
-    colors,
+    PSystemWelcomeFactory::create_system,
+    create_single_line_system::<PSystemColorsFactory>,
     create_system::<SequenceDiagramFactory>,
     create_system::<ClassDiagramFactory>,
     create_system::<ActivityDiagramFactory>,
     create_system::<DescriptionDiagramFactory>,
     create_system::<StateDiagramFactory>,
     create_system::<ActivityDiagramFactory3>,
-    license,
-    version,
+    create_single_line_system::<PSystemLicenseFactory>,
+    create_single_line_system::<PSystemVersionFactory>,
     donors,
-    skinparameter_list,
-    list_fonts,
-    list_emoji,
-    open_iconic,
-    list_open_iconic,
-    list_archimate_sprites,
+    create_single_line_system::<PSystemSkinparameterListFactory>,
+    create_single_line_system::<PSystemListFontsFactory>,
+    create_single_line_system::<PSystemListEmojiFactory>,
+    create_single_line_system::<PSystemOpenIconicFactory>,
+    create_single_line_system::<PSystemListOpenIconicFactory>,
+    create_single_line_system::<PSystemListArchimateSpritesFactory>,
     create_system::<ListSpriteDiagramFactory>,
     create_system::<TimingDiagramFactory>,
     create_system::<HelpFactory>,
@@ -166,9 +182,49 @@ pub(super) fn create_nwdiag(source: UmlSource) -> Result<Box<dyn Diagram>, NotYe
     select(&Rc::new(source), &[create_system::<NwDiagramFactory>])
 }
 
+/// A `@startpacketdiag` diagram.
+pub(super) fn create_packet(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PacketDiagramFactory>])
+}
+
+/// A `@startboard` diagram.
+pub(super) fn create_board(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<BoardDiagramFactory>])
+}
+
+/// A `@startwire` diagram.
+pub(super) fn create_wire(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<WireDiagramFactory>])
+}
+
+/// A `@startbpm` diagram.
+pub(super) fn create_bpm(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<BpmDiagramFactory>])
+}
+
+/// A `@startchart` diagram.
+pub(super) fn create_chart(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<ChartDiagramFactory>])
+}
+
 /// A `@startwbs` diagram.
 pub(super) fn create_wbs(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
     select(&Rc::new(source), &[create_system::<WbsDiagramFactory>])
+}
+
+/// A `@startebnf` diagram.
+pub(super) fn create_ebnf(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PSystemEbnfFactory>])
+}
+
+/// A `@startregex` diagram.
+pub(super) fn create_regex(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<PSystemRegexFactory>])
+}
+
+/// A `@startflow` diagram.
+pub(super) fn create_flow(source: UmlSource) -> Result<Box<dyn Diagram>, NotYetPorted> {
+    select(&Rc::new(source), &[create_system::<FlowDiagramFactory>])
 }
 
 /// The first diagram a factory makes, or else the error with the best score, the earlier on a tie.
@@ -202,15 +258,9 @@ fn check_basic_error(
     source: &Rc<UmlSource>,
     located_lines: &[StringLocated],
 ) -> Option<PSystemError> {
-    static DOT_HEADER: LazyLock<Regex> = LazyLock::new(|| {
-        java_regex(
-            r#"^\s*(strict\s+)?(di)?graph\s+([_\p{L}][_\p{L}\p{N}]*|-?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)|"([^"\\]|\\")*")?\s*\{\s*$"#,
-            false,
-        )
-    });
     let second = located_lines.get(1)?.text();
     let trimmed = crate::java::trim(second);
-    let message = if DOT_HEADER.is_match(second) {
+    let message = if super::dot::is_graphviz_dot_header(second) {
         "This looks like a DOT diagram. Please use @startdot instead of @startuml."
     } else if trimmed == "ditaa" {
         "This looks like a DITAA diagram. Please use @startditaa instead of @startuml."
@@ -231,20 +281,39 @@ fn check_basic_error(
     })
 }
 
-/// `@startuml` and `@enduml` alone show PlantUML's welcome screen.
-fn welcome(source: &Rc<UmlSource>) -> Outcome {
-    if source.lines().len() == 2 {
-        Outcome::Diagram(Err(NotYetPorted("the welcome screen")))
-    } else {
-        Outcome::Nothing
-    }
+/// A diagram type of a single line between the start and end lines (PlantUML's `PSystemSingleLineFactory`).
+pub(super) trait PSystemSingleLineFactory {
+    /// The diagram `line` makes, or `None` if it is no diagram of this type (`executeLine`). `source` is
+    /// without its initial noise.
+    fn execute_line(
+        source: &Rc<UmlSource>,
+        line: &str,
+    ) -> Option<Result<Box<dyn Diagram>, NotYetPorted>>;
 }
 
-/// A diagram of a single keyword line, which `accepts` recognises (PlantUML's `PSystemSingleLineFactory`).
+/// The diagram the single-line factory `F` makes of the source.
+pub(super) fn create_single_line_system<F: PSystemSingleLineFactory>(
+    source: &Rc<UmlSource>,
+) -> Outcome {
+    single_line_with(source, F::execute_line)
+}
+
+/// A diagram of a single keyword line, which `accepts` recognises, of a type rockuml cannot draw yet.
 fn single_line(
     source: &Rc<UmlSource>,
     accepts: impl Fn(&str) -> bool,
     what: &'static str,
+) -> Outcome {
+    single_line_with(source, |_, line| {
+        accepts(line).then_some(Err(NotYetPorted(what)))
+    })
+}
+
+/// The diagram `execute_line` makes of a source of a single line, or else a syntax error (PlantUML's
+/// `PSystemSingleLineFactory`). It is given the source without its initial noise.
+fn single_line_with(
+    source: &Rc<UmlSource>,
+    execute_line: impl Fn(&Rc<UmlSource>, &str) -> Option<Result<Box<dyn Diagram>, NotYetPorted>>,
 ) -> Outcome {
     if source.lines().len() - source.initial_noise() != 3 {
         return Outcome::Nothing;
@@ -266,103 +335,22 @@ fn single_line(
     }
     let line = lines[1].text();
     if start_utils::is_end_directive(line) {
-        failure("Empty description", &lines[..2])
-    } else if accepts(line) {
-        Outcome::Diagram(Err(NotYetPorted(what)))
-    } else {
-        failure("Syntax Error?", &lines[..2])
+        return failure("Empty description", &lines[..2]);
+    }
+    match execute_line(&source, line) {
+        Some(diagram) => Outcome::Diagram(diagram),
+        None => failure("Syntax Error?", &lines[..2]),
     }
 }
 
 /// A pattern the whole line must match, like Java's `String.matches`.
-fn whole_line(pattern: &str) -> Regex {
+pub(super) fn whole_line(pattern: &str) -> Regex {
     java_regex(&format!("^(?:{pattern})$"), false)
-}
-
-fn colors(source: &Rc<UmlSource>) -> Outcome {
-    static COLORS: LazyLock<Regex> = LazyLock::new(|| whole_line(r"colors?\s*(#?\w+)?\s*"));
-    single_line(source, |line| COLORS.is_match(line), "the colors diagram")
-}
-
-fn license(source: &Rc<UmlSource>) -> Outcome {
-    static LICENSE: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)li[sc][ea]n[sc]e\s*"));
-    single_line(source, |line| LICENSE.is_match(line), "the license diagram")
-}
-
-fn version(source: &Rc<UmlSource>) -> Outcome {
-    static VERSION: LazyLock<Regex> = LazyLock::new(|| {
-        whole_line(
-            r"(?i)(authors?|about|version|stdlib|testdot|keydistributor|keygen|keyimport(\s+[0-9a-z]+)?|keycheck\s+([0-9a-z]+)\s+([0-9a-z]+))\s*",
-        )
-    });
-    single_line(
-        source,
-        |line| VERSION.is_match(line),
-        "the version diagrams",
-    )
 }
 
 fn donors(source: &Rc<UmlSource>) -> Outcome {
     static DONORS: LazyLock<Regex> = LazyLock::new(|| whole_line(r"(?i)(donors)\s*"));
     single_line(source, |line| DONORS.is_match(line), "the donors diagram")
-}
-
-fn skinparameter_list(source: &Rc<UmlSource>) -> Outcome {
-    static SKIN_PARAMETERS: LazyLock<Regex> =
-        LazyLock::new(|| whole_line(r"(?i)(skinparameters)\s*"));
-    single_line(
-        source,
-        |line| SKIN_PARAMETERS.is_match(line),
-        "the skin parameter list",
-    )
-}
-
-fn list_fonts(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| {
-            let line = line.to_lowercase();
-            ["listfont", "listfonts"].contains(&line.as_str())
-                || line.starts_with("listfont ")
-                || line.starts_with("listfonts ")
-        },
-        "the font list",
-    )
-}
-
-fn list_emoji(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| {
-            let line = line.to_lowercase();
-            line == "emoji" || line.starts_with("emoji ")
-        },
-        "the emoji list",
-    )
-}
-
-fn open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("openiconic "),
-        "the OpenIconic diagram",
-    )
-}
-
-fn list_open_iconic(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("listopeniconic"),
-        "the OpenIconic list",
-    )
-}
-
-fn list_archimate_sprites(source: &Rc<UmlSource>) -> Outcome {
-    single_line(
-        source,
-        |line| line.to_lowercase().starts_with("listsprite"),
-        "the Archimate sprite list",
-    )
 }
 
 #[cfg(test)]
@@ -388,7 +376,7 @@ mod tests {
         match create(texts) {
             Ok(diagram) if diagram.is_error() => "error",
             Ok(diagram) => diagram
-                .export_settings()
+                .export_settings(0)
                 .diagram_type
                 .unwrap_or("a drawable diagram"),
             Err(NotYetPorted(what)) => what,
@@ -397,7 +385,6 @@ mod tests {
 
     #[test]
     fn each_diagram_type_reads_its_own_lines() {
-        assert_eq!(read_as(&["@startuml", "@enduml"]), "the welcome screen");
         assert_eq!(
             read_as(&["@startuml", "Alice -> Bob", "@enduml"]),
             "SEQUENCE"
@@ -413,7 +400,7 @@ mod tests {
                 "\"First\" --> (*)",
                 "@enduml"
             ]),
-            "legacy activity diagrams"
+            "ACTIVITY"
         );
         assert_eq!(
             read_as(&["@startuml", "actor User", "User --> (Login)", "@enduml"]),
@@ -434,9 +421,57 @@ mod tests {
             ]),
             "TIMING"
         );
+    }
+
+    #[test]
+    fn single_keyword_lines_draw_reference_cards() {
+        let drawn = "a drawable diagram";
+        assert_eq!(read_as(&["@startuml", "@enduml"]), drawn);
+        for card in [
+            "colors",
+            "color #Pink",
+            "Licence",
+            "version",
+            "about",
+            "stdlib",
+            "testdot",
+            "skinparameters",
+            "listfonts Hello",
+        ] {
+            assert_eq!(read_as(&["@startuml", card, "@enduml"]), drawn, "{card}");
+        }
+        assert_eq!(read_as(&["@startuml", "keygen", "@enduml"]), "license keys");
+        assert_eq!(read_as(&["@startuml", "Colors", "@enduml"]), "error");
+        assert_eq!(read_as(&["@startuml", "", "@enduml"]), "error");
+    }
+
+    #[test]
+    fn reference_cards_read_their_keyword_lines() {
+        assert_eq!(read_as(&["@startuml", "help fonts", "@enduml"]), "HELP");
         assert_eq!(
-            read_as(&["@startuml", "license", "@enduml"]),
-            "the license diagram"
+            read_as(&[
+                "@startuml",
+                "sprite foo <svg></svg>",
+                "listsprites",
+                "@enduml"
+            ]),
+            "HELP"
+        );
+        for card in [
+            "emoji 1f6",
+            "openiconic heart",
+            "listopeniconic",
+            "listsprite",
+        ] {
+            assert_eq!(
+                read_as(&["@startuml", card, "@enduml"]),
+                "a drawable diagram",
+                "{card}"
+            );
+        }
+        assert_eq!(
+            read_as(&["@startuml", "openiconic no-such-icon", "@enduml"]),
+            "the crash report of an unknown Open Iconic icon"
         );
     }
 

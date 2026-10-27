@@ -1,0 +1,106 @@
+DPI: 96
+dimension: [ 200.0000 ; 530.0000 ]
+scaleFactor: 1.0000
+seed: -39354496844764637
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 30.0000 ]
+  pt2: [ 120.0000 ; 130.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: power supply
+  position: [ 25.0000 ; 39.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 150.0000 ]
+  pt2: [ 180.0000 ; 210.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffadd8e6
+
+TEXT:
+  text: controller
+  position: [ 25.0000 ; 159.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 230.0000 ]
+  pt2: [ 100.0000 ; 270.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: sensor
+  position: [ 25.0000 ; 239.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 290.0000 ]
+  pt2: [ 120.0000 ; 390.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffffeecc
+
+TEXT:
+  text: display
+  position: [ 25.0000 ; 299.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 410.0000 ]
+  pt2: [ 140.0000 ; 510.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff008000
+
+TEXT:
+  text: relay
+  position: [ 25.0000 ; 419.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 15.0000 ; 19.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+

@@ -614,6 +614,209 @@ nwdiag, timing and gantt.
     functions, flags, formats and style names, flagging changed items rockuml has ported.
   - The ported commands that the sources did not name yet now carry their Java names.
 
+### Phase 16 — Shared commands and pages
+- **Status: done.** Every command of the ported diagram types is ported (752 of 752).
+  - `skin name` starts from an embedded or local `.skin`; `<style file=…>` reads a style sheet from a file or a
+    URL; `<style>…</style>` fits on one line; a `skinparam` block may come on one line (`%newline()`). Files a
+    source names are read before the diagram is built, as images are, so that the engine does no I/O.
+  - `page 2x3` cuts the PNG files the command line writes, framed by `pageMargin`, `pageBorderColor` and
+    `pageExternalColor` (Gantt charts frame them their own way), like PlantUML's `PngSplitter`, one piece at
+    a time and with Java's wrapping `int` margins. Where PlantUML throws (a piece less than a pixel long, a
+    frame it cannot allocate) rockuml reports its crash report as not ported, and it refuses frames beyond
+    `PLANTUML_LIMIT_SIZE`, where Java would run out of memory sooner or later.
+  - `newpage` in class, object and description diagrams: every page is a diagram of its own. PlantUML 1.2026.8
+    writes only the first page (`NewpagedDiagram` lost its `getNbImages`); the oracle is built with that fixed
+    (`tools/oracle/fixes.patch`) and rockuml writes every page.
+  - `() Name` declares an interface in class diagrams; `!assume transparent`, `minwidth` and `rotate` are
+    accepted and ignored, as in PlantUML.
+  - Found on the way: rockuml draws no shadows (`Shadowing`, `skinparam shadowing`, the `rose` skin). Next phase.
+
+### Phases 17+ — The remaining planned diagram types
+Measured in the reference sources, about 45k Java lines in four groups. Each phase grows the corpus first, from the
+examples of the PlantUML language reference. Goldens can be generated on Linux (`tools/oracle/setup-linux-jdk.sh`).
+
+### Phase 17 — Shadows
+- **Status: done.** `Shadowing`, `skinparam shadowing` and the `rose` skin draw PlantUML's blurred shadows, in SVG
+  (`filter`) and PNG, in every ported diagram that has them. 21 shadowing cases and the `rose` skin case pass every output, except the class
+  case's font-measured SVG, whose glyph outlines differ as in every class diagram.
+  - Rectangles, ellipses, polygons and paths carry `deltaShadow`. Like PlantUML, `rounded()`, `halfRounded()` and the
+    compression flags give a new shape without it, so the order of the calls matters.
+  - Legends never shadow (`TextBlockBordered` hard-codes it off); timing diagrams shadow only notes.
+
+### Phase 18 — Legacy activity diagrams (~2.6k)
+- **Status: done.** Every corpus case (15 legacy-activity) passes L1, L2, L3, PNG size, URL and preprocessor
+  outputs, and makes the Smetana graph PlantUML makes (`diagram/activity/graph_tests.rs`).
+  - Ported: `ActivityDiagramFactory` and its commands over the ported cucadiagram and Smetana: `(*)` starts and
+    ends (`(*top)`, `(*n)`), quoted and named actions, `as`, actions on several lines, synchronization bars, arrows
+    with directions, lengths, labels, styles, `*` and URLs, `if`/`else`/`endif` branches, partitions with colours
+    and stereotypes, notes on actions and on links, `hide`, `left to right direction`; `EntityImageActivity`
+    with its shadow. A generic `UBrexSingleLine` command replaces the Gantt chart's own.
+  - Deviations: `skinparam activityShape octagon` draws rounded boxes, as PlantUML does with Smetana (only
+    Graphviz gives the node an octagon).
+  - Not ported: inner activities (`-->{` ... `}`), reported as not ported.
+
+### Phases 19+ — The self-contained Tier 3 diagrams (~33k)
+Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer), flow (1k), boards (1.3k),
+git (2k), regex and EBNF together (2k + 6.2k, both railroad diagrams), packet (2.7k), wire (3.5k), BPM (5.7k),
+charts (6.3k).
+
+### Phase 19 — File trees
+- **Status: done.** Every corpus case (9 files) passes L1, L2, L3, PNG, URL and preprocessor outputs.
+  - Ported: `@startfiles` (`FilesDiagramFactory`): `/paths` that share their folders, files that repeat, notes
+    between `<note>` and `</note>` placed beside the last file, `filesDiagram` and `note` styles. Like PlantUML,
+    lines that do not start with `/` are ignored, `title` and `scale` among them.
+  - The wasm build, which leaves out the emoji, keeps the folder and the page that file trees draw.
+
+### Phase 20 — HCL data
+- **Status: done.** `@starthcl`: `HclDiagramFactory` and `HclParser` read the file into JSON, drawn by the JSON
+  diagram's tables and Smetana layout. 11 cases match every output.
+  - Faithful to PlantUML's small subset: lines are joined without a separator, nested blocks need `=`, lists keep
+    only quoted strings and maps, a lone block is drawn as its attributes, and `title`, `skin` and `<style>` are
+    taken out of the data and ignored (only `scale` applies).
+
+### Phase 21 — EBNF and regex diagrams
+- **Status: done.** `@startebnf` (`PSystemEbnfFactory`) and `@startregex` (`PSystemRegexFactory`) draw railroad
+  diagrams with the same `ETile` tiles. 14 EBNF and 15 regex cases match every output.
+  - EBNF: rules on one line or several, `,` `|` `( )` `[ ]` `{ }` `{ }-` `n *` and `-`, the three kinds of
+    terminal, `(* *)` comments as notes on boxes, rule names and between rules, `Syntax error!` for rules the
+    engine cannot build, "Unparsable expression" for unknown characters.
+  - Regex: letters merged into boxes, classes, sets, POSIX classes, anchors, escapes, quantifiers with counts,
+    named groups and lookarounds; "Error parsing: …" and PlantUML's `ProtectedCommand` message where its reader
+    throws. Like PlantUML, only the last expression is drawn, and `<style>` applies before any line is read.
+  - Not ported: `!option use_descriptive_names` (the preprocessor has no `!option`), and the crash report of a
+    regex diagram without expression.
+
+### Phase 22 — Packet diagrams
+- **Status: done.** `@startpacketdiag`: `PacketDiagramFactory` and its commands (fields by bit range, single bit or
+  `*` with `len`, `colwidth`, `node_height`, `scale_interval`, `scale_direction`, `same_height`, `height`), the
+  bit scale (`PacketIndicator`) and the fields (`PacketBlock`, labels cut short with `...`, `packetdiagDiagram`
+  and `rectangle` styles with corners and shadows). 10 cases match every output.
+  - Faithful to PlantUML's quirks: a field continued after full rows keeps a full row's width, so rows can grow
+    wider than `colwidth`; a row is as high as its last field; `rotate` has no effect, and the open edges of split
+    fields are drawn closed.
+  - A field ending before it starts, drawn negatively wide, and a first row without width, numbered by a
+    remainder by zero, crash PlantUML; rockuml reports them as not ported.
+
+### Phase 23 — Git diagrams
+- **Status: done.** `@startgit`: `GitDiagramFactory` reads `git log --graph` text (`GitTextArea`, `CursorPosition`,
+  `Commit`), merges straight runs of commits into one box (`GNodeBuilder`) and lays the graph out with Smetana
+  (`SmetanaForGit`, `MagicBox`, `GitCurve`). 10 cases match every output and make PlantUML's Smetana graph.
+  - Faithful to PlantUML: lines without a `*` are ignored, `title`, `skinparam` and `<style>` among them, and a
+    `|\` at the end of a line joins the next line, as everywhere. A graph PlantUML cannot follow crashes it; rockuml
+    reports it as not ported. A loop of commits named twice ends in a node eating itself, which leaves the
+    graph, so PlantUML draws nothing of the loop.
+
+### Phase 24 — Boards
+- **Status: done.** `@startboard` (`BoardDiagramFactory`, `CommandBoardPlus`): activities with their releases
+  one `+` per row, columns from `BNode.computeX`, cards drawn in the order of `BArray`'s `HashMap`, dashed lines
+  between the rows, and the common commands (title, legend, styles, scale, sprites). 9 cases match every output.
+  - A release before any activity crashes PlantUML; rockuml reports it as not ported.
+
+### Phase 25 — Charts
+- **Status: done.** `@startchart` (`ChartDiagramFactory` and its ten commands): bar, line, area and scatter series
+  by category or as coordinate pairs, grouped and stacked bars, horizontal bars, a second value axis, custom
+  ticks, spacing, grids, legends on four sides, annotations with arrows, the `chartDiagram` styles with
+  stereotypes, and the common commands. Rotated axis titles (`UText` orientation) are drawn in every output.
+  16 cases match every output.
+  - Faithful to PlantUML's quirks: series without a colour take their style's grey, scatter markers are black
+    unless `MarkerColor` says otherwise, and grid lines fall at tenths of the axes' ranges, not at their ticks.
+    Numbers print as `String.format` does (`%.2f`, `%.2e`).
+
+### Phase 26 — Reference cards
+The welcome screen, `colors`, `license`, `version`, `skinparameters`, `listfonts`, `emoji`, `openiconic`,
+`listopeniconic`, the sprite lists, `help …` and `@startdef`, on the ported creole, tables and sprites. `version`,
+`license` and `listfonts` tell rockuml's facts, not PlantUML's.
+- **Status: done.** Icon, sprite, help and definition cards: 19 cases (`tests/corpus/cards`) match every
+  output, and so does the preprocessor's `includedef-and-subs`, which draws a `@startdef` block.
+  - Ported, on `GraphicStrings`, the donors card's columns (`PSystemDonors.getCols`) and the ported creole and
+    sprites: `emoji` and `emoji <start of a name>` (`PSystemListEmojiFactory`), `openiconic <name>`
+    (`PSystemOpenIconicFactory`), `listopeniconic` (`PSystemListOpenIconicFactory`), `listsprites` alone, which
+    lists the built-in ArchiMate sprites (`PSystemListArchimateSpritesFactory`), and after sprite definitions,
+    which draws them (`ListSpriteDiagramFactory`), `help keywords|types|colors|themes|fonts` (`HelpFactory`,
+    `LanguageDescriptor`), and `@startdef` (`PSystemDefinitionFactory`), which draws its start line only.
+  - Faithful to PlantUML: `emoji` lists the shortcuts that start with its text as well as the codes; the whole
+    emoji list and the Open Iconic list are corpus cases (2 MB and 0.7 MB of goldens).
+  - Deviations: `help fonts` lists the fonts rockuml always has (Java's logical fonts, the Liberation fonts and the
+    Windows families they stand in for), not those of the machine, so it has a unit test and no corpus case. An
+    unknown `openiconic` name crashes PlantUML; rockuml reports it as not ported. The browser build has no emoji
+    but the two that file trees draw, so its emoji list shows no more.
+- Welcome screen, colours, skin parameters, fonts, version and license: 10 cases (`cards`)
+  match every output: the welcome screen, a blank diagram's error, the colour chart and the hexagons around a
+  colour (`PSystemColors`), `skinparameters` (`SkinParam.getPossibleValues`) and `stdlib`. `GraphicStrings`
+  draws the cards and the welcome text of short error images.
+  - rockuml's own facts, in PlantUML's layout, tested by unit and command line tests: `version` and `testdot`
+    tell rockuml's version, the PlantUML release it reproduces, its license and its Smetana layout, not Java,
+    memory or Graphviz; `authors` that it ports PlantUML; `license` its LGPL, the EPL of its layout code and
+    the licenses of what it embeds; `listfonts` the embedded Liberation fonts, Java's logical fonts and the
+    fonts registered with `--font` or `ROCKUML_FONTS`. These cards draw no PlantUML logo.
+  - Not planned: the license keys of PlantUML's professional edition (`keygen`, `keycheck`…), reported as not
+    ported.
+
+### Phases 27+ — The rest
+- The undocumented flow, wire and BPM diagrams, ported faithfully like the others.
+- On hold, not dropped: ditaa (the vendored `org/stathissideris`, 10k lines, a bitmap drawn by Java2D, comparable
+  by pixels only) and `@startmath`/`@startlatex` (JLaTeXMath is not in the sources; port it or use a Rust math
+  layout crate).
+
+### Phase 27 — Graphviz sources
+- **Status: done.** `@startdot` (`PSystemDotFactory`, `PSystemDot`): the lines from a graph's header on go to an
+  external Graphviz `dot`, run as PlantUML runs it (`-Tsvg`, `-Tpng`, its error stream joined to its output),
+  found through `--dot-path`, `-DGRAPHVIZ_DOT`, `GRAPHVIZ_DOT`, the `PATH` and the usual install places. The
+  engine asks its host (`Host::create_for_system_dot`); the command line runs `dot`, the browser build has none
+  and reports the diagram as not available. 11 cases (`tests/corpus/dot`) match every output, and 3 command line
+  scenarios cover a missing `dot` and the security profiles that suppress `dot`'s SVG.
+  - Goldens and parity need the oracle's Graphviz: `tools/oracle/setup-graphviz.sh` unpacks Ubuntu's Graphviz
+    2.42 into `tools/graphviz` (never installed, so the other goldens stay Smetana's) with a font
+    configuration of rockuml's Liberation fonts only. The parity suite skips the `dot` cases, with a note, when
+    the `dot` rockuml finds draws `dot/digraph` differently; CI sets `ROCKUML_PARITY_REQUIRE_GRAPHVIZ` on Linux,
+    where it runs the same script, so the cases must run there.
+  - Faithful to PlantUML: a dot syntax error or warning ends up in the image file, a missing `dot` or a failed
+    run draws PlantUML's green-on-black message and exits with status 200 (503 from the server), and
+    `INSECURE`/`INTERNET_WITH_DOTSVG` write the "feature has been suppressed" SVG. As in `ProcessRunner`, a
+    `dot` still running 30 seconds (`--graphviz-timeout`) after its output ends is killed: a crash.
+  - Deviations: `-f debug` and `svg-deterministic` ask `dot` for formats it does not have; PlantUML then
+    reports a crash or writes `dot`'s complaint, depending on a race that the first diagram of a run usually
+    loses. rockuml always reports the crash, and the generator drops goldens of the complaint.
+
+### Phase 28 — BPM diagrams
+- **Status: done.** `@startbpm` (`BpmDiagramFactory` and its seven commands): events, merges, `resume`, `goto`
+  and branches with `else` and `end branch`, placed on PlantUML's `Grid`, its connectors routed and its lines
+  merged by `CleanerEmptyLine` and `CleanerInterleavingLines`, drawn by `GridArray` with the activity diagram's
+  tiles. 14 cases match every output; of 1900 random diagrams, the 685 PlantUML draws match its debug output
+  and the others fail in both.
+  - Faithful to PlantUML's sketch: the grid's lines, red stubs and blue connectors are drawn, the factory has no
+    common commands, and the elements ignore skins, as PlantUML draws them with a skin of their own (no
+    shadows). An `else` or `end branch` without a branch is PlantUML's `NoSuchElementException` syntax error.
+  - Where PlantUML's layout throws (a connector through an element, a `goto` or `resume` to an unknown merge,
+    a connection back to its own line or column), rockuml reports the diagram as not ported. Deviation: of
+    two merges with the same name, `goto` and `resume` take the first, where PlantUML's `HashMap` takes either.
+
+### Phase 29 — Wire diagrams
+- **Status: done.** `@startwire` (`WireDiagramFactory` and its seven commands): blocks with sizes and colours
+  (`CommandComponent`), nested by indentation, columns (`CommandNewColumn`), the cursor moved by `goto` and `move`,
+  texts printed at the cursor (`CommandPrint`), spots at pixel and percent offsets (`CommandSpot`), and wires and
+  buses across or down with arrowheads, colours and labels (`CommandWLink`), over the common commands. 11 cases
+  (24 images) match every output.
+  - Faithful to PlantUML's quirks: any space that is not part of four makes a level, so two spaces are two;
+    a name must be new at every level down to its parent; links down draw no label; link starts are fixed when
+    the link is read, spots when drawn. Prints are measured as for PNG whatever the output, as PlantUML does
+    (`FileFormat.PNG.getDefaultStringBounder()`), with the embedded fonts. A line indented deeper than the blocks
+    go reports PlantUML's `NullPointerException`, word for word.
+
+### Phase 30 — Flow diagrams
+- **Status: done.** `@startflow` (`FlowDiagramFactory`, `CommandLineSimple`, `CommandLink`): boxes on the grid of
+  PlantUML's `golem` package (`TilesField`, `Position`, `TileGeometry`), each two cells from the last one, the boxes
+  in its way moved east (`moveAllToEast`), links between facing sides or westwards along a row, and the boxes
+  (`ActivityBox`). 11 cases: 8 match every output; `directions`, `links` and `crowded` match their PNG, preprocessor
+  and URL outputs, and draw the same shapes as the debug and SVG goldens in another order.
+  - Faithful to PlantUML: no common commands, so `title`, styles and empty lines are syntax errors; a link to an
+    unknown id or between sides that do not face each other reports the `IllegalArgumentException` PlantUML throws.
+  - Deviation: PlantUML keeps tiles in `HashMap`s keyed by identity hash codes, so the order it draws boxes in
+    changes with the Java machine, between `-pipe` and file runs and even between two output formats of one case
+    (`crowded`'s SVG golden swaps two boxes its debug golden does not). So does where boxes go when making room
+    moves one onto another still to move (`moveAllToEast` finds each again by its position): `a "A"`, `e b "B"`,
+    `e c "C"`, `w d "D"` puts B east of C on one machine and C east of B on another. rockuml takes the tiles in
+    the order they were declared, for drawing and for moving; moving each tile once instead would follow neither.
 ---
 
 ## 8. Known risks and mitigations

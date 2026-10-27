@@ -1,0 +1,14 @@
+@startwire
+title Wiring of the board
+header Page header
+footer Page footer
+caption A caption
+legend right
+  The legend
+endlegend
+mainframe Wire frame
+* left_part [80x60]
+--
+* right_part [80x60]
+left_part -> right_part : signal
+@endwire

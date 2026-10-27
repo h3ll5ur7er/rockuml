@@ -7,8 +7,8 @@ use super::time::day_of_week_from_string;
 use super::{Column, GanttDiagram, PrintScale, WeeklyHeaderStrategy};
 use crate::color::HColor;
 use crate::command::{
-    BlocLines, Command, CommandControl, CommandError, CommandResult, Multiline, PatternCommand,
-    SingleLine,
+    BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
+    ubrex_single_line,
 };
 use crate::decoration::WithLinkType;
 use crate::diagram::chrome::Warning;
@@ -19,8 +19,8 @@ use crate::diagram::description::arrow_style;
 use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
 use crate::stereo::{self, Stereotype};
 use crate::text::LineLocation;
+use crate::ubrex::UMatcher;
 use crate::ubrex::builder::UBrexPart;
-use crate::ubrex::{UMatcher, UnicodeBracketedExpression};
 
 /// The commands in PlantUML's order.
 pub(super) fn all() -> Vec<Box<dyn Command<GanttDiagram>>> {
@@ -64,44 +64,6 @@ fn command(
         RegexTree::concat(pattern),
         move |diagram: &mut GanttDiagram, _: &LineLocation, arg: &RegexResult| apply(diagram, arg),
     )))
-}
-
-/// A one-line command matched whole by a Unicode bracketed expression (`UBrexSingleLineCommand2`).
-struct UBrexCommand {
-    pattern: UnicodeBracketedExpression,
-    apply: fn(&mut GanttDiagram, &UMatcher) -> CommandResult,
-}
-
-impl Command<GanttDiagram> for UBrexCommand {
-    fn is_valid(&self, lines: &BlocLines) -> CommandControl {
-        match (lines.first(), lines.len()) {
-            (Some(first), 1) if self.pattern.exact_match(first.trimmed().text()) => {
-                CommandControl::Ok
-            }
-            _ => CommandControl::NotOk,
-        }
-    }
-
-    fn execute(&self, diagram: &mut GanttDiagram, lines: BlocLines) -> CommandResult {
-        let line = lines.first().expect("a command has its line").trimmed();
-        let matcher = self
-            .pattern
-            .match_at(line.text())
-            .expect("the line matched when the command was chosen");
-        (self.apply)(diagram, &matcher)
-    }
-}
-
-fn ubrex_command(
-    parts: Vec<UBrexPart>,
-    apply: fn(&mut GanttDiagram, &UMatcher) -> CommandResult,
-) -> Box<dyn Command<GanttDiagram>> {
-    let mut parts = parts;
-    parts.push(UBrexPart::end());
-    Box::new(UBrexCommand {
-        pattern: UBrexPart::concat(parts).build(),
-        apply,
-    })
 }
 
 fn no_such_task(code: &str) -> CommandError {
@@ -363,7 +325,7 @@ fn print_scale() -> Box<dyn Command<GanttDiagram>> {
 
 /// PlantUML's `CommandPrintBetween`: `print between 2020-01-01 and 2020-02-01`.
 fn print_between() -> Box<dyn Command<GanttDiagram>> {
-    ubrex_command(
+    ubrex_single_line(
         vec![
             UBrexPart::leaf("print"),
             UBrexPart::space_one_or_more(),
@@ -375,7 +337,7 @@ fn print_between() -> Box<dyn Command<GanttDiagram>> {
             UBrexPart::space_one_or_more(),
             UBrexPart::named("END", super::lang::any_date_ubrex()),
         ],
-        |diagram, arg| {
+        |diagram: &mut GanttDiagram, _: &LineLocation, arg: &UMatcher| {
             let start = super::lang::any_date(diagram, &arg.extract_by_prefix("START"))
                 .map_err(CommandError::new)?;
             let end = super::lang::any_date(diagram, &arg.extract_by_prefix("END"))
@@ -515,7 +477,7 @@ fn hide_show_columns() -> Box<dyn Command<GanttDiagram>> {
             ]
         })
         .collect();
-    ubrex_command(
+    ubrex_single_line(
         vec![
             UBrexPart::named(
                 "COMMAND",
@@ -526,7 +488,7 @@ fn hide_show_columns() -> Box<dyn Command<GanttDiagram>> {
             UBrexPart::space_one_or_more(),
             UBrexPart::named("WHAT", UBrexPart::or(columns)),
         ],
-        |diagram, arg| {
+        |diagram: &mut GanttDiagram, _: &LineLocation, arg: &UMatcher| {
             let show = arg
                 .find_first_value_by_key("COMMAND")
                 .is_some_and(|command| command.starts_with('s'));

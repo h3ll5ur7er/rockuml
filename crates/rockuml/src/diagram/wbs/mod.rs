@@ -353,7 +353,7 @@ impl Diagram for WbsDiagram {
         Ok(self.titled.add_chrome(Box::new(drawing), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(10.0))
     }

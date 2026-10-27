@@ -1,0 +1,14 @@
+@startuml
+skinparam shadowing true
+robust "Web" as W
+concise "User" as U
+@0
+U is Idle
+W is Idle
+@100
+U is Waiting
+W is Processing
+note top of W : busy
+@300
+W is Waiting
+@enduml

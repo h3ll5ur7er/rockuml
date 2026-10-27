@@ -92,12 +92,20 @@ impl UGraphicBackend for LimitFinder {
                 self.add_point(x + dx, y + dy);
             }
             UShape::Ellipse(ellipse) => {
+                let shadow = ellipse.delta_shadow() * 2.0;
                 self.add_point(x, y);
-                self.add_point(x + ellipse.width - 1.0, y + ellipse.height - 1.0);
+                self.add_point(
+                    x + ellipse.width - 1.0 + shadow,
+                    y + ellipse.height - 1.0 + shadow,
+                );
             }
             UShape::Rectangle(rectangle) => {
+                let shadow = rectangle.delta_shadow() * 2.0;
                 self.add_point(x - 1.0, y - 1.0);
-                self.add_point(x + rectangle.width - 1.0, y + rectangle.height - 1.0);
+                self.add_point(
+                    x + rectangle.width - 1.0 + shadow,
+                    y + rectangle.height - 1.0 + shadow,
+                );
             }
             UShape::Polygon(polygon) => {
                 if !polygon.points().is_empty() {

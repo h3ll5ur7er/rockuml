@@ -1,0 +1,126 @@
+DPI: 96
+dimension: [ 153.0000 ; 163.0000 ]
+scaleFactor: 1.0000
+seed: 1562950532805001610
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 38.0000 ]
+  pt2: [ 143.0000 ; 55.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: HEAD -> main
+  position: [ 10.0000 ; 35.1111 ]
+  orientation: 0
+  font: SansSerif.plain/13 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text: 3c2b1a0
+  position: [ 14.3013 ; 50.6667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 13.5000 ; 80.0000 ]
+  pt2: [ 139.5000 ; 104.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: 2b1a09f
+  position: [ 17.3550 ; 96.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 26.0000 ; 129.0000 ]
+  pt2: [ 127.0000 ; 153.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: 1a09f8e
+  position: [ 30.0756 ; 145.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 66.5000 ; 45.1943 ]
+   - type: SEG_CUBICTO
+     pt1: [ 66.5000 ; 50.5932 ]
+     pt2: [ 66.5000 ; 56.8248 ]
+     pt3: [ 66.5000 ; 62.5605 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 63.5442 ; 62.5605 ]
+   - type: SEG_LINETO
+     pt1: [ 66.5000 ; 64.7773 ]
+   - type: SEG_LINETO
+     pt1: [ 69.4558 ; 62.5605 ]
+   - type: SEG_LINETO
+     pt1: [ 66.5000 ; 69.9499 ]
+   - type: SEG_LINETO
+     pt1: [ 63.5442 ; 62.5605 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 66.5000 ; 94.3774 ]
+   - type: SEG_CUBICTO
+     pt1: [ 66.5000 ; 99.5732 ]
+     pt2: [ 66.5000 ; 105.8577 ]
+     pt3: [ 66.5000 ; 111.6927 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 63.6861 ; 111.6927 ]
+   - type: SEG_LINETO
+     pt1: [ 66.5000 ; 113.8031 ]
+   - type: SEG_LINETO
+     pt1: [ 69.3139 ; 111.6927 ]
+   - type: SEG_LINETO
+     pt1: [ 66.5000 ; 118.7274 ]
+   - type: SEG_LINETO
+     pt1: [ 63.6861 ; 111.6927 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

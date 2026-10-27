@@ -61,6 +61,23 @@ impl XColor {
         let gray = 255 - self.gray_scale() as u8;
         Self::rgb(gray, gray, gray)
     }
+
+    /// Black on light colours, white on dark ones (`HColorSimple.opposite`).
+    pub(crate) fn opposite(self) -> Self {
+        let gray = if 255 - self.gray_scale_color().green > 127 {
+            255
+        } else {
+            0
+        };
+        Self::rgb(gray, gray, gray)
+    }
+
+    /// The brightness of the difference between the colours (`ColorUtils.distance`).
+    pub(crate) fn distance(self, other: Self) -> u32 {
+        u32::from(self.red.abs_diff(other.red)) * 299
+            + u32::from(self.green.abs_diff(other.green)) * 587
+            + u32::from(self.blue.abs_diff(other.blue)) * 114
+    }
 }
 
 /// How an image format paints colours: as given, as grays (`skinparam monochrome`) or reversed
@@ -176,6 +193,12 @@ impl HColor {
     pub const WHITE: HColor = HColor::Simple(XColor::rgb(255, 255, 255));
     pub const BLUE: HColor = HColor::Simple(XColor::rgb(0, 0, 255));
     pub const RED: HColor = HColor::Simple(XColor::rgb(255, 0, 0));
+    /// The borders of PlantUML's original skin.
+    pub const MY_RED: HColor = HColor::Simple(XColor::rgb(0xA8, 0x00, 0x36));
+    /// The backgrounds of PlantUML's original skin.
+    pub const MY_YELLOW: HColor = HColor::Simple(XColor::rgb(0xFE, 0xFE, 0xCE));
+    /// The green of PlantUML's error and crash reports.
+    pub const MY_GREEN: HColor = HColor::Simple(XColor::rgb(0x33, 0xFF, 0x02));
     /// No colour: nothing is painted.
     pub const NONE: HColor = HColor::Simple(XColor {
         red: 0,
@@ -434,6 +457,13 @@ fn parse_simple_color(text: &str) -> Option<XColor> {
         _ => None,
     };
     from_hex.or_else(|| named_color(text))
+}
+
+/// The names of the colours PlantUML knows, sorted (`HColorSet.names`).
+pub(crate) fn names() -> Vec<&'static str> {
+    let mut names: Vec<&str> = NAMED_COLORS.iter().map(|&(name, _)| name).collect();
+    names.sort_unstable();
+    names
 }
 
 fn named_color(name: &str) -> Option<XColor> {

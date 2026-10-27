@@ -1,0 +1,9 @@
+@startuml
+(*) --> "Load" as L
+L --> "Parse" as P
+P --> L : retry
+P --> "Done"
+hide footbox
+left to right direction
+"Done" --> (*)
+@enduml

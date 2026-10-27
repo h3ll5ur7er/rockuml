@@ -1,0 +1,8 @@
+@startchart
+h-axis [A, B, C, D, E]
+v-axis 0 --> 10
+scatter "Circles" [2, 4, 3, 8, 6] labels
+scatter "Squares" [1, 3, 5, 7, 9] #ff7f0e <<square>>
+scatter "Triangles" [9, 7, 6, 2, 1] #2ca02c labels <<triangle>>
+legend bottom
+@endchart

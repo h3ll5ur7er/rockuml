@@ -102,6 +102,8 @@ public class USymbolDump {
 			return plain.withCorner(10, 0);
 		case "diagonal":
 			return plain.withCorner(0, 8);
+		case "shadowed":
+			return plain.withCorner(10, 0).withShadow(3);
 		default:
 			return plain;
 		}
@@ -148,14 +150,16 @@ public class USymbolDump {
 			new String[] { "stereo", "right", "round" }, //
 			new String[] { "dashes", "left", "diagonal" }, //
 			new String[] { "titled", "center", "plain" }, //
-			new String[] { "tall", "center", "round" });
+			new String[] { "tall", "center", "round" }, //
+			new String[] { "plain", "center", "shadowed" });
 
 	// Each big case: title, stereotype, width, height, label alignment, stereotype alignment, fashion.
 	private static final List<String[]> BIG_CASES = Arrays.asList( //
 			new String[] { "titled", "200", "120", "center", "center", "plain" }, //
 			new String[] { "stereo", "160", "90", "left", "right", "round" }, //
 			new String[] { "untitled", "80", "60", "right", "left", "diagonal" }, //
-			new String[] { "narrow", "120", "150", "center", "center", "plain" });
+			new String[] { "narrow", "120", "150", "center", "center", "plain" }, //
+			new String[] { "titled", "200", "120", "center", "center", "shadowed" });
 
 	private TextBlock bigTitle(String kase) {
 		switch (kase) {

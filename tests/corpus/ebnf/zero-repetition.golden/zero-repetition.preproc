@@ -1,0 +1,4 @@
+@startebnf
+skipped = 0 * x, y ;
+repeated = 3 * z ;
+@endebnf

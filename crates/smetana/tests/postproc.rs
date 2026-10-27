@@ -268,19 +268,21 @@ fn check(path: &str, records: &[&str]) -> Option<String> {
     let text = std::fs::read_to_string(&file).expect("trace");
     let parsed = trace::parse(&text);
     let section = |name: &str| {
-        &parsed
+        parsed
             .phases
             .iter()
             .find(|(phase, _)| phase == name)
-            .unwrap_or_else(|| panic!("{path}: no phase {name}"))
-            .1
+            .map(|(_, lines)| lines)
     };
     let mut r = trace::replay(&parsed.input);
     load_records(&mut r, records);
-    load_splines(&mut r, section("splines"));
+    // dot lays out a graph without nodes before routing anything, so its trace has no splines phase.
+    if let Some(splines) = section("splines") {
+        load_splines(&mut r, splines);
+    }
     dotneato_postprocess(&mut r.zz, r.root);
     let actual = final_lines(&mut r);
-    let expected = section("final");
+    let expected = section("final").unwrap_or_else(|| panic!("{path}: no phase final"));
     for (i, e) in expected.iter().enumerate() {
         match actual.get(i) {
             Some(a) if same_line(a, e) => {}

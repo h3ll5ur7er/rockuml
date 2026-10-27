@@ -1,0 +1,21 @@
+@startpacketdiag
+<style>
+packetdiagDiagram {
+  FontSize 10
+  LineColor #2266aa
+  FontColor #113355
+  rectangle {
+    BackGroundColor #ddeeff
+    RoundCorner 8
+    Shadowing 2
+    LineThickness 2
+  }
+}
+</style>
+packetdiag {
+  0-1: A label far too long for two bits
+  2-5: Medium length label
+  6-15: <b>bold</b> fits
+  16-31: Multi\nline
+}
+@endpacketdiag

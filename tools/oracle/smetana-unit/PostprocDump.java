@@ -118,7 +118,9 @@ public class PostprocDump {
 			realNodes.add(n);
 		edges.sort(Comparator.comparingInt(e -> e.tag.seq));
 
-		check(trace, "splines", edgeLines());
+		// A graph without nodes skips doDot, so its trace has no splines phase.
+		if (!realNodes.isEmpty())
+			check(trace, "splines", edgeLines());
 		out.println("state State " + zz.State + " EdgeLabelsDone " + zz.EdgeLabelsDone);
 		forEachGraph(root, g -> {
 			final StringBuilder text = new StringBuilder("graph " + quote(name(g)) + " rankdir " + GD_rankdir2(g)

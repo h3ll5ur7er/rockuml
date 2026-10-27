@@ -1,0 +1,7 @@
+@startchart
+h-axis [q1, q2, q3]
+v-axis "Count" 0 --> 100
+y2-axis "Rate" 0 --> 1
+bar "Sales" [40, 60, 80]
+line "Growth" [0.2, 0.5, 0.9] y2
+@endchart

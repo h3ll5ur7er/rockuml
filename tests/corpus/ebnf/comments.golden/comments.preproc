@@ -1,0 +1,12 @@
+@startebnf
+(* A rule with comments *)
+(*
+  A comment
+  on several lines
+*)
+(** documentation
+  comment **)
+name = first (* given name *), [ last (* family name *) ] ;
+(* above *) greeting (* below *) = "hello", (* who *) name ;
+farewell = "bye" ;
+@endebnf

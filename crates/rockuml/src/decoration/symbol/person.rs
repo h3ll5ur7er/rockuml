@@ -47,10 +47,15 @@ impl TextBlock for SmallPerson {
                 width: dim_full.width,
             }));
         let head_size = head_size(dim_body);
+        let shadowing = self.0.fashion.delta_shadow;
         ug.translated((dim_body.width - head_size) / 2.0, 0.0)
-            .draw(&UShape::Ellipse(UEllipse::new(head_size, head_size)));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(head_size, head_size).with_delta_shadow(shadowing),
+            ));
         ug.translated(0.0, head_size).draw(&UShape::Rectangle(
-            URectangle::new(dim_body.width, dim_body.height).rounded(head_size),
+            URectangle::new(dim_body.width, dim_body.height)
+                .rounded(head_size)
+                .with_delta_shadow(shadowing),
         ));
         self.0
             .text(self.0.stereo_alignment)

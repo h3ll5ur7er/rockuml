@@ -127,6 +127,7 @@ impl TextBlock for EntityImageState {
                 south_backcolor,
                 stroke,
                 rounded: common.style_state.value(PName::RoundCorner).as_double(),
+                shadowing: common.style_state.shadowing(),
             }
             .draw_u(&inner);
         }

@@ -1,0 +1,8 @@
+@startuml
+(*) --> "Red" #pink
+-[#blue,dashed]-> "Blue path"
+-[#green,bold]->[green] "Green" #lightgreen
+--> (*top)
+"Green" .> "Dotted"
+"Dotted" --> (*)
+@enduml

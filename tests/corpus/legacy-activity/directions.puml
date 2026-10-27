@@ -1,0 +1,7 @@
+@startuml
+(*) -up-> "First Activity"
+-right-> "Second Activity"
+--> "Third Activity"
+-left-> "Fourth Activity"
+-down-> (*)
+@enduml

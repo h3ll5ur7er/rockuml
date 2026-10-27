@@ -8,7 +8,6 @@ use regex::Regex;
 use super::ClassDiagram;
 use crate::abel::{EntityId, GroupType, LeafType, Link, LinkArg};
 use crate::color::ColorType;
-use crate::command::unported::{self, NotPortedCommands};
 use crate::command::{
     BlocLines, Command, CommandError, CommandResult, Multiline, PatternCommand, SingleLine,
     SingleLineCommand,
@@ -168,7 +167,7 @@ fn create_class_entity(
     let entity = match cuca.quark(quark).get_data() {
         None => {
             let display = display_or_name(display_string, cuca.quark(quark).get_name());
-            cuca.really_create_leaf(Some(location), quark, display, leaf_type)
+            cuca.really_create_leaf(Some(location), quark, display, leaf_type)?
         }
         Some(entity) => {
             if !cuca
@@ -451,7 +450,7 @@ pub(super) fn create_entity_object_multilines() -> Box<dyn Command<ClassDiagram>
                         quark,
                         display,
                         LeafType::Object,
-                    )
+                    )?
                 };
                 decorate_object(cuca, entity, &header)?;
                 let bodier = &mut cuca.entity_mut(entity).bodier;
@@ -483,7 +482,8 @@ pub(super) fn create_entity_object() -> Box<dyn Command<ClassDiagram>> {
             }
             let display =
                 display_or_name(arg.get_lazzy("DISPLAY", 0), cuca.quark(quark).get_name());
-            let entity = cuca.really_create_leaf(Some(location), quark, display, LeafType::Object);
+            let entity =
+                cuca.really_create_leaf(Some(location), quark, display, LeafType::Object)?;
             decorate_object(cuca, entity, arg)?;
             if let Some(url) = url_of(arg) {
                 cuca.entity_mut(entity).url = Some(url);
@@ -510,19 +510,26 @@ pub(super) fn allow_mixing() -> Box<dyn Command<ClassDiagram>> {
     )))
 }
 
-/// PlantUML's `CommandCreateElementParenthesis`.
-pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Box<dyn Command<D>> {
-    unported::single_line(
-        "CommandCreateElementParenthesis",
-        RegexTree::concat(vec![
+/// PlantUML's `CommandCreateElementParenthesis`: `() Name`, an interface drawn as a circle.
+pub(super) fn create_element_parenthesis() -> Box<dyn Command<ClassDiagram>> {
+    Box::new(SingleLine(CreateElementParenthesis(RegexTree::concat(
+        vec![
             RegexTree::start(),
             RegexTree::leaf(r"\(\)[%s]+"),
             color::optional_pattern("COLOR2"),
             RegexTree::spaces_zero_or_more(),
             RegexTree::or(vec![
-                RegexTree::named(1, "CODE1", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])"),
+                RegexTree::named(
+                    1,
+                    "CODE1",
+                    r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%g].+?[%g])",
+                ),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY2", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY2",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE2", r"(\<\<.+\>\>)"),
@@ -530,10 +537,18 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_zero_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE2", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE2",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "CODE3", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE3",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE3", r"(\<\<.+\>\>)"),
@@ -541,10 +556,18 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_one_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_zero_or_more(),
-                    RegexTree::named(1, "DISPLAY3", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY3",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
                 RegexTree::concat(vec![
-                    RegexTree::named(1, "DISPLAY4", r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%pLN_.]+)"),
+                    RegexTree::named(
+                        1,
+                        "DISPLAY4",
+                        r"([%g].+?[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\]|[%pLN_.]+)",
+                    ),
                     RegexTree::optional(RegexTree::concat(vec![
                         RegexTree::spaces_one_or_more(),
                         RegexTree::named(1, "STEREOTYPE4", r"(\<\<.+\>\>)"),
@@ -552,7 +575,11 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
                     RegexTree::spaces_zero_or_more(),
                     RegexTree::leaf(r"as"),
                     RegexTree::spaces_one_or_more(),
-                    RegexTree::named(1, "CODE4", r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])"),
+                    RegexTree::named(
+                        1,
+                        "CODE4",
+                        r"([%pLN_.]+|\(\)[%s]*[%pLN_.]+|\(\)[%s]*[%g][^%g]+[%g]|:[^:]+:/?|\([^()]+\)/?|\[[^\[\]]+\])",
+                    ),
                 ]),
             ]),
             RegexTree::optional(RegexTree::concat(vec![
@@ -564,10 +591,62 @@ pub(super) fn create_element_parenthesis<D: NotPortedCommands + 'static>() -> Bo
             RegexTree::spaces_zero_or_more(),
             color::optional_pattern("COLOR"),
             RegexTree::end(),
-        ]),
-    )
-    .forbidding(is_bare_name)
-    .boxed()
+        ],
+    ))))
+}
+
+struct CreateElementParenthesis(RegexTree);
+
+impl SingleLineCommand<ClassDiagram> for CreateElementParenthesis {
+    fn pattern(&self) -> &RegexTree {
+        &self.0
+    }
+
+    fn is_forbidden(&self, line: &str) -> bool {
+        is_bare_name(line)
+    }
+
+    fn execute_arg(
+        &self,
+        diagram: &mut ClassDiagram,
+        location: &LineLocation,
+        arg: &RegexResult,
+    ) -> CommandResult {
+        let code_raw = arg.get_lazzy("CODE", 0).unwrap_or_default();
+        let cuca = diagram.cuca();
+        let quark = cuca.quark_in_context(false, ClassDiagram::clean_id(code_raw))?;
+        let name = cuca.quark(quark).get_name().to_owned();
+        if cuca.quark(quark).get_data().is_some() {
+            return Err(CommandError::new(format!(
+                "This element ({name}) is already defined"
+            )));
+        }
+        let display = arg.get_lazzy("DISPLAY", 0).unwrap_or(&name);
+        let display = Display::with_newlines(without_quotes_or_brackets(display));
+        let stereotype = arg
+            .get_lazzy("STEREOTYPE", 0)
+            .map(Stereotype::with_spot)
+            .transpose()?;
+        let back = back_color(arg)?;
+        let usymbol = USymbols::from_string_skin_param("interface", cuca.skin());
+        let entity = cuca.really_create_leaf(
+            Some(location),
+            quark,
+            display.clone(),
+            LeafType::Description,
+        )?;
+        let entity = cuca.entity_mut(entity);
+        entity.usymbol = usymbol;
+        entity.display = display;
+        if stereotype.is_some() {
+            entity.stereotype = stereotype;
+        }
+        if let Some(url) = url_of(arg) {
+            entity.url = Some(url);
+        }
+        entity.colors = entity.colors.with(ColorType::Back, back);
+        Ok(())
+    }
 }
 
 /// PlantUML's `CommandLayoutNewLine`, which counts rows that nothing lays out by.
@@ -662,7 +741,7 @@ impl SingleLineCommand<ClassDiagram> for Package {
             GroupType::Package,
         );
         let colors = colors(arg, ColorType::Back)?;
-        let group = cuca.get_current_group();
+        let group = cuca.get_current_group()?;
         let entity = cuca.entity_mut(group);
         if usymbol.is_some() {
             entity.usymbol = usymbol;
@@ -716,7 +795,7 @@ pub(super) fn package_empty() -> Box<dyn Command<ClassDiagram>> {
             let quark = cuca.quark_in_context(false, ClassDiagram::clean_id(&id_short))?;
             cuca.goto_group(Some(location), quark, display, GroupType::Package);
             let back = back_color(arg)?;
-            let group = cuca.get_current_group();
+            let group = cuca.get_current_group()?;
             let entity = cuca.entity_mut(group);
             entity.colors = entity.colors.with(ColorType::Back, back);
             cuca.end_group();
@@ -830,7 +909,8 @@ impl SingleLineCommand<ClassDiagram> for CreateElementFull2 {
         let entity = if let Some(entity) = cuca.quark(quark).get_data() {
             entity
         } else {
-            let entity = cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type);
+            let entity =
+                cuca.really_create_leaf(Some(location), quark, display.clone(), leaf_type)?;
             cuca.entity_mut(entity).usymbol = usymbol;
             entity
         };
@@ -867,7 +947,7 @@ fn goto_namespace(
 ) -> CommandResult {
     cuca.goto_group(Some(location), quark, display, GroupType::Package);
     let back = back_color(arg)?;
-    let group = cuca.get_current_group();
+    let group = cuca.get_current_group()?;
     let entity = cuca.entity_mut(group);
     if usymbol.is_some() {
         entity.usymbol = usymbol;
@@ -1183,6 +1263,7 @@ fn get_or_create(
     }
     let display = Display::with_newlines(cuca.quark(quark).get_name());
     cuca.really_create_leaf(Some(location), quark, display, leaf_type)
+        .expect("the quark holds no entity yet")
 }
 
 /// The two entities of `(A, B)`, which must exist.
@@ -1371,7 +1452,7 @@ fn execute_link_lollipop(
         id_new_long,
         Display::with_newlines(named),
         lollipop_type(desc.unwrap_or_default()),
-    );
+    )?;
     let (cl1, cl2) = if lollipop_first {
         (lollipop, normal_entity)
     } else {
@@ -1469,7 +1550,7 @@ pub(super) fn diamond_association() -> Box<dyn Command<ClassDiagram>> {
                 quark,
                 Display::with_newlines(""),
                 LeafType::Association,
-            );
+            )?;
             Ok(())
         },
     )))

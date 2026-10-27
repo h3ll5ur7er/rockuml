@@ -1,0 +1,171 @@
+DPI: 96
+dimension: [ 246.0000 ; 157.0000 ]
+scaleFactor: 1.0000
+seed: 2037556908396043042
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 21.0000 ; 12.0000 ]
+  pt2: [ 215.5054 ; 52.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 85.8434 ; 12.0000 ]
+  pt2: [ 150.6620 ; 30.0000 ]
+
+TEXT:
+  text: user
+  position: [ 87.8434 ; 24.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 22.0000 ; 30.0000 ]
+  pt2: [ 214.5054 ; 30.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 21.0000 ; 30.0000 ]
+  pt2: [ 215.5054 ; 52.0000 ]
+
+TEXT:
+  text: name = "Dummy"
+  position: [ 27.0000 ; 44.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 6.0000 ; 88.0000 ]
+  pt2: [ 231.0367 ; 142.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 3
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 41.3647 ; 88.0000 ]
+  pt2: [ 195.6720 ; 106.0000 ]
+
+TEXT:
+  text: CapitalCity
+  position: [ 43.3647 ; 100.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 6.0000 ; 106.0000 ]
+  pt2: [ 231.0367 ; 106.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 11.7300 ; 106.0000 ]
+  pt2: [ 47.3044 ; 124.0000 ]
+
+TEXT:
+  text: UK
+  position: [ 16.7300 ; 118.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 53.0344 ; 106.0000 ]
+  pt2: [ 160.6279 ; 124.0000 ]
+
+TEXT:
+  text: London
+  position: [ 58.0344 ; 118.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 53.0344 ; 106.0000 ]
+  pt2: [ 53.0344 ; 124.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+LINE:
+  pt1: [ 6.0000 ; 124.0000 ]
+  pt2: [ 231.0367 ; 124.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 6.0000 ; 124.0000 ]
+  pt2: [ 53.0344 ; 142.0000 ]
+
+TEXT:
+  text: USA
+  position: [ 11.0000 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 53.0344 ; 124.0000 ]
+  pt2: [ 231.0367 ; 142.0000 ]
+
+TEXT:
+  text: Washington
+  position: [ 58.0344 ; 136.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 53.0344 ; 124.0000 ]
+  pt2: [ 53.0344 ; 142.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+
+POLYGON:
+  points:
+   - [ 118.5000 ; 87.8938 ]
+   - [ 122.5000 ; 78.8938 ]
+   - [ 118.5000 ; 82.8938 ]
+   - [ 114.5000 ; 78.8938 ]
+   - [ 118.5000 ; 87.8938 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 112.5000 ; 46.1959 ]
+   - type: SEG_CUBICTO
+     pt1: [ 112.5000 ; 56.8623 ]
+     pt2: [ 112.5000 ; 65.2850 ]
+     pt3: [ 112.5000 ; 76.8938 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

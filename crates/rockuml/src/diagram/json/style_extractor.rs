@@ -4,20 +4,20 @@
 use crate::text::StringLocated;
 
 #[derive(Default)]
-pub(super) struct StyleExtractor {
+pub(in crate::diagram) struct StyleExtractor {
     /// The start line, then the data and the end line.
     pub(super) list: Vec<String>,
     /// The `<style>` blocks, their tags included.
-    pub(super) style: Vec<String>,
+    style: Vec<String>,
     pub(super) title: Option<String>,
     pub(super) handwritten: bool,
     /// The `scale` line, trimmed.
     pub(super) scale: Option<StringLocated>,
-    pub(super) new_skin: Option<String>,
+    pub(in crate::diagram) new_skin: Option<String>,
 }
 
 impl StyleExtractor {
-    pub(super) fn new(data: &[StringLocated]) -> Self {
+    pub(in crate::diagram) fn new(data: &[StringLocated]) -> Self {
         let mut result = Self::default();
         let mut lines = data.iter();
         while let Some(mut line) = lines.next() {
@@ -64,11 +64,26 @@ impl StyleExtractor {
         result
     }
 
-    /// The data lines: between the start line and the last line, which ends the diagram.
-    pub(super) fn data(&self) -> &[String] {
+    /// The rules of the `<style>` blocks without their tags, or `None` without blocks.
+    pub(in crate::diagram) fn style_rules(&self) -> Option<Vec<&str>> {
+        if self.style.is_empty() {
+            return None;
+        }
+        Some(
+            self.style
+                .iter()
+                .map(String::as_str)
+                .filter(|line| !matches!(crate::java::trim(line), "<style>" | "</style>"))
+                .collect(),
+        )
+    }
+
+    /// The data lines: between the start line and the last line, which ends the diagram. `None` where there
+    /// are not both, an end line taken in by a `<style>` left open: PlantUML then reads past the lines.
+    pub(super) fn data(&self) -> Option<&[String]> {
         match self.list.as_slice() {
-            [_start, data @ .., _end] => data,
-            _ => &[],
+            [_start, data @ .., _end] => Some(data),
+            _ => None,
         }
     }
 }

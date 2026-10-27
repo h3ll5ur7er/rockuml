@@ -1,0 +1,10 @@
+@startgantt
+skinparam shadowing true
+[Design] lasts 5 days
+[Build] lasts 10 days
+[Build] starts at [Design]'s end
+[Release] happens at [Build]'s end
+note bottom
+  on time
+end note
+@endgantt

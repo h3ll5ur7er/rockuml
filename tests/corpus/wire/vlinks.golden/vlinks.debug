@@ -1,0 +1,267 @@
+DPI: 96
+dimension: [ 340.0000 ; 370.0000 ]
+scaleFactor: 1.0000
+seed: -1021271243266089534
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 30.0000 ]
+  pt2: [ 320.0000 ; 110.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: top
+  position: [ 25.0000 ; 39.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 20.0000 ; 270.0000 ]
+  pt2: [ 320.0000 ; 350.0000 ]
+  xCorner: 0
+  yCorner: 0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: bottom
+  position: [ 25.0000 ; 279.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+TEXT:
+  text:  
+  position: [ 15.0000 ; 19.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+LINE:
+  pt1: [ 25.0000 ; 111.0000 ]
+  pt2: [ 25.0000 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+LINE:
+  pt1: [ 40.0000 ; 111.0000 ]
+  pt2: [ 40.0000 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: ffff0000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+  backcolor: ffff0000
+
+LINE:
+  pt1: [ 55.0000 ; 111.0000 ]
+  pt2: [ 55.0000 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 70.0000 ; 111.0000 ]
+  pt2: [ 70.0000 ; 269.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffffffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff0000ff
+  backcolor: ffffffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 5.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 15.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffffffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ffffffff
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; -5.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+LINE:
+  pt1: [ 260.0000 ; 271.0000 ]
+  pt2: [ 260.0000 ; 29.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -5.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 5.0000 ; 158.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 15.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 143.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 10.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 0.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff008000
+  backcolor: ffffffff
+

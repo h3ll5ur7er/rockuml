@@ -15,13 +15,13 @@ use super::common_commands::{
     add_common_commands2, add_common_hides, add_common_scale_commands, add_title_commands,
 };
 use super::cuca::{AbstractClassOrObjectDiagram, CucaDiagram, EntityDiagram};
-use super::cuca_commands::{self, note};
+use super::cuca_commands::{self, Newpaged, note, on_each_page};
 use super::diagram_type::DiagramType;
 use super::titled::{PragmaKey, Titled, TitledDiagram};
 use super::{Diagram, ExportSettings, NotYetPorted, UmlSource};
 use crate::abel::DisplayPositioned;
 use crate::command::factory::AbstractDiagram;
-use crate::command::{Command, ParserPass};
+use crate::command::{Command, CommandResult, ParserPass};
 use crate::klimt::TextBlock;
 use crate::klimt::VerticalAlignment;
 use crate::klimt::font::StringBounder;
@@ -33,6 +33,7 @@ pub(super) struct ClassDiagram {
     diagram: AbstractClassOrObjectDiagram,
     /// Description elements may appear among the classes.
     allow_mixing: bool,
+    previous_pages: Vec<ClassDiagram>,
 }
 
 /// Reads class and object diagrams (PlantUML's `ClassDiagramFactory`).
@@ -49,6 +50,7 @@ impl CommandFactory for ClassDiagramFactory {
             source: source.clone(),
             diagram: AbstractClassOrObjectDiagram::new(titled),
             allow_mixing: false,
+            previous_pages: Vec::new(),
         }
     }
 
@@ -118,8 +120,14 @@ impl AbstractDiagram for ClassDiagram {
         self.diagram.cuca.starting_pass();
     }
 
-    /// Links between the same entities all get the length 1 if one of them has it.
     fn check_final_error(&mut self) -> Option<String> {
+        on_each_page(self, Self::check_page_final_error)
+    }
+}
+
+impl ClassDiagram {
+    /// Links between the same entities all get the length 1 if one of them has it.
+    fn check_page_final_error(&mut self) -> Option<String> {
         let cuca = &mut self.diagram.cuca;
         let links = cuca.get_link_ids().to_vec();
         for &link in &links {
@@ -146,6 +154,24 @@ impl AbstractDiagram for ClassDiagram {
     }
 }
 
+impl Newpaged for ClassDiagram {
+    fn create_empty_diagram(&self) -> Self {
+        ClassDiagramFactory::create_empty_diagram(&self.source)
+    }
+
+    fn cuca_diagram(&self) -> &CucaDiagram {
+        &self.diagram.cuca
+    }
+
+    fn previous_pages(&mut self) -> &mut Vec<Self> {
+        &mut self.previous_pages
+    }
+
+    fn previous_pages_ref(&self) -> &[Self] {
+        &self.previous_pages
+    }
+}
+
 impl EntityDiagram for ClassDiagram {
     fn cuca(&mut self) -> &mut CucaDiagram {
         &mut self.diagram.cuca
@@ -161,8 +187,12 @@ impl TitledDiagram for ClassDiagram {
         Some(&mut self.diagram.cuca)
     }
 
-    fn set_legend(&mut self, legend: DisplayPositioned, vertical: VerticalAlignment) {
-        self.diagram.set_legend(legend, vertical);
+    fn set_legend(
+        &mut self,
+        legend: DisplayPositioned,
+        vertical: VerticalAlignment,
+    ) -> CommandResult {
+        self.diagram.set_legend(legend, vertical)
     }
 }
 
@@ -173,17 +203,17 @@ impl Diagram for ClassDiagram {
 
     fn text_block(
         &self,
-        _page: usize,
+        page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let drawing = self.diagram.cuca.get_text_block(string_bounder.as_ref())?;
-        Ok(self.diagram.cuca.titled.add_chrome(drawing, string_bounder))
+        self.page_text_block(page, string_bounder)
     }
 
-    fn export_settings(&self) -> ExportSettings {
-        self.diagram
-            .cuca
-            .titled
-            .export_settings(self.source.seed(), CucaDiagram::get_default_margins())
+    fn page_count(&self) -> usize {
+        self.get_nb_images()
+    }
+
+    fn export_settings(&self, page: usize) -> ExportSettings {
+        self.page_export_settings(page)
     }
 }

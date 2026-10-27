@@ -62,7 +62,7 @@ pub(super) fn create_entity() -> Box<dyn Command<ChenEerDiagram>> {
                     quark,
                     Display::with_newlines(&display_text),
                     leaf_type,
-                )
+                )?
             };
             if let Some(stereo) = arg.get("STEREO", 0) {
                 cuca.entity_mut(entity)
@@ -119,7 +119,7 @@ pub(super) fn create_attribute() -> Box<dyn Command<ChenEerDiagram>> {
                 quark,
                 Display::with_newlines(display_text),
                 LeafType::ChenAttribute,
-            );
+            )?;
             if let Some(stereo) = arg.get("STEREO", 0) {
                 cuca.entity_mut(entity)
                     .set_stereotype_and_stereostyle(stereo);
@@ -285,7 +285,7 @@ pub(super) fn multi_subclass() -> Box<dyn Command<ChenEerDiagram>> {
                 center_quark,
                 Display::create([symbol]),
                 LeafType::ChenCircle,
-            );
+            )?;
             cuca.entity_mut(center).colors = colors.clone();
             let superclass_entity = existing_entity(cuca, &superclass)?;
             let mut link_type = LinkType::new(LinkDecor::None, LinkDecor::None);

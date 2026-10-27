@@ -8,7 +8,7 @@
 [![Documentation](https://img.shields.io/badge/docs-live%20examples-ea580c?logo=readthedocs&logoColor=white)](https://h3ll5ur7er.github.io/rockuml/)
 
 A PlantUML-compatible diagram renderer written in Rust: one self-contained binary for Windows, Linux and macOS
-(and a WebAssembly build), with no Java and no Graphviz required.
+(and a WebAssembly build), with no Java required and no Graphviz except for raw `@startdot` sources.
 
 Compatibility target: **PlantUML 1.2026.8**. See [PLAN.md](PLAN.md) for the porting plan and the definition of
 "compatible".
@@ -59,7 +59,16 @@ Add `:stop` to let `GET /stopserver` stop it.
   (`(*) --> "action"`) is not ported yet.
 - Mind maps (`@startmindmap`) and work breakdown structures (`@startwbs`).
 - JSON and YAML documents (`@startjson`, `@startyaml`), with `#highlight`.
+- File trees (`@startfiles`), with notes.
+- Boards (`@startboard`): story maps of activities and their releases.
+- Wire diagrams (`@startwire`, undocumented in PlantUML): nested blocks joined by wires and buses.
+- Flow diagrams (`@startflow`, undocumented in PlantUML): boxes on a grid, each a step from the one before.
+- BPM diagrams (`@startbpm`), which PlantUML has but does not document: events, merges and branches on a grid.
+- Charts (`@startchart`): bar, line, area and scatter series, with legends and annotations.
+- Git commit graphs (`@startgit`) from `git log --graph` output.
+- Graphviz sources (`@startdot`), drawn by an installed Graphviz `dot` as PlantUML does (command line only).
 - Network diagrams (`@startnwdiag`): networks, servers, groups and peer links.
+- Packet diagrams (`@startpacketdiag`): fields laid out bit by bit under a bit scale.
 - Timing diagrams (`@startuml` with `robust`, `concise`, `clock`, `binary`, `analog` and `rectangle` players).
 - Gantt charts (`@startgantt`), except working hours.
 - Salt wireframes (`@startsalt`) and creole text (`@startcreole`).
@@ -145,7 +154,8 @@ ported yet throw a `RockumlError` (with `notPorted` set for the latter). In Node
 
 The wasm build has no files, URLs or environment variables, so `!include` of files and URLs fails; dates are local
 time. To keep the download small it leaves out the standard library (`!include <C4/...>` fails like a library that
-does not exist) and the emoji: these are the engine's `stdlib` and `emoji` cargo features, on by default.
+does not exist) and the emoji but the two file trees draw: these are the engine's `stdlib` and `emoji` cargo features,
+on by default.
 
 Its tests render corpus cases and compare them with the goldens:
 

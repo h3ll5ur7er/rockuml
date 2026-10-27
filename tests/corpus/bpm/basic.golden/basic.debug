@@ -1,0 +1,149 @@
+DPI: 96
+dimension: [ 676.3096 ; 82.0000 ]
+scaleFactor: 1.0000
+seed: 2602139944646696698
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+LINE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 666.3096 ; 10.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 10.0000 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 60.0000 ; 10.0000 ]
+  pt2: [ 60.0000 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 267.8902 ; 10.0000 ]
+  pt2: [ 267.8902 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 461.2675 ; 10.0000 ]
+  pt2: [ 461.2675 ; 72.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+ELLIPSE:
+  pt1: [ 25.0000 ; 31.0000 ]
+  pt2: [ 45.0000 ; 51.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+LINE:
+  pt1: [ 45.0000 ; 41.0000 ]
+  pt2: [ 55.0000 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+RECTANGLE:
+  pt1: [ 75.0000 ; 25.0000 ]
+  pt2: [ 252.8902 ; 57.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Order received
+  position: [ 85.0000 ; 44.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 252.8902 ; 41.0000 ]
+  pt2: [ 262.8902 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 65.0000 ; 41.0000 ]
+  pt2: [ 75.0000 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+RECTANGLE:
+  pt1: [ 282.8902 ; 25.0000 ]
+  pt2: [ 446.2675 ; 57.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Check stock
+  position: [ 292.8902 ; 44.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 446.2675 ; 41.0000 ]
+  pt2: [ 456.2675 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+LINE:
+  pt1: [ 272.8902 ; 41.0000 ]
+  pt2: [ 282.8902 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+
+RECTANGLE:
+  pt1: [ 476.2675 ; 25.0000 ]
+  pt2: [ 651.3096 ; 57.0000 ]
+  xCorner: 25
+  yCorner: 25
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Ship order
+  position: [ 486.2675 ; 44.3333 ]
+  orientation: 0
+  font: SansSerif.plain/12 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 466.2675 ; 41.0000 ]
+  pt2: [ 476.2675 ; 41.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ffff0000
+

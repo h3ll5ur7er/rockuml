@@ -1,0 +1,11 @@
+@startuml
+skinparam shadowing true
+skinparam conditionStyle inside
+start
+if (ready?) then (yes)
+  :go;
+else (no)
+  :wait;
+endif
+stop
+@enduml

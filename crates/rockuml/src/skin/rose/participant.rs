@@ -49,6 +49,7 @@ impl Component for ComponentRoseParticipant {
         self.text_width(string_bounder)
             + self.margin.left
             + self.margin.right
+            + self.fashion.delta_shadow
             + self.delta_collection()
     }
 
@@ -56,6 +57,7 @@ impl Component for ComponentRoseParticipant {
         self.text.text_height(string_bounder)
             + self.margin.top
             + self.margin.bottom
+            + self.fashion.delta_shadow
             + 1.0
             + self.delta_collection()
     }
@@ -71,7 +73,8 @@ impl Component for ComponentRoseParticipant {
                 self.text_width(string_bounder),
                 self.text.text_height(string_bounder),
             )
-            .rounded(self.fashion.round_corner),
+            .rounded(self.fashion.round_corner)
+            .with_delta_shadow(self.fashion.delta_shadow),
         );
         if self.collections {
             ug.translated(self.delta_collection(), 0.0).draw(&rectangle);

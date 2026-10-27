@@ -1,0 +1,11 @@
+@startuml
+skinparam shadowing true
+object user {
+  name = "Dummy"
+}
+map CapitalCity {
+  UK => London
+  USA => Washington
+}
+user --> CapitalCity
+@enduml

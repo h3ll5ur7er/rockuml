@@ -1,0 +1,5 @@
+@startebnf
+nothing = ;
+letter = character - digit ;
+other = "x", - "y" ;
+@endebnf

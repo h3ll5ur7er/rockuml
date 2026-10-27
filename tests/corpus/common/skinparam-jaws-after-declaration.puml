@@ -1,0 +1,9 @@
+@startuml
+!procedure $paint($color)
+skinparam class {%newline()BackgroundColor $color%newline()Shadowing true%newline()}
+!endprocedure
+class Steve
+class Creeper
+Steve --> Creeper : avoids
+$paint("#E0FFE0")
+@enduml

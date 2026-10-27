@@ -9,9 +9,11 @@ use crate::klimt::ugraphic::UGraphic;
 pub(super) struct USymbolCard;
 
 /// A line at `top` unless it is 0.
-fn draw_card(ug: &UGraphic, width: f64, height: f64, top: f64, round_corner: f64) {
+fn draw_card(ug: &UGraphic, width: f64, height: f64, shadowing: f64, top: f64, round_corner: f64) {
     ug.draw(&UShape::Rectangle(
-        URectangle::new(width, height).rounded(round_corner),
+        URectangle::new(width, height)
+            .rounded(round_corner)
+            .with_delta_shadow(shadowing),
     ));
     if top != 0.0 {
         ug.translated(0.0, top)
@@ -29,6 +31,7 @@ impl SmallShape for USymbolCard {
             ug,
             dimension.width,
             dimension.height,
+            fashion.delta_shadow,
             0.0,
             fashion.round_corner,
         );
@@ -44,6 +47,7 @@ impl BigShape for USymbolCard {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             dim_title.height + dim_stereo.height + 4.0,
             content.fashion.round_corner,
         );

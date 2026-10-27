@@ -8,11 +8,19 @@ use crate::klimt::ugraphic::UGraphic;
 
 pub(super) struct USymbolComponent2;
 
-fn draw_component2(ug: &UGraphic, width_total: f64, height_total: f64, round_corner: f64) {
+fn draw_component2(
+    ug: &UGraphic,
+    width_total: f64,
+    height_total: f64,
+    shadowing: f64,
+    round_corner: f64,
+) {
     let small = UShape::Rectangle(URectangle::new(15.0, 10.0));
     let tiny = UShape::Rectangle(URectangle::new(4.0, 2.0));
     ug.draw(&UShape::Rectangle(
-        URectangle::new(width_total, height_total).rounded(round_corner),
+        URectangle::new(width_total, height_total)
+            .rounded(round_corner)
+            .with_delta_shadow(shadowing),
     ));
     ug.translated(width_total - 20.0, 5.0).draw(&small);
     ug.translated(width_total - 22.0, 7.0).draw(&tiny);
@@ -25,7 +33,13 @@ impl SmallShape for USymbolComponent2 {
     }
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
-        draw_component2(ug, dimension.width, dimension.height, fashion.round_corner);
+        draw_component2(
+            ug,
+            dimension.width,
+            dimension.height,
+            fashion.delta_shadow,
+            fashion.round_corner,
+        );
     }
 }
 
@@ -35,6 +49,7 @@ impl BigShape for USymbolComponent2 {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.draw_centered_stereotype_and_title(ug, 13.0);

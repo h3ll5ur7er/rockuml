@@ -1,0 +1,13 @@
+@startregex
+<style>
+element {
+  ebnf {
+    LineColor #6A1B9A
+    BackGroundColor #F3E5F5
+    FontSize 13
+  }
+}
+</style>
+title Email
+[\w.+-]+@[\w-]+(\.[\w-]+)+
+@endregex

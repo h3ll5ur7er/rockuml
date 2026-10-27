@@ -1,0 +1,6 @@
+@startuml
+skinparam class {BackgroundColor #E0FFE0BorderColor #333333}
+class Steve
+class Creeper
+Steve --> Creeper : avoids
+@enduml

@@ -15,6 +15,20 @@ pub trait Host {
     fn current_time_millis(&self) -> i64;
     /// IANA name such as `Europe/Zurich`; `None` means UTC.
     fn local_time_zone(&self) -> Option<String>;
+    /// Graphviz's `dot`, ready to turn `dot_string` into the `-T` format `format` (PlantUML's
+    /// `GraphvizRuntimeEnvironment.createForSystemDot`). `None` where no programs run, as in the browser.
+    fn create_for_system_dot(&self, _dot_string: &str, _format: &str) -> Option<Box<dyn Graphviz>> {
+        None
+    }
+}
+
+/// One run of Graphviz's `dot` that a host prepared (PlantUML's `Graphviz`).
+pub trait Graphviz {
+    /// Whether the `dot` the host found is a file it can read (PlantUML's `getExeState() == ExeState.OK`).
+    fn exe_state_is_ok(&self) -> bool;
+    /// Runs `dot`: what it wrote to its output and error streams, together and in order, or `None` when it
+    /// could not be run to its end (PlantUML's `createFile3`, whose `ProcessState` is not `TERMINATED_OK`).
+    fn create_file3(&self) -> Option<Vec<u8>>;
 }
 
 /// A host without files, environment or clock, for embedding and tests.

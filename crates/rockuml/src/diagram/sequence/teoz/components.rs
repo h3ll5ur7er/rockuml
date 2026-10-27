@@ -301,6 +301,7 @@ pub(super) fn divider(divider: &Labelled, sprites: &dyn SpriteContainer) -> Box<
         style.value(PName::LineColor).as_color(),
         style.stroke(),
         f64::from(style.value(PName::RoundCorner).as_int()),
+        style.shadowing(),
         empty,
     ))
 }

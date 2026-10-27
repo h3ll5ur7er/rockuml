@@ -1,0 +1,13 @@
+@startfiles
+title This title is ignored
+scale 2
+skinparam backgroundColor red
+' a comment
+/a/b.txt
+  /indented/is/ignored
+legend
+not drawn
+endlegend
+c/not-a-path
+/a/c.txt
+@endfiles

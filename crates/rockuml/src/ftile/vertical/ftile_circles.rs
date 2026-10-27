@@ -123,6 +123,7 @@ pub(crate) struct FtileCircleEndCross {
     line_color: HColor,
     back_color: HColor,
     swimlane: Option<SwimlaneId>,
+    shadowing: f64,
     stroke: UStroke,
 }
 
@@ -140,6 +141,7 @@ impl FtileCircleEndCross {
             line_color: colors.get_color_of(style, PName::LineColor),
             back_color: colors.get_color_of(style, PName::BackGroundColor),
             swimlane,
+            shadowing: style.shadowing(),
             stroke: style.stroke(),
         }
     }
@@ -162,8 +164,9 @@ impl Ftile for FtileCircleEndCross {
         let ug = ug
             .apply(self.line_color.clone())
             .with_backcolor(HColor::NONE);
-        ug.apply(self.stroke)
-            .draw(&UShape::Ellipse(UEllipse::new(Self::SIZE, Self::SIZE)));
+        ug.apply(self.stroke).draw(&UShape::Ellipse(
+            UEllipse::new(Self::SIZE, Self::SIZE).with_delta_shadow(self.shadowing),
+        ));
         let ug = ug.with_backcolor(self.back_color.clone());
         let thickness = 2.5;
         let size2 = (Self::SIZE - thickness) / 2.0_f64.sqrt();
@@ -234,7 +237,9 @@ impl Ftile for FtileCircleSpot {
         ug.apply(border_color)
             .with_backcolor(back_color)
             .apply(self.style.stroke())
-            .draw(&UShape::Ellipse(UEllipse::new(Self::SIZE, Self::SIZE)));
+            .draw(&UShape::Ellipse(
+                UEllipse::new(Self::SIZE, Self::SIZE).with_delta_shadow(self.style.shadowing()),
+            ));
         let Some(character) = self.spot.chars().next() else {
             return;
         };

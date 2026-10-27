@@ -15,6 +15,7 @@ use crate::svek::IEntityImage;
 pub(crate) struct EntityImageSynchroBar {
     rankdir: Rankdir,
     color: HColor,
+    shadowing: f64,
 }
 
 impl EntityImageSynchroBar {
@@ -32,6 +33,7 @@ impl EntityImageSynchroBar {
         Self {
             rankdir: diagram.skin().get_rankdir(),
             color: style.value(PName::BackGroundColor).as_color(),
+            shadowing: style.shadowing(),
         }
     }
 }
@@ -49,10 +51,10 @@ impl TextBlock for EntityImageSynchroBar {
         let dimension = self.calculate_dimension(ug.string_bounder());
         ug.with_color(HColor::NONE)
             .with_backcolor(self.color.clone())
-            .draw(&UShape::Rectangle(URectangle::new(
-                dimension.width,
-                dimension.height,
-            )));
+            .draw(&UShape::Rectangle(
+                URectangle::new(dimension.width, dimension.height)
+                    .with_delta_shadow(self.shadowing),
+            ));
     }
 }
 

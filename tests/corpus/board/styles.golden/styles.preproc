@@ -1,0 +1,20 @@
+@startboard
+skinparam backgroundColor #EEEEFF
+<style>
+document {
+  BackGroundColor #FFFFEE
+}
+title {
+  FontColor blue
+  FontSize 20
+}
+</style>
+title Styled
+scale 1.5
+mainframe Board frame
+One
++Two
+Three
++Four
+++Five
+@endboard

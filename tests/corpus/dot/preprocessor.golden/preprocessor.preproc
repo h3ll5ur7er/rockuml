@@ -1,0 +1,7 @@
+@startdot
+digraph preprocessed {
+    first [style=filled, fillcolor=orange];
+    second [style=filled, fillcolor=orange];
+  first -> second;
+}
+@enddot

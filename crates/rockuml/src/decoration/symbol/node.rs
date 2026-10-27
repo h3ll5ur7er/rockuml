@@ -16,16 +16,19 @@ pub(super) struct USymbolNode;
 const MARGIN: Margin = Margin::new(10.0 + 5.0, 20.0 + 5.0, 15.0 + 5.0, 5.0 + 5.0);
 
 /// The empty square past the bottom left corner makes room for the box's depth.
-fn draw_node(ug: &UGraphic, width: f64, height: f64) {
-    ug.draw(&UShape::polygon(vec![
-        (0.0, 10.0),
-        (10.0, 0.0),
-        (width, 0.0),
-        (width, height - 10.0),
-        (width - 10.0, height),
-        (0.0, height),
-        (0.0, 10.0),
-    ]));
+fn draw_node(ug: &UGraphic, width: f64, height: f64, shadowing: f64) {
+    ug.draw(
+        &UShape::polygon(vec![
+            (0.0, 10.0),
+            (10.0, 0.0),
+            (width, 0.0),
+            (width, height - 10.0),
+            (width - 10.0, height),
+            (0.0, height),
+            (0.0, 10.0),
+        ])
+        .with_delta_shadow(shadowing),
+    );
     ug.translated(width - 10.0, 10.0).draw(&UShape::Line {
         dx: 10.0,
         dy: -10.0,
@@ -78,8 +81,8 @@ impl SmallShape for USymbolNode {
         MARGIN
     }
 
-    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, _fashion: &Fashion) {
-        draw_node(ug, dimension.width, dimension.height);
+    fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
+        draw_node(ug, dimension.width, dimension.height, fashion.delta_shadow);
     }
 
     fn text_alignment(&self, stereo_alignment: HorizontalAlignment) -> HorizontalAlignment {
@@ -95,7 +98,12 @@ impl SmallShape for USymbolNode {
 
 impl BigShape for USymbolNode {
     fn draw_big(&self, ug: &UGraphic, content: &BigContent) {
-        draw_node(ug, content.width, content.height);
+        draw_node(
+            ug,
+            content.width,
+            content.height,
+            content.fashion.delta_shadow,
+        );
         let ug = ug.translated(-4.0, 11.0);
         let string_bounder = ug.string_bounder();
         let dim_stereo = content.stereotype.calculate_dimension(string_bounder);

@@ -12,6 +12,21 @@ use super::geom::{MinMax, XDimension2D, XPoint2D};
 use super::image::PortableImage;
 use crate::color::XColor;
 
+/// The shadow PlantUML's `Shadowable` shapes are drawn with: its offset, none when zero.
+macro_rules! shadowable {
+    () => {
+        #[must_use]
+        pub(crate) fn with_delta_shadow(mut self, delta_shadow: f64) -> Self {
+            self.delta_shadow = delta_shadow;
+            self
+        }
+
+        pub(crate) fn delta_shadow(&self) -> f64 {
+            self.delta_shadow
+        }
+    };
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum UShape {
     Text(UText),
@@ -64,6 +79,30 @@ impl UShape {
         }
     }
 
+    /// The shape with this shadow, when it is one PlantUML shadows (`Shadowable.setDeltaShadow`).
+    #[must_use]
+    pub(crate) fn with_delta_shadow(self, delta_shadow: f64) -> Self {
+        match self {
+            Self::Rectangle(shape) => Self::Rectangle(shape.with_delta_shadow(delta_shadow)),
+            Self::Ellipse(shape) => Self::Ellipse(shape.with_delta_shadow(delta_shadow)),
+            Self::Polygon(shape) => Self::Polygon(shape.with_delta_shadow(delta_shadow)),
+            Self::Path(shape) => Self::Path(shape.with_delta_shadow(delta_shadow)),
+            other => other,
+        }
+    }
+
+    /// The shadow the shape is drawn with; zero for shapes PlantUML never shadows.
+    #[cfg(test)]
+    pub(crate) fn delta_shadow(&self) -> f64 {
+        match self {
+            Self::Rectangle(shape) => shape.delta_shadow(),
+            Self::Ellipse(shape) => shape.delta_shadow(),
+            Self::Polygon(shape) => shape.delta_shadow(),
+            Self::Path(shape) => shape.delta_shadow(),
+            _ => 0.0,
+        }
+    }
+
     /// A closed shape through `points`, relative to the current position.
     pub(crate) fn polygon(points: Vec<(f64, f64)>) -> Self {
         Self::Polygon(UPolygon::new(points))
@@ -83,6 +122,7 @@ pub struct UPolygon {
     /// The compression pass that skips the polygon: the arrowheads of arrows that take no room
     /// (`compressionMode`).
     compression_mode: Option<CompressionMode>,
+    delta_shadow: f64,
 }
 
 impl UPolygon {
@@ -94,8 +134,11 @@ impl UPolygon {
             points,
             min_max,
             compression_mode: None,
+            delta_shadow: 0.0,
         }
     }
+
+    shadowable!();
 
     pub(crate) fn points(&self) -> &[(f64, f64)] {
         &self.points
@@ -147,6 +190,7 @@ pub struct UPath {
     pub segments: Vec<USegment>,
     /// The title tab of a frame takes no room when activity diagrams compress across.
     ignore_for_compression_on_x: bool,
+    delta_shadow: f64,
 }
 
 impl UPath {
@@ -154,8 +198,11 @@ impl UPath {
         Self {
             segments,
             ignore_for_compression_on_x: false,
+            delta_shadow: 0.0,
         }
     }
+
+    shadowable!();
 
     #[must_use]
     pub(crate) fn ignore_for_compression_on_x(self) -> Self {
@@ -237,6 +284,8 @@ impl USegment {
 pub struct UText {
     pub text: String,
     pub font: FontConfiguration,
+    /// Degrees: 90 reads upwards, 270 downwards; anything else is drawn level.
+    pub orientation: i32,
 }
 
 impl UText {
@@ -244,6 +293,15 @@ impl UText {
         Self {
             text: crate::jaws::make_newlines_visible(text),
             font,
+            orientation: 0,
+        }
+    }
+
+    #[must_use]
+    pub fn with_orientation(self, orientation: i32) -> Self {
+        Self {
+            orientation,
+            ..self
         }
     }
 }
@@ -261,6 +319,7 @@ pub struct UEllipse {
     pub height: f64,
     pub start: f64,
     pub extend: f64,
+    delta_shadow: f64,
 }
 
 impl UEllipse {
@@ -274,8 +333,11 @@ impl UEllipse {
             height,
             start,
             extend,
+            delta_shadow: 0.0,
         }
     }
+
+    shadowable!();
 
     pub(crate) fn is_arc(&self) -> bool {
         self.start != 0.0 || self.extend != 0.0
@@ -283,12 +345,12 @@ impl UEllipse {
 
     #[must_use]
     pub(crate) fn bigger(self, more: f64) -> Self {
-        Self::new(self.width + more, self.height + more)
+        Self::new(self.width + more, self.height + more).with_delta_shadow(self.delta_shadow)
     }
 
     #[must_use]
     pub(crate) fn scale(self, factor: f64) -> Self {
-        Self::new(self.width * factor, self.height * factor)
+        Self::new(self.width * factor, self.height * factor).with_delta_shadow(self.delta_shadow)
     }
 
     /// Where the ellipse's outline starts on the line at height `y`.
@@ -520,6 +582,7 @@ pub struct URectangle {
     /// Frames around content take no room of their own when activity diagrams compress across or down.
     ignore_for_compression_on_x: bool,
     ignore_for_compression_on_y: bool,
+    delta_shadow: f64,
 }
 
 impl URectangle {
@@ -531,13 +594,17 @@ impl URectangle {
             ry: 0.0,
             ignore_for_compression_on_x: false,
             ignore_for_compression_on_y: false,
+            delta_shadow: 0.0,
         }
     }
+
+    shadowable!();
 
     #[must_use]
     pub(crate) const fn ignore_for_compression_on_x(self) -> Self {
         Self {
             ignore_for_compression_on_x: true,
+            delta_shadow: 0.0,
             ..self
         }
     }
@@ -546,6 +613,7 @@ impl URectangle {
     pub(crate) const fn ignore_for_compression_on_y(self) -> Self {
         Self {
             ignore_for_compression_on_y: true,
+            delta_shadow: 0.0,
             ..self
         }
     }
@@ -569,11 +637,16 @@ impl URectangle {
         Self { height, ..self }
     }
 
+    /// A new rectangle, without the shadow, unless nothing is rounded (PlantUML's `rounded`).
     #[must_use]
     pub const fn rounded(self, corner: f64) -> Self {
+        if corner == 0.0 && self.rx == 0.0 && self.ry == 0.0 {
+            return self;
+        }
         Self {
             rx: corner,
             ry: corner,
+            delta_shadow: 0.0,
             ..self
         }
     }
@@ -583,6 +656,7 @@ impl URectangle {
         if round_corner == 0.0 {
             return UShape::Rectangle(self);
         }
+
         let (width, height, r) = (self.width, self.height, round_corner / 2.0);
         UShape::path(vec![
             USegment::MoveTo(r, 0.0),

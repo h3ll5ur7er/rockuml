@@ -624,8 +624,14 @@ impl Diagram for SequenceDiagram {
             .add_chrome_titled(Box::new(drawing), string_bounder, title))
     }
 
-    fn export_settings(&self) -> ExportSettings {
-        self.titled
-            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(5.0))
+    fn export_settings(&self, _page: usize) -> ExportSettings {
+        let settings = self
+            .titled
+            .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(5.0));
+        // PlantUML exports sequence diagrams page by page, without cutting them.
+        ExportSettings {
+            split: None,
+            ..settings
+        }
     }
 }

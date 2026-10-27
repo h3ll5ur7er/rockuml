@@ -1,0 +1,5 @@
+@startdef(id=greeting)
+!definelong HELLO(name)
+Hello name!
+!enddefinelong
+@enddef

@@ -1,0 +1,12 @@
+@startuml
+skinparam shadowing true
+:Customer: as C
+actor/ :Business:
+rectangle Shop {
+  (Checkout) as CO
+  usecase/ (Pay)
+}
+C --> CO
+CO .> (Pay) : include
+note "help" as N
+@enduml

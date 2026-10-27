@@ -28,6 +28,7 @@ pub(crate) struct InnerStateAutonom {
     with_symbol: bool,
     stroke: UStroke,
     rounded: f64,
+    shadowing: f64,
     description_alignment: HorizontalAlignment,
     north_backcolor: HColor,
     center_backcolor: HColor,
@@ -82,6 +83,7 @@ impl InnerStateAutonom {
                 .is_some_and(Stereotype::is_with_oo_symbol),
             stroke: style.stroke_with(&group.colors),
             rounded: style.value(PName::RoundCorner).as_double(),
+            shadowing: style.shadowing(),
             description_alignment: style_description.horizontal_alignment().unwrap_or_default(),
             north_backcolor,
             center_backcolor,
@@ -136,6 +138,7 @@ impl TextBlock for InnerStateAutonom {
             south_backcolor: self.south_backcolor.clone(),
             stroke: self.stroke,
             rounded: self.rounded,
+            shadowing: self.shadowing,
         };
         ug.start_group(&self.group);
         if let Some(url) = &self.url {

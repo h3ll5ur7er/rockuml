@@ -1,0 +1,6 @@
+@startebnf
+title Broken rules
+twoliterals = a b ;
+unclosed = [ a ;
+good = a, b ;
+@endebnf

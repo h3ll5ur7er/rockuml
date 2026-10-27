@@ -196,6 +196,37 @@ impl StyleBuilder {
             .unwrap_or_else(|error| panic!("{name} parses: {error:?}"));
     }
 
+    /// The builder with the rules of a style sheet alone, as `skin` loads one.
+    pub(crate) fn from_style_sheet(lines: &[&str]) -> Result<Self, StyleParsingError> {
+        let mut builder = Self::default();
+        builder.apply_style_sheet(lines)?;
+        Ok(builder)
+    }
+
+    pub(crate) fn is_empty(&self) -> bool {
+        self.storage.styles().next().is_none()
+    }
+
+    /// The properties a style sheet must give its root to be used on its own: without them it is a fragment,
+    /// meant to be merged over another one (`StyleLoader.getMissingRootProperties`).
+    pub(crate) fn missing_root_properties(&self) -> Vec<PName> {
+        const MANDATORY_ROOT_PROPERTIES: [PName; 8] = [
+            PName::FontName,
+            PName::FontSize,
+            PName::FontStyle,
+            PName::FontColor,
+            PName::LineColor,
+            PName::LineThickness,
+            PName::BackGroundColor,
+            PName::HorizontalAlignment,
+        ];
+        let root = self.merged_style(&StyleSignature::of(&[SName::Root]));
+        MANDATORY_ROOT_PROPERTIES
+            .into_iter()
+            .filter(|&property| !root.as_ref().is_some_and(|root| root.has_value(property)))
+            .collect()
+    }
+
     /// The rules of a style sheet, merged over the current ones.
     pub(crate) fn apply_style_sheet(&mut self, lines: &[&str]) -> Result<(), StyleParsingError> {
         let styles = StyleParser::new(&mut self.counter).parse(lines)?;

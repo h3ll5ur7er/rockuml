@@ -1,0 +1,5 @@
+@startchart
+h-axis [w1, w2, w3, w4]
+bar "Score" [12.5, 140, 33.333, 7]
+scatter "Errors" [0.005, 1.5, 3, 0] labels
+@endchart

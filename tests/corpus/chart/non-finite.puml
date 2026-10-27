@@ -1,0 +1,6 @@
+@startchart
+h-axis [a, b, c, d]
+v-axis 0 --> 10
+line "Odd" [1, Infinity, NaN, 3]
+scatter "Dots" [2, NaN, -Infinity, 1]
+@endchart

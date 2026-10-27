@@ -26,8 +26,7 @@ static END_NOTE_ON_ENTITY: LazyLock<Regex> =
     LazyLock::new(|| plantuml_regex("^[%s]*(end[%s]?note)$"));
 static END_WITH_BRACKET: LazyLock<Regex> = LazyLock::new(|| plantuml_regex(r"^(\})$"));
 /// The last line of a note on a link (`CommandFactoryNoteOnLink.END`).
-pub(in crate::diagram) static END_NOTE_ON_LINK: LazyLock<Regex> =
-    LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
+static END_NOTE_ON_LINK: LazyLock<Regex> = LazyLock::new(|| plantuml_regex("^end[%s]?note$"));
 
 /// A single-line command that runs in `pass`.
 fn single_line<D: 'static>(
@@ -136,7 +135,7 @@ fn create_note<D: EntityDiagram>(
             cuca.quark(quark).get_name()
         )));
     }
-    let entity = cuca.really_create_leaf(location, quark, display, LeafType::Note);
+    let entity = cuca.really_create_leaf(location, quark, display, LeafType::Note)?;
     let back = back_color(arg)?;
     let note = cuca.entity_mut(entity);
     note.colors = note.colors.with(ColorType::Back, back);
@@ -259,7 +258,7 @@ fn add_note_on_entity<D: EntityDiagram>(
     let colors = colors(arg, ColorType::Back)?;
     let tmp = cuca.get_unique_sequence("GMN");
     let quark = cuca.quark_in_context(true, &tmp)?;
-    let note = cuca.really_create_leaf(location, quark, display, LeafType::Note);
+    let note = cuca.really_create_leaf(location, quark, display, LeafType::Note)?;
     let entity = cuca.entity_mut(note);
     if let Some(stereotype) = arg.get("STEREO", 0) {
         entity.stereotype = Some(Stereotype::new(stereotype));
@@ -305,7 +304,7 @@ fn note_on_link_head() -> Vec<RegexTree> {
 }
 
 /// The pattern of `note on link : text`.
-pub(in crate::diagram) fn note_on_link_pattern() -> RegexTree {
+fn note_on_link_pattern() -> RegexTree {
     let mut pattern = note_on_link_head();
     pattern.extend([
         RegexTree::spaces_zero_or_more(),
@@ -318,7 +317,7 @@ pub(in crate::diagram) fn note_on_link_pattern() -> RegexTree {
 }
 
 /// The pattern of the first line of `note on link` ... `end note`.
-pub(in crate::diagram) fn note_on_link_multi_line_pattern() -> RegexTree {
+fn note_on_link_multi_line_pattern() -> RegexTree {
     let mut pattern = note_on_link_head();
     pattern.push(RegexTree::end());
     RegexTree::concat(pattern)
@@ -446,12 +445,14 @@ fn create_tips(
     target: EntityId,
     position: Position,
 ) -> EntityId {
-    let tips = cuca.really_create_leaf(
-        location,
-        ident_tip,
-        Display::with_newlines(""),
-        LeafType::Tips,
-    );
+    let tips = cuca
+        .really_create_leaf(
+            location,
+            ident_tip,
+            Display::with_newlines(""),
+            LeafType::Tips,
+        )
+        .expect("the quark holds no entity yet");
     let link_type = LinkType::new(LinkDecor::None, LinkDecor::None).get_invisible();
     let (entity1, entity2) = if position == Position::Right {
         (target, tips)

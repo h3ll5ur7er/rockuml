@@ -1,0 +1,9 @@
+@startuml
+(*) --> "A"
+if "x" as B then
+  --> "C"
+endif
+"C" --> if "x" as B then
+  --> "D"
+endif
+@enduml

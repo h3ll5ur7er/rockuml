@@ -1,0 +1,13 @@
+@startwire
+* chip [200x120]
+    * core [60x40]
+* module
+spot chip
+spot chip(100%, 0) #blue
+spot chip(50%, 50%) #green
+spot chip(100%-10, 100%+5)
+spot chip(-5, 25%-3) #orange
+spot chip.core(10, 10) #purple
+spot chip.core
+spot module(50%,100%)
+@endwire

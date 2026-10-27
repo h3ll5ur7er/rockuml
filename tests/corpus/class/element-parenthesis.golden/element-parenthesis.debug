@@ -1,0 +1,202 @@
+DPI: 96
+dimension: [ 215.9225 ; 199.3889 ]
+scaleFactor: 1.0000
+seed: 2451151145202919162
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: class Fry
+RECTANGLE:
+  pt1: [ 44.4612 ; 12.0000 ]
+  pt2: [ 130.7640 ; 60.0000 ]
+  xCorner: 5
+  yCorner: 5
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 44.4612 ; 12.0000 ]
+  pt2: [ 70.4612 ; 44.0000 ]
+
+ELLIPSE:
+  pt1: [ 48.4612 ; 17.0000 ]
+  pt2: [ 70.4612 ; 39.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ffadd1b2
+
+CENTERED_CHAR:
+  char: C
+  position: [ 59.4612 ; 28.0000 ]
+  font: Monospaced.bold/17
+  color: ff000000
+
+EMPTY:
+  pt1: [ 70.4612 ; 21.0000 ]
+  pt2: [ 130.7640 ; 35.0000 ]
+
+TEXT:
+  text: Fry
+  position: [ 73.4612 ; 31.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 45.4612 ; 44.0000 ]
+  pt2: [ 129.7640 ; 44.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 44.4612 ; 44.0000 ]
+  pt2: [ 56.4612 ; 52.0000 ]
+
+LINE:
+  pt1: [ 45.4612 ; 52.0000 ]
+  pt2: [ 129.7640 ; 52.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+
+EMPTY:
+  pt1: [ 44.4612 ; 52.0000 ]
+  pt2: [ 56.4612 ; 60.0000 ]
+
+COMMENT: entity Delivery
+ELLIPSE:
+  pt1: [ 61.4612 ; 97.0000 ]
+  pt2: [ 77.4612 ; 113.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Delivery
+  position: [ 0.1129 ; 132.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity pe
+ELLIPSE:
+  pt1: [ 97.4612 ; 97.0000 ]
+  pt2: [ 113.4612 ; 113.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: ffffd700
+
+TEXT:
+  text: Planet Express
+  position: [ 0.0000 ; 132.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 52.3439 ; 74.0000 ]
+  pt2: [ 158.5786 ; 88.0000 ]
+
+TEXT:
+  text: «company»
+  position: [ 53.3439 ; 84.8889 ]
+  orientation: 0
+  font: SansSerif.italic/14 [ITALIC]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity hypno
+ELLIPSE:
+  pt1: [ 97.4612 ; 157.0000 ]
+  pt2: [ 113.4612 ; 173.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Hypnotoad
+  position: [ 52.6303 ; 192.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 72.3539 ; 95.7509 ]
+   - [ 78.4692 ; 88.0306 ]
+   - [ 73.5991 ; 90.9084 ]
+   - [ 70.7213 ; 86.0383 ]
+   - [ 72.3539 ; 95.7509 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 37.0063 ; 54.3090 ]
+   - type: SEG_CUBICTO
+     pt1: [ 33.9382 ; 66.2405 ]
+     pt2: [ 31.5887 ; 75.3774 ]
+     pt3: [ 29.1378 ; 84.9084 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 102.5686 ; 95.7509 ]
+   - [ 104.2012 ; 86.0383 ]
+   - [ 101.3234 ; 90.9084 ]
+   - [ 96.4533 ; 88.0306 ]
+   - [ 102.5686 ; 95.7509 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 48.9937 ; 54.3090 ]
+   - type: SEG_CUBICTO
+     pt1: [ 52.0618 ; 66.2405 ]
+     pt2: [ 54.4113 ; 75.3774 ]
+     pt3: [ 56.8622 ; 84.9084 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 61.0000 ; 114.1830 ]
+   - type: SEG_CUBICTO
+     pt1: [ 61.0000 ; 124.4535 ]
+     pt2: [ 61.0000 ; 139.5917 ]
+     pt3: [ 61.0000 ; 149.8513 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

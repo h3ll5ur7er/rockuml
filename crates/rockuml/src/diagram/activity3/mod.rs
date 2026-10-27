@@ -186,7 +186,7 @@ impl Diagram for ActivityDiagram3 {
         Ok(self.titled.add_chrome(Box::new(result), string_bounder))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         self.titled
             .export_settings(self.source.seed(), ClockwiseTopRightBottomLeft::same(10.0))
     }

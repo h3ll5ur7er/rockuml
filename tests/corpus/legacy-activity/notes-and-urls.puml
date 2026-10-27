@@ -1,0 +1,17 @@
+@startuml
+(*) --> "A"
+note on link
+  the link
+  from the start
+end note
+"A" --> "[[http://example.com]]
+Long with
+a link" as L
+L --> "B"
+note right
+  [[http://example.com/note]]
+  a note
+end note
+note on link : short one
+"B" --> (*)
+@enduml

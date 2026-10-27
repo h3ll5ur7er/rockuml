@@ -1,0 +1,92 @@
+DPI: 96
+dimension: [ 220.0000 ; 182.0000 ]
+scaleFactor: 1.2500
+seed: -1029227759998998267
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+COMMENT: entity Luke
+ELLIPSE:
+  pt1: [ 97.7065 ; 12.5000 ]
+  pt2: [ 113.7065 ; 28.5000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 0.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ -13.0000 ; 8.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 8.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ -13.0000 ; 42.0000 ]
+   - type: SEG_MOVETO
+     pt1: [ 0.0000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 13.0000 ; 42.0000 ]
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: Luke
+  position: [ 74.5000 ; 82.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+COMMENT: entity force
+ELLIPSE:
+  pt1: [ 6.0000 ; 122.0000 ]
+  pt2: [ 204.9532 ; 166.5906 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-0.5
+  shadow: 0
+  color: ff181818
+  backcolor: fff1f1f1
+
+TEXT:
+  text: Use the Force
+  position: [ 15.5726 ; 147.7953 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+POLYGON:
+  points:
+   - [ 105.5000 ; 121.7728 ]
+   - [ 109.5000 ; 112.7728 ]
+   - [ 105.5000 ; 116.7728 ]
+   - [ 101.5000 ; 112.7728 ]
+   - [ 105.5000 ; 121.7728 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 99.5000 ; 80.1495 ]
+   - type: SEG_CUBICTO
+     pt1: [ 99.5000 ; 92.1744 ]
+     pt2: [ 99.5000 ; 100.1871 ]
+     pt3: [ 99.5000 ; 110.7728 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+

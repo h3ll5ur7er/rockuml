@@ -135,7 +135,7 @@ fn execute_class_diagram(cuca: &mut CucaDiagram, arg: &RegexResult) -> CommandRe
     if empty && !empty_members {
         gender = and(gender, empty_by_gender(portion));
     }
-    let current_group = cuca.get_current_group();
+    let current_group = cuca.get_current_group()?;
     if !cuca.entity(current_group).is_root() {
         gender = and(gender, EntityGender::ByPackage(current_group));
     }

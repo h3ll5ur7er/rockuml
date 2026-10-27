@@ -6,31 +6,48 @@ use std::rc::Rc;
 
 use super::SmallContent;
 use crate::klimt::TextBlock;
+use crate::klimt::fashion::Fashion;
 use crate::klimt::font::StringBounder;
 use crate::klimt::geom::XDimension2D;
 use crate::klimt::stencil::RectangleStencil;
 use crate::klimt::ugraphic::UGraphic;
 use crate::skin::symbol::{Boundary, CircleInterface2, Control, EntityDomain};
 
+/// Whatever shadow the style casts, these figures cast one of their own size.
+fn figure_shadow(fashion: &Fashion) -> f64 {
+    if fashion.is_shadowing() { 4.0 } else { 0.0 }
+}
+
 pub(super) fn boundary(content: SmallContent) -> Box<dyn TextBlock> {
-    let drawing = Box::new(Boundary::new(content.fashion.clone()));
+    let fashion = &content.fashion;
+    let drawing = Box::new(Boundary::new(
+        fashion.with_delta_shadow(figure_shadow(fashion)),
+    ));
     as_small(drawing, content)
 }
 
 pub(super) fn control(content: SmallContent) -> Box<dyn TextBlock> {
-    let drawing = Box::new(Control::new(content.fashion.clone()));
+    let fashion = &content.fashion;
+    let drawing = Box::new(Control::new(
+        fashion.with_delta_shadow(figure_shadow(fashion)),
+    ));
     as_small(drawing, content)
 }
 
 pub(super) fn entity_domain(content: SmallContent) -> Box<dyn TextBlock> {
-    let drawing = Box::new(EntityDomain::new(content.fashion.clone()));
+    let fashion = &content.fashion;
+    let drawing = Box::new(EntityDomain::new(
+        fashion.with_delta_shadow(figure_shadow(fashion)),
+    ));
     as_small(drawing, content)
 }
 
 pub(super) fn interface(content: SmallContent) -> Box<dyn TextBlock> {
+    let fashion = &content.fashion;
     let drawing = Box::new(CircleInterface2::new(
-        content.fashion.back_color.clone(),
-        content.fashion.fore_color.clone(),
+        fashion.back_color.clone(),
+        fashion.fore_color.clone(),
+        figure_shadow(fashion),
     ));
     as_small(drawing, content)
 }

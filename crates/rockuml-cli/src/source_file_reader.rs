@@ -154,14 +154,14 @@ impl<'a> SourceFileReader<'a> {
         let image_format = format
             .image_format()
             .expect("drawing formats export images");
-        let pages = diagram.page_count();
-        for page in 0..pages {
-            let file = suggested.file(page, format);
-            if !can_file_be_written(&file, options.is_true(CliFlag::Overwrite), console) {
+        let mut written = 0;
+        'pages: for page in 0..diagram.page_count() {
+            let overwrite = options.is_true(CliFlag::Overwrite);
+            if !can_file_be_written(&suggested.file(written, format), overwrite, console) {
                 break;
             }
-            let image = crash::render(|| {
-                rockuml::diagram::export_with(
+            let files = crash::render(|| {
+                rockuml::diagram::export_files(
                     diagram.as_ref(),
                     page,
                     image_format,
@@ -170,24 +170,38 @@ impl<'a> SourceFileReader<'a> {
                     &self.settings.host,
                 )
             });
-            let content = match image {
-                Ok(_) if format == FileFormat::Null => Vec::new(),
-                Ok(image) => image,
+            let files: Box<dyn Iterator<Item = Vec<u8>>> = match files {
+                // PlantUML's `TextBlockExporter` draws nothing for the null format, not even a crash report,
+                // and so drops its status.
+                Ok(_) if format == FileFormat::Null => Box::new(std::iter::once(Vec::new())),
+                Ok(exported) if exported.crashed => {
+                    // The image says what failed, yet the diagram is not drawn.
+                    status.goes_has_errors();
+                    exported.files
+                }
+                Ok(exported) => exported.files,
                 Err(unrendered) => {
+                    let file = suggested.file(written, format);
                     unrendered.report(&file.display().to_string(), status, console);
                     break;
                 }
             };
-            if let Err(error) = fs::write(&file, content) {
-                console.error(&format!(
-                    "rockuml: cannot write {}: {error}",
-                    file.display()
-                ));
+            for (piece, content) in files.enumerate() {
+                let file = suggested.file(written, format);
+                if piece > 0 && !can_file_be_written(&file, overwrite, console) {
+                    break 'pages;
+                }
+                if let Err(error) = fs::write(&file, content) {
+                    console.error(&format!(
+                        "rockuml: cannot write {}: {error}",
+                        file.display()
+                    ));
+                }
+                written += 1;
             }
         }
-        if pages > 1 {
-            self.cpt += pages - 1;
-        }
+        // The next block's files are numbered after the files this one wrote.
+        self.cpt += written.saturating_sub(1);
     }
 
     /// The file a block's images are named after (`getSuggestedFile`): the input's name, numbered, unless

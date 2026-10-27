@@ -6,12 +6,37 @@ to regenerate goldens. Building and testing rockuml never needs it.
 ## One-time setup
 
 1. Put the reference sources in `reference/plantuml-lgpl-1.2026.8-sources` (git-ignored).
+   Maven Central has them as `net.sourceforge.plantuml:plantuml-lgpl:1.2026.8:sources`; that jar was built 47 minutes
+   later than the sources the goldens come from, so set `COMPILE_TIMESTAMP` in
+   `net/sourceforge/plantuml/version/CompilationInfo.java` to `1788623957000L` (error images print it).
 2. Unpack a portable JDK 21 into `tools/jdk/` (git-ignored), for example the Temurin zip from
    `https://api.adoptium.net/v3/binary/latest/21/ga/windows/x64/jdk/hotspot/normal/eclipse`.
+   On Linux, `bash tools/oracle/setup-linux-jdk.sh` sets up `tools/jdk/linux` from an installed JDK 21 instead (see
+   below).
 3. `bash tools/oracle/build-reference.sh` builds `tools/oracle/build/plantuml-ref.jar`.
 
 **Do not install Graphviz** and do not set `GRAPHVIZ_DOT`. Without `dot`, PlantUML lays out graphs with Smetana,
 which is the engine rockuml ports, so the goldens stay comparable.
+
+`fixes.patch` fixes regressions of 1.2026.8 that rockuml does not copy, in copies of the sources it touches;
+`reference/` stays as it is. Each fix says why. So far there is one: `newpage` in class and description
+diagrams exports every page again, not only the first.
+
+### Graphviz for `@startdot`
+
+`@startdot` diagrams (`tests/corpus/dot`) are drawn by an external `dot`, in PlantUML and in rockuml alike.
+`bash tools/oracle/setup-graphviz.sh` unpacks Ubuntu 24.04's Graphviz into `tools/graphviz` (git-ignored) without
+installing it and prints the path of a `dot` that measures text with rockuml's Liberation fonts only
+(`graphviz-fonts.conf`). Generate those goldens, and run the parity suite, with `GRAPHVIZ_DOT` set to it:
+
+```bash
+export GRAPHVIZ_DOT="$(bash tools/oracle/setup-graphviz.sh)"
+bash tools/oracle/generate-goldens.sh tests/corpus/dot/*.puml
+cargo test --release -p rockuml-cli --test parity
+```
+
+Without it the parity suite skips the `dot` cases with a note; `ROCKUML_PARITY_REQUIRE_GRAPHVIZ=1`, which CI sets
+on Linux, makes that a failure. Leave `GRAPHVIZ_DOT` unset for every other golden.
 
 ## Usage
 
@@ -32,8 +57,13 @@ one per block (`x.preproc`, `x_001.preproc`, …), one per page, or a name chose
 | `.png` | `-tpng` | by size (antialiasing differs) |
 | `.dsvg` | `-f svg-deterministic` (oracle-only name: SVG measured with PlantUML's font-independent width table) | exactly |
 
-The `.svg` and `.png` goldens must be generated on Windows: elsewhere Java measures with other fonts. rockuml's embedded
-Liberation fonts have the Windows fonts' metrics.
+The `.svg` and `.png` goldens measure text with the fonts Java finds on Windows. rockuml's embedded Liberation fonts
+have the Windows fonts' metrics, and `setup-linux-jdk.sh` makes Java on Linux measure with them, the logical fonts'
+ascent and descent raised as on Windows. Its goldens are the same as the Windows ones, except where the fonts
+themselves differ: the outlines of glyphs drawn as paths (the letter of a class's circle) and characters Liberation has
+no glyph for, which fall back on other fonts. Font names Windows does not have (`Courier`, `Helvetica`,
+`TimesRoman`) fall back on `Dialog` there but find a font on Linux, so cases generated on Linux avoid them.
+Elsewhere, generate the `.svg` and `.png` goldens on Windows.
 
 Where PlantUML crashes it draws a crash report with a random quote; the generator drops such goldens (and the PNG of a crashed
 SVG), because rockuml renders the diagram instead.

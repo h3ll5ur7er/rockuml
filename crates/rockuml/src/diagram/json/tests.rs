@@ -1,9 +1,10 @@
-//! The Smetana graphs JSON and YAML documents make, against the traces PlantUML's layouts write
-//! (`tests/smetana/{json,yaml}/<case>/NN.trace`).
+//! The Smetana graphs JSON, YAML and HCL documents make, against the traces PlantUML's layouts write
+//! (`tests/smetana/{json,yaml,hcl}/<case>/NN.trace`).
 
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 
+use crate::diagram::test_support::not_ported_of;
 use crate::host::IsolatedHost;
 use crate::klimt::debug::StringBounderDebug;
 use crate::klimt::font::StringBounder;
@@ -59,7 +60,7 @@ fn graph_of(family: &str, case: &str) -> Vec<Vec<String>> {
 #[test]
 fn every_document_makes_the_graph_plantuml_lays_out() {
     let mut cases = 0;
-    for family in ["json", "yaml"] {
+    for family in ["json", "yaml", "hcl"] {
         for directory in sorted_entries(&repository_tests().join(format!("smetana/{family}"))) {
             let case = directory.file_name().unwrap().to_str().unwrap().to_owned();
             let graphs = graph_of(family, &case);
@@ -74,5 +75,12 @@ fn every_document_makes_the_graph_plantuml_lays_out() {
             cases += 1;
         }
     }
-    assert_eq!(cases, 16);
+    assert_eq!(cases, 25);
+}
+
+/// PlantUML reads past the lines of a JSON document whose end line a `<style>` left open took in.
+#[test]
+fn json_without_an_end_line_is_a_plantuml_crash() {
+    assert!(not_ported_of("@startjson\n<style>\n@endjson").is_some());
+    assert!(not_ported_of("@startjson\n<style>\n</style>\n@endjson").is_none());
 }

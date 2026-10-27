@@ -1,0 +1,11 @@
+@startpacketdiag
+packetdiag {
+  colwidth = 12
+  scale_direction = rtl
+  scale_interval = 3
+  0-3: low
+  4-7: middle [height = 2]
+  8-15: high
+  16-23: next
+}
+@endpacketdiag

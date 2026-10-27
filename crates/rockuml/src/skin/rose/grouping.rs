@@ -102,7 +102,11 @@ impl Component for ComponentRoseGroupingHeader {
     fn draw_background_internal(&self, ug: &UGraphic, area: &Area) {
         self.with_frame_stroke(ug)
             .with_backcolor(HColor::NONE)
-            .draw(&self.frame(area));
+            .draw(
+                &self
+                    .frame(area)
+                    .with_delta_shadow(self.fashion.delta_shadow),
+            );
     }
 
     fn draw_internal(&self, ug: &UGraphic, area: &Area) {

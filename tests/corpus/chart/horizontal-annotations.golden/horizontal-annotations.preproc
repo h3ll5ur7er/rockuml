@@ -1,0 +1,9 @@
+@startchart
+orientation horizontal
+v-axis [Apples, Oranges, Pears]
+h-axis 0 --> 50
+bar "Harvest" [32, 18, 44]
+annotation "Best" at (Pears, 44) <<arrow>>
+annotation "Low" at (Oranges, 18)
+annotation "Unknown" at (Plums, 10)
+@endchart

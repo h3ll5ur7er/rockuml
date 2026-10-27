@@ -74,7 +74,17 @@ Every diagram sits between a start line and an end line. `@startuml` and `@endum
 | Work breakdown structures | `@startwbs` |
 | Gantt charts | `@startgantt` |
 | JSON and YAML data | `@startjson`, `@startyaml` |
+| File trees | `@startfiles` |
+| Boards | `@startboard` |
+| Wire diagrams | `@startwire` |
+| Flow diagrams | `@startflow` |
+| BPM diagrams | `@startbpm` |
+| Charts | `@startchart` |
+| Git commit graphs | `@startgit` |
+| Graphviz graphs, drawn by an installed `dot` | `@startdot` |
+| EBNF grammars and regular expressions | `@startebnf`, `@startregex` |
 | Network diagrams | `@startnwdiag` |
+| Packet diagrams | `@startpacketdiag` |
 | Wireframes | `@startsalt` |
 | Formatted text | `@startcreole` |
 

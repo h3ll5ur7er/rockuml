@@ -20,13 +20,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        # Ubuntu 24.04's Graphviz is the one the @startdot goldens were made with.
+        os: [windows-latest, ubuntu-24.04, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
+      # The @startdot cases run the goldens' Graphviz, unpacked as for the oracle, so they must run on Linux;
+      # elsewhere the parity suite skips them.
+      - if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          dot="$(bash tools/oracle/setup-graphviz.sh)"
+          echo "GRAPHVIZ_DOT=$dot" >> "$GITHUB_ENV"
+          echo "ROCKUML_PARITY_REQUIRE_GRAPHVIZ=1" >> "$GITHUB_ENV"
       - run: cargo fmt --check
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test --release

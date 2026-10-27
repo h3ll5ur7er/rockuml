@@ -12,13 +12,12 @@ pub(super) struct USymbolCollections;
 const MARGIN: Margin = Margin::new(10.0, 10.0, 10.0, 10.0);
 const DELTA_COLLECTION: f64 = 4.0;
 
-fn draw_collections(ug: &UGraphic, width: f64, height: f64, round_corner: f64) {
-    let small = UShape::Rectangle(
-        URectangle::new(width - DELTA_COLLECTION, height - DELTA_COLLECTION).rounded(round_corner),
-    );
+fn draw_collections(ug: &UGraphic, width: f64, height: f64, shadowing: f64, round_corner: f64) {
+    let small =
+        URectangle::new(width - DELTA_COLLECTION, height - DELTA_COLLECTION).rounded(round_corner);
     ug.translated(DELTA_COLLECTION, DELTA_COLLECTION)
-        .draw(&small);
-    ug.draw(&small);
+        .draw(&UShape::Rectangle(small.with_delta_shadow(shadowing)));
+    ug.draw(&UShape::Rectangle(small));
 }
 
 impl SmallShape for USymbolCollections {
@@ -27,7 +26,13 @@ impl SmallShape for USymbolCollections {
     }
 
     fn draw_shape(&self, ug: &UGraphic, dimension: XDimension2D, fashion: &Fashion) {
-        draw_collections(ug, dimension.width, dimension.height, fashion.round_corner);
+        draw_collections(
+            ug,
+            dimension.width,
+            dimension.height,
+            fashion.delta_shadow,
+            fashion.round_corner,
+        );
     }
 
     fn text_alignment(&self, stereo_alignment: HorizontalAlignment) -> HorizontalAlignment {
@@ -49,6 +54,7 @@ impl BigShape for USymbolCollections {
             ug,
             content.width,
             content.height,
+            content.fashion.delta_shadow,
             content.fashion.round_corner,
         );
         content.draw_stereotype_top_and_title(ug, MARGIN, BigContent::centered_x);

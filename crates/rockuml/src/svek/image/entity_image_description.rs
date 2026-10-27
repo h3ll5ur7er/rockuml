@@ -4,7 +4,7 @@
 use std::rc::Rc;
 
 use crate::abel::{Entity, LeafType};
-use crate::color::ColorType;
+use crate::color::{ColorType, Colors};
 use crate::creole::Display;
 use crate::decoration::symbol::{Block, USymbols};
 use crate::diagram::cuca::CucaDiagram;
@@ -67,9 +67,7 @@ impl EntityImageDescription {
         } else {
             element(&[SName::Title])
         };
-        let builder = entity
-            .style_builder()
-            .expect("only the root has no style builder");
+        let builder = &entity.get_current_style_builder(diagram);
         let stereotype = entity.stereotype.as_ref();
         let style_title = signature_title
             .get_merged_style_with(builder, stereotype)
@@ -80,17 +78,7 @@ impl EntityImageDescription {
             .get_merged_style_with(builder, stereotype)
             .eventually_override_colors(colors);
 
-        let forecolor = style_title.value(PName::LineColor).as_color();
-        let backcolor = colors
-            .get(ColorType::Back)
-            .cloned()
-            .unwrap_or_else(|| style_title.value(PName::BackGroundColor).as_color());
-        let fashion = Fashion::new(backcolor, forecolor)
-            .with_stroke(style_title.stroke_with(colors))
-            .with_corner(
-                style_title.value(PName::RoundCorner).as_double(),
-                style_title.value(PName::DiagonalCorner).as_double(),
-            );
+        let fashion = title_fashion(&style_title, colors);
         let name = entity.get_name(diagram);
         let code_display = Display::with_newlines(name);
         let display = &entity.display;
@@ -196,6 +184,22 @@ impl TextBlock for EntityImageDescription {
 }
 
 impl IEntityImage for EntityImageDescription {}
+
+/// The symbol's colours, stroke, shadow and corners: the title's style, under the element's own back colour.
+fn title_fashion(style_title: &Style, colors: &Colors) -> Fashion {
+    let forecolor = style_title.value(PName::LineColor).as_color();
+    let backcolor = colors
+        .get(ColorType::Back)
+        .cloned()
+        .unwrap_or_else(|| style_title.value(PName::BackGroundColor).as_color());
+    Fashion::new(backcolor, forecolor)
+        .with_stroke(style_title.stroke_with(colors))
+        .with_delta_shadow(style_title.shadowing())
+        .with_corner(
+            style_title.value(PName::RoundCorner).as_double(),
+            style_title.value(PName::DiagonalCorner).as_double(),
+        )
+}
 
 /// The stereotype's sprite, or else its visible labels in `font`.
 fn stereo_block(entity: &Entity, diagram: &CucaDiagram, font: &FontConfiguration) -> Block {

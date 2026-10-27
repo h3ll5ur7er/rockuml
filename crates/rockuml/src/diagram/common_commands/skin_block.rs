@@ -1,13 +1,18 @@
-//! `skinparam` blocks and `!pragma` (PlantUML's `CommandSkinParamMultilines`, `SkinLoader` and
-//! `CommandPragma`).
+//! `skinparam` blocks and `!pragma` (PlantUML's `CommandSkinParamMultilines`, `CommandSkinParamJaws`,
+//! `SkinLoader` and `CommandPragma`).
 
 use std::sync::LazyLock;
 
 use regex::Regex;
 
-use crate::command::{BlocLines, Command, CommandControl, CommandResult};
+use crate::command::{
+    BlocLines, Command, CommandControl, CommandError, CommandResult, PatternCommand, SingleLine,
+};
 use crate::diagram::titled::TitledDiagram;
-use crate::pattern::plantuml_regex;
+use crate::java;
+use crate::jaws::BLOCK_E1_NEWLINE;
+use crate::pattern::{RegexResult, RegexTree, plantuml_regex};
+use crate::text::{LineLocation, StringLocated};
 
 /// `skinparam sequence {` ... `}`: parameters named by their nested blocks, like `sequenceArrowColor`.
 pub(super) struct SkinParamBlock;
@@ -66,6 +71,7 @@ impl<D: TitledDiagram> Command<D> for SkinParamBlock {
             .and_then(|captures| captures.get(1))
             .map(|group| vec![group.as_str().to_owned()])
             .unwrap_or_default();
+        diagram.titled().set_skin_param_used(true);
         let body = lines.sub_extract(1, 1).trimmed();
         for line in body.iter().filter(|line| !line.text().is_empty()) {
             if line.text() == "}" {
@@ -85,4 +91,41 @@ impl<D: TitledDiagram> Command<D> for SkinParamBlock {
         }
         Ok(())
     }
+}
+
+/// PlantUML's `CommandSkinParamJaws`: `skinparam` blocks folded into one line, as a procedure writes them
+/// with `%newline()`.
+pub(super) fn jaws<D: TitledDiagram + 'static>() -> Box<dyn Command<D>> {
+    Box::new(SingleLine(PatternCommand::new(
+        RegexTree::concat(vec![
+            RegexTree::start(),
+            RegexTree::named(
+                1,
+                "FULL",
+                format!("((?:(?:skinparam|skinparamlocked)[%s]+.*{BLOCK_E1_NEWLINE}.*)+)"),
+            ),
+            RegexTree::end(),
+        ]),
+        |diagram: &mut D, location: &LineLocation, arg: &RegexResult| {
+            let full = arg.get("FULL", 0).unwrap_or_default();
+            let mut block: Option<BlocLines> = None;
+            for line in java::split(full, &BLOCK_E1_NEWLINE.to_string()) {
+                let is_end = line.trim() == "}";
+                let line = StringLocated::new(line, location.clone());
+                let lines = match block.take() {
+                    Some(lines) => lines.add(line),
+                    None => BlocLines::single(line),
+                };
+                if !is_end {
+                    block = Some(lines);
+                } else if Command::<D>::is_valid(&SkinParamBlock, &lines) == CommandControl::Ok {
+                    SkinParamBlock.execute(diagram, lines)?;
+                } else {
+                    return Err(CommandError::new("Syntax Error?"));
+                }
+            }
+            diagram.titled().set_skin_param_used(true);
+            Ok(())
+        },
+    )))
 }

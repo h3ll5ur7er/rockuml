@@ -39,7 +39,7 @@ The [feature status](docs/features) lists every diagram type, command, function,
 
 | Area | What's missing |
 |---|---|
-| Diagram types | ditaa, EBNF, regex, charts, packet diagrams, HCL, git, files, board, wire, BPM and flow diagrams; the legacy activity syntax `(*) --> "Action"`; math with `@startmath`, `<math>` and `<latex>` |
+| Diagram types | ditaa diagrams; inner activities `-->{` in the legacy activity syntax; math with `@startmath`, `<math>` and `<latex>` |
 | Output formats | PDF, EPS, LaTeX, ASCII art (`-ttxt`, `-tutxt`), HTML, SCXML, XMI, VDX and braille |
 | Gantt charts | working hours (`from 9:00 to 17:00 are working hours`) |
 | Salt | the `salt` keyword inside `@startuml`, and `{{ … }}` diagrams embedded in notes or labels |
@@ -54,11 +54,12 @@ A diagram type that isn't ported yet is reported with a message and exit status 
 - **Hopeless sources.** Where PlantUML crashes or loops forever, rockuml reports an error: a mind map without a root draws nothing, and a Gantt task whose calendar never opens gives up after 100 000 days.
 - **Command line.** An unknown `-option` is refused unless a file of that name exists; PlantUML takes any unknown option for a file name. A diagram the engine fails on is reported as crashed, without an image.
 - **The server.** `/stopserver` really stops the server; ASCII-art formats answer 501.
+- **Pages.** Class, object, use case, component and deployment diagrams with `newpage` write every page; PlantUML 1.2026.8 writes only the first, a regression of that release.
 - **Extras.** PlantUML's easter eggs, GUI, FTP server, statistics, splash screen and Graphviz checks are left out.
 
 ## The browser build
 
-The WebAssembly build that runs this site has no files, so `!include` of files and URLs, images from files, and themes from folders don't work in it. To keep it small, it also leaves out the standard library and emoji. The [JavaScript page](docs/javascript#what-the-browser-build-leaves-out) has the details.
+The WebAssembly build that runs this site has no files, so `!include` of files and URLs, images from files, and themes from folders don't work in it. To keep it small, it also leaves out the standard library and emoji. It cannot run programs either, so [Graphviz graphs](docs/dot) (`@startdot`), which need an installed `dot`, are reported as not available. The [JavaScript page](docs/javascript#what-the-browser-build-leaves-out) has the details.
 
 ## Reporting a difference
 

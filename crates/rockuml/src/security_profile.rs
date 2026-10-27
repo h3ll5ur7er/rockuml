@@ -29,4 +29,10 @@ impl SecurityProfile {
             _ => Self::Legacy,
         }
     }
+
+    /// PlantUML names it so, yet the profiles it is true for are those whose `@startdot` SVGs say the feature
+    /// was suppressed instead of running `dot`.
+    pub(crate) fn allow_dot_svg(self) -> bool {
+        matches!(self, Self::Insecure | Self::InternetWithDotSvg)
+    }
 }

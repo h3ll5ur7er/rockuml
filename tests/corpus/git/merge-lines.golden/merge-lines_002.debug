@@ -1,0 +1,200 @@
+DPI: 96
+dimension: [ 503.0000 ; 154.0000 ]
+scaleFactor: 1.0000
+seed: -7886709388803364533
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 84.0000 ; 22.0000 ]
+  pt2: [ 183.0000 ; 46.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: f6f6f6f
+  position: [ 88.0823 ; 38.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 201.5000 ; 22.0000 ]
+  pt2: [ 333.5000 ; 46.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: e5e5e5e
+  position: [ 205.5338 ; 38.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 24.0000 ; 71.0000 ]
+  pt2: [ 117.0000 ; 95.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: d4d4d4d
+  position: [ 28.1099 ; 87.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 352.0000 ; 22.0000 ]
+  pt2: [ 493.0000 ; 46.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: c3c3c3c
+  position: [ 355.8147 ; 38.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 120.0000 ]
+  pt2: [ 131.0000 ; 144.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: b2b2b2b
+  position: [ 13.7900 ; 136.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 135.5000 ; 71.0000 ]
+  pt2: [ 259.5000 ; 95.0000 ]
+  xCorner: 8
+  yCorner: 8
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+TEXT:
+  text: a1a1a1a
+  position: [ 139.5541 ; 87.1667 ]
+  orientation: 0
+  font: Monospaced.bold/15 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 138.6671 ; 36.1383 ]
+   - type: SEG_CUBICTO
+     pt1: [ 147.0360 ; 42.2843 ]
+     pt2: [ 157.5523 ; 50.0072 ]
+     pt3: [ 166.6803 ; 56.7106 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 164.9879 ; 59.0151 ]
+   - type: SEG_LINETO
+     pt1: [ 168.4088 ; 57.9799 ]
+   - type: SEG_LINETO
+     pt1: [ 168.3728 ; 54.4060 ]
+   - type: SEG_LINETO
+     pt1: [ 172.4418 ; 60.9416 ]
+   - type: SEG_LINETO
+     pt1: [ 164.9879 ; 59.0151 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 108.5699 ; 36.1383 ]
+   - type: SEG_CUBICTO
+     pt1: [ 100.3317 ; 42.2843 ]
+     pt2: [ 89.9798 ; 50.0072 ]
+     pt3: [ 80.9944 ; 56.7106 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 79.3019 ; 54.4420 ]
+   - type: SEG_LINETO
+     pt1: [ 79.2929 ; 57.9799 ]
+   - type: SEG_LINETO
+     pt1: [ 82.6868 ; 58.9791 ]
+   - type: SEG_LINETO
+     pt1: [ 75.3230 ; 60.9416 ]
+   - type: SEG_LINETO
+     pt1: [ 79.3019 ; 54.4420 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 60.5000 ; 85.3774 ]
+   - type: SEG_CUBICTO
+     pt1: [ 60.5000 ; 90.5732 ]
+     pt2: [ 60.5000 ; 96.8577 ]
+     pt3: [ 60.5000 ; 102.6927 ]
+  stroke: 2.0-2.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 57.6861 ; 102.6927 ]
+   - type: SEG_LINETO
+     pt1: [ 60.5000 ; 104.8031 ]
+   - type: SEG_LINETO
+     pt1: [ 63.3139 ; 102.6927 ]
+   - type: SEG_LINETO
+     pt1: [ 60.5000 ; 109.7274 ]
+   - type: SEG_LINETO
+     pt1: [ 57.6861 ; 102.6927 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff181818
+  backcolor: ff181818
+

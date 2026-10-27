@@ -136,6 +136,7 @@ impl Cluster {
             ug.draw(&UShape::Comment(format!("cluster {full_name}")));
         }
         let style = self.get_style(diagram);
+        let shadowing = style.shadowing();
         let border_color = group
             .colors
             .get(ColorType::Line)
@@ -168,7 +169,7 @@ impl Cluster {
             self.manage_entry_exit_point(ug.string_bounder(), diagram, bibliotekon);
         }
         if diagram.get_style_name() == SName::StateDiagram && group.get_usymbol().is_none() {
-            self.draw_u_state(ug, diagram, rounded);
+            self.draw_u_state(ug, diagram, rounded, shadowing);
         } else {
             let package_style = group
                 .get_package_style()
@@ -194,6 +195,7 @@ impl Cluster {
                 ug,
                 back_color,
                 border_color,
+                shadowing,
                 rounded,
                 header.get_title_horizontal_alignment(),
                 diagram.skin().stereotype_alignment(),
@@ -272,6 +274,7 @@ impl Cluster {
             HColor::BLACK,
             HColor::BLACK,
             0.0,
+            0.0,
             diagram.skin().package_title_alignment(),
             diagram.skin().stereotype_alignment(),
             0.0,
@@ -332,7 +335,7 @@ fn get_back_color(
 /// What only state diagrams draw.
 impl Cluster {
     /// `Cluster.drawUState`: a composite state is a rounded box with its name and description on top.
-    fn draw_u_state(&self, ug: &UGraphic, diagram: &CucaDiagram, rounded: f64) {
+    fn draw_u_state(&self, ug: &UGraphic, diagram: &CucaDiagram, rounded: f64, shadowing: f64) {
         let group = diagram.entity(self.group);
         let builder = diagram.skin().current_style_builder();
         let stereotype = group.stereotype.as_ref();
@@ -386,6 +389,7 @@ impl Cluster {
             south_backcolor,
             stroke,
             rounded,
+            shadowing,
         }
         .draw_u(&ug.translated(position.dx, position.dy));
         let title_y = self

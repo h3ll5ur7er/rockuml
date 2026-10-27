@@ -95,7 +95,7 @@ A few settings change more than colours:
 | `skinparam defaultFontName Courier` | the font of all texts |
 | `skinparam defaultFontSize 14` | the size of all texts |
 | `skinparam roundCorner 12` | rounds the corners of boxes |
-| `skinparam shadowing false` | removes shadows |
+| `skinparam shadowing true` | draws shadows under boxes (`false` removes them) |
 
 ```rockuml
 @startuml
@@ -106,6 +106,29 @@ actor Neo
 participant "The Matrix" as M
 Neo -> M : there is no spoon
 M --> Neo : wake up
+@enduml
+```
+
+### Shadows
+
+Shadows fall below and to the right of boxes, notes and figures, blurred, in SVG and PNG alike. `skinparam shadowing
+true` turns them on everywhere, the `rose` skin draws them, and the `Shadowing` style property sets them for one kind
+of element:
+
+```rockuml
+@startuml
+skinparam shadowing true
+<style>
+note {
+  Shadowing 0
+}
+</style>
+actor Frodo
+participant "The Ring" as Ring
+database Mordor
+Frodo -> Ring : put on
+Ring -> Mordor : here I am
+note right of Ring : no shadow, it hides
 @enduml
 ```
 
@@ -142,6 +165,48 @@ Inn --> Hobbit : second breakfast
 @enduml
 ```
 
+A short style sheet fits on one line:
+
+```rockuml
+@startuml
+<style>class { BackgroundColor #FFE4B5; LineColor #8B4513 }</style>
+class Towel
+class Babelfish
+Towel -- Babelfish
+@enduml
+```
+
+`<style file=house.css>` reads a style sheet from a file, relative to the diagram, or from a URL. This reads files, so it works with the `rockuml` binary and not in the browser:
+
+```plantuml
+@startuml
+<style file=house.css>
+actor Neo
+usecase "Take the red pill" as red
+Neo --> red
+@enduml
+```
+
+### Where a style sheet applies
+
+Classes and the elements of component, deployment and use case diagrams take the style sheets in force where they are declared, so each part of a diagram can have its own:
+
+```rockuml
+@startuml
+<style>
+class { BackgroundColor #FEF3C7 }
+</style>
+class Bilbo
+<style>
+class { BackgroundColor #BFDBFE }
+</style>
+class Frodo
+Bilbo --> Frodo : the Ring
+@enduml
+```
+
+A `skinparam` anywhere in the diagram ends that, as in PlantUML: every element then takes the styles in force at the diagram's end, and Bilbo turns blue too.
+
 ### Properties
 
 The common properties are:
@@ -157,7 +222,7 @@ The common properties are:
 | `Padding`, `Margin` | `8` |
 | `MaximumWidth` | `150` (wraps longer texts) |
 | `HorizontalAlignment` | `left`, `center`, `right` |
-| `Shadowing` | `0` for none |
+| `Shadowing` | `4` (how far the shadow falls), `0` for none |
 
 ### Stereotypes
 
@@ -187,6 +252,19 @@ stop
 ### Depth
 
 In mind maps and work breakdowns, `:depth(1)` selects the nodes of one level, and `rootNode` and `leafNode` the top and the ends. See [mind maps](docs/mindmap#colours).
+
+## Skins
+
+`skin name` starts the diagram from another of PlantUML's style sheets instead of its default one: `rose` (PlantUML's old colours), `debug` (big fonts and loud colours, to see which style applies where) and `sonyxperiadev`. It must come before anything that styles the diagram. A file `name.skin` in the working directory or else beside the diagram, a style sheet that styles everything, is a skin too.
+
+```rockuml
+@startuml
+skin debug
+class Bender
+interface Robot
+Robot <|.. Bender
+@enduml
+```
 
 ## Colours of the page
 

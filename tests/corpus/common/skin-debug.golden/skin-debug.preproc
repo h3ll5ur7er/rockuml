@@ -1,0 +1,6 @@
+@startuml
+skin debug
+class Bender
+interface Robot
+Robot <|.. Bender
+@enduml

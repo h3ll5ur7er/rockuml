@@ -1,0 +1,5 @@
+@startflow
+check "Validate input"
+s store "Store it"
+e notify "Notify %upper($owner)"
+@endflow

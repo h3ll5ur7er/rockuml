@@ -133,10 +133,77 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/yaml.md')),
       },
       {
+        slug: 'hcl',
+        title: 'HCL data',
+        summary: 'Terraform and other HCL files drawn as nested tables.',
+        load: text(() => import('./content/hcl.md')),
+      },
+      {
+        slug: 'files',
+        title: 'File trees',
+        summary: 'Folders and files drawn as an indented tree, with notes.',
+        load: text(() => import('./content/files.md')),
+      },
+      {
+        slug: 'board',
+        title: 'Boards',
+        summary: 'Story maps: activities with their releases on cards below them.',
+        load: text(() => import('./content/board.md')),
+      },
+      {
+        slug: 'wire',
+        title: 'Wire diagrams',
+        summary: 'Nested blocks joined by wires and buses, an undocumented PlantUML diagram.',
+        load: text(() => import('./content/wire.md')),
+      },
+      {
+        slug: 'flow',
+        title: 'Flow diagrams',
+        summary:
+          'Boxes laid out on a grid, each a step from the one before, with links between them.',
+        load: text(() => import('./content/flow.md')),
+      },
+      {
+        slug: 'bpm',
+        title: 'BPM diagrams',
+        summary: 'Events, merges and branches on a grid, a diagram PlantUML does not document.',
+        load: text(() => import('./content/bpm.md')),
+      },
+      {
+        slug: 'git',
+        title: 'Git graphs',
+        summary: 'Commit graphs drawn from git log --graph output.',
+        load: text(() => import('./content/git.md')),
+      },
+      {
+        slug: 'ebnf',
+        title: 'EBNF grammars',
+        summary: 'Grammar rules drawn as railroad diagrams.',
+        load: text(() => import('./content/ebnf.md')),
+      },
+      {
+        slug: 'regex',
+        title: 'Regular expressions',
+        summary: 'Regular expressions drawn as railroad diagrams.',
+        load: text(() => import('./content/regex.md')),
+      },
+      {
+        slug: 'chart',
+        title: 'Charts',
+        summary: 'Bar, line, area and scatter charts, with axes, legends and annotations.',
+        load: text(() => import('./content/chart.md')),
+      },
+      {
         slug: 'network',
         title: 'Network diagrams',
         summary: 'Networks, the servers on them and their addresses.',
         load: text(() => import('./content/network.md')),
+      },
+      {
+        slug: 'packet',
+        title: 'Packet diagrams',
+        summary: 'Protocol headers and other records laid out bit by bit.',
+        load: text(() => import('./content/packet.md')),
       },
       {
         slug: 'salt',
@@ -174,6 +241,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         load: text(() => import('./content/sprites.md')),
       },
       {
+        slug: 'reference-cards',
+        title: 'Reference cards',
+        summary: 'One keyword, one card: colours, fonts, version, help, icons, sprites and emoji.',
+        load: text(() => import('./content/reference-cards.md')),
+      },
+      {
         slug: 'preprocessor',
         title: 'Preprocessor',
         summary: 'Variables, functions, conditions, loops and includes.',
@@ -195,6 +268,12 @@ const SECTIONS: { title: string; pages: Entry[] }[] = [
         title: 'Server for editors',
         summary: 'Run rockuml as the PlantUML server of your editor plugin.',
         load: text(() => import('./content/server.md')),
+      },
+      {
+        slug: 'dot',
+        title: 'Graphviz graphs',
+        summary: 'Graphviz sources drawn by your installed dot (command line only).',
+        load: text(() => import('./content/dot.md')),
       },
       {
         slug: 'javascript',

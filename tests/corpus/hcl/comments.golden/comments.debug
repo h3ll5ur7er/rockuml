@@ -1,0 +1,188 @@
+DPI: 96
+dimension: [ 551.3270 ; 57.0000 ]
+scaleFactor: 1.0000
+seed: -7681847727667295461
+svgLinkTarget: _top
+hoverPathColorRGB: null
+preserveAspectRatio: none
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 324.2144 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: fff1f1f1
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 241.7091 ; 28.0000 ]
+
+TEXT:
+  text: required_version
+  position: [ 15.0000 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 241.7091 ; 10.0000 ]
+  pt2: [ 324.2144 ; 28.0000 ]
+
+TEXT:
+  text: >= 1.0
+  position: [ 246.7091 ; 22.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 241.7091 ; 10.0000 ]
+  pt2: [ 241.7091 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+LINE:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 324.2144 ; 28.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+EMPTY:
+  pt1: [ 10.0000 ; 28.0000 ]
+  pt2: [ 104.0111 ; 46.0000 ]
+
+TEXT:
+  text: backend
+  position: [ 15.0000 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 241.7091 ; 28.0000 ]
+  pt2: [ 302.4693 ; 46.0000 ]
+
+TEXT:
+  text:    
+  position: [ 246.7091 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 241.7091 ; 28.0000 ]
+  pt2: [ 241.7091 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 10.0000 ; 10.0000 ]
+  pt2: [ 324.2144 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+RECTANGLE:
+  pt1: [ 361.0000 ; 28.0000 ]
+  pt2: [ 540.3270 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: fff1f1f1
+  backcolor: fff1f1f1
+
+EMPTY:
+  pt1: [ 361.0000 ; 28.0000 ]
+  pt2: [ 458.9743 ; 46.0000 ]
+
+TEXT:
+  text: bucket
+  position: [ 366.0000 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.bold/14 [BOLD]
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+EMPTY:
+  pt1: [ 458.9743 ; 28.0000 ]
+  pt2: [ 540.3270 ; 46.0000 ]
+
+TEXT:
+  text: state
+  position: [ 463.9743 ; 40.8889 ]
+  orientation: 0
+  font: SansSerif.plain/14 []
+  color: ff000000
+  extendedColor: NULL_COLOR
+
+LINE:
+  pt1: [ 458.9743 ; 28.0000 ]
+  pt2: [ 458.9743 ; 46.0000 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+
+RECTANGLE:
+  pt1: [ 361.0000 ; 28.0000 ]
+  pt2: [ 540.3270 ; 46.0000 ]
+  xCorner: 10
+  yCorner: 10
+  stroke: 0.0-0.0-1.5
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 301.5000 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 314.5000 ; 27.0000 ]
+   - type: SEG_CUBICTO
+     pt1: [ 323.9625 ; 27.0000 ]
+     pt2: [ 333.8264 ; 27.0000 ]
+     pt3: [ 343.6831 ; 27.0000 ]
+  stroke: 3.0-3.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: NULL_COLOR
+
+PATH:
+   - type: SEG_MOVETO
+     pt1: [ 343.6831 ; 30.0117 ]
+   - type: SEG_LINETO
+     pt1: [ 345.9419 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 343.6831 ; 23.9883 ]
+   - type: SEG_LINETO
+     pt1: [ 351.2124 ; 27.0000 ]
+   - type: SEG_LINETO
+     pt1: [ 343.6831 ; 30.0117 ]
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+
+ELLIPSE:
+  pt1: [ 308.5000 ; 34.0000 ]
+  pt2: [ 314.5000 ; 40.0000 ]
+  start: 0.0
+  extend: 0.0
+  stroke: 0.0-0.0-1.0
+  shadow: 0
+  color: ff000000
+  backcolor: ff000000
+

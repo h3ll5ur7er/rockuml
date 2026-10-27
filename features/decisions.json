@@ -188,159 +188,306 @@
     },
     "ActivityDiagramFactory": {
       "title": "Legacy activity diagrams (`(*) --> \"Action\"`)",
-      "status": "later",
-      "reason": "Tier 3 of the plan: the current activity syntax covers the same diagrams."
+      "rust": [
+        "diagram/activity",
+        "diagram/cuca",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "legacy-activity"
+      ],
+      "docs": "activity",
+      "notes": "Inner activities (`-->{` … `}`, PlantUML's `InnerActivity`) are read but reported as not ported yet: planned soon, they need `GroupMakerActivity`, which lays each one out as a graph of its own and draws it as one action."
     },
     "BpmDiagramFactory": {
       "title": "BPM diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/bpm"
+      ],
+      "corpus": [
+        "bpm"
+      ],
+      "docs": "bpm"
     },
     "PSystemDitaaFactory": {
       "title": "Ditaa diagrams",
       "status": "later",
-      "reason": "Tier 3 of the plan: a port of the vendored ditaa code, about 10 000 lines."
+      "reason": "On hold: a port of the vendored ditaa code, about 10 000 lines, whose bitmaps can only be compared by pixels."
     },
     "PSystemDotFactory": {
       "title": "Graphviz sources (`@startdot`)",
-      "status": "later",
-      "reason": "Tier 3 of the plan: needs an external `dot` or a port of more of Graphviz."
+      "rust": [
+        "diagram/dot.rs"
+      ],
+      "corpus": [
+        "dot"
+      ],
+      "docs": "dot",
+      "notes": "Runs the installed Graphviz `dot`, as PlantUML does, so the command line draws it and the browser build reports it as not available. `-f debug` and `svg-deterministic` always report the crash PlantUML usually reports for them."
     },
     "ChartDiagramFactory": {
       "title": "Charts",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/chart",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "chart"
+      ],
+      "docs": "chart"
     },
     "PacketDiagramFactory": {
       "title": "Packet diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/packetdiag",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "packetdiag"
+      ],
+      "docs": "packet"
     },
     "FlowDiagramFactory": {
       "title": "Flow diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/flow"
+      ],
+      "corpus": [
+        "flow"
+      ],
+      "docs": "flow",
+      "notes": "PlantUML keeps the boxes in a `HashMap` keyed by identity hash codes, so the order it draws them in, and where boxes it moves east to make room end up when one lands on another, change with the Java machine; rockuml takes them in the order they were declared."
     },
     "WireDiagramFactory": {
       "title": "Wire diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/wire",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "wire"
+      ],
+      "docs": "wire"
     },
     "GitDiagramFactory": {
       "title": "Git diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/git"
+      ],
+      "corpus": [
+        "git"
+      ],
+      "docs": "git"
     },
     "FilesDiagramFactory": {
       "title": "File trees",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/files.rs"
+      ],
+      "corpus": [
+        "files"
+      ],
+      "docs": "files"
     },
     "BoardDiagramFactory": {
       "title": "Boards",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/board.rs",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "board"
+      ],
+      "docs": "board"
     },
     "HclDiagramFactory": {
       "title": "HCL data",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/hcl.rs",
+        "diagram/json"
+      ],
+      "corpus": [
+        "hcl"
+      ],
+      "docs": "hcl"
     },
     "PSystemEbnfFactory": {
       "title": "EBNF diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/ebnf",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "ebnf"
+      ],
+      "docs": "ebnf"
     },
     "PSystemRegexFactory": {
       "title": "Regular expression diagrams",
-      "status": "later",
-      "reason": "Tier 3 of the plan, ported on demand."
+      "rust": [
+        "diagram/regexdiagram",
+        "diagram/ebnf",
+        "diagram/cuca_commands",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "regex"
+      ],
+      "docs": "regex"
     },
     "PSystemMathFactory": {
       "title": "Math (`@startmath`)",
       "status": "later",
-      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+      "reason": "On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen."
     },
     "PSystemLatexFactory": {
       "title": "LaTeX math (`@startlatex`)",
       "status": "later",
-      "reason": "Needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath; the approach is still to be chosen."
+      "reason": "On hold: needs a TeX math layout engine, which PlantUML borrows from JLaTeXMath (not in its sources); the approach is still to be chosen."
     },
     "PSystemDefinitionFactory": {
       "title": "Definitions drawn on their own (`@startdef`)",
-      "status": "later",
-      "reason": "Definitions work with `!includedef`; drawing them on their own is rarely needed."
+      "rust": [
+        "diagram/definition.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards"
     },
     "HelpFactory": {
       "title": "Help diagrams (`help keywords`, …)",
-      "status": "later",
-      "reason": "PlantUML's built-in reference cards; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/help"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "`help fonts` lists the fonts rockuml draws with, as `listfonts` does, not those of the machine."
     },
     "PSystemWelcomeFactory": {
       "title": "The welcome screen of an empty diagram",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/welcome.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemColorsFactory": {
       "title": "The colour chart (`colors`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/colors.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemVersionFactory": {
       "title": "The version diagram (`version`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/version.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "notes": "`version`, `authors` and `testdot` tell rockuml's version, license and layout engine instead of PlantUML's, Java's and Graphviz's; `stdlib` lists the embedded libraries as PlantUML does. The license key lines (`keygen`, `keyimport`, `keycheck`, `keydistributor`) are recognised and not planned: PlantUML draws cards for them that request, import or check a key for its professional edition, which rockuml has no use for.",
       "group": "Reference cards"
     },
     "PSystemLicenseFactory": {
       "title": "The license diagram (`license`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/license.rs"
+      ],
+      "docs": "reference-cards",
+      "notes": "Tells rockuml's license (LGPL, with the EPL for its layout code and the licenses of the fonts and content it embeds) in the layout of PlantUML's.",
       "group": "Reference cards"
     },
     "PSystemSkinparameterListFactory": {
       "title": "The skin parameter list (`skinparameters`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/skinparameter_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemListFontsFactory": {
       "title": "The font list (`listfonts`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/cards/list_fonts.rs"
+      ],
+      "docs": "reference-cards",
+      "notes": "Lists the fonts rockuml draws with, its embedded Liberation fonts and the fonts registered with `--font` or `ROCKUML_FONTS`, instead of the machine's: rockuml never picks up system fonts.",
       "group": "Reference cards"
     },
     "PSystemListEmojiFactory": {
       "title": "The emoji list (`emoji`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/emoji_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "The browser build has no emoji but the two that file trees draw, so it lists no more."
     },
     "PSystemOpenIconicFactory": {
       "title": "An Open Iconic icon on its own (`openiconic`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
-      "group": "Reference cards"
+      "rust": [
+        "diagram/openiconic.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
+      "group": "Reference cards",
+      "notes": "An unknown icon, on which PlantUML crashes, is reported as not ported."
     },
     "PSystemListOpenIconicFactory": {
       "title": "The Open Iconic list (`listopeniconic`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/openiconic.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemListArchimateSpritesFactory": {
       "title": "The ArchiMate sprite list",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/sprite_list.rs"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "ListSpriteDiagramFactory": {
       "title": "The sprite list (`listsprites`)",
-      "status": "later",
-      "reason": "A reference card; low priority.",
+      "rust": [
+        "diagram/sprite_list.rs",
+        "diagram/common_commands"
+      ],
+      "corpus": [
+        "cards"
+      ],
+      "docs": "reference-cards",
       "group": "Reference cards"
     },
     "PSystemDonorsFactory": {
@@ -390,35 +537,7 @@
       "reason": "PlantUML's way of testing its crash report; rockuml reports crashes on the command line."
     }
   },
-  "commands": {
-    "CommandAssumeTransparent": {
-      "status": "later"
-    },
-    "CommandSkin": {
-      "status": "later",
-      "reason": "Old skins are superseded by themes and styles."
-    },
-    "CommandMinwidth": {
-      "status": "later"
-    },
-    "CommandPage": {
-      "status": "later"
-    },
-    "CommandRotate": {
-      "status": "later"
-    },
-    "CommandStyleImport": {
-      "status": "later",
-      "reason": "Reads style files."
-    },
-    "CommandStyleSingleLineCSS": {
-      "status": "later"
-    },
-    "CommandSkinParamJaws": {
-      "status": "later",
-      "reason": "A `skinparam` line with line breaks inside, which only macros produce."
-    }
-  },
+  "commands": {},
   "outputFormats": {
     "PDF": {
       "status": "soon",

@@ -1,0 +1,20 @@
+@startmindmap
+<style>
+mindmapDiagram {
+  node {
+    Shadowing 5
+  }
+  :depth(1) {
+    Shadowing 0
+  }
+}
+mainframe {
+  Shadowing 4
+}
+</style>
+mainframe The plan
+* Root
+** One
+*** Leaf
+-- Left
+@endmindmap

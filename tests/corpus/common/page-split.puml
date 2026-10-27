@@ -1,0 +1,10 @@
+@startuml
+page 2x1
+class Luffy
+class Zoro
+class Nami
+class Usopp
+Luffy -- Zoro
+Luffy -- Nami
+Luffy -- Usopp
+@enduml

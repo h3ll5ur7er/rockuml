@@ -68,7 +68,7 @@ impl Diagram for CreoleDiagram {
         ))))
     }
 
-    fn export_settings(&self) -> ExportSettings {
+    fn export_settings(&self, _page: usize) -> ExportSettings {
         ExportSettings::without_skin(self.source.seed())
     }
 }

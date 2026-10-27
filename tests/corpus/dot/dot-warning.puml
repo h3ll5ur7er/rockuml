@@ -1,0 +1,6 @@
+@startdot
+digraph warned {
+  a [shape=hexagonal];
+  a -> b;
+}
+@enddot

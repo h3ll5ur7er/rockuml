@@ -1,0 +1,15 @@
+@startwire
+* top [300x80]
+goto(10, 250)
+* bottom [300x80]
+top --> bottom : ignored label
+top <-- bottom
+top <--> bottom #red
+top -- bottom
+top ==> bottom
+top <== bottom #blue
+top <==> bottom
+top == bottom
+bottom(80%, 0) --> top
+top(50%-5, 100%) ==> bottom #green
+@endwire

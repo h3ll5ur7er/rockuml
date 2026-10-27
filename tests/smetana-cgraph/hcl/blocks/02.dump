@@ -1,0 +1,49 @@
+cgraph-dump 1
+graph "g" nodes 5 edges 4
+graph ids "g"
+node ids "N0" "N1" "N2" "N3" "N4"
+in "g" node "N0" out e1> e2> e3> e4> in edges e1> e2> e3> e4> degree 0 4
+in "g" node "N1" out in e1< edges e1< degree 1 0
+in "g" node "N2" out in e2< edges e2< degree 1 0
+in "g" node "N3" out in e3< edges e3< degree 1 0
+in "g" node "N4" out in e4< edges e4< degree 1 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+attr "N0" "shape" "record"
+attr "N0" "height" "6.024744010388801"
+attr "N0" "width" "1.0"
+attr "N0" "label" "{_dim_72.0_365.02137160390464_|{<P0>_dim_18.0_52.76019714408902_|<P1>_dim_18.0_52.76019714408902_|<P2>_dim_18.0_52.76019714408902_|<P3>_dim_18.0_52.76019714408902_}}"
+attr "N1" "shape" "record"
+attr "N1" "height" "3.216213381120589"
+attr "N1" "width" "0.25"
+attr "N1" "label" "{_dim_18.0_73.23359854013525_|{<P0>_dim_18.0_142.33376490054715_}}"
+attr e1> "arrowsize" ".75"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "normal"
+attr e1> "tailport" "P0"
+attr "N2" "shape" "record"
+attr "N2" "height" "11.208703811399092"
+attr "N2" "width" "0.25"
+attr "N2" "label" "{_dim_18.0_135.77646396959923_|{<P0>_dim_18.0_655.2502104511353_}}"
+attr e2> "arrowsize" ".75"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "normal"
+attr e2> "tailport" "P1"
+attr "N3" "shape" "record"
+attr "N3" "height" "4.347870937586442"
+attr "N3" "width" "0.25"
+attr "N3" "label" "{_dim_18.0_124.88967921539776_|{<P0>_dim_18.0_172.15702829082605_}}"
+attr e3> "arrowsize" ".75"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "normal"
+attr e3> "tailport" "P2"
+attr "N4" "shape" "record"
+attr "N4" "height" "6.779237558865796"
+attr "N4" "width" "0.25"
+attr "N4" "label" "{_dim_18.0_65.30052409423405_|{<P0>_dim_18.0_406.8045801441032_}}"
+attr e4> "arrowsize" ".75"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "normal"
+attr e4> "tailport" "P3"

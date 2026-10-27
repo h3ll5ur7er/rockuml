@@ -3,7 +3,7 @@
 use std::cell::OnceCell;
 use std::rc::Rc;
 
-use super::note_sheet::NoteSheet;
+use super::note_sheet::note_opale;
 use super::{FtileWithNotes, UGraphicInterceptorOneSwimlane};
 use crate::diagram::activity3::{
     LinkRendering, NotePosition, NoteType, PositionedNote, SwimlaneId, SwimlaneSet,
@@ -15,7 +15,7 @@ use crate::klimt::geom::{UTranslate, XDimension2D, XPoint2D};
 use crate::klimt::ugraphic::UGraphic;
 use crate::klimt::{HorizontalAlignment, TextBlock, VerticalAlignment};
 use crate::skin::SkinParam;
-use crate::style::{PName, SName, StyleSignature, ValueReading};
+use crate::style::{SName, StyleSignature};
 use crate::svek::image::Opale;
 
 /// The room between the note and the tile, which its callout crosses.
@@ -70,22 +70,8 @@ impl FtileWithNoteOpale {
             note.stereotype.as_ref(),
         )
         .eventually_override_colors(&note.colors);
-        let font_configuration = style.font_configuration();
         let alignment = skin_param.note_text_alignment(HorizontalAlignment::Left);
-        let text = NoteSheet::new(
-            &note.display,
-            &font_configuration,
-            alignment,
-            style.wrap_width(),
-            skin_param,
-        );
-        let opale = Opale::new(
-            style.value(PName::LineColor).as_color(),
-            style.value(PName::BackGroundColor).as_color(),
-            Box::new(text),
-            style.stroke(),
-            0.0,
-        );
+        let opale = note_opale(&note.display, &style, alignment, skin_param);
         Self {
             tile,
             opale,

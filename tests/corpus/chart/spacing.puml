@@ -1,0 +1,7 @@
+@startchart
+h-axis [a, b, c]
+v-axis "Ratio" 0 --> 1 spacing 0.25 grid
+v2-axis "Share" 0 --> 0.005
+bar "Ratio" [0.2, 0.55, 0.9] labels
+line "Share" [0.001, 0.004, 0.0025] v2
+@endchart
