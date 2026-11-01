@@ -198,7 +198,7 @@
         "legacy-activity"
       ],
       "docs": "activity",
-      "notes": "Inner activities (`-->{` … `}`, PlantUML's `InnerActivity`) are read but reported as not ported yet: planned soon, they need `GroupMakerActivity`, which lays each one out as a graph of its own and draws it as one action."
+      "notes": "Inner activities (`-->{` … `}`) are drawn as PlantUML draws them without Graphviz: as a group framed like a package and titled with its generated name (`##4`, which creole reads as a numbered list). Only Graphviz layouts draw them as one action (`GroupMakerActivity`, `InnerActivity`)."
     },
     "BpmDiagramFactory": {
       "title": "BPM diagrams",

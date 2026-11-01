@@ -1,0 +1,9 @@
+@startuml
+(*) --> "First"
+--> {
+  --> "Inner one"
+  --> "Inner two"
+}
+--> "Last"
+--> (*)
+@enduml
