@@ -2,7 +2,6 @@ use std::rc::Rc;
 
 use super::*;
 use crate::command::factory::{Created, create_system};
-use crate::klimt::debug::StringBounderDebug;
 use crate::text::StringLocated;
 
 fn parse(body: &[&str]) -> Result<ActivityDiagram, String> {
@@ -136,8 +135,21 @@ fn a_note_goes_on_the_latest_activity() {
 }
 
 #[test]
-fn inner_activities_are_not_drawn_yet() {
-    let diagram = parse(&["(*) --> {", r#"--> "A""#, "}"]).unwrap();
-    let string_bounder: Rc<dyn StringBounder> = Rc::new(StringBounderDebug);
-    assert!(diagram.text_block(0, &string_bounder).is_err());
+fn the_activities_of_an_inner_activity_go_into_its_group() {
+    let diagram = parse(&["(*) --> {", r#"--> "A""#, "}", r#"--> "B""#]).unwrap();
+    let cuca = &diagram.cuca;
+    let inner = cuca
+        .groups()
+        .into_iter()
+        .find(|&group| cuca.entity(group).get_group_type() == GroupType::InnerActivity)
+        .expect("an inner activity");
+    let parent = |name: &str| {
+        let entity = cuca
+            .quark(cuca.first_with_name(name).unwrap())
+            .get_data()
+            .unwrap();
+        cuca.entity(entity).get_parent_container(cuca)
+    };
+    assert_eq!(parent("A"), Some(inner));
+    assert_ne!(parent("B"), Some(inner));
 }

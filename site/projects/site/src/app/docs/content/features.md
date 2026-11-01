@@ -80,7 +80,7 @@ This page compares rockuml with PlantUML 1.2026.8, feature by feature: what is p
 | [The colour chart (`colors`)](docs/reference-cards) | ✅ Ported | 30 of 30 match PlantUML |  | `PSystemColorsFactory` |
 | [Sequence diagrams](docs/sequence) | ✅ Ported | 94 of 94 match PlantUML |  | `SequenceDiagramFactory` |
 | [Class and object diagrams](docs/class) | ✅ Ported | 91 of 91 match PlantUML |  | `ClassDiagramFactory` |
-| [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 22 of 22 match PlantUML | Inner activities (`-->{` … `}`, PlantUML's `InnerActivity`) are read but reported as not ported yet: planned soon, they need `GroupMakerActivity`, which lays each one out as a graph of its own and draws it as one action. | `ActivityDiagramFactory` |
+| [Legacy activity diagrams (`(*) --> "Action"`)](docs/activity) | ✅ Ported | 26 of 26 match PlantUML | Inner activities (`-->{` … `}`) are drawn as PlantUML draws them without Graphviz: as a group framed like a package and titled with its generated name (`##4`, which creole reads as a numbered list). Only Graphviz layouts draw them as one action (`GroupMakerActivity`, `InnerActivity`). | `ActivityDiagramFactory` |
 | [Use case, component, deployment and ArchiMate diagrams](docs/component) | ✅ Ported | 84 of 84 match PlantUML |  | `DescriptionDiagramFactory` |
 | [State diagrams](docs/state) | ✅ Ported | 36 of 36 match PlantUML |  | `StateDiagramFactory` |
 | [Activity diagrams](docs/activity) | ✅ Ported | 110 of 110 match PlantUML |  | `ActivityDiagramFactory3` |

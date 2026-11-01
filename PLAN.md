@@ -653,7 +653,9 @@ examples of the PlantUML language reference. Goldens can be generated on Linux (
     with its shadow. A generic `UBrexSingleLine` command replaces the Gantt chart's own.
   - Deviations: `skinparam activityShape octagon` draws rounded boxes, as PlantUML does with Smetana (only
     Graphviz gives the node an octagon).
-  - Not ported: inner activities (`-->{` ... `}`), reported as not ported.
+  - Inner activities (`-->{` ... `}`): drawn as PlantUML draws them with Smetana, a group framed like a package
+    and titled with its generated name (`##4`, which creole reads as a numbered list); only Graphviz layouts turn
+    them into one action (`GroupMakerActivity`). 4 more cases cover them.
 
 ### Phases 19+ — The self-contained Tier 3 diagrams (~33k)
 Smallest and most reusing first: file trees (0.9k), HCL (0.9k, the JSON renderer), flow (1k), boards (1.3k),

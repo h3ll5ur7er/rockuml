@@ -1,0 +1,10 @@
+@startuml
+(*) --> "Start" as S
+S --> {
+  "A" --> "B"
+  "B" --> "C"
+  note right: inside the block
+}
+S --> "Elsewhere"
+"Elsewhere" ..> (*)
+@enduml
