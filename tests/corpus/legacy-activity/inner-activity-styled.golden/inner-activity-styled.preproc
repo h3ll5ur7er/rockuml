@@ -1,0 +1,16 @@
+@startuml
+skinparam shadowing true
+skinparam activity {
+  BackgroundColor LightYellow
+  BorderColor DarkOrange
+}
+partition Work {
+  (*) --> "Open"
+}
+"Open" --> {
+  --> "Edit" #pink
+  --> "Save"
+}
+--> "Close"
+--> (*)
+@enduml

@@ -184,14 +184,6 @@ impl Diagram for ActivityDiagram {
         _page: usize,
         string_bounder: &Rc<dyn StringBounder>,
     ) -> Result<Box<dyn TextBlock + '_>, NotYetPorted> {
-        let cuca = &self.cuca;
-        if cuca
-            .groups()
-            .into_iter()
-            .any(|group| cuca.entity(group).get_group_type() == GroupType::InnerActivity)
-        {
-            return Err(NotYetPorted("inner activities"));
-        }
         let drawing = self.cuca.get_text_block(string_bounder.as_ref())?;
         Ok(self.cuca.titled.add_chrome(drawing, string_bounder))
     }

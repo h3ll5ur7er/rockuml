@@ -357,5 +357,17 @@ partition Kitchen #LightYellow {
 @enduml
 ```
 
-Inner activities (`-->{` ... `}`) are not drawn yet: a diagram that has one is reported as not ported.
+`-->{` ... `}` opens an inner activity: the actions inside it are grouped, and links can lead into and out of the group. PlantUML draws it, without Graphviz, as a frame like a package's, titled with a name it makes up (`##4`, which reads as a numbered list), and rockuml draws it the same way.
+
+```rockuml
+@startuml
+(*) --> "Pack the bags"
+--> {
+  --> "Check the passports"
+  --> "Lock the door"
+}
+--> "Drive to the airport"
+--> (*)
+@enduml
+```
 

@@ -1,0 +1,17 @@
+@startuml
+(*) --> "Prepare"
+--> {
+  --> "Outer step"
+  --> {
+    --> "Inner step"
+    if "done?" then
+      -->[yes] "Finish inner"
+    else
+      ->[no] "Retry"
+    endif
+  }
+  --> "After the inner block"
+}
+--> "Report"
+--> (*)
+@enduml

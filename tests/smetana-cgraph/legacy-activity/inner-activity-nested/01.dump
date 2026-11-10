@@ -1,0 +1,136 @@
+cgraph-dump 1
+graph "g" nodes 12 edges 11
+subgraph "cluster6" parent "g" seq 1 nodes "sh0010" "sh0011" "sh0016" "sh0017" "sh0018" "sh0019" "zent0005" "zent0010"
+subgraph "cluster12" parent "cluster6" seq 2 nodes "sh0016" "sh0017" "sh0018" "sh0019" "zent0010"
+graph ids "g" "cluster6" "cluster12"
+node ids "sh0020" "sh0021" "sh0022" "sh0023" "sh0010" "sh0011" "sh0016" "sh0017" "sh0018" "sh0019" "zent0005" "zent0010"
+in "g" node "sh0020" out e1> in edges e1> degree 0 1
+in "g" node "sh0021" out e2> in e1< edges e2> e1< degree 1 1
+in "g" node "sh0022" out e11> in e10< edges e11> e10< degree 1 1
+in "g" node "sh0023" out in e11< edges e11< degree 1 0
+in "g" node "sh0010" out e4> in e3< edges e4> e3< degree 1 1
+in "g" node "sh0011" out e10> in e9< edges e10> e9< degree 1 1
+in "g" node "sh0016" out e6> in e5< edges e6> e5< degree 1 1
+in "g" node "sh0017" out e7> e8> in e6< edges e7> e8> e6< degree 1 2
+in "g" node "sh0018" out in e7< edges e7< degree 1 0
+in "g" node "sh0019" out e9> in e8< edges e9> e8< degree 1 1
+in "g" node "zent0005" out e3> in e2< edges e3> e2< degree 1 1
+in "g" node "zent0010" out e5> in e4< edges e5> e4< degree 1 1
+in "cluster6" node "sh0010" out in edges degree 0 0
+in "cluster6" node "sh0011" out in edges degree 0 0
+in "cluster6" node "sh0016" out in edges degree 0 0
+in "cluster6" node "sh0017" out in edges degree 0 0
+in "cluster6" node "sh0018" out in edges degree 0 0
+in "cluster6" node "sh0019" out in edges degree 0 0
+in "cluster6" node "zent0005" out in edges degree 0 0
+in "cluster6" node "zent0010" out in edges degree 0 0
+in "cluster12" node "sh0016" out in edges degree 0 0
+in "cluster12" node "sh0017" out in edges degree 0 0
+in "cluster12" node "sh0018" out in edges degree 0 0
+in "cluster12" node "sh0019" out in edges degree 0 0
+in "cluster12" node "zent0010" out in edges degree 0 0
+find e1> forward e1< backward none
+find e2> forward e2< backward none
+find e3> forward e3< backward none
+find e4> forward e4< backward none
+find e5> forward e5< backward none
+find e6> forward e6< backward none
+find e7> forward e7< backward none
+find e8> forward e8< backward none
+find e9> forward e9< backward none
+find e10> forward e10< backward none
+find e11> forward e11< backward none
+induce "cluster6" e4> e6> e7> e8> e9> e3> e5>
+in "cluster6" node "sh0010" out e4> in e3< edges e4> e3< degree 1 1
+in "cluster6" node "sh0011" out in e9< edges e9< degree 1 0
+in "cluster6" node "sh0016" out e6> in e5< edges e6> e5< degree 1 1
+in "cluster6" node "sh0017" out e7> e8> in e6< edges e7> e8> e6< degree 1 2
+in "cluster6" node "sh0018" out in e7< edges e7< degree 1 0
+in "cluster6" node "sh0019" out e9> in e8< edges e9> e8< degree 1 1
+in "cluster6" node "zent0005" out e3> in edges e3> degree 0 1
+in "cluster6" node "zent0010" out e5> in e4< edges e5> e4< degree 1 1
+induce "cluster12" e6> e7> e8> e5>
+in "cluster12" node "sh0016" out e6> in e5< edges e6> e5< degree 1 1
+in "cluster12" node "sh0017" out e7> e8> in e6< edges e7> e8> e6< degree 1 2
+in "cluster12" node "sh0018" out in e7< edges e7< degree 1 0
+in "cluster12" node "sh0019" out in e8< edges e8< degree 1 0
+in "cluster12" node "zent0010" out e5> in edges e5> degree 0 1
+contains "cluster6" 0 0 0 0 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 0 0
+contains "cluster12" 0 0 0 0 0 0 1 1 1 1 0 1 0 0 0 0 1 1 1 1 0 0 0
+attr "g" "margin" "16"
+attr "sh0020" "shape" "box"
+attr "sh0020" "width" "0.2777777777777778"
+attr "sh0020" "height" "0.2777777777777778"
+attr "sh0021" "shape" "box"
+attr "sh0021" "width" "1.469799599809448"
+attr "sh0021" "height" "0.4444444444444444"
+attr "sh0022" "shape" "box"
+attr "sh0022" "width" "1.3800604757202624"
+attr "sh0022" "height" "0.4444444444444444"
+attr "sh0023" "shape" "box"
+attr "sh0023" "width" "0.3055555555555556"
+attr "sh0023" "height" "0.3055555555555556"
+attr "cluster6" "label" "_dim_101_17_"
+attr "cluster6" "margin" "16"
+attr "sh0010" "shape" "box"
+attr "sh0010" "width" "2.4063016653160085"
+attr "sh0010" "height" "0.4444444444444444"
+attr "sh0011" "shape" "box"
+attr "sh0011" "width" "4.718502737762787"
+attr "sh0011" "height" "0.4444444444444444"
+attr "cluster12" "label" "_dim_101_17_"
+attr "cluster12" "margin" "16"
+attr "sh0016" "shape" "box"
+attr "sh0016" "width" "2.3331365744341936"
+attr "sh0016" "height" "0.4444444444444444"
+attr "sh0017" "shape" "box"
+attr "sh0017" "width" "0.3333333333333333"
+attr "sh0017" "height" "0.3333333333333333"
+attr "sh0018" "shape" "box"
+attr "sh0018" "width" "2.2732227969770418"
+attr "sh0018" "height" "0.4444444444444444"
+attr "sh0019" "shape" "box"
+attr "sh0019" "width" "1.1858008737545136"
+attr "sh0019" "height" "0.4444444444444444"
+attr e1> "arrowtail" "none"
+attr e1> "arrowhead" "none"
+attr e1> "minlen" "1"
+attr "zent0005" "shape" "box"
+attr "zent0005" "width" "0.1"
+attr "zent0005" "height" "0.1"
+attr e2> "arrowtail" "none"
+attr e2> "arrowhead" "none"
+attr e2> "minlen" "1"
+attr e3> "arrowtail" "none"
+attr e3> "arrowhead" "none"
+attr e3> "minlen" "1"
+attr "zent0010" "shape" "box"
+attr "zent0010" "width" "0.1"
+attr "zent0010" "height" "0.1"
+attr e4> "arrowtail" "none"
+attr e4> "arrowhead" "none"
+attr e4> "minlen" "1"
+attr e5> "arrowtail" "none"
+attr e5> "arrowhead" "none"
+attr e5> "minlen" "1"
+attr e6> "arrowtail" "none"
+attr e6> "arrowhead" "none"
+attr e6> "minlen" "1"
+attr e6> "headlabel" "_dim_51_13_"
+attr e7> "arrowtail" "none"
+attr e7> "arrowhead" "none"
+attr e7> "minlen" "1"
+attr e7> "label" "_dim_36_15_"
+attr e8> "arrowtail" "none"
+attr e8> "arrowhead" "none"
+attr e8> "minlen" "0"
+attr e8> "label" "_dim_26_15_"
+attr e9> "arrowtail" "none"
+attr e9> "arrowhead" "none"
+attr e9> "minlen" "1"
+attr e10> "arrowtail" "none"
+attr e10> "arrowhead" "none"
+attr e10> "minlen" "1"
+attr e11> "arrowtail" "none"
+attr e11> "arrowhead" "none"
+attr e11> "minlen" "1"

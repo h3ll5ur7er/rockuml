@@ -1605,6 +1605,65 @@ node "sh0011" coord 1.0 216.0 width 1.1111111111111112 height 0.3333333333333333
 node "sh0012" coord 1.0 152.0 width 0.3333333333333333 height 0.3333333333333333 lw 12.0 rw 12.0 ht 24.0
 node "sh0013" coord -17.0 84.0 width 0.4305555555555556 height 0.4444444444444444 lw 15.5 rw 15.5 ht 32.0
 node "sh0014" coord 32.0 84.0 width 0.4305555555555556 height 0.4444444444444444 lw 15.5 rw 15.5 ht 32.0
+trace legacy-activity/inner-activity-links/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 8 label_pos 0 bb -319.0 -8.0 122.0 325.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters "cluster6"
+graph "cluster6" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -311.0 0.0 -26.0 225.0 border 0.0 0.0 0.0 0.0 117.0 25.0 0.0 0.0 clusters
+graph "cluster6" label pos 0.0 0.0 dimen 101.0 17.0 set 0
+node "sh0014" coord -69.0 313.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+node "sh0015" coord -69.0 249.0 width 1.0694444444444444 height 0.4444444444444444 lw 38.5 rw 38.5 ht 32.0
+node "sh0016" coord 56.0 168.0 width 1.8333333333333333 height 0.4444444444444444 lw 66.0 rw 66.0 ht 32.0
+node "sh0017" coord 56.0 100.0 width 0.3055555555555556 height 0.3333333333333333 lw 11.0 rw 11.0 ht 24.0
+node "sh0010" coord -152.0 168.0 width 0.4305555555555556 height 0.4444444444444444 lw 15.5 rw 15.5 ht 32.0
+node "sh0011" coord -262.0 100.0 width 0.4305555555555556 height 0.4444444444444444 lw 15.5 rw 15.5 ht 32.0
+node "sh0012" coord -279.0 32.0 width 0.4305555555555556 height 0.4444444444444444 lw 15.5 rw 15.5 ht 32.0
+node "sh0013" coord -144.0 32.0 width 2.8194444444444446 height 0.3333333333333333 lw 101.5 rw 101.5 ht 24.0
+node "zent0005" coord -194.0 168.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
+trace legacy-activity/inner-activity-nested/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 11 label_pos 0 bb -409.0 0.0 195.0 719.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters "cluster6"
+graph "cluster6" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -401.0 120.0 187.0 599.0 border 0.0 0.0 0.0 0.0 117.0 25.0 0.0 0.0 clusters "cluster12"
+graph "cluster6" label pos 0.0 0.0 dimen 101.0 17.0 set 0
+graph "cluster12" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -385.0 136.0 -185.0 438.0 border 0.0 0.0 0.0 0.0 117.0 25.0 0.0 0.0 clusters
+graph "cluster12" label pos 0.0 0.0 dimen 101.0 17.0 set 0
+node "sh0020" coord -285.0 707.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+node "sh0021" coord -285.0 642.0 width 1.4722222222222223 height 0.4444444444444444 lw 53.0 rw 53.0 ht 32.0
+node "sh0022" coord 1.0 77.0 width 1.375 height 0.4444444444444444 lw 49.5 rw 49.5 ht 32.0
+node "sh0023" coord 1.0 12.0 width 0.3055555555555556 height 0.3333333333333333 lw 11.0 rw 11.0 ht 24.0
+node "sh0010" coord -285.0 481.0 width 2.4027777777777777 height 0.4444444444444444 lw 86.5 rw 86.5 ht 32.0
+node "sh0011" coord 1.0 168.0 width 4.722222222222222 height 0.4444444444444444 lw 170.0 rw 170.0 ht 32.0
+node "sh0016" coord -285.0 320.0 width 2.3333333333333335 height 0.4444444444444444 lw 84.0 rw 84.0 ht 32.0
+node "sh0017" coord -342.0 251.0 width 0.3333333333333333 height 0.3333333333333333 lw 12.0 rw 12.0 ht 24.0
+node "sh0018" coord -287.0 168.0 width 2.2777777777777777 height 0.4444444444444444 lw 82.0 rw 82.0 ht 32.0
+node "sh0019" coord -244.0 251.0 width 1.1805555555555556 height 0.4444444444444444 lw 42.5 rw 42.5 ht 32.0
+node "zent0005" coord -285.0 546.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
+node "zent0010" coord -285.0 385.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
+trace legacy-activity/inner-activity-styled/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 8 label_pos 0 bb -56.0 0.0 77.0 494.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters "cluster6" "cluster12"
+graph "cluster6" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -36.0 337.0 56.0 486.0 border 0.0 0.0 0.0 0.0 84.0 25.0 0.0 0.0 clusters
+graph "cluster6" label pos 0.0 0.0 dimen 68.0 17.0 set 0
+graph "cluster12" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -48.0 112.0 69.0 329.0 border 0.0 0.0 0.0 0.0 117.0 25.0 0.0 0.0 clusters
+graph "cluster12" label pos 0.0 0.0 dimen 101.0 17.0 set 0
+node "sh0018" coord 10.0 76.0 width 1.1944444444444444 height 0.4444444444444444 lw 43.0 rw 43.0 ht 32.0
+node "sh0019" coord 10.0 12.0 width 0.3055555555555556 height 0.3333333333333333 lw 11.0 rw 11.0 ht 24.0
+node "sh0010" coord 10.0 433.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+node "sh0011" coord 10.0 369.0 width 0.8194444444444444 height 0.4444444444444444 lw 29.5 rw 29.5 ht 32.0
+node "sh0016" coord 10.0 212.0 width 1.1111111111111112 height 0.4444444444444444 lw 40.0 rw 40.0 ht 32.0
+node "sh0017" coord 10.0 144.0 width 0.9166666666666666 height 0.4444444444444444 lw 33.0 rw 33.0 ht 32.0
+node "zent0006" coord 10.0 276.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
+trace legacy-activity/inner-activity/01.trace
+state State 1 EdgeLabelsDone 1
+graph "g" rankdir 0 flags 10 has_labels 8 label_pos 0 bb -95.0 0.0 97.0 429.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters "cluster6"
+graph "cluster6" rankdir 0 flags 0 has_labels 0 label_pos 1 bb -87.0 112.0 89.0 329.0 border 0.0 0.0 0.0 0.0 117.0 25.0 0.0 0.0 clusters
+graph "cluster6" label pos 0.0 0.0 dimen 101.0 17.0 set 0
+node "sh0012" coord 1.0 417.0 width 0.2777777777777778 height 0.3333333333333333 lw 10.0 rw 10.0 ht 24.0
+node "sh0013" coord 1.0 353.0 width 1.1805555555555556 height 0.4444444444444444 lw 42.5 rw 42.5 ht 32.0
+node "sh0014" coord 1.0 76.0 width 1.1388888888888888 height 0.4444444444444444 lw 41.0 rw 41.0 ht 32.0
+node "sh0015" coord 1.0 12.0 width 0.3055555555555556 height 0.3333333333333333 lw 11.0 rw 11.0 ht 24.0
+node "sh0010" coord 1.0 212.0 width 1.8611111111111112 height 0.4444444444444444 lw 67.0 rw 67.0 ht 32.0
+node "sh0011" coord 1.0 144.0 width 2.0 height 0.4444444444444444 lw 72.0 rw 72.0 ht 32.0
+node "zent0005" coord 1.0 276.0 width 0.2222222222222222 height 0.3333333333333333 lw 8.0 rw 8.0 ht 24.0
 trace legacy-activity/labels/01.trace
 state State 1 EdgeLabelsDone 1
 graph "g" rankdir 0 flags 10 has_labels 1 label_pos 0 bb -114.0 0.0 267.0 237.0 border 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 clusters
